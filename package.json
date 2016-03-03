@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": ["webpack"],
-  "files": ["webpack.config.js"],
+  "files": ["webpack.config.js", "taskRunner.js"],
   "main": "webpack.config.js",
-  "bin": "./taskRunner.js",
+  "bin": "taskRunner.js",
   "license": "ISC",
   "dependencies": {
     "babel-core": "*",
