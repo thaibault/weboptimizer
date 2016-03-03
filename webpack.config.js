@@ -2,7 +2,6 @@
 // TODO inject css in head instead of in js!
 // region header
 const packageConfiguration = require('../../package.json').webOptimizer || {}
-console.log(packageConfiguration)
 const extend = require('extend')
 const path = require('path')
 const webpack = require('webpack')
@@ -11,6 +10,7 @@ const plugins = require('webpack-load-plugins')()
 plugins.offline = WebpackOfflinePlugin
 // endregion
 // region configuration
+__dirname = path.normalize(__dirname + '/../..')
 if (!!global.process.env.npm_config_production)
     var debug = false
 else
