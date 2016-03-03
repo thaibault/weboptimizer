@@ -1,7 +1,8 @@
 'use strict'
 // TODO inject css in head instead of in js!
 // region header
-const packageConfiguration = require('../../package.json').config || {}
+const packageConfiguration = require('../../package.json').webOptimizer || {}
+console.log(packageConfiguration)
 const extend = require('extend')
 const path = require('path')
 const webpack = require('webpack')
