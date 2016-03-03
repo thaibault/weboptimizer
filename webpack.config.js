@@ -10,7 +10,16 @@ const plugins = require('webpack-load-plugins')()
 plugins.offline = WebpackOfflinePlugin
 // endregion
 // region configuration
+// NOTE: building context is this hierarchy up:
+// "PROJECT/node_modules/webOptimizer"
 __dirname = path.normalize(__dirname + '/../..')
+for (let key of [
+    'sourcePath', 'targetPath', 'sourceAssetPath', 'targetAssetPath'
+])
+    if(packageConfiguration[key])
+        packageConfiguration[key] =  path.normalize(
+            '../../' + packageConfiguration[key])
+
 if (!!global.process.env.npm_config_production)
     var debug = false
 else
