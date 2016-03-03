@@ -1,0 +1,11 @@
+doctype html
+html&attributes({manifest: includeManifest && 'manifest.appcache'})
+    head
+        title Debug mode: #{debug} manifest mode: #{includeManifest}
+        meta(charset='UTF-8')
+        link(
+            rel='shortcut icon' type='image/x-icon'
+            href='asset/image/favicon')
+    body
+        img(src='asset/image/background')
+        test-app Loading...

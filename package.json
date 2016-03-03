@@ -1,0 +1,84 @@
+{
+  "name": "testWebAPP",
+  "version": "1.0.0",
+  "description": "Full bundled default webpack angular2 application.",
+  "keywords": [
+    "angular2",
+    "webpack"
+  ],
+  "files": [
+    "source",
+    "webpack.config.js"
+  ],
+  "main": "source/webAsset/javaScript/angular/main.js",
+  "config": {
+    "debug": true,
+    "internalInjects": [
+      "cascadingStyleSheet/style",
+      "sass/style",
+      "scss/style",
+      "less/style",
+      "javaScript/angular/main"
+    ],
+    "externalInjects": [
+      "bootstrap",
+      "babel-polyfill",
+      "angular2/bundles/angular2-polyfills"
+    ],
+    "preprocessor": {
+      "modernJavaScript": {
+        "plugins": [
+          "angular2-annotations",
+          "transform-decorators-legacy",
+          "transform-class-properties",
+          "transform-flow-strip-types"
+        ]
+      }
+    }
+  },
+  "scripts": {
+    "clear": "rm build --recursive --force",
+    "build": "webpack && [ -f build/manifest.html ] && rm build/manifest.html || true",
+    "server": "webpack-dev-server --open --inline"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "angular2": "*",
+    "babel-core": "*",
+    "babel-loader": "*",
+    "babel-plugin-angular2-annotations": "*",
+    "babel-plugin-transform-class-properties": "*",
+    "babel-plugin-transform-decorators-legacy": "*",
+    "babel-plugin-transform-flow-strip-types": "*",
+    "babel-polyfill": "*",
+    "babel-preset-es2015": "*",
+    "bootstrap": "^3.3.6",
+    "coffee-loader": "*",
+    "coffee-script": "*",
+    "css-loader": "*",
+    "extract-loader": "0.0.2",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "*",
+    "html-loader": "^0.4.3",
+    "html-webpack-plugin": "*",
+    "image-webpack-loader": "^1.6.3",
+    "imports-loader": "^0.6.5",
+    "jade": "*",
+    "jade-html-loader": "*",
+    "jquery": "*",
+    "less": "*",
+    "less-loader": "*",
+    "node-sass": "*",
+    "offline-plugin": "*",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "^5.0.0-beta.0",
+    "sass-loader": "*",
+    "sizzle": "*",
+    "style-loader": "^0.13.0",
+    "url-loader": "*",
+    "webpack": "*",
+    "webpack-dev-server": "*",
+    "webpack-load-plugins": "*",
+    "zone.js": "^0.5.15"
+  }
+}
