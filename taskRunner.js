@@ -2,8 +2,6 @@
 
 const spawnProcess = require('child_process').spawnSync;
 
-console.log('CWD', process.cwd())
-
 if(global.process.argv[2] === 'clear')
     spawnProcess('rm', ['build', '--recursive', '--force'])
 else if(global.process.argv[2] === 'build')
