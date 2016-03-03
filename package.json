@@ -5,7 +5,7 @@
   "keywords": ["webpack"],
   "files": ["webpack.config.js"],
   "main": "webpack.config.js",
-  "bin": {"webOptimizer": "./taskRunner.js"},
+  "bin": "./taskRunner.js",
   "license": "ISC",
   "dependencies": {
     "babel-core": "*",
