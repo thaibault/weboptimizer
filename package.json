@@ -5,11 +5,7 @@
   "keywords": ["webpack"],
   "files": ["webpack.config.js"],
   "main": "webpack.config.js",
-  "scripts": {
-    "clear": "rm build --recursive --force",
-    "build": "webpack && [ -f build/manifest.html ] && rm build/manifest.html || true",
-    "server": "webpack-dev-server --open --inline"
-  },
+  "bin": {"webOptimizer": "./taskRunner.js"},
   "license": "ISC",
   "dependencies": {
     "babel-core": "*",
