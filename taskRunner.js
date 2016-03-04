@@ -36,7 +36,9 @@ else if(global.process.argv[2] === 'build') {
                     `${packageConfiguration.targetPath}/manifest.html`,
                     fileSystem.F_OK, (error) => {
                         if(!error)
-                            fileSystem.unlink(`${targetPath}/manifest.html`)
+                            fileSystem.unlink(
+                                packageConfiguration.targetPath +
+                                '/manifest.html')
                     })
     })
 } else if(global.process.argv[2] === 'server')
