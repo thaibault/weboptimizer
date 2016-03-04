@@ -26,7 +26,7 @@ if(global.process.argv[2] === 'clear')
     process = run(
         `rm ${packageConfiguration.targetPath} --recursive --force`,
         processOptions)
-else if(global.process.argv[2] === 'build') {
+else if(global.process.argv[2] === 'build')
     process = run(
         `webpack --config ${__dirname}/webpack.config.js`, processOptions, (
             error
@@ -41,17 +41,19 @@ else if(global.process.argv[2] === 'build') {
                                 '/manifest.html')
                     })
     })
-} else if(global.process.argv[2] === 'server')
+else if(global.process.argv[2] === 'server')
     process = run(
-        'webpack-dev-server ' +
+        `webpack-dev-server --config ${__dirname}/webpack.config.js ` +
         packageConfiguration.commandLineArguments.webpackDevServer,
         processOptions)
 else
     console.log(
         'Give one of "clear", "build" or "server" command line argument.')
 
-process.stdout.on('data', (data) => { console.log(`stdout: ${data}`) })
-process.stderr.on('data', (data) => { console.error(`stderr: ${data}`) })
+process.stdout.on('data', (data) => {
+    console.log(`Standart output: ${data}`)
+})
+process.stderr.on('data', (data) => { console.error(`Error ourput: ${data}`) })
 process.on('close', (returnCode) => {
     if(returnCode !== 0)
         console.error(`Task exited with error code ${returnCode}`)

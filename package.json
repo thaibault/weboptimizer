@@ -1,41 +1,4 @@
 {
-  "_args": [
-    [
-      "git+ssh://git@github.com/thaibault/webOptimizer.git",
-      "/home/torben/cloud/data/temp/test/testWebAPP"
-    ]
-  ],
-  "_from": "git+ssh://git@github.com/thaibault/webOptimizer.git",
-  "_id": "webOptimizer@1.0.0",
-  "_inCache": true,
-  "_installable": true,
-  "_location": "/webOptimizer",
-  "_phantomChildren": {},
-  "_requested": {
-    "hosted": {
-      "directUrl": "https://raw.githubusercontent.com/thaibault/webOptimizer/master/package.json",
-      "gitUrl": "git://github.com/thaibault/webOptimizer.git",
-      "httpsUrl": "git+https://github.com/thaibault/webOptimizer.git",
-      "shortcut": "github:thaibault/webOptimizer",
-      "ssh": "git@github.com:thaibault/webOptimizer.git",
-      "sshUrl": "git+ssh://git@github.com/thaibault/webOptimizer.git",
-      "type": "github"
-    },
-    "name": null,
-    "raw": "git+ssh://git@github.com/thaibault/webOptimizer.git",
-    "rawSpec": "git+ssh://git@github.com/thaibault/webOptimizer.git",
-    "scope": null,
-    "spec": "git+ssh://git@github.com/thaibault/webOptimizer.git",
-    "type": "hosted"
-  },
-  "_requiredBy": [
-    "#DEV:/"
-  ],
-  "_resolved": "git+ssh://git@github.com/thaibault/webOptimizer.git#485aeae5be901768cd7f2ef1c696e41416e7758a",
-  "_shasum": "c4ae58bd08db19816f15ed49e3939ce05a43d6af",
-  "_shrinkwrap": null,
-  "_spec": "git+ssh://git@github.com/thaibault/webOptimizer.git",
-  "_where": "/home/torben/cloud/data/temp/test/testWebAPP",
   "bin": {
     "webOptimizer": "taskRunner.js"
   },
@@ -72,20 +35,10 @@
     "webpack-load-plugins": "*"
   },
   "description": "A generic web optimizer, (module) bundler and development environment.",
-  "devDependencies": {},
-  "files": [
-    "webpack.config.js",
-    "taskRunner.js"
-  ],
-  "gitHead": "485aeae5be901768cd7f2ef1c696e41416e7758a",
-  "keywords": [
-    "webpack"
-  ],
+  "files": ["webpack.config.js", "taskRunner.js"],
+  "keywords": ["webpack"],
   "license": "ISC",
   "main": "webpack.config.js",
   "name": "webOptimizer",
-  "optionalDependencies": {},
-  "readme": "# webOptimizer\nA generic web optimizer, (module) bundler and development environment.\n",
-  "readmeFilename": "readme.md",
   "version": "1.0.0"
 }
