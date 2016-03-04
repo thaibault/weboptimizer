@@ -27,7 +27,8 @@ if(global.process.argv[2] === 'clear')
         processOptions)
 else if(global.process.argv[2] === 'build')
     process = run(
-        `webpack --config ${__dirname}/webpack.config.js`, processOptions, (
+        `webpack --config ${__dirname}/webpack.config.js` +
+        packageConfiguration.commandLineArguments.webpack, processOptions, (
             error
         ) => {
             if(!error)
