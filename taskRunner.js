@@ -9,7 +9,7 @@ const fileSystem = require('fs')
 const path = require('path')
 const packageConfiguration = require('../../package.json').webOptimizer || {}
 // endregion
-
+// region configuration
 const processOptions = {cwd: path.resolve(__dirname + '/../..')}
 if(!packageConfiguration.targetPath)
     packageConfiguration.targetPath = 'build'
@@ -19,14 +19,15 @@ if(!packageConfiguration.commandLineArguments.webpack)
     packageConfiguration.commandLineArguments.webpack = ''
 if(!packageConfiguration.commandLineArguments.webpackDevServer)
     packageConfiguration.commandLineArguments.webpackDevServer = ''
-
-let process = null
+// endregion
+// region controller
+let childProcess = null
 if(global.process.argv[2] === 'clear')
-    process = run(
+    childProcess = run(
         `rm ${packageConfiguration.targetPath} --recursive --force`,
         processOptions)
 else if(global.process.argv[2] === 'build')
-    process = run(
+    childProcess = run(
         `webpack --config ${__dirname}/webpack.config.js ` +
         packageConfiguration.commandLineArguments.webpack, processOptions, (
             error
@@ -42,25 +43,22 @@ else if(global.process.argv[2] === 'build')
                     })
     })
 else if(global.process.argv[2] === 'server')
-    process = run(
+    childProcess = run(
         `webpack-dev-server --config ${__dirname}/webpack.config.js ` +
         packageConfiguration.commandLineArguments.webpackDevServer,
         processOptions)
 else
     console.log(
         'Give one of "clear", "build" or "server" command line argument.')
-
-process.stdout.on('data', (data) => {
-    console.log(`Standart output: "${data}"`)
-})
-process.stderr.on('data', (data) => {
-    console.error(`Error output: "${data}"`)
-})
-process.on('close', (returnCode) => {
+// endregion
+// region handle child process communication
+childProcess.stdout.on('data', (data) => { process.stdout.write(data) })
+childProcess.stderr.on('data', (data) => { process.stderr.write(data) })
+childProcess.on('close', (returnCode) => {
     if(returnCode !== 0)
         console.error(`Task exited with error code ${returnCode}`)
 })
-
+// endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
