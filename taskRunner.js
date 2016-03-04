@@ -51,9 +51,11 @@ else
         'Give one of "clear", "build" or "server" command line argument.')
 
 process.stdout.on('data', (data) => {
-    console.log(`Standart output: ${data}`)
+    console.log(`Standart output: "${data}"`)
 })
-process.stderr.on('data', (data) => { console.error(`Error ourput: ${data}`) })
+process.stderr.on('data', (data) => {
+    console.error(`Error output: "${data}"`)
+})
 process.on('close', (returnCode) => {
     if(returnCode !== 0)
         console.error(`Task exited with error code ${returnCode}`)
