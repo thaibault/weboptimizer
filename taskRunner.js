@@ -1,40 +1,58 @@
 #!/usr/bin/env node
+// -*- coding: utf-8 -*-
 
+'use strict'
+
+// region imports
 const run = require('child_process').exec
 const fileSystem = require('fs')
 const path = require('path')
-const targetPath = path.normalize(__dirname + '/../../' + (require(
-    '../../package.json'
-).targetPath || 'build'))
+const packageConfiguration = require('../../package.json') || {}
+// endregion
 
-const resultHandler = (errorCode, standardOutput, errorOutput) => {
-    if(errorCode !== 0 && errorCode !== null)
-        console.log('Operation failed (return code ' + errorCode + ')')
-    if(errorOutput)
-        console.error(errorOutput)
-    if(standardOutput)
-        console.log(standardOutput)
-}
-
+const processOptions = {cwd: path.resolve(__dirname + '/../..')}
+if(!packageConfiguration.targetPath)
+    packageConfiguration.targetPath = 'build'
+if(!packageConfiguration.commandLineArguments)
+    packageConfiguration.commandLineArguments = {}
+if(!packageConfiguration.commandLineArguments.webpack)
+    packageConfiguration.commandLineArguments.webpack = ''
+if(!packageConfiguration.commandLineArguments.webpackDevServer)
+    packageConfiguration.commandLineArguments.webpackDevServer =
+        '--open --inline'
+let process = null
 if(global.process.argv[2] === 'clear')
-    run('rm ' + targetPath + ' --recursive --force', resultHandler)
+    process = run(
+        `rm ${packageConfiguration.targetPath} --recursive --force`,
+        processOptions)
 else if(global.process.argv[2] === 'build') {
-    run('webpack --config ' + __dirname + '/webpack.config.js', (
-        errorCode
-    ) => {
-        if(errorCode === 0 || errorCode === null)
-            fileSystem.access(
-                targetPath + '/manifest.html', fileSystem.F_OK, (error) => {
-                    if(!error)
-                        fileSystem.unlink(targetPath + '/manifest.html')
-                })
-        resultHandler.apply(this, arguments)
+    process = run(
+        `webpack --config ${__dirname}/webpack.config.js`, processOptions, (
+            error
+        ) => {
+            if(!error)
+                fileSystem.access(
+                    `${packageConfiguration.targetPath}/manifest.html`,
+                    fileSystem.F_OK, (error) => {
+                        if(!error)
+                            fileSystem.unlink(`${targetPath}/manifest.html`)
+                    })
     })
 } else if(global.process.argv[2] === 'server')
-    run('webpack-dev-server --open --inline', resultHandler)
+    process = run(
+        'webpack-dev-server ' +
+        packageConfiguration.commandLineArguments.webpackDevServer,
+        processOptions)
 else
     global.console.log(
         'Give one of "clear", "build" or "server" command line argument.')
+
+process.stdout.on('data', (data) => { console.log(`stdout: ${data}`) })
+process.stderr.on('data', (data) => { console.error(`stderr: ${data}`) })
+proces.on('close', (returnCode) => {
+    if(returnCode !== 0)
+        console.error(`Task exited with error code ${returnCode}`)
+})
 
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

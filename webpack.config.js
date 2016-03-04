@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+// -*- coding: utf-8 -*-
+
 'use strict'
 // TODO inject css in head instead of in js!
 // region header
