@@ -20,6 +20,7 @@ if(!packageConfiguration.commandLineArguments.webpack)
 if(!packageConfiguration.commandLineArguments.webpackDevServer)
     packageConfiguration.commandLineArguments.webpackDevServer =
         '--open --inline'
+
 let process = null
 if(global.process.argv[2] === 'clear')
     process = run(
@@ -44,12 +45,12 @@ else if(global.process.argv[2] === 'build') {
         packageConfiguration.commandLineArguments.webpackDevServer,
         processOptions)
 else
-    global.console.log(
+    console.log(
         'Give one of "clear", "build" or "server" command line argument.')
 
 process.stdout.on('data', (data) => { console.log(`stdout: ${data}`) })
 process.stderr.on('data', (data) => { console.error(`stderr: ${data}`) })
-proces.on('close', (returnCode) => {
+process.on('close', (returnCode) => {
     if(returnCode !== 0)
         console.error(`Task exited with error code ${returnCode}`)
 })
