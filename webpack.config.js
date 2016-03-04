@@ -3,7 +3,7 @@
 
 'use strict'
 // TODO inject css in head instead of in js!
-// region header
+// region imports
 const packageConfiguration = require('../../package.json').webOptimizer || {}
 const extend = require('extend')
 const path = require('path')

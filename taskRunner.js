@@ -7,7 +7,7 @@
 const run = require('child_process').exec
 const fileSystem = require('fs')
 const path = require('path')
-const packageConfiguration = require('../../package.json') || {}
+const packageConfiguration = require('../../package.json').webOptimizer || {}
 // endregion
 
 const processOptions = {cwd: path.resolve(__dirname + '/../..')}
@@ -18,8 +18,7 @@ if(!packageConfiguration.commandLineArguments)
 if(!packageConfiguration.commandLineArguments.webpack)
     packageConfiguration.commandLineArguments.webpack = ''
 if(!packageConfiguration.commandLineArguments.webpackDevServer)
-    packageConfiguration.commandLineArguments.webpackDevServer =
-        '--open --inline'
+    packageConfiguration.commandLineArguments.webpackDevServer = ''
 
 let process = null
 if(global.process.argv[2] === 'clear')
