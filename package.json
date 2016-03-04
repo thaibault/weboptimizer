@@ -40,5 +40,9 @@
   "license": "ISC",
   "main": "webpack.config.js",
   "name": "webOptimizer",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/thaibault/webOptimizer.git"
+  },
   "version": "1.0.0"
 }
