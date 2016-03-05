@@ -4,6 +4,7 @@
 // region imports
 const dom = require('jsdom')
 const extend = require('extend')
+const fileSystem = require('fs')
 const packageConfiguration = require('../../package.json').webOptimizer || {}
 const path = require('path')
 const plugins = require('webpack-load-plugins')()
@@ -13,14 +14,13 @@ plugins.offline = require('offline-plugin')
 // region configuration
 // NOTE: building context is this hierarchy up:
 // "PROJECT/node_modules/webOptimizer"
-__dirname = path.normalize(__dirname + '/../..')
+__dirname = path.normalize(path.join(`${__dirname}/../..`))
 for (let key of [
     'sourcePath', 'targetPath', 'sourceAssetPath', 'targetAssetPath'
 ])
     if(packageConfiguration[key])
-        packageConfiguration[key] =  path.normalize(
-            '../../' + packageConfiguration[key])
-
+        packageConfiguration[key] =  path.normalize(path.join(
+            `../../${packageConfiguration[key]}`))
 if (!!global.process.env.npm_config_production)
     var debug = false
 else
@@ -32,7 +32,8 @@ const maximumInPlaceFileLimitInByte =
     packageConfiguration.maximumInPlaceFileLimitInByte || 262144
 const html = packageConfiguration.html || {attrs: 'img:src link:href'}
 const jade = packageConfiguration.jade || {
-    pretty: debug, debug, includeManifest: !debug}
+    pretty: debug, debug,
+    includeManifest: !(packageConfiguration.offline === false || debug)}
 const sourcePath = packageConfiguration.sourcePath || __dirname + '/source/'
 const targetPath = packageConfiguration.targetPath || __dirname + '/build/'
 const sourceAssetPath =
@@ -77,8 +78,8 @@ const configuration = extend(true, {
                 template: () => {
                     const string = new global.String('html?' + JSON.stringify(
                         html
-                    ) + '!jade-html?' + JSON.stringify(jade) + '!' +
-                    sourcePath + 'index.jade')
+                    ) + `!jade-html?${JSON.stringify(jade)}!${sourcePath}` +
+                    'index.jade')
                     const nativeReplaceFunction = string.replace
                     string.replace = (search, replacement) => {
                         string.replace = nativeReplaceFunction
@@ -87,8 +88,12 @@ const configuration = extend(true, {
                     return string
                 }(),
                 hash: true,
-                // NOTE: Will be required to be in-placed:
+                // NOTE: We can't use this since placing in-place would be
+                // impossible so.
                 // favicon: sourceAssetPath + 'image/favicon.ico',
+                // NOTE: We can't use this since the file would have to be
+                // available before building.
+                // manifest: debug || 'manifest.appcache',
                 filename: 'index.html',
                 inject: 'body',
                 minify: debug ? false : {collapseWhitespace: true}
@@ -104,16 +109,14 @@ const configuration = extend(true, {
         scss: {},
         modernJavaScript: {cacheDirectory: true, presets: ['es2015']},
     },
-
     html,
     cascadingStyleSheet: {},
-
     optimizer: {
         uglifyJS: debug ? null : {compress: {warnings: false}},
         image: {
             file: {
                 limit: maximumInPlaceFileLimitInByte,
-                name: 'image/[name].[ext]?' + hashAlgorithm + '=[hash]'
+                name: `image/[name].[ext]?${hashAlgorithm}=[hash]`
             },
             content: {
                 optimizationLevel: 7,
@@ -124,21 +127,21 @@ const configuration = extend(true, {
         font: {
             eot: {
                 limit: maximumInPlaceFileLimitInByte,
-                name: 'font/[name].[ext]?' + hashAlgorithm + '=[hash]'
+                name: `font/[name].[ext]?${hashAlgorithm}=[hash]`
             },
             woff: {
                 limit: maximumInPlaceFileLimitInByte,
-                name: 'font/[name].[ext]?' + hashAlgorithm + '=[hash]'
+                name: `font/[name].[ext]?${hashAlgorithm}=[hash]`
             },
             ttf: {
                 limit: maximumInPlaceFileLimitInByte,
                 mimetype: 'application/octet-stream',
-                name: 'font/[name].[ext]?' + hashAlgorithm + '=[hash]'
+                name: `font/[name].[ext]?${hashAlgorithm}=[hash]`
             },
             svg: {
                 limit: maximumInPlaceFileLimitInByte,
                 mimetype: 'image/svg+xml',
-                name: 'font/[name].[ext]?' + hashAlgorithm + '=[hash]'
+                name: `font/[name].[ext]?${hashAlgorithm}=[hash]`
             }
         }
     }
@@ -172,8 +175,18 @@ configuration.plugins.push({apply: (compiler) => {
                 configuration.inplace.javaScript
             )
                 dom.env(htmlPluginData.html, (error, window) => {
-                    if (configuration.inplace.cascadingStyleSheet)
-                        console.log(window.document.querySelector)
+                    if (configuration.inplace.cascadingStyleSheet) {
+                        const domNode = window.document.querySelector(
+                            `link[href="${htmlPluginData.assets.css[0]}"]`)
+                        console.log(htmlPluginData.assets)
+                        /*
+                        console.log(fileSystem.readFileSync(path.join(
+                            configuration.targetPath,
+                            htmlPluginData.assets.css[0]
+                        ), {encoding: 'utf8'}))
+                        domNode.removeAttribute('href')
+                        */
+                    }
                     if (configuration.inplace.javaScript)
                         console.log('TODO Inplace js' + htmlPluginData.assets.js)
                     // TODO Preserve doctype.
@@ -187,28 +200,28 @@ configuration.plugins.push({apply: (compiler) => {
 /// region loader
 const loader = {
     preprocessor: {
-        less: 'less?' + JSON.stringify(configuration.preprocessor.less),
-        sass: 'sass?' + JSON.stringify(configuration.preprocessor.sass),
-        scss: 'sass?' + JSON.stringify(configuration.preprocessor.scss),
+        less: `less?${JSON.stringify(configuration.preprocessor.less)}`,
+        sass: `sass?${JSON.stringify(configuration.preprocessor.sass)}`,
+        scss: `sass?${JSON.stringify(configuration.preprocessor.scss)}`,
         babel: 'babel?' + JSON.stringify(
             configuration.preprocessor.modernJavaScript
         ),
         coffee: 'coffee',
-        jade: 'jade-html?' + JSON.stringify(configuration.preprocessor.jade),
+        jade:i `jade-html?${JSON.stringify(configuration.preprocessor.jade)}`,
         literateCoffee: 'coffee?literate'
     },
-    html: 'html?' + JSON.stringify(configuration.html),
+    html: `html?${JSON.stringify(configuration.html)}`,
     cascadingStyleSheet: plugins.extractText.extract('css?' + JSON.stringify(
         configuration.cascadingStyleSheet)),
     postprocessor: {
         image: 'url?' + JSON.stringify(
             configuration.optimizer.image.file
-        ) + '!image?' + JSON.stringify(configuration.optimizer.image.content),
+        ) + `!image?${JSON.stringify(configuration.optimizer.image.content)}`,
         font: {
-            eot: 'url?' + JSON.stringify(configuration.optimizer.font.eot),
-            woff: 'url?' + JSON.stringify(configuration.optimizer.font.woff),
-            ttf: 'url?' + JSON.stringify(configuration.optimizer.font.ttf),
-            svg: 'url?' + JSON.stringify(configuration.optimizer.font.svg)
+            eot: `url?${JSON.stringify(configuration.optimizer.font.eot)}`,
+            woff: `url?${JSON.stringify(configuration.optimizer.font.woff)}`,
+            ttf: `url?${JSON.stringify(configuration.optimizer.font.ttf)}`,
+            svg: `url?${JSON.stringify(configuration.optimizer.font.svg)}`
         }
     }
 }
@@ -250,47 +263,47 @@ module.exports = {
             // region style
             {
                 test: /\.less$/,
-                loader: loader.cascadingStyleSheet + '!' +
+                loader: `{loader.cascadingStyleSheet}!` +
                     loader.preprocessor.less,
                 include: configuration.sourceAssetPath + 'less'
             },
             {
                 test: /\.sass$/,
-                loader: loader.cascadingStyleSheet + '!' +
+                loader: `${loader.cascadingStyleSheet}!` +
                     loader.preprocessor.sass,
-                include: configuration.sourceAssetPath + 'sass'
+                include: `${configuration.sourceAssetPath}sass`
             },
             {
                 test: /\.scss$/,
-                loader: loader.cascadingStyleSheet + '!' +
+                loader: `${loader.cascadingStyleSheet}!` +
                     loader.preprocessor.scss,
-                include: configuration.sourceAssetPath + 'scss'
+                include: `${configuration.sourceAssetPath}scss`
             },
             // endregion
             // region script
             {
                 test: /\.js$/,
                 loader: loader.preprocessor.babel,
-                include: configuration.sourceAssetPath + 'javaScript'
+                include: `${configuration.sourceAssetPath}javaScript`
             },
             {
                 test: /\.coffee$/,
                 loader: loader.preprocessor.coffee,
-                include: configuration.sourceAssetPath + 'coffeeScript'
+                include: `${onfiguration.sourceAssetPath}coffeeScript`
             },
             {
                 test: /\.(coffee\.md|litcoffee)$/,
                 loader: loader.preprocessor.literateCoffee,
-                include: configuration.sourceAssetPath + 'coffeeScript'
+                include: `${configuration.sourceAssetPath}coffeeScript`
             },
             // endregion
             // region html
             {
                 test: /\.jade$/,
                 loader: 'file?name=template/[name].html?' +
-                    configuration.hashAlgorithm + '=[hash]!extract!' +
-                    loader.html + '!' + loader.preprocessor.jade,
-                include: configuration.sourceAssetPath + 'template'
+                    `${configuration.hashAlgorithm}=[hash]!extract!` +
+                    `${loader.html}!${loader.preprocessor.jade}`,
+                include: `${configuration.sourceAssetPath}template`
             },
             // endregion
         ],
