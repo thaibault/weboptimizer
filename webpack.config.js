@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
-
 'use strict'
-// TODO inject css in head instead of in js!
 // region imports
 const packageConfiguration = require('../../package.json').webOptimizer || {}
 const extend = require('extend')
@@ -162,6 +160,17 @@ if (configuration.optimizer.uglifyJS)
         configuration.optimizer.uglifyJS))
 if (configuration.offline)
     configuration.plugins.push(new plugins.offline(configuration.offline))
+configuration.plugins.push({apply: (compiler) => {
+    compiler.plugin('compilation', (compilation) => {
+        compilation.plugin('html-webpack-plugin-before-html-processing', (
+            htmlPluginData, callback
+        ) => {
+            // TODO inject css in head if configured.
+            // htmlPluginData.html += 'TEST'
+            callback()
+        })
+    })
+}})
 /// endregion
 /// region loader
 const loader = {
