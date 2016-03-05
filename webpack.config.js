@@ -2,13 +2,13 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-const packageConfiguration = require('../../package.json').webOptimizer || {}
+const dom = require('jsdom')
 const extend = require('extend')
+const packageConfiguration = require('../../package.json').webOptimizer || {}
 const path = require('path')
-const webpack = require('webpack')
-const WebpackOfflinePlugin = require('offline-plugin')
 const plugins = require('webpack-load-plugins')()
-plugins.offline = WebpackOfflinePlugin
+const webpack = require('webpack')
+plugins.offline = require('offline-plugin')
 // endregion
 // region configuration
 // NOTE: building context is this hierarchy up:
@@ -52,6 +52,7 @@ const configuration = extend(true, {
     developmentTool: debug ? '#source-map' : null,
     internalInjects: [],
     externalInjects: [],
+    inplace: {cascadingStyleSheet: true, javaScript: false},
     offline: debug ? null : {
         caches: 'all',
         scope: '/',
@@ -93,10 +94,9 @@ const configuration = extend(true, {
                 minify: debug ? false : {collapseWhitespace: true}
             }
         ],
-        cascadingStyleSheet: [
-            'cascadingStyleSheet/main.css?' + hashAlgorithm + '=[contenthash]'
-        ],
-        javaScript: 'javaScript/main.js?' + hashAlgorithm + '=[hash]'
+        cascadingStyleSheet: `cascadingStyleSheet/main.css?${hashAlgorithm}` +
+            '=[contenthash]',
+        javaScript: `javaScript/main.js?${hashAlgorithm}=[hash]`
     },
     preprocessor: {
         jade,
@@ -160,14 +160,26 @@ if (configuration.optimizer.uglifyJS)
         configuration.optimizer.uglifyJS))
 if (configuration.offline)
     configuration.plugins.push(new plugins.offline(configuration.offline))
+configuration.plugins.push(new plugins.extractText(
+    configuration.files.cascadingStyleSheet))
 configuration.plugins.push({apply: (compiler) => {
     compiler.plugin('compilation', (compilation) => {
-        compilation.plugin('html-webpack-plugin-before-html-processing', (
+        compilation.plugin('html-webpack-plugin-after-html-processing', (
             htmlPluginData, callback
         ) => {
-            // TODO inject css in head if configured.
-            // htmlPluginData.html += 'TEST'
-            callback()
+            if (
+                configuration.inplace.cascadingStyleSheet ||
+                configuration.inplace.javaScript
+            )
+                dom.env(htmlPluginData.html, (error, window) => {
+                    if (configuration.inplace.cascadingStyleSheet)
+                        console.log(window.document.querySelector)
+                    if (configuration.inplace.javaScript)
+                        console.log('TODO Inplace js' + htmlPluginData.assets.js)
+                    // TODO Preserve doctype.
+                    htmlPluginData.html = window.document.documentElement.outerHTML
+                    callback()
+                })
         })
     })
 }})
@@ -186,8 +198,8 @@ const loader = {
         literateCoffee: 'coffee?literate'
     },
     html: 'html?' + JSON.stringify(configuration.html),
-    cascadingStyleSheet: 'style-loader!css-loader?' + JSON.stringify(
-        configuration.cascadingStyleSheet),
+    cascadingStyleSheet: plugins.extractText.extract('css?' + JSON.stringify(
+        configuration.cascadingStyleSheet)),
     postprocessor: {
         image: 'url?' + JSON.stringify(
             configuration.optimizer.image.file
@@ -288,9 +300,9 @@ module.exports = {
             {
                 test: /\.html$/,
                 loader: 'file?name=template/[name].[ext]?' +
-                    configuration.hashAlgorithm + '=[hash]!extract!' +
+                    `${configuration.hashAlgorithm}=[hash]!extract!` +
                     loader.html,
-                include: configuration.sourceAssetPath + 'template'
+                include: `${configuration.sourceAssetPath}template`
             },
             // endregion
             // region cascadingStyleSheet
