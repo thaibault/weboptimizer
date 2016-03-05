@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
+
+// TODO make all paths and names configurable.
+
 'use strict'
 // region imports
 const dom = require('jsdom')
@@ -9,6 +12,7 @@ const packageConfiguration = require('../../package.json').webOptimizer || {}
 const path = require('path')
 const plugins = require('webpack-load-plugins')()
 const webpack = require('webpack')
+const WebpackRawSource = require('webpack-sources').RawSource
 plugins.offline = require('offline-plugin')
 // endregion
 // region configuration
@@ -53,7 +57,7 @@ const configuration = extend(true, {
     developmentTool: debug ? '#source-map' : null,
     internalInjects: [],
     externalInjects: [],
-    inplace: {cascadingStyleSheet: true, javaScript: false},
+    inPlace: {cascadingStyleSheet: true, javaScript: false},
     offline: debug ? null : {
         caches: 'all',
         scope: '/',
@@ -61,7 +65,7 @@ const configuration = extend(true, {
         version: 0,
         ServiceWorker: {output: 'javaScript/serviceWorker.js'},
         AppCache: {directory: '/'},
-        excludes: ['*.map?' + hashAlgorithm + '=*']
+        excludes: [`*.map?${hashAlgorithm}=*`]
     },
     files: {
         html: [
@@ -72,8 +76,8 @@ const configuration = extend(true, {
                     loader configurations (which we need here). Simple solution
                     would be:
 
-                    template: 'html?' + JSON.stringify(html) + '!jade-html?' +
-                        JSON.stringify(jade) + '!' + sourcePath + 'index.jade'
+                    template: `html?${JSON.stringify(html)}!jade-html?` +
+                        `${JSON.stringify(jade)}!${sourcePath}index.jade`
                 */
                 template: () => {
                     const string = new global.String('html?' + JSON.stringify(
@@ -90,10 +94,10 @@ const configuration = extend(true, {
                 hash: true,
                 // NOTE: We can't use this since placing in-place would be
                 // impossible so.
-                // favicon: sourceAssetPath + 'image/favicon.ico',
+                // favicon: `${sourceAssetPath}image/favicon.ico`,
                 // NOTE: We can't use this since the file would have to be
                 // available before building.
-                // manifest: debug || 'manifest.appcache',
+                // manifest: packageConfiguration.jade.includeManifest
                 filename: 'index.html',
                 inject: 'body',
                 minify: debug ? false : {collapseWhitespace: true}
@@ -165,37 +169,59 @@ if (configuration.offline)
     configuration.plugins.push(new plugins.offline(configuration.offline))
 configuration.plugins.push(new plugins.extractText(
     configuration.files.cascadingStyleSheet))
+//// region in-place configured assets in the main html file
 configuration.plugins.push({apply: (compiler) => {
-    compiler.plugin('compilation', (compilation) => {
-        compilation.plugin('html-webpack-plugin-after-html-processing', (
-            htmlPluginData, callback
-        ) => {
-            if (
-                configuration.inplace.cascadingStyleSheet ||
-                configuration.inplace.javaScript
-            )
-                dom.env(htmlPluginData.html, (error, window) => {
-                    if (configuration.inplace.cascadingStyleSheet) {
-                        const domNode = window.document.querySelector(
-                            `link[href="${htmlPluginData.assets.css[0]}"]`)
-                        console.log(htmlPluginData.assets)
-                        /*
-                        console.log(fileSystem.readFileSync(path.join(
-                            configuration.targetPath,
-                            htmlPluginData.assets.css[0]
-                        ), {encoding: 'utf8'}))
-                        domNode.removeAttribute('href')
-                        */
-                    }
-                    if (configuration.inplace.javaScript)
-                        console.log('TODO Inplace js' + htmlPluginData.assets.js)
-                    // TODO Preserve doctype.
-                    htmlPluginData.html = window.document.documentElement.outerHTML
-                    callback()
-                })
-        })
+    compiler.plugin('emit', (compilation, callback) => {
+        if (
+            configuration.inPlace.cascadingStyleSheet ||
+            configuration.inPlace.javaScript
+        )
+            dom.env(compilation.assets['index.html'].source(), (
+                error, window
+            ) => {
+                if (configuration.inPlace.cascadingStyleSheet) {
+                    const urlPrefix = configuration.files.cascadingStyleSheet
+                        .replace('[contenthash]', '')
+                    const domNode = window.document.querySelector(
+                        `link[href^="${urlPrefix}"]`)
+                    for(var asset in compilation.assets)
+                        if(asset.startsWith(urlPrefix))
+                            break
+                    const inPlaceDomNode = window.document.createElement(
+                        'style')
+                    inPlaceDomNode.textContent = compilation.assets[
+                        asset
+                    ].source()
+                    domNode.parentNode.insertBefore(inPlaceDomNode, domNode)
+                    domNode.parentNode.removeChild(domNode)
+                    // NOTE: This doesn't prevent webpack from creating this
+                    // file so removing it later in the "done" hook.
+                    delete compilation.assets[asset]
+                }
+                if (configuration.inPlace.javaScript)
+                    console.log('TODO Inplace js' + htmlPluginData.assets.js)
+                    // domNode.removeAttribute('src')
+                // TODO Preserve doctype.
+                compilation.assets['index.html'] = new WebpackRawSource(
+                    window.document.documentElement.outerHTML)
+                callback()
+            })
+    })
+    compiler.plugin('after-emit', (compilation, callback) => {
+        for(let type of ['cascadingStyleSheet', 'javaScript'])
+            if (configuration.inPlace[type])
+                const assetFilePath = path.join(
+                    configuration.targetPath,
+                    configuration.files[type].replace(
+                        `?${configuration.hashAlgorithm}=[contenthash]`, ''))
+                for(let filePath of [assetFilePath, `${assetFilePath}.map`])
+                    fileSystem.unlinkSync(filePath)
+                fileSystem.rmdirSync(path.join(
+                    configuration.targetPath, type))
+        callback()
     })
 }})
+//// endregion
 /// endregion
 /// region loader
 const loader = {
@@ -207,7 +233,7 @@ const loader = {
             configuration.preprocessor.modernJavaScript
         ),
         coffee: 'coffee',
-        jade:i `jade-html?${JSON.stringify(configuration.preprocessor.jade)}`,
+        jade: `jade-html?${JSON.stringify(configuration.preprocessor.jade)}`,
         literateCoffee: 'coffee?literate'
     },
     html: `html?${JSON.stringify(configuration.html)}`,
@@ -263,9 +289,9 @@ module.exports = {
             // region style
             {
                 test: /\.less$/,
-                loader: `{loader.cascadingStyleSheet}!` +
+                loader: `${loader.cascadingStyleSheet}!` +
                     loader.preprocessor.less,
-                include: configuration.sourceAssetPath + 'less'
+                include: `${configuration.sourceAssetPath}less`
             },
             {
                 test: /\.sass$/,
@@ -289,7 +315,7 @@ module.exports = {
             {
                 test: /\.coffee$/,
                 loader: loader.preprocessor.coffee,
-                include: `${onfiguration.sourceAssetPath}coffeeScript`
+                include: `${configuration.sourceAssetPath}coffeeScript`
             },
             {
                 test: /\.(coffee\.md|litcoffee)$/,
