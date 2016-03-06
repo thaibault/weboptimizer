@@ -3,7 +3,6 @@
     "webOptimizer": "taskRunner.js"
   },
   "dependencies": {
-    "babel": "*",
     "babel-cli": "*",
     "babel-core": "*",
     "babel-loader": "*",
