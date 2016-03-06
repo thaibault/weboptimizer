@@ -29,7 +29,7 @@ if(global.process.argv[2] === 'clear') {
 }
 if(global.process.argv[2] === 'build')
     childProcess = run(
-        `webpack --config ${__dirname}/webpack.config.js ` +
+        `webpack --config ${__dirname}/webpack.config.compiled.js ` +
         packageConfiguration.commandLineArguments.webpack, processOptions, (
             error
         ) => {
@@ -45,8 +45,8 @@ if(global.process.argv[2] === 'build')
     })
 else if(global.process.argv[2] === 'server')
     childProcess = run(
-        `webpack-dev-server --config ${__dirname}/webpack.config.js ` +
-        packageConfiguration.commandLineArguments.webpackDevServer,
+        `webpack-dev-server --config ${__dirname}/webpack.config.compiled.js` +
+        ` ${packageConfiguration.commandLineArguments.webpackDevServer}`,
         processOptions)
 else {
     console.log(
