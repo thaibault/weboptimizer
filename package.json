@@ -27,6 +27,7 @@
     "less-loader": "*",
     "node-sass": "*",
     "offline-plugin": "*",
+    "rimraf": "*",
     "sass-loader": "*",
     "sizzle": "*",
     "style-loader": "*",

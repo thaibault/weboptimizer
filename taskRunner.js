@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
-
 'use strict'
-
 // region imports
 const run = require('child_process').exec
 const fileSystem = require('fs')
+fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 const path = require('path')
 const packageConfiguration = require('../../package.json').webOptimizer || {}
 // endregion
@@ -22,11 +21,12 @@ if(!packageConfiguration.commandLineArguments.webpackDevServer)
 // endregion
 // region controller
 let childProcess = null
-if(global.process.argv[2] === 'clear')
-    childProcess = run(
-        `rm ${packageConfiguration.targetPath} --recursive --force`,
-        processOptions)
-else if(global.process.argv[2] === 'build')
+if(global.process.argv[2] === 'clear') {
+    fileSystem.removeDirectoryRecursivelySync(
+        packageConfiguration.targetPath, {glob: false})
+    process.exit()
+}
+if(global.process.argv[2] === 'build')
     childProcess = run(
         `webpack --config ${__dirname}/webpack.config.js ` +
         packageConfiguration.commandLineArguments.webpack, processOptions, (
@@ -47,9 +47,11 @@ else if(global.process.argv[2] === 'server')
         `webpack-dev-server --config ${__dirname}/webpack.config.js ` +
         packageConfiguration.commandLineArguments.webpackDevServer,
         processOptions)
-else
+else {
     console.log(
         'Give one of "clear", "build" or "server" command line argument.')
+    process.exit()
+}
 // endregion
 // region handle child process communication
 childProcess.stdout.on('data', (data) => { process.stdout.write(data) })

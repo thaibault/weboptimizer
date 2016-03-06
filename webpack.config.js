@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
-
 // TODO make all paths and names configurable.
-
 'use strict'
 // region imports
 const dom = require('jsdom')
 const extend = require('extend')
 const fileSystem = require('fs')
+fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 const packageConfiguration = require('../../package.json').webOptimizer || {}
 const path = require('path')
 const plugins = require('webpack-load-plugins')()
@@ -194,13 +193,30 @@ configuration.plugins.push({apply: (compiler) => {
                     ].source()
                     domNode.parentNode.insertBefore(inPlaceDomNode, domNode)
                     domNode.parentNode.removeChild(domNode)
-                    // NOTE: This doesn't prevent webpack from creating this
-                    // file so removing it later in the "done" hook.
+                    /*
+                        NOTE: This doesn't prevent webpack from creating this
+                        file if present in another chunk so removing it (and a
+                        potential source map file) later in the "done" hook.
+                    */
                     delete compilation.assets[asset]
                 }
-                if (configuration.inPlace.javaScript)
-                    console.log('TODO Inplace js' + htmlPluginData.assets.js)
-                    // domNode.removeAttribute('src')
+                if (configuration.inPlace.javaScript) {
+                    const urlPrefix = configuration.files.javaScript.replace(
+                        '[hash]', '')
+                    const domNode = window.document.querySelector(
+                        `script[src^="${urlPrefix}"]`)
+                    for(var asset in compilation.assets)
+                        if(asset.startsWith(urlPrefix))
+                            break
+                    domNode.textContent = compilation.assets[asset].source()
+                    domNode.removeAttribute('src')
+                    /*
+                        NOTE: This doesn't prevent webpack from creating this
+                        file if present in another chunk so removing it (and a
+                        potential source map file) later in the "done" hook.
+                    */
+                    delete compilation.assets[asset]
+                }
                 // TODO Preserve doctype.
                 compilation.assets['index.html'] = new WebpackRawSource(
                     window.document.documentElement.outerHTML)
@@ -208,16 +224,25 @@ configuration.plugins.push({apply: (compiler) => {
             })
     })
     compiler.plugin('after-emit', (compilation, callback) => {
-        for(let type of ['cascadingStyleSheet', 'javaScript'])
-            if (configuration.inPlace[type])
-                const assetFilePath = path.join(
-                    configuration.targetPath,
-                    configuration.files[type].replace(
-                        `?${configuration.hashAlgorithm}=[contenthash]`, ''))
-                for(let filePath of [assetFilePath, `${assetFilePath}.map`])
+        if (configuration.inPlace.cascadingStyleSheet)
+            fileSystem.removeDirectoryRecursivelySync(path.join(
+                configuration.targetPath, 'cascadingStyleSheet'
+            ), {glob: false})
+        if (configuration.inPlace.javaScript) {
+            const assetFilePath = path.join(
+                configuration.targetPath,
+                configuration.files.javaScript.replace(
+                    `?${configuration.hashAlgorithm}=[hash]`, ''))
+            for(let filePath of [assetFilePath, `${assetFilePath}.map`])
+                try {
                     fileSystem.unlinkSync(filePath)
+                } catch(error) {}
+            if(fileSystem.readdirSync(path.join(
+                configuration.targetPath, 'javaScript'
+            )).length === 0)
                 fileSystem.rmdirSync(path.join(
-                    configuration.targetPath, type))
+                    configuration.targetPath, 'javaScript'))
+        }
         callback()
     })
 }})
