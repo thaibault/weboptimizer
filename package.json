@@ -49,6 +49,6 @@
     "type" : "git",
     "url" : "https://github.com/thaibault/webOptimizer.git"
   },
-  "scripts": {"preinstall": "babel taskRunner.js --out-file taskRunner.js"},
+  "scripts": {"todo-preinstall": "babel taskRunner.js --out-file taskRunner.js"},
   "version": "1.0.0"
 }
