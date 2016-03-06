@@ -1,5 +1,5 @@
 {
-    "bin": {"webOptimizer": "taskRunnerCompiled.js"},
+    "bin": {"webOptimizer": "taskRunner.compiled.js"},
     "dependencies": {
         "babel-cli": "*",
         "babel-core": "*",
@@ -47,7 +47,7 @@
         "url" : "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
-        "preinstall": "babel taskRunner.js --presets es2015 --out-file taskRunnerCompiled.js"
+        "preinstall": "babel taskRunner.js --presets es2015 --out-file taskRunner.compiled.js && babel webpack.config.js --presets es2015 --out-file webpack.config.compiled.js"
     },
     "version": "1.0.0"
 }
