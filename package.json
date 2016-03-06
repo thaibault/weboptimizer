@@ -47,8 +47,7 @@
         "url" : "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
-        "todo-preinstall": "node_modules/babel-cli/bin/babel.js taskRunner.js --out-file taskRunner.js",
-        "preinstall": "pwd && babel taskRunner.js --out-file taskRunnerCompiled.js"
+        "preinstall": "babel taskRunner.js --presets es2015 --out-file taskRunnerCompiled.js"
     },
     "version": "1.0.0"
 }
