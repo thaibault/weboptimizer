@@ -57,6 +57,11 @@ const configuration = extend(true, {
     internalInjects: [],
     externalInjects: [],
     inPlace: {cascadingStyleSheet: true, javaScript: false},
+    developmentServer: {
+        contentBase: sourcePath,
+        historyApiFallback: true,
+        stats: {colors: true}
+    },
     offline: debug ? null : {
         caches: 'all',
         scope: '/',
@@ -169,83 +174,87 @@ if (configuration.offline)
 configuration.plugins.push(new plugins.extractText(
     configuration.files.cascadingStyleSheet))
 //// region in-place configured assets in the main html file
-configuration.plugins.push({apply: (compiler) => {
-    compiler.plugin('emit', (compilation, callback) => {
-        if (
-            configuration.inPlace.cascadingStyleSheet ||
-            configuration.inPlace.javaScript
-        )
-            dom.env(compilation.assets['index.html'].source(), (
-                error, window
-            ) => {
-                if (configuration.inPlace.cascadingStyleSheet) {
-                    const urlPrefix = configuration.files.cascadingStyleSheet
-                        .replace('[contenthash]', '')
-                    const domNode = window.document.querySelector(
-                        `link[href^="${urlPrefix}"]`)
-                    for(var asset in compilation.assets)
-                        if(asset.startsWith(urlPrefix))
-                            break
-                    const inPlaceDomNode = window.document.createElement(
-                        'style')
-                    inPlaceDomNode.textContent = compilation.assets[
-                        asset
-                    ].source()
-                    domNode.parentNode.insertBefore(inPlaceDomNode, domNode)
-                    domNode.parentNode.removeChild(domNode)
-                    /*
-                        NOTE: This doesn't prevent webpack from creating this
-                        file if present in another chunk so removing it (and a
-                        potential source map file) later in the "done" hook.
-                    */
-                    delete compilation.assets[asset]
-                }
-                if (configuration.inPlace.javaScript) {
-                    const urlPrefix = configuration.files.javaScript.replace(
-                        '[hash]', '')
-                    const domNode = window.document.querySelector(
-                        `script[src^="${urlPrefix}"]`)
-                    for(var asset in compilation.assets)
-                        if(asset.startsWith(urlPrefix))
-                            break
-                    domNode.textContent = compilation.assets[asset].source()
-                    domNode.removeAttribute('src')
-                    /*
-                        NOTE: This doesn't prevent webpack from creating this
-                        file if present in another chunk so removing it (and a
-                        potential source map file) later in the "done" hook.
-                    */
-                    delete compilation.assets[asset]
-                }
-                // TODO Preserve doctype.
-                compilation.assets['index.html'] = new WebpackRawSource(
-                    window.document.documentElement.outerHTML)
-                callback()
-            })
-    })
-    compiler.plugin('after-emit', (compilation, callback) => {
-        if (configuration.inPlace.cascadingStyleSheet)
-            fileSystem.removeDirectoryRecursivelySync(path.join(
-                configuration.targetPath, 'cascadingStyleSheet'
-            ), {glob: false})
-        if (configuration.inPlace.javaScript) {
-            const assetFilePath = path.join(
-                configuration.targetPath,
-                configuration.files.javaScript.replace(
-                    `?${configuration.hashAlgorithm}=[hash]`, ''))
-            for(let filePath of [assetFilePath, `${assetFilePath}.map`])
-                try {
-                    fileSystem.unlinkSync(filePath)
-                } catch(error) {}
-            if(fileSystem.readdirSync(path.join(
-                configuration.targetPath, 'javaScript'
-            )).length === 0)
-                fileSystem.rmdirSync(path.join(
-                    configuration.targetPath, 'javaScript'))
-        }
-        callback()
-    })
-}})
+if(!process.argv['1'].endsWith('/webpack-dev-server'))
+    configuration.plugins.push({apply: (compiler) => {
+        compiler.plugin('emit', (compilation, callback) => {
+            if (
+                configuration.inPlace.cascadingStyleSheet ||
+                configuration.inPlace.javaScript
+            )
+                dom.env(compilation.assets['index.html'].source(), (
+                    error, window
+                ) => {
+                    if (configuration.inPlace.cascadingStyleSheet) {
+                        const urlPrefix = configuration.files.cascadingStyleSheet
+                            .replace('[contenthash]', '')
+                        const domNode = window.document.querySelector(
+                            `link[href^="${urlPrefix}"]`)
+                        for(var asset in compilation.assets)
+                            if(asset.startsWith(urlPrefix))
+                                break
+                        const inPlaceDomNode = window.document.createElement(
+                            'style')
+                        inPlaceDomNode.textContent = compilation.assets[
+                            asset
+                        ].source()
+                        domNode.parentNode.insertBefore(inPlaceDomNode, domNode)
+                        domNode.parentNode.removeChild(domNode)
+                        /*
+                            NOTE: This doesn't prevent webpack from creating
+                            this file if present in another chunk so removing
+                            it (and a potential source map file) later in the
+                            "done" hook.
+                        */
+                        delete compilation.assets[asset]
+                    }
+                    if (configuration.inPlace.javaScript) {
+                        const urlPrefix = configuration.files.javaScript.replace(
+                            '[hash]', '')
+                        const domNode = window.document.querySelector(
+                            `script[src^="${urlPrefix}"]`)
+                        for(var asset in compilation.assets)
+                            if(asset.startsWith(urlPrefix))
+                                break
+                        domNode.textContent = compilation.assets[asset].source()
+                        domNode.removeAttribute('src')
+                        /*
+                            NOTE: This doesn't prevent webpack from creating
+                            this file if present in another chunk so removing
+                            it (and a potential source map file) later in the
+                            "done" hook.
+                        */
+                        delete compilation.assets[asset]
+                    }
+                    compilation.assets['index.html'] = new WebpackRawSource(
+                        compilation.assets['index.html'].source(
+                        ).split('\n')[0] + (debug ? '\n' : '') +
+                        window.document.documentElement.outerHTML)
+                    callback()
+                })
+        })
+        compiler.plugin('after-emit', (compilation, callback) => {
+            if (configuration.inPlace.cascadingStyleSheet)
+                fileSystem.removeDirectoryRecursivelySync(path.join(
+                    configuration.targetPath, 'cascadingStyleSheet'
+                ), {glob: false})
+            if (configuration.inPlace.javaScript) {
+                const assetFilePath = path.join(
+                    configuration.targetPath,
+                    configuration.files.javaScript.replace(
+                        `?${configuration.hashAlgorithm}=[hash]`, ''))
+                for(let filePath of [assetFilePath, `${assetFilePath}.map`])
+                    try {
+                        fileSystem.unlinkSync(filePath)
+                    } catch(error) {}
+                if(fileSystem.readdirSync(path.join(
+                    configuration.targetPath, 'javaScript'
+                )).length === 0)
+                    fileSystem.rmdirSync(path.join(
+                        configuration.targetPath, 'javaScript'))
+            }
+            callback()
+        })
+    }})
 //// endregion
 /// endregion
 /// region loader
@@ -281,7 +290,7 @@ module.exports = {
     context: __dirname,
     debug: configuration.debug,
     devtool: configuration.developmentTool,
-    devserver: {contentBase: configuration.sourcePath},
+    devserver: configuration.developmentServer,
     // region input
     resolve: {
         root: [configuration.sourceAssetPath],
