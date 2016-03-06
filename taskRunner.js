@@ -4,7 +4,7 @@
 // region imports
 import {exec as run} from 'child_process'
 import * as fileSystem from 'fs'
-import {sync as fileSystem.removeDirectoryRecursivelySync} from 'rimraf'
+fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 import path from 'path'
 const packageConfiguration = require('../../package.json').webOptimizer || {}
 // endregion
