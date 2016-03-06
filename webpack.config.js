@@ -5,7 +5,7 @@
 'use strict'
 // region imports
 import * as dom from 'jsdom'
-import * as extend from 'extend'
+import extend from 'extend'
 import * as fileSystem from 'fs'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 const packageConfiguration = require('../../package.json').webOptimizer || {}
