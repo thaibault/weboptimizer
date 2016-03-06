@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
 // TODO make all paths and names configurable.
+// TODO convert to es2015
 'use strict'
 // region imports
-const dom = require('jsdom')
-const extend = require('extend')
-const fileSystem = require('fs')
+import * as dom from 'jsdom'
+import * as extend from 'extend'
+import * as fileSystem from 'fs'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 const packageConfiguration = require('../../package.json').webOptimizer || {}
-const path = require('path')
+import path from 'path'
 const plugins = require('webpack-load-plugins')()
-const webpack = require('webpack')
-const WebpackRawSource = require('webpack-sources').RawSource
+import webpack from 'webpack'
+import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.offline = require('offline-plugin')
 // endregion
 // region configuration

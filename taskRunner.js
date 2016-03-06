@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
 'use strict'
+// TODO convert to es2015
 // region imports
 import {exec as run} from 'child_process'
 import * as fileSystem from 'fs'
