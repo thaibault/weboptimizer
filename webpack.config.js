@@ -84,7 +84,7 @@ const configuration = extend(true, {
                     template: `html?${JSON.stringify(html)}!jade-html?` +
                         `${JSON.stringify(jade)}!${sourcePath}index.jade`
                 */
-                template: () => {
+                template: (() => {
                     const string = new global.String('html?' + JSON.stringify(
                         html
                     ) + `!jade-html?${JSON.stringify(jade)}!${sourcePath}` +
@@ -95,7 +95,7 @@ const configuration = extend(true, {
                         return string
                     }
                     return string
-                }(),
+                })(),
                 hash: true,
                 // NOTE: We can't use this since placing in-place would be
                 // impossible so.
