@@ -1,6 +1,6 @@
 {
   "bin": {
-    "webOptimizer": "babel-node taskRunner.js"
+    "webOptimizer": "taskRunner.js"
   },
   "dependencies": {
     "babel": "*",
