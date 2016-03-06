@@ -1,8 +1,9 @@
 {
   "bin": {
-    "webOptimizer": "taskRunner.js"
+    "webOptimizer": "babel-node taskRunner.js"
   },
   "dependencies": {
+    "babel": "*",
     "babel-core": "*",
     "babel-loader": "*",
     "babel-plugin-transform-class-properties": "*",
@@ -38,6 +39,7 @@
   },
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "files": ["webpack.config.js", "taskRunner.js"],
+  "homepage": "http://torben.website/webOptimizer",
   "keywords": ["webpack"],
   "license": "ISC",
   "main": "webpack.config.js",
