@@ -2,7 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-const run = require('child_process').exec
+import {exec as run} from 'child_process'
 const fileSystem = require('fs')
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 const path = require('path')
