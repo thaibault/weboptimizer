@@ -1,5 +1,5 @@
 {
-    "bin": {"webOptimizer": "taskRunner.js"},
+    "bin": {"webOptimizer": "taskRunnerCompiled.js"},
     "dependencies": {
         "babel-cli": "*",
         "babel-core": "*",
@@ -48,7 +48,7 @@
     },
     "scripts": {
         "todo-preinstall": "node_modules/babel-cli/bin/babel.js taskRunner.js --out-file taskRunner.js",
-        "preinstall": "babel taskRunner.js --out-file taskRunner.js"
+        "preinstall": "babel taskRunner.js --out-file taskRunnerCompiled.js"
     },
     "version": "1.0.0"
 }
