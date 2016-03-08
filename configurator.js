@@ -48,18 +48,17 @@ module.exports.files.html[0].template = (() => {
 })()
 module.exports = extend(true, module.exports, specificConfiguration)
 const resolve = (object) => {
-    for(let key in object) {
-        if(key === '__execute__') {
-            let value = (new global.Function(
-                'self', 'webOptimizerPath', `return ${object[key]}`
-            ))(module.exports, __dirname)
-            if(typeof value === 'object')
-                return resolve(value)
-            return value
-        }
-        if(typeof object[key] === 'object')
+    if(globals.Array.isArray(object))
+        for(let index of object)
+            object[index] = resolve(object[index])
+    else if(typeof object === 'object')
+        for(let key in object) {
+            if(key === '__execute__')
+                return resolve(new global.Function(
+                    'self', 'webOptimizerPath', `return ${object[key]}`
+                ))(module.exports, __dirname)
             object[key] = resolve(object[key])
-    }
+        }
     return object
 }
 for(let key of [
