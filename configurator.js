@@ -50,7 +50,7 @@ const resolveConfiguration = (object) => {
     for(let key in object) {
         if(key === '__execute__') {
             let value = (new global.Function(
-                'self', 'webOptimizerPath', `return ${object[key][subKey]}`
+                'self', 'webOptimizerPath', `return ${object[key]}`
             ))(module.exports, __dirname)
             if(typeof value === 'object')
                 return resolveConfiguration(value)
