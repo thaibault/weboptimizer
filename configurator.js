@@ -3,7 +3,7 @@
 'use strict'
 // region imports
 import extend from 'extend'
-let configuration = require('./package').configuration
+module.exports = require('./package').configuration
 const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
 // NOTE: Given node command line arguments results in "npm_config_*"
@@ -14,25 +14,26 @@ else
     var debug = !!global.process.env.npm_config_debug ||
         specificConfiguration.debug || configuration.default.debug
 if(debug)
-    configuration = extend(true, configuration.default, configuration.debug)
+    module.exports = extend(true, module.exports.default, module.exports.debug)
 else
-    configuration = configuration.default
+    module.exports = module.exports.default
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
 
-    template: `html?${JSON.stringify(html)}!jade-html?` +
-        `${JSON.stringify(jade)}!${sourcePath}index.jade`
+    template: `html?${JSON.stringify(module.exports.html)}!jade-html?` +
+        `${JSON.stringify(module.exports.jade)}!` +
+        `${module.exports.sourcePath}index.jade`
 
     NOTE: We can't use this since placing in-place would be impossible so.
-    favicon: `${sourceAssetPath}image/favicon.ico`,
+    favicon: `${module.exports.sourceAssetPath}image/favicon.ico`,
     NOTE: We can't use this since the file would have to be available before
     building.
-    manifest: packageConfiguration.jade.includeManifest
+    manifest: module.exports.jade.includeManifest
 */
-configuration.files.html[0].template = (() => {
+module.exports.files.html[0].template = (() => {
     const string = new global.String('html?' + JSON.stringify(
-        html
+        module.exports.html
     ) + `!jade-html?${JSON.stringify(jade)}!${sourcePath}index.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = (search, replacement) => {
@@ -41,14 +42,14 @@ configuration.files.html[0].template = (() => {
     }
     return string
 })()
-module.exports = extend(true, configuration, specificConfiguration)
+module.exports = extend(true, module.exports, specificConfiguration)
 resolveConfiguration = (object) => {
     let value
     for(let key in object) {
         if(key === '__execute__')
-            value = (new globals.Function(
+            value = (new global.Function(
                 'self', 'webOptimizerPath', `return ${object[key][subKey]}`
-            ))(configuration, __dirname)
+            ))(module.exports, __dirname)
             if(typeof value === 'object')
                 return resolveConfiguration(value)
             return value
@@ -62,7 +63,7 @@ for (let key of [
     'sourcePath', 'targetPath', 'sourceAssetPath', 'targetAssetPath'
 ])
     if(module.exports[key])
-        module.exports[key] =  path.normalize(path.join(
+        module.exports[key] = path.normalize(path.join(
             `../../${module.exports[key]}`))
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
