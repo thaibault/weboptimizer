@@ -44,7 +44,7 @@ module.exports.files.html[0].template = (() => {
     return string
 })()
 module.exports = extend(true, module.exports, specificConfiguration)
-resolveConfiguration = (object) => {
+const resolveConfiguration = (object) => {
     let value
     for(let key in object) {
         if(key === '__execute__')
