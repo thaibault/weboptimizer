@@ -49,8 +49,11 @@ module.exports.files.html[0].template = (() => {
 module.exports = extend(true, module.exports, specificConfiguration)
 const resolve = (object) => {
     if(global.Array.isArray(object))
-        for(let index of object)
-            object[index] = resolve(object[index])
+        index = 0
+        for(let value of object) {
+            object[index] = resolve(value)
+            index += 1
+        }
     else if(typeof object === 'object')
         for(let key in object) {
             if(key === '__execute__')
