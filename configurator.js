@@ -45,12 +45,16 @@ module.exports = extend(true, defaultConfiguration, specificConfiguration)
 resolveConfiguration = (object) => {
     for(let key in object) {
         if(key === '__execute__')
-            return (new Function(
+            let value = (new Function(
                 'self', 'webOptimizerPath', `return ${object[key][subKey]}`
             ))(configuration, __dirname)
+            if(typeof value === 'object')
+                return resolveConfiguration(value)
+            return value
         if(typeof object[key] === 'object')
             object[key] = resolveConfiguration(object[key])
     }
+    return object
 }
 module.exports = resolveConfiguration(module.exports)
 for (let key of [
