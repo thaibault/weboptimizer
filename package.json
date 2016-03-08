@@ -106,7 +106,9 @@
                 },
                 "sass": {"indentedSyntax": true},
                 "scss": {},
-                "modernJavaScript": {"cacheDirectory": true, "presets": ["es2015"]}
+                "modernJavaScript": {
+                    "cacheDirectory": true, "presets": ["es2015"]
+                }
             },
             "html": {"attrs": "img:src link:href"},
             "cascadingStyleSheet": {},
@@ -114,8 +116,12 @@
                 "uglifyJS": {"compress": {"warnings": false}},
                 "image": {
                     "file": {
-                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
-                        "name": {"__execute__": "`image/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                        "limit": {
+                            "__execute__": "self.maximumInPlaceFileLimitInByte"
+                        },
+                        "name": {
+                            "__execute__": "`image/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                        }
                     },
                     "content": {
                         "optimizationLevel": 7,
