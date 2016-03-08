@@ -35,7 +35,10 @@
         "webpack-load-plugins": "*"
     },
     "description": "A generic web optimizer, (module) bundler and development environment.",
-    "files": ["configuration.js", "webpackConfiguration.js", "taskRunner.js"],
+    "files": [
+        "configuration.js", "webpackConfiguration.js", "taskRunner.js",
+        "defaultConfiguration.json", "defaultDebugConfiguration.json"
+    ],
     "homepage": "http://torben.website/webOptimizer",
     "keywords": ["webpack"],
     "license": "ISC",
