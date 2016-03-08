@@ -72,7 +72,7 @@ for(let key of [
             __dirname, '../../', module.exports[key]
         ) + '/'
     }
-module.exports = resolveConfiguration(module.exports)
+module.exports = resolve(module.exports)
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
