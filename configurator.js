@@ -3,7 +3,7 @@
 'use strict'
 // region imports
 import extend from 'extend'
-let configuration = require('package').configuration
+let configuration = require('./package').configuration
 const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
 // NOTE: Given node command line arguments results in "npm_config_*"
