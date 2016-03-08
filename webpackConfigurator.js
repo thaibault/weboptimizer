@@ -89,7 +89,7 @@ if(!process.argv['1'].endsWith('/webpack-dev-server'))
                     }
                     compilation.assets['index.html'] = new WebpackRawSource(
                         compilation.assets['index.html'].source(
-                        ).split('\n')[0] + (debug ? '\n' : '') +
+                        ).split('\n')[0] + (configuration.debug ? '\n' : '') +
                         window.document.documentElement.outerHTML)
                     callback()
                 })
