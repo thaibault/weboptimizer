@@ -160,6 +160,7 @@
             }
         },
         "debug": {
+            "debug": true,
             "developmentTool": "#source-map",
             "offline": null,
             "files": {"html": [{"debug": true, "template": true}]},
