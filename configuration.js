@@ -3,9 +3,9 @@
 'use strict'
 // region imports
 import extend from 'extend'
-let defaultConfiguration = require('defaultConfiguration.json')
-const defaultDebugConfiguration = require('defaultDebugConfiguration.json')
-const specificConfiguration = require('../../package.json').webOptimizer || {}
+let defaultConfiguration = require('defaultConfiguration')
+const defaultDebugConfiguration = require('defaultDebugConfiguration')
+const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
 // NOTE: Given node command line arguments results in "npm_config_*"
 // environment variables.
@@ -42,14 +42,16 @@ defaultConfiguration.files.html[0].template = (() => {
     return string
 })()
 module.exports = extend(true, defaultConfiguration, specificConfiguration)
-resolveConfiguration = (object) =>
-    for(let key in object)
+resolveConfiguration = (object) => {
+    for(let key in object) {
         if(key === '__execute__')
             return (new Function(
                 'self', 'webOptimizerPath', `return ${object[key][subKey]}`
             ))(configuration, __dirname)
         if(typeof object[key] === 'object')
             object[key] = resolveConfiguration(object[key])
+    }
+}
 module.exports = resolveConfiguration(module.exports)
 for (let key of [
     'sourcePath', 'targetPath', 'sourceAssetPath', 'targetAssetPath'
