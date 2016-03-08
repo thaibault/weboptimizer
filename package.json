@@ -39,7 +39,7 @@
     "homepage": "http://torben.website/webOptimizer",
     "keywords": ["webpack"],
     "license": "ISC",
-    "main": "webpackConfiguration.compiled.js",
+    "main": "webpackConfigurator.compiled.js",
     "name": "webOptimizer",
     "repository": {
         "type" : "git", "url" : "https://github.com/thaibault/webOptimizer.git"

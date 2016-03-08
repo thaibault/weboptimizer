@@ -4,6 +4,7 @@
 // region imports
 import extend from 'extend'
 module.exports = require('./package').configuration
+import path from 'path'
 const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
 // NOTE: Given node command line arguments results in "npm_config_*"
