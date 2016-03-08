@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
 // TODO make all paths and names configurable.
+// TODO ensure that after vanilla install/update postinstall with babel-cli dependency is working.
 // TODO convert to es2015
 'use strict'
 // region imports
@@ -18,7 +19,7 @@ plugins.offline = require('offline-plugin')
 /// region configuration pre processing
 // NOTE: building context is this hierarchy up:
 // "PROJECT/node_modules/webOptimizer"
-__dirname = path.normalize(path.join(`${__dirname}/../..`))
+__dirname = path.resolve(path.join(__dirname, '/../..'))
 let index = 0
 for (let path of configuration.internalInjects) {
     configuration.internalInjects[index] = configuration.sourceAssetPath + path
@@ -47,8 +48,8 @@ if(!process.argv['1'].endsWith('/webpack-dev-server'))
                     error, window
                 ) => {
                     if (configuration.inPlace.cascadingStyleSheet) {
-                        const urlPrefix = configuration.files.cascadingStyleSheet
-                            .replace('[contenthash]', '')
+                        const urlPrefix = configuration.files
+                            .cascadingStyleSheet.replace('[contenthash]', '')
                         const domNode = window.document.querySelector(
                             `link[href^="${urlPrefix}"]`)
                         for(var asset in compilation.assets)

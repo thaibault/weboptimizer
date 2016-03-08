@@ -47,29 +47,32 @@ module.exports.files.html[0].template = (() => {
     return string
 })()
 module.exports = extend(true, module.exports, specificConfiguration)
-const resolveConfiguration = (object) => {
+const resolve = (object) => {
     for(let key in object) {
         if(key === '__execute__') {
             let value = (new global.Function(
                 'self', 'webOptimizerPath', `return ${object[key]}`
             ))(module.exports, __dirname)
             if(typeof value === 'object')
-                return resolveConfiguration(value)
+                return resolve(value)
             return value
         }
         if(typeof object[key] === 'object')
-            object[key] = resolveConfiguration(object[key])
+            object[key] = resolve(object[key])
     }
     return object
 }
-module.exports = resolveConfiguration(module.exports)
-for (let key of [
+for(let key of [
     'sourcePath', 'targetPath', 'sourceAssetPath', 'targetAssetPath'
 ])
-    if(module.exports[key])
+    if(module.exports[key]) {
+        if(typeof module.exports[key] === 'object')
+            module.exports[key] = resolve(module.exports[key])
         module.exports[key] = path.resolve(
             __dirname, '../../', module.exports[key]
         ) + '/'
+    }
+module.exports = resolveConfiguration(module.exports)
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
