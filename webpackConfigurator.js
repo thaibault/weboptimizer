@@ -7,7 +7,7 @@
 import * as dom from 'jsdom'
 import * as fileSystem from 'fs'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
-import * as configuration from 'configuration.compiled'
+import * as configuration from 'configurator.compiled'
 import path from 'path'
 const plugins = require('webpack-load-plugins')()
 import webpack from 'webpack'

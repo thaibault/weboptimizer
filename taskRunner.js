@@ -3,7 +3,7 @@
 'use strict'
 // TODO convert to es2015
 // region imports
-import * as configuration from 'configuration.compiled'
+import * as configuration from 'configurator.compiled'
 import {exec as run} from 'child_process'
 import extend from 'extend'
 import * as fileSystem from 'fs'
