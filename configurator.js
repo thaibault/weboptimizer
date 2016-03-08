@@ -48,7 +48,7 @@ module.exports.files.html[0].template = (() => {
 })()
 module.exports = extend(true, module.exports, specificConfiguration)
 const resolve = (object) => {
-    if(globals.Array.isArray(object))
+    if(global.Array.isArray(object))
         for(let index of object)
             object[index] = resolve(object[index])
     else if(typeof object === 'object')

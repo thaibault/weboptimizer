@@ -45,7 +45,7 @@
         "type" : "git", "url" : "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
-        "preinstall": "babel taskRunner.js --presets es2015 --out-file taskRunner.compiled.js && babel webpackConfigurator.js --presets es2015 --out-file webpackConfigurator.compiled.js && babel configurator.js --presets es2015 --out-file configurator.compiled.js"
+        "postinstall": "babel taskRunner.js --presets es2015 --out-file taskRunner.compiled.js && babel webpackConfigurator.js --presets es2015 --out-file webpackConfigurator.compiled.js && babel configurator.js --presets es2015 --out-file configurator.compiled.js"
     },
     "version": "1.0.0",
     "configuration": {
