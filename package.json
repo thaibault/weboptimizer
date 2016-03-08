@@ -12,6 +12,7 @@
         "coffee-loader": "*",
         "coffee-script": "*",
         "css-loader": "*",
+        "eslint": "*",
         "extract-loader": "0.0.2",
         "extract-text-webpack-plugin": "^1.0.1",
         "file-loader": "*",
@@ -28,8 +29,6 @@
         "offline-plugin": "*",
         "rimraf": "*",
         "sass-loader": "*",
-        "sizzle": "*",
-        "style-loader": "*",
         "url-loader": "*",
         "webpack": "*",
         "webpack-dev-server": "*",
@@ -40,14 +39,14 @@
     "homepage": "http://torben.website/webOptimizer",
     "keywords": ["webpack"],
     "license": "ISC",
-    "main": "webpack.config.js",
+    "main": "webpackConfiguration.compiled.js",
     "name": "webOptimizer",
     "repository": {
         "type" : "git",
         "url" : "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
-        "preinstall": "babel taskRunner.js --presets es2015 --out-file taskRunner.compiled.js && babel webpack.config.js --presets es2015 --out-file webpack.config.compiled.js"
+        "preinstall": "babel taskRunner.js --presets es2015 --out-file taskRunner.compiled.js && babel webpackConfiguration.js --presets es2015 --out-file webpack.config.compiled.js"
     },
     "version": "1.0.0"
 }

@@ -8,7 +8,9 @@ import * as dom from 'jsdom'
 import extend from 'extend'
 import * as fileSystem from 'fs'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
-const packageConfiguration = require('../../package.json').webOptimizer || {}
+let defaultConfiguration = require('defaultConfiguration.json')
+const defaultDebugConfiguration = require('defaultDebugConfiguration.json')
+const specificConfiguration = require('../../package.json').webOptimizer || {}
 import path from 'path'
 const plugins = require('webpack-load-plugins')()
 import webpack from 'webpack'
@@ -16,6 +18,50 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.offline = require('offline-plugin')
 // endregion
 // region configuration
+// NOTE: Given node command line arguments results in "npm_config_*"
+// environment variables.
+if(!!global.process.env.npm_config_production)
+    var debug = defaultConfiguration.debug
+else
+    var debug = !!global.process.env.npm_config_debug ||
+        specificConfiguration.debug || defaultConfiguration.debug
+if(debug)
+    defaultConfiguration = extend(
+        true, defaultConfiguration, defaultDebugConfiguration)
+/*
+    NOTE: Provides a workaround to handle a bug with changed loader
+    configurations (which we need here). Simple solution would be:
+
+    template: `html?${JSON.stringify(html)}!jade-html?` +
+        `${JSON.stringify(jade)}!${sourcePath}index.jade`
+
+    NOTE: We can't use this since placing in-place would be impossible so.
+    favicon: `${sourceAssetPath}image/favicon.ico`,
+    NOTE: We can't use this since the file would have to be available before
+    building.
+    manifest: packageConfiguration.jade.includeManifest
+*/
+defaultConfiguration.files.html[0].template = (() => {
+    const string = new global.String('html?' + JSON.stringify(
+        html
+    ) + `!jade-html?${JSON.stringify(jade)}!${sourcePath}index.jade`)
+    const nativeReplaceFunction = string.replace
+    string.replace = (search, replacement) => {
+        string.replace = nativeReplaceFunction
+        return string
+    }
+    return string
+})()
+const configuration = extend(true, defaultConfiguration, specificConfiguration)
+resolveConfiguration = (object) =>
+    for(let key in object)
+        if(key === '__execute__')
+            return (new Function(
+                'self', `return ${object[key][subKey]}`
+            ))(configuration)
+        if(typeof object[key] === 'object')
+            object[key] = resolveConfiguration(object[key])
+configuration = resolveConfiguration(resolveConfiguration)
 // NOTE: building context is this hierarchy up:
 // "PROJECT/node_modules/webOptimizer"
 __dirname = path.normalize(path.join(`${__dirname}/../..`))
@@ -25,136 +71,6 @@ for (let key of [
     if(packageConfiguration[key])
         packageConfiguration[key] =  path.normalize(path.join(
             `../../${packageConfiguration[key]}`))
-if (!!global.process.env.npm_config_production)
-    var debug = false
-else
-    var debug = !!global.process.env.npm_config_debug ||
-        packageConfiguration.debug || false
-const hashAlgorithm = packageConfiguration.hashAlgorithm || 'md5'
-// 256 KiloByte
-const maximumInPlaceFileLimitInByte =
-    packageConfiguration.maximumInPlaceFileLimitInByte || 262144
-const html = packageConfiguration.html || {attrs: 'img:src link:href'}
-const jade = packageConfiguration.jade || {
-    pretty: debug, debug,
-    includeManifest: !(packageConfiguration.offline === false || debug)}
-const sourcePath = packageConfiguration.sourcePath || __dirname + '/source/'
-const targetPath = packageConfiguration.targetPath || __dirname + '/build/'
-const sourceAssetPath =
-    packageConfiguration.sourceAssetPath || sourcePath + 'asset/'
-const targetAssetPath =
-    packageConfiguration.targetAssetPath || targetPath + 'asset/'
-const configuration = extend(true, {
-    // region self referenced
-    debug,
-    sourcePath,
-    targetPath,
-    sourceAssetPath,
-    targetAssetPath,
-    hashAlgorithm,
-    maximumInPlaceFileLimitInByte,
-    // endregion
-    developmentTool: debug ? '#source-map' : null,
-    internalInjects: [],
-    externalInjects: [],
-    inPlace: {cascadingStyleSheet: true, javaScript: false},
-    developmentServer: {
-        contentBase: sourcePath,
-        historyApiFallback: true,
-        stats: {colors: true}
-    },
-    offline: debug ? null : {
-        caches: 'all',
-        scope: '/',
-        updateStrategy: 'hash',
-        version: 0,
-        ServiceWorker: {output: 'javaScript/serviceWorker.js'},
-        AppCache: {directory: '/'},
-        excludes: [`*.map?${hashAlgorithm}=*`]
-    },
-    files: {
-        html: [
-            {
-                debug,
-                /*
-                    NOTE: Provides a workaround to handle a bug with changed
-                    loader configurations (which we need here). Simple solution
-                    would be:
-
-                    template: `html?${JSON.stringify(html)}!jade-html?` +
-                        `${JSON.stringify(jade)}!${sourcePath}index.jade`
-                */
-                template: (() => {
-                    const string = new global.String('html?' + JSON.stringify(
-                        html
-                    ) + `!jade-html?${JSON.stringify(jade)}!${sourcePath}` +
-                    'index.jade')
-                    const nativeReplaceFunction = string.replace
-                    string.replace = (search, replacement) => {
-                        string.replace = nativeReplaceFunction
-                        return string
-                    }
-                    return string
-                })(),
-                hash: true,
-                // NOTE: We can't use this since placing in-place would be
-                // impossible so.
-                // favicon: `${sourceAssetPath}image/favicon.ico`,
-                // NOTE: We can't use this since the file would have to be
-                // available before building.
-                // manifest: packageConfiguration.jade.includeManifest
-                filename: 'index.html',
-                inject: 'body',
-                minify: debug ? false : {collapseWhitespace: true}
-            }
-        ],
-        cascadingStyleSheet: `cascadingStyleSheet/main.css?${hashAlgorithm}` +
-            '=[contenthash]',
-        javaScript: `javaScript/main.js?${hashAlgorithm}=[hash]`
-    },
-    preprocessor: {
-        jade,
-        sass: {indentedSyntax: true},
-        scss: {},
-        modernJavaScript: {cacheDirectory: true, presets: ['es2015']},
-    },
-    html,
-    cascadingStyleSheet: {},
-    optimizer: {
-        uglifyJS: debug ? null : {compress: {warnings: false}},
-        image: {
-            file: {
-                limit: maximumInPlaceFileLimitInByte,
-                name: `image/[name].[ext]?${hashAlgorithm}=[hash]`
-            },
-            content: {
-                optimizationLevel: 7,
-                bypassOnDebug: debug,
-                verbose: debug
-            }
-        },
-        font: {
-            eot: {
-                limit: maximumInPlaceFileLimitInByte,
-                name: `font/[name].[ext]?${hashAlgorithm}=[hash]`
-            },
-            woff: {
-                limit: maximumInPlaceFileLimitInByte,
-                name: `font/[name].[ext]?${hashAlgorithm}=[hash]`
-            },
-            ttf: {
-                limit: maximumInPlaceFileLimitInByte,
-                mimetype: 'application/octet-stream',
-                name: `font/[name].[ext]?${hashAlgorithm}=[hash]`
-            },
-            svg: {
-                limit: maximumInPlaceFileLimitInByte,
-                mimetype: 'image/svg+xml',
-                name: `font/[name].[ext]?${hashAlgorithm}=[hash]`
-            }
-        }
-    }
-}, packageConfiguration)
 // endregion
 // region initialisation
 /// region configuration pre processing

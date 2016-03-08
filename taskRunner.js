@@ -4,13 +4,18 @@
 // TODO convert to es2015
 // region imports
 import {exec as run} from 'child_process'
+import extend from 'extend'
 import * as fileSystem from 'fs'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 import path from 'path'
+const defaultConfiguration = require('defaultConfiguration.json')
 const packageConfiguration = require('../../package.json').webOptimizer || {}
 // endregion
 // region configuration
 const processOptions = {cwd: path.resolve(__dirname + '/../..')}
+configuration = extend(true, defaultConfiguration, packageConfiguration)
+if(!packageConfiguration.targetPath)
+    packageConfiguration.targetPath = 'build'
 if(!packageConfiguration.targetPath)
     packageConfiguration.targetPath = 'build'
 if(!packageConfiguration.commandLineArguments)
@@ -29,7 +34,7 @@ if(global.process.argv[2] === 'clear') {
 }
 if(global.process.argv[2] === 'build')
     childProcess = run(
-        `webpack --config ${__dirname}/webpack.config.compiled.js ` +
+        `webpack --config ${__dirname}/webpackConfiguration.compiled.js ` +
         packageConfiguration.commandLineArguments.webpack, processOptions, (
             error
         ) => {
@@ -45,12 +50,19 @@ if(global.process.argv[2] === 'build')
     })
 else if(global.process.argv[2] === 'server')
     childProcess = run(
-        `webpack-dev-server --config ${__dirname}/webpack.config.compiled.js` +
-        ` ${packageConfiguration.commandLineArguments.webpackDevServer}`,
+        'webpack-dev-server --config ' +
+        `${__dirname}/webpackConfiguration.compiled.js ` +
+        packageConfiguration.commandLineArguments.webpackDevServer,
+        processOptions)
+else if(global.process.argv[2] === 'lint')
+    childProcess = run(
+        `eslint --config ${__dirname}/eslintConfiguration.json ` +
+        packageConfiguration.commandLineArguments.eslint + ' ',
         processOptions)
 else {
     console.log(
-        'Give one of "clear", "build" or "server" command line argument.')
+        'Give one of "clear", "build", "lint" or "server" as command line ' +
+        'argument.')
     process.exit()
 }
 // endregion

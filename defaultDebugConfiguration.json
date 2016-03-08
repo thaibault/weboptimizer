@@ -1,0 +1,10 @@
+{
+    "developmentTool": "#source-map",
+    "offline": null,
+    "files": {"html": [{"debug": true, "template": true}]},
+    "preprocessor": {"jade": {"pretty": true, "debug": true}},
+    "optimizer": {
+        "uglifyJS": null,
+        "image": {"content": {"bypassOnDebug": true, "verbose": true}}
+    }
+}

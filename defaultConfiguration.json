@@ -1,0 +1,95 @@
+{
+    "debug": false,
+    "sourcePath": "source/",
+    "targetPath": "build/",
+    "sourceAssetPath": {"__execute__": "`${self.sourcPath}asset/`"},
+    "targetAssetPath": {"__execute__": "`${self.targetPath}asset/`"},
+    "hashAlgorithm": "md5",
+    "maximumInPlaceFileLimitInByte": 262144,
+    "developmentTool": null,
+    "internalInjects": [],
+    "externalInjects": [],
+    "inPlace": {"cascadingStyleSheet": true, "javaScript": false},
+    "developmentServer": {
+        "contentBase": {"__execute__": "self.sourcePath"},
+        "historyApiFallback": true,
+        "stats": {"colors": true}
+    },
+    "offline": {
+        "caches": "all",
+        "scope": "/",
+        "updateStrategy": "hash",
+        "version": 0,
+        "ServiceWorker": {"output": "javaScript/serviceWorker.js"},
+        "AppCache": {"directory": "/"},
+        "excludes": ["`*.map?${self.hashAlgorithm}=*`"]
+    },
+    "files": {
+        "html": [{
+            "debug": false,
+            "template": {
+                "__execute__": "`html?${JSON.stringify(self.html)}!jade-html?${JSON.stringify(self.jade)}!${self.sourcePath}index.jade`"
+            },
+            "hash": true,
+            "filename": "index.html",
+            "inject": "body",
+            "minify": {"collapseWhitespace": true}
+        }],
+        "cascadingStyleSheet": {"__execute__": "`cascadingStyleSheet/main.css?${self.hashAlgorithm}=[contenthash]`"},
+        "javaScript": {"__execute__": "`javaScript/main.js?${self.hashAlgorithm}=[hash]`"}
+    },
+    "preprocessor": {
+        "jade": {
+            "pretty": false,
+            "debug": false,
+            "includeManifest": {"__execute__": "!(self.offline === false || self.debug)"}
+        },
+        "sass": {"indentedSyntax": true},
+        "scss": {},
+        "modernJavaScript": {"cacheDirectory": true, "presets": ["es2015"]}
+    },
+    "html": {"attrs": "img:src link:href"},
+    "cascadingStyleSheet": {},
+    "optimizer": {
+        "uglifyJS": {"compress": {"warnings": false}},
+        "image": {
+            "file": {
+                "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                "name": {"__execute__": "`image/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+            },
+            "content": {
+                "optimizationLevel": 7,
+                "bypassOnDebug": false,
+                "verbose": false
+            }
+        },
+        "font": {
+            "eot": {
+                "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                "name": {
+                    "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                }
+            },
+            "woff": {
+                "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                "name": {
+                    "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                }
+            },
+            "ttf": {
+                "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                "mimetype": "application/octet-stream",
+                "name": {
+                    "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                }
+            },
+            "svg": {
+                "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                "mimetype": "image/svg+xml",
+                "name": {
+                    "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                }
+            }
+        }
+    }
+}
