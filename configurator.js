@@ -47,15 +47,15 @@ module.exports.files.html[0].template = (() => {
 })()
 module.exports = extend(true, module.exports, specificConfiguration)
 const resolveConfiguration = (object) => {
-    let value
     for(let key in object) {
-        if(key === '__execute__')
-            value = (new global.Function(
+        if(key === '__execute__') {
+            let value = (new global.Function(
                 'self', 'webOptimizerPath', `return ${object[key][subKey]}`
             ))(module.exports, __dirname)
             if(typeof value === 'object')
                 return resolveConfiguration(value)
             return value
+        }
         if(typeof object[key] === 'object')
             object[key] = resolveConfiguration(object[key])
     }
