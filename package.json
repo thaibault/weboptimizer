@@ -53,7 +53,7 @@
             "debug": false,
             "sourcePath": "source/",
             "targetPath": "build/",
-            "sourceAssetPath": {"__execute__": "`${self.sourcPath}asset/`"},
+            "sourceAssetPath": {"__execute__": "`${self.sourcePath}asset/`"},
             "targetAssetPath": {"__execute__": "`${self.targetPath}asset/`"},
             "hashAlgorithm": "md5",
             "maximumInPlaceFileLimitInByte": 262144,
