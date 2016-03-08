@@ -3,20 +3,20 @@
 'use strict'
 // region imports
 import extend from 'extend'
-let defaultConfiguration = require('defaultConfiguration')
-const defaultDebugConfiguration = require('defaultDebugConfiguration')
+let configuration = require('package').configuration
 const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
 // NOTE: Given node command line arguments results in "npm_config_*"
 // environment variables.
 if(!!global.process.env.npm_config_production)
-    var debug = defaultConfiguration.debug
+    var debug = configuration.default.debug
 else
     var debug = !!global.process.env.npm_config_debug ||
-        specificConfiguration.debug || defaultConfiguration.debug
+        specificConfiguration.debug || configuration.default.debug
 if(debug)
-    defaultConfiguration = extend(
-        true, defaultConfiguration, defaultDebugConfiguration)
+    configuration = extend(true, configuration.default, configuration.debug)
+else
+    configuration = configuration.default
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
@@ -30,7 +30,7 @@ if(debug)
     building.
     manifest: packageConfiguration.jade.includeManifest
 */
-defaultConfiguration.files.html[0].template = (() => {
+configuration.files.html[0].template = (() => {
     const string = new global.String('html?' + JSON.stringify(
         html
     ) + `!jade-html?${JSON.stringify(jade)}!${sourcePath}index.jade`)
@@ -41,7 +41,7 @@ defaultConfiguration.files.html[0].template = (() => {
     }
     return string
 })()
-module.exports = extend(true, defaultConfiguration, specificConfiguration)
+module.exports = extend(true, configuration, specificConfiguration)
 resolveConfiguration = (object) => {
     for(let key in object) {
         if(key === '__execute__')
