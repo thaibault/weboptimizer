@@ -5,75 +5,20 @@
 'use strict'
 // region imports
 import * as dom from 'jsdom'
-import extend from 'extend'
 import * as fileSystem from 'fs'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
-let defaultConfiguration = require('defaultConfiguration.json')
-const defaultDebugConfiguration = require('defaultDebugConfiguration.json')
-const specificConfiguration = require('../../package.json').webOptimizer || {}
+import * as configuration from 'configuration'
 import path from 'path'
 const plugins = require('webpack-load-plugins')()
 import webpack from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.offline = require('offline-plugin')
 // endregion
-// region configuration
-// NOTE: Given node command line arguments results in "npm_config_*"
-// environment variables.
-if(!!global.process.env.npm_config_production)
-    var debug = defaultConfiguration.debug
-else
-    var debug = !!global.process.env.npm_config_debug ||
-        specificConfiguration.debug || defaultConfiguration.debug
-if(debug)
-    defaultConfiguration = extend(
-        true, defaultConfiguration, defaultDebugConfiguration)
-/*
-    NOTE: Provides a workaround to handle a bug with changed loader
-    configurations (which we need here). Simple solution would be:
-
-    template: `html?${JSON.stringify(html)}!jade-html?` +
-        `${JSON.stringify(jade)}!${sourcePath}index.jade`
-
-    NOTE: We can't use this since placing in-place would be impossible so.
-    favicon: `${sourceAssetPath}image/favicon.ico`,
-    NOTE: We can't use this since the file would have to be available before
-    building.
-    manifest: packageConfiguration.jade.includeManifest
-*/
-defaultConfiguration.files.html[0].template = (() => {
-    const string = new global.String('html?' + JSON.stringify(
-        html
-    ) + `!jade-html?${JSON.stringify(jade)}!${sourcePath}index.jade`)
-    const nativeReplaceFunction = string.replace
-    string.replace = (search, replacement) => {
-        string.replace = nativeReplaceFunction
-        return string
-    }
-    return string
-})()
-const configuration = extend(true, defaultConfiguration, specificConfiguration)
-resolveConfiguration = (object) =>
-    for(let key in object)
-        if(key === '__execute__')
-            return (new Function(
-                'self', `return ${object[key][subKey]}`
-            ))(configuration)
-        if(typeof object[key] === 'object')
-            object[key] = resolveConfiguration(object[key])
-configuration = resolveConfiguration(resolveConfiguration)
+// region initialisation
+/// region configuration pre processing
 // NOTE: building context is this hierarchy up:
 // "PROJECT/node_modules/webOptimizer"
 __dirname = path.normalize(path.join(`${__dirname}/../..`))
-for (let key of [
-    'sourcePath', 'targetPath', 'sourceAssetPath', 'targetAssetPath'
-])
-    if(packageConfiguration[key])
-        packageConfiguration[key] =  path.normalize(path.join(
-            `../../${packageConfiguration[key]}`))
-// endregion
-// region initialisation
-/// region configuration pre processing
 let index = 0
 for (let path of configuration.internalInjects) {
     configuration.internalInjects[index] = configuration.sourceAssetPath + path

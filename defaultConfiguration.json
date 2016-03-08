@@ -10,6 +10,17 @@
     "internalInjects": [],
     "externalInjects": [],
     "inPlace": {"cascadingStyleSheet": true, "javaScript": false},
+    "commandLineArguments": {
+        "webpack": {
+            "__execute__": "`--config ${webOptimizerPath}/webpackConfiguration.compiled.js`"
+        },
+        "webpackDevServer": {
+            "__execute__": "`--config `${webOptimizerPath}/webpackConfiguration.compiled.js`"
+        },
+        "eslint": {
+            "__execute__": "`--config ${webOptimizerPath}/eslintConfiguration.json`"
+        }
+    },
     "developmentServer": {
         "contentBase": {"__execute__": "self.sourcePath"},
         "historyApiFallback": true,

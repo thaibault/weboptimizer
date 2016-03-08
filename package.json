@@ -35,7 +35,7 @@
         "webpack-load-plugins": "*"
     },
     "description": "A generic web optimizer, (module) bundler and development environment.",
-    "files": ["webpack.config.js", "taskRunner.js"],
+    "files": ["configuration.js", "webpackConfiguration.js", "taskRunner.js"],
     "homepage": "http://torben.website/webOptimizer",
     "keywords": ["webpack"],
     "license": "ISC",
@@ -46,7 +46,7 @@
         "url" : "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
-        "preinstall": "babel taskRunner.js --presets es2015 --out-file taskRunner.compiled.js && babel webpackConfiguration.js --presets es2015 --out-file webpack.config.compiled.js"
+        "preinstall": "babel taskRunner.js --presets es2015 --out-file taskRunner.compiled.js && babel webpackConfiguration.js --presets es2015 --out-file webpackConfiguration.compiled.js && babel configuration.js --presets es2015 --out-file configuration.compiled.js"
     },
     "version": "1.0.0"
 }
