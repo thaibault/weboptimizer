@@ -88,21 +88,27 @@
                 "html": [{
                     "debug": false,
                     "template": {
-                        "__execute__": "`html?${JSON.stringify(self.html)}!jade-html?${JSON.stringify(self.jade)}!${self.sourcePath}index.jade`"
+                        "__execute__": "`html?${JSON.stringify(self.html)}!jade-html?${JSON.stringify(self.preprocessor.jade)}!${self.sourcePath}index.jade`"
                     },
                     "hash": true,
                     "filename": "index.html",
                     "inject": "body",
                     "minify": {"collapseWhitespace": true}
                 }],
-                "cascadingStyleSheet": {"__execute__": "`cascadingStyleSheet/main.css?${self.hashAlgorithm}=[contenthash]`"},
-                "javaScript": {"__execute__": "`javaScript/main.js?${self.hashAlgorithm}=[hash]`"}
+                "cascadingStyleSheet": {
+                    "__execute__": "`cascadingStyleSheet/main.css?${self.hashAlgorithm}=[contenthash]`"
+                },
+                "javaScript": {
+                    "__execute__": "`javaScript/main.js?${self.hashAlgorithm}=[hash]`"
+                }
             },
             "preprocessor": {
                 "jade": {
                     "pretty": false,
                     "debug": false,
-                    "includeManifest": {"__execute__": "!(self.offline === false || self.debug)"}
+                    "includeManifest": {
+                        "__execute__": "!(self.offline === false || self.debug)"
+                    }
                 },
                 "sass": {"indentedSyntax": true},
                 "scss": {},
@@ -131,26 +137,34 @@
                 },
                 "font": {
                     "eot": {
-                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                        "limit": {
+                            "__execute__": "self.maximumInPlaceFileLimitInByte"
+                        },
                         "name": {
                             "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "woff": {
-                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                        "limit": {
+                            "__execute__": "self.maximumInPlaceFileLimitInByte"
+                        },
                         "name": {
                             "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "ttf": {
-                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                        "limit": {
+                            "__execute__": "self.maximumInPlaceFileLimitInByte"
+                        },
                         "mimetype": "application/octet-stream",
                         "name": {
                             "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "svg": {
-                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                        "limit": {
+                            "__execute__": "self.maximumInPlaceFileLimitInByte"
+                        },
                         "mimetype": "image/svg+xml",
                         "name": {
                             "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
