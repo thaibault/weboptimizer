@@ -37,7 +37,7 @@ else
 module.exports.files.html[0].template = (() => {
     const string = new global.String('html?' + JSON.stringify(
         module.exports.html
-    ) + `!jade-html?${JSON.stringify(module.exports.jade)}!` +
+    ) + `!jade-html?${JSON.stringify(module.exports.preprocessor.jade)}!` +
     `${module.exports.sourcePath}index.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = (search, replacement) => {
