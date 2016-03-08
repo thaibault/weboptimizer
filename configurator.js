@@ -67,7 +67,9 @@ for (let key of [
     'sourcePath', 'targetPath', 'sourceAssetPath', 'targetAssetPath'
 ])
     if(module.exports[key])
-        module.exports[key] = path.normalize(`../../${module.exports[key]}`)
+        module.exports[key] = path.resolve(
+            __dirname, '../../', module.exports[key]
+        ) + '/'
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
