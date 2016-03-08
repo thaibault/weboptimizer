@@ -8,11 +8,13 @@ const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
 // NOTE: Given node command line arguments results in "npm_config_*"
 // environment variables.
-if(!!global.process.env.npm_config_production)
-    var debug = configuration.default.debug
-else
-    var debug = !!global.process.env.npm_config_debug ||
-        specificConfiguration.debug || configuration.default.debug
+var debug = configuration.default.debug
+if(typeof specificConfiguration.debug !== undefined)
+    debug = specificConfiguration.debug
+if(global.process.env.npm_config_production)
+    debug = false
+else if(global.process.env.npm_config_debug)
+    debug = true
 if(debug)
     module.exports = extend(true, module.exports.default, module.exports.debug)
 else
