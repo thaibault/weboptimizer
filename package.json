@@ -75,7 +75,7 @@
             "developmentTool": null,
             "internalInjects": [],
             "externalInjects": [],
-            "moduleAlias": {},
+            "moduleAliases": {},
             "knownExtensions": [
                 "",
                 ".js", ".coffee", "coffee.md", ".litcoffee",
