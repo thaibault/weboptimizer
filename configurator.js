@@ -49,6 +49,7 @@ module.exports.files.html[0].template = (() => {
     return string
 })
 module.exports = extend(true, module.exports, specificConfiguration)
+module.exports.debug = debug
 const isObject = (object) => {
     return(
         object !== null && typeof object === 'object' &&
