@@ -74,11 +74,12 @@ const resolve = (object) => {
         }
     return object
 }
-for(let path of [module.exports.path, module.exports.path.asset])
+for(let pathConfiguration of [module.exports.path, module.exports.path.asset])
     for(let key of ['source', 'target'])
-        if(path[key])
-            path[key] = path.resolve(__dirname, '../../', resolve(path[key])) +
-                '/'
+        if(pathConfiguration[key])
+            pathConfiguration[key] = path.resolve(__dirname, '../../', resolve(
+                pathConfiguration[key])
+            ) + '/'
 module.exports = resolve(module.exports)
 if(isFunction(module.exports.files.html[0].template))
     module.exports.files.html[0].template = module.exports.files.html[0]
