@@ -26,7 +26,9 @@ if(global.process.argv[2] === 'build')
         childProcessOptions, (error) => {
             if(!error) {
                 let manifestFilePath = path.join(
-                    configuration.path.target, configuration.path.manifest)
+                    configuration.path.target, path.basename(
+                        configuration.path.manifest, '.appcache'
+                    ) + '.html')
                 fileSystem.access(manifestFilePath, fileSystem.F_OK, (
                     error
                 ) => {
