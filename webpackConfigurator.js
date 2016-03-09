@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
-// TODO make all paths and names configurable.
-// TODO ensure that after vanilla install/update postinstall with babel-cli dependency is working.
 // TODO convert to es2015
 'use strict'
 // region imports
