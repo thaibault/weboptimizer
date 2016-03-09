@@ -49,7 +49,7 @@ module.exports.files.html[0].template = (() => {
 module.exports = extend(true, module.exports, specificConfiguration)
 const resolve = (object) => {
     if(global.Array.isArray(object)) {
-        index = 0
+        let index = 0
         for(let value of object) {
             object[index] = resolve(value)
             index += 1

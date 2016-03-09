@@ -34,6 +34,7 @@
         "webpack-dev-server": "*",
         "webpack-load-plugins": "*"
     },
+    "devDependencies": {"source-map-support": "*"},
     "description": "A generic web optimizer, (module) bundler and development environment.",
     "files": ["configurator.js", "webpackConfigurator.js", "taskRunner.js"],
     "homepage": "http://torben.website/webOptimizer",
@@ -46,7 +47,7 @@
     },
     "scripts": {
         "preinstall": "touch taskRunner.compiled.js webpackConfigurator.compiled.js touch configurator.compiled.js",
-        "postinstall": "babel taskRunner.js --presets es2015 --out-file taskRunner.compiled.js && babel webpackConfigurator.js --presets es2015 --out-file webpackConfigurator.compiled.js && babel configurator.js --presets es2015 --out-file configurator.compiled.js"
+        "postinstall": "arguments='--presets es2015 --source-maps inline --out-file' && babel taskRunner.js $arguments taskRunner.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel configurator.js $arguments configurator.compiled.js"
     },
     "version": "1.0.0",
     "configuration": {
