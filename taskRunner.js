@@ -7,8 +7,10 @@ import * as configuration from './configurator.compiled'
 import {exec as run} from 'child_process'
 import extend from 'extend'
 import * as fileSystem from 'fs'
-fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 import path from 'path'
+fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
+// NOTE: Only needed for debugging this file.
+import 'source-map-support/register'
 // endregion
 // region controller
 const childProcessOptions = {cwd: path.resolve(`${__dirname}/../..`)}

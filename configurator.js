@@ -3,6 +3,8 @@
 'use strict'
 // region imports
 import extend from 'extend'
+// NOTE: Only needed for debugging this file.
+import 'source-map-support/register'
 module.exports = require('./package').configuration
 import path from 'path'
 const specificConfiguration = require('../../package').webOptimizer || {}

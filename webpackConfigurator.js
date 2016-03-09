@@ -5,13 +5,15 @@
 // TODO convert to es2015
 'use strict'
 // region imports
-import * as dom from 'jsdom'
-import * as fileSystem from 'fs'
-fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 import * as configuration from './configurator.compiled'
+import * as fileSystem from 'fs'
+import * as dom from 'jsdom'
 import path from 'path'
-const plugins = require('webpack-load-plugins')()
+fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
+// NOTE: Only needed for debugging this file.
+import 'source-map-support/register'
 import webpack from 'webpack'
+const plugins = require('webpack-load-plugins')()
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.offline = require('offline-plugin')
 // endregion
