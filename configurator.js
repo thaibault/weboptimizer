@@ -85,7 +85,6 @@ module.exports = resolve(module.exports)
 if(isFunction(module.exports.files.html[0].template))
     module.exports.files.html[0].template = module.exports.files.html[0]
         .template()
-console.log(module.exports.preprocessor.jade)
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
