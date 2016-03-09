@@ -47,12 +47,15 @@ module.exports.files.html[0].template = (() => {
         return string
     }
     return string
-})()
+})
 module.exports = extend(true, module.exports, specificConfiguration)
 const isObject = (object) => {
     return(
         object !== null && typeof object === 'object' &&
         global.Object.getPrototypeOf(object) === global.Object.prototype)
+}
+const isFunction = (object) => {
+    return object && {}.toString.call(object) === '[object Function]'
 }
 const resolve = (object) => {
     if(global.Array.isArray(object)) {
@@ -66,7 +69,7 @@ const resolve = (object) => {
             if(key === '__execute__')
                 return resolve(new global.Function(
                     'self', 'webOptimizerPath', `return ${object[key]}`
-                ))(module.exports, __dirname)
+                )(module.exports, __dirname))
             object[key] = resolve(object[key])
         }
     return object
@@ -79,6 +82,9 @@ for(let key of [
             __dirname, '../../', resolve(module.exports[key])
         ) + '/'
 module.exports = resolve(module.exports)
+if(isFunction(module.exports.files.html[0].template))
+    module.exports.files.html[0].template = module.exports.files.html[0]
+        .template()
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
