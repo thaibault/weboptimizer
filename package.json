@@ -63,7 +63,9 @@
                     "less": "less",
                     "scss": "scss", "sass": "sass",
                     "font": "font",
-                    "image": "image"
+                    "image": "image",
+                    "template": "template",
+                    "data": "data"
                 },
                 "manifest": "manifest.appcache"
             },
