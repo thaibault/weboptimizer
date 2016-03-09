@@ -58,14 +58,15 @@
                 "asset": {
                     "source": {"__execute__": "`${self.path.source}asset/`"},
                     "target": {"__execute__": "`${self.path.target}asset/`"},
-                    "cascadingStyleSheet": "cascadingStyleSheet",
-                    "javaScript": "javaScript", "coffeeScript": "coffeeScript",
-                    "less": "less",
-                    "scss": "scss", "sass": "sass",
-                    "font": "font",
-                    "image": "image",
-                    "template": "template",
-                    "data": "data"
+                    "cascadingStyleSheet": "cascadingStyleSheet/",
+                    "javaScript": "javaScript/",
+                    "coffeeScript": "coffeeScript/",
+                    "less": "less/",
+                    "scss": "scss/", "sass": "sass/",
+                    "font": "font/",
+                    "image": "image/",
+                    "template": "template/",
+                    "data": "data/"
                 },
                 "manifest": "manifest.appcache"
             },
