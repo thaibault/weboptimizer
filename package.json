@@ -129,9 +129,7 @@
                 "jade": {
                     "pretty": false,
                     "debug": false,
-                    "includeManifest": {
-                        "__execute__": "!(self.offline === false || self.debug)"
-                    }
+                    "includeManifest": {"__execute__": "!!self.offline"}
                 },
                 "sass": {"indentedSyntax": true},
                 "scss": {},
@@ -201,7 +199,9 @@
             "developmentTool": "#source-map",
             "offline": null,
             "files": {"html": [{"debug": true, "template": true}]},
-            "preprocessor": {"jade": {"pretty": true, "debug": true}},
+            "preprocessor": {"jade": {
+                "pretty": true, "debug": true, "includeManifest": false
+            }},
             "optimizer": {
                 "uglifyJS": null,
                 "image": {"content": {"bypassOnDebug": true, "verbose": true}}
