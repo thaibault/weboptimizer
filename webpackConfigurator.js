@@ -48,6 +48,7 @@ if(!process.argv[1].endsWith('/webpack-dev-server'))
                 dom.env(compilation.assets[configuration.files.html[
                     0
                 ].filename].source(), (error, window) => {
+                    console.log(compilation.assets[configuration.files.html[0].filename].source())
                     if (configuration.inPlace.cascadingStyleSheet) {
                         const urlPrefix = configuration.files
                             .cascadingStyleSheet.replace('[contenthash]', '')
