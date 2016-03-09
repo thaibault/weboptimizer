@@ -94,8 +94,8 @@ if(!process.argv[1].endsWith('/webpack-dev-server'))
                     ].filename] = new WebpackRawSource(
                         compilation.assets[configuration.files.html[
                             0
-                        ].filename].source().split('\n')[0] + (
-                            configuration.debug ? '\n' : ''
+                        ].filename].source().replace(
+                            /^(\s*<!doctype[^>]+>\s*).*/i, '$1'
                         ) + window.document.documentElement.outerHTML)
                     callback()
                 })
