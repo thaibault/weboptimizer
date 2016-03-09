@@ -24,7 +24,8 @@ plugins.offline = require('offline-plugin')
 __dirname = path.resolve(path.join(__dirname, '/../..'))
 let index = 0
 for (let path of configuration.internalInjects) {
-    configuration.internalInjects[index] = configuration.sourceAssetPath + path
+    configuration.internalInjects[index] = configuration.path.asset.source +
+        path
     index += 1
 }
 configuration.plugins = []
@@ -39,16 +40,16 @@ if (configuration.offline)
 configuration.plugins.push(new plugins.extractText(
     configuration.files.cascadingStyleSheet))
 //// region in-place configured assets in the main html file
-if(!process.argv['1'].endsWith('/webpack-dev-server'))
+if(!process.argv[1].endsWith('/webpack-dev-server'))
     configuration.plugins.push({apply: (compiler) => {
         compiler.plugin('emit', (compilation, callback) => {
             if (
                 configuration.inPlace.cascadingStyleSheet ||
                 configuration.inPlace.javaScript
             )
-                dom.env(compilation.assets['index.html'].source(), (
-                    error, window
-                ) => {
+                dom.env(compilation.assets[configuration.files.html[
+                    0
+                ].filename].source(), (error, window) => {
                     if (configuration.inPlace.cascadingStyleSheet) {
                         const urlPrefix = configuration.files
                             .cascadingStyleSheet.replace('[contenthash]', '')
@@ -73,8 +74,8 @@ if(!process.argv['1'].endsWith('/webpack-dev-server'))
                         delete compilation.assets[asset]
                     }
                     if (configuration.inPlace.javaScript) {
-                        const urlPrefix = configuration.files.javaScript.replace(
-                            '[hash]', '')
+                        const urlPrefix = configuration.files.javaScript
+                            .replace('[hash]', '')
                         const domNode = window.document.querySelector(
                             `script[src^="${urlPrefix}"]`)
                         for(var asset in compilation.assets)
@@ -90,32 +91,36 @@ if(!process.argv['1'].endsWith('/webpack-dev-server'))
                         */
                         delete compilation.assets[asset]
                     }
-                    compilation.assets['index.html'] = new WebpackRawSource(
-                        compilation.assets['index.html'].source(
-                        ).split('\n')[0] + (configuration.debug ? '\n' : '') +
-                        window.document.documentElement.outerHTML)
+                    compilation.assets[configuration.files.html[
+                        0
+                    ].filename] = new WebpackRawSource(
+                        compilation.assets[configuration.files.html[
+                            0
+                        ].filename].source().split('\n')[0] + (
+                            configuration.debug ? '\n' : ''
+                        ) + window.document.documentElement.outerHTML)
                     callback()
                 })
         })
         compiler.plugin('after-emit', (compilation, callback) => {
             if (configuration.inPlace.cascadingStyleSheet)
                 fileSystem.removeDirectoryRecursivelySync(path.join(
-                    configuration.targetPath, 'cascadingStyleSheet'
+                    configuration.path.target, 'cascadingStyleSheet'
                 ), {glob: false})
             if (configuration.inPlace.javaScript) {
                 const assetFilePath = path.join(
-                    configuration.targetPath,
+                    configuration.path.target,
                     configuration.files.javaScript.replace(
                         `?${configuration.hashAlgorithm}=[hash]`, ''))
                 for(let filePath of [assetFilePath, `${assetFilePath}.map`])
                     try {
                         fileSystem.unlinkSync(filePath)
                     } catch(error) {}
-                if(fileSystem.readdirSync(path.join(
-                    configuration.targetPath, 'javaScript'
-                )).length === 0)
-                    fileSystem.rmdirSync(path.join(
-                        configuration.targetPath, 'javaScript'))
+                let javaScriptPath = path.join(
+                    configuration.path.target,
+                    configuration.path.asset.javaScript)
+                if(fileSystem.readdirSync(javaScriptPath).length === 0)
+                    fileSystem.rmdirSync(javaScriptPath)
             }
             callback()
         })
@@ -158,25 +163,15 @@ module.exports = {
     devserver: configuration.developmentServer,
     // region input
     resolve: {
-        root: [configuration.sourceAssetPath],
-        extensions: [
-            '',
-            '.js', '.coffee', 'coffee.md', '.litcoffee',
-            '.html', '.jade',
-            '.css', '.scss', '.sass', '.less',
-            '.png', '.jpg', '.ico', '.gif'
-        ],
-        alias: {
-            jquery: 'jquery/src/jquery',
-            angular: 'angular2',
-            bootstrap: 'bootstrap/dist/css/bootstrap'
-        }
+        root: [configuration.path.asset.source],
+        extensions: configuration.extension,
+        alias: configuration.moduleAlias
     },
     entry: configuration.externalInjects.concat(configuration.internalInjects),
     // endregion
     // region output
     output: {
-        path: configuration.targetPath,
+        path: configuration.path.target,
         filename: configuration.files.javaScript,
         pathinfo: false,
         hashFunction: configuration.hashAlgorithm
@@ -190,36 +185,48 @@ module.exports = {
                 test: /\.less$/,
                 loader: `${loader.cascadingStyleSheet}!` +
                     loader.preprocessor.less,
-                include: `${configuration.sourceAssetPath}less`
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.less)
             },
             {
                 test: /\.sass$/,
                 loader: `${loader.cascadingStyleSheet}!` +
                     loader.preprocessor.sass,
-                include: `${configuration.sourceAssetPath}sass`
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.sass)
             },
             {
                 test: /\.scss$/,
                 loader: `${loader.cascadingStyleSheet}!` +
                     loader.preprocessor.scss,
-                include: `${configuration.sourceAssetPath}scss`
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.scss)
             },
             // endregion
             // region script
             {
                 test: /\.js$/,
                 loader: loader.preprocessor.babel,
-                include: `${configuration.sourceAssetPath}javaScript`
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.javaScript)
             },
             {
                 test: /\.coffee$/,
                 loader: loader.preprocessor.coffee,
-                include: `${configuration.sourceAssetPath}coffeeScript`
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.coffeeScript)
             },
             {
                 test: /\.(coffee\.md|litcoffee)$/,
                 loader: loader.preprocessor.literateCoffee,
-                include: `${configuration.sourceAssetPath}coffeeScript`
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.coffeeScript)
             },
             // endregion
             // region html
@@ -228,7 +235,9 @@ module.exports = {
                 loader: 'file?name=template/[name].html?' +
                     `${configuration.hashAlgorithm}=[hash]!extract!` +
                     `${loader.html}!${loader.preprocessor.jade}`,
-                include: `${configuration.sourceAssetPath}template`
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.template)
             },
             // endregion
         ],
@@ -240,7 +249,9 @@ module.exports = {
                 loader: 'file?name=template/[name].[ext]?' +
                     `${configuration.hashAlgorithm}=[hash]!extract!` +
                     loader.html,
-                include: `${configuration.sourceAssetPath}template`
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.template)
             },
             // endregion
             // region cascadingStyleSheet

@@ -28,10 +28,10 @@ else
 
     template: `html?${JSON.stringify(module.exports.html)}!jade-html?` +
         `${JSON.stringify(module.exports.jade)}!` +
-        `${module.exports.sourcePath}index.jade`
+        `${module.exports.path.source}index.jade`
 
     NOTE: We can't use this since placing in-place would be impossible so.
-    favicon: `${module.exports.sourceAssetPath}image/favicon.ico`,
+    favicon: `${module.exports.path.asset.source}image/favicon.ico`,
     NOTE: We can't use this since the file would have to be available before
     building.
     manifest: module.exports.jade.includeManifest
@@ -40,7 +40,7 @@ module.exports.files.html[0].template = (() => {
     const string = new global.String('html?' + JSON.stringify(
         module.exports.html
     ) + `!jade-html?${JSON.stringify(module.exports.preprocessor.jade)}!` +
-    `${module.exports.sourcePath}index.jade`)
+    `${module.exports.path.source}index.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = (search, replacement) => {
         string.replace = nativeReplaceFunction
@@ -74,13 +74,11 @@ const resolve = (object) => {
         }
     return object
 }
-for(let key of [
-    'sourcePath', 'targetPath', 'sourceAssetPath', 'targetAssetPath'
-])
-    if(module.exports[key])
-        module.exports[key] = path.resolve(
-            __dirname, '../../', resolve(module.exports[key])
-        ) + '/'
+for(let path of [module.exports.path, module.exports.path.asset])
+    for(let key of ['source', 'target'])
+        if(path[key])
+            path[key] = path.resolve(__dirname, '../../', resolve(path[key])) +
+                '/'
 module.exports = resolve(module.exports)
 if(isFunction(module.exports.files.html[0].template))
     module.exports.files.html[0].template = module.exports.files.html[0]

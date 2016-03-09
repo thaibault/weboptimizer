@@ -16,7 +16,7 @@ import 'source-map-support/register'
 const childProcessOptions = {cwd: path.resolve(`${__dirname}/../..`)}
 let childProcess = null
 if(global.process.argv[2] === 'clear') {
-    fileSystem.removeDirectoryRecursivelySync(configuration.targetPath, {
+    fileSystem.removeDirectoryRecursivelySync(configuration.path.target, {
         glob: false})
     process.exit()
 }
@@ -24,14 +24,16 @@ if(global.process.argv[2] === 'build')
     childProcess = run(
         `webpack ${configuration.commandLineArguments.webpack}`,
         childProcessOptions, (error) => {
-            if(!error)
-                fileSystem.access(
-                    `${configuration.targetPath}/manifest.html`,
-                    fileSystem.F_OK, (error) => {
-                        if(!error)
-                            fileSystem.unlink(
-                                `${configuration.targetPath}/manifest.html`)
-                    })
+            if(!error) {
+                let manifestFilePath = path.join(
+                    configuration.path.target, configuration.path.manifest)
+                fileSystem.access(manifestFilePath, fileSystem.F_OK, (
+                    error
+                ) => {
+                    if(!error)
+                        fileSystem.unlink(manifestFilePath)
+                })
+            }
     })
 else if(global.process.argv[2] === 'server')
     childProcess = run(

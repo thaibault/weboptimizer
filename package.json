@@ -53,15 +53,33 @@
     "configuration": {
         "default": {
             "debug": false,
-            "sourcePath": "source/",
-            "targetPath": "build/",
-            "sourceAssetPath": {"__execute__": "`${self.sourcePath}asset/`"},
-            "targetAssetPath": {"__execute__": "`${self.targetPath}asset/`"},
+            "path": {
+                "source": "source/", "target": "build/",
+                "asset": {
+                    "source": {"__execute__": "`${self.path.source}asset/`"},
+                    "target": {"__execute__": "`${self.path.target}asset/`"},
+                    "cascadingStyleSheet": "cascadingStyleSheet",
+                    "javaScript": "javaScript", "coffeeScript": "coffeeScript",
+                    "less": "less",
+                    "scss": "scss", "sass": "sass",
+                    "font": "font",
+                    "image": "image"
+                },
+                "manifest": "manifest.appcache"
+            },
             "hashAlgorithm": "md5",
             "maximumInPlaceFileLimitInByte": 262144,
             "developmentTool": null,
             "internalInjects": [],
             "externalInjects": [],
+            "moduleAlias": {},
+            "knownExtensions": [
+                "",
+                ".js", ".coffee", "coffee.md", ".litcoffee",
+                ".html", ".jade",
+                ".css", ".scss", ".sass", ".less",
+                ".png", ".jpg", ".ico", ".gif"
+            ],
             "inPlace": {"cascadingStyleSheet": true, "javaScript": false},
             "commandLineArguments": {
                 "webpack": {
@@ -73,7 +91,7 @@
                 "eslint": ""
             },
             "developmentServer": {
-                "contentBase": {"__execute__": "self.sourcePath"},
+                "contentBase": {"__execute__": "self.path.source"},
                 "historyApiFallback": true,
                 "stats": {"colors": true}
             },
@@ -90,7 +108,7 @@
                 "html": [{
                     "debug": false,
                     "template": {
-                        "__execute__": "`html?${JSON.stringify(self.html)}!jade-html?${JSON.stringify(self.preprocessor.jade)}!${self.sourcePath}index.jade`"
+                        "__execute__": "`html?${JSON.stringify(self.html)}!jade-html?${JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
                     },
                     "hash": true,
                     "filename": "index.html",
