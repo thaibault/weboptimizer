@@ -49,6 +49,11 @@ module.exports.files.html[0].template = (() => {
     return string
 })()
 module.exports = extend(true, module.exports, specificConfiguration)
+const isObject = (object) => {
+    return(
+        object !== null && typeof object === 'object' &&
+        global.Object.getPrototypeOf(object) === global.Object.prototype)
+}
 const resolve = (object) => {
     if(global.Array.isArray(object)) {
         let index = 0
@@ -56,7 +61,7 @@ const resolve = (object) => {
             object[index] = resolve(value)
             index += 1
         }
-    } else if(typeof object === 'object')
+    } else if(isObject(object))
         for(let key in object) {
             if(key === '__execute__')
                 return resolve(new global.Function(
@@ -69,13 +74,10 @@ const resolve = (object) => {
 for(let key of [
     'sourcePath', 'targetPath', 'sourceAssetPath', 'targetAssetPath'
 ])
-    if(module.exports[key]) {
-        if(typeof module.exports[key] === 'object')
-            module.exports[key] = resolve(module.exports[key])
+    if(module.exports[key])
         module.exports[key] = path.resolve(
-            __dirname, '../../', module.exports[key]
+            __dirname, '../../', resolve(module.exports[key])
         ) + '/'
-    }
 module.exports = resolve(module.exports)
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
