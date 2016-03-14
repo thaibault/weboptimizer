@@ -34,8 +34,13 @@ for (let htmlOptions of configuration.files.html)
 if (configuration.optimizer.uglifyJS)
     configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
         configuration.optimizer.uglifyJS))
-if (configuration.offline)
+if (configuration.offline) {
+    if (configuration.inPlace.cascadingStyleSheet)
+        configuration.offline.excludes.push('*.css')
+    if (configuration.inPlace.javaScript) {
+        configuration.offline.excludes.push('*.js')
     configuration.plugins.push(new plugins.Offline(configuration.offline))
+}
 configuration.plugins.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet))
 // // region in-place configured assets in the main html file
