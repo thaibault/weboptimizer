@@ -35,6 +35,8 @@ if (configuration.optimizer.uglifyJS)
     configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
         configuration.optimizer.uglifyJS))
 if (configuration.offline) {
+    if (!configuration.offline.excludes)
+        configuration.offline.excludes = []
     if (configuration.inPlace.cascadingStyleSheet)
         configuration.offline.excludes.push('*.css')
     if (configuration.inPlace.javaScript) {
