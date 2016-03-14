@@ -227,7 +227,7 @@ module.exports = {
                     configuration.path.asset.coffeeScript)
             },
             {
-                test: /\.(coffee\.md|litcoffee)$/,
+                test: /\.(?:coffee\.md|litcoffee)$/,
                 loader: loader.preprocessor.literateCoffee,
                 include: path.join(
                     configuration.path.asset.source,
@@ -267,21 +267,21 @@ module.exports = {
             // Optimize loaded assets.
             // region font
             {
-                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+                test: /\.eot(?:\?v=\d+\.\d+\.\d+)?$/,
                 loader: loader.postprocessor.font.eot
             },
-            {test: /\.(woff|woff2)$/, loader: loader.postprocessor.font.woff},
+            {test: /\.woff2?$/, loader: loader.postprocessor.font.woff},
             {
-                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+                test: /\.ttf(?:\?v=\d+\.\d+\.\d+)?$/,
                 loader: loader.postprocessor.font.ttf
             },
             {
-                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+                test: /\.svg(?:\?v=\d+\.\d+\.\d+)?$/,
                 loader: loader.postprocessor.font.svg
             },
             // endregion
             // region image
-            {test: /\.(png|jpg|ico|gif)$/, loader: loader.postprocessor.image}
+            {test: /\.(?:png|jpg|ico|gif)$/, loader: loader.postprocessor.image}
             // endregion
         ]
     },
