@@ -73,7 +73,10 @@
             "semi": [2, "never"],
             "curly": [2, "multi"],
             "indent": [2, 4],
-            "block-scoped-var": 0
+            "block-scoped-var": 0,
+            "spaced-comment": [2, "always", {"line": {"exceptions": [
+                "/usr/bin/env node"
+            ]}}]
         },
         "env": {"shared-node-browser": true}
     },
