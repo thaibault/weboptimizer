@@ -9,7 +9,9 @@ import * as fileSystem from 'fs'
 import path from 'path'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 // NOTE: Only needed for debugging this file.
-import 'source-map-support/register'
+try {
+    require('source-map-support/register')
+} catch (error) {}
 // endregion
 // region controller
 const childProcessOptions = {cwd: path.resolve(`${__dirname}/../..`)}
