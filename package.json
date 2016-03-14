@@ -130,7 +130,9 @@
                 "webpackDevServer": {
                     "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js`"
                 },
-                "eslint": "**/*.js"
+                "eslint": {
+                    "__execute__": "`--config ${webOptimizerPath}/package.json --ignore-path node_modules/ '**/*.js'`"
+                }
             },
             "developmentServer": {
                 "contentBase": {"__execute__": "self.path.source"},
