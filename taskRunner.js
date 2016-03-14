@@ -16,36 +16,39 @@ try {
 // region controller
 const childProcessOptions = {cwd: path.resolve(`${__dirname}/../..`)}
 let childProcess = null
-if (global.process.argv[2] === 'clear') {
-    fileSystem.removeDirectoryRecursivelySync(configuration.path.target, {
-        glob: false})
-    process.exit()
-}
-if (global.process.argv[2] === 'build')
-    childProcess = run(
-        `webpack ${configuration.commandLineArguments.webpack}`,
-        childProcessOptions, error => {
-            if (!error) {
-                let manifestFilePath = path.join(
-                    configuration.path.target, path.basename(
-                        configuration.path.manifest, '.appcache'
-                    ) + '.html')
-                fileSystem.access(manifestFilePath, fileSystem.F_OK, error => {
-                    if (!error)
-                        fileSystem.unlink(manifestFilePath)
-                })
-            }
-        })
-else if (global.process.argv[2] === 'server')
-    childProcess = run(
-        'webpack-dev-server ' +
-        configuration.commandLineArguments.webpackDevServer,
-        childProcessOptions)
-else if (global.process.argv[2] === 'lint')
-    childProcess = run(
-        `eslint ${configuration.commandLineArguments.eslint}`,
-        childProcessOptions)
-else {
+if (global.process.argv.length > 2)
+    if (global.process.argv[2] === 'clear') {
+        fileSystem.removeDirectoryRecursivelySync(configuration.path.target, {
+            glob: false})
+        process.exit()
+    }
+    let additionalArguments = global.process.argv.splice(2).join(' ')
+    if (global.process.argv[2] === 'build')
+        childProcess = run(
+            `webpack ${configuration.commandLineArguments.webpack} ` +
+            additionalArguments, childProcessOptions, error => {
+                if (!error) {
+                    let manifestFilePath = path.join(
+                        configuration.path.target, path.basename(
+                            configuration.path.manifest, '.appcache'
+                        ) + '.html')
+                    fileSystem.access(
+                        manifestFilePath, fileSystem.F_OK, error => {
+                            if (!error)
+                                fileSystem.unlink(manifestFilePath)
+                        })
+                }
+            })
+    else if (global.process.argv[2] === 'server')
+        childProcess = run(
+            'webpack-dev-server ' +
+            `${configuration.commandLineArguments.webpackDevServer} ` +
+            additionalArguments, childProcessOptions)
+    else if (global.process.argv[2] === 'lint')
+        childProcess = run(
+            `eslint ${configuration.commandLineArguments.eslint} ` +
+            additionalArguments, childProcessOptions)
+if (childProcess === null) {
     console.log(
         'Give one of "clear", "build", "lint" or "server" as command line ' +
         'argument.')
