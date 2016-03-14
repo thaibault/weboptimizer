@@ -9,7 +9,9 @@ import * as dom from 'jsdom'
 import path from 'path'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 // NOTE: Only needed for debugging this file.
-import 'source-map-support/register'
+try {
+    require('source-map-support/register')
+} catch (error) {}
 import webpack from 'webpack'
 const plugins = require('webpack-load-plugins')()
 plugins.HTML = plugins.html

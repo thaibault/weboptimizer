@@ -5,7 +5,9 @@
 // region imports
 import extend from 'extend'
 // NOTE: Only needed for debugging this file.
-import 'source-map-support/register'
+try {
+    require('source-map-support/register')
+} catch (error) {}
 module.exports = require('./package').configuration
 import path from 'path'
 const specificConfiguration = require('../../package').webOptimizer || {}
