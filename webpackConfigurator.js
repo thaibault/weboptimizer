@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
-// TODO convert to es2015
 'use strict'
+
 // region imports
 import * as configuration from './configurator.compiled'
 import * as fileSystem from 'fs'
@@ -12,14 +12,15 @@ fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
 import 'source-map-support/register'
 import webpack from 'webpack'
 const plugins = require('webpack-load-plugins')()
+plugins.HTML = plugins.html
+delete plugins.html
+plugins.ExtractText = plugins.extractText
+delete plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
-plugins.offline = require('offline-plugin')
+plugins.Offline = require('offline-plugin')
 // endregion
 // region initialisation
-/// region configuration pre processing
-// NOTE: building context is this hierarchy up:
-// "PROJECT/node_modules/webOptimizer"
-__dirname = path.resolve(path.join(__dirname, '/../..'))
+// / region configuration pre processing
 let index = 0
 for (let path of configuration.internalInjects) {
     configuration.internalInjects[index] = configuration.path.asset.source +
@@ -28,18 +29,18 @@ for (let path of configuration.internalInjects) {
 }
 configuration.plugins = []
 for (let htmlOptions of configuration.files.html)
-    configuration.plugins.push(new plugins.html(htmlOptions))
+    configuration.plugins.push(new plugins.HTML(htmlOptions))
 // Optimizes and bundles webpack output.
 if (configuration.optimizer.uglifyJS)
     configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
         configuration.optimizer.uglifyJS))
 if (configuration.offline)
-    configuration.plugins.push(new plugins.offline(configuration.offline))
-configuration.plugins.push(new plugins.extractText(
+    configuration.plugins.push(new plugins.Offline(configuration.offline))
+configuration.plugins.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet))
-//// region in-place configured assets in the main html file
-if(!process.argv[1].endsWith('/webpack-dev-server'))
-    configuration.plugins.push({apply: (compiler) => {
+// // region in-place configured assets in the main html file
+if (!process.argv[1].endsWith('/webpack-dev-server'))
+    configuration.plugins.push({apply: compiler => {
         compiler.plugin('emit', (compilation, callback) => {
             if (
                 configuration.inPlace.cascadingStyleSheet ||
@@ -53,8 +54,9 @@ if(!process.argv[1].endsWith('/webpack-dev-server'))
                             .cascadingStyleSheet.replace('[contenthash]', '')
                         const domNode = window.document.querySelector(
                             `link[href^="${urlPrefix}"]`)
-                        for(var asset in compilation.assets)
-                            if(asset.startsWith(urlPrefix))
+                        let asset
+                        for (asset in compilation.assets)
+                            if (asset.startsWith(urlPrefix))
                                 break
                         const inPlaceDomNode = window.document.createElement(
                             'style')
@@ -76,8 +78,9 @@ if(!process.argv[1].endsWith('/webpack-dev-server'))
                             .replace('[hash]', '')
                         const domNode = window.document.querySelector(
                             `script[src^="${urlPrefix}"]`)
-                        for(var asset in compilation.assets)
-                            if(asset.startsWith(urlPrefix))
+                        let asset
+                        for (asset in compilation.assets)
+                            if (asset.startsWith(urlPrefix))
                                 break
                         domNode.textContent = compilation.assets[asset].source()
                         domNode.removeAttribute('src')
@@ -110,22 +113,22 @@ if(!process.argv[1].endsWith('/webpack-dev-server'))
                     configuration.path.target,
                     configuration.files.javaScript.replace(
                         `?${configuration.hashAlgorithm}=[hash]`, ''))
-                for(let filePath of [assetFilePath, `${assetFilePath}.map`])
+                for (let filePath of [assetFilePath, `${assetFilePath}.map`])
                     try {
                         fileSystem.unlinkSync(filePath)
-                    } catch(error) {}
+                    } catch (error) {}
                 let javaScriptPath = path.join(
                     configuration.path.target,
                     configuration.path.asset.javaScript)
-                if(fileSystem.readdirSync(javaScriptPath).length === 0)
+                if (fileSystem.readdirSync(javaScriptPath).length === 0)
                     fileSystem.rmdirSync(javaScriptPath)
             }
             callback()
         })
     }})
-//// endregion
-/// endregion
-/// region loader
+// // endregion
+// / endregion
+// / region loader
 const loader = {
     preprocessor: {
         less: `less?${JSON.stringify(configuration.preprocessor.less)}`,
@@ -153,9 +156,11 @@ const loader = {
         }
     }
 }
-/// endregion
+// / endregion
 module.exports = {
-    context: __dirname,
+    // NOTE: building context is this hierarchy up:
+    // "PROJECT/node_modules/webOptimizer"
+    context: path.resolve(path.join(__dirname, '/../..')),
     debug: configuration.debug,
     devtool: configuration.developmentTool,
     devserver: configuration.developmentServer,
@@ -236,7 +241,7 @@ module.exports = {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template)
-            },
+            }
             // endregion
         ],
         loaders: [

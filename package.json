@@ -69,7 +69,13 @@
         },
         "parser": "babel-eslint",
         "extends": "google",
-        "rules": {}
+        "rules": {
+            "semi": [2, "never"],
+            "curly": [2, "multi"],
+            "indent": [2, 4],
+            "block-scoped-var": 0
+        },
+        "env": {"shared-node-browser": true}
     },
     "configuration": {
         "default": {

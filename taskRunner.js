@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
 'use strict'
-// TODO convert to es2015
+
 // region imports
 import * as configuration from './configurator.compiled'
 import {exec as run} from 'child_process'
-import extend from 'extend'
 import * as fileSystem from 'fs'
 import path from 'path'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
@@ -15,34 +14,32 @@ import 'source-map-support/register'
 // region controller
 const childProcessOptions = {cwd: path.resolve(`${__dirname}/../..`)}
 let childProcess = null
-if(global.process.argv[2] === 'clear') {
+if (global.process.argv[2] === 'clear') {
     fileSystem.removeDirectoryRecursivelySync(configuration.path.target, {
         glob: false})
     process.exit()
 }
-if(global.process.argv[2] === 'build')
+if (global.process.argv[2] === 'build')
     childProcess = run(
         `webpack ${configuration.commandLineArguments.webpack}`,
-        childProcessOptions, (error) => {
-            if(!error) {
+        childProcessOptions, error => {
+            if (!error) {
                 let manifestFilePath = path.join(
                     configuration.path.target, path.basename(
                         configuration.path.manifest, '.appcache'
                     ) + '.html')
-                fileSystem.access(manifestFilePath, fileSystem.F_OK, (
-                    error
-                ) => {
-                    if(!error)
+                fileSystem.access(manifestFilePath, fileSystem.F_OK, error => {
+                    if (!error)
                         fileSystem.unlink(manifestFilePath)
                 })
             }
-    })
-else if(global.process.argv[2] === 'server')
+        })
+else if (global.process.argv[2] === 'server')
     childProcess = run(
         'webpack-dev-server ' +
         configuration.commandLineArguments.webpackDevServer,
         childProcessOptions)
-else if(global.process.argv[2] === 'lint')
+else if (global.process.argv[2] === 'lint')
     childProcess = run(
         `eslint ${configuration.commandLineArguments.eslint}`,
         childProcessOptions)
@@ -54,10 +51,14 @@ else {
 }
 // endregion
 // region handle child process communication
-childProcess.stdout.on('data', (data) => { process.stdout.write(data) })
-childProcess.stderr.on('data', (data) => { process.stderr.write(data) })
-childProcess.on('close', (returnCode) => {
-    if(returnCode !== 0)
+childProcess.stdout.on('data', data => {
+    process.stdout.write(data)
+})
+childProcess.stderr.on('data', data => {
+    process.stderr.write(data)
+})
+childProcess.on('close', returnCode => {
+    if (returnCode !== 0)
         console.error(`Task exited with error code ${returnCode}`)
 })
 // endregion
