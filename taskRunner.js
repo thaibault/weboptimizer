@@ -16,7 +16,7 @@ try {
 // region controller
 const childProcessOptions = {cwd: path.resolve(`${__dirname}/../..`)}
 let childProcess = null
-if (global.process.argv.length > 2)
+if (global.process.argv.length > 2) {
     if (global.process.argv[2] === 'clear') {
         fileSystem.removeDirectoryRecursivelySync(configuration.path.target, {
             glob: false})
@@ -48,6 +48,7 @@ if (global.process.argv.length > 2)
         childProcess = run(
             `eslint ${configuration.commandLineArguments.eslint} ` +
             additionalArguments, childProcessOptions)
+}
 if (childProcess === null) {
     console.log(
         'Give one of "clear", "build", "lint" or "server" as command line ' +
