@@ -132,7 +132,7 @@
                     "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js --open --inline --colors`"
                 },
                 "eslint": {
-                    "__execute__": "`--config ${webOptimizerPath}/package.json --ignore-path node_modules/ '**/*.js'`"
+                    "__execute__": "`--config ${webOptimizerPath}/package.json --ignore-pattern '(${self.path.target.substring(currentPath.length)}|node_modules/)**/*' '**/*.js'`"
                 }
             },
             "developmentServer": {

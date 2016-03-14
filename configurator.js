@@ -32,8 +32,9 @@ const resolve = object => {
         for (let key in object) {
             if (key === '__execute__')
                 return resolve(new global.Function(
-                    'self', 'webOptimizerPath', `return ${object[key]}`
-                )(module.exports, __dirname))
+                    'self', 'webOptimizerPath', 'currentPath',
+                    `return ${object[key]}`
+                )(module.exports, __dirname, global.process.cwd()))
             object[key] = resolve(object[key])
         }
     return object
