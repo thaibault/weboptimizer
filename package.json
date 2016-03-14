@@ -3,6 +3,7 @@
     "dependencies": {
         "babel-cli": "*",
         "babel-core": "*",
+        "babel-eslint": "*",
         "babel-loader": "*",
         "babel-plugin-transform-class-properties": "*",
         "babel-plugin-transform-decorators-legacy": "*",
@@ -13,6 +14,7 @@
         "coffee-script": "*",
         "css-loader": "*",
         "eslint": "*",
+        "eslint-config-google": "*",
         "extract-loader": "0.0.2",
         "extract-text-webpack-plugin": "^1.0.1",
         "file-loader": "*",
@@ -36,25 +38,45 @@
     },
     "devDependencies": {"source-map-support": "*"},
     "description": "A generic web optimizer, (module) bundler and development environment.",
-    "files": ["configurator.js", "webpackConfigurator.js", "taskRunner.js"],
+    "files": [
+        "configurator.js",
+        "webpackConfigurator.js",
+        "taskRunner.js"
+    ],
     "homepage": "http://torben.website/webOptimizer",
-    "keywords": ["webpack"],
+    "keywords": [
+        "webpack", "optimizer", "configuration", "generic", "lint", "bundle"
+    ],
     "license": "ISC",
     "main": "webpackConfigurator.compiled.js",
     "name": "webOptimizer",
     "repository": {
-        "type" : "git", "url" : "https://github.com/thaibault/webOptimizer.git"
+        "type": "git",
+        "url": "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
+        "lint": "eslint *.js || true",
         "preinstall": "touch taskRunner.compiled.js webpackConfigurator.compiled.js configurator.compiled.js",
         "postinstall": "arguments='--presets es2015 --source-maps inline --out-file' && babel taskRunner.js $arguments taskRunner.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel configurator.js $arguments configurator.compiled.js"
     },
     "version": "1.0.0",
+    "eslintConfig": {
+        "parserOptions": {
+            "ecmaVersion": 7,
+            "sourceType": "module",
+            "impliedStrict": true,
+            "ecmaFeatures": {}
+        },
+        "parser": "babel-eslint",
+        "extends": "google",
+        "rules": {}
+    },
     "configuration": {
         "default": {
             "debug": false,
             "path": {
-                "source": "source/", "target": "build/",
+                "source": "source/",
+                "target": "build/",
                 "asset": {
                     "source": {"__execute__": "`${self.path.source}asset/`"},
                     "target": {"__execute__": "`${self.path.target}asset/`"},
@@ -62,7 +84,8 @@
                     "javaScript": "javaScript/",
                     "coffeeScript": "coffeeScript/",
                     "less": "less/",
-                    "scss": "scss/", "sass": "sass/",
+                    "scss": "scss/",
+                    "sass": "sass/",
                     "font": "font/",
                     "image": "image/",
                     "template": "template/",
@@ -78,12 +101,19 @@
             "moduleAliases": {},
             "knownExtensions": [
                 "",
+
                 ".js", ".coffee", "coffee.md", ".litcoffee",
+
                 ".html", ".jade",
+
                 ".css", ".scss", ".sass", ".less",
+
                 ".png", ".jpg", ".ico", ".gif"
             ],
-            "inPlace": {"cascadingStyleSheet": true, "javaScript": false},
+            "inPlace": {
+                "cascadingStyleSheet": true,
+                "javaScript": false
+            },
             "commandLineArguments": {
                 "webpack": {
                     "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js`"
@@ -108,16 +138,18 @@
                 "excludes": ["`*.map?${self.hashAlgorithm}=*`"]
             },
             "files": {
-                "html": [{
-                    "debug": false,
-                    "template": {
-                        "__execute__": "`html?${JSON.stringify(self.html)}!jade-html?${JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
-                    },
-                    "hash": true,
-                    "filename": "index.html",
-                    "inject": "body",
-                    "minify": {"collapseWhitespace": true}
-                }],
+                "html": [
+                    {
+                        "debug": false,
+                        "template": {
+                            "__execute__": "`html?${JSON.stringify(self.html)}!jade-html?${JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
+                        },
+                        "hash": true,
+                        "filename": "index.html",
+                        "inject": "body",
+                        "minify": {"collapseWhitespace": true}
+                    }
+                ],
                 "cascadingStyleSheet": {
                     "__execute__": "`cascadingStyleSheet/main.css?${self.hashAlgorithm}=[contenthash]`"
                 },
@@ -134,7 +166,8 @@
                 "sass": {"indentedSyntax": true},
                 "scss": {},
                 "modernJavaScript": {
-                    "cacheDirectory": true, "presets": ["es2015"]
+                    "cacheDirectory": true,
+                    "presets": ["es2015"]
                 }
             },
             "html": {"attrs": "img:src link:href"},
@@ -158,34 +191,26 @@
                 },
                 "font": {
                     "eot": {
-                        "limit": {
-                            "__execute__": "self.maximumInPlaceFileLimitInByte"
-                        },
+                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
                         "name": {
                             "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "woff": {
-                        "limit": {
-                            "__execute__": "self.maximumInPlaceFileLimitInByte"
-                        },
+                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
                         "name": {
                             "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "ttf": {
-                        "limit": {
-                            "__execute__": "self.maximumInPlaceFileLimitInByte"
-                        },
+                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
                         "mimetype": "application/octet-stream",
                         "name": {
                             "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "svg": {
-                        "limit": {
-                            "__execute__": "self.maximumInPlaceFileLimitInByte"
-                        },
+                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
                         "mimetype": "image/svg+xml",
                         "name": {
                             "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
@@ -200,7 +225,9 @@
             "offline": null,
             "files": {"html": [{"debug": true, "template": true}]},
             "preprocessor": {"jade": {
-                "pretty": true, "debug": true, "includeManifest": false
+                "pretty": true,
+                "debug": true,
+                "includeManifest": false
             }},
             "optimizer": {
                 "uglifyJS": null,
