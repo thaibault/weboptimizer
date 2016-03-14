@@ -38,9 +38,13 @@ if (configuration.offline) {
     if (!configuration.offline.excludes)
         configuration.offline.excludes = []
     if (configuration.inPlace.cascadingStyleSheet)
-        configuration.offline.excludes.push('*.css')
+        configuration.offline.excludes.push(
+            `${configuration.path.asset.cascadingStyleSheet}*.css?` +
+            `${configuration.hashAlgorithm}=*`)
     if (configuration.inPlace.javaScript)
-        configuration.offline.excludes.push('*.js')
+        configuration.offline.excludes.push(
+            `${configuration.path.asset.javaScript}*.js?` +
+            `${configuration.hashAlgorithm}=*`)
     configuration.plugins.push(new plugins.Offline(configuration.offline))
 }
 configuration.plugins.push(new plugins.ExtractText(
