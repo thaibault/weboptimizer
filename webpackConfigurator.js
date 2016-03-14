@@ -15,9 +15,7 @@ try {
 import webpack from 'webpack'
 const plugins = require('webpack-load-plugins')()
 plugins.HTML = plugins.html
-delete plugins.html
 plugins.ExtractText = plugins.extractText
-delete plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Offline = require('offline-plugin')
 // endregion

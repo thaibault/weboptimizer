@@ -22,7 +22,7 @@ if (global.process.argv.length > 2) {
             glob: false})
         process.exit()
     }
-    let additionalArguments = global.process.argv.splice(2).join(' ')
+    let additionalArguments = global.process.argv.splice(3).join(' ')
     if (global.process.argv[2] === 'build')
         childProcess = run(
             `webpack ${configuration.commandLineArguments.webpack} ` +
