@@ -39,7 +39,7 @@ if (configuration.offline) {
         configuration.offline.excludes = []
     if (configuration.inPlace.cascadingStyleSheet)
         configuration.offline.excludes.push('*.css')
-    if (configuration.inPlace.javaScript) {
+    if (configuration.inPlace.javaScript)
         configuration.offline.excludes.push('*.js')
     configuration.plugins.push(new plugins.Offline(configuration.offline))
 }
