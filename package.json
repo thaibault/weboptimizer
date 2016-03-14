@@ -126,10 +126,10 @@
             },
             "commandLineArguments": {
                 "webpack": {
-                    "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js`"
+                    "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js --progress --display-chunks --display-reasons --display-error-details`"
                 },
                 "webpackDevServer": {
-                    "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js`"
+                    "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js --open --inline --colors`"
                 },
                 "eslint": {
                     "__execute__": "`--config ${webOptimizerPath}/package.json --ignore-path node_modules/ '**/*.js'`"
