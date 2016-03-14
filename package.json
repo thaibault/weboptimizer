@@ -147,7 +147,9 @@
                 "version": 0,
                 "ServiceWorker": {"output": "javaScript/serviceWorker.js"},
                 "AppCache": {"directory": "/"},
-                "excludes": ["`*.map?${self.hashAlgorithm}=*`"]
+                "excludes": [{
+                    "__execute__": "`*.map?${self.hashAlgorithm}=*`"
+                }]
             },
             "files": {
                 "html": [
