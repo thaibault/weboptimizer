@@ -117,11 +117,11 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
         compiler.plugin('after-emit', (compilation, callback) => {
             if (configuration.inPlace.cascadingStyleSheet)
                 fileSystem.removeDirectoryRecursivelySync(path.join(
-                    configuration.path.target, 'cascadingStyleSheet'
+                    configuration.path.asset.target, 'cascadingStyleSheet'
                 ), {glob: false})
             if (configuration.inPlace.javaScript) {
                 const assetFilePath = path.join(
-                    configuration.path.target,
+                    configuration.path.asset.target,
                     configuration.files.javaScript.replace(
                         `?${configuration.hashAlgorithm}=[hash]`, ''))
                 for (let filePath of [assetFilePath, `${assetFilePath}.map`])
@@ -129,7 +129,7 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
                         fileSystem.unlinkSync(filePath)
                     } catch (error) {}
                 let javaScriptPath = path.join(
-                    configuration.path.target,
+                    configuration.path.asset.target,
                     configuration.path.asset.javaScript)
                 if (fileSystem.readdirSync(javaScriptPath).length === 0)
                     fileSystem.rmdirSync(javaScriptPath)
@@ -185,7 +185,7 @@ module.exports = {
     // endregion
     // region output
     output: {
-        path: configuration.path.target,
+        path: configuration.path.asset.target,
         filename: configuration.files.javaScript,
         pathinfo: false,
         hashFunction: configuration.hashAlgorithm

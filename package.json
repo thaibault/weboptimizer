@@ -88,8 +88,8 @@
                 "source": "source/",
                 "target": "build/",
                 "asset": {
-                    "source": {"__execute__": "`${self.path.source}asset/`"},
-                    "target": {"__execute__": "`${self.path.target}asset/`"},
+                    "source": {"__execute__": "self.path.source"},
+                    "target": {"__execute__": "self.path.target"},
                     "cascadingStyleSheet": "cascadingStyleSheet/",
                     "javaScript": "javaScript/",
                     "coffeeScript": "coffeeScript/",
@@ -132,7 +132,7 @@
                     "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js --open --inline --colors`"
                 },
                 "eslint": {
-                    "__execute__": "`--config ${webOptimizerPath}/package.json --ignore-pattern '(${self.path.target.substring(currentPath.length + 1)}|node_modules/)**/*' '**/*.js'`"
+                    "__execute__": "`--config ${webOptimizerPath}/package.json --ignore-pattern '(${self.path.target.substring(currentPath.length + 1)}|node_modules/)**/*' '${self.path.asset.source}**/*.js'`"
                 }
             },
             "developmentServer": {
