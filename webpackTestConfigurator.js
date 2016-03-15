@@ -3,7 +3,7 @@
 'use strict'
 
 // region imports
-import * as configuration from '../configurator.compiled'
+import * as configuration from './configurator.compiled'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
 try {
@@ -46,7 +46,7 @@ module.exports = {
             'qunit.css': 'qunitjs/qunit/qunit.css'
         }
     },
-    entry: ['qunit.js', 'qunit.css'],
+    entry: ['qunit.css', 'qunit.js'].concat(configuration.testModules),
     // endregion
     // region output
     output: {
@@ -117,7 +117,8 @@ module.exports = {
         template:
         `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!` +
         `jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
-        `${__dirname}index.jade`})]
+        `${__dirname}index.jade`
+    })]
 }
 // endregion
 // region vim modline
