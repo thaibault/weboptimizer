@@ -8,7 +8,7 @@ import extend from 'extend'
 try {
     require('source-map-support/register')
 } catch (error) {}
-export configuration = require('./package').configuration
+import {configuration} from './package'
 import path from 'path'
 const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
@@ -96,6 +96,7 @@ if (isFunction(configuration.files.html[0].template))
     configuration.files.html[0].template = configuration.files.html[0]
         .template()
 // endregion
+export configuration
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
