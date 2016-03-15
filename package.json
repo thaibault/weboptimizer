@@ -29,6 +29,7 @@
         "less-loader": "*",
         "node-sass": "*",
         "offline-plugin": "*",
+        "qunit": "*",
         "rimraf": "*",
         "sass-loader": "*",
         "url-loader": "*",

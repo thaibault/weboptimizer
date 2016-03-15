@@ -1,0 +1,26 @@
+DOCTYPE html
+html
+    head
+        meta(charset='UTF-8')
+        // Prevent bowser caching
+        meta(http-equiv='cache-control' content='no-cache')
+        meta(http-equiv='expires' content='0')
+        meta(http-equiv='pragma' content='no-cache')
+        title: test
+        link(rel='stylesheet' href='qunit-1.18.0.css')
+    body
+        div(id='qunit')
+        div(id='qunit-fixture')
+        script(type='text/javascript' src='javaScript/qunit-1.18.0.js')
+        script(type='text/javascript').
+            if ($.Tools().stringGetURLVariable('noglobals') === undefined)
+                if (document.URL.indexOf('?') is -1)
+                    window.location = document.URL + '?noglobals=true'
+                else
+                    window.location = document.URL + '&noglobals=true'
+
+// -
+    region vim modline
+    vim: set tabstop=4 shiftwidth=4 expandtab:
+    vim: foldmethod=marker foldmarker=region,endregion:
+    endregion
