@@ -32,9 +32,9 @@ const resolve = object => {
         for (let key in object) {
             if (key === '__execute__')
                 return resolve(new global.Function(
-                    'self', 'webOptimizerPath', 'currentPath',
+                    'global', 'self', 'webOptimizerPath', 'currentPath',
                     `return ${object[key]}`
-                )(module.exports, __dirname, global.process.cwd()))
+                )(global, module.exports, __dirname, global.process.cwd()))
             object[key] = resolve(object[key])
         }
     return object
@@ -58,8 +58,8 @@ else
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
 
-    template: `html?${JSON.stringify(module.exports.html)}!jade-html?` +
-        `${JSON.stringify(module.exports.jade)}!` +
+    template: `html?${global.JSON.stringify(module.exports.html)}!jade-html?` +
+        `${global.JSON.stringify(module.exports.jade)}!` +
         `${module.exports.path.source}index.jade`
 
     NOTE: We can't use this since placing in-place would be impossible so.
@@ -69,9 +69,10 @@ else
     manifest: module.exports.preprocessor.jade.includeManifest
 */
 module.exports.files.html[0].template = (() => {
-    const string = new global.String('html?' + JSON.stringify(
+    const string = new global.String('html?' + global.JSON.stringify(
         module.exports.html
-    ) + `!jade-html?${JSON.stringify(module.exports.preprocessor.jade)}!` +
+    ) + '!jade-html?' +
+    `${global.JSON.stringify(module.exports.preprocessor.jade)}!` +
     `${module.exports.path.source}index.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = () => {

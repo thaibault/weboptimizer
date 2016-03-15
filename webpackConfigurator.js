@@ -142,28 +142,34 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
 // / region loader
 const loader = {
     preprocessor: {
-        less: `less?${JSON.stringify(configuration.preprocessor.less)}`,
-        sass: `sass?${JSON.stringify(configuration.preprocessor.sass)}`,
-        scss: `sass?${JSON.stringify(configuration.preprocessor.scss)}`,
-        babel: 'babel?' + JSON.stringify(
+        less: `less?${global.JSON.stringify(configuration.preprocessor.less)}`,
+        sass: `sass?${global.JSON.stringify(configuration.preprocessor.sass)}`,
+        scss: `sass?${global.JSON.stringify(configuration.preprocessor.scss)}`,
+        babel: 'babel?' + global.JSON.stringify(
             configuration.preprocessor.modernJavaScript
         ),
         coffee: 'coffee',
-        jade: `jade-html?${JSON.stringify(configuration.preprocessor.jade)}`,
+        jade: 'jade-html?' +
+            global.JSON.stringify(configuration.preprocessor.jade),
         literateCoffee: 'coffee?literate'
     },
-    html: `html?${JSON.stringify(configuration.html)}`,
-    cascadingStyleSheet: plugins.extractText.extract('css?' + JSON.stringify(
-        configuration.cascadingStyleSheet)),
+    html: `html?${global.JSON.stringify(configuration.html)}`,
+    cascadingStyleSheet: plugins.extractText.extract(
+        `css?${global.JSON.stringify(configuration.cascadingStyleSheet)}`),
     postprocessor: {
-        image: 'url?' + JSON.stringify(
+        image: 'url?' + global.JSON.stringify(
             configuration.optimizer.image.file
-        ) + `!image?${JSON.stringify(configuration.optimizer.image.content)}`,
+        ) + '!image?' +
+            global.JSON.stringify(configuration.optimizer.image.content),
         font: {
-            eot: `url?${JSON.stringify(configuration.optimizer.font.eot)}`,
-            woff: `url?${JSON.stringify(configuration.optimizer.font.woff)}`,
-            ttf: `url?${JSON.stringify(configuration.optimizer.font.ttf)}`,
-            svg: `url?${JSON.stringify(configuration.optimizer.font.svg)}`
+            eot: 'url?' +
+                global.JSON.stringify(configuration.optimizer.font.eot),
+            woff: 'url?' +
+                global.JSON.stringify(configuration.optimizer.font.woff),
+            ttf: 'url?' +
+                global.JSON.stringify(configuration.optimizer.font.ttf),
+            svg: 'url?' +
+                global.JSON.stringify(configuration.optimizer.font.svg)
         }
     }
 }

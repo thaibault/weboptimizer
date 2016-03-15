@@ -39,20 +39,25 @@ if (global.process.argv.length > 2) {
                         })
                 }
             })
+    else if (global.process.argv[2] === 'lint')
+        childProcess = run(
+            `eslint ${configuration.commandLineArguments.eslint} ` +
+            additionalArguments, childProcessOptions)
     else if (global.process.argv[2] === 'server')
         childProcess = run(
             'webpack-dev-server ' +
             `${configuration.commandLineArguments.webpackDevServer} ` +
             additionalArguments, childProcessOptions)
-    else if (global.process.argv[2] === 'lint')
+    else if (global.process.argv[2] === 'test')
         childProcess = run(
-            `eslint ${configuration.commandLineArguments.eslint} ` +
+            'webpack-dev-server ' +
+            `${configuration.commandLineArguments.webpackDevServerTest} ` +
             additionalArguments, childProcessOptions)
 }
 if (childProcess === null) {
     console.log(
-        'Give one of "clear", "build", "lint" or "server" as command line ' +
-        'argument.')
+        'Give one of "build", "clear", "lint", "server" or "test" as command' +
+        ' line argument.')
     process.exit()
 }
 // endregion

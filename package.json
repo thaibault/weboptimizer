@@ -41,8 +41,9 @@
     "description": "A generic web optimizer, (module) bundler and development environment.",
     "files": [
         "configurator.js",
-        "webpackConfigurator.js",
-        "taskRunner.js"
+        "taskRunner.js",
+        "testEnvironment",
+        "webpackConfigurator.js"
     ],
     "homepage": "http://torben.website/webOptimizer",
     "keywords": [
@@ -56,9 +57,9 @@
         "url": "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
-        "lint": "eslint *.js || true",
-        "preinstall": "touch taskRunner.compiled.js webpackConfigurator.compiled.js configurator.compiled.js",
-        "postinstall": "arguments='--presets es2015 --source-maps inline --out-file' && babel taskRunner.js $arguments taskRunner.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel configurator.js $arguments configurator.compiled.js"
+        "lint": "eslint **/*.js || true",
+        "preinstall": "touch configurator.compiled.js taskRunner.compiled.js testEnvironment/webpackConfigurator.compiled.js webpackConfigurator.compiled.js",
+        "postinstall": "arguments='--presets es2015 --source-maps inline --out-file' && babel configurator.js $arguments configurator.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel testEnvironment/webpackConfigurator.js $arguments testEnvironment/webpackConfigurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js"
     },
     "version": "1.0.0",
     "eslintConfig": {
@@ -132,6 +133,9 @@
                 "webpackDevServer": {
                     "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js --open --inline --colors`"
                 },
+                "webpackDevServerTest": {
+                    "__execute__": "`--config ${webOptimizerPath}/testEnvironment/webpackConfigurator.compiled.js --open --inline --colors`"
+                },
                 "eslint": {
                     "__execute__": "`--config ${webOptimizerPath}/package.json --ignore-pattern '${self.path.target.substring(currentPath.length + 1)}**' '**/*.js'`"
                 }
@@ -157,7 +161,7 @@
                     {
                         "debug": false,
                         "template": {
-                            "__execute__": "`html?${JSON.stringify(self.html)}!jade-html?${JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
+                            "__execute__": "`html?${global.JSON.stringify(self.html)}!jade-html?${global.JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
                         },
                         "hash": true,
                         "filename": "index.html",
