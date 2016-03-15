@@ -42,8 +42,9 @@
     "files": [
         "configurator.js",
         "taskRunner.js",
-        "testEnvironment",
-        "webpackConfigurator.js"
+        "webpackConfigurator.js",
+        "webpackTestConfigurator.js",
+        "test.jade"
     ],
     "homepage": "http://torben.website/webOptimizer",
     "keywords": [
@@ -58,8 +59,8 @@
     },
     "scripts": {
         "lint": "eslint **/*.js || true",
-        "preinstall": "touch configurator.compiled.js taskRunner.compiled.js testEnvironment/webpackConfigurator.compiled.js webpackConfigurator.compiled.js",
-        "postinstall": "arguments='--presets es2015 --source-maps inline --out-file' && babel configurator.js $arguments configurator.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel testEnvironment/webpackConfigurator.js $arguments testEnvironment/webpackConfigurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js"
+        "preinstall": "touch configurator.compiled.js taskRunner.compiled.js webpackTestConfigurator.compiled.js webpackConfigurator.compiled.js",
+        "postinstall": "arguments='--presets es2015 --source-maps inline --out-file' && babel configurator.js $arguments configurator.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel webpackTestConfigurator.js $arguments webpackTestConfigurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js"
     },
     "version": "1.0.0",
     "eslintConfig": {
@@ -134,7 +135,7 @@
                     "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js --open --inline --colors`"
                 },
                 "webpackDevServerTest": {
-                    "__execute__": "`--config ${webOptimizerPath}/testEnvironment/webpackConfigurator.compiled.js --open --inline --colors`"
+                    "__execute__": "`--config ${webOptimizerPath}/webpackTestConfigurator.compiled.js --open --inline --colors`"
                 },
                 "eslint": {
                     "__execute__": "`--config ${webOptimizerPath}/package.json --ignore-pattern '${self.path.target.substring(currentPath.length + 1)}**' '**/*.js'`"
@@ -236,7 +237,8 @@
                         }
                     }
                 }
-            }
+            },
+            "testModules": []
         },
         "debug": {
             "debug": true,
