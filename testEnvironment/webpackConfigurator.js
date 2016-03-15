@@ -3,7 +3,7 @@
 'use strict'
 
 // region imports
-import * as configuration from './configurator.compiled'
+import * as configuration from '../configurator.compiled'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
 try {
@@ -109,27 +109,6 @@ module.exports = {
             // endregion
             // region cascadingStyleSheet
             {test: /\.css$/, loader: loader.cascadingStyleSheet}
-            // endregion
-        ],
-        postLoaders: [
-            // Optimize loaded assets.
-            // region font
-            {
-                test: /\.eot(?:\?v=\d+\.\d+\.\d+)?$/,
-                loader: loader.postprocessor.font.eot
-            },
-            {test: /\.woff2?$/, loader: loader.postprocessor.font.woff},
-            {
-                test: /\.ttf(?:\?v=\d+\.\d+\.\d+)?$/,
-                loader: loader.postprocessor.font.ttf
-            },
-            {
-                test: /\.svg(?:\?v=\d+\.\d+\.\d+)?$/,
-                loader: loader.postprocessor.font.svg
-            },
-            // endregion
-            // region image
-            {test: /\.(?:png|jpg|ico|gif)$/, loader: loader.postprocessor.image}
             // endregion
         ]
     },
