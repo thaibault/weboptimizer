@@ -12,6 +12,7 @@ import {configuration} from './package'
 import path from 'path'
 const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
+let currentConfiguration = configuration
 // region helper functions
 const isObject = object => {
     return (
@@ -34,7 +35,8 @@ const resolve = object => {
                 return resolve(new global.Function(
                     'global', 'self', 'webOptimizerPath', 'currentPath',
                     `return ${object[key]}`
-                )(global, configuration, __dirname, global.process.cwd()))
+                )(global, currentConfiguration, __dirname, global.process.cwd(
+                )))
             object[key] = resolve(object[key])
         }
     return object
@@ -43,7 +45,7 @@ const resolve = object => {
 // region loading default configuration
 // NOTE: Given node command line arguments results in "npm_config_*"
 // environment variables.
-var debug = configuration.default.debug
+var debug = currentConfiguration.default.debug
 if (typeof specificConfiguration.debug !== undefined)
     debug = specificConfiguration.debug
 if (global.process.env.npm_config_production)
@@ -51,29 +53,29 @@ if (global.process.env.npm_config_production)
 else if (global.process.env.npm_config_debug)
     debug = true
 if (debug)
-    configuration = extend(true, configuration.default, configuration.debug)
+    currentConfiguration = extend(true, currentConfiguration.default, currentConfiguration.debug)
 else
-    configuration = configuration.default
+    currentConfiguration = currentConfiguration.default
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
 
-    template: `html?${global.JSON.stringify(configuration.html)}!jade-html?` +
-        `${global.JSON.stringify(configuration.jade)}!` +
-        `${configuration.path.source}index.jade`
+    template: `html?${global.JSON.stringify(currentConfiguration.html)}!jade-html?` +
+        `${global.JSON.stringify(currentConfiguration.jade)}!` +
+        `${currentConfiguration.path.source}index.jade`
 
     NOTE: We can't use this since placing in-place would be impossible so.
-    favicon: `${configuration.path.asset.source}image/favicon.ico`,
+    favicon: `${currentConfiguration.path.asset.source}image/favicon.ico`,
     NOTE: We can't use this since the file would have to be available before
     building.
-    manifest: configuration.preprocessor.jade.includeManifest
+    manifest: currentConfiguration.preprocessor.jade.includeManifest
 */
-configuration.files.html[0].template = (() => {
+currentConfiguration.files.html[0].template = (() => {
     const string = new global.String('html?' + global.JSON.stringify(
-        configuration.html
+        currentConfiguration.html
     ) + '!jade-html?' +
-    `${global.JSON.stringify(configuration.preprocessor.jade)}!` +
-    `${configuration.path.source}index.jade`)
+    `${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!` +
+    `${currentConfiguration.path.source}index.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = () => {
         string.replace = nativeReplaceFunction
@@ -83,20 +85,20 @@ configuration.files.html[0].template = (() => {
 })
 // endregion
 // region merging and evaluating default and specific configuration
-configuration = extend(true, configuration, specificConfiguration)
-configuration.debug = debug
-for (let pathConfiguration of [configuration.path, configuration.path.asset])
+currentConfiguration = extend(true, currentConfiguration, specificConfiguration)
+currentConfiguration.debug = debug
+for (let pathConfiguration of [currentConfiguration.path, currentConfiguration.path.asset])
     for (let key of ['source', 'target'])
         if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(__dirname, '../../', resolve(
                 pathConfiguration[key])
             ) + '/'
-configuration = resolve(configuration)
-if (isFunction(configuration.files.html[0].template))
-    configuration.files.html[0].template = configuration.files.html[0]
-        .template()
+currentConfiguration = resolve(currentConfiguration)
+if (isFunction(currentConfiguration.files.html[0].template))
+    currentConfiguration.files.html[0].template =
+        currentConfiguration.files.html[0].template()
 // endregion
-export configuration
+export currentConfiguration
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

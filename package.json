@@ -54,8 +54,7 @@
     "main": "webpackConfigurator.compiled.js",
     "name": "webOptimizer",
     "repository": {
-        "type": "git",
-        "url": "https://github.com/thaibault/webOptimizer.git"
+        "type": "git", "url": "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
         "lint": "eslint **/*.js || true",
