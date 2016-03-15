@@ -4,6 +4,7 @@
 
 // region imports
 import * as configuration from './configurator.compiled'
+import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
 try {
@@ -11,8 +12,35 @@ try {
 } catch (error) {}
 const plugins = require('webpack-load-plugins')()
 plugins.HTML = plugins.html
+ // endregion
+// region helper functions
+const path.walkDirectoryRecursivelySync = (
+    path, callback=(filePath, error, stat) => {}
+) => {
+    fileSystem.readdirSync(path).forEach(fileName => {
+        const filePath = path.resolve(path, fileName)
+        const stat = fileSystem.statSync(filePath)
+        if (
+            callback(filePath, error, stat) !== false && stat &&
+            stat.isDirectory()
+        )
+            path.walkDirectoryRecursivelySync(filePath, callback)
+    })
+}
 // endregion
 // region initialisation
+const modules = []
+for (let module of configuration.testModules) {
+    let stat = fileSystem.statSync(module)
+    if (stat.isDirectory())
+        path.walkDirectoryRecursivelySync(module, (filePath) => {
+            modules.push(filePath)
+        })
+    else
+        modules.push(module)
+}
+configuration.testModules = modules
+path.walkDirectoryRecursively
 // / region loader
 const loader = {
     preprocessor: {
