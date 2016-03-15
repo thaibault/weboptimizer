@@ -8,7 +8,7 @@ import extend from 'extend'
 try {
     require('source-map-support/register')
 } catch (error) {}
-module.exports = require('./package').configuration
+export configuration = require('./package').configuration
 import path from 'path'
 const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
@@ -34,7 +34,7 @@ const resolve = object => {
                 return resolve(new global.Function(
                     'global', 'self', 'webOptimizerPath', 'currentPath',
                     `return ${object[key]}`
-                )(global, module.exports, __dirname, global.process.cwd()))
+                )(global, configuration, __dirname, global.process.cwd()))
             object[key] = resolve(object[key])
         }
     return object
@@ -43,7 +43,7 @@ const resolve = object => {
 // region loading default configuration
 // NOTE: Given node command line arguments results in "npm_config_*"
 // environment variables.
-var debug = module.exports.default.debug
+var debug = configuration.default.debug
 if (typeof specificConfiguration.debug !== undefined)
     debug = specificConfiguration.debug
 if (global.process.env.npm_config_production)
@@ -51,29 +51,29 @@ if (global.process.env.npm_config_production)
 else if (global.process.env.npm_config_debug)
     debug = true
 if (debug)
-    module.exports = extend(true, module.exports.default, module.exports.debug)
+    configuration = extend(true, configuration.default, configuration.debug)
 else
-    module.exports = module.exports.default
+    configuration = configuration.default
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
 
-    template: `html?${global.JSON.stringify(module.exports.html)}!jade-html?` +
-        `${global.JSON.stringify(module.exports.jade)}!` +
-        `${module.exports.path.source}index.jade`
+    template: `html?${global.JSON.stringify(configuration.html)}!jade-html?` +
+        `${global.JSON.stringify(configuration.jade)}!` +
+        `${configuration.path.source}index.jade`
 
     NOTE: We can't use this since placing in-place would be impossible so.
-    favicon: `${module.exports.path.asset.source}image/favicon.ico`,
+    favicon: `${configuration.path.asset.source}image/favicon.ico`,
     NOTE: We can't use this since the file would have to be available before
     building.
-    manifest: module.exports.preprocessor.jade.includeManifest
+    manifest: configuration.preprocessor.jade.includeManifest
 */
-module.exports.files.html[0].template = (() => {
+configuration.files.html[0].template = (() => {
     const string = new global.String('html?' + global.JSON.stringify(
-        module.exports.html
+        configuration.html
     ) + '!jade-html?' +
-    `${global.JSON.stringify(module.exports.preprocessor.jade)}!` +
-    `${module.exports.path.source}index.jade`)
+    `${global.JSON.stringify(configuration.preprocessor.jade)}!` +
+    `${configuration.path.source}index.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = () => {
         string.replace = nativeReplaceFunction
@@ -83,17 +83,17 @@ module.exports.files.html[0].template = (() => {
 })
 // endregion
 // region merging and evaluating default and specific configuration
-module.exports = extend(true, module.exports, specificConfiguration)
-module.exports.debug = debug
-for (let pathConfiguration of [module.exports.path, module.exports.path.asset])
+configuration = extend(true, configuration, specificConfiguration)
+configuration.debug = debug
+for (let pathConfiguration of [configuration.path, configuration.path.asset])
     for (let key of ['source', 'target'])
         if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(__dirname, '../../', resolve(
                 pathConfiguration[key])
             ) + '/'
-module.exports = resolve(module.exports)
-if (isFunction(module.exports.files.html[0].template))
-    module.exports.files.html[0].template = module.exports.files.html[0]
+configuration = resolve(configuration)
+if (isFunction(configuration.files.html[0].template))
+    configuration.files.html[0].template = configuration.files.html[0]
         .template()
 // endregion
 // region vim modline
