@@ -14,7 +14,7 @@ const plugins = require('webpack-load-plugins')()
 plugins.HTML = plugins.html
  // endregion
 // region helper functions
-const path.walkDirectoryRecursivelySync = (
+path.walkDirectoryRecursivelySync = (
     path, callback=(filePath, error, stat) => {}
 ) => {
     fileSystem.readdirSync(path).forEach(fileName => {
