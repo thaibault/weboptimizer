@@ -98,7 +98,7 @@ if (isFunction(currentConfiguration.files.html[0].template))
     currentConfiguration.files.html[0].template =
         currentConfiguration.files.html[0].template()
 // endregion
-export currentConfiguration
+export default currentConfiguration
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

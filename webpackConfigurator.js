@@ -3,7 +3,7 @@
 'use strict'
 
 // region imports
-import * as configuration from './configurator.compiled'
+import configuration from './configurator.compiled'
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
@@ -174,7 +174,7 @@ const loader = {
     }
 }
 // / endregion
-export {
+export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"
     context: path.resolve(path.join(__dirname, '/../..')),

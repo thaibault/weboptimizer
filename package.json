@@ -2,14 +2,11 @@
     "bin": {"webOptimizer": "taskRunner.compiled.js"},
     "dependencies": {
         "babel-cli": "*",
-        "babel-core": "*",
         "babel-eslint": "*",
         "babel-loader": "*",
-        "babel-plugin-transform-class-properties": "*",
-        "babel-plugin-transform-decorators-legacy": "*",
-        "babel-plugin-transform-flow-strip-types": "*",
         "babel-polyfill": "*",
         "babel-preset-es2015": "*",
+        "babel-preset-stage-0": "*",
         "coffee-loader": "*",
         "coffee-script": "*",
         "css-loader": "*",
@@ -57,6 +54,7 @@
         "type": "git", "url": "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
+        "clear": "rm *.compiled.* || true",
         "lint": "eslint **/*.js || true",
         "preinstall": "touch configurator.compiled.js taskRunner.compiled.js webpackTestConfigurator.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "arguments='--presets es2015 --source-maps inline --out-file' && babel configurator.js $arguments configurator.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel webpackTestConfigurator.js $arguments webpackTestConfigurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js"
@@ -186,7 +184,7 @@
                 "scss": {},
                 "modernJavaScript": {
                     "cacheDirectory": true,
-                    "presets": ["es2015"]
+                    "presets": ["es2015", "stage-0"]
                 }
             },
             "html": {"attrs": "img:src link:href"},

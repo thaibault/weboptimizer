@@ -60,7 +60,7 @@ const loader = {
         configuration.cascadingStyleSheet)
 }
 // / endregion
-export {
+export default {
     context: __dirname,
     debug: true,
     devtool: configuration.developmentTool,

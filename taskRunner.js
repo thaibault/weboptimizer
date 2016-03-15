@@ -3,7 +3,7 @@
 'use strict'
 
 // region imports
-import * as configuration from './configurator.compiled'
+import configuration from './configurator.compiled'
 import {exec as run} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
