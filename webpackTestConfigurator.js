@@ -4,6 +4,7 @@
 
 // region imports
 import configuration from './configurator.compiled'
+import extend from 'extend'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -71,7 +72,9 @@ export default {
     resolve: {
         root: [__dirname],
         extensions: configuration.knownExtensions,
-        alias: configuration.test.moduleAliases
+        alias: extend(
+            true, configuration.moduleAliases, configuration.test.moduleAliases
+        )
     },
     entry: configuration.test.modules,
     // endregion
