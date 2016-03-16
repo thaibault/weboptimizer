@@ -174,6 +174,8 @@ const loader = {
     }
 }
 // / endregion
+// endregion
+// region configuration
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"

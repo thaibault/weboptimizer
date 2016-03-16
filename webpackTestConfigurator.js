@@ -4,7 +4,6 @@
 
 // region imports
 import configuration from './configurator.compiled'
-import extend from 'extend'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -28,7 +27,7 @@ path.walkDirectoryRecursivelySync = (directoryPath, callback=(
 // endregion
 // region initialisation
 const modules = []
-const moduleDirectories = []
+const moduleDirectories = [configuration.path.asset.source]
 for (let module of configuration.test.modules) {
     let stat = fileSystem.statSync(module)
     if (stat.isDirectory()) {
@@ -70,11 +69,9 @@ export default {
     devserver: configuration.developmentServer,
     // region input
     resolve: {
-        root: [__dirname],
+        root: moduleDirectories,
         extensions: configuration.knownExtensions,
-        alias: extend(
-            true, configuration.moduleAliases, configuration.test.moduleAliases
-        )
+        alias: configuration.test.moduleAliases
     },
     entry: configuration.test.modules,
     // endregion
