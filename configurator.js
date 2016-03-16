@@ -60,12 +60,12 @@ else
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
 
-    template: `html?${global.JSON.stringify(currentConfiguration.html)}!jade-html?` +
-        `${global.JSON.stringify(currentConfiguration.jade)}!` +
+    template: `html?${global.JSON.stringify(currentConfiguration.html)}!` +
+        `jade-html?${global.JSON.stringify(currentConfiguration.jade)}!` +
         `${currentConfiguration.path.source}index.jade`
 
     NOTE: We can't use this since placing in-place would be impossible so.
-    favicon: `${currentConfiguration.path.asset.source}image/favicon.ico`,
+    favicon: `${currentConfiguration.path.asset.image}favicon.ico`,
     NOTE: We can't use this since the file would have to be available before
     building.
     manifest: currentConfiguration.preprocessor.jade.includeManifest

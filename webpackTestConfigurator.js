@@ -14,16 +14,13 @@ const plugins = require('webpack-load-plugins')()
 plugins.HTML = plugins.html
  // endregion
 // region helper functions
-path.walkDirectoryRecursivelySync = (
-    path, callback=(filePath, error, stat) => {}
-) => {
-    fileSystem.readdirSync(path).forEach(fileName => {
-        const filePath = path.resolve(path, fileName)
+path.walkDirectoryRecursivelySync = (directoryPath, callback=(
+    filePath, stat
+) => {}) => {
+    fileSystem.readdirSync(directoryPath).forEach(fileName => {
+        const filePath = path.resolve(directoryPath, fileName)
         const stat = fileSystem.statSync(filePath)
-        if (
-            callback(filePath, error, stat) !== false && stat &&
-            stat.isDirectory()
-        )
+        if (callback(filePath, stat) !== false && stat && stat.isDirectory())
             path.walkDirectoryRecursivelySync(filePath, callback)
     })
 }
@@ -142,10 +139,28 @@ export default {
     },
     plugins: [new plugins.HTML({
         debug: true,
-        template:
-        `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!` +
-        `jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
-        `${__dirname}index.jade`
+        /*
+            NOTE: Provides a workaround to handle a bug with changed loader
+            configurations (which we need here). Simple solution would be:
+
+            `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!` +
+            `jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
+            `${__dirname}test.jade`
+        */
+        template: (() => {
+            const string = new global.String('html?' + global.JSON.stringify(
+                currentConfiguration.html
+            ) + '!jade-html?' +
+            `${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!` +
+            `${currentConfiguration.path.source}index.jade`)
+            const nativeReplaceFunction = string.replace
+            string.replace = () => {
+                string.replace = nativeReplaceFunction
+                return string
+            }
+            return string
+        }),
+        favicon: `${currentConfiguration.path.asset.image}favicon.ico`,
     })]
 }
 // endregion
