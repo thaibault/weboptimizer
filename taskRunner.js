@@ -13,6 +13,18 @@ try {
     require('source-map-support/register')
 } catch (error) {}
 // endregion
+// region helper functions
+path.walkDirectoryRecursivelySync = (directoryPath, callback = (
+    /* filePath, stat */
+) => {}) => {
+    fileSystem.readdirSync(directoryPath).forEach(fileName => {
+        const filePath = path.resolve(directoryPath, fileName)
+        const stat = fileSystem.statSync(filePath)
+        if (callback(filePath, stat) !== false && stat && stat.isDirectory())
+            path.walkDirectoryRecursivelySync(filePath, callback)
+    })
+}
+// endregion
 // region controller
 const childProcessOptions = {cwd: path.resolve(`${__dirname}/../..`)}
 let childProcess = null
@@ -53,11 +65,27 @@ if (global.process.argv.length > 2) {
             'webpack-dev-server ' +
             `${configuration.commandLineArguments.webpackDevServerTest} ` +
             additionalArguments, childProcessOptions)
+    else if (['preinstall', 'postinstall'].indexOf(global.process.argv[
+        2
+    ]) !== -1)
+        let filePaths = []
+        path.walkDirectoryRecursivelySync(`{__dirname}/../../`, filePath => {
+            console.log(filePaths)
+            filePaths.push(filePath)
+        })
+        if (false)
+            if (global.process.argv[2] === 'preinstall')
+                childProcess = run(
+                    `touch ${filePaths.join(' ')}` + additionalArguments,
+                    childProcessOptions)
+            else if (global.process.argv[2] === 'postinstall')
+                childProcess = run(
+                    "arguments='--presets es2015 --source-maps inline --out-file' && babel index.js $arguments index.compiled.js")
 }
 if (childProcess === null) {
     console.log(
-        'Give one of "build", "clear", "lint", "server" or "test" as command' +
-        ' line argument.')
+        'Give one of "build", "clear", "lint", "server", "test", ' +
+        '"preinstall" or "postinstall" as command line argument.')
     process.exit()
 }
 // endregion
