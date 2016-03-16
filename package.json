@@ -235,7 +235,7 @@
                     }
                 }
             },
-            "testModules": []
+            "test": {"modules": ["test/"], "moduleAliases": {}}
         },
         "debug": {
             "debug": true,

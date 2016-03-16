@@ -28,7 +28,7 @@ path.walkDirectoryRecursivelySync = (directoryPath, callback=(
 // region initialisation
 const modules = []
 const moduleDirectories = []
-for (let module of configuration.testModules) {
+for (let module of configuration.test.modules) {
     let stat = fileSystem.statSync(module)
     if (stat.isDirectory()) {
         moduleDirectories.push(path.resolve(module))
@@ -40,7 +40,7 @@ for (let module of configuration.testModules) {
         modules.push(module)
     }
 }
-configuration.testModules = modules
+configuration.test.modules = modules
 // / region loader
 const loader = {
     preprocessor: {
@@ -71,12 +71,9 @@ export default {
     resolve: {
         root: [__dirname],
         extensions: configuration.knownExtensions,
-        alias: {
-            'qunit.js': 'qunitjs/qunit/qunit.js',
-            'qunit.css': 'qunitjs/qunit/qunit.css'
-        }
+        alias: configuration.test.moduleAliases
     },
-    entry: ['qunit.css', 'qunit.js'].concat(configuration.testModules),
+    entry: configuration.test.modules,
     // endregion
     // region output
     output: {
@@ -85,6 +82,7 @@ export default {
         pathinfo: false,
         hashFunction: configuration.hashAlgorithm
     },
+    externals: {'qunit.js': 'qunit'},
     // endregion
     module: {
         preLoaders: [
@@ -146,7 +144,7 @@ export default {
         ]
     },
     plugins: [new plugins.HTML({
-        debug: true,
+        debug: true, inject: 'head', minify: false, hash: true,
         /*
             NOTE: Provides a workaround to handle a bug with changed loader
             configurations (which we need here). Simple solution would be:
