@@ -83,6 +83,7 @@
     "configuration": {
         "default": {
             "debug": false,
+            "library": true,
             "path": {
                 "source": "source/",
                 "target": "build/",
@@ -249,6 +250,25 @@
             "optimizer": {
                 "uglifyJS": null,
                 "image": {"content": {"bypassOnDebug": true, "verbose": true}}
+            }
+        },
+        "library": {
+            "path": {
+                "source": "./",
+                "asset": {
+                    "source": {"__execute__": "self.path.source"},
+                    "target": {"__execute__": "self.path.target"},
+                    "cascadingStyleSheet": "./",
+                    "javaScript": "./",
+                    "coffeeScript": "./",
+                    "less": "./",
+                    "scss": "./",
+                    "sass": "./",
+                    "font": "./",
+                    "image": "./",
+                    "template": "./",
+                    "data": "./"
+                }
             }
         }
     }

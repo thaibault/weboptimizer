@@ -52,11 +52,15 @@ if (global.process.env.npm_config_production)
     debug = false
 else if (global.process.env.npm_config_debug)
     debug = true
+const libraryConfiguration = currentConfiguration.library
 if (debug)
     currentConfiguration = extend(
         true, currentConfiguration.default, currentConfiguration.debug)
 else
     currentConfiguration = currentConfiguration.default
+if (currentConfiguration.library)
+    currentConfiguration = extend(
+        true, currentConfiguration, libraryConfiguration)
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:

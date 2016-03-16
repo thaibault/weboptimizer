@@ -69,10 +69,10 @@ if (global.process.argv.length > 2) {
         2
     ]) !== -1) {
         let filePaths = []
-        path.walkDirectoryRecursivelySync(`{__dirname}/../../`, filePath => {
-            console.log(filePaths)
-            filePaths.push(filePath)
-        })
+        path.walkDirectoryRecursivelySync(
+            configuration.path.asset.javaScript, filePath => {
+                filePaths.push(filePath)
+            })
         if (false)
             if (global.process.argv[2] === 'preinstall')
                 childProcess = run(
