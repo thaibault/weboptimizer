@@ -30,63 +30,77 @@ const childProcessOptions = {cwd: path.resolve(`${__dirname}/../..`)}
 let childProcess = null
 if (global.process.argv.length > 2) {
     if (global.process.argv[2] === 'clear') {
+        // TODO check if target is root!
         fileSystem.removeDirectoryRecursivelySync(configuration.path.target, {
             glob: false})
         process.exit()
     }
     let additionalArguments = global.process.argv.splice(3).join(' ')
-    if (global.process.argv[2] === 'build')
-        childProcess = run(
-            `webpack ${configuration.commandLineArguments.webpack} ` +
-            additionalArguments, childProcessOptions, error => {
-                if (!error) {
-                    let manifestFilePath = path.join(
-                        configuration.path.target, path.basename(
-                            configuration.path.manifest, '.appcache'
-                        ) + '.html')
-                    fileSystem.access(
-                        manifestFilePath, fileSystem.F_OK, error => {
-                            if (!error)
-                                fileSystem.unlink(manifestFilePath)
-                        })
-                }
-            })
-    else if (global.process.argv[2] === 'lint')
+    if (configuration.library)
+        if (['preinstall', 'build'].indexOf(global.process.argv[2]) !== -1) {
+            let filePaths = []
+            path.walkDirectoryRecursivelySync(
+                configuration.path.asset.javaScript, filePath => {
+                    for (pathToIgnore of configuration.path.ignore)
+                        if (filePath.startsWith(path.resolve(
+                            `${__dirname}/../../`, pathToIgnore
+                        )))
+                            return
+                    console.log(filePath)
+                    filePaths.push(filePath)
+                })
+            // TODO with filePaths
+            if (false)
+                if (global.process.argv[2] === 'preinstall')
+                    childProcess = run(
+                        `touch ${filePaths.join(' ')}` + additionalArguments,
+                        childProcessOptions)
+                else if (global.process.argv[2] === 'build')
+                    childProcess = run(
+                        "arguments='--presets es2015 --source-maps inline --out-file' && babel index.js $arguments index.compiled.js")
+        }
+    else {
+        if (global.process.argv[2] === 'build')
+            childProcess = run(
+                `webpack ${configuration.commandLineArguments.webpack} ` +
+                additionalArguments, childProcessOptions, error => {
+                    if (!error) {
+                        let manifestFilePath = path.join(
+                            configuration.path.target, path.basename(
+                                configuration.path.manifest, '.appcache'
+                            ) + '.html')
+                        fileSystem.access(
+                            manifestFilePath, fileSystem.F_OK, error => {
+                                if (!error)
+                                    fileSystem.unlink(manifestFilePath)
+                            })
+                    }
+                })
+        else if (global.process.argv[2] === 'serve')
+            childProcess = run(
+                'webpack-dev-server ' +
+                `${configuration.commandLineArguments.webpackDevServer} ` +
+                additionalArguments, childProcessOptions)
+    }
+    if (global.process.argv[2] === 'lint')
         childProcess = run(
             `eslint ${configuration.commandLineArguments.eslint} ` +
-            additionalArguments, childProcessOptions)
-    else if (global.process.argv[2] === 'server')
-        childProcess = run(
-            'webpack-dev-server ' +
-            `${configuration.commandLineArguments.webpackDevServer} ` +
             additionalArguments, childProcessOptions)
     else if (global.process.argv[2] === 'test')
         childProcess = run(
             'webpack-dev-server ' +
             `${configuration.commandLineArguments.webpackDevServerTest} ` +
             additionalArguments, childProcessOptions)
-    else if (['preinstall', 'postinstall'].indexOf(global.process.argv[
-        2
-    ]) !== -1) {
-        let filePaths = []
-        path.walkDirectoryRecursivelySync(
-            configuration.path.asset.javaScript, filePath => {
-                filePaths.push(filePath)
-            })
-        if (false)
-            if (global.process.argv[2] === 'preinstall')
-                childProcess = run(
-                    `touch ${filePaths.join(' ')}` + additionalArguments,
-                    childProcessOptions)
-            else if (global.process.argv[2] === 'postinstall')
-                childProcess = run(
-                    "arguments='--presets es2015 --source-maps inline --out-file' && babel index.js $arguments index.compiled.js")
-    }
 }
 if (childProcess === null) {
-    console.log(
-        'Give one of "build", "clear", "lint", "server", "test", ' +
-        '"preinstall" or "postinstall" as command line argument.')
+    if (configuration.library)
+        console.log(
+            'Give one of "build", "clear", "lint", "serve", "test" or ' +
+            '"preinstall" as command line argument.\n')
+    else
+        console.log(
+            'Give one of "build", "clear", "lint", "test" or "preinstall" as' +
+            ' command line argument.\n')
     process.exit()
 }
 // endregion

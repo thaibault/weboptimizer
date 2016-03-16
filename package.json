@@ -101,7 +101,8 @@
                     "template": "template/",
                     "data": "data/"
                 },
-                "manifest": "manifest.appcache"
+                "manifest": "manifest.appcache",
+                "ignore": ["node_modules", ".git"]
             },
             "hashAlgorithm": "md5",
             "maximumInPlaceFileLimitInByte": 262144,
