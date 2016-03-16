@@ -39,19 +39,21 @@ if (global.process.argv.length > 2) {
     if (configuration.library)
         if (['preinstall', 'build'].indexOf(global.process.argv[2]) !== -1) {
             let filePaths = []
-            path.walkDirectoryRecursivelySync(
-                configuration.path.asset.javaScript, filePath => {
-                    if (path.extname(filePath).substring(
-                        1
-                    ) === configurator.build.extension) {
-                        for (let pathToIgnore of configuration.path.ignore)
-                            if (filePath.startsWith(path.resolve(
-                                `${__dirname}/../../`, pathToIgnore
-                            )))
-                                return
-                        filePaths.push(filePath)
-                    }
-                })
+            path.walkDirectoryRecursivelySync(path.join(
+                configuration.path.asset.source,
+                configuration.path.asset.javaScript
+            ), (filePath, stat) => {
+                if (stat.isFile() && path.extname(filePath).substring(
+                    1
+                ) === configuration.build.extension)
+                    for (let pathToIgnore of configuration.path.ignore) {
+                        if (filePath.startsWith(path.resolve(
+                            `${__dirname}/../../`, pathToIgnore
+                        )))
+                            return false
+                    filePaths.push(filePath)
+                }
+            })
             for (let type of ['preinstall', 'build'])
                 if (global.process.argv[2] === type)
                     for (let filePath of filePaths)

@@ -53,10 +53,11 @@
         "type": "git", "url": "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
+        "build": "arguments='--presets es2015 --source-maps inline --out-file' && babel configurator.js $arguments configurator.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel webpackTestConfigurator.js $arguments webpackTestConfigurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js",
         "clear": "rm *.compiled.* || true",
         "lint": "eslint '**/*.js' || true",
         "preinstall": "touch configurator.compiled.js taskRunner.compiled.js webpackTestConfigurator.compiled.js webpackConfigurator.compiled.js",
-        "postinstall": "arguments='--presets es2015 --source-maps inline --out-file' && babel configurator.js $arguments configurator.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel webpackTestConfigurator.js $arguments webpackTestConfigurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js"
+        "postinstall": "npm run build"
     },
     "version": "1.0.0",
     "eslintConfig": {
