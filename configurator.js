@@ -92,7 +92,7 @@ currentConfiguration.files.html[0].template = (() => {
     `${global.JSON.stringify({pretty: true, debug: true})}!${__dirname}/` +
     'test.jade'
 */
-currentConfiguration.test.template: (() => {
+currentConfiguration.test.template = (() => {
     const string = new global.String('html?' + global.JSON.stringify({
         attrs: 'img:src link:href'
     }) + `!jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
