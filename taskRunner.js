@@ -41,7 +41,7 @@ if (global.process.argv.length > 2) {
             let filePaths = []
             path.walkDirectoryRecursivelySync(
                 configuration.path.asset.javaScript, filePath => {
-                    for (pathToIgnore of configuration.path.ignore)
+                    for (let pathToIgnore of configuration.path.ignore)
                         if (filePath.startsWith(path.resolve(
                             `${__dirname}/../../`, pathToIgnore
                         )))
