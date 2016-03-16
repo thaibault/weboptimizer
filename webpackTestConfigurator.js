@@ -82,7 +82,6 @@ export default {
         pathinfo: false,
         hashFunction: configuration.hashAlgorithm
     },
-    externals: {'qunit.js': 'qunit'},
     // endregion
     module: {
         preLoaders: [
