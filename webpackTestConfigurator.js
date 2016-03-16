@@ -152,7 +152,7 @@ export default {
     },
     plugins: [new plugins.HTML({
         debug: true, inject: 'head', minify: false, hash: true, favicon,
-        configuration.test.template
+        template: configuration.test.template
     })]
 }
 // endregion
