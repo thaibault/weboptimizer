@@ -26,46 +26,56 @@ path.walkDirectoryRecursivelySync = (directoryPath, callback = (
 }
 // endregion
 // region controller
-const childProcessOptions = {cwd: path.resolve(`${__dirname}/../..`)}
+const childProcessOptions = {cwd: path.resolve(__dirname, '../..')}
 let childProcess = null
 if (global.process.argv.length > 2) {
     if (global.process.argv[2] === 'clear') {
-        // TODO check if target is root!
-        fileSystem.removeDirectoryRecursivelySync(configuration.path.target, {
-            glob: false})
-        process.exit()
+        if (path.resolve(configuration.path.target) === path.resolve(
+            __dirname, '../../'
+        )) {
+            console.error(
+                'Automatic clearing is only possible if target directory ' +
+                "isn't equal to the projects root.")
+            process.exit(1)
+        } else {
+            fileSystem.removeDirectoryRecursivelySync(
+                configuration.path.target, {glob: false})
+            process.exit()
+        }
     }
     let additionalArguments = global.process.argv.splice(3).join(' ')
     if (configuration.library)
-        if (['preinstall', 'build'].indexOf(global.process.argv[2]) !== -1) {
-            let filePaths = []
-            path.walkDirectoryRecursivelySync(path.join(
-                configuration.path.asset.source,
-                configuration.path.asset.javaScript
-            ), (filePath, stat) => {
-                if (stat.isFile() && path.extname(filePath).substring(
-                    1
-                ) === configuration.build.extension)
-                    for (let pathToIgnore of configuration.path.ignore) {
-                        if (filePath.startsWith(path.resolve(
-                            `${__dirname}/../../`, pathToIgnore
-                        )))
-                            return false
-                    filePaths.push(filePath)
-                }
-            })
-            for (let type of ['preinstall', 'build'])
-                if (global.process.argv[2] === type)
-                    for (let filePath of filePaths)
-                        childProcess = run(new global.Function(
-                            'global', 'self', 'webOptimizerPath',
-                            'currentPath', 'path', 'additionalArguments',
-                            'filePath',
-                            `return \`${configuration.build[type]}\``
-                        )(global, configuration, __dirname, global.process.cwd(
-                        ), path, additionalArguments, filePath),
-                        childProcessOptions)
-        }
+        if (['preinstall', 'build'].indexOf(global.process.argv[2]) !== -1)
+            for (let extension in configuration.build) {
+                let buildConfiguration = extend(
+                    true, {}, configuration.build.default,
+                    configuration.build[extension])
+                let filePaths = []
+                path.walkDirectoryRecursivelySync(path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.javaScript
+                ), (filePath, stat) => {
+                    if (stat.isFile() && path.extname(filePath).substring(
+                        1
+                    ) === extension) {
+                        for (let pathToIgnore of configuration.path.ignore)
+                            if (filePath.startsWith(path.resolve(
+                                __dirname, '../../', pathToIgnore
+                            )))
+                                return false
+                        filePaths.push(filePath)
+                    }
+                })
+                for (let filePath of filePaths)
+                    childProcess = run(new global.Function(
+                        'global', 'self', 'webOptimizerPath',
+                        'currentPath', 'path', 'additionalArguments',
+                        'filePath', 'return `' +
+                        `${buildConfiguration[global.process.argv[2]]}\``
+                    )(global, configuration, __dirname, global.process.cwd(
+                    ), path, additionalArguments, filePath),
+                    childProcessOptions)
+            }
     else {
         if (global.process.argv[2] === 'build')
             childProcess = run(

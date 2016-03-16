@@ -239,9 +239,15 @@
             },
             "test": {"modules": ["test/"], "moduleAliases": {}},
             "build": {
-                "extension": "js",
-                "preinstall": "touch ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.${self.build.extension}",
-                "build": "babel ${filePath} --presets es2015 --source-maps inline --out-file ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.${self.build.extension}"
+                "default": {
+                    "preinstall": "touch ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.${self.build.extension}"
+                },
+                "js": {
+                    "build": "babel ${filePath} --presets es2015 --source-maps inline --out-file ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.${self.build.extension}"
+                },
+                "coffee": {
+                    "build": "coffee --compile --print ${filePath} >${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.js"
+                }
             }
         },
         "debug": {
