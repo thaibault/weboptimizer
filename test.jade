@@ -12,7 +12,7 @@ html
         div(id='qunit-fixture')
         script(type='text/javascript').
             if ($.Tools().stringGetURLVariable('noglobals') === undefined)
-                if (document.URL.indexOf('?') is -1)
+                if (document.URL.indexOf('?') === -1)
                     window.location = document.URL + '?noglobals=true'
                 else
                     window.location = document.URL + '&noglobals=true'
