@@ -27,17 +27,20 @@ path.walkDirectoryRecursivelySync = (directoryPath, callback=(
 // endregion
 // region initialisation
 const modules = []
+const moduleDirectories = []
 for (let module of configuration.testModules) {
     let stat = fileSystem.statSync(module)
-    if (stat.isDirectory())
+    if (stat.isDirectory()) {
+        moduleDirectories.push(path.resolve(module))
         path.walkDirectoryRecursivelySync(module, (filePath) => {
             modules.push(filePath)
         })
-    else
+    } else {
+        moduleDirectories.push(path.dirname(path.resolve(module)))
         modules.push(module)
+    }
 }
 configuration.testModules = modules
-path.walkDirectoryRecursively
 // / region loader
 const loader = {
     preprocessor: {
@@ -57,6 +60,8 @@ const loader = {
         configuration.cascadingStyleSheet)
 }
 // / endregion
+// endregion
+// region configuration
 export default {
     context: __dirname,
     debug: true,
@@ -88,23 +93,26 @@ export default {
             {
                 test: /\.js$/,
                 loader: loader.preprocessor.babel,
-                include: path.join(
+                include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript)
+                ].concat(moduleDirectories)
             },
             {
                 test: /\.coffee$/,
                 loader: loader.preprocessor.coffee,
-                include: path.join(
+                include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript)
+                ].concat(moduleDirectories)
             },
             {
                 test: /\.(?:coffee\.md|litcoffee)$/,
                 loader: loader.preprocessor.literateCoffee,
-                include: path.join(
+                include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript)
+                ].concat(moduleDirectories)
             },
             // endregion
             // region html
@@ -145,22 +153,22 @@ export default {
 
             `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!` +
             `jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
-            `${__dirname}test.jade`
+            `${__dirname}/test.jade`
         */
         template: (() => {
             const string = new global.String('html?' + global.JSON.stringify({
                 attrs: 'img:src link:href'
             }) + '!jade-html?' +
             `${global.JSON.stringify({pretty: true, debug: true})}!` +
-            `${__dirname}test.jade`)
+            `${__dirname}/test.jade`)
             const nativeReplaceFunction = string.replace
             string.replace = () => {
                 string.replace = nativeReplaceFunction
                 return string
             }
             return string
-        }),
-        favicon: `${currentConfiguration.path.asset.image}favicon.ico`
+        })(),
+        favicon: `${configuration.path.asset.source}${configuration.path.asset.image}favicon.ico`
     })]
 }
 // endregion
