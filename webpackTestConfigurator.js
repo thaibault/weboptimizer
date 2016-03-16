@@ -148,11 +148,11 @@ export default {
             `${__dirname}test.jade`
         */
         template: (() => {
-            const string = new global.String('html?' + global.JSON.stringify(
-                currentConfiguration.html
-            ) + '!jade-html?' +
-            `${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!` +
-            `${currentConfiguration.path.source}index.jade`)
+            const string = new global.String('html?' + global.JSON.stringify({
+                attrs: 'img:src link:href'
+            }) + '!jade-html?' +
+            `${global.JSON.stringify({pretty: true, debug: true})}!` +
+            `${__dirname}test.jade`)
             const nativeReplaceFunction = string.replace
             string.replace = () => {
                 string.replace = nativeReplaceFunction
@@ -160,7 +160,7 @@ export default {
             }
             return string
         }),
-        favicon: `${currentConfiguration.path.asset.image}favicon.ico`,
+        favicon: `${currentConfiguration.path.asset.image}favicon.ico`
     })]
 }
 // endregion
