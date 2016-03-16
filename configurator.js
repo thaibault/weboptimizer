@@ -53,7 +53,8 @@ if (global.process.env.npm_config_production)
 else if (global.process.env.npm_config_debug)
     debug = true
 if (debug)
-    currentConfiguration = extend(true, currentConfiguration.default, currentConfiguration.debug)
+    currentConfiguration = extend(
+        true, currentConfiguration.default, currentConfiguration.debug)
 else
     currentConfiguration = currentConfiguration.default
 /*
@@ -87,7 +88,9 @@ currentConfiguration.files.html[0].template = (() => {
 // region merging and evaluating default and specific configuration
 currentConfiguration = extend(true, currentConfiguration, specificConfiguration)
 currentConfiguration.debug = debug
-for (let pathConfiguration of [currentConfiguration.path, currentConfiguration.path.asset])
+for (let pathConfiguration of [
+    currentConfiguration.path, currentConfiguration.path.asset
+])
     for (let key of ['source', 'target'])
         if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(__dirname, '../../', resolve(

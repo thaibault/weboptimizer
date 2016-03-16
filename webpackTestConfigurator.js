@@ -14,8 +14,8 @@ const plugins = require('webpack-load-plugins')()
 plugins.HTML = plugins.html
  // endregion
 // region helper functions
-path.walkDirectoryRecursivelySync = (directoryPath, callback=(
-    filePath, stat
+path.walkDirectoryRecursivelySync = (directoryPath, callback = (
+    /* filePath, stat */
 ) => {}) => {
     fileSystem.readdirSync(directoryPath).forEach(fileName => {
         const filePath = path.resolve(directoryPath, fileName)
@@ -32,7 +32,7 @@ for (let module of configuration.test.modules) {
     let stat = fileSystem.statSync(module)
     if (stat.isDirectory()) {
         moduleDirectories.push(path.resolve(module))
-        path.walkDirectoryRecursivelySync(module, (filePath) => {
+        path.walkDirectoryRecursivelySync(module, filePath => {
             modules.push(filePath)
         })
     } else {
@@ -41,6 +41,14 @@ for (let module of configuration.test.modules) {
     }
 }
 configuration.test.modules = modules
+let favicon = configuration.path.asset.source +
+    `${configuration.path.asset.image}favicon.ico`
+try {
+    if (!fileSystem.statSync(favicon).isFile())
+        favicon = null
+} catch (error) {
+    favicon = null
+}
 // / region loader
 const loader = {
     preprocessor: {
@@ -165,7 +173,7 @@ export default {
             }
             return string
         })(),
-        favicon: `${configuration.path.asset.source}${configuration.path.asset.image}favicon.ico`
+        favicon
     })]
 }
 // endregion
