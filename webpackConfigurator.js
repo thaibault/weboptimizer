@@ -117,7 +117,8 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
         compiler.plugin('after-emit', (compilation, callback) => {
             if (configuration.inPlace.cascadingStyleSheet)
                 fileSystem.removeDirectoryRecursivelySync(path.join(
-                    configuration.path.asset.target, 'cascadingStyleSheet'
+                    configuration.path.asset.target,
+                    configuration.path.asset.cascadingStyleSheet
                 ), {glob: false})
             if (configuration.inPlace.javaScript) {
                 const assetFilePath = path.join(

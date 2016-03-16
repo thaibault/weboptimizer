@@ -236,7 +236,12 @@
                     }
                 }
             },
-            "test": {"modules": ["test/"], "moduleAliases": {}}
+            "test": {"modules": ["test/"], "moduleAliases": {}},
+            "build": {
+                "extension": "js",
+                "preinstall": "touch ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.${self.build.extension}",
+                "build": "babel ${filePath} --presets es2015 --source-maps inline --out-file ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.${self.build.extension}"
+            }
         },
         "debug": {
             "debug": true,
@@ -256,9 +261,8 @@
         "library": {
             "path": {
                 "source": "./",
+                "target": "./",
                 "asset": {
-                    "source": {"__execute__": "self.path.source"},
-                    "target": {"__execute__": "self.path.target"},
                     "cascadingStyleSheet": "./",
                     "javaScript": "./",
                     "coffeeScript": "./",

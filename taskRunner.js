@@ -41,23 +41,28 @@ if (global.process.argv.length > 2) {
             let filePaths = []
             path.walkDirectoryRecursivelySync(
                 configuration.path.asset.javaScript, filePath => {
-                    for (let pathToIgnore of configuration.path.ignore)
-                        if (filePath.startsWith(path.resolve(
-                            `${__dirname}/../../`, pathToIgnore
-                        )))
-                            return
-                    console.log(filePath)
-                    filePaths.push(filePath)
+                    if (path.extname(filePath).substring(
+                        1
+                    ) === configurator.build.extension) {
+                        for (let pathToIgnore of configuration.path.ignore)
+                            if (filePath.startsWith(path.resolve(
+                                `${__dirname}/../../`, pathToIgnore
+                            )))
+                                return
+                        filePaths.push(filePath)
+                    }
                 })
-            // TODO with filePaths
-            if (false)
-                if (global.process.argv[2] === 'preinstall')
-                    childProcess = run(
-                        `touch ${filePaths.join(' ')}` + additionalArguments,
+            for (let type of ['preinstall', 'build'])
+                if (global.process.argv[2] === type)
+                    for (let filePath of filePaths)
+                        childProcess = run(new global.Function(
+                            'global', 'self', 'webOptimizerPath',
+                            'currentPath', 'path', 'additionalArguments',
+                            'filePath',
+                            `return \`${configuration.build[type]}\``
+                        )(global, configuration, __dirname, global.process.cwd(
+                        ), path, additionalArguments, filePath),
                         childProcessOptions)
-                else if (global.process.argv[2] === 'build')
-                    childProcess = run(
-                        "arguments='--presets es2015 --source-maps inline --out-file' && babel index.js $arguments index.compiled.js")
         }
     else {
         if (global.process.argv[2] === 'build')
@@ -95,12 +100,12 @@ if (global.process.argv.length > 2) {
 if (childProcess === null) {
     if (configuration.library)
         console.log(
-            'Give one of "build", "clear", "lint", "serve", "test" or ' +
-            '"preinstall" as command line argument.\n')
-    else
-        console.log(
             'Give one of "build", "clear", "lint", "test" or "preinstall" as' +
             ' command line argument.\n')
+    else
+        console.log(
+            'Give one of "build", "clear", "lint", "serve", "test" or ' +
+            '"preinstall" as command line argument.\n')
     process.exit()
 }
 // endregion
