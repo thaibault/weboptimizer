@@ -151,7 +151,7 @@ export default {
         ]
     },
     plugins: [new plugins.HTML({
-        debug: true, inject: 'head', minify: false, hash: true, favicon,
+        debug: true, minify: false, hash: true, favicon,
         template: configuration.test.template
     })]
 }
