@@ -67,7 +67,7 @@ if (global.process.argv.length > 2) {
             additionalArguments, childProcessOptions)
     else if (['preinstall', 'postinstall'].indexOf(global.process.argv[
         2
-    ]) !== -1)
+    ]) !== -1) {
         let filePaths = []
         path.walkDirectoryRecursivelySync(`{__dirname}/../../`, filePath => {
             console.log(filePaths)
@@ -81,6 +81,7 @@ if (global.process.argv.length > 2) {
             else if (global.process.argv[2] === 'postinstall')
                 childProcess = run(
                     "arguments='--presets es2015 --source-maps inline --out-file' && babel index.js $arguments index.compiled.js")
+    }
 }
 if (childProcess === null) {
     console.log(
