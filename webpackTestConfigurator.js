@@ -151,29 +151,8 @@ export default {
         ]
     },
     plugins: [new plugins.HTML({
-        debug: true, inject: 'head', minify: false, hash: true,
-        /*
-            NOTE: Provides a workaround to handle a bug with changed loader
-            configurations (which we need here). Simple solution would be:
-
-            `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!` +
-            `jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
-            `${__dirname}/test.jade`
-        */
-        template: (() => {
-            const string = new global.String('html?' + global.JSON.stringify({
-                attrs: 'img:src link:href'
-            }) + '!jade-html?' +
-            `${global.JSON.stringify({pretty: true, debug: true})}!` +
-            `${__dirname}/test.jade`)
-            const nativeReplaceFunction = string.replace
-            string.replace = () => {
-                string.replace = nativeReplaceFunction
-                return string
-            }
-            return string
-        })(),
-        favicon
+        debug: true, inject: 'head', minify: false, hash: true, favicon,
+        configuration.test.template
     })]
 }
 // endregion

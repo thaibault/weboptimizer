@@ -84,6 +84,26 @@ currentConfiguration.files.html[0].template = (() => {
     }
     return string
 })
+/*
+    NOTE: Provides a workaround to handle a bug with changed loader
+    configurations (which we need here). Simple solution would be:
+
+    `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!jade-html?` +
+    `${global.JSON.stringify({pretty: true, debug: true})}!${__dirname}/` +
+    'test.jade'
+*/
+currentConfiguration.test.template: (() => {
+    const string = new global.String('html?' + global.JSON.stringify({
+        attrs: 'img:src link:href'
+    }) + `!jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
+    `${__dirname}/test.jade`)
+    const nativeReplaceFunction = string.replace
+    string.replace = () => {
+        string.replace = nativeReplaceFunction
+        return string
+    }
+    return string
+})
 // endregion
 // region merging and evaluating default and specific configuration
 currentConfiguration = extend(true, currentConfiguration, specificConfiguration)
@@ -100,6 +120,8 @@ currentConfiguration = resolve(currentConfiguration)
 if (isFunction(currentConfiguration.files.html[0].template))
     currentConfiguration.files.html[0].template =
         currentConfiguration.files.html[0].template()
+if (isFunction(currentConfiguration.test.template))
+    currentConfiguration.test.template = currentConfiguration.test.template()
 // endregion
 export default currentConfiguration
 // region vim modline
