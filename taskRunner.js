@@ -94,7 +94,7 @@ if (global.process.argv.length > 2) {
                     childProcessOptions)
         }
     } else
-        if (global.process.argv[2] === 'build') {
+        if (global.process.argv[2] === 'build')
             childProcess = run(
                 `${configuration.commandLine.build} ${additionalArguments}`,
                 childProcessOptions, error => {
@@ -110,15 +110,15 @@ if (global.process.argv.length > 2) {
                             })
                     }
                 })
-        } else if (global.process.argv[2] === 'serve')
+        else if (global.process.argv[2] === 'serve')
             childProcess = run(
                 `${configuration.commandLine.serve} ${additionalArguments}`,
                 childProcessOptions)
-    if (global.process.argv[2] === 'lint') {
+    if (global.process.argv[2] === 'lint')
         childProcess = run(
             `${configuration.commandLine.lint} ${additionalArguments}`,
             childProcessOptions)
-    } else if (global.process.argv[2] === 'test')
+    else if (global.process.argv[2] === 'test')
         childProcess = run(
             `${configuration.commandLine.test} ${additionalArguments}`,
             childProcessOptions)
