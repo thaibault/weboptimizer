@@ -254,7 +254,7 @@
             "debug": true,
             "developmentTool": "#source-map",
             "offline": null,
-            "files": {"html": [{"debug": true, "template": true}]},
+            "files": {"html": [{"debug": true}]},
             "preprocessor": {"jade": {
                 "pretty": true,
                 "debug": true,
