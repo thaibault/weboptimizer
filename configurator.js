@@ -15,14 +15,17 @@ const specificConfiguration = require('../../package').webOptimizer || {}
 let currentConfiguration = configuration
 // region helper functions
 const isObject = object => {
+    // Checks if given entity is a object.
     return (
         object !== null && typeof object === 'object' &&
         global.Object.getPrototypeOf(object) === global.Object.prototype)
 }
 const isFunction = object => {
+    // Checks if given entity is a function.
     return object && {}.toString.call(object) === '[object Function]'
 }
 const resolve = object => {
+    // Processes all dynamically linked values in given object.
     if (global.Array.isArray(object)) {
         let index = 0
         for (let value of object) {
@@ -99,6 +102,8 @@ currentConfiguration.default.test.template = (() => {
     }
     return string
 })
+// Merges final default configuration object depending on given target
+// environment.
 const libraryConfiguration = currentConfiguration.library
 if (debug)
     currentConfiguration = extend(
@@ -114,6 +119,7 @@ if (
         true, currentConfiguration, libraryConfiguration)
 // endregion
 // region merging and evaluating default and specific configuration
+// Merges project specific configurations with default ones.
 currentConfiguration = extend(
     true, currentConfiguration, specificConfiguration)
 currentConfiguration.debug = debug
