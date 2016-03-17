@@ -96,8 +96,8 @@ if (global.process.argv.length > 2) {
     else {
         if (global.process.argv[2] === 'build')
             childProcess = run(
-                `webpack ${configuration.commandLineArguments.webpack} ` +
-                additionalArguments, childProcessOptions, error => {
+                `${configuration.commandLine.build} ${additionalArguments}`,
+                childProcessOptions, error => {
                     if (!error) {
                         let manifestFilePath = path.join(
                             configuration.path.target, path.basename(
@@ -112,19 +112,17 @@ if (global.process.argv.length > 2) {
                 })
         else if (global.process.argv[2] === 'serve')
             childProcess = run(
-                'webpack-dev-server ' +
-                `${configuration.commandLineArguments.webpackDevServer} ` +
-                additionalArguments, childProcessOptions)
+                `${configuration.commandLine.serve} ${additionalArguments}`,
+                childProcessOptions)
     }
     if (global.process.argv[2] === 'lint')
         childProcess = run(
-            `eslint ${configuration.commandLineArguments.eslint} ` +
-            additionalArguments, childProcessOptions)
+            `${configuration.commandLine.lint} ${additionalArguments}`,
+            childProcessOptions)
     else if (global.process.argv[2] === 'test')
         childProcess = run(
-            'webpack-dev-server ' +
-            `${configuration.commandLineArguments.webpackDevServerTest} ` +
-            additionalArguments, childProcessOptions)
+            `${configuration.commandLine.test} ${additionalArguments}`,
+            childProcessOptions)
 }
 if (childProcess === null) {
     if (configuration.library)

@@ -126,18 +126,18 @@
                 "cascadingStyleSheet": true,
                 "javaScript": false
             },
-            "commandLineArguments": {
-                "webpack": {
-                    "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js --progress --display-chunks --display-reasons --display-error-details`"
+            "commandLine": {
+                "build": {
+                    "__execute__": "`webpack --config ${webOptimizerPath}/webpackConfigurator.compiled.js --progress --display-chunks --display-reasons --display-error-details`"
                 },
-                "webpackDevServer": {
-                    "__execute__": "`--config ${webOptimizerPath}/webpackConfigurator.compiled.js --open --inline --colors`"
+                "serve": {
+                    "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackConfigurator.compiled.js --open --inline --colors`"
                 },
-                "webpackDevServerTest": {
-                    "__execute__": "`--config ${webOptimizerPath}/webpackTestConfigurator.compiled.js --open --inline --colors`"
+                "test": {
+                    "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackTestConfigurator.compiled.js --open --inline --colors`"
                 },
-                "eslint": {
-                    "__execute__": "`--config ${webOptimizerPath}/package.json --ignore-pattern '${self.path.target.substring(currentPath.length + 1)}**' '**/*.js'`"
+                "lint": {
+                    "__execute__": "`eslint --config ${webOptimizerPath}/package.json --ignore-pattern '${self.path.target.substring(currentPath.length + 1)}**' '**/*.js'`"
                 }
             },
             "developmentServer": {
