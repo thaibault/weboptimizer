@@ -5,6 +5,7 @@
 // region imports
 import configuration from './configurator.compiled'
 import {exec as run} from 'child_process'
+import extend from 'extend'
 import * as fileSystem from 'fs'
 import path from 'path'
 fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
@@ -32,25 +33,34 @@ if (global.process.argv.length > 2) {
     if (global.process.argv[2] === 'clear') {
         if (path.resolve(configuration.path.target) === path.resolve(
             __dirname, '../../'
-        )) {
-            console.error(
-                'Automatic clearing is only possible if target directory ' +
-                "isn't equal to the projects root.")
-            process.exit(1)
-        } else {
+        ))
+            path.walkDirectoryRecursivelySync(configuration.path.target, (
+                filePath, stat
+            ) => {
+                for (let pathToIgnore of configuration.path.ignore)
+                    if (filePath.startsWith(path.resolve(
+                        __dirname, '../../', pathToIgnore
+                    )))
+                        return false
+                if (stat.isFile() && path.extname(path.basename(
+                    filePath, path.extname(filePath)
+                )) === '.compiled')
+                    fileSystem.unlink(filePath)
+            })
+        else
             fileSystem.removeDirectoryRecursivelySync(
                 configuration.path.target, {glob: false})
-            process.exit()
-        }
+        process.exit()
     }
     let additionalArguments = global.process.argv.splice(3).join(' ')
     if (configuration.library)
-        if (['preinstall', 'build'].indexOf(global.process.argv[2]) !== -1)
+        if (['preinstall', 'build'].indexOf(global.process.argv[2]) !== -1) {
+            let buildConfigurations = []
+            let index = 0
             for (let extension in configuration.build) {
-                let buildConfiguration = extend(
-                    true, {}, configuration.build.default,
-                    configuration.build[extension])
-                let filePaths = []
+                buildConfigurations.push(extend(
+                    true, {filePaths: []}, configuration.build.default,
+                    configuration.build[extension]))
                 path.walkDirectoryRecursivelySync(path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
@@ -63,10 +73,17 @@ if (global.process.argv.length > 2) {
                                 __dirname, '../../', pathToIgnore
                             )))
                                 return false
-                        filePaths.push(filePath)
+                        buildConfigurations[index].filePaths.push(filePath)
                     }
                 })
-                for (let filePath of filePaths)
+                index += 1
+            }
+            /*
+                NOTE: We have to loop twice since generated files from further
+                loops shouldn't be taken into account in later loops.
+            */
+            for (let buildConfiguration of buildConfigurations)
+                for (let filePath of buildConfiguration.filePaths)
                     childProcess = run(new global.Function(
                         'global', 'self', 'webOptimizerPath',
                         'currentPath', 'path', 'additionalArguments',
@@ -75,7 +92,7 @@ if (global.process.argv.length > 2) {
                     )(global, configuration, __dirname, global.process.cwd(
                     ), path, additionalArguments, filePath),
                     childProcessOptions)
-            }
+        }
     else {
         if (global.process.argv[2] === 'build')
             childProcess = run(
