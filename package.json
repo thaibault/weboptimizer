@@ -240,13 +240,16 @@
             "test": {"modules": ["test/"], "moduleAliases": {}},
             "build": {
                 "default": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.${self.build.extension}"
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.scriptType]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js",
+                    "buildFileNamePattern": "^.+\\.compiled\\.[^.]+$"
                 },
-                "js": {
-                    "build": "babel ${filePath} --presets es2015 --source-maps inline --out-file ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.${self.build.extension}"
+                "javaScript": {
+                    "extension": "js",
+                    "build": "babel ${filePath} --presets es2015 --source-maps inline --out-file ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.extension}"
                 },
-                "coffee": {
-                    "build": "coffee --compile --print ${filePath} >${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${self.build.extension}`)}.compiled.js"
+                "coffeeScript": {
+                    "extension": "coffee",
+                    "build": "coffee --compile --print ${filePath} >${self.path.target}${self.path.asset.coffeeScript}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js"
                 }
             }
         },

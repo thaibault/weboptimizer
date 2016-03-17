@@ -15,9 +15,30 @@ try {
 } catch (error) {}
 // endregion
 // region helper functions
+const handleChildProcess = childProcess => {
+    /*
+        Forwards given child process communication channels to corresponding
+        current process communication channels.
+    */
+    childProcess.stdout.on('data', data => {
+        process.stdout.write(data)
+    })
+    childProcess.stderr.on('data', data => {
+        process.stderr.write(data)
+    })
+    childProcess.on('close', returnCode => {
+        if (returnCode !== 0)
+            console.error(`Task exited with error code ${returnCode}`)
+    })
+}
 path.walkDirectoryRecursivelySync = (directoryPath, callback = (
     /* filePath, stat */
 ) => {}) => {
+    /*
+        Iterates recursively through given directory structure and calls given
+        callback for each found entity. If "false" is returned and current
+        file is a directory deeper leaves aren't explored.
+    */
     fileSystem.readdirSync(directoryPath).forEach(fileName => {
         const filePath = path.resolve(directoryPath, fileName)
         const stat = fileSystem.statSync(filePath)
@@ -30,7 +51,15 @@ path.walkDirectoryRecursivelySync = (directoryPath, callback = (
 const childProcessOptions = {cwd: path.resolve(__dirname, '../..')}
 let childProcess = null
 if (global.process.argv.length > 2) {
+    // Apply default file level build configurations to all file type specific
+    // ones.
+    global.Object.keys(configuration.build).forEach(scriptType => {
+        configuration.build[scriptType] = extend(
+            true, {scriptType}, configuration.build.default,
+            configuration.build[scriptType])
+    })
     if (global.process.argv[2] === 'clear') {
+        // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
             __dirname, '../../'
         ))
@@ -42,10 +71,12 @@ if (global.process.argv.length > 2) {
                         __dirname, '../../', pathToIgnore
                     )))
                         return false
-                if (stat.isFile() && path.extname(path.basename(
-                    filePath, path.extname(filePath)
-                )) === '.compiled')
-                    fileSystem.unlink(filePath)
+                global.Object.keys(configuration.build).forEach(scriptType => {
+                    if (stat.isFile() && (new global.RegExp(
+                        configuration.build[scriptType].buildFileNamePattern
+                    )).test(filePath))
+                        fileSystem.unlink(filePath)
+                })
             })
         else
             fileSystem.removeDirectoryRecursivelySync(
@@ -54,20 +85,29 @@ if (global.process.argv.length > 2) {
     }
     let additionalArguments = global.process.argv.splice(3).join(' ')
     if (configuration.library) {
+        // Compile file specific since bundling is only needed in the final
+        // full blown project (if configuration evaluates to "false").
         if (['preinstall', 'build'].indexOf(global.process.argv[2]) !== -1) {
+            // Determines all files which should be preprocessed after using
+            // them in production.
             let buildConfigurations = []
             let index = 0
-            global.Object.keys(configuration.build).forEach(extension => {
+            global.Object.keys(configuration.build).forEach(scriptType => {
                 buildConfigurations.push(extend(
-                    true, {filePaths: []}, configuration.build.default,
-                    configuration.build[extension]))
+                    true, {filePaths: []}, configuration.build[scriptType]))
                 path.walkDirectoryRecursivelySync(path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
                 ), (filePath, stat) => {
                     if (stat.isFile() && path.extname(filePath).substring(
                         1
-                    ) === extension) {
+                    ) === buildConfigurations[
+                        buildConfigurations.length -1
+                    ].extension && !(new global.RegExp(
+                        buildConfigurations[
+                            buildConfigurations.length - 1
+                        ].buildFileNamePattern
+                    )).test(filePath)) {
                         for (let pathToIgnore of configuration.path.ignore)
                             if (filePath.startsWith(path.resolve(
                                 __dirname, '../../', pathToIgnore
@@ -82,19 +122,23 @@ if (global.process.argv.length > 2) {
                 NOTE: We have to loop twice since generated files from further
                 loops shouldn't be taken into account in later loops.
             */
+            childProcess = []
+            // Perform all file specific preprocessing stuff.
             for (let buildConfiguration of buildConfigurations)
                 for (let filePath of buildConfiguration.filePaths)
-                    childProcess = run(new global.Function(
-                        'global', 'self', 'webOptimizerPath',
-                        'currentPath', 'path', 'additionalArguments',
-                        'filePath', 'return `' +
+                    childProcess.push(run(new global.Function(
+                        'global', 'self', 'buildConfiguration',
+                        'webOptimizerPath', 'currentPath', 'path',
+                        'additionalArguments', 'filePath', 'return `' +
                         `${buildConfiguration[global.process.argv[2]]}\``
-                    )(global, configuration, __dirname, global.process.cwd(
-                    ), path, additionalArguments, filePath),
-                    childProcessOptions)
+                    )(global, configuration, buildConfiguration, __dirname,
+                    global.process.cwd(), path, additionalArguments, filePath),
+                    childProcessOptions))
         }
     } else
         if (global.process.argv[2] === 'build')
+            // Triggers complete asset compiling and bundles them into the
+            // final productive output.
             childProcess = run(
                 `${configuration.commandLine.build} ${additionalArguments}`,
                 childProcessOptions, error => {
@@ -111,19 +155,25 @@ if (global.process.argv.length > 2) {
                     }
                 })
         else if (global.process.argv[2] === 'serve')
+            // Provide a development environment where all assets are
+            // dynamically bundled and updated on changes.
             childProcess = run(
                 `${configuration.commandLine.serve} ${additionalArguments}`,
                 childProcessOptions)
     if (global.process.argv[2] === 'lint')
+        // Lints files with respect to given linting configuration.
         childProcess = run(
             `${configuration.commandLine.lint} ${additionalArguments}`,
             childProcessOptions)
     else if (global.process.argv[2] === 'test')
+        // Runs all specified tests (typically in a real browser environment).
         childProcess = run(
             `${configuration.commandLine.test} ${additionalArguments}`,
             childProcessOptions)
 }
 if (childProcess === null) {
+    // If no sub process could be started a message with all available
+    // arguments is printed.
     if (configuration.library)
         console.log(
             'Give one of "build", "clear", "lint", "test" or "preinstall" as' +
@@ -135,17 +185,12 @@ if (childProcess === null) {
     process.exit()
 }
 // endregion
-// region handle child process communication
-childProcess.stdout.on('data', data => {
-    process.stdout.write(data)
-})
-childProcess.stderr.on('data', data => {
-    process.stderr.write(data)
-})
-childProcess.on('close', returnCode => {
-    if (returnCode !== 0)
-        console.error(`Task exited with error code ${returnCode}`)
-})
+// region trigger child process communication handler
+if (global.Array.isArray(childProcess))
+    for (let subChildProcess of childProcess)
+        handleChildProcess(subChildProcess)
+else
+    handleChildProcess(childProcess)
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
