@@ -52,15 +52,6 @@ if (global.process.env.npm_config_production)
     debug = false
 else if (global.process.env.npm_config_debug)
     debug = true
-const libraryConfiguration = currentConfiguration.library
-if (debug)
-    currentConfiguration = extend(
-        true, currentConfiguration.default, currentConfiguration.debug)
-else
-    currentConfiguration = currentConfiguration.default
-if (currentConfiguration.library)
-    currentConfiguration = extend(
-        true, currentConfiguration, libraryConfiguration)
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
@@ -75,7 +66,7 @@ if (currentConfiguration.library)
     building.
     manifest: currentConfiguration.preprocessor.jade.includeManifest
 */
-currentConfiguration.files.html[0].template = (() => {
+currentConfiguration.default.files.html[0].template = (() => {
     const string = new global.String('html?' + global.JSON.stringify(
         currentConfiguration.html
     ) + '!jade-html?' +
@@ -96,7 +87,7 @@ currentConfiguration.files.html[0].template = (() => {
     `${global.JSON.stringify({pretty: true, debug: true})}!${__dirname}/` +
     'test.jade'
 */
-currentConfiguration.test.template = (() => {
+currentConfiguration.default.test.template = (() => {
     const string = new global.String('html?' + global.JSON.stringify({
         attrs: 'img:src link:href'
     }) + `!jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
@@ -108,9 +99,23 @@ currentConfiguration.test.template = (() => {
     }
     return string
 })
+const libraryConfiguration = currentConfiguration.library
+if (debug)
+    currentConfiguration = extend(
+        true, currentConfiguration.default, currentConfiguration.debug)
+else
+    currentConfiguration = currentConfiguration.default
+if (
+    specificConfiguration.library === true ||
+    typeof specificConfiguration.library === undefined &&
+    currentConfiguration.library
+)
+    currentConfiguration = extend(
+        true, currentConfiguration, libraryConfiguration)
 // endregion
 // region merging and evaluating default and specific configuration
-currentConfiguration = extend(true, currentConfiguration, specificConfiguration)
+currentConfiguration = extend(
+    true, currentConfiguration, specificConfiguration)
 currentConfiguration.debug = debug
 for (let pathConfiguration of [
     currentConfiguration.path, currentConfiguration.path.asset

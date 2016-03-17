@@ -94,7 +94,7 @@ if (global.process.argv.length > 2) {
                     childProcessOptions)
         }
     } else
-        if (global.process.argv[2] === 'build')
+        if (global.process.argv[2] === 'build') {
             childProcess = run(
                 `${configuration.commandLine.build} ${additionalArguments}`,
                 childProcessOptions, error => {
@@ -110,7 +110,7 @@ if (global.process.argv.length > 2) {
                             })
                     }
                 })
-        else if (global.process.argv[2] === 'serve')
+        } else if (global.process.argv[2] === 'serve')
             childProcess = run(
                 `${configuration.commandLine.serve} ${additionalArguments}`,
                 childProcessOptions)
