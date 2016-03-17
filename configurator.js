@@ -107,7 +107,7 @@ else
     currentConfiguration = currentConfiguration.default
 if (
     specificConfiguration.library === true ||
-    typeof specificConfiguration.library === undefined &&
+    specificConfiguration.library === undefined &&
     currentConfiguration.library
 )
     currentConfiguration = extend(
