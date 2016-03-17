@@ -137,7 +137,7 @@
                     "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackTestConfigurator.compiled.js --open --inline --colors`"
                 },
                 "lint": {
-                    "__execute__": "`eslint --config ${webOptimizerPath}/package.json --ignore-pattern '${self.path.target.substring(currentPath.length + 1)}**' '**/*.js'`"
+                    "__execute__": "`eslint --config ${webOptimizerPath}/package.json --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
                 }
             },
             "developmentServer": {
