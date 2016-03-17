@@ -115,9 +115,6 @@ if (global.process.argv.length > 2) {
                 `${configuration.commandLine.serve} ${additionalArguments}`,
                 childProcessOptions)
     if (global.process.argv[2] === 'lint') {
-        console.log(configuration.commandLine.lint)
-        console.log()
-        console.log(`${configuration.commandLine.lint} ${additionalArguments}`)
         childProcess = run(
             `${configuration.commandLine.lint} ${additionalArguments}`,
             childProcessOptions)
