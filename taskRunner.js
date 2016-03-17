@@ -53,11 +53,11 @@ if (global.process.argv.length > 2) {
         process.exit()
     }
     let additionalArguments = global.process.argv.splice(3).join(' ')
-    if (configuration.library)
+    if (configuration.library) {
         if (['preinstall', 'build'].indexOf(global.process.argv[2]) !== -1) {
             let buildConfigurations = []
             let index = 0
-            for (let extension in configuration.build) {
+            global.Object.keys(configuration.build).forEach(extension => {
                 buildConfigurations.push(extend(
                     true, {filePaths: []}, configuration.build.default,
                     configuration.build[extension]))
@@ -77,7 +77,7 @@ if (global.process.argv.length > 2) {
                     }
                 })
                 index += 1
-            }
+            })
             /*
                 NOTE: We have to loop twice since generated files from further
                 loops shouldn't be taken into account in later loops.
@@ -93,7 +93,7 @@ if (global.process.argv.length > 2) {
                     ), path, additionalArguments, filePath),
                     childProcessOptions)
         }
-    else {
+    } else
         if (global.process.argv[2] === 'build')
             childProcess = run(
                 `${configuration.commandLine.build} ${additionalArguments}`,
@@ -114,7 +114,6 @@ if (global.process.argv.length > 2) {
             childProcess = run(
                 `${configuration.commandLine.serve} ${additionalArguments}`,
                 childProcessOptions)
-    }
     if (global.process.argv[2] === 'lint')
         childProcess = run(
             `${configuration.commandLine.lint} ${additionalArguments}`,
