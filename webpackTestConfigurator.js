@@ -27,21 +27,26 @@ path.walkDirectoryRecursivelySync = (directoryPath, callback = (
 // endregion
 // region initialisation
 const modules = []
-const moduleDirectories = [configuration.path.asset.source]
+const moduleDirectoryPaths = [configuration.path.asset.source]
 for (let module of configuration.test.modules) {
-    let stat = fileSystem.statSync(module)
-    let directoryToAdd
+    let stat
+    for (let extension of configuration.knownExtensions)
+        try {
+            stat = fileSystem.statSync(module + extension)
+            break
+        } catch (error) {}
+    let pathToAdd
     if (stat.isDirectory()) {
-        directoryToAdd = `${path.resolve(module)}/`
+        pathToAdd = `${path.resolve(module)}/`
         path.walkDirectoryRecursivelySync(module, filePath => {
             modules.push(filePath)
         })
     } else {
-        directoryToAdd = `${path.resolve(path.dirname(module))}/`
+        pathToAdd = `${path.resolve(path.dirname(module))}/`
         modules.push(module)
     }
-    if (moduleDirectories.indexOf(directoryToAdd) === -1)
-        moduleDirectories.push(directoryToAdd)
+    if (moduleDirectoryPaths.indexOf(pathToAdd) === -1)
+        moduleDirectoryPaths.push(pathToAdd)
 }
 configuration.test.modules = modules
 let favicon = configuration.path.asset.source +
@@ -62,8 +67,8 @@ const loader = {
             configuration.preprocessor.modernJavaScript
         ),
         coffee: 'coffee',
-        jade: 'jade-html?' +
-            global.JSON.stringify(configuration.preprocessor.jade),
+        jade: 'jade-html?' + global.JSON.stringify(
+            configuration.preprocessor.jade),
         literateCoffee: 'coffee?literate'
     },
     html: `html?${global.JSON.stringify(configuration.html)}`,
@@ -72,7 +77,7 @@ const loader = {
 }
 // / endregion
 // endregion
-// region configuration
+// region configuratio n
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"
@@ -82,7 +87,7 @@ export default {
     devserver: configuration.developmentServer,
     // region input
     resolve: {
-        root: moduleDirectories,
+        root: moduleDirectoryPaths,
         extensions: configuration.knownExtensions,
         alias: configuration.test.moduleAliases
     },
@@ -106,7 +111,7 @@ export default {
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript)
-                ].concat(moduleDirectories)
+                ].concat(moduleDirectoryPaths)
             },
             {
                 test: /\.coffee$/,
@@ -114,7 +119,7 @@ export default {
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript)
-                ].concat(moduleDirectories)
+                ].concat(moduleDirectoryPaths)
             },
             {
                 test: /\.(?:coffee\.md|litcoffee)$/,
@@ -122,7 +127,7 @@ export default {
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript)
-                ].concat(moduleDirectories)
+                ].concat(moduleDirectoryPaths)
             }
             // endregion
         ],
