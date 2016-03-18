@@ -30,7 +30,7 @@ for (let path of configuration.internalInjects) {
 configuration.plugins = []
 for (let htmlOptions of configuration.files.html)
     configuration.plugins.push(new plugins.HTML(htmlOptions))
-// Optimizes and bundles webpack output.
+// Optimizes webpack output and provides an offline manifest
 if (configuration.optimizer.uglifyJS)
     configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
         configuration.optimizer.uglifyJS))
