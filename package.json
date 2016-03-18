@@ -182,6 +182,7 @@
                     "debug": false,
                     "includeManifest": {"__execute__": "!!self.offline"}
                 },
+                "less": {},
                 "sass": {"indentedSyntax": true},
                 "scss": {},
                 "modernJavaScript": {

@@ -65,43 +65,56 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
                             .cascadingStyleSheet.replace('[contenthash]', '')
                         const domNode = window.document.querySelector(
                             `link[href^="${urlPrefix}"]`)
-                        let asset
-                        for (asset in compilation.assets)
-                            if (asset.startsWith(urlPrefix))
-                                break
-                        const inPlaceDomNode = window.document.createElement(
-                            'style')
-                        inPlaceDomNode.textContent = compilation.assets[
-                            asset
-                        ].source()
-                        domNode.parentNode.insertBefore(inPlaceDomNode, domNode)
-                        domNode.parentNode.removeChild(domNode)
-                        /*
-                            NOTE: This doesn't prevent webpack from creating
-                            this file if present in another chunk so removing
-                            it (and a potential source map file) later in the
-                            "done" hook.
-                        */
-                        delete compilation.assets[asset]
+                        if (domNode) {
+                            let asset
+                            for (asset in compilation.assets)
+                                if (asset.startsWith(urlPrefix))
+                                    break
+                            const inPlaceDomNode =
+                                window.document.createElement('style')
+                            inPlaceDomNode.textContent = compilation.assets[
+                                asset
+                            ].source()
+                            domNode.parentNode.insertBefore(
+                                inPlaceDomNode, domNode)
+                            domNode.parentNode.removeChild(domNode)
+                            /*
+                                NOTE: This doesn't prevent webpack from
+                                creating this file if present in another chunk
+                                so removing it (and a potential source map
+                                file) later in the "done" hook.
+                            */
+                            delete compilation.assets[asset]
+                        } else
+                            console.warn(
+                                'No referenced cascading style sheet file in' +
+                                ' resulting markup found with selector: ' +
+                                `link[href^="${urlPrefix}"]`)
                     }
                     if (configuration.inPlace.javaScript) {
                         const urlPrefix = configuration.files.javaScript
                             .replace('[hash]', '')
                         const domNode = window.document.querySelector(
                             `script[src^="${urlPrefix}"]`)
-                        let asset
-                        for (asset in compilation.assets)
-                            if (asset.startsWith(urlPrefix))
-                                break
-                        domNode.textContent = compilation.assets[asset].source()
-                        domNode.removeAttribute('src')
-                        /*
-                            NOTE: This doesn't prevent webpack from creating
-                            this file if present in another chunk so removing
-                            it (and a potential source map file) later in the
-                            "done" hook.
-                        */
-                        delete compilation.assets[asset]
+                        if (domNode) {
+                            let asset
+                            for (asset in compilation.assets)
+                                if (asset.startsWith(urlPrefix))
+                                    break
+                            domNode.textContent = compilation.assets[asset].source()
+                            domNode.removeAttribute('src')
+                            /*
+                                NOTE: This doesn't prevent webpack from
+                                creating this file if present in another chunk
+                                so removing it (and a potential source map
+                                file) later in the "done" hook.
+                            */
+                            delete compilation.assets[asset]
+                        } else
+                            console.warn(
+                                'No referenced javaScript file in resulting ' +
+                                'markup found with selector: ' +
+                                `script[src^="${urlPrefix}"]`)
                     }
                     compilation.assets[configuration.files.html[
                         0
@@ -180,7 +193,7 @@ const loader = {
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"
-    context: path.resolve(__dirname, '/../..'),
+    context: path.resolve(__dirname, '../../'),
     debug: configuration.debug,
     devtool: configuration.developmentTool,
     devserver: configuration.developmentServer,
@@ -256,7 +269,7 @@ export default {
             {
                 test: /\.jade$/,
                 loader:
-                    `file?name=${configurator.path.asset.template}` +
+                    `file?name=${configuration.path.asset.template}` +
                     `[name].html?${configuration.hashAlgorithm}=[hash]!` +
                     `extract!${loader.html}!${loader.preprocessor.jade}`,
                 include: path.join(
@@ -271,7 +284,7 @@ export default {
             {
                 test: /\.html$/,
                 loader:
-                    `file?name=${configurator.path.asset.template}`
+                    `file?name=${configuration.path.asset.template}` +
                     `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
                     `extract!${loader.html}`,
                 include: path.join(
