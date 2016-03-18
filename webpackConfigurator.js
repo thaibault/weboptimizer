@@ -255,9 +255,10 @@ export default {
             // region html
             {
                 test: /\.jade$/,
-                loader: 'file?name=template/[name].html?' +
-                    `${configuration.hashAlgorithm}=[hash]!extract!` +
-                    `${loader.html}!${loader.preprocessor.jade}`,
+                loader:
+                    `file?name=${configurator.path.asset.template}` +
+                    `[name].html?${configuration.hashAlgorithm}=[hash]!` +
+                    `extract!${loader.html}!${loader.preprocessor.jade}`,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template)
@@ -269,9 +270,10 @@ export default {
             // region html
             {
                 test: /\.html$/,
-                loader: 'file?name=template/[name].[ext]?' +
-                    `${configuration.hashAlgorithm}=[hash]!extract!` +
-                    loader.html,
+                loader:
+                    `file?name=${configurator.path.asset.template}`
+                    `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
+                    `extract!${loader.html}`,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template)
