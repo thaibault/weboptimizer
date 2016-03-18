@@ -221,24 +221,21 @@ export default {
             // region style
             {
                 test: /\.less$/,
-                loader: `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.less,
+                loader: `${loader.less}!${loader.preprocessor.less}`,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.less)
             },
             {
                 test: /\.sass$/,
-                loader: `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.sass,
+                loader: `${loader.sass}!${loader.preprocessor.sass}`,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.sass)
             },
             {
                 test: /\.scss$/,
-                loader: `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.scss,
+                loader: `${loader.scss}!${loader.preprocessor.scss}`,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.scss)

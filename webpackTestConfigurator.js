@@ -77,7 +77,7 @@ const loader = {
 }
 // / endregion
 // endregion
-// region configuratio n
+// region configuration
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"
@@ -104,6 +104,29 @@ export default {
     module: {
         preLoaders: [
             // Convert to native web types.
+            // region style
+            {
+                test: /\.less$/,
+                loader: `${loader.less}!${loader.preprocessor.less}`,
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.less)
+            },
+            {
+                test: /\.sass$/,
+                loader: `${loader.sass}!${loader.preprocessor.sass}`,
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.sass)
+            },
+            {
+                test: /\.scss$/,
+                loader: `${loader.scss}!${loader.preprocessor.scss}`,
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.scss)
+            },
+            // endregion
             // region script
             {
                 test: /\.js$/,
@@ -128,6 +151,18 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript)
                 ].concat(moduleDirectoryPaths)
+            }
+            // endregion
+            // region html
+            {
+                test: /\.jade$/,
+                loader:
+                    `file?name=${configuration.path.asset.template}` +
+                    `[name].html?${configuration.hashAlgorithm}=[hash]!` +
+                    `extract!${loader.html}!${loader.preprocessor.jade}`,
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.template)
             }
             // endregion
         ],
