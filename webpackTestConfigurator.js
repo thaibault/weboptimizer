@@ -134,7 +134,13 @@ export default {
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript)
-                ].concat(moduleDirectoryPaths)
+                ].concat(moduleDirectoryPaths),
+                exclude: filePath => {
+                    for (let pathToIgnore of configuration.path.ignore)
+                        if (filePath.startsWith(path.resolve(pathToIgnore)))
+                            return true
+                    return false
+                }
             },
             {
                 test: /\.coffee$/,
@@ -160,6 +166,18 @@ export default {
                     `file?name=${configuration.path.asset.template}` +
                     `[name].html?${configuration.hashAlgorithm}=[hash]!` +
                     `extract!${loader.html}!${loader.preprocessor.jade}`,
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.template),
+                exclude: configuration.test.template.substring(
+                    configuration.test.template.lastIndexOf('!') + 1)
+            },
+            {
+                test: /\.html$/,
+                loader:
+                    `file?name=${configuration.path.asset.template}` +
+                    `[name].html?${configuration.hashAlgorithm}=[hash]!` +
+                    `extract!${loader.html}`,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
