@@ -159,7 +159,7 @@ export default {
                 ].concat(moduleDirectoryPaths)
             },
             // endregion
-            // region html
+            // region html (templates)
             {
                 test: /\.jade$/,
                 loader:
@@ -171,7 +171,12 @@ export default {
                     configuration.path.asset.template),
                 exclude: configuration.test.template.substring(
                     configuration.test.template.lastIndexOf('!') + 1)
-            },
+            }
+            // endregion
+        ],
+        loaders: [
+            // Loads dependencies.
+            // region html (templates)
             {
                 test: /\.html$/,
                 loader:
@@ -183,11 +188,8 @@ export default {
                     configuration.path.asset.template),
                 exclude: configuration.test.template.substring(
                     configuration.test.template.lastIndexOf('!') + 1)
-            }
+            },
             // endregion
-        ],
-        loaders: [
-            // Loads dependencies.
             // region cascadingStyleSheet
             {test: /\.css$/, loader: loader.cascadingStyleSheet}
             // endregion

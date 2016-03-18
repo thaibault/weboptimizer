@@ -221,21 +221,24 @@ export default {
             // region style
             {
                 test: /\.less$/,
-                loader: `${loader.less}!${loader.preprocessor.less}`,
+                loader: `${loader.cascadingStyleSheet}!` +
+                    loader.preprocessor.less,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.less)
             },
             {
                 test: /\.sass$/,
-                loader: `${loader.sass}!${loader.preprocessor.sass}`,
+                loader: `${loader.cascadingStyleSheet}!` +
+                    loader.preprocessor.sass,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.sass)
             },
             {
                 test: /\.scss$/,
-                loader: `${loader.scss}!${loader.preprocessor.scss}`,
+                loader: `${loader.cascadingStyleSheet}!` +
+                    loader.preprocessor.scss,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.scss)
@@ -264,7 +267,7 @@ export default {
                     configuration.path.asset.coffeeScript)
             },
             // endregion
-            // region html
+            // region html (templates)
             {
                 test: /\.jade$/,
                 loader:
@@ -279,7 +282,7 @@ export default {
         ],
         loaders: [
             // Loads dependencies.
-            // region html
+            // region html (templates)
             {
                 test: /\.html$/,
                 loader:
@@ -289,6 +292,7 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template)
+                // exclude: TODO extracted html files!
             },
             // endregion
             // region cascadingStyleSheet
