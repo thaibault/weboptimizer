@@ -77,7 +77,7 @@ const loader = {
 }
 // / endregion
 // endregion
-// region configuration
+ // region configuration
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"
@@ -151,7 +151,7 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript)
                 ].concat(moduleDirectoryPaths)
-            }
+            },
             // endregion
             // region html
             {
@@ -162,7 +162,9 @@ export default {
                     `extract!${loader.html}!${loader.preprocessor.jade}`,
                 include: path.join(
                     configuration.path.asset.source,
-                    configuration.path.asset.template)
+                    configuration.path.asset.template),
+                exclude: configuration.test.template.substring(
+                    configuration.test.template.lastIndexOf('!') + 1)
             }
             // endregion
         ],
