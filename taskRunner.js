@@ -102,7 +102,7 @@ if (global.process.argv.length > 2) {
                     if (stat.isFile() && path.extname(filePath).substring(
                         1
                     ) === buildConfigurations[
-                        buildConfigurations.length -1
+                        buildConfigurations.length - 1
                     ].extension && !(new global.RegExp(
                         buildConfigurations[
                             buildConfigurations.length - 1

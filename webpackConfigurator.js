@@ -180,7 +180,7 @@ const loader = {
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"
-    context: path.resolve(path.join(__dirname, '/../..')),
+    context: path.resolve(__dirname, '/../..'),
     debug: configuration.debug,
     devtool: configuration.developmentTool,
     devserver: configuration.developmentServer,

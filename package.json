@@ -237,7 +237,13 @@
                     }
                 }
             },
-            "test": {"modules": ["test/"], "moduleAliases": {}},
+            "test": {
+                "modules": ["test/"],
+                "moduleAliases": {
+                    "qunit.css": "qunitjs/qunit/qunit.css",
+                    "qunit.js": "qunitjs/qunit/qunit.js"
+                }
+            },
             "build": {
                 "default": {
                     "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.scriptType]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js",
@@ -269,6 +275,7 @@
             }
         },
         "library": {
+            "test": {"modules": ["test"]},
             "path": {
                 "source": "./",
                 "target": "./",

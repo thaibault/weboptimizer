@@ -30,15 +30,18 @@ const modules = []
 const moduleDirectories = [configuration.path.asset.source]
 for (let module of configuration.test.modules) {
     let stat = fileSystem.statSync(module)
+    let directoryToAdd
     if (stat.isDirectory()) {
-        moduleDirectories.push(path.resolve(module))
+        directoryToAdd = `${path.resolve(module)}/`
         path.walkDirectoryRecursivelySync(module, filePath => {
             modules.push(filePath)
         })
     } else {
-        moduleDirectories.push(path.dirname(path.resolve(module)))
+        directoryToAdd = `${path.resolve(path.dirname(module))}/`
         modules.push(module)
     }
+    if (moduleDirectories.indexOf(directoryToAdd) === -1)
+        moduleDirectories.push(directoryToAdd)
 }
 configuration.test.modules = modules
 let favicon = configuration.path.asset.source +
@@ -71,7 +74,9 @@ const loader = {
 // endregion
 // region configuration
 export default {
-    context: __dirname,
+    // NOTE: building context is this hierarchy up:
+    // "PROJECT/node_modules/webOptimizer"
+    context: path.resolve(__dirname, '../../'),
     debug: true,
     devtool: configuration.developmentTool,
     devserver: configuration.developmentServer,
@@ -85,7 +90,7 @@ export default {
     // endregion
     // region output
     output: {
-        path: __dirname,
+        path: path.resolve(__dirname, '../../'),
         filename: configuration.files.javaScript,
         pathinfo: false,
         hashFunction: configuration.hashAlgorithm
@@ -118,33 +123,11 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript)
                 ].concat(moduleDirectories)
-            },
-            // endregion
-            // region html
-            {
-                test: /\.jade$/,
-                loader: 'file?name=template/[name].html?' +
-                    `${configuration.hashAlgorithm}=[hash]!extract!` +
-                    `${loader.html}!${loader.preprocessor.jade}`,
-                include: path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.template)
             }
             // endregion
         ],
         loaders: [
             // Loads dependencies.
-            // region html
-            {
-                test: /\.html$/,
-                loader: 'file?name=template/[name].[ext]?' +
-                    `${configuration.hashAlgorithm}=[hash]!extract!` +
-                    loader.html,
-                include: path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.template)
-            },
-            // endregion
             // region cascadingStyleSheet
             {test: /\.css$/, loader: loader.cascadingStyleSheet}
             // endregion
