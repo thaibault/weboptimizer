@@ -101,7 +101,9 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
                             for (asset in compilation.assets)
                                 if (asset.startsWith(urlPrefix))
                                     break
-                            domNode.textContent = compilation.assets[asset].source()
+                            domNode.textContent = compilation.assets[
+                                asset
+                            ].source()
                             domNode.removeAttribute('src')
                             /*
                                 NOTE: This doesn't prevent webpack from
