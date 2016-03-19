@@ -292,7 +292,7 @@ export default {
                     `extract!${loader.html}`,
                 include: path.join(
                     configuration.path.asset.source,
-                    configuration.path.asset.template)
+                    configuration.path.asset.template),
                 exclude: filePath => {
                     for (let templateToIgnore of configuration.files.html)
                         if (filePath === templateToIgnore.template.lastIndexOf(
