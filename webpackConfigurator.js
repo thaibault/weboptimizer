@@ -191,6 +191,7 @@ const loader = {
 }
 // / endregion
 // endregion
+console.log(configuration.files.html)
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:
@@ -292,7 +293,14 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template)
-                // exclude: TODO extracted html files!
+                exclude: filePath => {
+                    for (let templateToIgnore of configuration.files.html)
+                        if (filePath === templateToIgnore.template.lastIndexOf(
+                            '!'
+                        ) + 1)
+                            return true
+                    return false
+                }
             },
             // endregion
             // region cascadingStyleSheet
