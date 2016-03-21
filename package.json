@@ -205,7 +205,7 @@
                             "customEventAttributes": [],
                             "customAttrAssign": [],
                             "customAttrSurround": [],
-                            "customAttrCollapse": [],
+                            "customAttrCollapse": {"__execute__": "/a^/"},
                             "quoteCharacter": "\""
                         }
                     }
