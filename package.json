@@ -198,7 +198,11 @@
                             "ignoreCustomComments": [{
                                 "__execute__": "/^\\|?[a-z]{2}[A-Z]{2}:/"
                             }],
-                            "ignoreCustomFragments": [],
+                            "ignoreCustomFragments": [
+                                {"__execute__": "/<%[\\s\\S]*?%>/"},
+                                {"__execute__": "/<\\?[\\s\\S]*?\\?>/"},
+                                {"__execute__": "/<link[^>]*>/"}
+                            ],
                             "processScripts": [],
                             "processConditionalComments": false,
                             "maxLineLength": 10000,
