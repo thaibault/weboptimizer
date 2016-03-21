@@ -187,7 +187,7 @@
                             "removeOptionalTags": false,
                             "removeEmptyElements": false,
                             "lint": false,
-                            "keepClosingSlash": false,
+                            "keepClosingSlash": true,
                             "caseSensitive": true,
                             "minifyJS": {
                                 "__execute__": "self.optimizer.uglifyJS"
