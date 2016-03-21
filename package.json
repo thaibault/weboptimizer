@@ -201,7 +201,8 @@
                             "ignoreCustomFragments": [
                                 {"__execute__": "/<%[\\s\\S]*?%>/"},
                                 {"__execute__": "/<\\?[\\s\\S]*?\\?>/"},
-                                {"__execute__": "/<link[^>]*>/"}
+                                {"__execute__": "/<link[^>]*>/"},
+                                {"__execute__": "/<img[^>]*>/"}
                             ],
                             "processScripts": [],
                             "processConditionalComments": false,
