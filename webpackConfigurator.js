@@ -191,7 +191,6 @@ const loader = {
 }
 // / endregion
 // endregion
-console.log(configuration.files.html)
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:
