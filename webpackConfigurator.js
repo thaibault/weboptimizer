@@ -124,7 +124,7 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
                         compilation.assets[configuration.files.html[
                             0
                         ].filename].source().replace(
-                            /^(\s*<!doctype[^>]+>\s*).*/i, '$1'
+                            /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
                         ) + window.document.documentElement.outerHTML)
                     callback()
                 })
