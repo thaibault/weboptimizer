@@ -329,8 +329,8 @@ export default {
         ]
     },
     plugins: configuration.plugins,
-    // Let the "html-loader" access full html processing configuration.
-    html: configuration.html
+    // Let the "html-loader" access full minify html processing configuration.
+    html: configuration.optimizer.htmlMinifier
 }
 // endregion
 // region vim modline
