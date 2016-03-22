@@ -328,7 +328,9 @@ export default {
             // endregion
         ]
     },
-    plugins: configuration.plugins
+    plugins: configuration.plugins,
+    // Let the "html-loader" access full html processing configuration.
+    html: configuration.html
 }
 // endregion
 // region vim modline
