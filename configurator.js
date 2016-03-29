@@ -92,13 +92,13 @@ currentConfiguration.default.files.html[0].template = (() => {
 
     `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!` +
     `jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
-    `${currentConfiguration.contextPath}/test.jade`
+    `${__dirname}/test.jade`
 */
 currentConfiguration.default.test.template = (() => {
     const string = new global.String('html?' + global.JSON.stringify({
         attrs: 'img:src link:href'
     }) + `!jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
-    `${currentConfiguration.contextPath}/test.jade`)
+    `${__dirname}/test.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = () => {
         string.replace = nativeReplaceFunction
