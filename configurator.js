@@ -13,10 +13,6 @@ import path from 'path'
 const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
 let currentConfiguration = configuration
-currentConfiguration.contextPath = path.resolve(__dirname, '../../')
-if (path.basename(path.dirname(process.cwd())) === 'node_modules')
-    currentConfiguration.contextPath = process.cwd()
-currentConfiguration.contextPath += '/'
 // region helper functions
 const isObject = object => {
     // Checks if given entity is a object.
@@ -59,6 +55,10 @@ if (global.process.env.npm_config_production)
     debug = false
 else if (global.process.env.npm_config_debug)
     debug = true
+currentConfiguration.default.contextPath = path.resolve(__dirname, '../../')
+if (path.basename(path.dirname(process.cwd())) === 'node_modules')
+    currentConfiguration.default.contextPath = process.cwd()
+currentConfiguration.default.contextPath += '/'
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
