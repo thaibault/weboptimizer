@@ -48,7 +48,7 @@ path.walkDirectoryRecursivelySync = (directoryPath, callback = (
 }
 // endregion
 // region controller
-const childProcessOptions = {cwd: path.resolve(__dirname, '../..')}
+const childProcessOptions = {cwd: configuration.contextPath}
 let childProcess = null
 if (global.process.argv.length > 2) {
     // Apply default file level build configurations to all file type specific
@@ -61,14 +61,14 @@ if (global.process.argv.length > 2) {
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
-            __dirname, '../../'
+            configuration.contextPath
         ))
             path.walkDirectoryRecursivelySync(configuration.path.target, (
                 filePath, stat
             ) => {
                 for (let pathToIgnore of configuration.path.ignore)
                     if (filePath.startsWith(path.resolve(
-                        __dirname, '../../', pathToIgnore
+                        configuration.contextPath, pathToIgnore
                     )))
                         return false
                 global.Object.keys(configuration.build).forEach(scriptType => {
@@ -110,7 +110,7 @@ if (global.process.argv.length > 2) {
                     )).test(filePath)) {
                         for (let pathToIgnore of configuration.path.ignore)
                             if (filePath.startsWith(path.resolve(
-                                __dirname, '../../', pathToIgnore
+                                configuration.contextPath, pathToIgnore
                             )))
                                 return false
                         buildConfigurations[index].filePaths.push(filePath)
@@ -128,12 +128,12 @@ if (global.process.argv.length > 2) {
                 for (let filePath of buildConfiguration.filePaths)
                     childProcess.push(run(new global.Function(
                         'global', 'self', 'buildConfiguration',
-                        'webOptimizerPath', 'currentPath', 'path',
-                        'additionalArguments', 'filePath', 'return `' +
+                        'webOptimizerPath', 'currentPath', 'contextPath',
+                        'path', 'additionalArguments', 'filePath', 'return `' +
                         `${buildConfiguration[global.process.argv[2]]}\``
                     )(global, configuration, buildConfiguration, __dirname,
-                    global.process.cwd(), path, additionalArguments, filePath),
-                    childProcessOptions))
+                    global.process.cwd(), configuration.contextPath, path,
+                    additionalArguments, filePath), childProcessOptions))
         }
     } else
         if (global.process.argv[2] === 'build')

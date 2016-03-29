@@ -13,6 +13,10 @@ import path from 'path'
 const specificConfiguration = require('../../package').webOptimizer || {}
 // endregion
 let currentConfiguration = configuration
+currentConfiguration.contextPath = path.resolve(__dirname, '../../')
+if (path.basename(path.dirname(process.cwd())) === 'node_modules')
+    currentConfiguration.contextPath = process.cwd()
+currentConfiguration.contextPath += '/'
 // region helper functions
 const isObject = object => {
     // Checks if given entity is a object.
@@ -37,9 +41,9 @@ const resolve = object => {
             if (key === '__execute__')
                 return resolve(new global.Function(
                     'global', 'self', 'webOptimizerPath', 'currentPath',
-                    `return ${object[key]}`
+                    'contextPath', `return ${object[key]}`
                 )(global, currentConfiguration, __dirname, global.process.cwd(
-                )))
+                ), currentConfiguration.contextPath))
             object[key] = resolve(object[key])
         }
     return object
@@ -86,15 +90,15 @@ currentConfiguration.default.files.html[0].template = (() => {
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
 
-    `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!jade-html?` +
-    `${global.JSON.stringify({pretty: true, debug: true})}!${__dirname}/` +
-    'test.jade'
+    `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!` +
+    `jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
+    `${currentConfiguration.contextPath}/test.jade`
 */
 currentConfiguration.default.test.template = (() => {
     const string = new global.String('html?' + global.JSON.stringify({
         attrs: 'img:src link:href'
     }) + `!jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
-    `${__dirname}/test.jade`)
+    `${currentConfiguration.contextPath}/test.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = () => {
         string.replace = nativeReplaceFunction
@@ -128,8 +132,9 @@ for (let pathConfiguration of [
 ])
     for (let key of ['source', 'target'])
         if (pathConfiguration[key])
-            pathConfiguration[key] = path.resolve(__dirname, '../../', resolve(
-                pathConfiguration[key])
+            pathConfiguration[key] = path.resolve(
+                currentConfiguration.contextPath, resolve(
+                    pathConfiguration[key])
             ) + '/'
 currentConfiguration = resolve(currentConfiguration)
 if (isFunction(currentConfiguration.files.html[0].template))
