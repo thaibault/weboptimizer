@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
 'use strict'
-
 // region imports
 import configuration from './configurator.compiled'
 import {exec as run} from 'child_process'
