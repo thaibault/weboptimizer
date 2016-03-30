@@ -2,6 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import extend from 'extend'
 import configuration from './configurator.compiled'
 import * as fileSystem from 'fs'
 import path from 'path'
@@ -76,7 +77,7 @@ const loader = {
 }
 // / endregion
 // endregion
- // region configuration
+// region configuration
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"
@@ -88,7 +89,8 @@ export default {
     resolve: {
         root: moduleDirectoryPaths,
         extensions: configuration.knownExtensions,
-        alias: configuration.test.moduleAliases
+        alias: extend(
+            configuration.moduleAliases, configuration.test.moduleAliases)
     },
     entry: configuration.test.modules,
     // endregion
