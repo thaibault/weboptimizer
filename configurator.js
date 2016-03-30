@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
 'use strict'
-
 // region imports
 import extend from 'extend'
 // NOTE: Only needed for debugging this file.
