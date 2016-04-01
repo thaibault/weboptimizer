@@ -296,7 +296,7 @@
             },
             "build": {
                 "default": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.scriptType]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.extension}",
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js",
                     "buildFileNamePattern": "^.+\\.compiled\\.[^.]+$"
                 },
                 "javaScript": {
@@ -308,12 +308,15 @@
                     "build": "coffee --compile --print ${filePath} >${self.path.target}${self.path.asset.coffeeScript}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js"
                 },
                 "less": {
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css",
                     "build": "lessc ${filePath} >${self.path.target}${self.path.asset.less}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
                 },
                 "sass": {
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css",
                     "build": "node-sass --indented-syntax ${filePath} ${self.path.target}${self.path.asset.sass}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
                 },
                 "scss": {
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css",
                     "build": "node-sass ${filePath} ${self.path.target}${self.path.asset.scss}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
                 }
 

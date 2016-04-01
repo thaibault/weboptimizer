@@ -52,10 +52,10 @@ let childProcess = null
 if (global.process.argv.length > 2) {
     // Apply default file level build configurations to all file type specific
     // ones.
-    global.Object.keys(configuration.build).forEach(scriptType => {
-        configuration.build[scriptType] = extend(
-            true, {scriptType}, configuration.build.default,
-            configuration.build[scriptType])
+    global.Object.keys(configuration.build).forEach(type => {
+        configuration.build[type] = extend(
+            true, {type}, configuration.build.default,
+            configuration.build[type])
     })
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
@@ -70,9 +70,9 @@ if (global.process.argv.length > 2) {
                         configuration.contextPath, pathToIgnore
                     )))
                         return false
-                global.Object.keys(configuration.build).forEach(scriptType => {
+                global.Object.keys(configuration.build).forEach(type => {
                     if (stat.isFile() && (new global.RegExp(
-                        configuration.build[scriptType].buildFileNamePattern
+                        configuration.build[type].buildFileNamePattern
                     )).test(filePath))
                         fileSystem.unlink(filePath)
                 })
@@ -91,10 +91,10 @@ if (global.process.argv.length > 2) {
             // them in production.
             let buildConfigurations = []
             let index = 0
-            global.Object.keys(configuration.build).forEach(scriptType => {
+            global.Object.keys(configuration.build).forEach(type => {
                 buildConfigurations.push(extend(
-                    true, {filePaths: [], extension: scriptType},
-                    configuration.build[scriptType]))
+                    true, {filePaths: [], extension: type},
+                    configuration.build[type]))
                 path.walkDirectoryRecursivelySync(path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
