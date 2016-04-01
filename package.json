@@ -306,7 +306,17 @@
                 "coffeeScript": {
                     "extension": "coffee",
                     "build": "coffee --compile --print ${filePath} >${self.path.target}${self.path.asset.coffeeScript}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js"
+                },
+                "less": {
+                    "build": "lessc ${filePath} >${self.path.target}${self.path.asset.less}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
+                },
+                "sass": {
+                    "build": "node-sass --indented-syntax ${filePath} ${self.path.target}${self.path.asset.sass}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
+                },
+                "scss": {
+                    "build": "node-sass ${filePath} ${self.path.target}${self.path.asset.scss}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
                 }
+
             }
         },
         "debug": {

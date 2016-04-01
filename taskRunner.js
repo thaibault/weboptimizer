@@ -93,7 +93,8 @@ if (global.process.argv.length > 2) {
             let index = 0
             global.Object.keys(configuration.build).forEach(scriptType => {
                 buildConfigurations.push(extend(
-                    true, {filePaths: []}, configuration.build[scriptType]))
+                    true, {filePaths: [], extension: scriptType},
+                    configuration.build[scriptType]))
                 path.walkDirectoryRecursivelySync(path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
