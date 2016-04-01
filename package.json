@@ -296,7 +296,7 @@
             },
             "build": {
                 "default": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.scriptType]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js",
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.scriptType]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.extension}",
                     "buildFileNamePattern": "^.+\\.compiled\\.[^.]+$"
                 },
                 "javaScript": {
