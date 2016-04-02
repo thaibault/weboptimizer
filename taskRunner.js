@@ -52,11 +52,14 @@ let childProcess = null
 if (global.process.argv.length > 2) {
     // Apply default file level build configurations to all file type specific
     // ones.
+    let defaultConfiguration = configuration.build.default
+    delete configuration.build.default
     global.Object.keys(configuration.build).forEach(type => {
         configuration.build[type] = extend(
-            true, {type}, configuration.build.default,
-            configuration.build[type])
+            true, {extension: type}, defaultConfiguration,
+            configuration.build[type], {type})
     })
+    console.log(configuration.build)
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
@@ -93,12 +96,16 @@ if (global.process.argv.length > 2) {
             let index = 0
             global.Object.keys(configuration.build).forEach(type => {
                 buildConfigurations.push(extend(
-                    true, {filePaths: [], extension: type},
-                    configuration.build[type]))
+                    true, {filePaths: []}, configuration.build[type]))
                 path.walkDirectoryRecursivelySync(path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
                 ), (filePath, stat) => {
+                    for (let pathToIgnore of configuration.path.ignore)
+                        if (filePath.startsWith(path.resolve(
+                            configuration.contextPath, pathToIgnore
+                        )))
+                            return false
                     if (stat.isFile() && path.extname(filePath).substring(
                         1
                     ) === buildConfigurations[
@@ -108,11 +115,6 @@ if (global.process.argv.length > 2) {
                             buildConfigurations.length - 1
                         ].buildFileNamePattern
                     )).test(filePath)) {
-                        for (let pathToIgnore of configuration.path.ignore)
-                            if (filePath.startsWith(path.resolve(
-                                configuration.contextPath, pathToIgnore
-                            )))
-                                return false
                         buildConfigurations[index].filePaths.push(filePath)
                     }
                 })
@@ -125,15 +127,33 @@ if (global.process.argv.length > 2) {
             childProcess = []
             // Perform all file specific preprocessing stuff.
             for (let buildConfiguration of buildConfigurations)
-                for (let filePath of buildConfiguration.filePaths)
+                for (let filePath of buildConfiguration.filePaths) {
+
+                    console.log(buildConfiguration.type)
+                    if(buildConfiguration.type === 'less') {
+                        var self = configuration
+                        console.log(
+                            self.path.asset.less,
+                            path.basename(filePath, `.${buildConfiguration.extension}`),
+                            new global.Function(
+                                'global', 'self', 'buildConfiguration',
+                                'webOptimizerPath', 'currentPath', 'path',
+                                'additionalArguments', 'filePath', 'return `' +
+                                `${buildConfiguration['preinstall_a']}\``
+                            )(global, configuration, buildConfiguration, __dirname,
+                            global.process.cwd(), path,
+                            additionalArguments, filePath))
+                    }
+
                     childProcess.push(run(new global.Function(
                         'global', 'self', 'buildConfiguration',
-                        'webOptimizerPath', 'currentPath', 'contextPath',
-                        'path', 'additionalArguments', 'filePath', 'return `' +
+                        'webOptimizerPath', 'currentPath', 'path',
+                        'additionalArguments', 'filePath', 'return `' +
                         `${buildConfiguration[global.process.argv[2]]}\``
                     )(global, configuration, buildConfiguration, __dirname,
-                    global.process.cwd(), configuration.contextPath, path,
-                    additionalArguments, filePath), childProcessOptions))
+                    global.process.cwd(), path, additionalArguments, filePath
+                    ), childProcessOptions))
+                }
         }
     } else
         if (global.process.argv[2] === 'build')

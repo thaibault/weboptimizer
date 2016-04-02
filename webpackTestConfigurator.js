@@ -39,6 +39,11 @@ for (let module of configuration.test.modules) {
     if (stat.isDirectory()) {
         pathToAdd = `${path.resolve(module)}/`
         path.walkDirectoryRecursivelySync(module, filePath => {
+            for (let pathToIgnore of configuration.path.ignore)
+                if (filePath.startsWith(path.resolve(
+                    configuration.contextPath, pathToIgnore
+                )))
+                    return false
             modules.push(filePath)
         })
     } else {
