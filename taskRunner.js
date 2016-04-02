@@ -59,7 +59,6 @@ if (global.process.argv.length > 2) {
             true, {extension: type}, defaultConfiguration,
             configuration.build[type], {type})
     })
-    console.log(configuration.build)
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
@@ -127,24 +126,7 @@ if (global.process.argv.length > 2) {
             childProcess = []
             // Perform all file specific preprocessing stuff.
             for (let buildConfiguration of buildConfigurations)
-                for (let filePath of buildConfiguration.filePaths) {
-
-                    console.log(buildConfiguration.type)
-                    if(buildConfiguration.type === 'less') {
-                        var self = configuration
-                        console.log(
-                            self.path.asset.less,
-                            path.basename(filePath, `.${buildConfiguration.extension}`),
-                            new global.Function(
-                                'global', 'self', 'buildConfiguration',
-                                'webOptimizerPath', 'currentPath', 'path',
-                                'additionalArguments', 'filePath', 'return `' +
-                                `${buildConfiguration['preinstall_a']}\``
-                            )(global, configuration, buildConfiguration, __dirname,
-                            global.process.cwd(), path,
-                            additionalArguments, filePath))
-                    }
-
+                for (let filePath of buildConfiguration.filePaths)
                     childProcess.push(run(new global.Function(
                         'global', 'self', 'buildConfiguration',
                         'webOptimizerPath', 'currentPath', 'path',
@@ -153,7 +135,6 @@ if (global.process.argv.length > 2) {
                     )(global, configuration, buildConfiguration, __dirname,
                     global.process.cwd(), path, additionalArguments, filePath
                     ), childProcessOptions))
-                }
         }
     } else
         if (global.process.argv[2] === 'build')
