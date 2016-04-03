@@ -7,10 +7,10 @@ import {exec as run} from 'child_process'
 import extend from 'extend'
 import * as fileSystem from 'fs'
 import path from 'path'
-fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
+fileSystem.removeDirectoryRecursivelySync = module.require('rimraf').sync
 // NOTE: Only needed for debugging this file.
 try {
-    require('source-map-support/register')
+    module.require('source-map-support/register')
 } catch (error) {}
 // endregion
 // region helper functions
@@ -47,7 +47,7 @@ path.walkDirectoryRecursivelySync = (directoryPath, callback = (
 }
 // endregion
 // region controller
-const childProcessOptions = {cwd: configuration.contextPath}
+const childProcessOptions = {cwd: configuration.path.context}
 let childProcess = null
 if (global.process.argv.length > 2) {
     // Apply default file level build configurations to all file type specific
@@ -62,14 +62,14 @@ if (global.process.argv.length > 2) {
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
-            configuration.contextPath
+            configuration.path.context
         ))
             path.walkDirectoryRecursivelySync(configuration.path.target, (
                 filePath, stat
             ) => {
                 for (let pathToIgnore of configuration.path.ignore)
                     if (filePath.startsWith(path.resolve(
-                        configuration.contextPath, pathToIgnore
+                        configuration.path.context, pathToIgnore
                     )))
                         return false
                 global.Object.keys(configuration.build).forEach(type => {
@@ -102,7 +102,7 @@ if (global.process.argv.length > 2) {
                 ), (filePath, stat) => {
                     for (let pathToIgnore of configuration.path.ignore)
                         if (filePath.startsWith(path.resolve(
-                            configuration.contextPath, pathToIgnore
+                            configuration.path.context, pathToIgnore
                         )))
                             return false
                     if (stat.isFile() && path.extname(filePath).substring(

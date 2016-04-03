@@ -5,13 +5,25 @@
 import extend from 'extend'
 // NOTE: Only needed for debugging this file.
 try {
-    require('source-map-support/register')
+    module.require('source-map-support/register')
 } catch (error) {}
+// NOTE: "{configuration as currentConfiguration}" would result in a read only
+// variable.
 import {configuration} from './package'
-import path from 'path'
-const specificConfiguration = require('../../package').webOptimizer || {}
-// endregion
 let currentConfiguration = configuration
+import path from 'path'
+currentConfiguration.default.path.context = path.resolve(__dirname, '../../')
+if (
+    path.basename(path.dirname(process.cwd())) === 'node_modules' ||
+    path.basename(path.dirname(process.cwd())) === '.staging' &&
+    path.basename(path.dirname(path.dirname(process.cwd()))) === 'node_modules'
+)
+    currentConfiguration.default.path.context = process.cwd()
+const specificConfiguration = module.require(path.join(
+    currentConfiguration.default.path.context, 'package'
+)).webOptimizer || {}
+console.log(process.cwd(), module.require(path.join(currentConfiguration.default.path.context, 'package')).name)
+// endregion
 // region helper functions
 const isObject = object => {
     // Checks if given entity is a object.
@@ -36,9 +48,9 @@ const resolve = object => {
             if (key === '__execute__')
                 return resolve(new global.Function(
                     'global', 'self', 'webOptimizerPath', 'currentPath',
-                    'contextPath', `return ${object[key]}`
+                    `return ${object[key]}`
                 )(global, currentConfiguration, __dirname, global.process.cwd(
-                ), currentConfiguration.contextPath))
+                )))
             object[key] = resolve(object[key])
         }
     return object
@@ -54,10 +66,7 @@ if (global.process.env.npm_config_production)
     debug = false
 else if (global.process.env.npm_config_debug)
     debug = true
-currentConfiguration.default.contextPath = path.resolve(__dirname, '../../')
-if (path.basename(path.dirname(process.cwd())) === 'node_modules')
-    currentConfiguration.default.contextPath = process.cwd()
-currentConfiguration.default.contextPath += '/'
+currentConfiguration.default.path.context += '/'
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
@@ -132,7 +141,7 @@ for (let pathConfiguration of [
     for (let key of ['source', 'target'])
         if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(
-                currentConfiguration.contextPath, resolve(
+                currentConfiguration.path.context, resolve(
                     pathConfiguration[key])
             ) + '/'
 currentConfiguration = resolve(currentConfiguration)

@@ -6,17 +6,17 @@ import configuration from './configurator.compiled'
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
-fileSystem.removeDirectoryRecursivelySync = require('rimraf').sync
+fileSystem.removeDirectoryRecursivelySync = module.require('rimraf').sync
 // NOTE: Only needed for debugging this file.
 try {
-    require('source-map-support/register')
+    module.require('source-map-support/register')
 } catch (error) {}
 import webpack from 'webpack'
-const plugins = require('webpack-load-plugins')()
+const plugins = module.require('webpack-load-plugins')()
 plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
-plugins.Offline = require('offline-plugin')
+plugins.Offline = module.require('offline-plugin')
 // endregion
 // region initialisation
 // / region configuration pre processing
@@ -194,7 +194,7 @@ const loader = {
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"
-    context: configuration.contextPath,
+    context: configuration.path.context,
     debug: configuration.debug,
     devtool: configuration.developmentTool,
     devserver: configuration.developmentServer,

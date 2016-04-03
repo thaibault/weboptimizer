@@ -8,9 +8,9 @@ import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
 try {
-    require('source-map-support/register')
+    module.require('source-map-support/register')
 } catch (error) {}
-const plugins = require('webpack-load-plugins')()
+const plugins = module.require('webpack-load-plugins')()
 plugins.HTML = plugins.html
  // endregion
 // region helper functions
@@ -41,7 +41,7 @@ for (let module of configuration.test.modules) {
         path.walkDirectoryRecursivelySync(module, filePath => {
             for (let pathToIgnore of configuration.path.ignore)
                 if (filePath.startsWith(path.resolve(
-                    configuration.contextPath, pathToIgnore
+                    configuration.path.context, pathToIgnore
                 )))
                     return false
             modules.push(filePath)
@@ -86,7 +86,7 @@ const loader = {
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"
-    context: configuration.contextPath,
+    context: configuration.path.context,
     debug: true,
     devtool: configuration.developmentTool,
     devserver: configuration.developmentServer,
@@ -101,7 +101,7 @@ export default {
     // endregion
     // region output
     output: {
-        path: configuration.contextPath,
+        path: configuration.path.context,
         filename: configuration.files.javaScript,
         pathinfo: false,
         hashFunction: configuration.hashAlgorithm
