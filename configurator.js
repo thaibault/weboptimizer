@@ -22,7 +22,6 @@ if (
 const specificConfiguration = module.require(path.join(
     currentConfiguration.default.path.context, 'package'
 )).webOptimizer || {}
-console.log(process.cwd(), module.require(path.join(currentConfiguration.default.path.context, 'package')).name)
 // endregion
 // region helper functions
 const isObject = object => {
