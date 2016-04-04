@@ -208,10 +208,10 @@ if (configuration.library) {
                         moduleFilePath, `.${buildConfiguration.extension}`
                     )] = moduleFilePath
                 else
-                    console.log(moduleFilePath)
+                    // TODO should also be builded! Add them to extraxtText directly.
+                    console.log(moduleFilePath, plugins.extractText)
 }
 // endregion
-console.log(entryModules)
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:
