@@ -103,6 +103,16 @@ if (global.process.argv.length > 2) {
                         })
                 }
             })
+    else if (global.process.argv[2] === 'lint')
+        // Lints files with respect to given linting configuration.
+        childProcess = run(
+            `${configuration.commandLine.lint} ${additionalArguments}`,
+            childProcessOptions)
+    else if (global.process.argv[2] === 'test')
+        // Runs all specified tests (typically in a real browser environment).
+        childProcess = run(
+            `${configuration.commandLine.test} ${additionalArguments}`,
+            childProcessOptions)
     else if (
         configuration.library && global.process.argv[2] === 'preinstall'
     ) {
@@ -157,16 +167,6 @@ if (global.process.argv.length > 2) {
         childProcess = run(
             `${configuration.commandLine.serve} ${additionalArguments}`,
             childProcessOptions)
-    if (global.process.argv[2] === 'lint')
-        // Lints files with respect to given linting configuration.
-        childProcess = run(
-            `${configuration.commandLine.lint} ${additionalArguments}`,
-            childProcessOptions)
-    else if (global.process.argv[2] === 'test')
-        // Runs all specified tests (typically in a real browser environment).
-        childProcess = run(
-            `${configuration.commandLine.test} ${additionalArguments}`,
-            childProcessOptions)
 }
 if (childProcess === null) {
     // If no sub process could be started a message with all available
@@ -177,7 +177,7 @@ if (childProcess === null) {
             ' command line argument.\n')
     else
         console.log(
-            'Give one of "build", "clear", "lint", "serve" or "test" as ' +
+            'Give one of "build", "clear", "lint", "test" or "serve" as ' +
             'command line argument.\n')
     process.exit()
 }

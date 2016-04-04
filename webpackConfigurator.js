@@ -191,6 +191,9 @@ const loader = {
 // / endregion
 // endregion
 // region configuration
+console.log('A')
+console.log(configuration.library)
+console.log('B')
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"

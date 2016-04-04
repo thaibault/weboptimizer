@@ -299,25 +299,16 @@
                     "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js",
                     "buildFileNamePattern": "^.+\\.compiled\\.[^.]+$"
                 },
-                "javaScript": {
-                    "extension": "js",
-                    "build": "babel ${filePath} --presets es2015 --source-maps inline --out-file ${self.path.target}${self.path.asset.javaScript}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.extension}"
-                },
-                "coffeeScript": {
-                    "extension": "coffee",
-                    "build": "coffee --compile --print ${filePath} >${self.path.target}${self.path.asset.coffeeScript}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js"
-                },
+                "javaScript": {"extension": "js"},
+                "coffeeScript": {"extension": "coffee"},
                 "less": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css",
-                    "build": "lessc ${filePath} >${self.path.target}${self.path.asset.less}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
                 },
                 "sass": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css",
-                    "build": "node-sass --indented-syntax ${filePath} ${self.path.target}${self.path.asset.sass}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
                 },
                 "scss": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css",
-                    "build": "node-sass ${filePath} ${self.path.target}${self.path.asset.scss}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
                 }
 
             }
