@@ -195,8 +195,17 @@ const loader = {
     }
 }
 // / endregion
+let entryModules = configuration.externalInjects.concat(
+    configuration.internalInjects)
+const testModuleFilePaths = helper.determineTestModules()[0]
+if (configuration.library) {
+    entryModules = []
+    for (let buildConfiguration of helper.determineBuildConfigurations())
+        for (let moduleFilePath of buildConfiguration.filePaths)
+            if (testModuleFilePaths.indexOf(moduleFilePath) === -1)
+                entryModules.push(moduleFilePath)
+}
 // endregion
-console.log('webpack-config:', helper.determineBuildConfigurations())
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:
@@ -211,7 +220,7 @@ export default {
         extensions: configuration.knownExtensions,
         alias: configuration.moduleAliases
     },
-    entry: configuration.externalInjects.concat(configuration.internalInjects),
+    entry: entryModules,
     // endregion
     // region output
     output: {

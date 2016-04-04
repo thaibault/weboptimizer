@@ -3,7 +3,6 @@
 'use strict'
 // region imports
 import {exec as run} from 'child_process'
-import extend from 'extend'
 import * as fileSystem from 'fs'
 import path from 'path'
 fileSystem.removeDirectoryRecursivelySync = module.require('rimraf').sync
@@ -19,15 +18,6 @@ import helper from './helper.compiled'
 const childProcessOptions = {cwd: configuration.path.context}
 let childProcess = null
 if (global.process.argv.length > 2) {
-    // Apply default file level build configurations to all file type specific
-    // ones.
-    let defaultConfiguration = configuration.build.default
-    delete configuration.build.default
-    global.Object.keys(configuration.build).forEach(type => {
-        configuration.build[type] = extend(
-            true, {extension: type}, defaultConfiguration,
-            configuration.build[type], {type})
-    })
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(

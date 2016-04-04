@@ -78,7 +78,49 @@ export default {
                 this.walkDirectoryRecursivelySync(filePath, callback)
         })
     },
+    determineTestModules: function() {
+        const filePaths = []
+        const moduleDirectoryPaths = [configuration.path.asset.source]
+        for (let module of configuration.test.modules) {
+            let stat
+            let filePath
+            for (let extension of configuration.knownExtensions) {
+                filePath = path.resolve(module + extension)
+                try {
+                    stat = fileSystem.statSync(filePath)
+                    break
+                } catch (error) {}
+            }
+            let pathToAdd
+            if (stat.isDirectory()) {
+                pathToAdd = `${path.resolve(module)}/`
+                this.walkDirectoryRecursivelySync(module, filePath => {
+                    for (let pathToIgnore of configuration.path.ignore)
+                        if (filePath.startsWith(path.resolve(
+                            configuration.path.context, pathToIgnore
+                        )))
+                            return false
+                    filePaths.push(filePath)
+                })
+            } else {
+                pathToAdd = `${path.resolve(path.dirname(module))}/`
+                filePaths.push(filePath)
+            }
+            if (moduleDirectoryPaths.indexOf(pathToAdd) === -1)
+                moduleDirectoryPaths.push(pathToAdd)
+        }
+        return [filePaths, moduleDirectoryPaths]
+    },
     determineBuildConfigurations: function() {
+        // Apply default file level build configurations to all file type specific
+        // ones.
+        let defaultConfiguration = configuration.build.default
+        delete configuration.build.default
+        global.Object.keys(configuration.build).forEach(type => {
+            configuration.build[type] = extend(
+                true, {extension: type}, defaultConfiguration,
+                configuration.build[type], {type})
+        })
         // Determines all files which should be preprocessed after using
         // them in production.
         let buildConfigurations = []

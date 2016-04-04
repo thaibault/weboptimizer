@@ -16,34 +16,9 @@ import configuration from './configurator.compiled'
 import helper from './helper.compiled'
  // endregion
 // region initialisation
-const modules = []
-const moduleDirectoryPaths = [configuration.path.asset.source]
-for (let module of configuration.test.modules) {
-    let stat
-    for (let extension of configuration.knownExtensions)
-        try {
-            stat = fileSystem.statSync(module + extension)
-            break
-        } catch (error) {}
-    let pathToAdd
-    if (stat.isDirectory()) {
-        pathToAdd = `${path.resolve(module)}/`
-        helper.walkDirectoryRecursivelySync(module, filePath => {
-            for (let pathToIgnore of configuration.path.ignore)
-                if (filePath.startsWith(path.resolve(
-                    configuration.path.context, pathToIgnore
-                )))
-                    return false
-            modules.push(filePath)
-        })
-    } else {
-        pathToAdd = `${path.resolve(path.dirname(module))}/`
-        modules.push(module)
-    }
-    if (moduleDirectoryPaths.indexOf(pathToAdd) === -1)
-        moduleDirectoryPaths.push(pathToAdd)
-}
-configuration.test.modules = modules
+let testModuleFilePaths
+let moduleDirectoryPaths
+[testModuleFilePaths, moduleDirectoryPaths] = helper.determineTestModules()
 let favicon = configuration.path.asset.source +
     `${configuration.path.asset.image}favicon.ico`
 try {
@@ -87,7 +62,7 @@ export default {
         alias: extend(
             configuration.moduleAliases, configuration.test.moduleAliases)
     },
-    entry: configuration.test.modules,
+    entry: testModuleFilePaths,
     // endregion
     // region output
     output: {
