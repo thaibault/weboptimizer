@@ -2,7 +2,6 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import configuration from './configurator.compiled'
 import {exec as run} from 'child_process'
 import extend from 'extend'
 import * as fileSystem from 'fs'
@@ -12,39 +11,9 @@ fileSystem.removeDirectoryRecursivelySync = module.require('rimraf').sync
 try {
     module.require('source-map-support/register')
 } catch (error) {}
-// endregion
-// region helper functions
-const handleChildProcess = childProcess => {
-    /*
-        Forwards given child process communication channels to corresponding
-        current process communication channels.
-    */
-    childProcess.stdout.on('data', data => {
-        process.stdout.write(data)
-    })
-    childProcess.stderr.on('data', data => {
-        process.stderr.write(data)
-    })
-    childProcess.on('close', returnCode => {
-        if (returnCode !== 0)
-            console.error(`Task exited with error code ${returnCode}`)
-    })
-}
-path.walkDirectoryRecursivelySync = (directoryPath, callback = (
-    /* filePath, stat */
-) => {}) => {
-    /*
-        Iterates recursively through given directory structure and calls given
-        callback for each found entity. If "false" is returned and current
-        file is a directory deeper leaves aren't explored.
-    */
-    fileSystem.readdirSync(directoryPath).forEach(fileName => {
-        const filePath = path.resolve(directoryPath, fileName)
-        const stat = fileSystem.statSync(filePath)
-        if (callback(filePath, stat) !== false && stat && stat.isDirectory())
-            path.walkDirectoryRecursivelySync(filePath, callback)
-    })
-}
+
+import configuration from './configurator.compiled'
+import helper from './helper'
 // endregion
 // region controller
 const childProcessOptions = {cwd: configuration.path.context}
@@ -86,40 +55,8 @@ if (global.process.argv.length > 2) {
     }
     let additionalArguments = global.process.argv.splice(3).join(' ')
     let buildConfigurations = []
-    if (configuration.library) {
-        // Determines all files which should be preprocessed after using
-        // them in production.
-        let index = 0
-        global.Object.keys(configuration.build).forEach(type => {
-            buildConfigurations.push(extend(
-                true, {filePaths: []}, configuration.build[type]))
-            path.walkDirectoryRecursivelySync(path.join(
-                configuration.path.asset.source,
-                configuration.path.asset.javaScript
-            ), (filePath, stat) => {
-                for (let pathToIgnore of configuration.path.ignore)
-                    if (filePath.startsWith(path.resolve(
-                        configuration.path.context, pathToIgnore
-                    )))
-                        return false
-                if (stat.isFile() && path.extname(filePath).substring(
-                    1
-                ) === buildConfigurations[
-                    buildConfigurations.length - 1
-                ].extension && !(new global.RegExp(
-                    buildConfigurations[
-                        buildConfigurations.length - 1
-                    ].buildFileNamePattern
-                )).test(filePath))
-                    buildConfigurations[index].filePaths.push(filePath)
-            })
-            index += 1
-        })
-        if (global.process.argv[3] === '--print-source-paths') {
-            console.log(global.JSON.stringify(buildConfigurations))
-            process.exit()
-        }
-    }
+    if (configuration.library)
+        buildConfigurations = helper.determineBuildConfigurations()
     if (global.process.argv[2] === 'build')
         // Triggers complete asset compiling and bundles them into the
         // final productive output.
@@ -179,16 +116,16 @@ if (childProcess === null) {
     else
         console.log(
             'Give one of "build", "clear", "lint", "test" or "serve" as ' +
-            'command line argument.\n')
+            ' command line argument.\n')
     process.exit()
 }
 // endregion
 // region trigger child process communication handler
 if (global.Array.isArray(childProcess))
     for (let subChildProcess of childProcess)
-        handleChildProcess(subChildProcess)
+        helper.handleChildProcess(subChildProcess)
 else
-    handleChildProcess(childProcess)
+    helper.handleChildProcess(childProcess)
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

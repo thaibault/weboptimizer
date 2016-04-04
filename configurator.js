@@ -3,15 +3,17 @@
 'use strict'
 // region imports
 import extend from 'extend'
+import path from 'path'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
 } catch (error) {}
+
+import helper from './helper'
 // NOTE: "{configuration as currentConfiguration}" would result in a read only
 // variable.
 import {configuration} from './package'
 let currentConfiguration = configuration
-import path from 'path'
 currentConfiguration.default.path.context = path.resolve(__dirname, '../../')
 if (
     path.basename(path.dirname(process.cwd())) === 'node_modules' ||
@@ -22,38 +24,6 @@ if (
 const specificConfiguration = module.require(path.join(
     currentConfiguration.default.path.context, 'package'
 )).webOptimizer || {}
-// endregion
-// region helper functions
-const isObject = object => {
-    // Checks if given entity is a object.
-    return (
-        object !== null && typeof object === 'object' &&
-        global.Object.getPrototypeOf(object) === global.Object.prototype)
-}
-const isFunction = object => {
-    // Checks if given entity is a function.
-    return object && {}.toString.call(object) === '[object Function]'
-}
-const resolve = object => {
-    // Processes all dynamically linked values in given object.
-    if (global.Array.isArray(object)) {
-        let index = 0
-        for (let value of object) {
-            object[index] = resolve(value)
-            index += 1
-        }
-    } else if (isObject(object))
-        for (let key in object) {
-            if (key === '__execute__')
-                return resolve(new global.Function(
-                    'global', 'self', 'webOptimizerPath', 'currentPath',
-                    `return ${object[key]}`
-                )(global, currentConfiguration, __dirname, global.process.cwd(
-                )))
-            object[key] = resolve(object[key])
-        }
-    return object
-}
 // endregion
 // region loading default configuration
 // NOTE: Given node command line arguments results in "npm_config_*"
@@ -140,14 +110,14 @@ for (let pathConfiguration of [
     for (let key of ['source', 'target'])
         if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(
-                currentConfiguration.path.context, resolve(
+                currentConfiguration.path.context, helper.resolve(
                     pathConfiguration[key])
             ) + '/'
-currentConfiguration = resolve(currentConfiguration)
-if (isFunction(currentConfiguration.files.html[0].template))
+currentConfiguration = helper.resolve(currentConfiguration)
+if (helper.isFunction(currentConfiguration.files.html[0].template))
     currentConfiguration.files.html[0].template =
         currentConfiguration.files.html[0].template()
-if (isFunction(currentConfiguration.test.template))
+if (helper.isFunction(currentConfiguration.test.template))
     currentConfiguration.test.template = currentConfiguration.test.template()
 // endregion
 export default currentConfiguration

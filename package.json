@@ -40,6 +40,7 @@
         "taskRunner.js",
         "webpackConfigurator.js",
         "webpackTestConfigurator.js",
+        "helper.js",
         "test.jade"
     ],
     "homepage": "http://torben.website/webOptimizer",

@@ -3,7 +3,6 @@
 'use strict'
 // region imports
 import extend from 'extend'
-import configuration from './configurator.compiled'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -12,19 +11,10 @@ try {
 } catch (error) {}
 const plugins = module.require('webpack-load-plugins')()
 plugins.HTML = plugins.html
+
+import configuration from './configurator.compiled'
+import helper from './helper'
  // endregion
-// region helper functions
-path.walkDirectoryRecursivelySync = (directoryPath, callback = (
-    /* filePath, stat */
-) => {}) => {
-    fileSystem.readdirSync(directoryPath).forEach(fileName => {
-        const filePath = path.resolve(directoryPath, fileName)
-        const stat = fileSystem.statSync(filePath)
-        if (callback(filePath, stat) !== false && stat && stat.isDirectory())
-            path.walkDirectoryRecursivelySync(filePath, callback)
-    })
-}
-// endregion
 // region initialisation
 const modules = []
 const moduleDirectoryPaths = [configuration.path.asset.source]
@@ -38,7 +28,7 @@ for (let module of configuration.test.modules) {
     let pathToAdd
     if (stat.isDirectory()) {
         pathToAdd = `${path.resolve(module)}/`
-        path.walkDirectoryRecursivelySync(module, filePath => {
+        helper.walkDirectoryRecursivelySync(module, filePath => {
             for (let pathToIgnore of configuration.path.ignore)
                 if (filePath.startsWith(path.resolve(
                     configuration.path.context, pathToIgnore

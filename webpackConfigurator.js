@@ -2,7 +2,6 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import configuration from './configurator.compiled'
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
@@ -17,6 +16,9 @@ plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Offline = module.require('offline-plugin')
+
+import configuration from './configurator.compiled'
+import helper from './helper'
 // endregion
 // region initialisation
 // / region configuration pre processing
@@ -194,7 +196,7 @@ const loader = {
 }
 // / endregion
 // endregion
-console.log('webpack-config:', configuration.files.javaScript)
+console.log('webpack-config:', helper.determineBuildConfigurations())
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:
