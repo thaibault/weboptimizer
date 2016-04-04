@@ -111,9 +111,10 @@ for (let pathConfiguration of [
         if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(
                 currentConfiguration.path.context, helper.resolve(
-                    pathConfiguration[key])
+                    pathConfiguration[key], currentConfiguration)
             ) + '/'
-currentConfiguration = helper.resolve(currentConfiguration)
+currentConfiguration = helper.resolve(
+    currentConfiguration, currentConfiguration)
 if (helper.isFunction(currentConfiguration.files.html[0].template))
     currentConfiguration.files.html[0].template =
         currentConfiguration.files.html[0].template()

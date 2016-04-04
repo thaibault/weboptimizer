@@ -13,7 +13,7 @@ const plugins = module.require('webpack-load-plugins')()
 plugins.HTML = plugins.html
 
 import configuration from './configurator.compiled'
-import helper from './helper'
+import helper from './helper.compiled'
  // endregion
 // region initialisation
 const modules = []

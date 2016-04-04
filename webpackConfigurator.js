@@ -18,7 +18,7 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Offline = module.require('offline-plugin')
 
 import configuration from './configurator.compiled'
-import helper from './helper'
+import helper from './helper.compiled'
 // endregion
 // region initialisation
 // / region configuration pre processing

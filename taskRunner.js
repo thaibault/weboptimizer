@@ -13,7 +13,7 @@ try {
 } catch (error) {}
 
 import configuration from './configurator.compiled'
-import helper from './helper'
+import helper from './helper.compiled'
 // endregion
 // region controller
 const childProcessOptions = {cwd: configuration.path.context}

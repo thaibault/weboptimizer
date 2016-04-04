@@ -23,12 +23,12 @@ export default {
         // Checks if given entity is a function.
         return object && {}.toString.call(object) === '[object Function]'
     },
-    resolve: (object, currentConfiguration = configuration) => {
+    resolve: function(object, currentConfiguration = configuration) {
         // Processes all dynamically linked values in given object.
         if (global.Array.isArray(object)) {
             let index = 0
             for (let value of object) {
-                object[index] = this.resolve(value)
+                object[index] = this.resolve(value, currentConfiguration)
                 index += 1
             }
         } else if (this.isObject(object))
