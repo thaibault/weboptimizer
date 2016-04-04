@@ -117,7 +117,7 @@ if (global.process.argv.length > 2) {
             index += 1
         })
         if (global.process.argv[3] === '--print-source-paths') {
-            console.log('A', global.JSON.stringify(buildConfigurations))
+            console.log(global.JSON.stringify(buildConfigurations))
             process.exit()
         }
     }
