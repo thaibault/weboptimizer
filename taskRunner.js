@@ -85,6 +85,42 @@ if (global.process.argv.length > 2) {
         process.exit()
     }
     let additionalArguments = global.process.argv.splice(3).join(' ')
+    if (configuration.library) {
+        // Determines all files which should be preprocessed after using
+        // them in production.
+        let buildConfigurations = []
+        let index = 0
+        global.Object.keys(configuration.build).forEach(type => {
+            buildConfigurations.push(extend(
+                true, {filePaths: []}, configuration.build[type]))
+            path.walkDirectoryRecursivelySync(path.join(
+                configuration.path.asset.source,
+                configuration.path.asset.javaScript
+            ), (filePath, stat) => {
+                for (let pathToIgnore of configuration.path.ignore)
+                    if (filePath.startsWith(path.resolve(
+                        configuration.path.context, pathToIgnore
+                    )))
+                        return false
+                if (stat.isFile() && path.extname(filePath).substring(
+                    1
+                ) === buildConfigurations[
+                    buildConfigurations.length - 1
+                ].extension && !(new global.RegExp(
+                    buildConfigurations[
+                        buildConfigurations.length - 1
+                    ].buildFileNamePattern
+                )).test(filePath)) {
+                    buildConfigurations[index].filePaths.push(filePath)
+                }
+            })
+            index += 1
+        })
+        if (global.process.argv[3] === '--print-source-paths') {
+            console.log('A', global.JSON.stringify(buildConfigurations))
+            process.exit()
+        }
+    }
     if (global.process.argv[2] === 'build')
         // Triggers complete asset compiling and bundles them into the
         // final productive output.
@@ -116,40 +152,6 @@ if (global.process.argv.length > 2) {
     else if (
         configuration.library && global.process.argv[2] === 'preinstall'
     ) {
-        // Determines all files which should be preprocessed after using
-        // them in production.
-        let buildConfigurations = []
-        let index = 0
-        global.Object.keys(configuration.build).forEach(type => {
-            buildConfigurations.push(extend(
-                true, {filePaths: []}, configuration.build[type]))
-            path.walkDirectoryRecursivelySync(path.join(
-                configuration.path.asset.source,
-                configuration.path.asset.javaScript
-            ), (filePath, stat) => {
-                for (let pathToIgnore of configuration.path.ignore)
-                    if (filePath.startsWith(path.resolve(
-                        configuration.path.context, pathToIgnore
-                    )))
-                        return false
-                if (stat.isFile() && path.extname(filePath).substring(
-                    1
-                ) === buildConfigurations[
-                    buildConfigurations.length - 1
-                ].extension && !(new global.RegExp(
-                    buildConfigurations[
-                        buildConfigurations.length - 1
-                    ].buildFileNamePattern
-                )).test(filePath)) {
-                    buildConfigurations[index].filePaths.push(filePath)
-                }
-            })
-            index += 1
-        })
-        /*
-            NOTE: We have to loop twice since generated files from further
-            loops shouldn't be taken into account in later loops.
-        */
         childProcess = []
         // Perform all file specific preprocessing stuff.
         for (let buildConfiguration of buildConfigurations)

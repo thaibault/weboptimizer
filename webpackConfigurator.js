@@ -20,36 +20,40 @@ plugins.Offline = module.require('offline-plugin')
 // endregion
 // region initialisation
 // / region configuration pre processing
-let index = 0
-for (let path of configuration.internalInjects) {
-    configuration.internalInjects[index] = configuration.path.asset.source +
-        path
-    index += 1
-}
 configuration.plugins = []
-for (let htmlOptions of configuration.files.html)
-    configuration.plugins.push(new plugins.HTML(htmlOptions))
+if (!configuration.library) {
+    let index = 0
+    for (let path of configuration.internalInjects) {
+        configuration.internalInjects[index] =
+            configuration.path.asset.source + path
+        index += 1
+    }
+    for (let htmlOptions of configuration.files.html)
+        configuration.plugins.push(new plugins.HTML(htmlOptions))
+    if (configuration.offline) {
+        if (!configuration.offline.excludes)
+            configuration.offline.excludes = []
+        if (configuration.inPlace.cascadingStyleSheet)
+            configuration.offline.excludes.push(
+                `${configuration.path.asset.cascadingStyleSheet}*.css?` +
+                `${configuration.hashAlgorithm}=*`)
+        if (configuration.inPlace.javaScript)
+            configuration.offline.excludes.push(
+                `${configuration.path.asset.javaScript}*.js?` +
+                `${configuration.hashAlgorithm}=*`)
+        configuration.plugins.push(new plugins.Offline(configuration.offline))
+    }
+    configuration.plugins.push(new plugins.ExtractText(
+        configuration.files.cascadingStyleSheet))
+}
 // Optimizes webpack output and provides an offline manifest
 if (configuration.optimizer.uglifyJS)
     configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
         configuration.optimizer.uglifyJS))
-if (configuration.offline) {
-    if (!configuration.offline.excludes)
-        configuration.offline.excludes = []
-    if (configuration.inPlace.cascadingStyleSheet)
-        configuration.offline.excludes.push(
-            `${configuration.path.asset.cascadingStyleSheet}*.css?` +
-            `${configuration.hashAlgorithm}=*`)
-    if (configuration.inPlace.javaScript)
-        configuration.offline.excludes.push(
-            `${configuration.path.asset.javaScript}*.js?` +
-            `${configuration.hashAlgorithm}=*`)
-    configuration.plugins.push(new plugins.Offline(configuration.offline))
-}
-configuration.plugins.push(new plugins.ExtractText(
-    configuration.files.cascadingStyleSheet))
 // // region in-place configured assets in the main html file
-if (!process.argv[1].endsWith('/webpack-dev-server'))
+if (!(configuration.library || process.argv[1].endsWith(
+    '/webpack-dev-server'
+)))
     configuration.plugins.push({apply: compiler => {
         compiler.plugin('emit', (compilation, callback) => {
             if (
@@ -190,10 +194,8 @@ const loader = {
 }
 // / endregion
 // endregion
+console.log('webpack-config:', configuration.files.javaScript)
 // region configuration
-console.log('A')
-console.log(configuration.library)
-console.log('B')
 export default {
     // NOTE: building context is this hierarchy up:
     // "PROJECT/node_modules/webOptimizer"

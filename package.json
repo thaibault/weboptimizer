@@ -172,10 +172,10 @@
                     }
                 ],
                 "cascadingStyleSheet": {
-                    "__execute__": "`cascadingStyleSheet/main.css?${self.hashAlgorithm}=[contenthash]`"
+                    "__execute__": "`${self.path.asset.cascadingStyleSheet}main.css?${self.hashAlgorithm}=[contenthash]`"
                 },
                 "javaScript": {
-                    "__execute__": "`javaScript/main.js?${self.hashAlgorithm}=[hash]`"
+                    "__execute__": "`${self.path.asset.javaScript}main.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "preprocessor": {
@@ -329,6 +329,7 @@
             }
         },
         "library": {
+            "internalInjects": "__auto__",
             "test": {"modules": ["test"]},
             "path": {
                 "source": "./",
