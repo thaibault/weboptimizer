@@ -85,10 +85,10 @@ if (global.process.argv.length > 2) {
         process.exit()
     }
     let additionalArguments = global.process.argv.splice(3).join(' ')
+    let buildConfigurations = []
     if (configuration.library) {
         // Determines all files which should be preprocessed after using
         // them in production.
-        let buildConfigurations = []
         let index = 0
         global.Object.keys(configuration.build).forEach(type => {
             buildConfigurations.push(extend(
