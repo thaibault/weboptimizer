@@ -199,27 +199,34 @@ const injects = {
     internal: configuration.internalInjects,
     external: configuration.externalInjects
 }
-if (configuration.library) {
-    const testModuleFilePaths = helper.determineTestModules()[0]
-    for (let type of ['internal', 'external'])
-        if (configuration[`${type}Injects`] === '__auto__') {
-            injects[type] = {}
-            for (let buildConfiguration of helper.determineBuildConfigurations())
-                for (let moduleFilePath of buildConfiguration.filePaths)
-                    if (testModuleFilePaths.indexOf(moduleFilePath) === -1)
-                        if (buildConfiguration.outputExtension === 'js')
-                            injects[type][path.basename(
-                                moduleFilePath, `.${buildConfiguration.extension}`
-                            )] = moduleFilePath
-                        else
-                            injects[type][path.basename(
-                                moduleFilePath, `.${buildConfiguration.extension}`
-                            )] = moduleFilePath
-                            // TODO should also be builded! Add them to extraxtText directly.
-                            // console.log(moduleFilePath, plugins.extractText)
-        }
+const testModuleFilePaths = helper.determineTestModules()[0]
+for (let type of ['internal', 'external'])
+    if (configuration[`${type}Injects`] === '__auto__') {
+        injects[type] = {}
+        for (let buildConfiguration of helper.determineBuildConfigurations())
+            for (let moduleFilePath of buildConfiguration.filePaths)
+                if (testModuleFilePaths.indexOf(moduleFilePath) === -1)
+                    if (buildConfiguration.outputExtension === 'js')
+                        injects[type][path.basename(
+                            moduleFilePath, `.${buildConfiguration.extension}`
+                        )] = moduleFilePath
+                    else
+                        injects[type][path.basename(
+                            moduleFilePath, `.${buildConfiguration.extension}`
+                        )] = moduleFilePath
+                        // TODO should also be builded! Add them to extraxtText directly.
+                        // console.log(moduleFilePath, plugins.extractText)
+    }
+// TODO check if "configuration.externalInjects" and
+// "configuration.internalInjects" arent set explicitly.
+if (configuration.library && !false && !false) {
+    configuration.externalInjects = function(context, request, callback) {
+        console.log(request, injects.internal)
+        if(injects.internal.indexOf(request) === -1)
+            return callback(null, `var ${request}`)
+        callback()
+    }
 }
-console.log('A', injects)
 // endregion
 // region configuration
 export default {
