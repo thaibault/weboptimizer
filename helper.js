@@ -12,6 +12,7 @@ try {
 
 import configuration from './configurator.compiled'
 // endregion
+// region functions
 export default {
     isObject: object => {
         // Checks if given entity is a object.
@@ -61,9 +62,9 @@ export default {
                 console.error(`Task exited with error code ${returnCode}`)
         })
     },
-    walkDirectoryRecursivelySync: (directoryPath, callback = (
+    walkDirectoryRecursivelySync: function(directoryPath, callback = (
         /* filePath, stat */
-    ) => {}) => {
+    ) => {}) {
         /*
             Iterates recursively through given directory structure and calls
             given callback for each found entity. If "false" is returned and
@@ -74,10 +75,10 @@ export default {
             const stat = fileSystem.statSync(filePath)
             if (callback(filePath, stat) !== false && stat && stat.isDirectory(
             ))
-                path.walkDirectoryRecursivelySync(filePath, callback)
+                this.walkDirectoryRecursivelySync(filePath, callback)
         })
     },
-    determineBuildConfigurations: () => {
+    determineBuildConfigurations: function() {
         // Determines all files which should be preprocessed after using
         // them in production.
         let buildConfigurations = []
@@ -85,7 +86,7 @@ export default {
         global.Object.keys(configuration.build).forEach(type => {
             buildConfigurations.push(extend(
                 true, {filePaths: []}, configuration.build[type]))
-            path.walkDirectoryRecursivelySync(path.join(
+            this.walkDirectoryRecursivelySync(path.join(
                 configuration.path.asset.source,
                 configuration.path.asset.javaScript
             ), (filePath, stat) => {
@@ -110,6 +111,7 @@ export default {
         return buildConfigurations
     }
 }
+// endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
