@@ -330,6 +330,9 @@
             }
         },
         "library": {
+            "files": {"javaScript": {
+                "__execute__": "`${self.path.asset.javaScript}index.js?${self.hashAlgorithm}=[hash]`"
+            }},
             "internalInjects": "__auto__",
             "test": {"modules": ["test"]},
             "path": {
