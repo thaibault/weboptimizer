@@ -45,9 +45,9 @@ if (!configuration.library) {
                 `${configuration.hashAlgorithm}=*`)
         configuration.plugins.push(new plugins.Offline(configuration.offline))
     }
-    configuration.plugins.push(new plugins.ExtractText(
-        configuration.files.cascadingStyleSheet))
 }
+configuration.plugins.push(new plugins.ExtractText(
+    configuration.files.cascadingStyleSheet))
 // Optimizes webpack output and provides an offline manifest
 if (configuration.optimizer.uglifyJS)
     configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
