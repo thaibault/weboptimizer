@@ -329,7 +329,7 @@
             "files": {"javaScript": {
                 "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
             }},
-            "internalInjects": "__auto__",
+            "externalInjects": "__auto__",
             "test": {"modules": ["test"]},
             "path": {
                 "source": "./",

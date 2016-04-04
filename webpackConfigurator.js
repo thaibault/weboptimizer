@@ -195,22 +195,31 @@ const loader = {
     }
 }
 // / endregion
-let entryModules = configuration.externalInjects.concat(
-    configuration.internalInjects)
-const testModuleFilePaths = helper.determineTestModules()[0]
-if (configuration.library) {
-    entryModules = {}
-    for (let buildConfiguration of helper.determineBuildConfigurations())
-        for (let moduleFilePath of buildConfiguration.filePaths)
-            if (testModuleFilePaths.indexOf(moduleFilePath) === -1)
-                if (buildConfiguration.outputExtension === 'js')
-                    entryModules[path.basename(
-                        moduleFilePath, `.${buildConfiguration.extension}`
-                    )] = moduleFilePath
-                else
-                    // TODO should also be builded! Add them to extraxtText directly.
-                    console.log(moduleFilePath, plugins.extractText)
+const injects = {
+    internal: configuration.internalInjects,
+    external: configuration.externalInjects
 }
+if (configuration.library) {
+    const testModuleFilePaths = helper.determineTestModules()[0]
+    for (let type of ['internal', 'external'])
+        if (configuration[`${type}Injects`] === '__auto__') {
+            injects[type] = {}
+            for (let buildConfiguration of helper.determineBuildConfigurations())
+                for (let moduleFilePath of buildConfiguration.filePaths)
+                    if (testModuleFilePaths.indexOf(moduleFilePath) === -1)
+                        if (buildConfiguration.outputExtension === 'js')
+                            injects[type][path.basename(
+                                moduleFilePath, `.${buildConfiguration.extension}`
+                            )] = moduleFilePath
+                        else
+                            injects[type][path.basename(
+                                moduleFilePath, `.${buildConfiguration.extension}`
+                            )] = moduleFilePath
+                            // TODO should also be builded! Add them to extraxtText directly.
+                            // console.log(moduleFilePath, plugins.extractText)
+        }
+}
+console.log('A', injects)
 // endregion
 // region configuration
 export default {
@@ -226,7 +235,8 @@ export default {
         extensions: configuration.knownExtensions,
         alias: configuration.moduleAliases
     },
-    entry: entryModules,
+    entry: injects.internal,
+    externals: injects.external,
     // endregion
     // region output
     output: {
