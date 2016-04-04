@@ -85,82 +85,78 @@ if (global.process.argv.length > 2) {
         process.exit()
     }
     let additionalArguments = global.process.argv.splice(3).join(' ')
-    if (configuration.library) {
-        // Compile file specific since bundling is only needed in the final
-        // full blown project (if configuration evaluates to "false").
-        if (['preinstall', 'build'].indexOf(global.process.argv[2]) !== -1) {
-            // Determines all files which should be preprocessed after using
-            // them in production.
-            let buildConfigurations = []
-            let index = 0
-            global.Object.keys(configuration.build).forEach(type => {
-                buildConfigurations.push(extend(
-                    true, {filePaths: []}, configuration.build[type]))
-                path.walkDirectoryRecursivelySync(path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.javaScript
-                ), (filePath, stat) => {
-                    for (let pathToIgnore of configuration.path.ignore)
-                        if (filePath.startsWith(path.resolve(
-                            configuration.path.context, pathToIgnore
-                        )))
-                            return false
-                    if (stat.isFile() && path.extname(filePath).substring(
-                        1
-                    ) === buildConfigurations[
-                        buildConfigurations.length - 1
-                    ].extension && !(new global.RegExp(
-                        buildConfigurations[
-                            buildConfigurations.length - 1
-                        ].buildFileNamePattern
-                    )).test(filePath)) {
-                        buildConfigurations[index].filePaths.push(filePath)
-                    }
-                })
-                index += 1
+    if (global.process.argv[2] === 'build')
+        // Triggers complete asset compiling and bundles them into the
+        // final productive output.
+        childProcess = run(
+            `${configuration.commandLine.build} ${additionalArguments}`,
+            childProcessOptions, error => {
+                if (!error) {
+                    let manifestFilePath = path.join(
+                        configuration.path.target, path.basename(
+                            configuration.path.manifest, '.appcache'
+                        ) + '.html')
+                    fileSystem.access(
+                        manifestFilePath, fileSystem.F_OK, error => {
+                            if (!error)
+                                fileSystem.unlink(manifestFilePath)
+                        })
+                }
             })
-            /*
-                NOTE: We have to loop twice since generated files from further
-                loops shouldn't be taken into account in later loops.
-            */
-            childProcess = []
-            // Perform all file specific preprocessing stuff.
-            for (let buildConfiguration of buildConfigurations)
-                for (let filePath of buildConfiguration.filePaths)
-                    childProcess.push(run(new global.Function(
-                        'global', 'self', 'buildConfiguration',
-                        'webOptimizerPath', 'currentPath', 'path',
-                        'additionalArguments', 'filePath', 'return `' +
-                        `${buildConfiguration[global.process.argv[2]]}\``
-                    )(global, configuration, buildConfiguration, __dirname,
-                    global.process.cwd(), path, additionalArguments, filePath
-                    ), childProcessOptions))
-        }
-    } else
-        if (global.process.argv[2] === 'build')
-            // Triggers complete asset compiling and bundles them into the
-            // final productive output.
-            childProcess = run(
-                `${configuration.commandLine.build} ${additionalArguments}`,
-                childProcessOptions, error => {
-                    if (!error) {
-                        let manifestFilePath = path.join(
-                            configuration.path.target, path.basename(
-                                configuration.path.manifest, '.appcache'
-                            ) + '.html')
-                        fileSystem.access(
-                            manifestFilePath, fileSystem.F_OK, error => {
-                                if (!error)
-                                    fileSystem.unlink(manifestFilePath)
-                            })
-                    }
-                })
-        else if (global.process.argv[2] === 'serve')
-            // Provide a development environment where all assets are
-            // dynamically bundled and updated on changes.
-            childProcess = run(
-                `${configuration.commandLine.serve} ${additionalArguments}`,
-                childProcessOptions)
+    else if (
+        configuration.library && global.process.argv[2] === 'preinstall'
+    ) {
+        // Determines all files which should be preprocessed after using
+        // them in production.
+        let buildConfigurations = []
+        let index = 0
+        global.Object.keys(configuration.build).forEach(type => {
+            buildConfigurations.push(extend(
+                true, {filePaths: []}, configuration.build[type]))
+            path.walkDirectoryRecursivelySync(path.join(
+                configuration.path.asset.source,
+                configuration.path.asset.javaScript
+            ), (filePath, stat) => {
+                for (let pathToIgnore of configuration.path.ignore)
+                    if (filePath.startsWith(path.resolve(
+                        configuration.path.context, pathToIgnore
+                    )))
+                        return false
+                if (stat.isFile() && path.extname(filePath).substring(
+                    1
+                ) === buildConfigurations[
+                    buildConfigurations.length - 1
+                ].extension && !(new global.RegExp(
+                    buildConfigurations[
+                        buildConfigurations.length - 1
+                    ].buildFileNamePattern
+                )).test(filePath)) {
+                    buildConfigurations[index].filePaths.push(filePath)
+                }
+            })
+            index += 1
+        })
+        /*
+            NOTE: We have to loop twice since generated files from further
+            loops shouldn't be taken into account in later loops.
+        */
+        childProcess = []
+        // Perform all file specific preprocessing stuff.
+        for (let buildConfiguration of buildConfigurations)
+            for (let filePath of buildConfiguration.filePaths)
+                childProcess.push(run(new global.Function(
+                    'global', 'self', 'buildConfiguration', 'webOptimizerPath',
+                    'currentPath', 'path', 'additionalArguments', 'filePath',
+                    `return \`${buildConfiguration[global.process.argv[2]]}\``
+                )(global, configuration, buildConfiguration, __dirname,
+                global.process.cwd(), path, additionalArguments, filePath
+                ), childProcessOptions))
+    } else if (global.process.argv[2] === 'serve')
+        // Provide a development environment where all assets are dynamically
+        // bundled and updated on changes.
+        childProcess = run(
+            `${configuration.commandLine.serve} ${additionalArguments}`,
+            childProcessOptions)
     if (global.process.argv[2] === 'lint')
         // Lints files with respect to given linting configuration.
         childProcess = run(
@@ -181,8 +177,8 @@ if (childProcess === null) {
             ' command line argument.\n')
     else
         console.log(
-            'Give one of "build", "clear", "lint", "serve", "test" or ' +
-            '"preinstall" as command line argument.\n')
+            'Give one of "build", "clear", "lint", "serve" or "test" as ' +
+            'command line argument.\n')
     process.exit()
 }
 // endregion
