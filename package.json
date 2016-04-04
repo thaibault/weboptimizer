@@ -297,20 +297,16 @@
             },
             "build": {
                 "default": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.js",
+                    "extension": "js",
+                    "outputExtension": "js",
+                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.outputExtension}",
                     "buildFileNamePattern": "^.+\\.compiled\\.[^.]+$"
                 },
-                "javaScript": {"extension": "js"},
+                "javaScript": {},
                 "coffeeScript": {"extension": "coffee"},
-                "less": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
-                },
-                "sass": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
-                },
-                "scss": {
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.css"
-                }
+                "less": {"outputExtension": "css"},
+                "sass": {"outputExtension": "css"},
+                "scss": {"outputExtension": "css"}
 
             }
         },

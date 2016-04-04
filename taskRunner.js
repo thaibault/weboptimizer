@@ -23,7 +23,7 @@ if (global.process.argv.length > 2) {
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
         ))
-            path.walkDirectoryRecursivelySync(configuration.path.target, (
+            helper.walkDirectoryRecursivelySync(configuration.path.target, (
                 filePath, stat
             ) => {
                 for (let pathToIgnore of configuration.path.ignore)
