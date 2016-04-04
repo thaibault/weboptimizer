@@ -9,7 +9,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 
-import helper from './helper'
+import helper from './helper.compiled'
 // NOTE: "{configuration as currentConfiguration}" would result in a read only
 // variable.
 import {configuration} from './package'
