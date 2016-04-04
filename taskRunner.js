@@ -110,9 +110,8 @@ if (global.process.argv.length > 2) {
                     buildConfigurations[
                         buildConfigurations.length - 1
                     ].buildFileNamePattern
-                )).test(filePath)) {
+                )).test(filePath))
                     buildConfigurations[index].filePaths.push(filePath)
-                }
             })
             index += 1
         })
