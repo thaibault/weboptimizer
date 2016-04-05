@@ -91,6 +91,8 @@ export default {
                     break
                 } catch (error) {}
             }
+            if (!stat)
+                continue
             let pathToAdd
             if (stat.isDirectory()) {
                 pathToAdd = `${path.resolve(module)}/`
