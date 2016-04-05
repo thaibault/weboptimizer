@@ -96,7 +96,7 @@ export default {
                 pathToAdd = `${path.resolve(module)}/`
                 this.walkDirectoryRecursivelySync(module, subFilePath => {
                     for (let pathToIgnore of configuration.path.ignore)
-                        if (subfilePath.startsWith(path.resolve(
+                        if (subFilePath.startsWith(path.resolve(
                             configuration.path.context, pathToIgnore
                         )))
                             return false
