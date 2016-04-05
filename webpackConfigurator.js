@@ -217,16 +217,29 @@ for (let type of ['internal', 'external'])
                         // TODO should also be builded! Add them to extraxtText directly.
                         // console.log(moduleFilePath, plugins.extractText)
     }
-// TODO check if "configuration.externalInjects" and
-// "configuration.internalInjects" arent set explicitly.
-if (configuration.library && !false && !false) {
-    configuration.externalInjects = function(context, request, callback) {
-        console.log(request, injects.internal)
-        if(injects.internal.indexOf(request) === -1)
+if (configuration.library)
+    /*
+        We only want to process modules from local context in library mode,
+        since a concrete project using this library should combine all assets
+        for optimal results.
+    */
+    injects.external = (context, request, callback) => {
+        if (global.Array.isArray(injects.internal) && injects.internal.indexOf(
+            request
+        ) !== -1)
             return callback(null, `var ${request}`)
+        if (helper.isObject(injects.internal)) {
+            let isInternal = false
+            for (let chunkName in injects.internal)
+                if (injects.internal[chunkName] === request) {
+                    isInternal = true
+                    break
+                }
+            if (!isInternal)
+                return callback(null, `var ${request}`)
+        }
         callback()
     }
-}
 // endregion
 // region configuration
 export default {
@@ -242,8 +255,7 @@ export default {
         extensions: configuration.knownExtensions,
         alias: configuration.moduleAliases
     },
-    entry: injects.internal,
-    externals: injects.external,
+    entry: injects.internal, externals: injects.external,
     // endregion
     // region output
     output: {

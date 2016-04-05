@@ -84,8 +84,7 @@
     },
     "configuration": {
         "default": {
-            "debug": false,
-            "library": true,
+            "debug": false, "library": true,
             "path": {
                 "source": "source/",
                 "target": "build/",
@@ -123,10 +122,7 @@
 
                 ".png", ".jpg", ".ico", ".gif"
             ],
-            "inPlace": {
-                "cascadingStyleSheet": true,
-                "javaScript": false
-            },
+            "inPlace": {"cascadingStyleSheet": true, "javaScript": false},
             "commandLine": {
                 "build": {
                     "__execute__": "`webpack --config ${webOptimizerPath}/webpackConfigurator.compiled.js --progress --display-chunks --display-reasons --display-error-details`"
@@ -329,11 +325,11 @@
             "files": {"javaScript": {
                 "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
             }},
+            "optimizer": {"uglifyJS": null},
             "internalInjects": "__auto__",
             "test": {"modules": ["test"]},
             "path": {
-                "source": "./",
-                "target": "./",
+                "source": "./", "target": "./",
                 "asset": {
                     "cascadingStyleSheet": "./",
                     "javaScript": "./",
