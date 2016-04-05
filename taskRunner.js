@@ -20,6 +20,8 @@ let childProcess = null
 if (global.process.argv.length > 2) {
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
+        console.log('A')
+        process.exit()
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
         ))

@@ -203,7 +203,6 @@ const testModuleFilePaths = helper.determineTestModules()[0]
 for (let type of ['internal', 'external'])
     if (configuration[`${type}Injects`] === '__auto__') {
         injects[type] = {}
-        console.log(helper.determineBuildConfigurations())
         for (let buildConfiguration of helper.determineBuildConfigurations())
             for (let moduleFilePath of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(moduleFilePath) === -1)
@@ -224,10 +223,6 @@ if (configuration.library)
         for optimal results.
     */
     injects.external = (context, request, callback) => {
-        console.log()
-        console.log(injects.internal)
-        console.log(request)
-        console.log()
         if (global.Array.isArray(injects.internal) && injects.internal.indexOf(
             request
         ) !== -1)
