@@ -94,7 +94,7 @@ export default {
             let pathToAdd
             if (stat.isDirectory()) {
                 pathToAdd = `${path.resolve(module)}/`
-                this.walkDirectoryRecursivelySync(module, subfilePath => {
+                this.walkDirectoryRecursivelySync(module, subFilePath => {
                     for (let pathToIgnore of configuration.path.ignore)
                         if (subfilePath.startsWith(path.resolve(
                             configuration.path.context, pathToIgnore

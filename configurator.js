@@ -21,9 +21,12 @@ if (
     path.basename(path.dirname(path.dirname(process.cwd()))) === 'node_modules'
 )
     currentConfiguration.default.path.context = process.cwd()
-const specificConfiguration = module.require(path.join(
+let specificConfiguration = module.require(path.join(
     currentConfiguration.default.path.context, 'package'
-)).webOptimizer || {}
+))
+const name = specificConfiguration.name
+specificConfiguration = specificConfiguration.webOptimizer || {}
+specificConfiguration.name = name
 // endregion
 // region loading default configuration
 // NOTE: Given node command line arguments results in "npm_config_*"

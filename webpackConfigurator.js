@@ -262,7 +262,9 @@ export default {
         path: configuration.path.asset.target,
         filename: configuration.files.javaScript,
         pathinfo: false,
-        hashFunction: configuration.hashAlgorithm
+        hashFunction: configuration.hashAlgorithm,
+        libraryTarget: 'umd',
+        library: configuration.name
     },
     // endregion
     module: {
