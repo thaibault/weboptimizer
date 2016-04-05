@@ -117,9 +117,10 @@ export default {
         let defaultConfiguration = configuration.build.default
         delete configuration.build.default
         global.Object.keys(configuration.build).forEach(type => {
-            configuration.build[type] = extend(
-                true, {extension: type}, defaultConfiguration,
-                configuration.build[type], {type})
+            configuration.build[type] = extend(true, {
+            }, defaultConfiguration, extend(true, {
+                extension: type
+            }, configuration.build[type], {type}))
         })
         // Determines all files which should be preprocessed after using
         // them in production.

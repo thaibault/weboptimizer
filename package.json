@@ -293,12 +293,11 @@
             },
             "build": {
                 "default": {
-                    "extension": "js",
                     "outputExtension": "js",
                     "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.outputExtension}",
                     "buildFileNamePattern": "^.+\\.compiled\\.[^.]+$"
                 },
-                "javaScript": {},
+                "javaScript": {"extension": "js"},
                 "coffeeScript": {"extension": "coffee"},
                 "less": {"outputExtension": "css"},
                 "sass": {"outputExtension": "css"},

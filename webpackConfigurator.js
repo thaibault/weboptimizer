@@ -203,6 +203,7 @@ const testModuleFilePaths = helper.determineTestModules()[0]
 for (let type of ['internal', 'external'])
     if (configuration[`${type}Injects`] === '__auto__') {
         injects[type] = {}
+        console.log(helper.determineBuildConfigurations())
         for (let buildConfiguration of helper.determineBuildConfigurations())
             for (let moduleFilePath of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(moduleFilePath) === -1)
@@ -210,12 +211,11 @@ for (let type of ['internal', 'external'])
                         injects[type][path.basename(
                             moduleFilePath, `.${buildConfiguration.extension}`
                         )] = moduleFilePath
-                    else
-                        injects[type][path.basename(
-                            moduleFilePath, `.${buildConfiguration.extension}`
-                        )] = moduleFilePath
-                        // TODO should also be builded! Add them to extraxtText directly.
-                        // console.log(moduleFilePath, plugins.extractText)
+                    else {
+                        // We have to avoid name clashing with
+                        // JavaScript-Modules which have same base name.
+                        injects[type][moduleFilePath] = moduleFilePath
+                    }
     }
 if (configuration.library)
     /*
@@ -224,6 +224,10 @@ if (configuration.library)
         for optimal results.
     */
     injects.external = (context, request, callback) => {
+        console.log()
+        console.log(injects.internal)
+        console.log(request)
+        console.log()
         if (global.Array.isArray(injects.internal) && injects.internal.indexOf(
             request
         ) !== -1)
@@ -261,9 +265,10 @@ export default {
     output: {
         path: configuration.path.asset.target,
         filename: configuration.files.javaScript,
-        pathinfo: false,
+        pathinfo: configuration.debug,
         hashFunction: configuration.hashAlgorithm,
         libraryTarget: 'umd',
+        umdNamedDefine: configuration.name,
         library: configuration.name
     },
     // endregion
