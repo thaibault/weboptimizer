@@ -20,9 +20,6 @@ let childProcess = null
 if (global.process.argv.length > 2) {
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
-        // TODO currently removes everything!
-        console.log('TODO')
-        process.exit()
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
         ))

@@ -123,6 +123,16 @@ if (helper.isFunction(currentConfiguration.files.html[0].template))
         currentConfiguration.files.html[0].template()
 if (helper.isFunction(currentConfiguration.test.template))
     currentConfiguration.test.template = currentConfiguration.test.template()
+// Apply default file level build configurations to all file type specific
+// ones.
+const defaultConfiguration = currentConfiguration.build.default
+delete currentConfiguration.build.default
+global.Object.keys(currentConfiguration.build).forEach(type => {
+    currentConfiguration.build[type] = extend(true, {
+    }, defaultConfiguration, extend(true, {
+        extension: type
+    }, currentConfiguration.build[type], {type}))
+})
 // endregion
 export default currentConfiguration
 // region vim modline

@@ -114,16 +114,6 @@ export default {
         return [filePaths, moduleDirectoryPaths]
     },
     determineBuildConfigurations: function() {
-        // Apply default file level build configurations to all file type specific
-        // ones.
-        let defaultConfiguration = configuration.build.default
-        delete configuration.build.default
-        global.Object.keys(configuration.build).forEach(type => {
-            configuration.build[type] = extend(true, {
-            }, defaultConfiguration, extend(true, {
-                extension: type
-            }, configuration.build[type], {type}))
-        })
         // Determines all files which should be preprocessed after using
         // them in production.
         let buildConfigurations = []
