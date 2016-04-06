@@ -21,7 +21,7 @@ import configuration from './configurator.compiled'
 import helper from './helper.compiled'
 // endregion
 // region initialisation
-// / region configuration pre processing
+// / region pre processing
 configuration.plugins = []
 if (!configuration.library) {
     let index = 0
@@ -46,7 +46,7 @@ if (!configuration.library) {
         configuration.plugins.push(new plugins.Offline(configuration.offline))
     }
     if (configuration.openBrowser)
-        configuration.plugins.push(plugins.OpenBrowser(
+        configuration.plugins.push(new plugins.openBrowser(
             configuration.openBrowser))
 }
 configuration.plugins.push(new plugins.ExtractText(
@@ -198,6 +198,7 @@ const loader = {
     }
 }
 // / endregion
+// / region determine entries and excludes
 const injects = {
     internal: configuration.internalInjects,
     external: configuration.externalInjects
@@ -271,6 +272,7 @@ if (configuration.library)
         }
         callback()
     }
+// / endregion
 // endregion
 // region configuration
 export default {

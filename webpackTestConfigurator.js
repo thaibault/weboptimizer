@@ -27,6 +27,13 @@ try {
 } catch (error) {
     favicon = null
 }
+configuration.plugins = [new plugins.HTML({
+    debug: true, minify: false, hash: true, favicon,
+    template: configuration.test.template
+})]
+if (configuration.openBrowser)
+    configuration.plugins.push(new plugins.openBrowser(
+        configuration.openBrowser))
 // / region loader
 const loader = {
     preprocessor: {
@@ -166,10 +173,7 @@ export default {
             // endregion
         ]
     },
-    plugins: [new plugins.HTML({
-        debug: true, minify: false, hash: true, favicon,
-        template: configuration.test.template
-    })]
+    plugins: configuration.plugins
 }
 // endregion
 // region vim modline
