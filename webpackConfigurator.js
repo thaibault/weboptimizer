@@ -46,6 +46,7 @@ if (!configuration.library) {
         configuration.plugins.push(new plugins.Offline(configuration.offline))
     }
 }
+console.log(configuration.files.cascadingStyleSheet)
 configuration.plugins.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet))
 // Optimizes webpack output and provides an offline manifest
@@ -216,7 +217,9 @@ for (let type of ['internal', 'external'])
                     ) === -1) {
                         // We have to avoid name clashing with
                         // JavaScript-Modules which have same base name.
-                        injects[type][moduleFilePath] = moduleFilePath
+                        injects[type][path.relative(
+                            configuration.path.context, moduleFilePath
+                        )] = moduleFilePath
                         injectedNonJavaScriptBaseNames.push(name)
                     }
                 }
@@ -246,7 +249,7 @@ if (configuration.library)
     }
 // endregion
 // TODO
-console.log(injects, configuration.files.javaScript)
+console.log('A', injects, 'B', configuration.files.javaScript, 'C')
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:

@@ -317,13 +317,30 @@
             }},
             "optimizer": {
                 "uglifyJS": null,
-                "image": {"content": {"bypassOnDebug": true, "verbose": true}}
+                "image": {"content": {"bypassOnDebug": true, "verbose": true}},
+                "htmlMinifier": {
+                    "collapseWhitespace": false,
+                    "removeComments": false,
+                    "removeCommentsFromCDATA": false,
+                    "removeCDATASectionsFromCDATA": false,
+                    "collapseWhitespace": false,
+                    "collapseInlineTagWhitespace": false,
+                    "collapseBooleanAttributes": false,
+                    "removeScriptTypeAttributes": false,
+                    "removeStyleLinkTypeAttributes": false,
+                    "lint": true
+                }
             }
         },
         "library": {
-            "files": {"javaScript": {
-                "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
-            }},
+            "files": {
+                "javaScript": {
+                    "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
+                },
+                "cascadingStyleSheet": {
+                    "__execute__": "`${self.path.asset.cascadingStyleSheet}[name].compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                },
+            },
             "optimizer": {"uglifyJS": null},
             "internalInjects": "__auto__",
             "test": {"modules": ["test"]},
