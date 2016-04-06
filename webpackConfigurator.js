@@ -203,18 +203,23 @@ const testModuleFilePaths = helper.determineTestModules()[0]
 for (let type of ['internal', 'external'])
     if (configuration[`${type}Injects`] === '__auto__') {
         injects[type] = {}
+        let injectedNonJavaScriptBaseNames = []
         for (let buildConfiguration of helper.determineBuildConfigurations())
             for (let moduleFilePath of buildConfiguration.filePaths)
-                if (testModuleFilePaths.indexOf(moduleFilePath) === -1)
+                if (testModuleFilePaths.indexOf(moduleFilePath) === -1) {
+                    let name = path.basename(
+                        moduleFilePath, `.${buildConfiguration.extension}`)
                     if (buildConfiguration.outputExtension === 'js')
-                        injects[type][path.basename(
-                            moduleFilePath, `.${buildConfiguration.extension}`
-                        )] = moduleFilePath
-                    else {
+                        injects[type][name] = moduleFilePath
+                    else if (injectedNonJavaScriptBaseNames.indexOf(
+                        name
+                    ) === -1) {
                         // We have to avoid name clashing with
                         // JavaScript-Modules which have same base name.
                         injects[type][moduleFilePath] = moduleFilePath
+                        injectedNonJavaScriptBaseNames.push(name)
                     }
+                }
     }
 if (configuration.library)
     /*
@@ -240,6 +245,7 @@ if (configuration.library)
         callback()
     }
 // endregion
+console.log(injects)
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:
