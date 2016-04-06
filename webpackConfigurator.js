@@ -208,7 +208,8 @@ for (let type of ['internal', 'external'])
         injects[type] = {}
         let injectedBaseNames = {}
         for (let buildConfiguration of helper.determineBuildConfigurations()) {
-            injectedBaseNames[buildConfiguration.outputExtension] = []
+            if (!injectedBaseNames[buildConfiguration.outputExtension])
+                injectedBaseNames[buildConfiguration.outputExtension] = []
             for (let moduleFilePath of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(moduleFilePath) === -1) {
                     let baseName = path.basename(
