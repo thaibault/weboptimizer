@@ -164,35 +164,46 @@ if (!(configuration.library || process.argv[1].endsWith(
 // // endregion
 // / endregion
 // / region loader
+// NOTE: Loader are only searched in "node_modules/*", so we have to explicitly
+// set the modules location if we are a dependency in this context.
+let loaderPrefix = ''
+if (path.basename(path.dirname(configuration.path.context)) === 'node_modules')
+    loaderPrefix = '../'
+const loaderSuffix = '-loader'
 const loader = {
     preprocessor: {
-        less: `less?${global.JSON.stringify(configuration.preprocessor.less)}`,
-        sass: `sass?${global.JSON.stringify(configuration.preprocessor.sass)}`,
-        scss: `sass?${global.JSON.stringify(configuration.preprocessor.scss)}`,
-        babel: 'babel?' + global.JSON.stringify(
+        less: `${loaderPrefix}less${loaderSuffix}?$` +
+            global.JSON.stringify(configuration.preprocessor.less),
+        sass: `${loaderPrefix}sass${loaderSuffix}?` +
+            global.JSON.stringify(configuration.preprocessor.sass),
+        scss: `${loaderPrefix}sass${loaderSuffix}?` +
+            global.JSON.stringify(configuration.preprocessor.scss),
+        babel: '${loaderPrefix}babel${loaderSuffix}?' + global.JSON.stringify(
             configuration.preprocessor.modernJavaScript
         ),
-        coffee: 'coffee',
-        jade: 'jade-html?' +
+        coffee: `${loaderPrefix}coffee${loaderSuffix}`,
+        jade: `${loaderPrefix}jade-html${loaderSuffix}?` +
             global.JSON.stringify(configuration.preprocessor.jade),
-        literateCoffee: 'coffee?literate'
+        literateCoffee: `${loaderPrefix}coffee${loaderSuffix}?literate`
     },
-    html: `html?${global.JSON.stringify(configuration.html)}`,
+    html: `${loaderPrefix}html${loaderSuffix}?` +
+        global.JSON.stringify(configuration.html),
     cascadingStyleSheet: plugins.extractText.extract(
-        `css?${global.JSON.stringify(configuration.cascadingStyleSheet)}`),
+        `${loaderPrefix}css${loaderSuffix}?` +
+            global.JSON.stringify(configuration.cascadingStyleSheet)),
     postprocessor: {
-        image: 'url?' + global.JSON.stringify(
+        image: `${loaderPrefix}url${loaderSuffix}?` + global.JSON.stringify(
             configuration.optimizer.image.file
-        ) + '!image?' +
+        ) + `!${loaderPrefix}image-webpack${loaderSuffix}?` +
             global.JSON.stringify(configuration.optimizer.image.content),
         font: {
-            eot: 'url?' +
+            eot: `${loaderPrefix}url${loaderSuffix}?` +
                 global.JSON.stringify(configuration.optimizer.font.eot),
-            woff: 'url?' +
+            woff: `${loaderPrefix}url${loaderSuffix}?` +
                 global.JSON.stringify(configuration.optimizer.font.woff),
-            ttf: 'url?' +
+            ttf: `${loaderPrefix}url${loaderSuffix}?` +
                 global.JSON.stringify(configuration.optimizer.font.ttf),
-            svg: 'url?' +
+            svg: `${loaderPrefix}url${loaderSuffix}?` +
                 global.JSON.stringify(configuration.optimizer.font.svg)
         }
     }
