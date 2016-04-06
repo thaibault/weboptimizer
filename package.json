@@ -339,7 +339,7 @@
                 },
                 "cascadingStyleSheet": {
                     "__execute__": "`${self.path.asset.cascadingStyleSheet}[name].compiled.css?${self.hashAlgorithm}=[contenthash]`"
-                },
+                }
             },
             "optimizer": {"uglifyJS": null},
             "internalInjects": "__auto__",
