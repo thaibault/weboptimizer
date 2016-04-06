@@ -166,7 +166,7 @@ if (!(configuration.library || process.argv[1].endsWith(
 // / region loader
 const loader = {
     preprocessor: {
-        less: `less?${global.JSON.stringify(configuration.preprocessor.less)}`,
+        less: `less-loader?${global.JSON.stringify(configuration.preprocessor.less)}`,
         sass: `sass?${global.JSON.stringify(configuration.preprocessor.sass)}`,
         scss: `sass?${global.JSON.stringify(configuration.preprocessor.scss)}`,
         babel: 'babel?' + global.JSON.stringify(
@@ -213,16 +213,31 @@ for (let type of ['internal', 'external'])
                 if (testModuleFilePaths.indexOf(moduleFilePath) === -1) {
                     let baseName = path.basename(
                         moduleFilePath, `.${buildConfiguration.extension}`)
+                    /*
+                        Ensure that each output type has only one source
+                        representation.
+                    */
                     if (injectedBaseNames[
                         buildConfiguration.outputExtension
-                    ].indexOf(baseName) === -1)
-                        injects[type][baseName] = moduleFilePath
-                    else
-                        injects[type][path.relative(
-                            configuration.path.context, moduleFilePath
-                        )] = moduleFilePath
-                    injectedBaseNames[buildConfiguration.outputExtension].push(
-                        baseName)
+                    ].indexOf(baseName) === -1) {
+                        /*
+                            Ensure that if same basenames and different output
+                            types can be distinguished by their extension
+                            (JavaScript-Modules remains without extension
+                            since they will be handled first because the build
+                            configurations are expected to be sorted in this
+                            context).
+                        */
+                        if (injects[type][baseName])
+                            injects[type][path.relative(
+                                configuration.path.context, moduleFilePath
+                            )] = moduleFilePath
+                        else
+                            injects[type][baseName] = moduleFilePath
+                        injectedBaseNames[
+                            buildConfiguration.outputExtension
+                        ].push(baseName)
+                    }
                 }
         }
     }
@@ -285,7 +300,9 @@ export default {
         explicitly set the modules location if we are a dependency in this
         context.
     */
-    resolveLoader: {modulesDirectories: ['../']},
+    resolveLoader: {modulesDirectories: [
+        'web_loaders', 'web_modules', 'node_loaders', 'node_modules', '../'
+    ]},
     resolve: {
         root: [configuration.path.asset.source],
         extensions: configuration.knownExtensions,
