@@ -56,8 +56,6 @@ const loader = {
 // endregion
 // region configuration
 export default {
-    // NOTE: building context is this hierarchy up:
-    // "PROJECT/node_modules/webOptimizer"
     context: configuration.path.context,
     debug: true,
     devtool: configuration.developmentTool,
