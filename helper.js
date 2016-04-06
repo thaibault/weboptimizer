@@ -113,6 +113,19 @@ export default {
         }
         return [filePaths, moduleDirectoryPaths]
     },
+    determineAssetType: filePath => {
+        // Determines file type of given file (by path).
+        let result = null
+        global.Object.keys(configuration.build).forEach(type => {
+            if (path.extname(
+                filePath
+            ) === `.${configuration.build[type].extension}`) {
+                result = type
+                return false
+            }
+        })
+        return result
+    },
     determineBuildConfigurations: function() {
         /*
             Determines all files which should be taken into account before
@@ -149,11 +162,12 @@ export default {
             index += 1
         })
         return buildConfigurations.sort((first, second) => {
-            if (first.outputExtension !== second.outputExtension)
+            if (first.outputExtension !== second.outputExtension) {
                 if (first.outputExtension === 'js')
                     return -1
                 if (second.outputExtension === 'js')
                     return 1
+            }
             return 0
         })
     }

@@ -224,18 +224,25 @@ for (let type of ['internal', 'external'])
         }
     }
 let javaScriptNeeded = false
-if (global.Array.isArray(injects.internal))
-    for (filePath of injects.internal)
-        if (path.extname(filePath) === '.js') {
+/* eslint-disable curly */
+if (global.Array.isArray(injects.internal)) {
+    for (let filePath of injects.internal)
+        if (configuration.build[helper.determineAssetType(
+            filePath
+        )].outputExtension === 'js') {
             javaScriptNeeded = true
             break
         }
-else
-    for (moduleName in injects.internal)
-        if (path.extname(injects.internal[moduleName]) === '.js') {
+} else
+/* eslint-enable curly */
+    global.Object.keys(injects.internal).forEach(moduleName => {
+        if (configuration.build[helper.determineAssetType(injects.internal[
+            moduleName
+        ])].outputExtension === 'js') {
             javaScriptNeeded = true
-            break
+            return false
         }
+    })
 if (!javaScriptNeeded)
     configuration.files.javaScript = '.__dummy__.compiled.js'
 if (configuration.library)
