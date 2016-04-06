@@ -258,7 +258,7 @@ if (configuration.library)
         if (global.Array.isArray(injects.internal) && injects.internal.indexOf(
             request
         ) !== -1)
-            return callback(null, `var ${request}`)
+            return callback(null, `umd ${request}`)
         if (helper.isObject(injects.internal)) {
             let isInternal = false
             for (let chunkName in injects.internal)
@@ -267,7 +267,7 @@ if (configuration.library)
                     break
                 }
             if (!isInternal)
-                return callback(null, `var ${request}`)
+                return callback(null, `umd ${request}`)
         }
         callback()
     }
