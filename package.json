@@ -128,10 +128,10 @@
                     "__execute__": "`webpack --config ${webOptimizerPath}/webpackConfigurator.compiled.js --progress --display-chunks --display-reasons --display-error-details`"
                 },
                 "serve": {
-                    "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackConfigurator.compiled.js --open --inline --colors`"
+                    "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackConfigurator.compiled.js --inline --colors`"
                 },
                 "test": {
-                    "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackTestConfigurator.compiled.js --open --inline --colors`"
+                    "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackTestConfigurator.compiled.js --inline --colors`"
                 },
                 "lint": {
                     "__execute__": "`eslint --config ${webOptimizerPath}/package.json --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"

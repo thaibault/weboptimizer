@@ -46,7 +46,6 @@ if (!configuration.library) {
         configuration.plugins.push(new plugins.Offline(configuration.offline))
     }
 }
-console.log(configuration.files.cascadingStyleSheet)
 configuration.plugins.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet))
 // Optimizes webpack output and provides an offline manifest
@@ -204,26 +203,41 @@ const testModuleFilePaths = helper.determineTestModules()[0]
 for (let type of ['internal', 'external'])
     if (configuration[`${type}Injects`] === '__auto__') {
         injects[type] = {}
-        let injectedNonJavaScriptBaseNames = []
-        for (let buildConfiguration of helper.determineBuildConfigurations())
+        let injectedBaseNames = {}
+        for (let buildConfiguration of helper.determineBuildConfigurations()) {
+            injectedBaseNames[buildConfiguration.outputExtension] = []
             for (let moduleFilePath of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(moduleFilePath) === -1) {
-                    let name = path.basename(
+                    let baseName = path.basename(
                         moduleFilePath, `.${buildConfiguration.extension}`)
-                    if (buildConfiguration.outputExtension === 'js')
-                        injects[type][name] = moduleFilePath
-                    else if (injectedNonJavaScriptBaseNames.indexOf(
-                        name
-                    ) === -1) {
-                        // We have to avoid name clashing with
-                        // JavaScript-Modules which have same base name.
+                    if (injectedBaseNames[
+                        buildConfiguration.outputExtension
+                    ].indexOf(baseName) === -1)
+                        injects[type][baseName] = moduleFilePath
+                    else
                         injects[type][path.relative(
                             configuration.path.context, moduleFilePath
                         )] = moduleFilePath
-                        injectedNonJavaScriptBaseNames.push(name)
-                    }
+                    injectedBaseNames[buildConfiguration.outputExtension].push(
+                        baseName)
                 }
+        }
     }
+let javaScriptNeeded = false
+if (global.Array.isArray(injects.internal))
+    for (filePath of injects.internal)
+        if (path.extname(filePath) === '.js') {
+            javaScriptNeeded = true
+            break
+        }
+else
+    for (moduleName in injects.internal)
+        if (path.extname(injects.internal[moduleName]) === '.js') {
+            javaScriptNeeded = true
+            break
+        }
+if (!javaScriptNeeded)
+    configuration.files.javaScript = '.__dummy__.compiled.js'
 if (configuration.library)
     /*
         We only want to process modules from local context in library mode,
@@ -248,8 +262,6 @@ if (configuration.library)
         callback()
     }
 // endregion
-// TODO
-console.log('A', injects, 'B', configuration.files.javaScript, 'C')
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:

@@ -114,8 +114,13 @@ export default {
         return [filePaths, moduleDirectoryPaths]
     },
     determineBuildConfigurations: function() {
-        // Determines all files which should be preprocessed after using
-        // them in production.
+        /*
+            Determines all files which should be taken into account before
+            using them in production. The result is a list of build
+            configurations taken from current configuration object. Each
+            configuration has all related files saved as property. Result is
+            sorted to prefer java script modules.
+        */
         let buildConfigurations = []
         let index = 0
         global.Object.keys(configuration.build).forEach(type => {
@@ -143,7 +148,14 @@ export default {
             })
             index += 1
         })
-        return buildConfigurations
+        return buildConfigurations.sort((first, second) => {
+            if (first.outputExtension !== second.outputExtension)
+                if (first.outputExtension === 'js')
+                    return -1
+                if (second.outputExtension === 'js')
+                    return 1
+            return 0
+        })
     }
 }
 // endregion
