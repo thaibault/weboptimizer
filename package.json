@@ -289,7 +289,7 @@
                 "modules": ["test/"],
                 "moduleAliases": {
                     "qunit.css": "qunitjs/qunit/qunit.css",
-                    "qunit.js": "qunitjs/qunit/qunit.js"
+                    "qunit": "qunitjs/qunit/qunit.js"
                 }
             },
             "build": {
