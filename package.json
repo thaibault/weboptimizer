@@ -26,6 +26,7 @@
         "less-loader": "*",
         "node-sass": "*",
         "offline-plugin": "*",
+        "open-browser-webpack-plugin": "*",
         "rimraf": "*",
         "sass-loader": "*",
         "url-loader": "*",
@@ -302,8 +303,8 @@
                 "less": {"outputExtension": "css"},
                 "sass": {"outputExtension": "css"},
                 "scss": {"outputExtension": "css"}
-
-            }
+            },
+            "openBrowser": null
         },
         "debug": {
             "debug": true,
@@ -330,7 +331,8 @@
                     "removeStyleLinkTypeAttributes": false,
                     "lint": true
                 }
-            }
+            },
+            "openBrowser": {"url": "http://localhost:8080"}
         },
         "library": {
             "files": {

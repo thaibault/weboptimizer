@@ -45,6 +45,9 @@ if (!configuration.library) {
                 `${configuration.hashAlgorithm}=*`)
         configuration.plugins.push(new plugins.Offline(configuration.offline))
     }
+    if (configuration.openBrowser)
+        configuration.plugins.push(plugins.OpenBrowser(
+            configuration.openBrowser))
 }
 configuration.plugins.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet))
