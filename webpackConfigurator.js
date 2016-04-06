@@ -245,7 +245,8 @@ if (configuration.library)
         callback()
     }
 // endregion
-console.log(injects)
+// TODO
+console.log(injects, configuration.files.javaScript)
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:
