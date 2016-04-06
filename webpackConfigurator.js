@@ -164,52 +164,40 @@ if (!(configuration.library || process.argv[1].endsWith(
 // // endregion
 // / endregion
 // / region loader
-// NOTE: Loader are only searched in "node_modules/*", so we have to explicitly
-// set the modules location if we are a dependency in this context.
-let loaderPrefix = ''
-if (path.basename(path.dirname(configuration.path.context)) === 'node_modules')
-    loaderPrefix = '../'
-const loaderSuffix = '-loader'
 const loader = {
     preprocessor: {
-        less: `${loaderPrefix}less${loaderSuffix}?$` +
-            global.JSON.stringify(configuration.preprocessor.less),
-        sass: `${loaderPrefix}sass${loaderSuffix}?` +
-            global.JSON.stringify(configuration.preprocessor.sass),
-        scss: `${loaderPrefix}sass${loaderSuffix}?` +
-            global.JSON.stringify(configuration.preprocessor.scss),
-        babel: '${loaderPrefix}babel${loaderSuffix}?' + global.JSON.stringify(
-            configuration.preprocessor.modernJavaScript
-        ),
-        coffee: `${loaderPrefix}coffee${loaderSuffix}`,
-        jade: `${loaderPrefix}jade-html${loaderSuffix}?` +
+        less: `less?${global.JSON.stringify(configuration.preprocessor.less)}`,
+        sass: `sass?${global.JSON.stringify(configuration.preprocessor.sass)}`,
+        scss: `sass?${global.JSON.stringify(configuration.preprocessor.scss)}`,
+        babel: 'babel?' + global.JSON.stringify(
+            configuration.preprocessor.modernJavaScript),
+        coffee: 'coffee',
+        jade: 'jade-html?' +
             global.JSON.stringify(configuration.preprocessor.jade),
-        literateCoffee: `${loaderPrefix}coffee${loaderSuffix}?literate`
+        literateCoffee: 'coffee?literate'
     },
-    html: `${loaderPrefix}html${loaderSuffix}?` +
-        global.JSON.stringify(configuration.html),
+    html: `html?${global.JSON.stringify(configuration.html)}`,
     cascadingStyleSheet: plugins.extractText.extract(
-        `${loaderPrefix}css${loaderSuffix}?` +
-            global.JSON.stringify(configuration.cascadingStyleSheet)),
+        `css?${global.JSON.stringify(configuration.cascadingStyleSheet)}`),
     postprocessor: {
-        image: `${loaderPrefix}url${loaderSuffix}?` + global.JSON.stringify(
+        image: 'url?' + global.JSON.stringify(
             configuration.optimizer.image.file
-        ) + `!${loaderPrefix}image-webpack${loaderSuffix}?` +
+        ) + '!image?' +
             global.JSON.stringify(configuration.optimizer.image.content),
         font: {
-            eot: `${loaderPrefix}url${loaderSuffix}?` +
+            eot: 'url?' +
                 global.JSON.stringify(configuration.optimizer.font.eot),
-            woff: `${loaderPrefix}url${loaderSuffix}?` +
+            woff: 'url?' +
                 global.JSON.stringify(configuration.optimizer.font.woff),
-            ttf: `${loaderPrefix}url${loaderSuffix}?` +
+            ttf: 'url?' +
                 global.JSON.stringify(configuration.optimizer.font.ttf),
-            svg: `${loaderPrefix}url${loaderSuffix}?` +
+            svg: 'url?' +
                 global.JSON.stringify(configuration.optimizer.font.svg)
         }
     }
 }
 // / endregion
-// / region determine entries and excludes
+// / region determine entries and externals
 const injects = {
     internal: configuration.internalInjects,
     external: configuration.externalInjects
@@ -292,6 +280,12 @@ export default {
     devtool: configuration.developmentTool,
     devserver: configuration.developmentServer,
     // region input
+    /*
+        NOTE: Loader are only searched in "node_modules/*", so we have to
+        explicitly set the modules location if we are a dependency in this
+        context.
+    */
+    resolveLoader: {modulesDirectories: ['../']},
     resolve: {
         root: [configuration.path.asset.source],
         extensions: configuration.knownExtensions,
