@@ -80,15 +80,19 @@ if (global.process.argv.length > 2) {
     ) {
         childProcess = []
         // Perform all file specific preprocessing stuff.
+        const testModuleFilePaths = helper.determineTestModules()[0]
         for (let buildConfiguration of buildConfigurations)
             for (let filePath of buildConfiguration.filePaths)
-                childProcess.push(run(new global.Function(
-                    'global', 'self', 'buildConfiguration', 'webOptimizerPath',
-                    'currentPath', 'path', 'additionalArguments', 'filePath',
-                    `return \`${buildConfiguration[global.process.argv[2]]}\``
-                )(global, configuration, buildConfiguration, __dirname,
-                global.process.cwd(), path, additionalArguments, filePath
-                ), childProcessOptions))
+                if (testModuleFilePaths.indexOf(filePath) === -1)
+                    childProcess.push(run(new global.Function(
+                        'global', 'self', 'buildConfiguration',
+                        'webOptimizerPath', 'currentPath', 'path',
+                        'additionalArguments', 'filePath',
+                        'return ' +
+                        `\`${buildConfiguration[global.process.argv[2]]}\``
+                    )(global, configuration, buildConfiguration, __dirname,
+                    global.process.cwd(), path, additionalArguments, filePath
+                    ), childProcessOptions))
     } else if (global.process.argv[2] === 'serve')
         // Provide a development environment where all assets are dynamically
         // bundled and updated on changes.
