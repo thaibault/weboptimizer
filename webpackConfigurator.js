@@ -274,6 +274,12 @@ if (configuration.library)
     }
 // / endregion
 // endregion
+console.log({
+    root: [configuration.path.asset.source],
+    extensions: configuration.knownExtensions,
+    alias: configuration.moduleAliases
+}, {entry: injects.internal, externals: injects.external}
+)
 // region configuration
 export default {
     // NOTE: building context is this hierarchy up:

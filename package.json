@@ -115,7 +115,7 @@
             "knownExtensions": [
                 "",
 
-                ".js", ".coffee", "coffee.md", ".litcoffee",
+                ".js", ".coffee", ".coffee.md", ".litcoffee",
 
                 ".html", ".jade",
 
