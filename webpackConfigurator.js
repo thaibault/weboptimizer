@@ -289,6 +289,15 @@ if (configuration.library)
     }
 // / endregion
 // endregion
+console.log(injects, {
+    path: configuration.path.asset.target,
+    filename: configuration.files.javaScript,
+    pathinfo: configuration.debug,
+    hashFunction: configuration.hashAlgorithm,
+    libraryTarget: 'umd',
+    umdNamedDefine: configuration.name,
+    library: configuration.name
+})
 // region configuration
 export default {
     context: configuration.path.context,

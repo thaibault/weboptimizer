@@ -32,7 +32,7 @@ specificConfiguration.name = name
 // NOTE: Given node command line arguments results in "npm_config_*"
 // environment variables.
 var debug = currentConfiguration.default.debug
-if (typeof specificConfiguration.debug !== undefined)
+if (specificConfiguration.debug === undefined)
     debug = specificConfiguration.debug
 if (global.process.env.npm_config_production)
     debug = false
