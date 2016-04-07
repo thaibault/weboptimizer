@@ -31,17 +31,17 @@ if (global.process.argv.length > 2) {
                         configuration.path.context, pathToIgnore
                     )))
                         return false
-                global.Object.keys(configuration.build).forEach(type => {
+                for (let type in configuration.build)
                     if (new global.RegExp(
                         configuration.build[type].buildFileNamePattern
-                    ).test(filePath))
+                    ).test(filePath)) {
                         if (stat.isDirectory()) {
                             fileSystem.removeDirectoryRecursivelySync(
                                 filePath, {glob: false})
                             return false
-                        } else
-                            fileSystem.unlink(filePath)
-                })
+                        }
+                        fileSystem.unlink(filePath)
+                    }
             })
         else
             fileSystem.removeDirectoryRecursivelySync(

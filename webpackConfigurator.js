@@ -167,7 +167,7 @@ if (!(configuration.library || process.argv[1].endsWith(
 // / region loader
 const loader = {
     preprocessor: {
-        less: `less-loader?${global.JSON.stringify(configuration.preprocessor.less)}`,
+        less: `less?${global.JSON.stringify(configuration.preprocessor.less)}`,
         sass: `sass?${global.JSON.stringify(configuration.preprocessor.sass)}`,
         scss: `sass?${global.JSON.stringify(configuration.preprocessor.scss)}`,
         babel: 'babel?' + global.JSON.stringify(
