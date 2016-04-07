@@ -32,10 +32,14 @@ if (global.process.argv.length > 2) {
                     )))
                         return false
                 global.Object.keys(configuration.build).forEach(type => {
-                    if (stat.isFile() && (new global.RegExp(
+                    if (new global.RegExp(
                         configuration.build[type].buildFileNamePattern
-                    )).test(filePath))
-                        fileSystem.unlink(filePath)
+                    ).test(filePath))
+                        if (stat.isDirectory())
+                            fileSystem.removeDirectoryRecursivelySync(
+                                filePath, {glob: false})
+                        else
+                            fileSystem.unlink(filePath)
                 })
             })
         else
