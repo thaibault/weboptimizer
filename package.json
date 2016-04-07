@@ -295,7 +295,7 @@
                 "default": {
                     "outputExtension": "js",
                     "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.outputExtension}",
-                    "buildFileNamePattern": "^.+\\.compiled\\.[^.]+$"
+                    "buildFileNamePattern": "^.+\\.compiled(?:\\.[^.]+)?$"
                 },
                 "javaScript": {"extension": "js"},
                 "coffeeScript": {"extension": "coffee"},
