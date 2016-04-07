@@ -2,6 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import extend from 'extend'
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
@@ -25,8 +26,8 @@ import helper from './helper.compiled'
 configuration.plugins = []
 if (!configuration.library) {
     let index = 0
-    for (let path of configuration.internalInjects) {
-        configuration.internalInjects[index] =
+    for (let path of configuration.injects.internal) {
+        configuration.injects.internal[index] =
             configuration.path.asset.source + path
         index += 1
     }
@@ -50,7 +51,7 @@ if (!configuration.library) {
             configuration.openBrowser))
 }
 configuration.plugins.push(new plugins.ExtractText(
-    configuration.files.cascadingStyleSheet))
+    configuration.files.cascadingStyleSheet, {allChunks: true}))
 // Optimizes webpack output and provides an offline manifest
 if (configuration.optimizer.uglifyJS)
     configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
@@ -198,10 +199,7 @@ const loader = {
 }
 // / endregion
 // / region determine entries and externals
-const injects = {
-    internal: configuration.internalInjects,
-    external: configuration.externalInjects
-}
+const injects = extend(true, {}, configuration.injects)
 const testModuleFilePaths = helper.determineTestModules()[0]
 for (let type of ['internal', 'external'])
     if (configuration[`${type}Injects`] === '__auto__') {
@@ -289,15 +287,6 @@ if (configuration.library)
     }
 // / endregion
 // endregion
-console.log(injects, {
-    path: configuration.path.asset.target,
-    filename: configuration.files.javaScript,
-    pathinfo: configuration.debug,
-    hashFunction: configuration.hashAlgorithm,
-    libraryTarget: 'umd',
-    umdNamedDefine: configuration.name,
-    library: configuration.name
-})
 // region configuration
 export default {
     context: configuration.path.context,

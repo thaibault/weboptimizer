@@ -109,8 +109,7 @@
             "hashAlgorithm": "md5",
             "maximumInPlaceFileLimitInByte": 262144,
             "developmentTool": null,
-            "internalInjects": [],
-            "externalInjects": [],
+            "injects": {"internal": [], "external": []},
             "moduleAliases": {},
             "knownExtensions": [
                 "",
