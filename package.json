@@ -246,7 +246,7 @@
                             "__execute__": "self.maximumInPlaceFileLimitInByte"
                         },
                         "name": {
-                            "__execute__": "`image/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`${self.path.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "content": {
@@ -259,27 +259,27 @@
                     "eot": {
                         "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
                         "name": {
-                            "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "woff": {
                         "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
                         "name": {
-                            "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "ttf": {
                         "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
                         "mimetype": "application/octet-stream",
                         "name": {
-                            "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "svg": {
                         "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
                         "mimetype": "image/svg+xml",
                         "name": {
-                            "__execute__": "`font/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     }
                 }
