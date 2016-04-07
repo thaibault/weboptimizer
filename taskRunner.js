@@ -35,10 +35,11 @@ if (global.process.argv.length > 2) {
                     if (new global.RegExp(
                         configuration.build[type].buildFileNamePattern
                     ).test(filePath))
-                        if (stat.isDirectory())
+                        if (stat.isDirectory()) {
                             fileSystem.removeDirectoryRecursivelySync(
                                 filePath, {glob: false})
-                        else
+                            return false
+                        } else
                             fileSystem.unlink(filePath)
                 })
             })
