@@ -337,8 +337,7 @@
                     "collapseInlineTagWhitespace": false,
                     "collapseBooleanAttributes": false,
                     "removeScriptTypeAttributes": false,
-                    "removeStyleLinkTypeAttributes": false,
-                    "lint": true
+                    "removeStyleLinkTypeAttributes": false
                 }
             },
             "openBrowser": {"url": "http://localhost:8080"}
