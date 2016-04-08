@@ -306,6 +306,9 @@
                 },
                 "javaScript": {"extension": "js"},
                 "coffeeScript": {"extension": "coffee"},
+                "cascadingStyleSheet": {
+                    "extension": "css", "outputExtension": "css"
+                },
                 "less": {"outputExtension": "css"},
                 "sass": {"outputExtension": "css"},
                 "scss": {"outputExtension": "css"}

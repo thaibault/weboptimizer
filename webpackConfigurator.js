@@ -241,21 +241,22 @@ for (let type of ['internal', 'external'])
         }
     }
 let javaScriptNeeded = false
-/* eslint-disable curly */
-if (global.Array.isArray(injects.internal)) {
-    for (let filePath of injects.internal)
-        if (configuration.build[helper.determineAssetType(
-            filePath
-        )].outputExtension === 'js') {
+if (global.Array.isArray(injects.internal))
+    for (let filePath of injects.internal) {
+        let type = helper.determineAssetType(filePath)
+        if (configuration.build[type] && configuration.build[
+            type
+        ].outputExtension === 'js') {
             javaScriptNeeded = true
             break
         }
-} else
-/* eslint-enable curly */
+    }
+else
     global.Object.keys(injects.internal).forEach(moduleName => {
-        if (configuration.build[helper.determineAssetType(injects.internal[
-            moduleName
-        ])].outputExtension === 'js') {
+        let type = helper.determineAssetType(injects.internal[moduleName])
+        if (configuration.build[type] && configuration.build[
+            type
+        ].outputExtension === 'js') {
             javaScriptNeeded = true
             return false
         }

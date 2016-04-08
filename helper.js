@@ -124,6 +124,14 @@ export default {
                 return false
             }
         })
+        if (!result)
+            for (let type of ['source', 'target'])
+                for (let assetType in configuration.path.asset)
+                    if (filePath.startsWith(path.join(
+                            configuration.path[type],
+                            configuration.path.asset[assetType]
+                    )))
+                        return assetType
         return result
     },
     determineBuildConfigurations: function() {
