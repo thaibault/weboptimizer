@@ -312,7 +312,8 @@ export default {
     // region output
     output: {
         path: configuration.path.asset.target,
-        filename: configuration.files.javaScript,
+        filename: './index.compiled.js?md5=[hash]',
+        // filename: configuration.files.javaScript,
         pathinfo: configuration.debug,
         hashFunction: configuration.hashAlgorithm,
         libraryTarget: 'umd',

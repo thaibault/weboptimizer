@@ -112,15 +112,18 @@
             "injects": {"internal": [], "external": []},
             "moduleAliases": {},
             "knownExtensions": [
-                "",
+                ".compiled", "",
 
-                ".js", ".coffee", ".coffee.md", ".litcoffee",
+                ".compiled.js", ".js", ".coffee", ".coffee.md", ".litcoffee",
 
-                ".html", ".jade",
+                ".compiled.html", ".html", ".jade",
 
-                ".css", ".scss", ".sass", ".less",
+                ".compiled.css", ".css", ".scss", ".sass", ".less",
 
-                ".png", ".jpg", ".ico", ".gif"
+                ".compiled.png", ".png",
+                ".compiled.jpg", ".jpg",
+                ".compiled.ico", ".ico",
+                ".compiled.gif", ".gif"
             ],
             "inPlace": {"cascadingStyleSheet": true, "javaScript": false},
             "commandLine": {
