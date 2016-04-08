@@ -104,7 +104,11 @@
                     "data": "data/"
                 },
                 "manifest": "manifest.appcache",
-                "ignore": ["node_modules", ".git"]
+                "ignore": ["node_modules", ".git"],
+                "tidyUp": [
+                    {"__execute__": "path.join(self.path.target, path.basename(self.path.manifest, '.appcache') + '.html')"},
+                    {"__execute__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js')"}
+                ]
             },
             "hashAlgorithm": "md5",
             "maximumInPlaceFileLimitInByte": 262144,

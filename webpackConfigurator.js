@@ -261,7 +261,8 @@ if (global.Array.isArray(injects.internal)) {
         }
     })
 if (!javaScriptNeeded)
-    configuration.files.javaScript = '.__dummy__.compiled.js'
+    configuration.files.javaScript = path.join(
+        configuration.path.asset.javaScript, '.__dummy__.compiled.js')
 if (configuration.library)
     /*
         We only want to process modules from local context in library mode,

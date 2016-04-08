@@ -37,10 +37,10 @@ export default {
                 if (key === '__execute__')
                     return this.resolve(new global.Function(
                         'global', 'self', 'webOptimizerPath', 'currentPath',
-                        `return ${object[key]}`
+                        'path', `return ${object[key]}`
                     )(
                         global, currentConfiguration, __dirname,
-                        global.process.cwd()
+                        global.process.cwd(), path
                     ), currentConfiguration)
                 object[key] = this.resolve(object[key], currentConfiguration)
             }

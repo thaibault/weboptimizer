@@ -53,22 +53,18 @@ if (global.process.argv.length > 2) {
     if (configuration.library)
         buildConfigurations = helper.determineBuildConfigurations()
     if (global.process.argv[2] === 'build')
-        // Triggers complete asset compiling and bundles them into the
-        // final productive output.
+        // Triggers complete asset compiling and bundles them into the final
+        // productive output.
         childProcess = run(
             `${configuration.commandLine.build} ${additionalArguments}`,
             childProcessOptions, error => {
-                if (!error) {
-                    let manifestFilePath = path.join(
-                        configuration.path.target, path.basename(
-                            configuration.path.manifest, '.appcache'
-                        ) + '.html')
-                    fileSystem.access(
-                        manifestFilePath, fileSystem.F_OK, error => {
-                            if (!error)
-                                fileSystem.unlink(manifestFilePath)
-                        })
-                }
+                if (!error)
+                    for (let filePath of configuration.path.tidyUp)
+                        fileSystem.access(
+                            filePath, fileSystem.F_OK, error => {
+                                if (!error)
+                                    fileSystem.unlink(filePath)
+                            })
             })
     else if (global.process.argv[2] === 'lint')
         // Lints files with respect to given linting configuration.
