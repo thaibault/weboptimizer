@@ -172,10 +172,10 @@
                     }
                 ],
                 "cascadingStyleSheet": {
-                    "__execute__": "`${self.path.asset.cascadingStyleSheet}main.css?${self.hashAlgorithm}=[contenthash]`"
+                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
                 },
                 "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}main.js?${self.hashAlgorithm}=[hash]`"
+                    "__execute__": "`${self.path.asset.javaScript}index.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "preprocessor": {
@@ -337,17 +337,17 @@
             "openBrowser": {"url": "http://localhost:8080"}
         },
         "library": {
-            "files": {
-                "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
-                },
-                "cascadingStyleSheet": {
-                    "__execute__": "`${self.path.asset.cascadingStyleSheet}[name].compiled.css?${self.hashAlgorithm}=[contenthash]`"
-                }
-            },
             "optimizer": {"uglifyJS": null},
             "internalInjects": "__auto__",
             "test": {"modules": ["test"]},
+            "files": {
+                "cascadingStyleSheet": {
+                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                },
+                "javaScript": {
+                    "__execute__": "`${self.path.asset.javaScript}index.compiled.js?${self.hashAlgorithm}=[hash]`"
+                }
+            },
             "path": {
                 "source": "./", "target": "./",
                 "asset": {
