@@ -199,47 +199,7 @@ const loader = {
 }
 // / endregion
 // / region determine entries and externals
-const injects = extend(true, {}, configuration.injects)
-const testModuleFilePaths = helper.determineTestModules()[0]
-for (let type of ['internal', 'external'])
-    if (configuration[`${type}Injects`] === '__auto__') {
-        injects[type] = {}
-        let injectedBaseNames = {}
-        for (let buildConfiguration of helper.determineBuildConfigurations()) {
-            if (!injectedBaseNames[buildConfiguration.outputExtension])
-                injectedBaseNames[buildConfiguration.outputExtension] = []
-            for (let moduleFilePath of buildConfiguration.filePaths)
-                if (testModuleFilePaths.indexOf(moduleFilePath) === -1) {
-                    let baseName = path.basename(
-                        moduleFilePath, `.${buildConfiguration.extension}`)
-                    /*
-                        Ensure that each output type has only one source
-                        representation.
-                    */
-                    if (injectedBaseNames[
-                        buildConfiguration.outputExtension
-                    ].indexOf(baseName) === -1) {
-                        /*
-                            Ensure that if same basenames and different output
-                            types can be distinguished by their extension
-                            (JavaScript-Modules remains without extension
-                            since they will be handled first because the build
-                            configurations are expected to be sorted in this
-                            context).
-                        */
-                        if (injects[type][baseName])
-                            injects[type][path.relative(
-                                configuration.path.context, moduleFilePath
-                            )] = moduleFilePath
-                        else
-                            injects[type][baseName] = moduleFilePath
-                        injectedBaseNames[
-                            buildConfiguration.outputExtension
-                        ].push(baseName)
-                    }
-                }
-        }
-    }
+const injects = helper.determineInjects()
 let javaScriptNeeded = false
 if (global.Array.isArray(injects.internal))
     for (let filePath of injects.internal) {
@@ -289,10 +249,6 @@ if (configuration.library)
     }
 // / endregion
 // endregion
-console.log(
-    injects,
-    configuration.files.javaScript
-)
 // region configuration
 export default {
     context: configuration.path.context,

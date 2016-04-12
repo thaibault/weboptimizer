@@ -58,13 +58,33 @@ if (global.process.argv.length > 2) {
         childProcess = run(
             `${configuration.commandLine.build} ${additionalArguments}`,
             childProcessOptions, error => {
-                if (!error)
+                if (!error) {
+                    // Determines all none javaScript entities which have been
+                    // emitted as single javaScript module to remove.
+                    let modulesToEmit = helper.determineInjects().internal
+                    global.Object.keys(modulesToEmit).forEach(moduleID => {
+                        const type = helper.determineAssetType(
+                            modulesToEmit[moduleID])
+                        const filePath =
+                            configuration.files.javaScript.replace(
+                                '[name]', moduleID
+                            ).replace(/\?[^?]+/, '')
+                        if (configuration.build[type] && configuration.build[
+                            type
+                        ].outputExtension !== 'js')
+                            fileSystem.access(
+                                filePath, fileSystem.F_OK, error => {
+                                    if (!error)
+                                        fileSystem.unlink(filePath)
+                                })
+                    })
                     for (let filePath of configuration.path.tidyUp)
                         fileSystem.access(
                             filePath, fileSystem.F_OK, error => {
                                 if (!error)
                                     fileSystem.unlink(filePath)
                             })
+                }
             })
     else if (global.process.argv[2] === 'lint')
         // Lints files with respect to given linting configuration.

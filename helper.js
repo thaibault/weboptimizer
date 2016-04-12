@@ -79,6 +79,7 @@ export default {
         })
     },
     determineTestModules: function() {
+        // Determines all script modules to use as test injects.
         const filePaths = []
         const moduleDirectoryPaths = [configuration.path.asset.source]
         for (let module of configuration.test.modules) {
@@ -178,6 +179,61 @@ export default {
             }
             return 0
         })
+    },
+    determineInjects: function() {
+        // Determines all injects for current build.
+        const injects = extend(true, {}, configuration.injects)
+        const testModuleFilePaths = this.determineTestModules()[0]
+        for (let type of ['internal', 'external'])
+            if (configuration[`${type}Injects`] === '__auto__') {
+                injects[type] = {}
+                let injectedBaseNames = {}
+                for (
+                    let buildConfiguration of
+                    this.determineBuildConfigurations()
+                ) {
+                    if (!injectedBaseNames[buildConfiguration.outputExtension])
+                        injectedBaseNames[
+                            buildConfiguration.outputExtension
+                        ] = []
+                    for (let moduleFilePath of buildConfiguration.filePaths)
+                        if (
+                            testModuleFilePaths.indexOf(moduleFilePath) === -1
+                        ) {
+                            let baseName = path.basename(
+                                moduleFilePath,
+                                `.${buildConfiguration.extension}`)
+                            /*
+                                Ensure that each output type has only one
+                                source representation.
+                            */
+                            if (injectedBaseNames[
+                                buildConfiguration.outputExtension
+                            ].indexOf(baseName) === -1) {
+                                /*
+                                    Ensure that if same basenames and different
+                                    output types can be distinguished by their
+                                    extension (JavaScript-Modules remains
+                                    without extension since they will be
+                                    handled first because the build
+                                    configurations are expected to be sorted in
+                                    this context).
+                                */
+                                if (injects[type][baseName])
+                                    injects[type][path.relative(
+                                        configuration.path.context,
+                                        moduleFilePath
+                                    )] = moduleFilePath
+                                else
+                                    injects[type][baseName] = moduleFilePath
+                                injectedBaseNames[
+                                    buildConfiguration.outputExtension
+                                ].push(baseName)
+                            }
+                        }
+                }
+            }
+        return injects
     }
 }
 // endregion
