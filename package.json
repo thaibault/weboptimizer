@@ -120,7 +120,14 @@
             "maximumInPlaceFileLimitInByte": 262144,
             "developmentTool": null,
             "injects": {"internal": [], "external": []},
-            "moduleAliases": {"jade": "webOptimizer/jade-loader"},
+            "moduleAliases": {},
+            "loader": {
+                "modulesDirectories": [
+                    "web_loaders", "web_modules", "node_loaders",
+                    "node_modules", "../"
+                ],
+                "alias": {"jade": "webOptimizer/jade-loader"}
+            },
             "knownExtensions": [
                 ".compiled", "",
 

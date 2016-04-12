@@ -259,9 +259,7 @@ export default {
         explicitly set the modules location if we are a dependency in this
         context.
     */
-    resolveLoader: {modulesDirectories: [
-        'web_loaders', 'web_modules', 'node_loaders', 'node_modules', '../'
-    ]},
+    resolveLoader: configuration.loader,
     resolve: {
         root: [configuration.path.asset.source],
         extensions: configuration.knownExtensions,
