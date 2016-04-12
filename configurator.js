@@ -86,6 +86,11 @@ currentConfiguration.default.test.template = (() => {
     }
     return string
 })
+// Allows to require resources in jade context.
+currentConfiguration.default.preprocessor.jade.require = moduleDescription => {
+    console.log(moduleDescription)
+    return 'test'
+}
 // Merges final default configuration object depending on given target
 // environment.
 const libraryConfiguration = currentConfiguration.library
