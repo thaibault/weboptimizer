@@ -431,7 +431,10 @@ export default {
             },
             // endregion
             // region image
-            {test: /\.(?:png|jpg|ico|gif)$/, loader: loader.postprocessor.image}
+            {
+                test: /\.(?:png|jpg|ico|gif)$/,
+                loader: loader.postprocessor.image
+            }
             // endregion
         ]
     },
