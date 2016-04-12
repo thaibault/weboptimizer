@@ -33,7 +33,7 @@ if (global.process.argv.length > 2) {
                         return false
                 for (let type in configuration.build)
                     if (new global.RegExp(
-                        configuration.build[type].buildFileNamePattern
+                        configuration.build[type].fileNamePattern
                     ).test(filePath)) {
                         if (stat.isDirectory()) {
                             fileSystem.removeDirectoryRecursivelySync(
