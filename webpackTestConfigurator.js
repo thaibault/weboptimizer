@@ -44,7 +44,8 @@ const loader = {
             configuration.preprocessor.modernJavaScript
         ),
         coffee: 'coffee',
-        jade: `jade?${global.JSON.stringify(configuration.preprocessor.jade)}`,
+        jade: 'jade-html?' + global.JSON.stringify(
+            configuration.preprocessor.jade),
         literateCoffee: 'coffee?literate'
     },
     html: `html?${global.JSON.stringify(configuration.html)}`,
