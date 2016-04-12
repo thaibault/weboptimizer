@@ -10,8 +10,14 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 // endregion
-exports default function(source) {
-    this.cacheable && this.cacheable(true)
+/**
+ * Provides a generic jade loader.
+ * @param {string} source Jade content.
+ * @return {string} The rendered html.
+ */
+export default function jadeLoader(source) {
+    if (this.cacheable)
+        this.cacheable(true)
     const query = loaderUtils.parseQuery(this.query)
     const request = loaderUtils.getRemainingRequest(this).replace(/^!/, '')
     const locals = query.locals
@@ -22,3 +28,7 @@ exports default function(source) {
         compileDebug: this.debug || false
     }, query))(locals)
 }
+// region vim modline
+// vim: set tabstop=4 shiftwidth=4 expandtab:
+// vim: foldmethod=marker foldmarker=region,endregion:
+// endregion

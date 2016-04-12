@@ -80,7 +80,12 @@
             "spaced-comment": [2, "always", {"line": {"exceptions": [
                 "/usr/bin/env node"
             ]}}],
-            "new-cap": 0
+            "new-cap": 0,
+            "require-jsdoc": ["error", {"require": {
+                "FunctionDeclaration": true,
+                "MethodDefinition": true,
+                "ClassDeclaration": true
+            }}]
         },
         "env": {"shared-node-browser": true}
     },
