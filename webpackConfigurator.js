@@ -164,6 +164,10 @@ if (!(configuration.library || process.argv[1].endsWith(
 // // endregion
 // / endregion
 // / region loader
+configuration.preprocessor.jade.require = moduleDescription => {
+    console.log(moduleDescription)
+    return 'test'
+}
 const loader = {
     preprocessor: {
         less: `less?${global.JSON.stringify(configuration.preprocessor.less)}`,
