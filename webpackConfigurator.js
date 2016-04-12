@@ -163,6 +163,7 @@ if (!(configuration.library || process.argv[1].endsWith(
     }})
 // // endregion
 // / endregion
+console.log('webpack', configuration.preprocessor.jade)
 // / region loader
 const loader = {
     preprocessor: {

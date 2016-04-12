@@ -186,7 +186,9 @@
                 "jade": {
                     "pretty": false,
                     "debug": false,
-                    "includeManifest": {"__execute__": "!!self.offline"}
+                    "locals": {"includeManifest": {
+                        "__execute__": "!!self.offline"
+                    }}
                 },
                 "less": {},
                 "sass": {"indentedSyntax": true},
@@ -323,7 +325,7 @@
             "preprocessor": {"jade": {
                 "pretty": true,
                 "debug": true,
-                "includeManifest": false
+                "locals": {"includeManifest": false}
             }},
             "optimizer": {
                 "uglifyJS": null,
