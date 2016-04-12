@@ -2,7 +2,6 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import extend from 'extend'
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
