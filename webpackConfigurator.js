@@ -289,6 +289,7 @@ if (configuration.library)
     }
 // / endregion
 // endregion
+console.log(injects)
 // region configuration
 export default {
     context: configuration.path.context,
