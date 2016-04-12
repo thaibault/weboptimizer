@@ -20,10 +20,10 @@
         "image-webpack-loader": "^1.6.3",
         "imports-loader": "^0.6.5",
         "jade": "*",
-        "jade-html-loader": "*",
         "jsdom": "*",
         "less": "*",
         "less-loader": "*",
+        "loader-utils": "*",
         "node-sass": "*",
         "offline-plugin": "*",
         "open-browser-webpack-plugin": "*",
@@ -42,6 +42,7 @@
         "webpackConfigurator.js",
         "webpackTestConfigurator.js",
         "helper.js",
+        "jade-loader.js",
         "test.jade"
     ],
     "homepage": "http://torben.website/webOptimizer",
@@ -114,7 +115,7 @@
             "maximumInPlaceFileLimitInByte": 262144,
             "developmentTool": null,
             "injects": {"internal": [], "external": []},
-            "moduleAliases": {},
+            "moduleAliases": {"jade": "webOptimizer/jade-loader"},
             "knownExtensions": [
                 ".compiled", "",
 
@@ -165,7 +166,7 @@
                     {
                         "debug": false,
                         "template": {
-                            "__execute__": "`html?${global.JSON.stringify(self.html)}!jade-html?${global.JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
+                            "__execute__": "`html?${global.JSON.stringify(self.html)}!jade?${global.JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
                         },
                         "hash": true,
                         "filename": "index.html",
@@ -186,7 +187,7 @@
                 "jade": {
                     "pretty": false,
                     "debug": false,
-                    "locals": {"includeManifest": {
+                    "globals": {"includeManifest": {
                         "__execute__": "!!self.offline"
                     }}
                 },
@@ -325,7 +326,7 @@
             "preprocessor": {"jade": {
                 "pretty": true,
                 "debug": true,
-                "locals": {"includeManifest": false}
+                "globals": {"includeManifest": false}
             }},
             "optimizer": {
                 "uglifyJS": null,

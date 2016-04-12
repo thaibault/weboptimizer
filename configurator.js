@@ -44,7 +44,7 @@ currentConfiguration.default.path.context += '/'
     configurations (which we need here). Simple solution would be:
 
     template: `html?${global.JSON.stringify(currentConfiguration.html)}!` +
-        `jade-html?${global.JSON.stringify(currentConfiguration.jade)}!` +
+        `jade?${global.JSON.stringify(currentConfiguration.jade)}!` +
         `${currentConfiguration.path.source}index.jade`
 
     NOTE: We can't use this since placing in-place would be impossible so.
@@ -56,8 +56,8 @@ currentConfiguration.default.path.context += '/'
 currentConfiguration.default.files.html[0].template = (() => {
     const string = new global.String('html?' + global.JSON.stringify(
         currentConfiguration.html
-    ) + '!jade-html?' +
-        `${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!` +
+    ) +
+    `!jade?${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!` +
     `${currentConfiguration.path.source}index.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = () => {
@@ -71,13 +71,13 @@ currentConfiguration.default.files.html[0].template = (() => {
     configurations (which we need here). Simple solution would be:
 
     `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!` +
-    `jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
-    `${__dirname}/test.jade`
+    `jade?${global.JSON.stringify({pretty: true, debug: true})}!${__dirname}` +
+    '/test.jade'
 */
 currentConfiguration.default.test.template = (() => {
     const string = new global.String('html?' + global.JSON.stringify({
         attrs: 'img:src link:href'
-    }) + `!jade-html?${global.JSON.stringify({pretty: true, debug: true})}!` +
+    }) + `!jade?${global.JSON.stringify({pretty: true, debug: true})}!` +
     `${__dirname}/test.jade`)
     const nativeReplaceFunction = string.replace
     string.replace = () => {
@@ -87,13 +87,10 @@ currentConfiguration.default.test.template = (() => {
     return string
 })
 // Allows to require resources in jade context.
-currentConfiguration.default.preprocessor.jade.require = moduleDescription => {
+currentConfiguration.default.preprocessor.jade.globals.require = moduleDescription => {
     // TODO
     console.log('jade-require', moduleDescription)
     return 'test'
-}
-currentConfiguration.default.preprocessor.jade.locals = {
-    require: currentConfiguration.default.preprocessor.jade.require
 }
 // Merges final default configuration object depending on given target
 // environment.
