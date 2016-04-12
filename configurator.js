@@ -88,6 +88,7 @@ currentConfiguration.default.test.template = (() => {
 })
 // Allows to require resources in jade context.
 currentConfiguration.default.preprocessor.jade.require = moduleDescription => {
+    // TODO
     console.log(moduleDescription)
     return 'test'
 }
