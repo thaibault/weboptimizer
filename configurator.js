@@ -92,6 +92,9 @@ currentConfiguration.default.preprocessor.jade.require = moduleDescription => {
     console.log(moduleDescription)
     return 'test'
 }
+currentConfiguration.default.preprocessor.jade.locals = {
+    require: currentConfiguration.default.preprocessor.jade.require
+}
 // Merges final default configuration object depending on given target
 // environment.
 const libraryConfiguration = currentConfiguration.library
