@@ -163,7 +163,7 @@ export default {
                 ].extension && !(new global.RegExp(
                     buildConfigurations[
                         buildConfigurations.length - 1
-                    ].buildFileNamePattern
+                    ].fileNamePattern
                 )).test(filePath))
                     buildConfigurations[index].filePaths.push(filePath)
             })
