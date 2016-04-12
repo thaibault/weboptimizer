@@ -348,10 +348,10 @@
             "test": {"modules": ["test"]},
             "files": {
                 "cascadingStyleSheet": {
-                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                    "__execute__": "`${self.path.asset.cascadingStyleSheet}[name].compiled.css?${self.hashAlgorithm}=[contenthash]`"
                 },
                 "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}index.compiled.js?${self.hashAlgorithm}=[hash]`"
+                    "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "path": {
