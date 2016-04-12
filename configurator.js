@@ -34,9 +34,13 @@ specificConfiguration.name = name
 var debug = currentConfiguration.default.debug
 if (specificConfiguration.debug !== undefined)
     debug = specificConfiguration.debug
-if (global.process.env.npm_config_production)
+if (
+    global.process.env.npm_config_production || global.process.env.npm_config_p
+)
     debug = false
-else if (global.process.env.npm_config_debug)
+else if (
+    global.process.env.npm_config_debug || global.process.env.npm_config_d
+)
     debug = true
 currentConfiguration.default.path.context += '/'
 /*
