@@ -42,7 +42,7 @@
         "webpackConfigurator.js",
         "webpackTestConfigurator.js",
         "helper.js",
-        "jade-loader.js",
+        "jadeLoader.js",
         "test.jade"
     ],
     "homepage": "http://torben.website/webOptimizer",
