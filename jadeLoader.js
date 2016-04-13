@@ -3,12 +3,16 @@
 'use strict'
 // region imports
 import extend from 'extend'
+import * as fileSystem from 'fs'
+import path from 'path'
 import * as jade from 'jade'
 import * as loaderUtils from 'loader-utils'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
 } catch (error) {}
+
+import configuration from './configurator.compiled'
 // endregion
 module.exports = function(source) {
     if (this.cacheable)
@@ -30,18 +34,42 @@ module.exports = function(source) {
             else
                 templateFunction = jade.compileFile(template, options)
             return templateFunction(extend(true, {require: request => {
-                console.log()
-                console.log(request, request.replace(
-                    /^.+(\?[^?]+)$/, '$1'
-                ), new global.Function('return ' + (request.replace(
-                    /^.+\?([^?]+)$/, '$1'))))
-                console.log()
-                const locals = {} // TODO global.JSON.parse(request)
-                const options = locals.options || {}
-                // TODO
-                const result = '/home/torben/cloud/data/repository/website/node_modules/legalNotes/index.jade'
-                this.addDependency(result)
-                return compile(result, options)(locals)
+                let template = request.replace(/^(.+)\?[^?]+$/, '$1')
+                const query = request.replace(/^.+\?([^?]+)$/, '$1')
+                let locals = {}
+                if (query)
+                    locals = (new global.Function(
+                        'request', 'template', `return ${query}`
+                    ))(request, template)
+                const options = extend(true, {
+                    encoding: 'utf-8'
+                }, locals.options || {})
+                if (!options.isString) {
+                    console.log()
+                    console.log(template)
+                    global.Object.keys(configuration.moduleAliases).forEach(
+                        search => {
+                            template = template.replace(
+                                search, configuration.moduleAliases[search])
+                        }
+                    )
+                    template = path.join(configuration.path.context, template)
+                    for (let extension of configuration.knownExtensions)
+                        try {
+                            fileSystem.accessSync(
+                                `template${extension}`, fileSystem.F_OK)
+                            template += extension
+                            break
+                        } catch (error) {}
+                    console.log(template)
+                    console.log()
+                    this.addDependency(template)
+                }
+                if (query || template.endsWith('.less'))
+                    return compile(template, options)(locals)
+                if (options.isString)
+                    return template
+                return fileSystem.readFileSync(template, options)
             }}, locals))
         }
     }
