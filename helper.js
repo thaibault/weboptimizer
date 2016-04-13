@@ -237,41 +237,49 @@ export default {
     },
     determineModulePath: moduleID => {
         // Determines a module path for given module id synchronously.
-        console.log()
-        console.log(moduleID)
         global.Object.keys(configuration.moduleAliases).forEach(search => {
             moduleID = moduleID.replace(
                 search, configuration.moduleAliases[search])
         })
-        let moduleFilePath = moduleID
-        if (!moduleFilePath.startswith('/'))
-            moduleFilePath = path.join(
-                configuration.path.context, moduleFilePath)
-        // TODO
-        let indexFilePath = path.join(moduleFilePath, 'index')
-        if (fileSystem.statSync(moduleFilePath).isDirectory()) {
-            let pathToPackageJSON = path.join(
-                moduleFilePath, 'package.json')
-            if (fileSystem.statSync(pathToPackageJSON).isFile())
-                try {
-                    let mainField = global.JSON.parse(fileSystem.readFileSync(
-                        template, {encoding: 'utf-8'}
-                    )).main
-                    if (mainField)
-                        indexFilePath = path.join(moduleFilePath, mainField)
-                } catch (error) {}
-        else (fileSystem.statSync(moduleFilePath).isFile())
-            indexFilePath = moduleFilePath
-        if (!fileSystem.statSync(indexFilePath).isFile())
-        for (let extension of configuration.knownExtensions)
-            try {
-                fileSystem.accessSync(`template${extension}`, fileSystem.F_OK)
-                moduleFilePath += extension
-                break
-            } catch (error) {}
-        console.log(moduleFilePath)
-        console.log()
-        return moduleFilePath
+        for (let moduleLocation of ['', 'node_modules'])
+            for (let fileName of [null, '', 'index', 'main'])
+                for (let extension of configuration.knownExtensions) {
+                    let moduleFilePath = moduleID
+                    if (!moduleFilePath.startsWith('/'))
+                        moduleFilePath = path.join(
+                            configuration.path.context, moduleLocation,
+                            moduleFilePath)
+                    if (fileName === null) {
+                        try {
+                            if (fileSystem.statSync(
+                                moduleFilePath
+                            ).isDirectory()) {
+                                let pathToPackageJSON = path.join(
+                                    moduleFilePath, 'package.json')
+                                if (fileSystem.statSync(
+                                    pathToPackageJSON
+                                ).isFile()) {
+                                    let mainField = global.JSON.parse(
+                                        fileSystem.readFileSync(
+                                            pathToPackageJSON, {
+                                                encoding: 'utf-8'})
+                                    ).main
+                                    if (mainField)
+                                        fileName = mainField
+                                }
+                            }
+                        } catch (error) {}
+                        if (!fileName)
+                            continue
+                    }
+                    moduleFilePath = path.join(moduleFilePath, fileName)
+                    moduleFilePath += extension
+                    try {
+                        if (fileSystem.statSync(moduleFilePath).isFile())
+                            return moduleFilePath
+                    } catch (error) {}
+                }
+        return moduleID
     }
 }
 // endregion
