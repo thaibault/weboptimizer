@@ -45,6 +45,17 @@ if (global.process.argv.length > 2) {
                 temporaryFileDescriptor,
                 global.process.argv[global.process.argv.length - 1])
             fileSystem.closeSync(temporaryFileDescriptor)
+            // region register exit handler to tidy up
+            const exitHandler = () => {
+                try {
+                    fileSystem.unlinkSync(filePath)
+                } catch (error) {}
+                global.process.exit()
+            }
+            global.process.on('exit', exitHandler)
+            global.process.on('SIGINT', exitHandler)
+            global.process.on('uncaughtException', exitHandler)
+            // endregion
         } else
             additionalArguments = global.process.argv.splice(3).join(' ')
     } else

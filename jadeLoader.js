@@ -30,6 +30,12 @@ module.exports = function(source) {
             else
                 templateFunction = jade.compileFile(template, options)
             return templateFunction(extend(true, {require: request => {
+                console.log()
+                console.log(request, request.replace(
+                    /^.+(\?[^?]+)$/, '$1'
+                ), new global.Function('return ' + (request.replace(
+                    /^.+\?([^?]+)$/, '$1'))))
+                console.log()
                 const locals = {} // TODO global.JSON.parse(request)
                 const options = locals.options || {}
                 // TODO
