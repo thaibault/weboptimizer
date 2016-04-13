@@ -204,7 +204,7 @@
                 "jade": {
                     "pretty": false,
                     "debug": false,
-                    "globals": {"includeManifest": {
+                    "locals": {"includeManifest": {
                         "__execute__": "!!self.offline"
                     }}
                 },
@@ -342,8 +342,7 @@
             "files": {"html": [{"debug": true}]},
             "preprocessor": {"jade": {
                 "pretty": true,
-                "debug": true,
-                "globals": {"includeManifest": false}
+                "locals": {"includeManifest": false}
             }},
             "optimizer": {
                 "uglifyJS": null,

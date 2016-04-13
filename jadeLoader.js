@@ -10,11 +10,10 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 // endregion
-exports = function(source) {
-    console.log('JAAAA', source)
-    if (this.cacheable)
-        this.cacheable(true)
-    const query = loaderUtils.parseQuery(this.query)
+module.exports = function(source) {
+    this.cacheable()
+    const query = extend(true, this.options.jade || {}, loaderUtils.parseQuery(
+        this.query))
     const request = loaderUtils.getRemainingRequest(this).replace(/^!/, '')
     const locals = query.locals
     delete query.locals
