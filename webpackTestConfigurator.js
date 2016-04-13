@@ -60,6 +60,7 @@ export default {
     devtool: configuration.developmentTool,
     devserver: configuration.developmentServer,
     // region input
+    resolveLoader: configuration.loader,
     resolve: {
         root: moduleDirectoryPaths,
         extensions: configuration.knownExtensions,

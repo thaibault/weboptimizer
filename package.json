@@ -126,7 +126,11 @@
                     "web_loaders", "web_modules", "node_loaders",
                     "node_modules", "../"
                 ],
-                "alias": {"jade": "webOptimizer/jade-loader"}
+                "extensions": [
+                    "", ".webpack-loader.js", ".web-loader.js", ".loader.js",
+                    "-loader.js", ".js"
+                ],
+                "alias": {"jade": "webOptimizer/jade"}
             },
             "knownExtensions": [
                 ".compiled", "",

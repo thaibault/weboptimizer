@@ -254,11 +254,6 @@ export default {
     devtool: configuration.developmentTool,
     devserver: configuration.developmentServer,
     // region input
-    /*
-        NOTE: Loader are only searched in "node_modules/*", so we have to
-        explicitly set the modules location if we are a dependency in this
-        context.
-    */
     resolveLoader: configuration.loader,
     resolve: {
         root: [configuration.path.asset.source],

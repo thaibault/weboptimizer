@@ -16,6 +16,7 @@ try {
  * @return {string} The rendered html.
  */
 export default function jadeLoader(source) {
+    console.log('JAAAA', source)
     if (this.cacheable)
         this.cacheable(true)
     const query = loaderUtils.parseQuery(this.query)
