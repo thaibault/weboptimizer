@@ -134,6 +134,12 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
     }, currentConfiguration.build[type], {type}))
 })
 // endregion
+// region load additional options
+if (global.process.argv.length > 3)
+    extend(
+        true, currentConfiguration.preprocessor.jade.locals,
+        global.JSON.parse(global.process.argv[3]))
+// endregion
 export default currentConfiguration
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

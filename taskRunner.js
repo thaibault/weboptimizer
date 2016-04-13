@@ -127,11 +127,13 @@ if (childProcess === null) {
     if (configuration.library)
         console.log(
             'Give one of "build", "clear", "lint", "test" or "preinstall" as' +
-            ' command line argument.\n')
+            ' command line argument. You can provide a json string as second' +
+            ' parameter to dynamically overwrite some configurations.\n')
     else
         console.log(
             'Give one of "build", "clear", "lint", "test" or "serve" as ' +
-            ' command line argument.\n')
+            ' command line argument. You can provide a json string as second' +
+            ' parameter to dynamically overwrite some configurations.\n')
     process.exit()
 }
 // endregion

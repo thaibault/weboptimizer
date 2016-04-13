@@ -15,17 +15,17 @@ module.exports = function(source) {
         this.cacheable()
     const query = extend(true, this.options.jade || {}, loaderUtils.parseQuery(
         this.query))
-    const request = loaderUtils.getRemainingRequest(this).replace(/^!/, '')
     const locals = query.locals || {}
     delete query.locals
-    const compile = (template, options=query) => {
+    const compile = (template, options = query) => {
         return locals => {
             options = extend(true, {
                 filename: template, doctype: 'html',
-                compileDebug: this.debug || false
+                compileDebug: this.debug || false,
+                cache: true
             }, options)
             let templateFunction
-            if (options.filename === '__string__')
+            if (options.isString)
                 templateFunction = jade.compile(template, options)
             else
                 templateFunction = jade.compileFile(template, options)
@@ -36,10 +36,13 @@ module.exports = function(source) {
                 const result = '/home/torben/cloud/data/repository/website/node_modules/legalNotes/index.jade'
                 this.addDependency(result)
                 return compile(result, options)(locals)
-            }}))
+            }}, locals))
         }
     }
-    return compile(source, {filename: '__string__'})(locals)
+    return compile(source, {
+        isString: true,
+        filename: loaderUtils.getRemainingRequest(this).replace(/^!/, '')
+    })(locals)
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
