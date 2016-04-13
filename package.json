@@ -85,7 +85,8 @@
                 "FunctionDeclaration": true,
                 "MethodDefinition": true,
                 "ClassDeclaration": true
-            }}]
+            }}],
+            "no-constant-condition": 0
         },
         "env": {"shared-node-browser": true}
     },

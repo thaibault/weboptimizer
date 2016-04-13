@@ -18,6 +18,7 @@ import helper from './helper.compiled'
 const childProcessOptions = {cwd: configuration.path.context}
 let childProcess = null
 if (global.process.argv.length > 2) {
+    // region temporary save dynamically given configurations
     let additionalArguments
     if (global.process.argv.length > 3) {
         let dynamicConfiguration = null
@@ -39,18 +40,16 @@ if (global.process.argv.length > 2) {
                 }
                 count += 1
             }
-            const temporaryFileDescriptor = fileSystem.openSync(filePath)
+            const temporaryFileDescriptor = fileSystem.openSync(filePath, 'w')
             fileSystem.writeSync(
                 temporaryFileDescriptor,
                 global.process.argv[global.process.argv.length - 1])
             fileSystem.closeSync(temporaryFileDescriptor)
-            console.log()
-            console.log(filePath)
-            console.log()
         } else
             additionalArguments = global.process.argv.splice(3).join(' ')
     } else
         additionalArguments = global.process.argv.splice(3).join(' ')
+    // endregion
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(

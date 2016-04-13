@@ -135,20 +135,23 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
     }, currentConfiguration.build[type], {type}))
 })
 // endregion
-// region load additional options
-for (let filePath of fileSystem.readdirSync(
-    currentConfiguration.path.context
-)) {
-    console.log(filePath)
-    if (filePath.startsWith('.dynamicConfiguration') && filePath.endsWith(
-        '.json'
-    ))
-        console.log(global.JSON.parse(fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
-        /*
-        extend(true, currentConfiguration, global.JSON.parse(
-            fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
-        */
+// region load additional dynamically given configuration
+let count = 0
+let filePath = null
+while (true) {
+    let newFilePath = currentConfiguration.path.context +
+        `.dynamicConfiguration-${count}.json`
+    try {
+        fileSystem.accessSync(newFilePath, fileSystem.F_OK)
+    } catch (error) {
+        break
+    }
+    filePath = newFilePath
+    count += 1
 }
+if (filePath)
+    extend(true, currentConfiguration, global.JSON.parse(
+        fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
 // endregion
 export default currentConfiguration
 // region vim modline
