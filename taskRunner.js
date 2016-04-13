@@ -6,7 +6,6 @@ import {exec as run} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
 fileSystem.removeDirectoryRecursivelySync = module.require('rimraf').sync
-import * as temp from 'temp'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
@@ -19,23 +18,39 @@ import helper from './helper.compiled'
 const childProcessOptions = {cwd: configuration.path.context}
 let childProcess = null
 if (global.process.argv.length > 2) {
+    let additionalArguments
     if (global.process.argv.length > 3) {
-        let dynamicConfigurations = null
+        let dynamicConfiguration = null
         try {
-            dynamicConfigurations = global.JSON.parse(
+            dynamicConfiguration = global.JSON.parse(
                 global.process.argv[global.process.argv.length - 1])
         } catch (error) {}
-        if (dynamicConfigurations) {
-            // Automatically track and cleanup files at exit.
-            // temp.track()
-            const temporaryFile = temp.openSync({
-                prefix: '.dynamicConfiguration', suffix: '.json'})
+        if (dynamicConfiguration) {
+            additionalArguments = global.process.argv.splice(4).join(' ')
+            let count = 0
+            let filePath
+            while (true) {
+                filePath = configuration.path.context +
+                    `.dynamicConfiguration-${count}.json`
+                try {
+                    fileSystem.accessSync(filePath, fileSystem.F_OK)
+                } catch (error) {
+                    break
+                }
+                count += 1
+            }
+            const temporaryFileDescriptor = fileSystem.openSync(filePath)
             fileSystem.writeSync(
-                temporaryFile.fd,
+                temporaryFileDescriptor,
                 global.process.argv[global.process.argv.length - 1])
-            fileSystem.closeSync(temporaryFile.fd)
-        }
-    }
+            fileSystem.closeSync(temporaryFileDescriptor)
+            console.log()
+            console.log(filePath)
+            console.log()
+        } else
+            additionalArguments = global.process.argv.splice(3).join(' ')
+    } else
+        additionalArguments = global.process.argv.splice(3).join(' ')
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
@@ -66,7 +81,6 @@ if (global.process.argv.length > 2) {
                 configuration.path.target, {glob: false})
         process.exit()
     }
-    let additionalArguments = global.process.argv.splice(3).join(' ')
     let buildConfigurations = []
     if (configuration.library)
         buildConfigurations = helper.determineBuildConfigurations()

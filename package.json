@@ -29,7 +29,6 @@
         "open-browser-webpack-plugin": "*",
         "rimraf": "*",
         "sass-loader": "*",
-        "temp": "*",
         "url-loader": "*",
         "webpack": "*",
         "webpack-dev-server": "*",
