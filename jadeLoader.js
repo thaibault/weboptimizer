@@ -10,12 +10,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 // endregion
-/**
- * Provides a generic jade loader.
- * @param {string} source Jade content.
- * @return {string} The rendered html.
- */
-export default function jadeLoader(source) {
+exports = function(source) {
     console.log('JAAAA', source)
     if (this.cacheable)
         this.cacheable(true)
