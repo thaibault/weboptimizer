@@ -6,6 +6,7 @@ import {exec as run} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
 fileSystem.removeDirectoryRecursivelySync = module.require('rimraf').sync
+import * as temp from 'temp'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
@@ -18,7 +19,23 @@ import helper from './helper.compiled'
 const childProcessOptions = {cwd: configuration.path.context}
 let childProcess = null
 if (global.process.argv.length > 2) {
-    if (global.process.argv.length > 3)
+    if (global.process.argv.length > 3) {
+        let dynamicConfigurations = null
+        try {
+            dynamicConfigurations = global.JSON.parse(
+                global.process.argv[global.process.argv.length - 1])
+        } catch (error) {}
+        if (dynamicConfigurations) {
+            // Automatically track and cleanup files at exit.
+            // temp.track()
+            const temporaryFile = temp.openSync({
+                prefix: '.dynamicConfiguration', suffix: '.json'})
+            fileSystem.writeSync(
+                temporaryFile.fd,
+                global.process.argv[global.process.argv.length - 1])
+            fileSystem.closeSync(temporaryFile.fd)
+        }
+    }
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(

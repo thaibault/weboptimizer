@@ -3,6 +3,7 @@
 'use strict'
 // region imports
 import extend from 'extend'
+import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
 try {
@@ -135,16 +136,18 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
 })
 // endregion
 // region load additional options
-if (global.process.argv.length > 3) {
-    let dynamicConfigurations = null
-    try {
-        dynamicConfigurations = global.JSON.parse(
-            global.process.argv[global.process.argv.length - 1])
-    } catch (error) {}
-    if (dynamicConfigurations)
-        extend(
-            true, currentConfiguration.preprocessor.jade.locals,
-            dynamicConfigurations)
+for (let filePath of fileSystem.readdirSync(
+    currentConfiguration.path.context
+)) {
+    console.log(filePath)
+    if (filePath.startsWith('.dynamicConfiguration') && filePath.endsWith(
+        '.json'
+    ))
+        console.log(global.JSON.parse(fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
+        /*
+        extend(true, currentConfiguration, global.JSON.parse(
+            fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
+        */
 }
 // endregion
 export default currentConfiguration
