@@ -48,7 +48,7 @@ module.exports = function(source) {
                     return template
                 template = helper.determineModulePath(template)
                 this.addDependency(template)
-                if (query || template.endsWith('.less'))
+                if (queryMatch || template.endsWith('.less'))
                     return compile(template, options)(nestedLocals)
                 return fileSystem.readFileSync(template, options)
             }}, locals))
