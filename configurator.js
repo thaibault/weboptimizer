@@ -135,10 +135,17 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
 })
 // endregion
 // region load additional options
-if (global.process.argv.length > 3)
-    extend(
-        true, currentConfiguration.preprocessor.jade.locals,
-        global.JSON.parse(global.process.argv[3]))
+if (global.process.argv.length > 3) {
+    let dynamicConfigurations = null
+    try {
+        dynamicConfigurations = global.JSON.parse(
+            global.process.argv[global.process.argv.length - 1])
+    } catch (error) {}
+    if (dynamicConfigurations)
+        extend(
+            true, currentConfiguration.preprocessor.jade.locals,
+            dynamicConfigurations)
+}
 // endregion
 export default currentConfiguration
 // region vim modline

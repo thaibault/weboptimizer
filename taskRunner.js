@@ -18,6 +18,7 @@ import helper from './helper.compiled'
 const childProcessOptions = {cwd: configuration.path.context}
 let childProcess = null
 if (global.process.argv.length > 2) {
+    if (global.process.argv.length > 3)
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
