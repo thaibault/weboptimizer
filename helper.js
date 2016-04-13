@@ -234,6 +234,44 @@ export default {
                 }
             }
         return injects
+    },
+    determineModulePath: moduleID => {
+        // Determines a module path for given module id synchronously.
+        console.log()
+        console.log(moduleID)
+        global.Object.keys(configuration.moduleAliases).forEach(search => {
+            moduleID = moduleID.replace(
+                search, configuration.moduleAliases[search])
+        })
+        let moduleFilePath = moduleID
+        if (!moduleFilePath.startswith('/'))
+            moduleFilePath = path.join(
+                configuration.path.context, moduleFilePath)
+        // TODO
+        let indexFilePath = path.join(moduleFilePath, 'index')
+        if (fileSystem.statSync(moduleFilePath).isDirectory()) {
+            let pathToPackageJSON = path.join(
+                moduleFilePath, 'package.json')
+            if (fileSystem.statSync(pathToPackageJSON).isFile())
+                try {
+                    let mainField = global.JSON.parse(fileSystem.readFileSync(
+                        template, {encoding: 'utf-8'}
+                    )).main
+                    if (mainField)
+                        indexFilePath = path.join(moduleFilePath, mainField)
+                } catch (error) {}
+        else (fileSystem.statSync(moduleFilePath).isFile())
+            indexFilePath = moduleFilePath
+        if (!fileSystem.statSync(indexFilePath).isFile())
+        for (let extension of configuration.knownExtensions)
+            try {
+                fileSystem.accessSync(`template${extension}`, fileSystem.F_OK)
+                moduleFilePath += extension
+                break
+            } catch (error) {}
+        console.log(moduleFilePath)
+        console.log()
+        return moduleFilePath
     }
 }
 // endregion

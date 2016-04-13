@@ -4,7 +4,6 @@
 // region imports
 import extend from 'extend'
 import * as fileSystem from 'fs'
-import path from 'path'
 import * as jade from 'jade'
 import * as loaderUtils from 'loader-utils'
 // NOTE: Only needed for debugging this file.
@@ -12,7 +11,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 
-import configuration from './configurator.compiled'
+import helper from './helper.compiled'
 // endregion
 module.exports = function(source) {
     if (this.cacheable)
@@ -35,40 +34,22 @@ module.exports = function(source) {
                 templateFunction = jade.compileFile(template, options)
             return templateFunction(extend(true, {require: request => {
                 let template = request.replace(/^(.+)\?[^?]+$/, '$1')
-                const query = request.replace(/^.+\?([^?]+)$/, '$1')
-                let locals = {}
-                if (query)
-                    locals = (new global.Function(
-                        'request', 'template', `return ${query}`
-                    ))(request, template)
+                const queryMatch = request.match(/^.+\?([^?]+)$/, '$1')
+                let nestedLocals = {}
+                if (queryMatch)
+                    nestedLocals = (new global.Function(
+                        'request', 'template', 'source', 'locals',
+                        `return ${queryMatch[1]}`
+                    ))(request, template, source, locals)
                 const options = extend(true, {
                     encoding: 'utf-8'
-                }, locals.options || {})
-                if (!options.isString) {
-                    console.log()
-                    console.log(template)
-                    global.Object.keys(configuration.moduleAliases).forEach(
-                        search => {
-                            template = template.replace(
-                                search, configuration.moduleAliases[search])
-                        }
-                    )
-                    template = path.join(configuration.path.context, template)
-                    for (let extension of configuration.knownExtensions)
-                        try {
-                            fileSystem.accessSync(
-                                `template${extension}`, fileSystem.F_OK)
-                            template += extension
-                            break
-                        } catch (error) {}
-                    console.log(template)
-                    console.log()
-                    this.addDependency(template)
-                }
-                if (query || template.endsWith('.less'))
-                    return compile(template, options)(locals)
+                }, nestedLocals.options || {})
                 if (options.isString)
                     return template
+                template = helper.determineModulePath(template)
+                this.addDependency(template)
+                if (query || template.endsWith('.less'))
+                    return compile(template, options)(nestedLocals)
                 return fileSystem.readFileSync(template, options)
             }}, locals))
         }
