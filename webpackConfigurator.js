@@ -164,6 +164,11 @@ if (!(configuration.library || process.argv[1].endsWith(
 // // endregion
 // / endregion
 // / region loader
+let imageLoader = 'url?' + global.JSON.stringify(
+    configuration.optimizer.image.file)
+if (configuration.optimizer.image.content)
+    imageLoader += '!image?' + global.JSON.stringify(
+        configuration.optimizer.image.content)
 const loader = {
     preprocessor: {
         less: `less?${global.JSON.stringify(configuration.preprocessor.less)}`,
@@ -179,10 +184,7 @@ const loader = {
     cascadingStyleSheet: plugins.extractText.extract(
         `css?${global.JSON.stringify(configuration.cascadingStyleSheet)}`),
     postprocessor: {
-        image: 'url?' + global.JSON.stringify(
-            configuration.optimizer.image.file
-        ) + '!image?' +
-            global.JSON.stringify(configuration.optimizer.image.content),
+        image: imageLoader,
         font: {
             eot: 'url?' +
                 global.JSON.stringify(configuration.optimizer.font.eot),
@@ -265,6 +267,7 @@ export default {
     // region output
     output: {
         path: configuration.path.asset.target,
+        publicPath: configuration.path.asset.publicTarget,
         filename: configuration.files.javaScript,
         pathinfo: configuration.debug,
         hashFunction: configuration.hashAlgorithm,
