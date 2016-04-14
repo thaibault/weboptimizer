@@ -54,10 +54,10 @@ module.exports = function(source) {
             }}, locals))
         }
     }
-    return compile(source, {
+    return compile(source, extend(true, {
         isString: true,
         filename: loaderUtils.getRemainingRequest(this).replace(/^!/, '')
-    })(locals)
+    }, query))(locals)
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
