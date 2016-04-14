@@ -340,6 +340,7 @@
             "debug": true,
             "developmentTool": "#source-map",
             "offline": null,
+            "maximumInPlaceFileLimitInByte": 0,
             "files": {"html": [{"debug": true}]},
             "preprocessor": {"jade": {
                 "pretty": true,
