@@ -2,6 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import extend from 'extend'
 import {exec as run} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
@@ -19,48 +20,43 @@ const childProcessOptions = {cwd: configuration.path.context}
 let childProcess = null
 if (global.process.argv.length > 2) {
     // region temporary save dynamically given configurations
-    let additionalArguments
-    if (global.process.argv.length > 3) {
-        let dynamicConfiguration = null
+    let dynamicConfiguration = {givenCommandLineArguments: global.process.argv}
+    if (global.process.argv.length > 3)
         try {
-            dynamicConfiguration = global.JSON.parse(
-                global.process.argv[global.process.argv.length - 1])
+            extend(true, dynamicConfiguration, global.JSON.parse(
+                global.process.argv[global.process.argv.length - 1]))
+            global.process.argv.pop()
         } catch (error) {}
-        if (dynamicConfiguration) {
-            additionalArguments = global.process.argv.splice(4).join(' ')
-            let count = 0
-            let filePath
-            while (true) {
-                filePath = configuration.path.context +
-                    `.dynamicConfiguration-${count}.json`
-                try {
-                    fileSystem.accessSync(filePath, fileSystem.F_OK)
-                } catch (error) {
-                    break
-                }
-                count += 1
-            }
-            const temporaryFileDescriptor = fileSystem.openSync(filePath, 'w')
-            fileSystem.writeSync(
-                temporaryFileDescriptor,
-                global.process.argv[global.process.argv.length - 1])
-            fileSystem.closeSync(temporaryFileDescriptor)
-            // region register exit handler to tidy up
-            const exitHandler = () => {
-                try {
-                    fileSystem.unlinkSync(filePath)
-                } catch (error) {}
-                global.process.exit()
-            }
-            global.process.on('exit', exitHandler)
-            global.process.on('SIGINT', exitHandler)
-            global.process.on('uncaughtException', exitHandler)
-            // endregion
-        } else
-            additionalArguments = global.process.argv.splice(3).join(' ')
-    } else
-        additionalArguments = global.process.argv.splice(3).join(' ')
+    let count = 0
+    let filePath
+    while (true) {
+        filePath = configuration.path.context +
+            `.dynamicConfiguration-${count}.json`
+        try {
+            fileSystem.accessSync(filePath, fileSystem.F_OK)
+        } catch (error) {
+            break
+        }
+        count += 1
+    }
+    const temporaryFileDescriptor = fileSystem.openSync(filePath, 'w')
+    fileSystem.writeSync(
+        temporaryFileDescriptor,
+        global.process.argv[global.process.argv.length - 1])
+    fileSystem.closeSync(temporaryFileDescriptor)
+    // / region register exit handler to tidy up
+    const exitHandler = () => {
+        try {
+            fileSystem.unlinkSync(filePath)
+        } catch (error) {}
+        global.process.exit()
+    }
+    global.process.on('exit', exitHandler)
+    global.process.on('SIGINT', exitHandler)
+    global.process.on('uncaughtException', exitHandler)
+    // / endregion
     // endregion
+    // region handle clear
     if (global.process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
@@ -91,6 +87,9 @@ if (global.process.argv.length > 2) {
                 configuration.path.target, {glob: false})
         process.exit()
     }
+    // endregion
+    let additionalArguments = global.process.argv.splice(3).join(' ')
+    // region handle build
     let buildConfigurations = []
     if (configuration.library)
         buildConfigurations = helper.determineBuildConfigurations()
@@ -128,16 +127,22 @@ if (global.process.argv.length > 2) {
                             })
                 }
             })
+    // endregion
+    // region handle lint
     else if (global.process.argv[2] === 'lint')
         // Lints files with respect to given linting configuration.
         childProcess = run(
             `${configuration.commandLine.lint} ${additionalArguments}`,
             childProcessOptions)
+    // endregion
+    // region handle test
     else if (global.process.argv[2] === 'test')
         // Runs all specified tests (typically in a real browser environment).
         childProcess = run(
             `${configuration.commandLine.test} ${additionalArguments}`,
             childProcessOptions)
+    // endregion
+    // region handle preinstall
     else if (
         configuration.library && global.process.argv[2] === 'preinstall'
     ) {
@@ -156,13 +161,17 @@ if (global.process.argv.length > 2) {
                     )(global, configuration, buildConfiguration, __dirname,
                     global.process.cwd(), path, additionalArguments, filePath
                     ), childProcessOptions))
+    // endregion
+    // region handle serve
     } else if (global.process.argv[2] === 'serve')
         // Provide a development environment where all assets are dynamically
         // bundled and updated on changes.
         childProcess = run(
             `${configuration.commandLine.serve} ${additionalArguments}`,
             childProcessOptions)
+    // endregion
 }
+// / region handle child process interface
 if (childProcess === null) {
     // If no sub process could be started a message with all available
     // arguments is printed.
@@ -178,13 +187,14 @@ if (childProcess === null) {
             ' parameter to dynamically overwrite some configurations.\n')
     process.exit()
 }
-// endregion
-// region trigger child process communication handler
+// / endregion
+// / region trigger child process communication handler
 if (global.Array.isArray(childProcess))
     for (let subChildProcess of childProcess)
         helper.handleChildProcess(subChildProcess)
 else
     helper.handleChildProcess(childProcess)
+// / endregion
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

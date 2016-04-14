@@ -99,7 +99,7 @@
                 "asset": {
                     "source": {"__execute__": "self.path.source"},
                     "target": {"__execute__": "self.path.target"},
-                    "publicTarget": {"__execute__": "self.path.asset.target"},
+                    "publicTarget": "",
                     "cascadingStyleSheet": "cascadingStyleSheet/",
                     "javaScript": "javaScript/",
                     "coffeeScript": "coffeeScript/",

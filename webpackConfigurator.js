@@ -2,6 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import extend from 'extend'
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
@@ -20,6 +21,7 @@ plugins.Offline = module.require('offline-plugin')
 import configuration from './configurator.compiled'
 import helper from './helper.compiled'
 // endregion
+console.log(configuration.givenCommandLineArguments)
 // region initialisation
 // / region pre processing
 configuration.plugins = []
@@ -29,6 +31,13 @@ if (!configuration.library) {
         configuration.injects.internal[index] =
             configuration.path.asset.source + path
         index += 1
+    }
+    // Monke-Patch html loader to retrieve html loader options since the
+    // "webpack-html-plugin" doesn't preserve the original loader interface.
+    const moduleBackup = require('html-loader')
+    require.cache[require.resolve('html-loader')].exports = function() {
+        extend(true, this.options, module, this.options)
+        return moduleBackup.apply(this, arguments)
     }
     for (let htmlOptions of configuration.files.html)
         configuration.plugins.push(new plugins.HTML(htmlOptions))
