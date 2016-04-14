@@ -118,7 +118,7 @@
                 ]
             },
             "hashAlgorithm": "md5",
-            "maximumInPlaceFileLimitInByte": 262144,
+            "maximumInPlaceFileLimitInByte": 40960,
             "developmentTool": null,
             "injects": {"internal": [], "external": []},
             "moduleAliases": {},
@@ -367,6 +367,7 @@
             "optimizer": {"uglifyJS": null},
             "internalInjects": "__auto__",
             "test": {"modules": ["test"]},
+            "maximumInPlaceFileLimitInByte": 1,
             "files": {
                 "cascadingStyleSheet": {
                     "__execute__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
