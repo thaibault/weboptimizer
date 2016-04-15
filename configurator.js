@@ -75,7 +75,7 @@ currentConfiguration.default.files.html[0].template = (() => {
         `${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!`
     if (
         currentConfiguration.givenCommandLineArguments &&
-        2 < currentConfiguration.givenCommandLineArguments.length &&
+        currentConfiguration.givenCommandLineArguments.length > 2 &&
         currentConfiguration.givenCommandLineArguments[2] === 'test'
     )
         string += `${currentConfiguration.path.source}index.jade`
@@ -165,7 +165,7 @@ if (filePath) {
 // region apply test configuration
 if (
     currentConfiguration.givenCommandLineArguments &&
-    2 < currentConfiguration.givenCommandLineArguments.length &&
+    currentConfiguration.givenCommandLineArguments.length > 2 &&
     currentConfiguration.givenCommandLineArguments[2] === 'test'
 )
     extend(true, currentConfiguration, currentConfiguration.test)

@@ -384,8 +384,9 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: configuration.files.html.map(request =>
-                    return request.substring(file.lastIndexOf('!') + 1))
+                exclude: configuration.files.html.map(request => {
+                    return request.substring(request.lastIndexOf('!') + 1)
+                })
             }
             // endregion
         ],
@@ -401,8 +402,9 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: configuration.files.html.map(request =>
-                    return request.substring(file.lastIndexOf('!') + 1))
+                exclude: configuration.files.html.map(request => {
+                    return request.substring(request.lastIndexOf('!') + 1)
+                })
             },
             // endregion
             // region cascadingStyleSheet
