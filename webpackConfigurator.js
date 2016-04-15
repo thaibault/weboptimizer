@@ -82,7 +82,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     injects = {internal: injects, external: []}
 } else {
     configuration.plugins.push(new plugins.ExtractText(
-        configuration.files.cascadingStyleSheet, {allChunks: true}))
+        configuration.files.cascadingStyleSheet))
     // Optimizes webpack output
     if (configuration.optimizer.uglifyJS)
         configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
@@ -197,7 +197,6 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         }})
     // // endregion
     injects = helper.determineInjects()
-    console.log(injects)
     let javaScriptNeeded = false
     if (global.Array.isArray(injects.internal))
         for (let filePath of injects.internal) {
@@ -304,7 +303,7 @@ export default {
     // region output
     output: {
         path: configuration.path.asset.target,
-        publicPath: configuration.path.asset.publicTarget,
+        // publicPath: configuration.path.asset.publicTarget,
         filename: configuration.files.javaScript,
         pathinfo: configuration.debug,
         hashFunction: configuration.hashAlgorithm,
@@ -453,7 +452,12 @@ export default {
                 loader: loader.postprocessor.data,
                 include: path.join(
                     configuration.path.asset.source,
-                    configuration.path.asset.data)
+                    configuration.path.asset.data),
+                exclude: filePath => {
+                    return configuration.knownExtensions.indexOf(path.extname(
+                        filePath
+                    )) !== -1
+                }
             }
             // endregion
         ]

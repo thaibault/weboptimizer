@@ -145,6 +145,12 @@
 
                 ".compiled.css", ".css", ".scss", ".sass", ".less",
 
+                ".compiled.eot", ".eot",
+                ".compiled.woff", ".woff", ".compiled.woff2", ".woff2",
+                ".compiled.ttf", ".ttf",
+
+                ".compiled.svg", ".svg",
+
                 ".compiled.png", ".png",
                 ".compiled.jpg", ".jpg",
                 ".compiled.ico", ".ico",
