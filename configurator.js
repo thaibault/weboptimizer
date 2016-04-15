@@ -78,9 +78,9 @@ currentConfiguration.default.files.html[0].template = (() => {
         currentConfiguration.givenCommandLineArguments.length > 2 &&
         currentConfiguration.givenCommandLineArguments[2] === 'test'
     )
-        string += `${currentConfiguration.path.source}index.jade`
-    else
         string += `${__dirname}/test.jade`
+    else
+        string += `${currentConfiguration.path.source}index.jade`
     string = new global.String(string)
     const nativeReplaceFunction = string.replace
     string.replace = () => {

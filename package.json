@@ -214,8 +214,7 @@
                 }
             },
             "html": {
-                "root": "./", "config": "html",
-                "attrs": ["img:src", "link:href", "a:href"]
+                "config": "html", "attrs": ["img:src", "link:href", "a:href"]
             },
             "cascadingStyleSheet": {},
             "optimizer": {
