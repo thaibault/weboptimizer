@@ -78,11 +78,13 @@ export default {
                 this.walkDirectoryRecursivelySync(filePath, callback)
         })
     },
-    determineModuleLocations: function() {
+    determineModuleLocations: function(
+        internals = configuration.injects.internal
+    ) {
         // Determines all script modules to use as injects.
         const filePaths = []
         const moduleDirectoryPaths = [configuration.path.asset.source]
-        for (let module of configuration.injects.internal) {
+        for (let module of internals) {
             let stat
             let filePath
             for (let extension of configuration.knownExtensions) {
@@ -183,7 +185,9 @@ export default {
     determineInjects: function() {
         // Determines all injects for current build.
         const injects = extend(true, {}, configuration.injects)
-        const testModuleFilePaths = this.determineModuleLocations()[0]
+        const testModuleFilePaths = this.determineModuleLocations(
+            configuration.test.injects.internal
+        )[0]
         for (let type of ['internal', 'external'])
             if (configuration[`${type}Injects`] === '__auto__') {
                 injects[type] = {}
