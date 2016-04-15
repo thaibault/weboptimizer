@@ -378,6 +378,7 @@
             "internalInjects": "__auto__",
             "test": {"injects": {"internal": ["test"]}},
             "maximumInPlaceFileLimitInByte": 1,
+            "offline": null,
             "files": {
                 "cascadingStyleSheet": {
                     "__execute__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"

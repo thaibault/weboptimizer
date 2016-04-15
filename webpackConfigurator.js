@@ -52,6 +52,7 @@ for (let htmlOptions of configuration.files.html)
             htmlOptions.template.lastIndexOf('!') + 1), fileSystem.F_OK)
         configuration.plugins.push(new plugins.HTML(htmlOptions))
     } catch (error) {}
+// provide an offline manifest
 if (configuration.offline) {
     if (!configuration.offline.excludes)
         configuration.offline.excludes = []
@@ -82,7 +83,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
 } else {
     configuration.plugins.push(new plugins.ExtractText(
         configuration.files.cascadingStyleSheet, {allChunks: true}))
-    // Optimizes webpack output and provides an offline manifest
+    // Optimizes webpack output
     if (configuration.optimizer.uglifyJS)
         configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
             configuration.optimizer.uglifyJS))
@@ -196,6 +197,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         }})
     // // endregion
     injects = helper.determineInjects()
+    console.log(injects)
     let javaScriptNeeded = false
     if (global.Array.isArray(injects.internal))
         for (let filePath of injects.internal) {
