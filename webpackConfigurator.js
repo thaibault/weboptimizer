@@ -323,16 +323,14 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.less)
-            },
-            {
+            }, {
                 test: /\.sass$/,
                 loader: `${loader.cascadingStyleSheet}!` +
                     loader.preprocessor.sass,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.sass)
-            },
-            {
+            }, {
                 test: /\.scss$/,
                 loader: `${loader.cascadingStyleSheet}!` +
                     loader.preprocessor.scss,
@@ -348,40 +346,35 @@ export default {
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
-                )].concat((configuration.givenCommandLineArguments[
-                    2
-                ] === 'test') ? root : []),
+                )].concat(helper.determineModuleLocations(
+                    configuration.injects.test
+                )[1]),
                 exclude: filePath => {
-                    if (configuration.givenCommandLineArguments[
-                        2
-                    ] === 'test')
-                        for (let pathToIgnore of configuration.path.ignore)
-                            if (filePath.startsWith(path.resolve(
-                                pathToIgnore
-                            )))
-                                return true
+                    for (let pathToIgnore of configuration.path.ignore)
+                        if (filePath.startsWith(path.resolve(
+                            pathToIgnore
+                        )))
+                            return true
                     return false
                 }
-            },
-            {
+            }, {
                 test: /\.coffee$/,
                 loader: loader.preprocessor.coffee,
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript
-                )].concat((configuration.givenCommandLineArguments[
-                    2
-                ] === 'test') ? root : [])
-            },
-            {
+                )].concat(helper.determineModuleLocations(
+                    configuration.injects.test
+                )[1])
+            }, {
                 test: /\.(?:coffee\.md|litcoffee)$/,
                 loader: loader.preprocessor.literateCoffee,
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript
-                )].concat((configuration.givenCommandLineArguments[
-                    2
-                ] === 'test') ? root : [])
+                )].concat(helper.determineModuleLocations(
+                    configuration.injects.test
+                )[1])
             },
             // endregion
             // region html (templates)
@@ -429,13 +422,10 @@ export default {
             {
                 test: /\.eot(?:\?v=\d+\.\d+\.\d+)?$/,
                 loader: loader.postprocessor.font.eot
-            },
-            {test: /\.woff2?$/, loader: loader.postprocessor.font.woff},
-            {
+            }, {test: /\.woff2?$/, loader: loader.postprocessor.font.woff}, {
                 test: /\.ttf(?:\?v=\d+\.\d+\.\d+)?$/,
                 loader: loader.postprocessor.font.ttf
-            },
-            {
+            }, {
                 test: /\.svg(?:\?v=\d+\.\d+\.\d+)?$/,
                 loader: loader.postprocessor.font.svg
             },
