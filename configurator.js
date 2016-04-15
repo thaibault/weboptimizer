@@ -122,9 +122,9 @@ for (let pathConfiguration of [
             ) + '/'
 // Append asset path to all specified internal files to inject.
 let index = 0
-for (let path of configuration.injects.internal) {
-    configuration.injects.internal[index] = configuration.path.asset.source +
-        path
+for (let path of currentConfiguration.injects.internal) {
+    currentConfiguration.injects.internal[index] =
+        currentConfiguration.path.asset.source + path
     index += 1
 }
 // endregion

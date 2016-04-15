@@ -385,7 +385,8 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.template),
                 exclude: configuration.files.html.map(request => {
-                    return request.substring(request.lastIndexOf('!') + 1)
+                    return request.template.substring(
+                        request.template.lastIndexOf('!') + 1)
                 })
             }
             // endregion
@@ -403,7 +404,8 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.template),
                 exclude: configuration.files.html.map(request => {
-                    return request.substring(request.lastIndexOf('!') + 1)
+                    return request.template.substring(
+                        request.template.lastIndexOf('!') + 1)
                 })
             },
             // endregion
