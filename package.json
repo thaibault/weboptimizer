@@ -315,7 +315,7 @@
                 },
                 "files": {"html": [{
                     "template": {
-                        "__execute__": "`html?${global.JSON.stringify(self.html)}!jade?${global.JSON.stringify(self.preprocessor.jade)}!${__dirname}/test.jade`"
+                        "__execute__": "`html?${global.JSON.stringify(self.html)}!jade?${global.JSON.stringify(self.preprocessor.jade)}!${webOptimizerPath}/test.jade`"
                     },
                     "filename": "test.html"
                 }]},

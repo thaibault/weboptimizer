@@ -44,15 +44,24 @@ currentConfiguration.default.path.context += '/'
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations (which we need here). Simple solution would be:
 
-    template: `html?${global.JSON.stringify(currentConfiguration.html)}!` +
-        `jade?${global.JSON.stringify(currentConfiguration.jade)}!` +
-        `${currentConfiguration.path.source}index.jade`
+    ...,
+    template: {
+        "__execute__": 'html?' +
+            `${global.JSON.stringify(currentConfiguration.html)}!jade?` +
+            `${global.JSON.stringify(currentConfiguration.jade)}!` +
+            `${currentConfiguration.path.source}index.jade`
+    },
+    ...
 
     or for testing:
 
-    template: `html?${global.JSON.stringify(self.html)}!jade?` +
-        `${global.JSON.stringify(self.preprocessor.jade)}!${__dirname}/` +
-        'test.jade'
+    ...,
+    template: {
+        "__execute__": `html?${global.JSON.stringify(self.html)}!jade?` +
+            `${global.JSON.stringify(self.preprocessor.jade)}!` +
+            `${webOptimizerPath}/test.jade`
+    },
+    ...
 
     NOTE: We can't use this since placing in-place would be impossible so.
     favicon: `${currentConfiguration.path.asset.image}favicon.ico`,
