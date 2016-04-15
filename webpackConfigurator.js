@@ -39,7 +39,8 @@ require.cache[require.resolve('html-loader')].exports = function() {
     return moduleBackup.apply(this, arguments)
 }
 if (!configuration.library)
-    configuration.plugins.push(new plugins.HTML(htmlOptions))
+    for (let htmlOptions of configuration.files.html)
+        configuration.plugins.push(new plugins.HTML(htmlOptions))
 if (configuration.offline) {
     if (!configuration.offline.excludes)
         configuration.offline.excludes = []
@@ -59,10 +60,11 @@ if ((
 ) && configuration.openBrowser)
     configuration.plugins.push(new plugins.openBrowser(
         configuration.openBrowser))
+let injects
 let root
 if (configuration.givenCommandLineArguments[2] === 'test') {
-    let testModuleFilePaths
-    [testModuleFilePaths, root] = helper.determineModuleLocations()
+    [injects, root] = helper.determineModuleLocations()
+    injects = {internal: injects, external: []}
     let favicon = configuration.path.asset.source +
         `${configuration.path.asset.image}favicon.ico`
     try {
@@ -95,7 +97,8 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                     ].filename].source(), (error, window) => {
                         if (configuration.inPlace.cascadingStyleSheet) {
                             const urlPrefix = configuration.files
-                                .cascadingStyleSheet.replace('[contenthash]', '')
+                                .cascadingStyleSheet.replace(
+                                    '[contenthash]', '')
                             const domNode = window.document.querySelector(
                                 `link[href^="${urlPrefix}"]`)
                             if (domNode) {
@@ -105,24 +108,23 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                                         break
                                 const inPlaceDomNode =
                                     window.document.createElement('style')
-                                inPlaceDomNode.textContent = compilation.assets[
-                                    asset
-                                ].source()
+                                inPlaceDomNode.textContent =
+                                    compilation.assets[asset].source()
                                 domNode.parentNode.insertBefore(
                                     inPlaceDomNode, domNode)
                                 domNode.parentNode.removeChild(domNode)
                                 /*
                                     NOTE: This doesn't prevent webpack from
-                                    creating this file if present in another chunk
-                                    so removing it (and a potential source map
-                                    file) later in the "done" hook.
+                                    creating this file if present in another
+                                    chunk so removing it (and a potential
+                                    source map file) later in the "done" hook.
                                 */
                                 delete compilation.assets[asset]
                             } else
                                 console.warn(
-                                    'No referenced cascading style sheet file in' +
-                                    ' resulting markup found with selector: ' +
-                                    `link[href^="${urlPrefix}"]`)
+                                    'No referenced cascading style sheet ' +
+                                    'file in resulting markup found with ' +
+                                    `selector: link[href^="${urlPrefix}"]`)
                         }
                         if (configuration.inPlace.javaScript) {
                             const urlPrefix = configuration.files.javaScript
@@ -140,15 +142,15 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                                 domNode.removeAttribute('src')
                                 /*
                                     NOTE: This doesn't prevent webpack from
-                                    creating this file if present in another chunk
-                                    so removing it (and a potential source map
-                                    file) later in the "done" hook.
+                                    creating this file if present in another
+                                    chunk so removing it (and a potential
+                                    source map file) later in the "done" hook.
                                 */
                                 delete compilation.assets[asset]
                             } else
                                 console.warn(
-                                    'No referenced javaScript file in resulting ' +
-                                    'markup found with selector: ' +
+                                    'No referenced javaScript file in ' +
+                                    'resulting markup found with selector: ' +
                                     `script[src^="${urlPrefix}"]`)
                         }
                         compilation.assets[configuration.files.html[
@@ -173,7 +175,9 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                         configuration.path.asset.target,
                         configuration.files.javaScript.replace(
                             `?${configuration.hashAlgorithm}=[hash]`, ''))
-                    for (let filePath of [assetFilePath, `${assetFilePath}.map`])
+                    for (let filePath of [
+                        assetFilePath, `${assetFilePath}.map`
+                    ])
                         try {
                             fileSystem.unlinkSync(filePath)
                         } catch (error) {}
@@ -187,6 +191,54 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             })
         }})
     // // endregion
+    injects = helper.determineInjects()
+    let javaScriptNeeded = false
+    if (global.Array.isArray(injects.internal))
+        for (let filePath of injects.internal) {
+            let type = helper.determineAssetType(filePath)
+            if (configuration.build[type] && configuration.build[
+                type
+            ].outputExtension === 'js') {
+                javaScriptNeeded = true
+                break
+            }
+        }
+    else
+        global.Object.keys(injects.internal).forEach(moduleName => {
+            let type = helper.determineAssetType(injects.internal[moduleName])
+            if (configuration.build[type] && configuration.build[
+                type
+            ].outputExtension === 'js') {
+                javaScriptNeeded = true
+                return false
+            }
+        })
+    if (!javaScriptNeeded)
+        configuration.files.javaScript = path.join(
+            configuration.path.asset.javaScript, '.__dummy__.compiled.js')
+    if (configuration.library)
+        /*
+            We only want to process modules from local context in library mode,
+            since a concrete project using this library should combine all
+            assets for optimal results.
+        */
+        injects.external = (context, request, callback) => {
+            if (global.Array.isArray(
+                injects.internal
+            ) && injects.internal.indexOf(request) !== -1)
+                return callback(null, `umd ${request}`)
+            if (helper.isObject(injects.internal)) {
+                let isInternal = false
+                for (let chunkName in injects.internal)
+                    if (injects.internal[chunkName] === request) {
+                        isInternal = true
+                        break
+                    }
+                if (!isInternal)
+                    return callback(null, `umd ${request}`)
+            }
+            callback()
+        }
 }
 // / endregion
 // / region loader
@@ -222,61 +274,6 @@ const loader = {
                 global.JSON.stringify(configuration.optimizer.font.svg)
         }
     }
-}
-// / endregion
-// / region determine entries and externals
-let injects
-if (configuration.givenCommandLineArguments[2] === 'test')
-    injects = {internal: testModuleFilePaths}
-else {
-    injects = helper.determineInjects()
-    let javaScriptNeeded = false
-    if (global.Array.isArray(injects.internal))
-        for (let filePath of injects.internal) {
-            let type = helper.determineAssetType(filePath)
-            if (configuration.build[type] && configuration.build[
-                type
-            ].outputExtension === 'js') {
-                javaScriptNeeded = true
-                break
-            }
-        }
-    else
-        global.Object.keys(injects.internal).forEach(moduleName => {
-            let type = helper.determineAssetType(injects.internal[moduleName])
-            if (configuration.build[type] && configuration.build[
-                type
-            ].outputExtension === 'js') {
-                javaScriptNeeded = true
-                return false
-            }
-        })
-    if (!javaScriptNeeded)
-        configuration.files.javaScript = path.join(
-            configuration.path.asset.javaScript, '.__dummy__.compiled.js')
-    if (configuration.library)
-        /*
-            We only want to process modules from local context in library mode,
-            since a concrete project using this library should combine all assets
-            for optimal results.
-        */
-        injects.external = (context, request, callback) => {
-            if (global.Array.isArray(injects.internal) && injects.internal.indexOf(
-                request
-            ) !== -1)
-                return callback(null, `umd ${request}`)
-            if (helper.isObject(injects.internal)) {
-                let isInternal = false
-                for (let chunkName in injects.internal)
-                    if (injects.internal[chunkName] === request) {
-                        isInternal = true
-                        break
-                    }
-                if (!isInternal)
-                    return callback(null, `umd ${request}`)
-            }
-            callback()
-        }
 }
 // / endregion
 // endregion
@@ -345,7 +342,7 @@ export default {
                     configuration.path.asset.javaScript
                 )].concat((configuration.givenCommandLineArguments[
                     2
-                ] === 'test') ? moduleDirectoryPaths : []),
+                ] === 'test') ? root : []),
                 exclude: filePath => {
                     if (configuration.givenCommandLineArguments[
                         2
@@ -366,7 +363,7 @@ export default {
                     configuration.path.asset.coffeeScript
                 )].concat((configuration.givenCommandLineArguments[
                     2
-                ] === 'test') ? moduleDirectoryPaths : [])
+                ] === 'test') ? root : [])
             },
             {
                 test: /\.(?:coffee\.md|litcoffee)$/,
@@ -376,7 +373,7 @@ export default {
                     configuration.path.asset.coffeeScript
                 )].concat((configuration.givenCommandLineArguments[
                     2
-                ] === 'test') ? moduleDirectoryPaths : [])
+                ] === 'test') ? root : [])
             },
             // endregion
             // region html (templates)
