@@ -183,7 +183,7 @@ export default {
     determineInjects: function() {
         // Determines all injects for current build.
         const injects = extend(true, {}, configuration.injects)
-        const testModuleFilePaths = this.determineTestModules()[0]
+        const testModuleFilePaths = this.determineModuleLocations()[0]
         for (let type of ['internal', 'external'])
             if (configuration[`${type}Injects`] === '__auto__') {
                 injects[type] = {}

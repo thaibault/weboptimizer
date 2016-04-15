@@ -70,14 +70,18 @@ currentConfiguration.default.path.context += '/'
     manifest: currentConfiguration.preprocessor.jade.includeManifest
 */
 currentConfiguration.default.files.html[0].template = (() => {
-    let string = new global.String('html?' + global.JSON.stringify(
-        currentConfiguration.html)
-    ) + '!jade?' +
+    let string = 'html?' + global.JSON.stringify(currentConfiguration.html) +
+        '!jade?' +
         `${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!`
-    if (currentConfiguration.givenCommandLineArguments[2] === 'test')
+    if (
+        currentConfiguration.givenCommandLineArguments &&
+        2 < currentConfiguration.givenCommandLineArguments.length &&
+        currentConfiguration.givenCommandLineArguments[2] === 'test'
+    )
         string += `${currentConfiguration.path.source}index.jade`
     else
         string += `${__dirname}/test.jade`
+    string = new global.String(string)
     const nativeReplaceFunction = string.replace
     string.replace = () => {
         string.replace = nativeReplaceFunction
@@ -150,7 +154,11 @@ if (filePath) {
 }
 // endregion
 // region apply test configuration
-if (currentConfiguration.givenCommandLineArguments[2] === 'test')
+if (
+    currentConfiguration.givenCommandLineArguments &&
+    2 < currentConfiguration.givenCommandLineArguments.length &&
+    currentConfiguration.givenCommandLineArguments[2] === 'test'
+)
     extend(true, currentConfiguration, currentConfiguration.test)
 // endregion
 // region apply webpack html plugin workaround
