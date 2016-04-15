@@ -2,7 +2,6 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import extend from 'extend'
 import {exec as run} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
@@ -23,9 +22,18 @@ if (global.process.argv.length > 2) {
     let dynamicConfiguration = {givenCommandLineArguments: global.process.argv}
     if (global.process.argv.length > 3)
         try {
-            extend(true, dynamicConfiguration, global.JSON.parse(
-                global.process.argv[global.process.argv.length - 1]))
-            global.process.argv.pop()
+            const result = (new global.Function(
+                'configuration',
+                `return global.process.argv[global.process.argv.length - 1]`
+            ))(configuration)
+            if (
+                result !== null && typeof result === 'object' &&
+                !global.Array.isArray(result) &&
+                global.Object.prototype.toString.call(
+                    result
+                ) === '[object Object]'
+            )
+                global.process.argv.pop()
         } catch (error) {}
     let count = 0
     let filePath
@@ -40,9 +48,8 @@ if (global.process.argv.length > 2) {
         count += 1
     }
     const temporaryFileDescriptor = fileSystem.openSync(filePath, 'w')
-    fileSystem.writeSync(
-        temporaryFileDescriptor,
-        global.process.argv[global.process.argv.length - 1])
+    fileSystem.writeSync(temporaryFileDescriptor, global.JSON.stringify(
+        dynamicConfiguration))
     fileSystem.closeSync(temporaryFileDescriptor)
     // / region register exit handler to tidy up
     const exitHandler = () => {

@@ -48,6 +48,12 @@ currentConfiguration.default.path.context += '/'
         `jade?${global.JSON.stringify(currentConfiguration.jade)}!` +
         `${currentConfiguration.path.source}index.jade`
 
+    or for testing:
+
+    template: `html?${global.JSON.stringify(self.html)}!jade?` +
+        `${global.JSON.stringify(self.preprocessor.jade)}!${__dirname}/` +
+        'test.jade'
+
     NOTE: We can't use this since placing in-place would be impossible so.
     favicon: `${currentConfiguration.path.asset.image}favicon.ico`,
     NOTE: We can't use this since the file would have to be available before
@@ -55,31 +61,14 @@ currentConfiguration.default.path.context += '/'
     manifest: currentConfiguration.preprocessor.jade.includeManifest
 */
 currentConfiguration.default.files.html[0].template = (() => {
-    const string = new global.String('html?' + global.JSON.stringify(
-        currentConfiguration.html
-    ) +
-    `!jade?${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!` +
-    `${currentConfiguration.path.source}index.jade`)
-    const nativeReplaceFunction = string.replace
-    string.replace = () => {
-        string.replace = nativeReplaceFunction
-        return string
-    }
-    return string
-})
-/*
-    NOTE: Provides a workaround to handle a bug with changed loader
-    configurations (which we need here). Simple solution would be:
-
-    `html?${global.JSON.stringify({attrs: 'img:src link:href'})}!` +
-    `jade?${global.JSON.stringify({pretty: true, debug: true})}!${__dirname}` +
-    '/test.jade'
-*/
-currentConfiguration.default.test.template = (() => {
-    const string = new global.String('html?' + global.JSON.stringify({
-        attrs: 'img:src link:href'
-    }) + `!jade?${global.JSON.stringify({pretty: true, debug: true})}!` +
-    `${__dirname}/test.jade`)
+    let string = new global.String('html?' + global.JSON.stringify(
+        currentConfiguration.html)
+    ) + '!jade?' +
+        `${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!`
+    if (currentConfiguration.givenCommandLineArguments[2] === 'test')
+        string += `${currentConfiguration.path.source}index.jade`
+    else
+        string += `${__dirname}/test.jade`
     const nativeReplaceFunction = string.replace
     string.replace = () => {
         string.replace = nativeReplaceFunction
@@ -119,11 +108,6 @@ for (let pathConfiguration of [
             ) + '/'
 currentConfiguration = helper.resolve(
     currentConfiguration, currentConfiguration)
-if (helper.isFunction(currentConfiguration.files.html[0].template))
-    currentConfiguration.files.html[0].template =
-        currentConfiguration.files.html[0].template()
-if (helper.isFunction(currentConfiguration.test.template))
-    currentConfiguration.test.template = currentConfiguration.test.template()
 // Apply default file level build configurations to all file type specific
 // ones.
 const defaultConfiguration = currentConfiguration.build.default
@@ -149,9 +133,21 @@ while (true) {
     filePath = newFilePath
     count += 1
 }
-if (filePath)
+if (filePath) {
     extend(true, currentConfiguration, global.JSON.parse(
         fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
+    currentConfiguration = helper.resolve(
+        currentConfiguration, currentConfiguration)
+}
+// endregion
+// region apply test configuration
+if (currentConfiguration.givenCommandLineArguments[2] === 'test')
+    extend(true, currentConfiguration, currentConfiguration.test)
+// endregion
+// region apply webpack html plugin workaround
+if (helper.isFunction(currentConfiguration.files.html[0].template))
+    currentConfiguration.files.html[0].template =
+        currentConfiguration.files.html[0].template()
 // endregion
 export default currentConfiguration
 // region vim modline

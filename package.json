@@ -56,10 +56,10 @@
         "type": "git", "url": "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
-        "build": "arguments='--presets es2015 --source-maps inline --out-file' && babel configurator.js $arguments configurator.compiled.js && babel helper.js $arguments helper.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel webpackTestConfigurator.js $arguments webpackTestConfigurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js && babel jadeLoader.js $arguments jadeLoader.compiled.js",
+        "build": "arguments='--presets es2015 --source-maps inline --out-file' && babel configurator.js $arguments configurator.compiled.js && babel helper.js $arguments helper.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js && babel jadeLoader.js $arguments jadeLoader.compiled.js",
         "clear": "rm *.compiled.* || true",
         "lint": "eslint '**/*.js' || true",
-        "preinstall": "touch configurator.compiled.js helper.compiled.js taskRunner.compiled.js webpackTestConfigurator.compiled.js webpackConfigurator.compiled.js jadeLoader.compiled.js",
+        "preinstall": "touch configurator.compiled.js helper.compiled.js taskRunner.compiled.js webpackConfigurator.compiled.js jadeLoader.compiled.js",
         "postinstall": "npm run build"
     },
     "version": "1.0.0",
@@ -157,9 +157,7 @@
                 "serve": {
                     "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackConfigurator.compiled.js --inline --colors`"
                 },
-                "test": {
-                    "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackTestConfigurator.compiled.js --inline --colors`"
-                },
+                "test": {"__execute__": "self.commandLine.serve"},
                 "lint": {
                     "__execute__": "`eslint --config ${webOptimizerPath}/package.json --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
                 }
@@ -181,20 +179,16 @@
                 }]
             },
             "files": {
-                "html": [
-                    {
-                        "debug": false,
-                        "template": {
-                            "__execute__": "`html?${global.JSON.stringify(self.html)}!jade?${global.JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
-                        },
-                        "hash": true,
-                        "filename": "index.html",
-                        "inject": "body",
-                        "minify": {
-                            "__execute__": "self.optimizer.htmlMinifier"
-                        }
-                    }
-                ],
+                "html": [{
+                    "debug": false,
+                    "template": {
+                        "__execute__": "`html?${global.JSON.stringify(self.html)}!jade?${global.JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
+                    },
+                    "hash": true,
+                    "filename": "index.html",
+                    "inject": "body",
+                    "minify": {"__execute__": "self.optimizer.htmlMinifier"}
+                }],
                 "cascadingStyleSheet": {
                     "__execute__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
                 },
@@ -312,11 +306,18 @@
                 }
             },
             "test": {
-                "modules": ["test/"],
+                "injects": {"internal": ["test/"]},
                 "moduleAliases": {
                     "qunit.css": "qunitjs/qunit/qunit.css",
                     "qunit": "qunitjs/qunit/qunit.js"
                 }
+                "files": {"html": [{
+                    "template": {
+                        "__execute__": "`html?${global.JSON.stringify(self.html)}!jade?${global.JSON.stringify(self.preprocessor.jade)}!${__dirname}/test.jade`"
+                    },
+                    "filename": "test.html"
+                }]},
+                "offline": null
             },
             "build": {
                 "default": {
@@ -364,7 +365,7 @@
         "library": {
             "optimizer": {"uglifyJS": null},
             "internalInjects": "__auto__",
-            "test": {"modules": ["test"]},
+            "test": {"injects": {"internal": ["test"]}},
             "maximumInPlaceFileLimitInByte": 1,
             "files": {
                 "cascadingStyleSheet": {
