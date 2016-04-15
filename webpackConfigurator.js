@@ -21,13 +21,26 @@ plugins.Offline = module.require('offline-plugin')
 import configuration from './configurator.compiled'
 import helper from './helper.compiled'
 
+// / region monkey patches
 // Monkey-Patch html loader to retrieve html loader options since the
 // "webpack-html-plugin" doesn't preserve the original loader interface.
-const moduleBackup = require('html-loader')
+import htmlLoaderModuleBackup from 'html-loader'
 require.cache[require.resolve('html-loader')].exports = function() {
     extend(true, this.options, module, this.options)
-    return moduleBackup.apply(this, arguments)
+    return htmlLoaderModuleBackup.apply(this, arguments)
 }
+// Monkey-Patch loader-utils to define which url is a local request.
+import loaderUtilsModuleBackup from 'loader-utils'
+const loaderUtilsIsUrlRequestBackup = loaderUtilsModuleBackup.isUrlRequest
+require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
+    url
+) {
+    if (url.match(/^[a-z]:.+/))
+        return false
+    return loaderUtilsIsUrlRequestBackup.apply(
+        loaderUtilsModuleBackup, arguments)
+}
+// / endregion
 // endregion
 // region initialisation
 // / region pre processing
