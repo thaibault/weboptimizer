@@ -46,9 +46,12 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // / region pre processing
 // // region plugins
 configuration.plugins = []
-if (!configuration.library)
-    for (let htmlOptions of configuration.files.html)
+for (let htmlOptions of configuration.files.html)
+    try {
+        fileSystem.accessSync(htmlOptions.template.substring(
+            htmlOptions.template.lastIndexOf('!') + 1), fileSystem.F_OK)
         configuration.plugins.push(new plugins.HTML(htmlOptions))
+    } catch (error) {}
 if (configuration.offline) {
     if (!configuration.offline.excludes)
         configuration.offline.excludes = []
