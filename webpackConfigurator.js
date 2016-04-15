@@ -269,9 +269,9 @@ const loader = {
                 global.JSON.stringify(configuration.optimizer.font.ttf),
             svg: 'url?' +
                 global.JSON.stringify(configuration.optimizer.font.svg)
-        }
-    },
-    data: `url?${global.JSON.stringify(configuration.optimizer.default)}`
+        },
+        data: `url?${global.JSON.stringify(configuration.optimizer.default)}`
+    }
 }
 // / endregion
 // endregion
@@ -440,7 +440,7 @@ export default {
             // region data
             {
                 test: /.+/,
-                loader: loader.optimizer.data,
+                loader: loader.postprocessor.data,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.data)
