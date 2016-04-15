@@ -35,7 +35,7 @@ const loaderUtilsIsUrlRequestBackup = loaderUtilsModuleBackup.isUrlRequest
 require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
     url
 ) {
-    if (url.match(/^[a-z]:.+/))
+    if (url.match(/^[a-z]+:.+/))
         return false
     return loaderUtilsIsUrlRequestBackup.apply(
         loaderUtilsModuleBackup, arguments)
@@ -76,14 +76,6 @@ let fallbackModuleDirectoryPaths = []
 if (configuration.givenCommandLineArguments[2] === 'test') {
     [injects, fallbackModuleDirectoryPaths] = helper.determineModuleLocations()
     injects = {internal: injects, external: []}
-    let favicon = configuration.path.asset.source +
-        `${configuration.path.asset.image}favicon.ico`
-    try {
-        if (!fileSystem.statSync(favicon).isFile())
-            favicon = null
-    } catch (error) {
-        favicon = null
-    }
 } else {
     configuration.plugins.push(new plugins.ExtractText(
         configuration.files.cascadingStyleSheet, {allChunks: true}))
