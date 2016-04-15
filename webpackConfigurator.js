@@ -275,7 +275,7 @@ const loader = {
             svg: 'url?' +
                 global.JSON.stringify(configuration.optimizer.font.svg)
         },
-        data: `url?${global.JSON.stringify(configuration.optimizer.default)}`
+        data: `url?${global.JSON.stringify(configuration.optimizer.data)}`
     }
 }
 // / endregion
