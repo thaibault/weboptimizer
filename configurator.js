@@ -110,6 +110,7 @@ if (
 currentConfiguration = extend(
     true, currentConfiguration, specificConfiguration)
 currentConfiguration.debug = debug
+// region build absolute paths
 for (let pathConfiguration of [
     currentConfiguration.path, currentConfiguration.path.asset
 ])
@@ -119,6 +120,14 @@ for (let pathConfiguration of [
                 currentConfiguration.path.context, helper.resolve(
                     pathConfiguration[key], currentConfiguration)
             ) + '/'
+// Append asset path to all specified internal files to inject.
+let index = 0
+for (let path of configuration.injects.internal) {
+    configuration.injects.internal[index] = configuration.path.asset.source +
+        path
+    index += 1
+}
+// endregion
 currentConfiguration = helper.resolve(
     currentConfiguration, currentConfiguration)
 // Apply default file level build configurations to all file type specific

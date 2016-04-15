@@ -20,17 +20,7 @@ plugins.Offline = module.require('offline-plugin')
 
 import configuration from './configurator.compiled'
 import helper from './helper.compiled'
-// endregion
-// region initialisation
-// / region pre processing
-configuration.plugins = []
-// Append asset path to all specified internal files to inject.
-let index = 0
-for (let path of configuration.injects.internal) {
-    configuration.injects.internal[index] =
-        configuration.path.asset.source + path
-    index += 1
-}
+
 // Monkey-Patch html loader to retrieve html loader options since the
 // "webpack-html-plugin" doesn't preserve the original loader interface.
 const moduleBackup = require('html-loader')
@@ -38,6 +28,11 @@ require.cache[require.resolve('html-loader')].exports = function() {
     extend(true, this.options, module, this.options)
     return moduleBackup.apply(this, arguments)
 }
+// endregion
+// region initialisation
+// / region pre processing
+// // region plugins
+configuration.plugins = []
 if (!configuration.library)
     for (let htmlOptions of configuration.files.html)
         configuration.plugins.push(new plugins.HTML(htmlOptions))
@@ -60,10 +55,13 @@ if ((
 ) && configuration.openBrowser)
     configuration.plugins.push(new plugins.openBrowser(
         configuration.openBrowser))
+// // endregion
+// // region modules/assets
+extend(configuration.moduleAliases, configuration.additionalModuleAliases)
 let injects
-let root
+let fallbackModuleDirectoryPaths = []
 if (configuration.givenCommandLineArguments[2] === 'test') {
-    [injects, root] = helper.determineModuleLocations()
+    [injects, fallbackModuleDirectoryPaths] = helper.determineModuleLocations()
     injects = {internal: injects, external: []}
     let favicon = configuration.path.asset.source +
         `${configuration.path.asset.image}favicon.ico`
@@ -73,9 +71,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     } catch (error) {
         favicon = null
     }
-    extend(configuration.moduleAliases, configuration.test.moduleAliases)
 } else {
-    root = [configuration.path.asset.source]
     configuration.plugins.push(new plugins.ExtractText(
         configuration.files.cascadingStyleSheet, {allChunks: true}))
     // Optimizes webpack output and provides an offline manifest
@@ -240,6 +236,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             callback()
         }
 }
+// // endregion
 // / endregion
 // / region loader
 let imageLoader = 'url?' + global.JSON.stringify(
@@ -286,7 +283,8 @@ export default {
     // region input
     resolveLoader: configuration.loader,
     resolve: {
-        root,
+        root: [configuration.path.asset.source],
+        fallback: fallbackModuleDirectoryPaths,
         extensions: configuration.knownExtensions,
         alias: configuration.moduleAliases
     },
@@ -386,9 +384,8 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: configuration.files.html.map(file =>
-                    return file.substring(
-                        configuration.test.template.lastIndexOf('!') + 1))
+                exclude: configuration.files.html.map(request =>
+                    return request.substring(file.lastIndexOf('!') + 1))
             }
             // endregion
         ],
@@ -404,17 +401,8 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: filePath => {
-                    for (let templateToIgnore of configuration.files.html)
-                        if (filePath === templateToIgnore.template.lastIndexOf(
-                            '!'
-                        ) + 1)
-                            return true
-                    return configuration.files.html.map(file =>
-                        return file.substring(
-                            configuration.test.template.lastIndexOf('!') + 1)
-                    ).indexOf(filePath) !== -1
-                }
+                exclude: configuration.files.html.map(request =>
+                    return request.substring(file.lastIndexOf('!') + 1))
             },
             // endregion
             // region cascadingStyleSheet

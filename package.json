@@ -123,6 +123,7 @@
             "developmentTool": null,
             "injects": {"internal": [], "external": []},
             "moduleAliases": {},
+            "additionalModuleAliases": {},
             "loader": {
                 "modulesDirectories": [
                     "web_loaders", "web_modules", "node_loaders",
@@ -213,7 +214,8 @@
                 }
             },
             "html": {
-                "attrs": ["img:src", "link:href", "a:href"], "config": "html"
+                "root": "./", "config": "html",
+                "attrs": ["img:src", "link:href", "a:href"]
             },
             "cascadingStyleSheet": {},
             "optimizer": {
@@ -309,7 +311,7 @@
             },
             "test": {
                 "injects": {"internal": ["test/"]},
-                "moduleAliases": {
+                "additionalModuleAliases": {
                     "qunit.css": "qunitjs/qunit/qunit.css",
                     "qunit": "qunitjs/qunit/qunit.js"
                 },
