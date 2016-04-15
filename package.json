@@ -279,6 +279,12 @@
                         "verbose": false
                     }
                 },
+                "data": {
+                    "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                    "name": {
+                        "__execute__": "`/${self.path.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                    }
+                },
                 "font": {
                     "eot": {
                         "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},

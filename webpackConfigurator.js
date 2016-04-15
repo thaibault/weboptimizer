@@ -270,7 +270,8 @@ const loader = {
             svg: 'url?' +
                 global.JSON.stringify(configuration.optimizer.font.svg)
         }
-    }
+    },
+    data: `url?${global.JSON.stringify(configuration.optimizer.default)}`
 }
 // / endregion
 // endregion
@@ -434,6 +435,15 @@ export default {
             {
                 test: /\.(?:png|jpg|ico|gif)$/,
                 loader: loader.postprocessor.image
+            },
+            // endregion
+            // region data
+            {
+                test: /.+/,
+                loader: loader.optimizer.data,
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.data)
             }
             // endregion
         ]
