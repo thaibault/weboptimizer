@@ -386,8 +386,9 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: configuration.test.template.substring(
-                    configuration.test.template.lastIndexOf('!') + 1)
+                exclude: configuration.files.html.map(file =>
+                    return file.substring(
+                        configuration.test.template.lastIndexOf('!') + 1))
             }
             // endregion
         ],
@@ -409,7 +410,10 @@ export default {
                             '!'
                         ) + 1)
                             return true
-                    return false
+                    return configuration.files.html.map(file =>
+                        return file.substring(
+                            configuration.test.template.lastIndexOf('!') + 1)
+                    ).indexOf(filePath) !== -1
                 }
             },
             // endregion
