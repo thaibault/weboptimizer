@@ -312,7 +312,7 @@
                 "moduleAliases": {
                     "qunit.css": "qunitjs/qunit/qunit.css",
                     "qunit": "qunitjs/qunit/qunit.js"
-                }
+                },
                 "files": {"html": [{
                     "template": {
                         "__execute__": "`html?${global.JSON.stringify(self.html)}!jade?${global.JSON.stringify(self.preprocessor.jade)}!${__dirname}/test.jade`"
