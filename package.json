@@ -212,7 +212,9 @@
                     "presets": ["es2015", "stage-0"]
                 }
             },
-            "html": {"attrs": "img:src link:href", "config": "html"},
+            "html": {
+                "attrs": ["img:src", "link:href", "a:href"], "config": "html"
+            },
             "cascadingStyleSheet": {},
             "optimizer": {
                 "uglifyJS": {"compress": {"warnings": false}},
