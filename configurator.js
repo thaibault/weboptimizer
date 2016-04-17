@@ -40,55 +40,6 @@ if (global.process.env.npm_config_production)
 else if (global.process.env.npm_config_debug)
     debug = true
 currentConfiguration.default.path.context += '/'
-/*
-    NOTE: Provides a workaround to handle a bug with changed loader
-    configurations (which we need here). Simple solution would be:
-
-    ...,
-    template: {
-        "__execute__": 'html?' +
-            `${global.JSON.stringify(currentConfiguration.html)}!jade?` +
-            `${global.JSON.stringify(currentConfiguration.jade)}!` +
-            `${currentConfiguration.path.source}index.jade`
-    },
-    ...
-
-    or for testing:
-
-    ...,
-    template: {
-        "__execute__": `html?${global.JSON.stringify(self.html)}!jade?` +
-            `${global.JSON.stringify(self.preprocessor.jade)}!` +
-            `${webOptimizerPath}/test.jade`
-    },
-    ...
-
-    NOTE: We can't use this since placing in-place would be impossible so.
-    favicon: `${currentConfiguration.path.asset.image}favicon.ico`,
-    NOTE: We can't use this since the file would have to be available before
-    building.
-    manifest: currentConfiguration.preprocessor.jade.includeManifest
-*/
-currentConfiguration.default.files.html[0].template = (() => {
-    let string = 'html?' + global.JSON.stringify(currentConfiguration.html) +
-        '!jade?' +
-        `${global.JSON.stringify(currentConfiguration.preprocessor.jade)}!`
-    if (
-        currentConfiguration.givenCommandLineArguments &&
-        currentConfiguration.givenCommandLineArguments.length > 2 &&
-        currentConfiguration.givenCommandLineArguments[2] === 'test'
-    )
-        string += `${__dirname}/test.jade`
-    else
-        string += `${currentConfiguration.path.source}index.jade`
-    string = new global.String(string)
-    const nativeReplaceFunction = string.replace
-    string.replace = () => {
-        string.replace = nativeReplaceFunction
-        return string
-    }
-    return string
-})
 // Merges final default configuration object depending on given target
 // environment.
 const libraryConfiguration = currentConfiguration.library
@@ -105,7 +56,7 @@ if (
     currentConfiguration = extend(
         true, currentConfiguration, libraryConfiguration)
 // endregion
-// region merging and evaluating default and specific configuration
+// region merging and evaluating default, test and specific configuration
 // Merges project specific configurations with default ones.
 currentConfiguration = extend(
     true, currentConfiguration, specificConfiguration)
@@ -128,19 +79,6 @@ for (let path of currentConfiguration.injects.internal) {
     index += 1
 }
 // endregion
-currentConfiguration = helper.resolve(
-    currentConfiguration, currentConfiguration)
-// Apply default file level build configurations to all file type specific
-// ones.
-const defaultConfiguration = currentConfiguration.build.default
-delete currentConfiguration.build.default
-global.Object.keys(currentConfiguration.build).forEach(type => {
-    currentConfiguration.build[type] = extend(true, {
-    }, defaultConfiguration, extend(true, {
-        extension: type
-    }, currentConfiguration.build[type], {type}))
-})
-// endregion
 // region load additional dynamically given configuration
 let count = 0
 let filePath = null
@@ -156,24 +94,60 @@ while (true) {
     count += 1
 }
 if (filePath) {
-    extend(true, currentConfiguration, global.JSON.parse(
-        fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
-    currentConfiguration = helper.resolve(
-        currentConfiguration, currentConfiguration)
+    const dynamicConfiguration = global.JSON.parse(
+        fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
+    // region apply test configuration
+    if (
+        dynamicConfiguration.givenCommandLineArguments.length > 2 &&
+        dynamicConfiguration.givenCommandLineArguments[2] === 'test'
+    )
+        extend(true, currentConfiguration, currentConfiguration.test)
+    // endregion
+    extend(true, currentConfiguration, dynamicConfiguration)
 }
 // endregion
-// region apply test configuration
-if (
-    currentConfiguration.givenCommandLineArguments &&
-    currentConfiguration.givenCommandLineArguments.length > 2 &&
-    currentConfiguration.givenCommandLineArguments[2] === 'test'
-)
-    extend(true, currentConfiguration, currentConfiguration.test)
+currentConfiguration = helper.resolve(
+    currentConfiguration, currentConfiguration)
+// Apply default file level build configurations to all file type specific
+// ones.
+const defaultConfiguration = currentConfiguration.build.default
+delete currentConfiguration.build.default
+global.Object.keys(currentConfiguration.build).forEach(type => {
+    currentConfiguration.build[type] = extend(true, {
+    }, defaultConfiguration, extend(true, {
+        extension: type
+    }, currentConfiguration.build[type], {type}))
+})
 // endregion
 // region apply webpack html plugin workaround
-if (helper.isFunction(currentConfiguration.files.html[0].template))
-    currentConfiguration.files.html[0].template =
-        currentConfiguration.files.html[0].template()
+/*
+    NOTE: Provides a workaround to handle a bug with changed loader
+    configurations.
+*/
+console.log()
+console.log('A', currentConfiguration.files.html[0].template)
+index = 0
+for (let templateRequest of currentConfiguration.files.html) {
+    if (
+        templateRequest.template.indexOf('!') !== -1 &&
+        typeof templateRequest.template !== 'object'
+    ) {
+        currentConfiguration.files.html[index].template = new global.String(
+            templateRequest)
+        const nativeReplaceFunction =
+            currentConfiguration.files.html[index].template.replace
+        currentConfiguration.files.html[index].template.replace = (index => {
+            return () => {
+                currentConfiguration.files.html[index].template.replace =
+                    nativeReplaceFunction
+                return currentConfiguration.files.html[index].template
+            }
+        })(index)
+    }
+    index += 1
+}
+console.log('B', currentConfiguration.files.html[0].template)
+console.log()
 // endregion
 export default currentConfiguration
 // region vim modline

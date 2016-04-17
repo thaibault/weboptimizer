@@ -24,25 +24,41 @@ export default {
         // Checks if given entity is a function.
         return object && {}.toString.call(object) === '[object Function]'
     },
-    resolve: function(object, currentConfiguration = configuration) {
+    resolve: function(
+        object, currentConfiguration = configuration, initial = true
+    ) {
         // Processes all dynamically linked values in given object.
+        if (initial) {
+            const attachProxy = object => {
+                for (let key in object)
+                    if (this.isObject(object[key]))
+                        attachProxy(object[key])
+                return global.Proxy(object, {get: (target, name) => {
+                    return this.resolve(
+                        target[name], currentConfiguration, false)
+                }})
+            }
+            attachProxy(currentConfiguration)
+        }
         if (global.Array.isArray(object)) {
             let index = 0
             for (let value of object) {
-                object[index] = this.resolve(value, currentConfiguration)
+                object[index] = this.resolve(
+                    value, currentConfiguration, false)
                 index += 1
             }
         } else if (this.isObject(object))
             for (let key in object) {
                 if (key === '__execute__')
                     return this.resolve(new global.Function(
-                        'global', 'self', 'webOptimizerPath', 'currentPath',
-                        'path', `return ${object[key]}`
+                        'global', 'self', 'resolve', 'webOptimizerPath',
+                        'currentPath', 'path', `return ${object[key]}`
                     )(
-                        global, currentConfiguration, __dirname,
+                        global, currentConfiguration, this.resolve, __dirname,
                         global.process.cwd(), path
-                    ), currentConfiguration)
-                object[key] = this.resolve(object[key], currentConfiguration)
+                    ), currentConfiguration, false)
+                object[key] = this.resolve(
+                    object[key], currentConfiguration, false)
             }
         return object
     },
