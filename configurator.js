@@ -61,7 +61,7 @@ if (
 currentConfiguration = extend(
     true, currentConfiguration, specificConfiguration)
 currentConfiguration.debug = debug
-// region build absolute paths
+// / region build absolute paths
 for (let pathConfiguration of [
     currentConfiguration.path, currentConfiguration.path.asset
 ])
@@ -72,13 +72,15 @@ for (let pathConfiguration of [
                     pathConfiguration[key], currentConfiguration)
             ) + '/'
 // Append asset path to all specified internal files to inject.
-let index = 0
-for (let path of currentConfiguration.injects.internal) {
-    currentConfiguration.injects.internal[index] =
-        currentConfiguration.path.asset.source + path
-    index += 1
+if (global.Array.isArray(currentConfiguration.injects.internal)) {
+    let index = 0
+    for (let path of currentConfiguration.injects.internal) {
+        currentConfiguration.injects.internal[index] =
+            currentConfiguration.path.asset.source + path
+        index += 1
+    }
 }
-// endregion
+// / endregion
 // region load additional dynamically given configuration
 let count = 0
 let filePath = null
@@ -123,7 +125,7 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations.
 */
-index = 0
+let index = 0
 for (let templateRequest of currentConfiguration.files.html) {
     if (
         templateRequest.template.indexOf('!') !== -1 &&

@@ -42,9 +42,6 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 }
 // / endregion
 // endregion
-console.log()
-console.log('AAA', configuration.injects)
-console.log()
 // region initialisation
 // / region pre processing
 // // region plugins

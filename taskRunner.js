@@ -166,7 +166,7 @@ if (global.process.argv.length > 2) {
         const testModuleFilePaths = helper.determineModuleLocations(
             configuration.injects.internal, configuration.knownExtensions,
             configuration.path.context, configuration.path.ignore
-        )[0]
+        ).filePaths
         for (let buildConfiguration of buildConfigurations)
             for (let filePath of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(filePath) === -1)

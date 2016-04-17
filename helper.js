@@ -215,7 +215,7 @@ export default {
         let injects = extend(true, {}, givenInjects)
         const moduleFilePathsToExclude = this.determineModuleLocations(
             modulesToExclude, knownExtensions, context, pathsToIgnore
-        )[0]
+        ).filePaths
         for (let type of ['internal', 'external'])
             if (givenInjects[type] === '__auto__') {
                 injects[type] = {}
