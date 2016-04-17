@@ -57,8 +57,13 @@ export default {
                         'global', 'self', 'resolve', 'webOptimizerPath',
                         'currentPath', 'path', `return ${object[key]}`
                     )(
-                        global, configuration, this.resolve, __dirname,
-                        global.process.cwd(), path
+                        global, configuration, (
+                            propertyName, subConfiguration = configuration,
+                            subInitial = false
+                        ) => {
+                            return this.resolve(
+                                propertyName, subConfiguration, subInitial)
+                        }, __dirname, global.process.cwd(), path
                     ), configuration, false)
                 object[key] = this.resolve(
                     object[key], configuration, false)
