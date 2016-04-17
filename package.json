@@ -378,7 +378,7 @@
             "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
             "files": {"html": [{"debug": true}]},
             "preprocessor": {"jade": {
-                "pretty": true,
+                "compiler": {"pretty": true},
                 "locals": {"includeManifest": false}
             }},
             "optimizer": {
