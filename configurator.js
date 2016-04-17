@@ -126,22 +126,18 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
     configurations.
 */
 let index = 0
-for (let templateRequest of currentConfiguration.files.html) {
+for (let html of currentConfiguration.files.html) {
     if (
-        templateRequest.template.indexOf('!') !== -1 &&
-        typeof templateRequest.template !== 'object'
+        html.template.indexOf('!') !== -1 && typeof html.template !== 'object'
     ) {
+        let templateRequestBackup = html.template
         currentConfiguration.files.html[index].template = new global.String(
-            templateRequest)
-        const nativeReplaceFunction =
-            currentConfiguration.files.html[index].template.replace
-        currentConfiguration.files.html[index].template.replace = (index => {
+            html.template)
+        currentConfiguration.files.html[index].template.replace = (string => {
             return () => {
-                currentConfiguration.files.html[index].template.replace =
-                    nativeReplaceFunction
-                return currentConfiguration.files.html[index].template
+                return string
             }
-        })(index)
+        })(templateRequestBackup)
     }
     index += 1
 }

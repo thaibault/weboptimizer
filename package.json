@@ -395,7 +395,9 @@
                     "removeStyleLinkTypeAttributes": false
                 }
             },
-            "openBrowser": {"url": "http://localhost:8080"}
+            "openBrowser": {"url": {
+                "__execute__": "`http://localhost:8080/${resolve(self.files.html[0].template).substring(resolve(self.files.html[0].template).lastIndexOf('!') + 1)}`"
+            }}
         },
         "library": {
             "optimizer": {"uglifyJS": null},
