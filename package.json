@@ -396,7 +396,7 @@
                 }
             },
             "openBrowser": {"url": {
-                "__execute__": "var temp = resolve(self.files.html[0].template) && `http://localhost:8080/${path.basename(temp.substring(temp.lastIndexOf('!') + 1))}`"
+                "__execute__": "(function(sourceFilePath) {return `http://localhost:8080/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`})(resolve(self.files.html[0].template))"
             }}
         },
         "library": {
