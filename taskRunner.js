@@ -166,7 +166,7 @@ if (global.process.argv.length > 2) {
         childProcess = []
         // Perform all file specific preprocessing stuff.
         const testModuleFilePaths = helper.determineModuleLocations(
-            configuration.injects.internal, configuration.knownExtensions,
+            configuration.test.injects.internal, configuration.knownExtensions,
             configuration.path.context, configuration.path.ignore
         ).filePaths
         for (let buildConfiguration of buildConfigurations)
