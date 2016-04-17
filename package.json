@@ -355,7 +355,9 @@
             "build": {
                 "default": {
                     "outputExtension": "js",
-                    "preinstall": "touch ${resolve(self.path.target)}${resolve(self.path.asset[buildConfiguration.type])}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.outputExtension}",
+                    "preinstall": {
+                        "__execute__": "`touch ${resolve(self.path.target)}\${resolve(self.path.asset[buildConfiguration.type])}\${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.outputExtension}`"
+                    },
                     "fileNamePattern": "^.+\\.compiled(?:\\.[^.]+(?:\\.map)?)?$"
                 },
                 "javaScript": {"extension": "js"},

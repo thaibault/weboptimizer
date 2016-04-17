@@ -52,10 +52,12 @@ if (global.process.argv.length > 2) {
         dynamicConfiguration))
     fileSystem.closeSync(temporaryFileDescriptor)
     // / region register exit handler to tidy up
-    const exitHandler = () => {
+    const exitHandler = function(error) {
         try {
             fileSystem.unlinkSync(filePath)
         } catch (error) {}
+        if (error)
+            throw error
         global.process.exit()
     }
     global.process.on('exit', exitHandler)
@@ -169,16 +171,18 @@ if (global.process.argv.length > 2) {
         ).filePaths
         for (let buildConfiguration of buildConfigurations)
             for (let filePath of buildConfiguration.filePaths)
-                if (testModuleFilePaths.indexOf(filePath) === -1)
-                    childProcess.push(run(new global.Function(
-                        'global', 'self', 'buildConfiguration',
-                        'webOptimizerPath', 'currentPath', 'path',
-                        'additionalArguments', 'filePath',
-                        'return ' +
+                if (testModuleFilePaths.indexOf(filePath) === -1) {
+                    console.log('A', buildConfiguration[global.process.argv[2]])
+                    childProcess.push(run((new global.Function(
+                        'global', 'self', 'buildConfiguration', 'path',
+                        'additionalArguments', 'filePath', 'return ' +
                         `\`${buildConfiguration[global.process.argv[2]]}\``
-                    )(global, configuration, buildConfiguration, __dirname,
-                    global.process.cwd(), path, additionalArguments, filePath
+                    ))(
+                        global, configuration, buildConfiguration, path,
+                        additionalArguments, filePath
                     ), childProcessOptions))
+                    console.log('B', filePath)
+                }
     // endregion
     // region handle serve
     } else if (global.process.argv[2] === 'serve')
