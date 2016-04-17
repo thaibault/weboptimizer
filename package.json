@@ -58,7 +58,7 @@
     "scripts": {
         "build": "arguments='--presets es2015 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments jadeLoader.compiled.js jadeLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
         "clear": "rm *.compiled.* || true",
-        "lint": "eslint '**/*.js' || true",
+        "lint": "npm run clear &>/dev/null; eslint '**/*.js' || true",
         "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js jadeLoader.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build"
     },
