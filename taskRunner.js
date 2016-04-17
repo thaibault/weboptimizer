@@ -97,9 +97,11 @@ if (global.process.argv.length > 2) {
     // endregion
     let additionalArguments = global.process.argv.splice(3).join(' ')
     // region handle build
-    let buildConfigurations = []
-    if (configuration.library)
-        buildConfigurations = helper.determineBuildConfigurations()
+    const buildConfigurations = helper.resolveBuildConfigurationFilePaths(
+        configuration.build, path.join(
+            configuration.path.asset.source,
+            configuration.path.asset.javaScript
+        ), configuration.path.context, configuration.path.ignore)
     if (global.process.argv[2] === 'build')
         // Triggers complete asset compiling and bundles them into the final
         // productive output.
@@ -109,10 +111,16 @@ if (global.process.argv.length > 2) {
                 if (!error) {
                     // Determines all none javaScript entities which have been
                     // emitted as single javaScript module to remove.
-                    let modulesToEmit = helper.determineInjects().internal
+                    let modulesToEmit = helper.resolveInjects(
+                        configuration.injects, buildConfigurations,
+                        configuration.test.injects.internal,
+                        configuration.knownExtensions,
+                        configuration.path.context, configuration.path.ignore
+                    ).internal
                     global.Object.keys(modulesToEmit).forEach(moduleID => {
                         const type = helper.determineAssetType(
-                            modulesToEmit[moduleID])
+                            modulesToEmit[moduleID], configuration.build,
+                            configuration.path)
                         const filePath =
                             configuration.files.javaScript.replace(
                                 '[name]', moduleID
@@ -156,7 +164,8 @@ if (global.process.argv.length > 2) {
         childProcess = []
         // Perform all file specific preprocessing stuff.
         const testModuleFilePaths = helper.determineModuleLocations(
-            configuration.test.injects.internal
+            configuration.injects.internal, configuration.knownExtensions,
+            configuration.path.context, configuration.path.ignore
         )[0]
         for (let buildConfiguration of buildConfigurations)
             for (let filePath of buildConfiguration.filePaths)

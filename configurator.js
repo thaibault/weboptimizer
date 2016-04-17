@@ -106,8 +106,7 @@ if (filePath) {
     extend(true, currentConfiguration, dynamicConfiguration)
 }
 // endregion
-currentConfiguration = helper.resolve(
-    currentConfiguration, currentConfiguration)
+currentConfiguration = helper.resolve(currentConfiguration)
 // Apply default file level build configurations to all file type specific
 // ones.
 const defaultConfiguration = currentConfiguration.build.default

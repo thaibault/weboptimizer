@@ -4,6 +4,7 @@
         "babel-cli": "*",
         "babel-eslint": "*",
         "babel-loader": "*",
+        "babel-plugin-proxy": "*",
         "babel-polyfill": "*",
         "babel-preset-es2015": "*",
         "babel-preset-stage-0": "*",
@@ -56,10 +57,10 @@
         "type": "git", "url": "https://github.com/thaibault/webOptimizer.git"
     },
     "scripts": {
-        "build": "arguments='--presets es2015 --source-maps inline --out-file' && babel configurator.js $arguments configurator.compiled.js && babel helper.js $arguments helper.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js && babel jadeLoader.js $arguments jadeLoader.compiled.js",
+        "build": "arguments='--presets es2015 --source-maps inline --out-file --plugins proxy' && babel helper.js $arguments helper.compiled.js && babel configurator.js $arguments configurator.compiled.js && babel taskRunner.js $arguments taskRunner.compiled.js && babel jadeLoader.js $arguments jadeLoader.compiled.js && babel webpackConfigurator.js $arguments webpackConfigurator.compiled.js",
         "clear": "rm *.compiled.* || true",
         "lint": "eslint '**/*.js' || true",
-        "preinstall": "touch configurator.compiled.js helper.compiled.js taskRunner.compiled.js webpackConfigurator.compiled.js jadeLoader.compiled.js",
+        "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js jadeLoader.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build"
     },
     "version": "1.0.0",
@@ -119,7 +120,6 @@
                 ]
             },
             "hashAlgorithm": "md5",
-            "maximumInPlaceFileLimitInByte": 40960,
             "developmentTool": null,
             "injects": {"internal": [], "external": []},
             "moduleAliases": {},
@@ -156,7 +156,10 @@
                 ".compiled.ico", ".ico",
                 ".compiled.gif", ".gif"
             ],
-            "inPlace": {"cascadingStyleSheet": true, "javaScript": false},
+            "inPlace": {
+                "cascadingStyleSheet": true, "javaScript": false,
+                "otherMaximumFileSizeLimitInByte": 40960
+            },
             "commandLine": {
                 "build": {
                     "__execute__": "`webpack --config ${webOptimizerPath}/webpackConfigurator.compiled.js --progress --display-chunks --display-reasons --display-error-details`"
@@ -205,8 +208,14 @@
             },
             "preprocessor": {
                 "jade": {
-                    "pretty": false,
-                    "debug": false,
+                    "moduleAliases": {"__execute__": "self.moduleAliases"},
+                    "knownExtensions": {"__execute__": "self.knownExtensions"},
+                    "context": {"__execute__": "self.path.context"},
+                    "compiler": {
+                        "pretty": false,
+                        "debug": false,
+                        "cache": true
+                    },
                     "locals": {"includeManifest": {
                         "__execute__": "!!self.offline"
                     }}
@@ -273,7 +282,7 @@
                 "image": {
                     "file": {
                         "limit": {
-                            "__execute__": "self.maximumInPlaceFileLimitInByte"
+                            "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                         },
                         "name": {
                             "__execute__": "`/${self.path.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
@@ -287,7 +296,7 @@
                 },
                 "data": {
                     "limit": {
-                        "__execute__": "self.maximumInPlaceFileLimitInByte"
+                        "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                     },
                     "name": {
                         "__execute__": "`/${self.path.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
@@ -295,26 +304,34 @@
                 },
                 "font": {
                     "eot": {
-                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                        "limit": {
+                            "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                        },
                         "name": {
                             "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "woff": {
-                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                        "limit": {
+                            "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                        },
                         "name": {
                             "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "ttf": {
-                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                        "limit": {
+                            "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                        },
                         "mimetype": "application/octet-stream",
                         "name": {
                             "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "svg": {
-                        "limit": {"__execute__": "self.maximumInPlaceFileLimitInByte"},
+                        "limit": {
+                            "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                        },
                         "mimetype": "image/svg+xml",
                         "name": {
                             "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
@@ -357,7 +374,7 @@
             "debug": true,
             "developmentTool": "#source-map",
             "offline": null,
-            "maximumInPlaceFileLimitInByte": 1,
+            "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
             "files": {"html": [{"debug": true}]},
             "preprocessor": {"jade": {
                 "pretty": true,
@@ -383,7 +400,7 @@
             "optimizer": {"uglifyJS": null},
             "internalInjects": "__auto__",
             "test": {"injects": {"internal": ["test"]}},
-            "maximumInPlaceFileLimitInByte": 1,
+            "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
             "offline": null,
             "files": {
                 "cascadingStyleSheet": {

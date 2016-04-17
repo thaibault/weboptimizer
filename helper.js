@@ -9,8 +9,6 @@ import path from 'path'
 try {
     module.require('source-map-support/register')
 } catch (error) {}
-
-import configuration from './configurator.compiled'
 // endregion
 // region functions
 export default {
@@ -24,22 +22,22 @@ export default {
         // Checks if given entity is a function.
         return object && {}.toString.call(object) === '[object Function]'
     },
-    resolve: function(
-        object, currentConfiguration = configuration, initial = true
-    ) {
+    resolve: function(object, currentConfiguration = null, initial = true) {
         // Processes all dynamically linked values in given object.
         if (initial) {
             const attachProxy = object => {
                 for (let key in object)
                     if (this.isObject(object[key]))
                         attachProxy(object[key])
-                return global.Proxy(object, {get: (target, name) => {
+                return new global.Proxy(object, {get: (target, name) => {
                     return this.resolve(
                         target[name], currentConfiguration, false)
                 }})
             }
             attachProxy(currentConfiguration)
         }
+        if (!currentConfiguration)
+            currentConfiguration = object
         if (global.Array.isArray(object)) {
             let index = 0
             for (let value of object) {
@@ -95,15 +93,16 @@ export default {
         })
     },
     determineModuleLocations: function(
-        internals = configuration.injects.internal
+        internals, knownExtensions = ['.js'], context = './',
+        pathsToIgnore = ['.git'],
     ) {
         // Determines all script modules to use as injects.
         const filePaths = []
-        const moduleDirectoryPaths = [configuration.path.asset.source]
+        const directoryPaths = []
         for (let module of internals) {
             let stat
             let filePath
-            for (let extension of configuration.knownExtensions) {
+            for (let extension of knownExtensions) {
                 filePath = path.resolve(module + extension)
                 try {
                     stat = fileSystem.statSync(filePath)
@@ -116,9 +115,9 @@ export default {
             if (stat.isDirectory()) {
                 pathToAdd = `${path.resolve(module)}/`
                 this.walkDirectoryRecursivelySync(module, subFilePath => {
-                    for (let pathToIgnore of configuration.path.ignore)
+                    for (let pathToIgnore of pathsToIgnore)
                         if (subFilePath.startsWith(path.resolve(
-                            configuration.path.context, pathToIgnore
+                            context, pathToIgnore
                         )))
                             return false
                     filePaths.push(subFilePath)
@@ -127,33 +126,35 @@ export default {
                 pathToAdd = `${path.resolve(path.dirname(module))}/`
                 filePaths.push(filePath)
             }
-            if (moduleDirectoryPaths.indexOf(pathToAdd) === -1)
-                moduleDirectoryPaths.push(pathToAdd)
+            if (directoryPaths.indexOf(pathToAdd) === -1)
+                directoryPaths.push(pathToAdd)
         }
-        return [filePaths, moduleDirectoryPaths]
+        return {filePaths, directoryPaths}
     },
-    determineAssetType: filePath => {
+    determineAssetType: (filePath, buildConfiguration, paths) => {
         // Determines file type of given file (by path).
         let result = null
-        global.Object.keys(configuration.build).forEach(type => {
+        global.Object.keys(buildConfiguration).forEach(type => {
             if (path.extname(
                 filePath
-            ) === `.${configuration.build[type].extension}`) {
+            ) === `.${buildConfiguration[type].extension}`) {
                 result = type
                 return false
             }
         })
         if (!result)
             for (let type of ['source', 'target'])
-                for (let assetType in configuration.path.asset)
+                for (let assetType in paths.asset)
                     if (filePath.startsWith(path.join(
-                            configuration.path[type],
-                            configuration.path.asset[assetType]
+                        paths[type], paths.asset[assetType]
                     )))
                         return assetType
         return result
     },
-    determineBuildConfigurations: function() {
+    resolveBuildConfigurationFilePaths: function(
+        configuration, entryPath = './', context = './',
+        pathsToIgnore = ['.git']
+    ) {
         /*
             Determines all files which should be taken into account before
             using them in production. The result is a list of build
@@ -163,16 +164,13 @@ export default {
         */
         let buildConfigurations = []
         let index = 0
-        global.Object.keys(configuration.build).forEach(type => {
+        global.Object.keys(configuration).forEach(type => {
             buildConfigurations.push(extend(
-                true, {filePaths: []}, configuration.build[type]))
-            this.walkDirectoryRecursivelySync(path.join(
-                configuration.path.asset.source,
-                configuration.path.asset.javaScript
-            ), (filePath, stat) => {
-                for (let pathToIgnore of configuration.path.ignore)
+                true, {filePaths: []}, configuration[type]))
+            this.walkDirectoryRecursivelySync(entryPath, (filePath, stat) => {
+                for (let pathToIgnore of pathsToIgnore)
                     if (filePath.startsWith(path.resolve(
-                        configuration.path.context, pathToIgnore
+                        context, pathToIgnore
                     )))
                         return false
                 if (stat.isFile() && path.extname(filePath).substring(
@@ -198,28 +196,29 @@ export default {
             return 0
         })
     },
-    determineInjects: function() {
+    resolveInjects: function(
+        givenInjects, buildConfiguration, modulesToExclude, knownExtensions = [
+            '.js', '.css', '.svg', '.html'
+        ], context = './', pathsToIgnore = ['.git']
+    ) {
         // Determines all injects for current build.
-        const injects = extend(true, {}, configuration.injects)
-        const testModuleFilePaths = this.determineModuleLocations(
-            configuration.test.injects.internal
+        let injects = extend(true, {}, givenInjects)
+        const moduleFilePathsToExclude = this.determineModuleLocations(
+            modulesToExclude, knownExtensions, context, pathsToIgnore
         )[0]
         for (let type of ['internal', 'external'])
-            if (configuration[`${type}Injects`] === '__auto__') {
+            if (givenInjects[type] === '__auto__') {
                 injects[type] = {}
                 let injectedBaseNames = {}
-                for (
-                    let buildConfiguration of
-                    this.determineBuildConfigurations()
-                ) {
+                for (let buildConfiguration of buildConfiguration) {
                     if (!injectedBaseNames[buildConfiguration.outputExtension])
                         injectedBaseNames[
                             buildConfiguration.outputExtension
                         ] = []
                     for (let moduleFilePath of buildConfiguration.filePaths)
-                        if (
-                            testModuleFilePaths.indexOf(moduleFilePath) === -1
-                        ) {
+                        if (moduleFilePathsToExclude.indexOf(
+                            moduleFilePath
+                        ) === -1) {
                             let baseName = path.basename(
                                 moduleFilePath,
                                 `.${buildConfiguration.extension}`)
@@ -241,8 +240,7 @@ export default {
                                 */
                                 if (injects[type][baseName])
                                     injects[type][path.relative(
-                                        configuration.path.context,
-                                        moduleFilePath
+                                        context, moduleFilePath
                                     )] = moduleFilePath
                                 else
                                     injects[type][baseName] = moduleFilePath
@@ -255,20 +253,20 @@ export default {
             }
         return injects
     },
-    determineModulePath: moduleID => {
+    determineModulePath: (
+        moduleID, moduleAliases = {}, knownExtensions = ['.js'], context = './'
+    ) => {
         // Determines a module path for given module id synchronously.
-        global.Object.keys(configuration.moduleAliases).forEach(search => {
-            moduleID = moduleID.replace(
-                search, configuration.moduleAliases[search])
+        global.Object.keys(moduleAliases).forEach(search => {
+            moduleID = moduleID.replace(search, moduleAliases[search])
         })
         for (let moduleLocation of ['', 'node_modules'])
             for (let fileName of [null, '', 'index', 'main'])
-                for (let extension of configuration.knownExtensions) {
+                for (let extension of knownExtensions) {
                     let moduleFilePath = moduleID
                     if (!moduleFilePath.startsWith('/'))
                         moduleFilePath = path.join(
-                            configuration.path.context, moduleLocation,
-                            moduleFilePath)
+                            context, moduleLocation, moduleFilePath)
                     if (fileName === null) {
                         try {
                             if (fileSystem.statSync(

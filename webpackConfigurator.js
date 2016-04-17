@@ -75,11 +75,14 @@ if ((
 // // endregion
 // // region modules/assets
 extend(configuration.moduleAliases, configuration.additionalModuleAliases)
+const moduleLocations = helper.determineModuleLocations(
+    configuration.injects.internal, configuration.knownExtensions,
+    configuration.path.context, configuration.path.ignore)
 let injects
 let fallbackModuleDirectoryPaths = []
 if (configuration.givenCommandLineArguments[2] === 'test') {
-    [injects, fallbackModuleDirectoryPaths] = helper.determineModuleLocations()
-    injects = {internal: injects, external: []}
+    fallbackModuleDirectoryPaths = moduleLocations.directoryPaths
+    injects = {internal: moduleLocations.filePaths, external: []}
 } else {
     configuration.plugins.push(new plugins.ExtractText(
         configuration.files.cascadingStyleSheet))
@@ -196,11 +199,20 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             })
         }})
     // // endregion
-    injects = helper.determineInjects()
+    injects = helper.resolveInjects(
+        configuration.injects, helper.resolveBuildConfigurationFilePaths(
+            configuration.build, path.join(
+                configuration.path.asset.source,
+                configuration.path.asset.javaScript
+            ), configuration.path.context, configuration.path.ignore
+        ), configuration.test.injects.internal,
+        configuration.knownExtensions, configuration.path.context,
+        configuration.path.ignore)
     let javaScriptNeeded = false
     if (global.Array.isArray(injects.internal))
         for (let filePath of injects.internal) {
-            let type = helper.determineAssetType(filePath)
+            let type = helper.determineAssetType(
+                filePath, configuration.build, configuration.path)
             if (configuration.build[type] && configuration.build[
                 type
             ].outputExtension === 'js') {
@@ -210,7 +222,9 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         }
     else
         global.Object.keys(injects.internal).forEach(moduleName => {
-            let type = helper.determineAssetType(injects.internal[moduleName])
+            let type = helper.determineAssetType(
+                injects.internal[moduleName], configuration.build,
+                configuration.path)
             if (configuration.build[type] && configuration.build[
                 type
             ].outputExtension === 'js') {
@@ -346,9 +360,7 @@ export default {
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
-                )].concat(helper.determineModuleLocations(
-                    configuration.injects.test
-                )[1]),
+                )].concat(moduleLocations.directoryPaths),
                 exclude: filePath => {
                     for (let pathToIgnore of configuration.path.ignore)
                         if (filePath.startsWith(path.resolve(
@@ -363,18 +375,14 @@ export default {
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript
-                )].concat(helper.determineModuleLocations(
-                    configuration.injects.test
-                )[1])
+                )].concat(moduleLocations.directoryPaths)
             }, {
                 test: /\.(?:coffee\.md|litcoffee)$/,
                 loader: loader.preprocessor.literateCoffee,
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.coffeeScript
-                )].concat(helper.determineModuleLocations(
-                    configuration.injects.test
-                )[1])
+                )].concat(moduleLocations.directoryPaths)
             },
             // endregion
             // region html (templates)

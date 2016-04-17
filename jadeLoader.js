@@ -16,21 +16,21 @@ import helper from './helper.compiled'
 module.exports = function(source) {
     if (this.cacheable)
         this.cacheable()
-    const query = extend(true, this.options.jade || {}, loaderUtils.parseQuery(
-        this.query))
-    const locals = query.locals || {}
-    delete query.locals
-    const compile = (template, options = query) => {
-        return locals => {
+    const query = extend(true, {
+        moduleAliases: [], knownExtensions: ['.jade', '.html', '.js', '.css'],
+        context: './'
+    }, this.options.jade || {}, loaderUtils.parseQuery(this.query))
+    const compile = (template, options = query.compiler) => {
+        return (locals = {}) => {
             options = extend(true, {
                 filename: template, doctype: 'html',
-                compileDebug: this.debug || false,
-                cache: true
+                compileDebug: this.debug || false
             }, options)
             let templateFunction
-            if (options.isString)
+            if (options.isString) {
+                delete options.isString
                 templateFunction = jade.compile(template, options)
-            else
+            } else
                 templateFunction = jade.compileFile(template, options)
             return templateFunction(extend(true, {require: request => {
                 let template = request.replace(/^(.+)\?[^?]+$/, '$1')
@@ -46,7 +46,9 @@ module.exports = function(source) {
                 }, nestedLocals.options || {})
                 if (options.isString)
                     return template
-                template = helper.determineModulePath(template)
+                template = helper.determineModulePath(
+                    template, query.moduleAliases, query.knownExtensions,
+                    query.context)
                 this.addDependency(template)
                 if (queryMatch || template.endsWith('.less'))
                     return compile(template, options)(nestedLocals)
@@ -57,7 +59,7 @@ module.exports = function(source) {
     return compile(source, extend(true, {
         isString: true,
         filename: loaderUtils.getRemainingRequest(this).replace(/^!/, '')
-    }, query))(locals)
+    }, query.compiler || {}))(query.locals || {})
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
