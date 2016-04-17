@@ -22,8 +22,16 @@ export default {
         // Checks if given entity is a function.
         return object && {}.toString.call(object) === '[object Function]'
     },
-    resolve: function(object, currentConfiguration = null, initial = true) {
+    // NOTE: Uncomment this feature if node or babel supports es2015 proxies.
+    resolve: function(
+        object, currentConfiguration = null/* , initial = true*/
+    ) {
         // Processes all dynamically linked values in given object.
+        if (!currentConfiguration)
+            currentConfiguration = object
+        // NOTE: Uncomment this feature if node or babel supports es2015
+        // proxies.
+        /*
         if (initial) {
             const attachProxy = object => {
                 for (let key in object)
@@ -36,8 +44,7 @@ export default {
             }
             attachProxy(currentConfiguration)
         }
-        if (!currentConfiguration)
-            currentConfiguration = object
+        */
         if (global.Array.isArray(object)) {
             let index = 0
             for (let value of object) {
@@ -47,14 +54,25 @@ export default {
             }
         } else if (this.isObject(object))
             for (let key in object) {
-                if (key === '__execute__')
-                    return this.resolve(new global.Function(
+                if (key === '__execute__') {
+                    // NOTE: Change "let result = " to "return " if node or
+                    // babel supports
+                    let result = this.resolve(new global.Function(
                         'global', 'self', 'resolve', 'webOptimizerPath',
                         'currentPath', 'path', `return ${object[key]}`
                     )(
                         global, currentConfiguration, this.resolve, __dirname,
                         global.process.cwd(), path
                     ), currentConfiguration, false)
+                    // NOTE: Removes this polyfill if node or babel supports
+                    // es2015 proxies.
+                    result.replace(/\{"__execute__": (.+?)\}/g, match => {
+                        console.log(arguments)
+                        return match[0]
+                    })
+                    return result
+                    //
+                }
                 object[key] = this.resolve(
                     object[key], currentConfiguration, false)
             }
@@ -94,7 +112,7 @@ export default {
     },
     determineModuleLocations: function(
         internals, knownExtensions = ['.js'], context = './',
-        pathsToIgnore = ['.git'],
+        pathsToIgnore = ['.git']
     ) {
         // Determines all script modules to use as injects.
         const filePaths = []
