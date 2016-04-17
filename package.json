@@ -356,7 +356,7 @@
                 "default": {
                     "outputExtension": "js",
                     "preinstall": {
-                        "__execute__": "`touch ${resolve(self.path.target)}\${resolve(self.path.asset[buildConfiguration.type])}\${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.outputExtension}`"
+                        "__execute__": "`touch ${resolve(self.path.target)}\\${resolve(self.path.asset[buildConfiguration.type])}\\${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.\\${buildConfiguration.outputExtension}`"
                     },
                     "fileNamePattern": "^.+\\.compiled(?:\\.[^.]+(?:\\.map)?)?$"
                 },
