@@ -123,8 +123,6 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations.
 */
-console.log()
-console.log('A', currentConfiguration.files.html[0].template)
 index = 0
 for (let templateRequest of currentConfiguration.files.html) {
     if (
@@ -145,8 +143,6 @@ for (let templateRequest of currentConfiguration.files.html) {
     }
     index += 1
 }
-console.log('B', currentConfiguration.files.html[0].template)
-console.log()
 // endregion
 export default currentConfiguration
 // region vim modline
