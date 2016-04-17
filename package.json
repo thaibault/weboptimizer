@@ -114,8 +114,8 @@
                 "manifest": "manifest.appcache",
                 "ignore": ["node_modules", ".git"],
                 "tidyUp": [
-                    {"__execute__": "path.join(self.path.target, path.basename(self.path.manifest, '.appcache') + '.html')"},
-                    {"__execute__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js')"}
+                    {"__execute__": "path.join(resolve(self.path.target), path.basename(resolve(self.path.manifest), '.appcache') + '.html')"},
+                    {"__execute__": "path.join(resolve(self.path.target), resolve(self.path.asset.javaScript), '.__dummy__.compiled.js')"}
                 ]
             },
             "hashAlgorithm": "md5",
@@ -168,7 +168,7 @@
                 },
                 "test": {"__execute__": "self.commandLine.serve"},
                 "lint": {
-                    "__execute__": "`eslint --config ${webOptimizerPath}/package.json --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
+                    "__execute__": "`eslint --config ${webOptimizerPath}/package.json --ignore-pattern '${resolve(self.path.target).substring(currentPath.length + 1) ? `${resolve(self.path.target).substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
                 }
             },
             "developmentServer": {
@@ -184,14 +184,14 @@
                 "ServiceWorker": {"output": "javaScript/serviceWorker.js"},
                 "AppCache": {"directory": "/"},
                 "excludes": [{
-                    "__execute__": "`*.map?${self.hashAlgorithm}=*`"
+                    "__execute__": "`*.map?${resolve(self.hashAlgorithm)}=*`"
                 }]
             },
             "files": {
                 "html": [{
                     "debug": false,
                     "template": {
-                        "__execute__": "`html?${global.JSON.stringify(self.html)}!jade?${global.JSON.stringify(self.preprocessor.jade)}!${self.path.source}index.jade`"
+                        "__execute__": "`html?${global.JSON.stringify(resolve(self.html))}!jade?${global.JSON.stringify(resolve(self.preprocessor.jade))}!${resolve(self.path.source)}index.jade`"
                     },
                     "hash": true,
                     "filename": "index.html",
@@ -199,10 +199,10 @@
                     "minify": {"__execute__": "self.optimizer.htmlMinifier"}
                 }],
                 "cascadingStyleSheet": {
-                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+                    "__execute__": "`${resolve(self.path.asset.cascadingStyleSheet)}index.css?${resolve(self.hashAlgorithm)}=[contenthash]`"
                 },
                 "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}index.js?${self.hashAlgorithm}=[hash]`"
+                    "__execute__": "`${resolve(self.path.asset.javaScript)}index.js?${resolve(self.hashAlgorithm)}=[hash]`"
                 }
             },
             "preprocessor": {
@@ -216,7 +216,7 @@
                         "cache": true
                     },
                     "locals": {"includeManifest": {
-                        "__execute__": "!!self.offline"
+                        "__execute__": "!!resolve(self.offline)"
                     }}
                 },
                 "less": {},
@@ -284,7 +284,7 @@
                             "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                         },
                         "name": {
-                            "__execute__": "`/${self.path.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`/${resolve(self.path.asset.image)}[name].[ext]?${resolve(self.hashAlgorithm)}=[hash]`"
                         }
                     },
                     "content": {
@@ -298,7 +298,7 @@
                         "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                     },
                     "name": {
-                        "__execute__": "`/${self.path.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                        "__execute__": "`/${resolve(self.path.asset.data)}[name].[ext]?${resolve(self.hashAlgorithm)}=[hash]`"
                     }
                 },
                 "font": {
@@ -307,7 +307,7 @@
                             "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                         },
                         "name": {
-                            "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`/${resolve(self.path.asset.font)}[name].[ext]?${resolve(self.hashAlgorithm)}=[hash]`"
                         }
                     },
                     "woff": {
@@ -315,7 +315,7 @@
                             "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                         },
                         "name": {
-                            "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`/${resolve(self.path.asset.font)}[name].[ext]?${resolve(self.hashAlgorithm)}=[hash]`"
                         }
                     },
                     "ttf": {
@@ -324,7 +324,7 @@
                         },
                         "mimetype": "application/octet-stream",
                         "name": {
-                            "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`/${resolve(self.path.asset.font)}[name].[ext]?${resolve(self.hashAlgorithm)}=[hash]`"
                         }
                     },
                     "svg": {
@@ -333,7 +333,7 @@
                         },
                         "mimetype": "image/svg+xml",
                         "name": {
-                            "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__execute__": "`/${resolve(self.path.asset.font)}[name].[ext]?${resolve(self.hashAlgorithm)}=[hash]`"
                         }
                     }
                 }
@@ -346,7 +346,7 @@
                 },
                 "files": {"html": [{
                     "template": {
-                        "__execute__": "`html?${global.JSON.stringify(self.html)}!jade?${global.JSON.stringify(self.preprocessor.jade)}!${webOptimizerPath}/test.jade`"
+                        "__execute__": "`html?${global.JSON.stringify(resolve(self.html))}!jade?${global.JSON.stringify(resolve(self.preprocessor.jade))}!${webOptimizerPath}/test.jade`"
                     },
                     "filename": "test.html"
                 }]},
@@ -355,7 +355,7 @@
             "build": {
                 "default": {
                     "outputExtension": "js",
-                    "preinstall": "touch ${self.path.target}${self.path.asset[buildConfiguration.type]}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.outputExtension}",
+                    "preinstall": "touch ${resolve(self.path.target)}${resolve(self.path.asset[buildConfiguration.type])}${path.basename(filePath, `.${buildConfiguration.extension}`)}.compiled.${buildConfiguration.outputExtension}",
                     "fileNamePattern": "^.+\\.compiled(?:\\.[^.]+(?:\\.map)?)?$"
                 },
                 "javaScript": {"extension": "js"},
@@ -403,10 +403,10 @@
             "offline": null,
             "files": {
                 "cascadingStyleSheet": {
-                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                    "__execute__": "`${resolve(self.path.asset.cascadingStyleSheet)}index.compiled.css?${resolve(self.hashAlgorithm)}=[contenthash]`"
                 },
                 "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
+                    "__execute__": "`${resolve(self.path.asset.javaScript)}[name].compiled.js?${resolve(self.hashAlgorithm)}=[hash]`"
                 }
             },
             "path": {
