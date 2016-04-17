@@ -171,8 +171,7 @@ if (global.process.argv.length > 2) {
         ).filePaths
         for (let buildConfiguration of buildConfigurations)
             for (let filePath of buildConfiguration.filePaths)
-                if (testModuleFilePaths.indexOf(filePath) === -1) {
-                    console.log('A', buildConfiguration[global.process.argv[2]])
+                if (testModuleFilePaths.indexOf(filePath) === -1)
                     childProcess.push(run((new global.Function(
                         'global', 'self', 'buildConfiguration', 'path',
                         'additionalArguments', 'filePath', 'return ' +
@@ -181,8 +180,6 @@ if (global.process.argv.length > 2) {
                         global, configuration, buildConfiguration, path,
                         additionalArguments, filePath
                     ), childProcessOptions))
-                    console.log('B', filePath)
-                }
     // endregion
     // region handle serve
     } else if (global.process.argv[2] === 'serve')
