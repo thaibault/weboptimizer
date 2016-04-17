@@ -397,7 +397,7 @@
         },
         "library": {
             "optimizer": {"uglifyJS": null},
-            "internalInjects": "__auto__",
+            "injects": {"internal": "__auto__"},
             "test": {"injects": {"internal": ["test"]}},
             "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
             "offline": null,
