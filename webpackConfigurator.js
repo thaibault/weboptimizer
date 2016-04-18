@@ -290,7 +290,7 @@ const loader = {
     },
     html: `html?${global.JSON.stringify(configuration.html)}`,
     cascadingStyleSheet: plugins.extractText.extract(
-        'style',
+        `style?${global.JSON.stringify(configuration.style)}`,
         `css?${global.JSON.stringify(configuration.cascadingStyleSheet)}`),
     postprocessor: {
         image: imageLoader,

@@ -232,6 +232,7 @@
                 "config": "html", "attrs": ["img:src", "link:href", "a:href"]
             },
             "cascadingStyleSheet": {},
+            "style": {"insertAt": "top", "singleton": true},
             "optimizer": {
                 "uglifyJS": {"compress": {"warnings": false}},
                 "htmlMinifier": {
