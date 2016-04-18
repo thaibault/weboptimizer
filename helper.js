@@ -111,8 +111,9 @@ export default {
         const directoryPaths = []
         if (this.isObject(internals)) {
             let newInternals = []
-            for (let key in internals)
+            global.Object.keys(internals).forEach(key => {
                 newInternals.push(internals[key])
+            })
             internals = newInternals
         }
         for (let module of internals) {

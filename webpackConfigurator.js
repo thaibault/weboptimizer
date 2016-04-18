@@ -431,7 +431,7 @@ export default {
                     return request.template.substring(
                         request.template.lastIndexOf('!') + 1)
                 })
-            },
+            }
             // endregion
         ],
         postLoaders: [
