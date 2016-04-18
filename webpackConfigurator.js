@@ -69,12 +69,12 @@ if (configuration.offline) {
 if ((
     !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'test'
-) && configuration.openBrowser)
+) && configuration.development.openBrowser)
     configuration.plugins.push(new plugins.openBrowser(
-        configuration.openBrowser))
+        configuration.development.openBrowser))
 // // endregion
 // // region modules/assets
-extend(configuration.moduleAliases, configuration.additionalModuleAliases)
+extend(configuration.module.aliases, configuration.module.additionalAliases)
 const moduleLocations = helper.determineModuleLocations(
     configuration.injects.internal, configuration.knownExtensions,
     configuration.path.context, configuration.path.ignore)
@@ -89,13 +89,11 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             allChunks: true,
             disable: !configuration.files.cascadingStyleSheet}))
     // Optimizes webpack output
-    if (configuration.optimizer.uglifyJS)
+    if (configuration.module.optimizer.uglifyJS)
         configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
-            configuration.optimizer.uglifyJS))
+            configuration.module.optimizer.uglifyJS))
     // // region in-place configured assets in the main html file
-    if (!(configuration.library || process.argv[1].endsWith(
-        '/webpack-dev-server'
-    )))
+    if (!process.argv[1].endsWith('/webpack-dev-server'))
         configuration.plugins.push({apply: compiler => {
             compiler.plugin('emit', (compilation, callback) => {
                 if (
@@ -237,7 +235,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     if (!javaScriptNeeded)
         configuration.files.javaScript = path.join(
             configuration.path.asset.javaScript, '.__dummy__.compiled.js')
-    if (configuration.library)
+    if (!configuration.inPlace.externalLibraries)
         /*
             We only want to process modules from local context in library mode,
             since a concrete project using this library should combine all
@@ -248,13 +246,13 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         injects.external = (context, request, callback) => {
             let filePath = helper.determineModulePath(
                 request.substring(request.lastIndexOf('!') + 1),
-                configuration.moduleAliases, configuration.knownExtensions,
+                configuration.module.aliases, configuration.knownExtensions,
                 context)
             if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
                 if (global.Array.isArray(injects.internal)) {
                     for (let internalModule of injects.internal)
                         if (helper.determineModulePath(
-                            internalModule, configuration.moduleAliases,
+                            internalModule, configuration.module.aliases,
                             configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
@@ -264,7 +262,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                     for (let chunkName in injects.internal)
                         if (helper.determineModulePath(
                             injects.internal[chunkName],
-                            configuration.moduleAliases,
+                            configuration.module.aliases,
                             configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
@@ -278,38 +276,43 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
 // / endregion
 // / region loader
 let imageLoader = 'url?' + global.JSON.stringify(
-    configuration.optimizer.image.file)
-if (configuration.optimizer.image.content)
+    configuration.module.optimizer.image.file)
+if (configuration.module.optimizer.image.content)
     imageLoader += '!image?' + global.JSON.stringify(
-        configuration.optimizer.image.content)
+        configuration.module.optimizer.image.content)
 const loader = {
     preprocessor: {
-        less: `less?${global.JSON.stringify(configuration.preprocessor.less)}`,
-        sass: `sass?${global.JSON.stringify(configuration.preprocessor.sass)}`,
-        scss: `sass?${global.JSON.stringify(configuration.preprocessor.scss)}`,
+        less: 'less?' + global.JSON.stringify(
+            configuration.module.preprocessor.less),
+        sass: 'sass?' + global.JSON.stringify(
+            configuration.module.preprocessor.sass),
+        scss: 'sass?' + global.JSON.stringify(
+            configuration.module.preprocessor.scss),
         babel: 'babel?' + global.JSON.stringify(
-            configuration.preprocessor.modernJavaScript),
+            configuration.module.preprocessor.modernJavaScript),
         coffee: 'coffee',
-        jade: `jade?${global.JSON.stringify(configuration.preprocessor.jade)}`,
+        jade: 'jade?' + global.JSON.stringify(
+            configuration.module.preprocessor.jade),
         literateCoffee: 'coffee?literate'
     },
-    html: `html?${global.JSON.stringify(configuration.html)}`,
+    html: `html?${global.JSON.stringify(configuration.module.html)}`,
     cascadingStyleSheet: 'css?' + global.JSON.stringify(
-        configuration.cascadingStyleSheet),
-    style: `style?${global.JSON.stringify(configuration.style)}`,
+        configuration.module.cascadingStyleSheet),
+    style: `style?${global.JSON.stringify(configuration.module.style)}`,
     postprocessor: {
         image: imageLoader,
         font: {
-            eot: 'url?' +
-                global.JSON.stringify(configuration.optimizer.font.eot),
-            woff: 'url?' +
-                global.JSON.stringify(configuration.optimizer.font.woff),
-            ttf: 'url?' +
-                global.JSON.stringify(configuration.optimizer.font.ttf),
-            svg: 'url?' +
-                global.JSON.stringify(configuration.optimizer.font.svg)
+            eot: 'url?' + global.JSON.stringify(
+                configuration.module.optimizer.font.eot),
+            woff: 'url?' + global.JSON.stringify(
+                configuration.module.optimizer.font.woff),
+            ttf: 'url?' + global.JSON.stringify(
+                configuration.module.optimizer.font.ttf),
+            svg: 'url?' + global.JSON.stringify(
+                configuration.module.optimizer.font.svg)
         },
-        data: `url?${global.JSON.stringify(configuration.optimizer.data)}`
+        data: 'url?' + global.JSON.stringify(
+            configuration.module.optimizer.data)
     }
 }
 // / endregion
@@ -318,15 +321,15 @@ const loader = {
 export default {
     context: configuration.path.context,
     debug: configuration.debug,
-    devtool: configuration.developmentTool,
-    devserver: configuration.developmentServer,
+    devtool: configuration.development.tool,
+    devserver: configuration.development.server,
     // region input
     resolveLoader: configuration.loader,
     resolve: {
         root: [configuration.path.asset.source],
         fallback: fallbackModuleDirectoryPaths,
         extensions: configuration.knownExtensions,
-        alias: configuration.moduleAliases
+        alias: configuration.module.aliases
     },
     entry: injects.internal, externals: injects.external,
     // endregion
@@ -477,8 +480,8 @@ export default {
     plugins: configuration.plugins,
     // Let the "html-loader" access full html minifier processing
     // configuration.
-    html: configuration.optimizer.htmlMinifier,
-    jade: configuration.preprocessor.jade
+    html: configuration.module.optimizer.htmlMinifier,
+    jade: configuration.module.preprocessor.jade
 }
 // endregion
 // region vim modline
