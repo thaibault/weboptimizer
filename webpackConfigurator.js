@@ -235,7 +235,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     if (!javaScriptNeeded)
         configuration.files.javaScript = path.join(
             configuration.path.asset.javaScript, '.__dummy__.compiled.js')
-    if (!configuration.inPlace.externalLibraries)
+    if (!configuration.inPlace.externalLibrary)
         /*
             We only want to process modules from local context in library mode,
             since a concrete project using this library should combine all
@@ -317,6 +317,10 @@ const loader = {
 }
 // / endregion
 // endregion
+
+console.log({
+})
+
 // region configuration
 export default {
     context: configuration.path.context,

@@ -95,7 +95,7 @@
             "inPlace": {
                 "cascadingStyleSheet": true, "javaScript": false,
                 "otherMaximumFileSizeLimitInByte": 40960,
-                "externalLibraries": true
+                "externalLibrary": true
             },
             "knownExtensions": [
                 ".compiled", "",
@@ -418,7 +418,7 @@
             "inPlace": {
                 "cascadingStyleSheet": false, "javaScript": false,
                 "otherMaximumFileSizeLimitInByte": 1,
-                "externalLibraries": false
+                "externalLibrary": false
             },
             "injects": {"internal": "__auto__"},
             "test": {"injects": {"internal": ["test"]}},
