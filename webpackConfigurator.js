@@ -85,7 +85,9 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     injects = {internal: moduleLocations.filePaths, external: []}
 } else {
     configuration.plugins.push(new plugins.ExtractText(
-        configuration.files.cascadingStyleSheet))
+        configuration.files.cascadingStyleSheet, {
+            allChunks: true,
+            disable: !configuration.files.cascadingStyleSheet}))
     // Optimizes webpack output
     if (configuration.optimizer.uglifyJS)
         configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
@@ -239,24 +241,32 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         /*
             We only want to process modules from local context in library mode,
             since a concrete project using this library should combine all
-            assets for optimal results.
+            assets for optimal bundling results.
         */
         injects.external = (context, request, callback) => {
-            if (global.Array.isArray(
-                injects.internal
-            ) && injects.internal.indexOf(request) !== -1)
-                return callback(null, `umd ${request}`)
-            if (helper.isObject(injects.internal)) {
-                let isInternal = false
-                for (let chunkName in injects.internal)
-                    if (injects.internal[chunkName] === request) {
-                        isInternal = true
-                        break
-                    }
-                if (!isInternal)
+            // TODO
+            let filePath = request.substring(request.lastIndexOf('!') + 1)
+            if (!filePath.startsWith('/'))
+                filePath = path.join(context, filePath)
+            if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
+                if (global.Array.isArray(injects.internal)) {
+                    for (let internalModule of injects.internal)
+                        if (helper.determineModulePath(
+                            internalModule
+                        ) === filePath)
+                            return callback()
                     return callback(null, `umd ${request}`)
+                }
+                if (helper.isObject(injects.internal)) {
+                    for (let chunkName in injects.internal)
+                        if (helper.determineModulePath(injects.internal[
+                            chunkName
+                        ]) === filePath)
+                            return callback()
+                    return callback(null, `umd ${request}`)
+                }
             }
-            callback()
+            return callback()
         }
 }
 // // endregion
@@ -280,6 +290,7 @@ const loader = {
     },
     html: `html?${global.JSON.stringify(configuration.html)}`,
     cascadingStyleSheet: plugins.extractText.extract(
+        'style',
         `css?${global.JSON.stringify(configuration.cascadingStyleSheet)}`),
     postprocessor: {
         image: imageLoader,

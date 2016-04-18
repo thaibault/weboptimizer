@@ -109,6 +109,12 @@ export default {
         // Determines all script modules to use as injects.
         const filePaths = []
         const directoryPaths = []
+        if (this.isObject(internals)) {
+            let newInternals = []
+            for (let key in internals)
+                newInternals.push(internals[key])
+            internals = newInternals
+        }
         for (let module of internals) {
             let stat
             let filePath

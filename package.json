@@ -29,6 +29,7 @@
         "open-browser-webpack-plugin": "*",
         "rimraf": "*",
         "sass-loader": "*",
+        "style-loader": "*",
         "url-loader": "*",
         "webpack": "*",
         "webpack-dev-server": "*",
@@ -377,10 +378,14 @@
             "offline": null,
             "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
             "files": {"html": [{"debug": true}]},
-            "preprocessor": {"jade": {
-                "compiler": {"pretty": true},
-                "locals": {"includeManifest": false}
-            }},
+            "preprocessor": {
+                "jade": {
+                    "compiler": {"pretty": true},
+                    "locals": {"includeManifest": false}
+                },
+                "less": {"sourceMap": true}
+            },
+            "cascadingStyleSheet": {"sourceMap": true},
             "optimizer": {
                 "uglifyJS": null,
                 "htmlMinifier": {
