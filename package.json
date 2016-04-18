@@ -58,8 +58,8 @@
     },
     "scripts": {
         "build": "arguments='--presets es2015 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments jadeLoader.compiled.js jadeLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
-        "clear": "rm *.compiled.* || true",
-        "lint": "npm run clear &>/dev/null; eslint '**/*.js' || true",
+        "clear": "rm *.compiled.* &>/dev/null || true",
+        "lint": "npm run clear &>/dev/null; eslint '*.js' || true",
         "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js jadeLoader.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build"
     },
@@ -162,14 +162,14 @@
             },
             "commandLine": {
                 "build": {
-                    "__execute__": "`webpack --config ${webOptimizerPath}/webpackConfigurator.compiled.js --progress --display-chunks --display-reasons --display-error-details`"
+                    "__execute__": "`webpack --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --progress --display-chunks --display-reasons --display-error-details`"
                 },
                 "serve": {
-                    "__execute__": "`webpack-dev-server --config ${webOptimizerPath}/webpackConfigurator.compiled.js --inline --colors`"
+                    "__execute__": "`webpack-dev-server --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --inline --colors`"
                 },
                 "test": {"__execute__": "self.commandLine.serve"},
                 "lint": {
-                    "__execute__": "`eslint --config ${webOptimizerPath}/package.json --ignore-pattern '${resolve(self.path.target).substring(currentPath.length + 1) ? `${resolve(self.path.target).substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
+                    "__execute__": "`eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${resolve(self.path.target).substring(currentPath.length + 1) ? `${resolve(self.path.target).substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
                 }
             },
             "developmentServer": {
