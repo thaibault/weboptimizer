@@ -171,6 +171,8 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                             ) + window.document.documentElement.outerHTML)
                         callback()
                     })
+                else
+                    callback()
             })
             compiler.plugin('after-emit', (compilation, callback) => {
                 if (configuration.inPlace.cascadingStyleSheet)
@@ -317,10 +319,6 @@ const loader = {
 }
 // / endregion
 // endregion
-
-console.log({
-})
-
 // region configuration
 export default {
     context: configuration.path.context,
