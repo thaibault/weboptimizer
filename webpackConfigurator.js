@@ -289,9 +289,9 @@ const loader = {
         literateCoffee: 'coffee?literate'
     },
     html: `html?${global.JSON.stringify(configuration.html)}`,
-    cascadingStyleSheet: plugins.extractText.extract(
-        `style?${global.JSON.stringify(configuration.style)}`,
-        `css?${global.JSON.stringify(configuration.cascadingStyleSheet)}`),
+    cascadingStyleSheet: 'css?' + global.JSON.stringify(
+        configuration.cascadingStyleSheet),
+    style: `style?${global.JSON.stringify(configuration.style)}`,
     postprocessor: {
         image: imageLoader,
         font: {
@@ -340,30 +340,6 @@ export default {
     module: {
         preLoaders: [
             // Convert to native web types.
-            // region style
-            {
-                test: /\.less$/,
-                loader: `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.less,
-                include: path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.less)
-            }, {
-                test: /\.sass$/,
-                loader: `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.sass,
-                include: path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.sass)
-            }, {
-                test: /\.scss$/,
-                loader: `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.scss,
-                include: path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.scss)
-            },
-            // endregion
             // region script
             {
                 test: /\.js$/,
@@ -415,6 +391,31 @@ export default {
         ],
         loaders: [
             // Loads dependencies.
+            // region style
+            {
+                test: /\.less$/,
+                loader: plugins.extractText.extract(
+                    loader.style,
+                    `${loader.cascadingStyleSheet}!${loader.preprocessor.less}`
+                )
+            }, {
+                test: /\.sass$/,
+                loader: plugins.extractText.extract(
+                    loader.style,
+                    `${loader.cascadingStyleSheet}!${loader.preprocessor.sass}`
+                )
+            }, {
+                test: /\.scss$/,
+                loader: plugins.extractText.extract(
+                    loader.style,
+                    `${loader.cascadingStyleSheet}!${loader.preprocessor.scss}`
+                )
+            }, {
+                test: /\.css$/,
+                loader: plugins.extractText.extract(
+                    loader.style, loader.cascadingStyleSheet)
+            },
+            // endregion
             // region html (templates)
             {
                 test: /\.html$/,
@@ -430,9 +431,6 @@ export default {
                         request.template.lastIndexOf('!') + 1)
                 })
             },
-            // endregion
-            // region cascadingStyleSheet
-            {test: /\.css$/, loader: loader.cascadingStyleSheet}
             // endregion
         ],
         postLoaders: [
