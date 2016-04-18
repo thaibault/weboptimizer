@@ -242,9 +242,10 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             We only want to process modules from local context in library mode,
             since a concrete project using this library should combine all
             assets for optimal bundling results.
+            NOTE: Only native javaScript and json modules will be marked as
+            external dependency.
         */
         injects.external = (context, request, callback) => {
-            // TODO
             let filePath = request.substring(request.lastIndexOf('!') + 1)
             if (!filePath.startsWith('/'))
                 filePath = path.join(context, filePath)
