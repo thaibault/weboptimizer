@@ -246,23 +246,27 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             external dependency.
         */
         injects.external = (context, request, callback) => {
-            let filePath = request.substring(request.lastIndexOf('!') + 1)
-            if (!filePath.startsWith('/'))
-                filePath = path.join(context, filePath)
+            let filePath = helper.determineModulePath(
+                request.substring(request.lastIndexOf('!') + 1),
+                configuration.moduleAliases, configuration.knownExtensions,
+                context)
             if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
                 if (global.Array.isArray(injects.internal)) {
                     for (let internalModule of injects.internal)
                         if (helper.determineModulePath(
-                            internalModule
+                            internalModule, configuration.moduleAliases,
+                            configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
                     return callback(null, `umd ${request}`)
                 }
                 if (helper.isObject(injects.internal)) {
                     for (let chunkName in injects.internal)
-                        if (helper.determineModulePath(injects.internal[
-                            chunkName
-                        ]) === filePath)
+                        if (helper.determineModulePath(
+                            injects.internal[chunkName],
+                            configuration.moduleAliases,
+                            configuration.knownExtensions, context
+                        ) === filePath)
                             return callback()
                     return callback(null, `umd ${request}`)
                 }
