@@ -133,7 +133,7 @@
                 "html": [{
                     "debug": false,
                     "template": {
-                        "__execute__": "`html?${global.JSON.stringify(resolve(self.html))}!jade?${global.JSON.stringify(resolve(self.module.preprocessor.jade))}!${resolve(self.path.source)}index.jade`"
+                        "__execute__": "`html?${global.JSON.stringify(resolve(self.module.html))}!jade?${global.JSON.stringify(resolve(self.module.preprocessor.jade))}!${resolve(self.path.source)}index.jade`"
                     },
                     "hash": true,
                     "filename": "index.html",
@@ -351,7 +351,7 @@
                 }},
                 "files": {"html": [{
                     "template": {
-                        "__execute__": "`html?${global.JSON.stringify(resolve(self.html))}!jade?${global.JSON.stringify(resolve(self.module.preprocessor.jade))}!${webOptimizerPath}/test.jade`"
+                        "__execute__": "`html?${global.JSON.stringify(resolve(self.module.html))}!jade?${global.JSON.stringify(resolve(self.module.preprocessor.jade))}!${webOptimizerPath}/test.jade`"
                     },
                     "filename": "test.html"
                 }]}
