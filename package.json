@@ -89,7 +89,8 @@
                 "ignore": ["node_modules", ".git"],
                 "tidyUp": [
                     {"__execute__": "path.join(resolve(self.path.target), path.basename(resolve(self.path.manifest), '.appcache') + '.html')"},
-                    {"__execute__": "path.join(resolve(self.path.target), resolve(self.path.asset.javaScript), '.__dummy__.compiled.js')"}
+                    {"__execute__": "path.join(resolve(self.path.target), resolve(self.path.asset.javaScript), '.__dummy__.compiled.js')"},
+                    {"__execute__": "path.join(resolve(self.path.target), resolve(self.path.asset.javaScript), '.__dummy__.compiled.js.map')"}
                 ]
             },
             "inPlace": {
