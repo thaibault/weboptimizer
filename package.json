@@ -67,7 +67,7 @@
     "configuration": {
         "default": {
             "debug": false, "library": true,
-            "injects": {"internal": [], "external": []},
+            "injects": {"internal": [], "external": [], "include": []},
             "path": {
                 "source": "source/", "target": "build/",
                 "asset": {

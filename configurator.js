@@ -61,26 +61,6 @@ if (
 currentConfiguration = extend(
     true, currentConfiguration, specificConfiguration)
 currentConfiguration.debug = debug
-// / region build absolute paths
-for (let pathConfiguration of [
-    currentConfiguration.path, currentConfiguration.path.asset
-])
-    for (let key of ['source', 'target'])
-        if (pathConfiguration[key])
-            pathConfiguration[key] = path.resolve(
-                currentConfiguration.path.context, helper.resolve(
-                    pathConfiguration[key], currentConfiguration)
-            ) + '/'
-// Append asset path to all specified internal files to inject.
-if (global.Array.isArray(currentConfiguration.injects.internal)) {
-    let index = 0
-    for (let path of currentConfiguration.injects.internal) {
-        currentConfiguration.injects.internal[index] =
-            currentConfiguration.path.asset.source + path
-        index += 1
-    }
-}
-// / endregion
 // region load additional dynamically given configuration
 let count = 0
 let filePath = null
@@ -109,6 +89,28 @@ if (filePath) {
 }
 // endregion
 currentConfiguration = helper.resolve(currentConfiguration)
+// / region build absolute paths
+for (let pathConfiguration of [
+    currentConfiguration.path, currentConfiguration.path.asset
+])
+    for (let key of ['source', 'target'])
+        if (pathConfiguration[key])
+            pathConfiguration[key] = path.resolve(
+                currentConfiguration.path.context, helper.resolve(
+                    pathConfiguration[key], currentConfiguration)
+            ) + '/'
+// Append asset path to all specified internal files to inject.
+if (global.Array.isArray(currentConfiguration.injects.internal)) {
+    let index = 0
+    for (let path of currentConfiguration.injects.internal) {
+        currentConfiguration.injects.internal[index] =
+            currentConfiguration.path.asset.source + path
+        index += 1
+    }
+}
+currentConfiguration.injects.internal.concat(
+    currentConfiguration.injects.include)
+// / endregion
 // Apply default file level build configurations to all file type specific
 // ones.
 const defaultConfiguration = currentConfiguration.build.default
