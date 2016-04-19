@@ -102,6 +102,9 @@ for (let pathConfiguration of [
 if (global.Array.isArray(currentConfiguration.injects.internal)) {
     let index = 0
     for (let path of currentConfiguration.injects.internal) {
+        console.log()
+        console.log(path)
+        console.log()
         if (path !== '__auto__')
             currentConfiguration.injects.internal[index] =
                 currentConfiguration.path.asset.source + path
