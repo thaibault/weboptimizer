@@ -129,11 +129,14 @@ if (global.process.argv.length > 2) {
                         if (configuration.build[type] && configuration.build[
                             type
                         ].outputExtension !== 'js')
-                            fileSystem.access(
-                                filePath, fileSystem.F_OK, error => {
-                                    if (!error)
-                                        fileSystem.unlink(filePath)
-                                })
+                            for (let suffix of ['', '.map'])
+                                fileSystem.access(
+                                    filePath + suffix, fileSystem.F_OK,
+                                    error => {
+                                        if (!error)
+                                            fileSystem.unlink(
+                                                filePath + suffix)
+                                    })
                     })
                     for (let filePath of configuration.path.tidyUp)
                         fileSystem.access(
