@@ -99,10 +99,8 @@ if (global.process.argv.length > 2) {
     let additionalArguments = global.process.argv.splice(3).join(' ')
     // region handle build
     const buildConfigurations = helper.resolveBuildConfigurationFilePaths(
-        configuration.build, path.join(
-            configuration.path.asset.source,
-            configuration.path.asset.javaScript
-        ), configuration.path.context, configuration.path.ignore)
+        configuration.build, configuration.path.asset.source,
+        configuration.path.context, configuration.path.ignore)
     if (global.process.argv[2] === 'build')
         // Triggers complete asset compiling and bundles them into the final
         // productive output.

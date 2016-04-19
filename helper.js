@@ -177,7 +177,7 @@ export default {
             using them in production. The result is a list of build
             configurations taken from current configuration object. Each
             configuration has all related files saved as property. Result is
-            sorted to prefer java script modules.
+            sorted to prefer javaScript modules.
         */
         let buildConfigurations = []
         let index = 0

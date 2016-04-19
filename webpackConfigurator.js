@@ -203,10 +203,8 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     // // endregion
     injects = helper.resolveInjects(
         configuration.injects, helper.resolveBuildConfigurationFilePaths(
-            configuration.build, path.join(
-                configuration.path.asset.source,
-                configuration.path.asset.javaScript
-            ), configuration.path.context, configuration.path.ignore
+            configuration.build, configuration.path.asset.source,
+            configuration.path.context, configuration.path.ignore
         ), configuration.test.injects.internal,
         configuration.knownExtensions, configuration.path.context,
         configuration.path.ignore)
