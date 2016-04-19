@@ -277,7 +277,7 @@ export default {
         global.Object.keys(moduleAliases).forEach(search => {
             moduleID = moduleID.replace(search, moduleAliases[search])
         })
-        for (let moduleLocation of ['', 'node_modules'])
+        for (let moduleLocation of ['', 'node_modules', '../'])
             for (let fileName of [null, '', 'index', 'main'])
                 for (let extension of knownExtensions) {
                     let moduleFilePath = moduleID
@@ -315,6 +315,14 @@ export default {
                     } catch (error) {}
                 }
         return moduleID
+    },
+    isFilPathInLocation: (filePath, locationsToCheck) => {
+        // Returns "true" if given location is within given locations to
+        // include.
+        for (let pathToCheck of locationsToCheck)
+            if (path.resolve(filePath).startsWith(path.resolve(pathToCheck)))
+                return true
+        return false
     }
 }
 // endregion

@@ -74,11 +74,10 @@ if (global.process.argv.length > 2) {
             helper.walkDirectoryRecursivelySync(configuration.path.target, (
                 filePath, stat
             ) => {
-                for (let pathToIgnore of configuration.path.ignore)
-                    if (filePath.startsWith(path.resolve(
-                        configuration.path.context, pathToIgnore
-                    )))
-                        return false
+                if (helper.isFilePathInLocation(
+                    filePath, configuration.path.ignore
+                ))
+                    return false
                 for (let type in configuration.build)
                     if (new global.RegExp(
                         configuration.build[type].fileNamePattern

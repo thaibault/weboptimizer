@@ -241,7 +241,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         /*
             We only want to process modules from local context in library mode,
             since a concrete project using this library should combine all
-            assets for optimal bundling results.
+            assets (and deduplicate them) for optimal bundling results.
             NOTE: Only native javaScript and json modules will be marked as
             external dependency.
         */
@@ -251,6 +251,10 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                 configuration.module.aliases, configuration.knownExtensions,
                 context)
             if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
+                if (helper.isFilePathInLocation(
+                    filePath, configuration.path.ignore
+                ))
+                    return callback(null, `umd ${request}`)
                 if (global.Array.isArray(injects.internal)) {
                     for (let internalModule of injects.internal)
                         if (helper.determineModulePath(
@@ -359,12 +363,8 @@ export default {
                     configuration.path.asset.javaScript
                 )].concat(moduleLocations.directoryPaths),
                 exclude: filePath => {
-                    for (let pathToIgnore of configuration.path.ignore)
-                        if (filePath.startsWith(path.resolve(
-                            pathToIgnore
-                        )))
-                            return true
-                    return false
+                    return helper.isFilePathInLocation(
+                        filePath, configuration.path.ignore)
                 }
             }, {
                 test: /\.coffee$/,
