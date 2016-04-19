@@ -108,8 +108,11 @@ if (global.Array.isArray(currentConfiguration.injects.internal)) {
         index += 1
     }
 }
-currentConfiguration.injects.internal.concat(
-    currentConfiguration.injects.include)
+// NOTE: Includes should be before internals since internals may depend on
+// them.
+currentConfiguration.injects.internal =
+    currentConfiguration.injects.include.concat(
+        currentConfiguration.injects.internal)
 // / endregion
 // Apply default file level build configurations to all file type specific
 // ones.
