@@ -102,13 +102,15 @@ for (let pathConfiguration of [
 if (global.Array.isArray(currentConfiguration.injects.internal)) {
     let index = 0
     for (let path of currentConfiguration.injects.internal) {
-        currentConfiguration.injects.internal[index] =
-            currentConfiguration.path.asset.source + path
+        if (path !== '__auto__')
+            currentConfiguration.injects.internal[index] =
+                currentConfiguration.path.asset.source + path
         index += 1
     }
 }
 // / endregion
 currentConfiguration = helper.resolve(currentConfiguration)
+// endregion
 // NOTE: Includes should be before internals since they could depend on them.
 currentConfiguration.injects.internal =
     currentConfiguration.injects.include.concat(
@@ -123,7 +125,6 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
         extension: type
     }, currentConfiguration.build[type], {type}))
 })
-// endregion
 // region apply webpack html plugin workaround
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
