@@ -98,26 +98,9 @@ for (let pathConfiguration of [
                 currentConfiguration.path.context, helper.resolve(
                     pathConfiguration[key], currentConfiguration)
             ) + '/'
-// Append asset path to all specified internal files to inject.
-if (global.Array.isArray(currentConfiguration.injects.internal)) {
-    let index = 0
-    for (let path of currentConfiguration.injects.internal) {
-        console.log()
-        console.log(path)
-        console.log()
-        if (path !== '__auto__')
-            currentConfiguration.injects.internal[index] =
-                currentConfiguration.path.asset.source + path
-        index += 1
-    }
-}
 // / endregion
 currentConfiguration = helper.resolve(currentConfiguration)
 // endregion
-// NOTE: Includes should be before internals since they could depend on them.
-currentConfiguration.injects.internal =
-    currentConfiguration.injects.include.concat(
-        currentConfiguration.injects.internal)
 // Apply default file level build configurations to all file type specific
 // ones.
 const defaultConfiguration = currentConfiguration.build.default
