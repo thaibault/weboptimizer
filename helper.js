@@ -316,7 +316,7 @@ export default {
                 }
         return moduleID
     },
-    isFilPathInLocation: (filePath, locationsToCheck) => {
+    isFilePathInLocation: (filePath, locationsToCheck) => {
         // Returns "true" if given location is within given locations to
         // include.
         for (let pathToCheck of locationsToCheck)
