@@ -151,7 +151,9 @@
                 "aliases": {}, "additionalAliases": {},
                 "preprocessor": {
                     "jade": {
-                        "moduleAliases": {"__execute__": "self.module.aliases"},
+                        "moduleAliases": {
+                            "__execute__": "self.module.aliases"
+                        },
                         "knownExtensions": {"__execute__": "self.knownExtensions"},
                         "context": {"__execute__": "self.path.context"},
                         "compiler": {

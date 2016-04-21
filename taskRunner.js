@@ -24,7 +24,7 @@ if (global.process.argv.length > 2) {
         try {
             const result = (new global.Function(
                 'configuration',
-                `return global.process.argv[global.process.argv.length - 1]`
+                `return ${global.process.argv[global.process.argv.length - 1]}`
             ))(configuration)
             if (
                 result !== null && typeof result === 'object' &&
@@ -96,7 +96,9 @@ if (global.process.argv.length > 2) {
         process.exit()
     }
     // endregion
-    let additionalArguments = global.process.argv.splice(3).join(' ')
+    let additionalArguments = global.process.argv.splice(3).join("' '")
+    if (additionalArguments)
+        additionalArguments = `'${additionalArguments}'`
     // region handle build
     const buildConfigurations = helper.resolveBuildConfigurationFilePaths(
         configuration.build, configuration.path.asset.source,

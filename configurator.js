@@ -56,7 +56,7 @@ if (
     currentConfiguration = extend(
         true, currentConfiguration, libraryConfiguration)
 // endregion
-// region merging and evaluating default, test and specific configuration
+// region merging and evaluating default, test, dynamic and specific configs
 // Merges project specific configurations with default ones.
 currentConfiguration = extend(
     true, currentConfiguration, specificConfiguration)
@@ -76,16 +76,21 @@ while (true) {
     count += 1
 }
 if (filePath) {
-    const dynamicConfiguration = global.JSON.parse(
+    const runtimeInformation = global.JSON.parse(
         fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
     // region apply test configuration
     if (
-        dynamicConfiguration.givenCommandLineArguments.length > 2 &&
-        dynamicConfiguration.givenCommandLineArguments[2] === 'test'
+        runtimeInformation.givenCommandLineArguments.length > 2 &&
+        runtimeInformation.givenCommandLineArguments[2] === 'test'
     )
         extend(true, currentConfiguration, currentConfiguration.test)
     // endregion
-    extend(true, currentConfiguration, dynamicConfiguration)
+    extend(true, currentConfiguration, runtimeInformation)
+    try {
+        extend(true, currentConfiguration, global.JSON.parse(
+            runtimeInformation.givenCommandLineArguments[
+                runtimeInformation.givenCommandLineArguments.length - 1]))
+    } catch (error) {}
 }
 // endregion
 // / region build absolute paths
@@ -101,6 +106,7 @@ for (let pathConfiguration of [
 // / endregion
 currentConfiguration = helper.resolve(currentConfiguration)
 // endregion
+// region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.
 const defaultConfiguration = currentConfiguration.build.default
@@ -111,6 +117,7 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
         extension: type
     }, currentConfiguration.build[type], {type}))
 })
+// endregion
 // region apply webpack html plugin workaround
 /*
     NOTE: Provides a workaround to handle a bug with changed loader
