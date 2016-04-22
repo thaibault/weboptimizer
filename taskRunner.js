@@ -19,7 +19,9 @@ const childProcessOptions = {cwd: configuration.path.context}
 let childProcess = null
 if (global.process.argv.length > 2) {
     // region temporary save dynamically given configurations
-    let dynamicConfiguration = {givenCommandLineArguments: global.process.argv}
+    // NOTE: We need a copy of given arguments array.
+    let dynamicConfiguration = {
+        givenCommandLineArguments: global.process.argv.slice()}
     if (global.process.argv.length > 3)
         try {
             const result = (new global.Function(

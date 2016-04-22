@@ -86,11 +86,22 @@ if (filePath) {
         extend(true, currentConfiguration, currentConfiguration.test)
     // endregion
     extend(true, currentConfiguration, runtimeInformation)
+    let result = null
     try {
-        extend(true, currentConfiguration, global.JSON.parse(
-            runtimeInformation.givenCommandLineArguments[
-                runtimeInformation.givenCommandLineArguments.length - 1]))
+        result = (new global.Function(
+            'configuration', 'return ' +
+            runtimeInformation.givenCommandLineArguments[runtimeInformation
+                .givenCommandLineArguments.length - 1]
+        ))(currentConfiguration)
     } catch (error) {}
+    if (
+        result !== null && typeof result === 'object' && !global.Array.isArray(
+            result
+        ) && global.Object.prototype.toString.call(
+            result
+        ) === '[object Object]'
+    )
+        extend(true, currentConfiguration, result)
 }
 // endregion
 // / region build absolute paths
