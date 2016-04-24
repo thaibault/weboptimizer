@@ -38,9 +38,9 @@ module.exports = function(source) {
                 let nestedLocals = {}
                 if (queryMatch)
                     nestedLocals = (new global.Function(
-                        'request', 'template', 'source', 'locals',
+                        'request', 'template', 'source', 'compile', 'locals',
                         `return ${queryMatch[1]}`
-                    ))(request, template, source, locals)
+                    ))(request, template, source, compile, locals)
                 const options = extend(true, {
                     encoding: 'utf-8'
                 }, nestedLocals.options || {})
