@@ -106,7 +106,7 @@ export default {
         internals, knownExtensions = ['.js'], context = './',
         pathsToIgnore = ['.git']
     ) {
-        // Determines all script modules to use as injects.
+        // Determines all script modules to use as internal injects.
         const filePaths = []
         const directoryPaths = []
         if (this.isObject(internals)) {
@@ -294,13 +294,12 @@ export default {
                                 if (fileSystem.statSync(
                                     pathToPackageJSON
                                 ).isFile()) {
-                                    let mainField = global.JSON.parse(
+                                    let localConfiguration = global.JSON.parse(
                                         fileSystem.readFileSync(
                                             pathToPackageJSON, {
-                                                encoding: 'utf-8'})
-                                    ).main
-                                    if (mainField)
-                                        fileName = mainField
+                                                encoding: 'utf-8'}))
+                                    if (localConfiguration.main)
+                                        fileName = localConfiguration.main
                                 }
                             }
                         } catch (error) {}

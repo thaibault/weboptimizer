@@ -210,9 +210,11 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         configuration.path.ignore)
     let javaScriptNeeded = false
     if (global.Array.isArray(injects.internal))
-        for (let filePath of injects.internal) {
-            let type = helper.determineAssetType(
-                filePath, configuration.build, configuration.path)
+        for (let moduleID of injects.internal) {
+            let type = helper.determineAssetType(helper.determineModulePath(
+                moduleID, configuration.module.aliases,
+                configuration.knownExtensions, configuration.path.context
+            ), configuration.build, configuration.path)
             if (configuration.build[type] && configuration.build[
                 type
             ].outputExtension === 'js') {
@@ -223,8 +225,8 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     else
         global.Object.keys(injects.internal).forEach(moduleName => {
             let type = helper.determineAssetType(
-                injects.internal[moduleName], configuration.build,
-                configuration.path)
+                helper.determineModulPath(injects.internal[moduleName]),
+                configuration.build, configuration.path)
             if (configuration.build[type] && configuration.build[
                 type
             ].outputExtension === 'js') {
