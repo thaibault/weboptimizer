@@ -19,7 +19,7 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Offline = module.require('offline-plugin')
 
 import configuration from './configurator.compiled'
-import helper from './helper.compiled'
+import Helper from './helper.compiled'
 
 // / region monkey patches
 // Monkey-Patch html loader to retrieve html loader options since the
@@ -75,7 +75,7 @@ if ((
 // // endregion
 // // region modules/assets
 extend(configuration.module.aliases, configuration.module.additionalAliases)
-const moduleLocations = helper.determineModuleLocations(
+const moduleLocations = Helper.determineModuleLocations(
     configuration.injects.internal, configuration.knownExtensions,
     configuration.path.context, configuration.path.ignore)
 let injects
@@ -201,8 +201,8 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             })
         }})
     // // endregion
-    injects = helper.resolveInjects(
-        configuration.injects, helper.resolveBuildConfigurationFilePaths(
+    injects = Helper.resolveInjects(
+        configuration.injects, Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore
         ), configuration.test.injects.internal,
@@ -211,7 +211,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     let javaScriptNeeded = false
     if (global.Array.isArray(injects.internal))
         for (let moduleID of injects.internal) {
-            let type = helper.determineAssetType(helper.determineModulePath(
+            let type = Helper.determineAssetType(Helper.determineModulePath(
                 moduleID, configuration.module.aliases,
                 configuration.knownExtensions, configuration.path.context
             ), configuration.build, configuration.path)
@@ -224,8 +224,8 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         }
     else
         global.Object.keys(injects.internal).forEach(moduleName => {
-            let type = helper.determineAssetType(
-                helper.determineModulePath(injects.internal[moduleName]),
+            let type = Helper.determineAssetType(
+                Helper.determineModulePath(injects.internal[moduleName]),
                 configuration.build, configuration.path)
             if (configuration.build[type] && configuration.build[
                 type
@@ -246,27 +246,27 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             external dependency.
         */
         injects.external = (context, request, callback) => {
-            let filePath = helper.determineModulePath(
+            let filePath = Helper.determineModulePath(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases, configuration.knownExtensions,
                 context)
             if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
-                if (helper.isFilePathInLocation(
+                if (Helper.isFilePathInLocation(
                     filePath, configuration.path.ignore
                 ))
                     return callback(null, `umd ${request}`)
                 if (global.Array.isArray(injects.internal)) {
                     for (let internalModule of injects.internal)
-                        if (helper.determineModulePath(
+                        if (Helper.determineModulePath(
                             internalModule, configuration.module.aliases,
                             configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
                     return callback(null, `umd ${request}`)
                 }
-                if (helper.isObject(injects.internal)) {
+                if (Helper.isObject(injects.internal)) {
                     for (let chunkName in injects.internal)
-                        if (helper.determineModulePath(
+                        if (Helper.determineModulePath(
                             injects.internal[chunkName],
                             configuration.module.aliases,
                             configuration.knownExtensions, context
@@ -363,7 +363,7 @@ export default {
                     configuration.path.asset.javaScript
                 )].concat(moduleLocations.directoryPaths),
                 exclude: filePath => {
-                    return helper.isFilePathInLocation(
+                    return Helper.isFilePathInLocation(
                         filePath, configuration.path.ignore)
                 }
             }, {

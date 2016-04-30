@@ -12,7 +12,7 @@ try {
 } catch (error) {}
 
 import configuration from './configurator.compiled'
-import helper from './helper.compiled'
+import Helper from './helper.compiled'
 // endregion
 // region controller
 const childProcessOptions = {cwd: configuration.path.context}
@@ -73,10 +73,10 @@ if (global.process.argv.length > 2) {
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
         ))
-            helper.walkDirectoryRecursivelySync(configuration.path.target, (
+            Helper.walkDirectoryRecursivelySync(configuration.path.target, (
                 filePath, stat
             ) => {
-                if (helper.isFilePathInLocation(
+                if (Helper.isFilePathInLocation(
                     filePath, configuration.path.ignore
                 ))
                     return false
@@ -102,7 +102,7 @@ if (global.process.argv.length > 2) {
     if (additionalArguments)
         additionalArguments = `'${additionalArguments}'`
     // region handle build
-    const buildConfigurations = helper.resolveBuildConfigurationFilePaths(
+    const buildConfigurations = Helper.resolveBuildConfigurationFilePaths(
         configuration.build, configuration.path.asset.source,
         configuration.path.context, configuration.path.ignore)
     if (global.process.argv[2] === 'build')
@@ -114,14 +114,14 @@ if (global.process.argv.length > 2) {
                 if (!error) {
                     // Determines all none javaScript entities which have been
                     // emitted as single javaScript module to remove.
-                    let modulesToEmit = helper.resolveInjects(
+                    let modulesToEmit = Helper.resolveInjects(
                         configuration.injects, buildConfigurations,
                         configuration.test.injects.internal,
                         configuration.knownExtensions,
                         configuration.path.context, configuration.path.ignore
                     ).internal
                     global.Object.keys(modulesToEmit).forEach(moduleID => {
-                        const type = helper.determineAssetType(
+                        const type = Helper.determineAssetType(
                             modulesToEmit[moduleID], configuration.build,
                             configuration.path)
                         const filePath =
@@ -169,7 +169,7 @@ if (global.process.argv.length > 2) {
     ) {
         childProcess = []
         // Perform all file specific preprocessing stuff.
-        const testModuleFilePaths = helper.determineModuleLocations(
+        const testModuleFilePaths = Helper.determineModuleLocations(
             configuration.test.injects.internal, configuration.knownExtensions,
             configuration.path.context, configuration.path.ignore
         ).filePaths
@@ -214,9 +214,9 @@ if (childProcess === null) {
 // / region trigger child process communication handler
 if (global.Array.isArray(childProcess))
     for (let subChildProcess of childProcess)
-        helper.handleChildProcess(subChildProcess)
+        Helper.handleChildProcess(subChildProcess)
 else
-    helper.handleChildProcess(childProcess)
+    Helper.handleChildProcess(childProcess)
 // / endregion
 // endregion
 // region vim modline

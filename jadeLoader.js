@@ -11,7 +11,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 
-import helper from './helper.compiled'
+import Helper from './helper.compiled'
 // endregion
 module.exports = function(source) {
     if (this.cacheable)
@@ -46,7 +46,7 @@ module.exports = function(source) {
                 }, nestedLocals.options || {})
                 if (options.isString)
                     return template
-                template = helper.determineModulePath(
+                template = Helper.determineModulePath(
                     template, query.moduleAliases, query.knownExtensions,
                     query.context)
                 this.addDependency(template)

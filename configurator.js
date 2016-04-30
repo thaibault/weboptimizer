@@ -10,7 +10,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 
-import helper from './helper.compiled'
+import Helper from './helper.compiled'
 // NOTE: "{configuration as currentConfiguration}" would result in a read only
 // variable.
 import {configuration} from './package'
@@ -111,23 +111,23 @@ for (let pathConfiguration of [
     for (let key of ['source', 'target'])
         if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(
-                currentConfiguration.path.context, helper.resolve(
+                currentConfiguration.path.context, Helper.resolve(
                     pathConfiguration[key], currentConfiguration)
             ) + '/'
 // / endregion
-currentConfiguration = helper.resolve(currentConfiguration)
+currentConfiguration = Helper.resolve(currentConfiguration)
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.
 const defaultConfiguration = currentConfiguration.build.default
 delete currentConfiguration.build.default
-global.Object.keys(currentConfiguration.build).forEach(type => {
+global.Object.keys(currentConfiguration.build).forEach(type =>
     currentConfiguration.build[type] = extend(true, {
     }, defaultConfiguration, extend(true, {
         extension: type
     }, currentConfiguration.build[type], {type}))
-})
+)
 // endregion
 // region apply webpack html plugin workaround
 /*
@@ -142,11 +142,9 @@ for (let html of currentConfiguration.files.html) {
         let templateRequestBackup = html.template
         currentConfiguration.files.html[index].template = new global.String(
             html.template)
-        currentConfiguration.files.html[index].template.replace = (string => {
-            return () => {
-                return string
-            }
-        })(templateRequestBackup)
+        currentConfiguration.files.html[index].template.replace = (
+            string => () => string
+        )(templateRequestBackup)
     }
     index += 1
 }

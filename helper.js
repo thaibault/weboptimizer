@@ -10,83 +10,31 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 // endregion
-// region functions
-export default {
-    isObject: object => {
+// region methods
+export default class Helper {
+    static isObject(object) {
         // Checks if given entity is a object.
         return (
             object !== null && typeof object === 'object' &&
             global.Object.getPrototypeOf(object) === global.Object.prototype)
-    },
-    isFunction: object => {
+    }
+    static isFunction(object) {
         // Checks if given entity is a function.
         return object && {}.toString.call(object) === '[object Function]'
-    },
-    resolve: function(object, configuration = null, initial = true) {
-        // Processes all dynamically linked values in given object.
-        if (!configuration)
-            configuration = object
-        if (initial) {
-            const attachProxy = object => {
-                for (let key in object)
-                    if (this.isObject(object[key]))
-                        attachProxy(object[key])
-                // NOTE: Replace this return code with outcomment code and
-                // remove all unneeded "resolve" calls in all potentially given
-                // configurations if node or babel supports proxies.
-                return object
-                /*
-                return new global.Proxy(object, {get: (target, name) => {
-                    return this.resolve(
-                        target[name], configuration, false)
-                }})
-                */
-            }
-            attachProxy(configuration)
-        }
-        if (global.Array.isArray(object)) {
-            let index = 0
-            for (let value of object) {
-                object[index] = this.resolve(value, configuration, false)
-                index += 1
-            }
-        } else if (this.isObject(object))
-            for (let key in object) {
-                if (key === '__execute__')
-                    return this.resolve(new global.Function(
-                        'global', 'self', 'resolve', 'webOptimizerPath',
-                        'currentPath', 'path', `return ${object[key]}`
-                    )(
-                        global, configuration, (
-                            propertyName, subConfiguration = configuration,
-                            subInitial = false
-                        ) => {
-                            return this.resolve(
-                                propertyName, subConfiguration, subInitial)
-                        }, __dirname, global.process.cwd(), path
-                    ), configuration, false)
-                object[key] = this.resolve(
-                    object[key], configuration, false)
-            }
-        return object
-    },
-    handleChildProcess: childProcess => {
+    }
+    static handleChildProcess(childProcess) {
         /*
             Forwards given child process communication channels to corresponding
             current process communication channels.
         */
-        childProcess.stdout.on('data', data => {
-            process.stdout.write(data)
-        })
-        childProcess.stderr.on('data', data => {
-            process.stderr.write(data)
-        })
+        childProcess.stdout.on('data', data => process.stdout.write(data))
+        childProcess.stderr.on('data', data => process.stderr.write(data))
         childProcess.on('close', returnCode => {
             if (returnCode !== 0)
                 console.error(`Task exited with error code ${returnCode}`)
         })
-    },
-    walkDirectoryRecursivelySync: function(directoryPath, callback = (
+    }
+    static walkDirectoryRecursivelySync(directoryPath, callback = (
         /* filePath, stat */
     ) => {}) {
         /*
@@ -99,56 +47,10 @@ export default {
             const stat = fileSystem.statSync(filePath)
             if (callback(filePath, stat) !== false && stat && stat.isDirectory(
             ))
-                this.walkDirectoryRecursivelySync(filePath, callback)
+                Helper.walkDirectoryRecursivelySync(filePath, callback)
         })
-    },
-    determineModuleLocations: function(
-        internals, knownExtensions = ['.js'], context = './',
-        pathsToIgnore = ['.git']
-    ) {
-        // Determines all script modules to use as internal injects.
-        const filePaths = []
-        const directoryPaths = []
-        if (this.isObject(internals)) {
-            let newInternals = []
-            global.Object.keys(internals).forEach(key => {
-                newInternals.push(internals[key])
-            })
-            internals = newInternals
-        }
-        for (let module of internals) {
-            let stat
-            let filePath
-            for (let extension of knownExtensions) {
-                filePath = path.resolve(module + extension)
-                try {
-                    stat = fileSystem.statSync(filePath)
-                    break
-                } catch (error) {}
-            }
-            if (!stat)
-                continue
-            let pathToAdd
-            if (stat.isDirectory()) {
-                pathToAdd = `${path.resolve(module)}/`
-                this.walkDirectoryRecursivelySync(module, subFilePath => {
-                    for (let pathToIgnore of pathsToIgnore)
-                        if (subFilePath.startsWith(path.resolve(
-                            context, pathToIgnore
-                        )))
-                            return false
-                    filePaths.push(subFilePath)
-                })
-            } else {
-                pathToAdd = `${path.resolve(path.dirname(module))}/`
-                filePaths.push(filePath)
-            }
-            if (directoryPaths.indexOf(pathToAdd) === -1)
-                directoryPaths.push(pathToAdd)
-        }
-        return {filePaths, directoryPaths}
-    },
-    determineAssetType: (filePath, buildConfiguration, paths) => {
+    }
+    static determineAssetType(filePath, buildConfiguration, paths) {
         // Determines file type of given file (by path).
         let result = null
         global.Object.keys(buildConfiguration).forEach(type => {
@@ -167,8 +69,8 @@ export default {
                     )))
                         return assetType
         return result
-    },
-    resolveBuildConfigurationFilePaths: function(
+    }
+    static resolveBuildConfigurationFilePaths(
         configuration, entryPath = './', context = './',
         pathsToIgnore = ['.git']
     ) {
@@ -184,7 +86,7 @@ export default {
         global.Object.keys(configuration).forEach(type => {
             buildConfigurations.push(extend(
                 true, {filePaths: []}, configuration[type]))
-            this.walkDirectoryRecursivelySync(entryPath, (filePath, stat) => {
+            Helper.walkDirectoryRecursivelySync(entryPath, (filePath, stat) => {
                 for (let pathToIgnore of pathsToIgnore)
                     if (filePath.startsWith(path.resolve(
                         context, pathToIgnore
@@ -212,15 +114,15 @@ export default {
             }
             return 0
         })
-    },
-    resolveInjects: function(
+    }
+    static resolveInjects(
         givenInjects, buildConfiguration, modulesToExclude, knownExtensions = [
             '.js', '.css', '.svg', '.html'
         ], context = './', pathsToIgnore = ['.git']
     ) {
         // Determines all injects for current build.
         let injects = extend(true, {}, givenInjects)
-        const moduleFilePathsToExclude = this.determineModuleLocations(
+        const moduleFilePathsToExclude = Helper.determineModuleLocations(
             modulesToExclude, knownExtensions, context, pathsToIgnore
         ).filePaths
         for (let type of ['internal', 'external'])
@@ -269,10 +171,10 @@ export default {
                 }
             }
         return injects
-    },
-    determineModulePath: (
+    }
+    static determineModulePath(
         moduleID, moduleAliases = {}, knownExtensions = ['.js'], context = './'
-    ) => {
+    ) {
         // Determines a module path for given module id synchronously.
         global.Object.keys(moduleAliases).forEach(search => {
             moduleID = moduleID.replace(search, moduleAliases[search])
@@ -314,14 +216,107 @@ export default {
                     } catch (error) {}
                 }
         return moduleID
-    },
-    isFilePathInLocation: (filePath, locationsToCheck) => {
+    }
+    static isFilePathInLocation(filePath, locationsToCheck) {
         // Returns "true" if given location is within given locations to
         // include.
         for (let pathToCheck of locationsToCheck)
             if (path.resolve(filePath).startsWith(path.resolve(pathToCheck)))
                 return true
         return false
+    }
+    static resolve(object, configuration = null, initial = true) {
+        // Processes all dynamically linked values in given object.
+        if (!configuration)
+            configuration = object
+        if (initial) {
+            const attachProxy = object => {
+                for (let key in object)
+                    if (Helper.isObject(object[key]))
+                        attachProxy(object[key])
+                // NOTE: Replace this return code with outcomment code and
+                // remove all unneeded "resolve" calls in all potentially given
+                // configurations if node or babel supports proxies.
+                return object
+                /*
+                return new global.Proxy(object, {get: (target, name) => {
+                    return Helper.resolve(
+                        target[name], configuration, false)
+                }})
+                */
+            }
+            attachProxy(configuration)
+        }
+        if (global.Array.isArray(object)) {
+            let index = 0
+            for (let value of object) {
+                object[index] = Helper.resolve(value, configuration, false)
+                index += 1
+            }
+        } else if (Helper.isObject(object))
+            for (let key in object) {
+                if (key === '__execute__')
+                    return Helper.resolve(new global.Function(
+                        'global', 'self', 'resolve', 'webOptimizerPath',
+                        'currentPath', 'path', `return ${object[key]}`
+                    )(
+                        global, configuration, (
+                            propertyName, subConfiguration = configuration,
+                            subInitial = false
+                        ) => {
+                            return Helper.resolve(
+                                propertyName, subConfiguration, subInitial)
+                        }, __dirname, global.process.cwd(), path
+                    ), configuration, false)
+                object[key] = Helper.resolve(object[key], configuration, false)
+            }
+        return object
+    }
+    static determineModuleLocations(
+        internals, knownExtensions = ['.js'], context = './',
+        pathsToIgnore = ['.git']
+    ) {
+        // Determines all script modules to use as internal injects.
+        const filePaths = []
+        const directoryPaths = []
+        if (Helper.isObject(internals)) {
+            let newInternals = []
+            global.Object.keys(internals).forEach(key => {
+                newInternals.push(internals[key])
+            })
+            internals = newInternals
+        }
+        for (let module of internals) {
+            let stat
+            let filePath
+            for (let extension of knownExtensions) {
+                filePath = path.resolve(module + extension)
+                try {
+                    stat = fileSystem.statSync(filePath)
+                    break
+                } catch (error) {}
+            }
+            if (!stat)
+                continue
+            let pathToAdd
+            if (stat.isDirectory()) {
+                pathToAdd = `${path.resolve(module)}/`
+                Helper.walkDirectoryRecursivelySync(module, subFilePath => {
+                    for (let pathToIgnore of pathsToIgnore)
+                        if (subFilePath.startsWith(path.resolve(
+                            context, pathToIgnore
+                        )))
+                            return false
+                    filePaths.push(subFilePath)
+                })
+            } else {
+                pathToAdd = `${path.resolve(path.dirname(module))}/`
+                filePaths.push(filePath)
+            }
+            if (directoryPaths.indexOf(pathToAdd) === -1)
+                directoryPaths.push(pathToAdd)
+        }
+        return {filePaths, directoryPaths}
     }
 }
 // endregion
