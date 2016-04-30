@@ -122,12 +122,12 @@ currentConfiguration = Helper.resolve(currentConfiguration)
 // ones.
 const defaultConfiguration = currentConfiguration.build.default
 delete currentConfiguration.build.default
-global.Object.keys(currentConfiguration.build).forEach(type =>
+global.Object.keys(currentConfiguration.build).forEach(type => {
     currentConfiguration.build[type] = extend(true, {
     }, defaultConfiguration, extend(true, {
         extension: type
     }, currentConfiguration.build[type], {type}))
-)
+})
 // endregion
 // region apply webpack html plugin workaround
 /*

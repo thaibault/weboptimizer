@@ -20,41 +20,39 @@ module.exports = function(source) {
         moduleAliases: [], knownExtensions: ['.jade', '.html', '.js', '.css'],
         context: './'
     }, this.options.jade || {}, loaderUtils.parseQuery(this.query))
-    const compile = (template, options = query.compiler) => {
-        return (locals = {}) => {
-            options = extend(true, {
-                filename: template, doctype: 'html',
-                compileDebug: this.debug || false
-            }, options)
-            let templateFunction
-            if (options.isString) {
-                delete options.isString
-                templateFunction = jade.compile(template, options)
-            } else
-                templateFunction = jade.compileFile(template, options)
-            return templateFunction(extend(true, {require: request => {
-                let template = request.replace(/^(.+)\?[^?]+$/, '$1')
-                const queryMatch = request.match(/^.+\?([^?]+)$/, '$1')
-                let nestedLocals = {}
-                if (queryMatch)
-                    nestedLocals = (new global.Function(
-                        'request', 'template', 'source', 'compile', 'locals',
-                        `return ${queryMatch[1]}`
-                    ))(request, template, source, compile, locals)
-                const options = extend(true, {
-                    encoding: 'utf-8'
-                }, nestedLocals.options || {})
-                if (options.isString)
-                    return template
-                template = Helper.determineModulePath(
-                    template, query.moduleAliases, query.knownExtensions,
-                    query.context)
-                this.addDependency(template)
-                if (queryMatch || template.endsWith('.less'))
-                    return compile(template, options)(nestedLocals)
-                return fileSystem.readFileSync(template, options)
-            }}, locals))
-        }
+    const compile = (template, options = query.compiler) => (locals = {}) => {
+        options = extend(true, {
+            filename: template, doctype: 'html',
+            compileDebug: this.debug || false
+        }, options)
+        let templateFunction
+        if (options.isString) {
+            delete options.isString
+            templateFunction = jade.compile(template, options)
+        } else
+            templateFunction = jade.compileFile(template, options)
+        return templateFunction(extend(true, {require: request => {
+            let template = request.replace(/^(.+)\?[^?]+$/, '$1')
+            const queryMatch = request.match(/^.+\?([^?]+)$/, '$1')
+            let nestedLocals = {}
+            if (queryMatch)
+                nestedLocals = (new global.Function(
+                    'request', 'template', 'source', 'compile', 'locals',
+                    `return ${queryMatch[1]}`
+                ))(request, template, source, compile, locals)
+            const options = extend(true, {
+                encoding: 'utf-8'
+            }, nestedLocals.options || {})
+            if (options.isString)
+                return template
+            template = Helper.determineModulePath(
+                template, query.moduleAliases, query.knownExtensions,
+                query.context)
+            this.addDependency(template)
+            if (queryMatch || template.endsWith('.less'))
+                return compile(template, options)(nestedLocals)
+            return fileSystem.readFileSync(template, options)
+        }}, locals))
     }
     return compile(source, extend(true, {
         isString: true,

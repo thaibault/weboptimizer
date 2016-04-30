@@ -362,10 +362,8 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
                 )].concat(moduleLocations.directoryPaths),
-                exclude: filePath => {
-                    return Helper.isFilePathInLocation(
-                        filePath, configuration.path.ignore)
-                }
+                exclude: filePath => Helper.isFilePathInLocation(
+                    filePath, configuration.path.ignore)
             }, {
                 test: /\.coffee$/,
                 loader: loader.preprocessor.coffee,
@@ -392,10 +390,9 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: configuration.files.html.map(request => {
-                    return request.template.substring(
-                        request.template.lastIndexOf('!') + 1)
-                })
+                exclude: configuration.files.html.map(request =>
+                    request.template.substring(
+                        request.template.lastIndexOf('!') + 1))
             }
             // endregion
         ],
@@ -436,10 +433,9 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: configuration.files.html.map(request => {
-                    return request.template.substring(
-                        request.template.lastIndexOf('!') + 1)
-                })
+                exclude: configuration.files.html.map(request =>
+                    request.template.substring(
+                        request.template.lastIndexOf('!') + 1))
             }
             // endregion
         ],
@@ -470,11 +466,9 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.data),
-                exclude: filePath => {
-                    return configuration.knownExtensions.indexOf(path.extname(
-                        filePath
-                    )) !== -1
-                }
+                exclude: filePath => configuration.knownExtensions.indexOf(
+                    path.extname(filePath)
+                ) !== -1
             }
             // endregion
         ]

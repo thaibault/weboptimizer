@@ -86,7 +86,9 @@ export default class Helper {
         global.Object.keys(configuration).forEach(type => {
             buildConfigurations.push(extend(
                 true, {filePaths: []}, configuration[type]))
-            Helper.walkDirectoryRecursivelySync(entryPath, (filePath, stat) => {
+            Helper.walkDirectoryRecursivelySync(entryPath, (
+                filePath, stat
+            ) => {
                 for (let pathToIgnore of pathsToIgnore)
                     if (filePath.startsWith(path.resolve(
                         context, pathToIgnore
@@ -239,10 +241,9 @@ export default class Helper {
                 // configurations if node or babel supports proxies.
                 return object
                 /*
-                return new global.Proxy(object, {get: (target, name) => {
-                    return Helper.resolve(
-                        target[name], configuration, false)
-                }})
+                return new global.Proxy(object, {get: (target, name) =>
+                    Helper.resolve(target[name], configuration, false)
+                })
                 */
             }
             attachProxy(configuration)
@@ -263,10 +264,9 @@ export default class Helper {
                         global, configuration, (
                             propertyName, subConfiguration = configuration,
                             subInitial = false
-                        ) => {
-                            return Helper.resolve(
-                                propertyName, subConfiguration, subInitial)
-                        }, __dirname, global.process.cwd(), path
+                        ) => Helper.resolve(
+                            propertyName, subConfiguration, subInitial
+                        ), __dirname, global.process.cwd(), path
                     ), configuration, false)
                 object[key] = Helper.resolve(object[key], configuration, false)
             }
@@ -281,9 +281,8 @@ export default class Helper {
         const directoryPaths = []
         if (Helper.isObject(internals)) {
             let newInternals = []
-            global.Object.keys(internals).forEach(key => {
-                newInternals.push(internals[key])
-            })
+            global.Object.keys(internals).forEach(key => newInternals.push(
+                internals[key]))
             internals = newInternals
         }
         for (let module of internals) {
