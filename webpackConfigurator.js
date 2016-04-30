@@ -225,7 +225,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     else
         global.Object.keys(injects.internal).forEach(moduleName => {
             let type = helper.determineAssetType(
-                helper.determineModulPath(injects.internal[moduleName]),
+                helper.determineModulePath(injects.internal[moduleName]),
                 configuration.build, configuration.path)
             if (configuration.build[type] && configuration.build[
                 type
