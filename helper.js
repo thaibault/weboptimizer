@@ -43,7 +43,7 @@ export default class Helper {
      * @param childProcess - Child process meta data.
      * @returns Given child process meta data.
      */
-    static handleChildProcess(childProcess):void {
+    static handleChildProcess(childProcess) {
         /*
             Forwards given child process communication channels to corresponding
             current process communication channels.
