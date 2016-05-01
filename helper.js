@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
@@ -17,18 +18,32 @@ try {
 export default class Helper {
     /**
      * Checks weather given object is a plain native object.
+     * @param object - Object to check.
+     * @returns Value "true" if given object is a plain javaScript object and
+     * "false" otherwise.
      */
-    static isObject(object: mixed): boolean {
+    static isObject(object:mixed):boolean {
         // Checks if given entity is a object.
         return (
             object !== null && typeof object === 'object' &&
             global.Object.getPrototypeOf(object) === global.Object.prototype)
     }
-    static isFunction(object: mixed): boolean {
+    /**
+     * Checks weather given object is a function.
+     * @param object - Object to check.
+     * @returns Value "true" if given object is a function and "false"
+     * otherwise.
+     */
+    static isFunction(object:mixed):boolean {
         // Checks if given entity is a function.
         return object && {}.toString.call(object) === '[object Function]'
     }
-    static handleChildProcess(childProcess): void {
+    /**
+     * Forwards given child process api to current process api.
+     * @param childProcess - Child process meta data.
+     * @returns Given child process meta data.
+     */
+    static handleChildProcess(childProcess):void {
         /*
             Forwards given child process communication channels to corresponding
             current process communication channels.
@@ -39,10 +54,11 @@ export default class Helper {
             if (returnCode !== 0)
                 console.error(`Task exited with error code ${returnCode}`)
         })
+        return childProcess
     }
-    static walkDirectoryRecursivelySync(directoryPath: string, callback = (
+    static walkDirectoryRecursivelySync(directoryPath:string, callback = (
         /* filePath, stat */
-    ) => {}): void {
+    ) => {}):void {
         /*
             Iterates recursively through given directory structure and calls
             given callback for each found entity. If "false" is returned and

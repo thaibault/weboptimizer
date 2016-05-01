@@ -26,6 +26,7 @@
         "eslint": "*",
         "eslint-config-google": "*",
         "eslint-plugin-flowtype": "*",
+        "eslint-plugin-jsdoc": "*",
         "extract-loader": "0.0.2",
         "extract-text-webpack-plugin": "^1.0.1",
         "file-loader": "*",
@@ -65,7 +66,8 @@
     "scripts": {
         "build": "arguments='--plugins transform-flow-strip-types --presets es2015 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments jadeLoader.compiled.js jadeLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
         "clear": "rm *.compiled.* &>/dev/null || true",
-        "lint": "flow && eslint --ignore-pattern '*.compiled.js' '*.js' || true",
+        "lint_back": "flow && eslint --ignore-pattern '*.compiled.js' '*.js' || true",
+        "lint": "eslint --ignore-pattern '*.compiled.js' '*.js' || true",
         "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js jadeLoader.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build"
     },
@@ -449,14 +451,14 @@
             "ecmaFeatures": {}
         },
         "parser": "babel-eslint",
-        "plugins": ["flowtype"],
+        "plugins": ["jsdoc", "flowtype"],
         "extends": "google",
         "rules": {
-            "semi": [2, "never"],
-            "curly": [2, "multi"],
-            "indent": [2, 4],
+            "semi": ["error", "never"],
+            "curly": ["error", "multi"],
+            "indent": ["error", 4],
             "block-scoped-var": 0,
-            "spaced-comment": [2, "always", {"line": {"exceptions": [
+            "spaced-comment": ["error", "always", {"line": {"exceptions": [
                 "/usr/bin/env node"
             ]}}],
             "new-cap": 0,
@@ -466,16 +468,31 @@
                 "MethodDefinition": true,
                 "ClassDeclaration": true
             }}],
-            "valid-jsdoc": ["error", {"prefer": {
-                "return": "return"
-            }}],
-            "flowtype/require-parameter-type": 2,
-            "flowtype/require-return-type": [2, "always", {
+            "valid-jsdoc": [0, {
+                "prefer": {"return": "returns"},
+                "requireParamDescription": false,
+                "requireReturnDescription": true,
+                "requireReturnType": false
+            }],
+
+            "jsdoc/check-param-names": "error",
+            "jsdoc/check-tag-names": "error",
+            "jsdoc/newline-after-description": ["error", "newer"],
+            "jsdoc/require-description-complete-sentence": "error",
+            "jsdoc/require-hyphen-before-param-description": "error",
+            "jsdoc/require-param": "error",
+            "jsdoc/require-param-description": "error",
+            "jsdoc/require-param-type": 0,
+            "jsdoc/require-returns-description": "error",
+            "jsdoc/require-returns-type": 0,
+
+            "flowtype/require-parameter-type": "error",
+            "flowtype/require-return-type": ["error", "always", {
                 "annotateUndefined": "always"
             }],
-            "flowtype/space-before-type-colon": [2, "never"],
-            "flowtype/space-after-type-colon": [2, "never"],
-            "flowtype/type-id-match": [2, "^([A-Z][a-z0-9]+)+Type$"]
+            "flowtype/space-before-type-colon": ["error", "never"],
+            "flowtype/space-after-type-colon": ["error", "never"],
+            "flowtype/type-id-match": ["error", "^([A-Z][a-z0-9]+)+Type$"]
         },
         "settings": {"flowtype": {"onlyFilesWithFlowAnnotation": false}},
         "env": {"shared-node-browser": true}
