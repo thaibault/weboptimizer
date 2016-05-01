@@ -56,6 +56,14 @@ export default class Helper {
         })
         return childProcess
     }
+    /**
+     * Iterates through given directory structure recursively and calls given
+     * callback for each found file. Callback gets file path and corresponding
+     * stat object as argument.
+     * @param directoryPath - Path to directory structure to traverse.
+     * @param callback - Function to invoke for each traversed file.
+     * @returns Given callback function.
+     */
     static walkDirectoryRecursivelySync(directoryPath:string, callback = (
         /* filePath, stat */
     ) => {}):void {
@@ -71,8 +79,20 @@ export default class Helper {
             ))
                 Helper.walkDirectoryRecursivelySync(filePath, callback)
         })
+        return callback
     }
-    static determineAssetType(filePath, buildConfiguration, paths) {
+    /**
+     * Determines a asset type if given file.
+     * @param filePath - Path to file to analyse.
+     * @param buildConfiguration - Meta informations for available asset types.
+     * @param paths - List of paths to search if given path doesn't reference
+     * a file directly.
+     * @returns Determined file type or "null" of given file couldn't be
+     * determined.
+     */
+    static determineAssetType(
+        filePath:string, buildConfiguration, paths
+    ):string|null {
         // Determines file type of given file (by path).
         let result = null
         global.Object.keys(buildConfiguration).forEach(type => {
