@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
@@ -13,7 +14,7 @@ try {
 
 import Helper from './helper.compiled'
 // endregion
-module.exports = function(source) {
+module.exports = function(source:string) {
     if (this.cacheable)
         this.cacheable()
     const query = extend(true, {

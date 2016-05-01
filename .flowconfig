@@ -1,9 +1,12 @@
 [ignore]
-.*/node_modules/.*
-.*/.git/.*
-.*/.*[^.]\.compiled\.js
+.*/\.git
+.*[^.]\.compiled\.js
 [options]
+module.name_mapper='^\./configurator\.compiled$' -> './configurator'
 module.name_mapper='^\./helper\.compiled$' -> './helper'
+module.name_mapper='^\./jadeLoader\.compiled$' -> './jadeLoader'
+module.name_mapper='^\./taskRunner\.compiled$' -> './taskRunner'
+module.name_mapper='^\./webpackConfigurator\.compiled$' -> './webpackConfigurator'
 
 module.file_ext=.js
 module.file_ext=.compiled.js
@@ -13,4 +16,3 @@ module.file_ext=.jsx
 module.file_ext=.compiled.jsx
 
 strip_root=true
-traces=true

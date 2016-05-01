@@ -23,7 +23,6 @@ export default class Helper {
      * "false" otherwise.
      */
     static isObject(object:mixed):boolean {
-        // Checks if given entity is a object.
         return (
             object !== null && typeof object === 'object' &&
             global.Object.getPrototypeOf(object) === global.Object.prototype)
@@ -35,8 +34,7 @@ export default class Helper {
      * otherwise.
      */
     static isFunction(object:mixed):boolean {
-        // Checks if given entity is a function.
-        return object && {}.toString.call(object) === '[object Function]'
+        return !!object && {}.toString.call(object) === '[object Function]'
     }
     /**
      * Forwards given child process api to current process api.
@@ -64,9 +62,9 @@ export default class Helper {
      * @param callback - Function to invoke for each traversed file.
      * @returns Given callback function.
      */
-    static walkDirectoryRecursivelySync(directoryPath:string, callback = (
-        /* filePath, stat */
-    ) => {}):void {
+    static walkDirectoryRecursivelySync(
+        directoryPath:string, callback:Function = (/* filePath, stat */) => {}
+    ):Function {
         /*
             Iterates recursively through given directory structure and calls
             given callback for each found entity. If "false" is returned and

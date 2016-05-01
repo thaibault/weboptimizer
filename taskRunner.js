@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
