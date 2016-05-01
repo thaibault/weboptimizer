@@ -11,18 +11,24 @@ try {
 } catch (error) {}
 // endregion
 // region methods
+/**
+ * Provides a class of static methods with generic use cases.
+ */
 export default class Helper {
-    static isObject(object) {
+    /**
+     * Checks weather given object is a plain native object.
+     */
+    static isObject(object: mixed): boolean {
         // Checks if given entity is a object.
         return (
             object !== null && typeof object === 'object' &&
             global.Object.getPrototypeOf(object) === global.Object.prototype)
     }
-    static isFunction(object) {
+    static isFunction(object: mixed): boolean {
         // Checks if given entity is a function.
         return object && {}.toString.call(object) === '[object Function]'
     }
-    static handleChildProcess(childProcess) {
+    static handleChildProcess(childProcess): void {
         /*
             Forwards given child process communication channels to corresponding
             current process communication channels.
@@ -34,9 +40,9 @@ export default class Helper {
                 console.error(`Task exited with error code ${returnCode}`)
         })
     }
-    static walkDirectoryRecursivelySync(directoryPath, callback = (
+    static walkDirectoryRecursivelySync(directoryPath: string, callback = (
         /* filePath, stat */
-    ) => {}) {
+    ) => {}): void {
         /*
             Iterates recursively through given directory structure and calls
             given callback for each found entity. If "false" is returned and

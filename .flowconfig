@@ -1,0 +1,16 @@
+[ignore]
+.*/node_modules/.*
+.*/.git/.*
+.*/.*[^.]\.compiled\.js
+[options]
+module.name_mapper='^\./helper\.compiled$' -> './helper'
+
+module.file_ext=.js
+module.file_ext=.compiled.js
+module.file_ext=.json
+module.file_ext=.compiled.json
+module.file_ext=.jsx
+module.file_ext=.compiled.jsx
+
+strip_root=true
+traces=true

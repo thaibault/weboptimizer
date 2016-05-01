@@ -17,6 +17,7 @@
         "babel-eslint": "*",
         "babel-loader": "*",
         "babel-polyfill": "*",
+        "babel-plugin-transform-flow-strip-types": "*",
         "babel-preset-es2015": "*",
         "babel-preset-stage-0": "*",
         "coffee-loader": "*",
@@ -24,6 +25,7 @@
         "css-loader": "*",
         "eslint": "*",
         "eslint-config-google": "*",
+        "eslint-plugin-flowtype": "*",
         "extract-loader": "0.0.2",
         "extract-text-webpack-plugin": "^1.0.1",
         "file-loader": "*",
@@ -47,7 +49,10 @@
         "webpack-dev-server": "*",
         "webpack-load-plugins": "*"
     },
-    "devDependencies": {"source-map-support": "*"},
+    "devDependencies": {
+        "flow-bin": "*",
+        "source-map-support": "*"
+    },
     "files": [
         "configurator.js",
         "taskRunner.js",
@@ -58,9 +63,9 @@
         "test.jade"
     ],
     "scripts": {
-        "build": "arguments='--presets es2015 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments jadeLoader.compiled.js jadeLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
+        "build": "arguments='--plugins transform-flow-strip-types --presets es2015 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments jadeLoader.compiled.js jadeLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
         "clear": "rm *.compiled.* &>/dev/null || true",
-        "lint": "npm run clear &>/dev/null; eslint '*.js' || true",
+        "lint": "flow && eslint --ignore-pattern '*.compiled.js' '*.js' || true",
         "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js jadeLoader.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build"
     },
@@ -170,7 +175,8 @@
                     "scss": {},
                     "modernJavaScript": {
                         "cacheDirectory": true,
-                        "presets": ["es2015", "stage-0"]
+                        "presets": ["es2015", "stage-0"],
+                        "plugins": ["transform-flow-strip-types"]
                     }
                 },
                 "html": {
@@ -443,6 +449,7 @@
             "ecmaFeatures": {}
         },
         "parser": "babel-eslint",
+        "plugins": ["flowtype"],
         "extends": "google",
         "rules": {
             "semi": [2, "never"],
@@ -453,13 +460,24 @@
                 "/usr/bin/env node"
             ]}}],
             "new-cap": 0,
+            "no-constant-condition": 0,
             "require-jsdoc": ["error", {"require": {
                 "FunctionDeclaration": true,
                 "MethodDefinition": true,
                 "ClassDeclaration": true
             }}],
-            "no-constant-condition": 0
+            "valid-jsdoc": ["error", {"prefer": {
+                "return": "return"
+            }}],
+            "flowtype/require-parameter-type": 2,
+            "flowtype/require-return-type": [2, "always", {
+                "annotateUndefined": "always"
+            }],
+            "flowtype/space-before-type-colon": [2, "never"],
+            "flowtype/space-after-type-colon": [2, "never"],
+            "flowtype/type-id-match": [2, "^([A-Z][a-z0-9]+)+Type$"]
         },
+        "settings": {"flowtype": {"onlyFilesWithFlowAnnotation": false}},
         "env": {"shared-node-browser": true}
     }
 }
