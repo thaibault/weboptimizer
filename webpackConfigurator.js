@@ -7,7 +7,7 @@ import extend from 'extend'
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
-fileSystem.removeDirectoryRecursivelySync = module.require('rimraf').sync
+import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
@@ -79,8 +79,11 @@ extend(configuration.module.aliases, configuration.module.additionalAliases)
 const moduleLocations = Helper.determineModuleLocations(
     configuration.injects.internal, configuration.knownExtensions,
     configuration.path.context, configuration.path.ignore)
-let injects
-let fallbackModuleDirectoryPaths = []
+let injects:{
+    internal:Array<string>|{[key:string]:string};
+    external:Function|Array<string>
+}
+let fallbackModuleDirectoryPaths:Array<string> = []
 if (configuration.givenCommandLineArguments[2] === 'test') {
     fallbackModuleDirectoryPaths = moduleLocations.directoryPaths
     injects = {internal: moduleLocations.filePaths, external: []}
@@ -177,7 +180,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             })
             compiler.plugin('after-emit', (compilation, callback) => {
                 if (configuration.inPlace.cascadingStyleSheet)
-                    fileSystem.removeDirectoryRecursivelySync(path.join(
+                    removeDirectoryRecursivelySync(path.join(
                         configuration.path.asset.target,
                         configuration.path.asset.cascadingStyleSheet
                     ), {glob: false})
@@ -363,7 +366,7 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
                 )].concat(moduleLocations.directoryPaths),
-                exclude: filePath => Helper.isFilePathInLocation(
+                exclude: (filePath:string) => Helper.isFilePathInLocation(
                     filePath, configuration.path.ignore)
             }, {
                 test: /\.coffee$/,
@@ -467,7 +470,7 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.data),
-                exclude: filePath => configuration.knownExtensions.indexOf(
+                exclude: (filePath:string) => configuration.knownExtensions.indexOf(
                     path.extname(filePath)
                 ) !== -1
             }

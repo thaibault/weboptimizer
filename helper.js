@@ -315,7 +315,7 @@ export default class Helper {
     static determineModuleLocations(
         internals, knownExtensions = ['.js'], context = './',
         pathsToIgnore = ['.git']
-    ) {
+    ):{[key:string]:Array<string>} {
         // Determines all script modules to use as internal injects.
         const filePaths = []
         const directoryPaths = []
@@ -326,10 +326,10 @@ export default class Helper {
             internals = newInternals
         }
         for (let module of internals) {
+            let filePath = path.resolve(`${module}${knownExtensions[0]}`)
             let stat
-            let filePath
             for (let extension of knownExtensions) {
-                filePath = path.resolve(module + extension)
+                filePath = path.resolve(`${module}${extension}`)
                 try {
                     stat = fileSystem.statSync(filePath)
                     break

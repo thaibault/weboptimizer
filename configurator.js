@@ -15,7 +15,7 @@ import Helper from './helper.compiled'
 // NOTE: "{configuration as currentConfiguration}" would result in a read only
 // variable.
 import {configuration} from './package'
-let currentConfiguration = configuration
+let currentConfiguration:Object = configuration
 currentConfiguration.default.path.context = path.resolve(__dirname, '../../')
 if (
     path.basename(path.dirname(process.cwd())) === 'node_modules' ||
