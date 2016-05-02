@@ -228,10 +228,10 @@ export default class Helper {
             get: (target, name) => {
                 if (name === '__target__')
                     return target
-                if (target[containesMethodName](name))
-                    return target.get(name)
                 if (typeof target[name] === 'function')
                     return target[name].bind(target)
+                if (target[containesMethodName](name))
+                    return target.get(name)
                 return target[name]
             },
             set: (target, name, value) => target[setterMethodName](name, value)
@@ -400,33 +400,46 @@ export default class Helper {
                 return true
         return false
     }
-    static resolve(object, configuration = null, initial = true) {
+    static resolve(object, configuration = null, direct = false) {
         // Processes all dynamically linked values in given object.
         if (!configuration)
             configuration = object
-        if (initial) {
-            const attachProxy = object => {
-                for (const [key, value] of object)
-                    if (value instanceof global.Map)
-                        attachProxy(value)
-                return new global.Proxy(object, {get: (target, name) =>
-                    Helper.resolve(target[name], configuration, false)
-                })
+        if (!configuration.__initialized__) {
+            configuration.__initialized__ = true
+            const addProxy = object => {
+                if (global.Array.isArray(object)) {
+                    let index = 0
+                    for (const value of object) {
+                        object[index] = addProxy(value)
+                        index += 1
+                    }
+                } else if (object instanceof global.Map) {
+                    for (const [key, value] of object)
+                        object[key] = addProxy(value)
+                    return new global.Proxy(object, {get: (target, name) => {
+                        if (name === '__target__')
+                            return target
+                        if (typeof target[name] === 'function')
+                            return target[name].bind(target)
+                        if (target.has(name)) {
+                            target.set(name, Helper.resolve(target.get(
+                                name
+                            ), configuration, true))
+                            return target.get(name)
+                        }
+                        return target[name]
+                    }})
+                }
+                return object
             }
-            attachProxy(configuration)
+            addProxy(configuration)
         }
-        if (global.Array.isArray(object)) {
-            let index = 0
-            for (const value of object) {
-                object[index] = Helper.resolve(value, configuration, false)
-                index += 1
-            }
-        } else if (object instanceof global.Map)
+        if (object instanceof global.Map)
             for (const [key, value] of object) {
                 if (key === '__execute__')
                     return Helper.resolve(new global.Function(
                         'global', 'self', 'resolve', 'webOptimizerPath',
-                        'currentPath', 'path', `return ${object[key]}`
+                        'currentPath', 'path', `return ${value}`
                     )(
                         global, configuration, (
                             propertyName, subConfiguration = configuration,
@@ -434,9 +447,17 @@ export default class Helper {
                         ) => Helper.resolve(
                             propertyName, subConfiguration, subInitial
                         ), __dirname, global.process.cwd(), path
-                    ), configuration, false)
-                object[key] = Helper.resolve(value, configuration, false)
+                    ), configuration)
+                else if (!direct)
+                    object[key] = Helper.resolve(value, configuration)
             }
+        else if (!direct && global.Array.isArray(object)) {
+            let index = 0
+            for (const value of object) {
+                object[index] = Helper.resolve(value, configuration)
+                index += 1
+            }
+        }
         return object
     }
     static determineModuleLocations(
