@@ -51,11 +51,8 @@ if (global.process.argv.length > 2) {
         }
         count += 1
     }
-    const temporaryFileDescriptor = fileSystem.openSync(filePath, 'w')
-    fileSystem.writeSync(temporaryFileDescriptor, global.JSON.stringify(
-        dynamicConfiguration
-    ), 0, 'utf-8')
-    fileSystem.closeSync(temporaryFileDescriptor)
+    fileSystem.writeFileSync(filePath, global.JSON.stringify(
+        dynamicConfiguration))
     // / region register exit handler to tidy up
     const exitHandler = function(error) {
         try {
@@ -83,9 +80,9 @@ if (global.process.argv.length > 2) {
                     filePath, configuration.path.ignore
                 ))
                     return false
-                for (let type in configuration.build)
+                for (const [type, buildConfiguration] of configuration.build)
                     if (new global.RegExp(
-                        configuration.build[type].fileNamePattern
+                        buildConfiguration.fileNamePattern
                     ).test(filePath)) {
                         if (stat.isDirectory()) {
                             removeDirectoryRecursivelySync(filePath, {
@@ -117,15 +114,15 @@ if (global.process.argv.length > 2) {
                 if (!error) {
                     // Determines all none javaScript entities which have been
                     // emitted as single javaScript module to remove.
-                    let modulesToEmit = Helper.resolveInjects(
+                    const modulesToEmit = Helper.resolveInjects(
                         configuration.injects, buildConfigurations,
                         configuration.test.injects.internal,
                         configuration.knownExtensions,
                         configuration.path.context, configuration.path.ignore
                     ).internal
-                    global.Object.keys(modulesToEmit).forEach(moduleID => {
+                    for (const [moduleID, moduleFilePath] of modulesToEmit) {
                         const type = Helper.determineAssetType(
-                            modulesToEmit[moduleID], configuration.build,
+                            moduleFilePath, configuration.build,
                             configuration.path)
                         const filePath =
                             configuration.files.javaScript.replace(
@@ -134,7 +131,7 @@ if (global.process.argv.length > 2) {
                         if (configuration.build[type] && configuration.build[
                             type
                         ].outputExtension !== 'js')
-                            for (let suffix of ['', '.map'])
+                            for (const suffix of ['', '.map'])
                                 fileSystem.access(
                                     filePath + suffix, fileSystem.F_OK,
                                     error => {
@@ -142,8 +139,8 @@ if (global.process.argv.length > 2) {
                                             fileSystem.unlink(
                                                 filePath + suffix)
                                     })
-                    })
-                    for (let filePath of configuration.path.tidyUp)
+                    }
+                    for (const filePath of configuration.path.tidyUp)
                         fileSystem.access(
                             filePath, fileSystem.F_OK, error => {
                                 if (!error)
@@ -175,8 +172,8 @@ if (global.process.argv.length > 2) {
             configuration.test.injects.internal, configuration.knownExtensions,
             configuration.path.context, configuration.path.ignore
         ).filePaths
-        for (let buildConfiguration of buildConfigurations)
-            for (let filePath of buildConfiguration.filePaths)
+        for (const buildConfiguration of buildConfigurations)
+            for (const filePath of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(filePath) === -1)
                     childProcesses.push(run((new global.Function(
                         'global', 'self', 'buildConfiguration', 'path',
@@ -214,7 +211,7 @@ if (childProcesses.length === 0) {
 }
 // / endregion
 // / region trigger child process communication handler
-for (let childProcess of childProcesses)
+for (const childProcess of childProcesses)
     Helper.handleChildProcess(childProcess)
 // / endregion
 // endregion

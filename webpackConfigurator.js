@@ -3,7 +3,6 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import extend from 'extend'
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
@@ -19,6 +18,7 @@ plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Offline = module.require('offline-plugin')
 
+import type {InternalInject, ExternalInject} from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 
@@ -27,7 +27,7 @@ import Helper from './helper.compiled'
 // "webpack-html-plugin" doesn't preserve the original loader interface.
 import htmlLoaderModuleBackup from 'html-loader'
 require.cache[require.resolve('html-loader')].exports = function() {
-    extend(true, this.options, module, this.options)
+    Helper.extendObject(true, this.options, module, this.options)
     return htmlLoaderModuleBackup.apply(this, arguments)
 }
 // Monkey-Patch loader-utils to define which url is a local request.
@@ -47,7 +47,7 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // / region pre processing
 // // region plugins
 configuration.plugins = []
-for (let htmlOptions of configuration.files.html)
+for (const htmlOptions of configuration.files.html)
     try {
         fileSystem.accessSync(htmlOptions.template.substring(
             htmlOptions.template.lastIndexOf('!') + 1), fileSystem.F_OK)
@@ -75,14 +75,12 @@ if ((
         configuration.development.openBrowser))
 // // endregion
 // // region modules/assets
-extend(configuration.module.aliases, configuration.module.additionalAliases)
+Helper.extendObject(
+    configuration.module.aliases, configuration.module.additionalAliases)
 const moduleLocations = Helper.determineModuleLocations(
     configuration.injects.internal, configuration.knownExtensions,
     configuration.path.context, configuration.path.ignore)
-let injects:{
-    internal:Array<string>|{[key:string]:string};
-    external:Function|Array<string>
-}
+let injects:{internal:InternalInject; external:ExternalInject}
 let fallbackModuleDirectoryPaths:Array<string> = []
 if (configuration.givenCommandLineArguments[2] === 'test') {
     fallbackModuleDirectoryPaths = moduleLocations.directoryPaths
@@ -189,13 +187,13 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                         configuration.path.asset.target,
                         configuration.files.javaScript.replace(
                             `?${configuration.hashAlgorithm}=[hash]`, ''))
-                    for (let filePath of [
+                    for (const filePath of [
                         assetFilePath, `${assetFilePath}.map`
                     ])
                         try {
                             fileSystem.unlinkSync(filePath)
                         } catch (error) {}
-                    let javaScriptPath = path.join(
+                    const javaScriptPath = path.join(
                         configuration.path.asset.target,
                         configuration.path.asset.javaScript)
                     if (fileSystem.readdirSync(javaScriptPath).length === 0)
@@ -214,8 +212,8 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         configuration.path.ignore)
     let javaScriptNeeded = false
     if (global.Array.isArray(injects.internal))
-        for (let moduleID of injects.internal) {
-            let type = Helper.determineAssetType(Helper.determineModulePath(
+        for (const moduleID of injects.internal) {
+            const type = Helper.determineAssetType(Helper.determineModulePath(
                 moduleID, configuration.module.aliases,
                 configuration.knownExtensions, configuration.path.context
             ), configuration.build, configuration.path)
@@ -227,17 +225,17 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             }
         }
     else
-        global.Object.keys(injects.internal).forEach(moduleName => {
-            let type = Helper.determineAssetType(
-                Helper.determineModulePath(injects.internal[moduleName]),
+        for (const [moduleName, moduleFilePath] of injects.internal) {
+            const type = Helper.determineAssetType(
+                Helper.determineModulePath(moduleFilePath),
                 configuration.build, configuration.path)
             if (configuration.build[type] && configuration.build[
                 type
             ].outputExtension === 'js') {
                 javaScriptNeeded = true
-                return false
+                break
             }
-        })
+        }
     if (!javaScriptNeeded)
         configuration.files.javaScript = path.join(
             configuration.path.asset.javaScript, '.__dummy__.compiled.js')
@@ -250,7 +248,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             external dependency.
         */
         injects.external = (context, request, callback) => {
-            let filePath = Helper.determineModulePath(
+            const filePath = Helper.determineModulePath(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases, configuration.knownExtensions,
                 context)
@@ -260,7 +258,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                 ))
                     return callback(null, `umd ${request}`)
                 if (global.Array.isArray(injects.internal)) {
-                    for (let internalModule of injects.internal)
+                    for (const internalModule of injects.internal)
                         if (Helper.determineModulePath(
                             internalModule, configuration.module.aliases,
                             configuration.knownExtensions, context
@@ -268,11 +266,10 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                             return callback()
                     return callback(null, `umd ${request}`)
                 }
-                if (Helper.isObject(injects.internal)) {
-                    for (let chunkName in injects.internal)
+                if (injects.internal instanceof global.Map) {
+                    for (const [chunkName, moduleFilePath] of injects.internal)
                         if (Helper.determineModulePath(
-                            injects.internal[chunkName],
-                            configuration.module.aliases,
+                            moduleFilePath, configuration.module.aliases,
                             configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
@@ -341,7 +338,8 @@ export default {
         extensions: configuration.knownExtensions,
         alias: configuration.module.aliases
     },
-    entry: injects.internal, externals: injects.external,
+    entry: Helper.convertMapToPlainObjectRecursivly(injects.internal),
+    externals: Helper.convertMapToPlainObjectRecursivly(injects.external),
     // endregion
     // region output
     output: {

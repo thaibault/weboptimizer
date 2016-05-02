@@ -3,13 +3,14 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import extend from 'extend'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
 } catch (error) {}
+
+import type {InternalInject, ExternalInject} from './type'
 // endregion
 // region methods
 /**
@@ -35,6 +36,78 @@ export default class Helper {
      */
     static isFunction(object:mixed):boolean {
         return !!object && {}.toString.call(object) === '[object Function]'
+    }
+    static extendObject(target) {
+        let index = 1
+        let deep = false
+        if (typeof target === 'boolean') {
+            // Handle a deep copy situation and skip deep indicator and target.
+            deep = target
+            target = arguments[1]
+            index = 2
+        }
+        const mergeValue = (key, value) => {
+            const targetValue = target[key]
+            // Recurse if we're merging plain objects or arrays.
+            if (deep && value && (
+                global.Array.isArray(value) || Helper.isObject(value) ||
+                value instanceof global.Map
+            )) {
+                let clone
+                if (global.Array.isArray(value))
+                    clone = targetValue && global.Array.isArray(
+                        targetValue
+                    ) ? targetValue : []
+                else if (value instanceof global.Map)
+                    clone = targetValue && (
+                        targetValue instanceof global.Map
+                    ) ? Helper.addDynamicGetterAndSetter(
+                        targetValue
+                    ) : Helper.addDynamicGetterAndSetter(
+                        new global.Map())
+                else
+                    clone = targetValue && Helper.isObject(
+                        targetValue
+                    ) ? targetValue : {}
+                // Never move original objects, clone them.
+                return Helper.extendObject(deep, clone, value)
+            }
+            return value
+        }
+        while (index < arguments.length) {
+            const currentObject = arguments[index]
+            let targetType = typeof target
+            let currentObjectType = typeof currentObject
+            if (target instanceof Map)
+                targetType += ' Map'
+            if (currentObject instanceof Map)
+                currentObjectType += ' Map'
+            if (targetType !== currentObjectType)
+                throw Error(
+                    `Can't merge given target type "${targetType}" with ` +
+                    `given source type "${currentObjectType}" (${index}. ` +
+                    `argument).`)
+            // Only deal with non-null/undefined values.
+            if (currentObject != null)
+                if (currentObject instanceof global.Map)
+                    for (const [key, value] of currentObject) {
+                        const newValue = mergeValue(key, value)
+                        // Don't bring in undefined values.
+                        if (typeof newValue !== 'undefined')
+                            target.set(key, newValue)
+                    }
+                else
+                    for (const key in currentObject)
+                        if (currentObject.hasOwnProperty(key)) {
+                            const newValue = mergeValue(
+                                key, currentObject[key])
+                            // Don't bring in undefined values.
+                            if (typeof newValue !== 'undefined')
+                                target[key] = newValue
+                        }
+            index += 1
+        }
+        return target
     }
     /**
      * Forwards given child process api to current process api.
@@ -89,29 +162,83 @@ export default class Helper {
      * determined.
      */
     static determineAssetType(
-        filePath:string, buildConfiguration, paths
+        filePath:string, buildConfigurations, paths
     ):string|null {
         // Determines file type of given file (by path).
         let result = null
-        global.Object.keys(buildConfiguration).forEach(type => {
+        for (const [type, buildConfiguration] of buildConfigurations)
             if (path.extname(
                 filePath
-            ) === `.${buildConfiguration[type].extension}`) {
+            ) === `.${buildConfiguration.extension}`) {
                 result = type
                 return false
             }
-        })
         if (!result)
-            for (let type of ['source', 'target'])
-                for (let assetType in paths.asset)
-                    if (filePath.startsWith(path.join(
-                        paths[type], paths.asset[assetType]
-                    )))
+            for (const type of ['source', 'target'])
+                for (const [assetType, filePath] of paths.asset)
+                    if (filePath.startsWith(path.join(paths[type], filePath)))
                         return assetType
         return result
     }
+    static convertPlainObjectToMapRecursivly(
+        object:Object, debug = false
+    ):Object {
+        if (Helper.isObject(object)) {
+            const newObject = new global.Map()
+            for (const key in object)
+                if (object.hasOwnProperty(key))
+                    newObject.set(
+                        key, Helper.convertPlainObjectToMapRecursivly(
+                            object[key]))
+            return Helper.addDynamicGetterAndSetter(newObject)
+        }
+        if (global.Array.isArray(object)) {
+            let index = 0
+            for (const value of object) {
+                object[index] = Helper.convertPlainObjectToMapRecursivly(value)
+                index += 1
+            }
+        }
+        return object
+    }
+    static convertMapToPlainObjectRecursivly(object:Object):Object {
+        if (object instanceof global.Map) {
+            const newObject = {}
+            for (const [key, value] of object)
+                newObject[key] = Helper.convertMapToPlainObjectRecursivly(
+                    value)
+            return newObject
+        }
+        if (global.Array.isArray(object)) {
+            let index = 0
+            for (const value of object) {
+                object[index] = Helper.convertMapToPlainObjectRecursivly(value)
+                index += 1
+            }
+        }
+        return object
+    }
+    static addDynamicGetterAndSetter(
+        object:Object, containesMethodName = 'has', getterMethodName = 'get',
+        setterMethodName = 'set'
+    ) {
+        if (object.__target__)
+            return object
+        return new global.Proxy(object, {
+            get: (target, name) => {
+                if (name === '__target__')
+                    return target
+                if (target[containesMethodName](name))
+                    return target.get(name)
+                if (typeof target[name] === 'function')
+                    return target[name].bind(target)
+                return target[name]
+            },
+            set: (target, name, value) => target[setterMethodName](name, value)
+        })
+    }
     static resolveBuildConfigurationFilePaths(
-        configuration, entryPath = './', context = './',
+        configurations, entryPath = './', context = './',
         pathsToIgnore = ['.git']
     ) {
         /*
@@ -121,15 +248,16 @@ export default class Helper {
             configuration has all related files saved as property. Result is
             sorted to prefer javaScript modules.
         */
-        let buildConfigurations = []
+        const buildConfigurations = []
         let index = 0
-        global.Object.keys(configuration).forEach(type => {
-            buildConfigurations.push(extend(
-                true, {filePaths: []}, configuration[type]))
+        for (const [type, configuration] of configurations) {
+            buildConfigurations.push(Helper.extendObject(
+                true, Helper.convertPlainObjectToMapRecursivly({filePaths: [
+                ]}), configuration))
             Helper.walkDirectoryRecursivelySync(entryPath, (
                 filePath, stat
             ) => {
-                for (let pathToIgnore of pathsToIgnore)
+                for (const pathToIgnore of pathsToIgnore)
                     if (filePath.startsWith(path.resolve(
                         context, pathToIgnore
                     )))
@@ -146,7 +274,7 @@ export default class Helper {
                     buildConfigurations[index].filePaths.push(filePath)
             })
             index += 1
-        })
+        }
         return buildConfigurations.sort((first, second) => {
             if (first.outputExtension !== second.outputExtension) {
                 if (first.outputExtension === 'js')
@@ -158,29 +286,32 @@ export default class Helper {
         })
     }
     static resolveInjects(
-        givenInjects, buildConfiguration, modulesToExclude, knownExtensions = [
+        givenInjects:{internal:InternalInject;external:ExternalInject},
+        buildConfigurations, modulesToExclude:Array<string>,
+        knownExtensions:Array<string> = [
             '.js', '.css', '.svg', '.html'
-        ], context = './', pathsToIgnore = ['.git']
-    ) {
+        ], context:string = './', pathsToIgnore:Array<string> = ['.git']
+    ):{internal:InternalInject;external:ExternalInject} {
         // Determines all injects for current build.
-        let injects = extend(true, {}, givenInjects)
+        const injects = Helper.extendObject(
+            true, Helper.convertPlainObjectToMapRecursivly({}), givenInjects)
         const moduleFilePathsToExclude = Helper.determineModuleLocations(
             modulesToExclude, knownExtensions, context, pathsToIgnore
         ).filePaths
-        for (let type of ['internal', 'external'])
+        for (const type of ['internal', 'external'])
             if (givenInjects[type] === '__auto__') {
-                injects[type] = {}
-                let injectedBaseNames = {}
-                for (let buildConfiguration of buildConfiguration) {
+                injects[type] = Helper.convertPlainObjectToMapRecursivly({})
+                const injectedBaseNames = {}
+                for (const buildConfiguration of buildConfigurations) {
                     if (!injectedBaseNames[buildConfiguration.outputExtension])
                         injectedBaseNames[
                             buildConfiguration.outputExtension
                         ] = []
-                    for (let moduleFilePath of buildConfiguration.filePaths)
+                    for (const moduleFilePath of buildConfiguration.filePaths)
                         if (moduleFilePathsToExclude.indexOf(
                             moduleFilePath
                         ) === -1) {
-                            let baseName = path.basename(
+                            const baseName = path.basename(
                                 moduleFilePath,
                                 `.${buildConfiguration.extension}`)
                             /*
@@ -215,15 +346,15 @@ export default class Helper {
         return injects
     }
     static determineModulePath(
-        moduleID, moduleAliases = {}, knownExtensions = ['.js'], context = './'
+        moduleID, moduleAliases = Helper.convertPlainObjectToMapRecursivly({}),
+        knownExtensions = ['.js'], context = './'
     ) {
         // Determines a module path for given module id synchronously.
-        global.Object.keys(moduleAliases).forEach(search => {
-            moduleID = moduleID.replace(search, moduleAliases[search])
-        })
-        for (let moduleLocation of ['', 'node_modules', '../'])
+        for (const [search, replacement] of moduleAliases)
+            moduleID = moduleID.replace(search, replacement)
+        for (const moduleLocation of ['', 'node_modules', '../'])
             for (let fileName of [null, '', 'index', 'main'])
-                for (let extension of knownExtensions) {
+                for (const extension of knownExtensions) {
                     let moduleFilePath = moduleID
                     if (!moduleFilePath.startsWith('/'))
                         moduleFilePath = path.join(
@@ -233,15 +364,17 @@ export default class Helper {
                             if (fileSystem.statSync(
                                 moduleFilePath
                             ).isDirectory()) {
-                                let pathToPackageJSON = path.join(
+                                const pathToPackageJSON = path.join(
                                     moduleFilePath, 'package.json')
                                 if (fileSystem.statSync(
                                     pathToPackageJSON
                                 ).isFile()) {
-                                    let localConfiguration = global.JSON.parse(
-                                        fileSystem.readFileSync(
-                                            pathToPackageJSON, {
-                                                encoding: 'utf-8'}))
+                                    const localConfiguration =
+                                    Helper.convertPlainObjectToMapRecursivly(
+                                        global.JSON.parse(
+                                            fileSystem.readFileSync(
+                                                pathToPackageJSON, {
+                                                    encoding: 'utf-8'})))
                                     if (localConfiguration.main)
                                         fileName = localConfiguration.main
                                 }
@@ -262,7 +395,7 @@ export default class Helper {
     static isFilePathInLocation(filePath, locationsToCheck) {
         // Returns "true" if given location is within given locations to
         // include.
-        for (let pathToCheck of locationsToCheck)
+        for (const pathToCheck of locationsToCheck)
             if (path.resolve(filePath).startsWith(path.resolve(pathToCheck)))
                 return true
         return false
@@ -273,29 +406,23 @@ export default class Helper {
             configuration = object
         if (initial) {
             const attachProxy = object => {
-                for (let key in object)
-                    if (Helper.isObject(object[key]))
-                        attachProxy(object[key])
-                // NOTE: Replace this return code with outcomment code and
-                // remove all unneeded "resolve" calls in all potentially given
-                // configurations if node or babel supports proxies.
-                return object
-                /*
+                for (const [key, value] of object)
+                    if (value instanceof global.Map)
+                        attachProxy(value)
                 return new global.Proxy(object, {get: (target, name) =>
                     Helper.resolve(target[name], configuration, false)
                 })
-                */
             }
             attachProxy(configuration)
         }
         if (global.Array.isArray(object)) {
             let index = 0
-            for (let value of object) {
+            for (const value of object) {
                 object[index] = Helper.resolve(value, configuration, false)
                 index += 1
             }
-        } else if (Helper.isObject(object))
-            for (let key in object) {
+        } else if (object instanceof global.Map)
+            for (const [key, value] of object) {
                 if (key === '__execute__')
                     return Helper.resolve(new global.Function(
                         'global', 'self', 'resolve', 'webOptimizerPath',
@@ -308,7 +435,7 @@ export default class Helper {
                             propertyName, subConfiguration, subInitial
                         ), __dirname, global.process.cwd(), path
                     ), configuration, false)
-                object[key] = Helper.resolve(object[key], configuration, false)
+                object[key] = Helper.resolve(value, configuration, false)
             }
         return object
     }
@@ -319,16 +446,16 @@ export default class Helper {
         // Determines all script modules to use as internal injects.
         const filePaths = []
         const directoryPaths = []
-        if (Helper.isObject(internals)) {
-            let newInternals = []
-            global.Object.keys(internals).forEach(key => newInternals.push(
-                internals[key]))
+        if (internals instanceof global.Map) {
+            const newInternals = []
+            for (const [key, internal] of internals)
+                newInternals.push(internal)
             internals = newInternals
         }
-        for (let module of internals) {
+        for (const module of internals) {
             let filePath = path.resolve(`${module}${knownExtensions[0]}`)
             let stat
-            for (let extension of knownExtensions) {
+            for (const extension of knownExtensions) {
                 filePath = path.resolve(`${module}${extension}`)
                 try {
                     stat = fileSystem.statSync(filePath)
@@ -341,7 +468,7 @@ export default class Helper {
             if (stat.isDirectory()) {
                 pathToAdd = `${path.resolve(module)}/`
                 Helper.walkDirectoryRecursivelySync(module, subFilePath => {
-                    for (let pathToIgnore of pathsToIgnore)
+                    for (const pathToIgnore of pathsToIgnore)
                         if (subFilePath.startsWith(path.resolve(
                             context, pathToIgnore
                         )))
@@ -355,7 +482,8 @@ export default class Helper {
             if (directoryPaths.indexOf(pathToAdd) === -1)
                 directoryPaths.push(pathToAdd)
         }
-        return {filePaths, directoryPaths}
+        return Helper.convertPlainObjectToMapRecursivly({
+            filePaths, directoryPaths})
     }
 }
 // endregion

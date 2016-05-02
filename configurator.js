@@ -3,7 +3,6 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import extend from 'extend'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -15,7 +14,8 @@ import Helper from './helper.compiled'
 // NOTE: "{configuration as currentConfiguration}" would result in a read only
 // variable.
 import {configuration} from './package'
-let currentConfiguration:Object = configuration
+let currentConfiguration:Map = Helper.addDynamicGetterAndSetter(
+    Helper.convertPlainObjectToMapRecursivly(configuration))
 currentConfiguration.default.path.context = path.resolve(__dirname, '../../')
 if (
     path.basename(path.dirname(process.cwd())) === 'node_modules' ||
@@ -23,11 +23,12 @@ if (
     path.basename(path.dirname(path.dirname(process.cwd()))) === 'node_modules'
 )
     currentConfiguration.default.path.context = process.cwd()
-let specificConfiguration = module.require(path.join(
-    currentConfiguration.default.path.context, 'package'
-))
+let specificConfiguration = Helper.addDynamicGetterAndSetter(
+    Helper.convertPlainObjectToMapRecursivly(module.require(path.join(
+        currentConfiguration.default.path.context, 'package'))))
 const name = specificConfiguration.name
-specificConfiguration = specificConfiguration.webOptimizer || {}
+specificConfiguration = specificConfiguration.webOptimizer ||
+    Helper.convertPlainObjectToMapRecursivly({})
 specificConfiguration.name = name
 // endregion
 // region loading default configuration
@@ -45,7 +46,7 @@ currentConfiguration.default.path.context += '/'
 // environment.
 const libraryConfiguration = currentConfiguration.library
 if (debug)
-    currentConfiguration = extend(
+    currentConfiguration = Helper.extendObject(
         true, currentConfiguration.default, currentConfiguration.debug)
 else
     currentConfiguration = currentConfiguration.default
@@ -54,19 +55,19 @@ if (
     specificConfiguration.library === undefined &&
     currentConfiguration.library
 )
-    currentConfiguration = extend(
+    currentConfiguration = Helper.extendObject(
         true, currentConfiguration, libraryConfiguration)
 // endregion
 // region merging and evaluating default, test, dynamic and specific configs
 // Merges project specific configurations with default ones.
-currentConfiguration = extend(
+currentConfiguration = Helper.extendObject(
     true, currentConfiguration, specificConfiguration)
 currentConfiguration.debug = debug
 // region load additional dynamically given configuration
 let count = 0
 let filePath = null
 while (true) {
-    let newFilePath = currentConfiguration.path.context +
+    const newFilePath = currentConfiguration.path.context +
         `.dynamicConfiguration-${count}.json`
     try {
         fileSystem.accessSync(newFilePath, fileSystem.F_OK)
@@ -77,16 +78,18 @@ while (true) {
     count += 1
 }
 if (filePath) {
-    const runtimeInformation = global.JSON.parse(
-        fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
+    const runtimeInformation = Helper.convertPlainObjectToMapRecursivly(
+        global.JSON.parse(fileSystem.readFileSync(filePath, {
+            encoding: 'utf-8'})))
     // region apply test configuration
     if (
         runtimeInformation.givenCommandLineArguments.length > 2 &&
         runtimeInformation.givenCommandLineArguments[2] === 'test'
     )
-        extend(true, currentConfiguration, currentConfiguration.test)
+        Helper.extendObject(
+            true, currentConfiguration, currentConfiguration.test)
     // endregion
-    extend(true, currentConfiguration, runtimeInformation)
+    Helper.extendObject(true, currentConfiguration, runtimeInformation)
     let result = null
     try {
         result = (new global.Function(
@@ -102,19 +105,20 @@ if (filePath) {
             result
         ) === '[object Object]'
     )
-        extend(true, currentConfiguration, result)
+        Helper.extendObject(true, currentConfiguration, result)
 }
 // endregion
 // / region build absolute paths
-for (let pathConfiguration of [
+for (const pathConfiguration of [
     currentConfiguration.path, currentConfiguration.path.asset
 ])
-    for (let key of ['source', 'target'])
-        if (pathConfiguration[key])
+    for (const key of ['source', 'target'])
+        if (pathConfiguration[key]) {
             pathConfiguration[key] = path.resolve(
                 currentConfiguration.path.context, Helper.resolve(
                     pathConfiguration[key], currentConfiguration)
             ) + '/'
+        }
 // / endregion
 currentConfiguration = Helper.resolve(currentConfiguration)
 // endregion
@@ -123,12 +127,13 @@ currentConfiguration = Helper.resolve(currentConfiguration)
 // ones.
 const defaultConfiguration = currentConfiguration.build.default
 delete currentConfiguration.build.default
-global.Object.keys(currentConfiguration.build).forEach(type => {
-    currentConfiguration.build[type] = extend(true, {
-    }, defaultConfiguration, extend(true, {
-        extension: type
-    }, currentConfiguration.build[type], {type}))
-})
+for (const [type, buildConfiguration] of currentConfiguration.build)
+    currentConfiguration.build[type] = Helper.extendObject(
+        true, Helper.convertPlainObjectToMapRecursivly({}),
+        defaultConfiguration, Helper.extendObject(
+            true, Helper.convertPlainObjectToMapRecursivly({extension: type}),
+            buildConfiguration, Helper.convertPlainObjectToMapRecursivly({
+                type})))
 // endregion
 // region apply webpack html plugin workaround
 /*
@@ -136,11 +141,11 @@ global.Object.keys(currentConfiguration.build).forEach(type => {
     configurations.
 */
 let index = 0
-for (let html of currentConfiguration.files.html) {
+for (const html of currentConfiguration.files.html) {
     if (
         html.template.indexOf('!') !== -1 && typeof html.template !== 'object'
     ) {
-        let templateRequestBackup = html.template
+        const templateRequestBackup = html.template
         currentConfiguration.files.html[index].template = new global.String(
             html.template)
         currentConfiguration.files.html[index].template.replace = (
