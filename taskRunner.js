@@ -3,10 +3,10 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import {exec as run} from 'child_process'
+import {exec as run, ChildProcess} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
-fileSystem.removeDirectoryRecursivelySync = module.require('rimraf').sync
+import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
@@ -17,7 +17,7 @@ import Helper from './helper.compiled'
 // endregion
 // region controller
 const childProcessOptions = {cwd: configuration.path.context}
-let childProcess = null
+const childProcesses:Array<ChildProcess> = []
 if (global.process.argv.length > 2) {
     // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
@@ -39,7 +39,8 @@ if (global.process.argv.length > 2) {
                 global.process.argv.pop()
         } catch (error) {}
     let count = 0
-    let filePath
+    let filePath = `${configuration.path.context}.dynamicConfiguration-` +
+        `${count}.json`
     while (true) {
         filePath = configuration.path.context +
             `.dynamicConfiguration-${count}.json`
@@ -52,7 +53,8 @@ if (global.process.argv.length > 2) {
     }
     const temporaryFileDescriptor = fileSystem.openSync(filePath, 'w')
     fileSystem.writeSync(temporaryFileDescriptor, global.JSON.stringify(
-        dynamicConfiguration))
+        dynamicConfiguration
+    ), 0, 'utf-8')
     fileSystem.closeSync(temporaryFileDescriptor)
     // / region register exit handler to tidy up
     const exitHandler = function(error) {
@@ -86,16 +88,16 @@ if (global.process.argv.length > 2) {
                         configuration.build[type].fileNamePattern
                     ).test(filePath)) {
                         if (stat.isDirectory()) {
-                            fileSystem.removeDirectoryRecursivelySync(
-                                filePath, {glob: false})
+                            removeDirectoryRecursivelySync(filePath, {
+                                glob: false})
                             return false
                         }
                         fileSystem.unlink(filePath)
                     }
             })
         else
-            fileSystem.removeDirectoryRecursivelySync(
-                configuration.path.target, {glob: false})
+            removeDirectoryRecursivelySync(configuration.path.target, {
+                glob: false})
         process.exit()
     }
     // endregion
@@ -109,7 +111,7 @@ if (global.process.argv.length > 2) {
     if (global.process.argv[2] === 'build')
         // Triggers complete asset compiling and bundles them into the final
         // productive output.
-        childProcess = run(
+        childProcesses.push(run(
             `${configuration.commandLine.build} ${additionalArguments}`,
             childProcessOptions, error => {
                 if (!error) {
@@ -148,27 +150,26 @@ if (global.process.argv.length > 2) {
                                     fileSystem.unlink(filePath)
                             })
                 }
-            })
+            }))
     // endregion
     // region handle lint
     else if (global.process.argv[2] === 'lint')
         // Lints files with respect to given linting configuration.
-        childProcess = run(
+        childProcesses.push(run(
             `${configuration.commandLine.lint} ${additionalArguments}`,
-            childProcessOptions)
+            childProcessOptions))
     // endregion
     // region handle test
     else if (global.process.argv[2] === 'test')
         // Runs all specified tests (typically in a real browser environment).
-        childProcess = run(
+        childProcesses.push(run(
             `${configuration.commandLine.test} ${additionalArguments}`,
-            childProcessOptions)
+            childProcessOptions))
     // endregion
     // region handle preinstall
     else if (
         configuration.library && global.process.argv[2] === 'preinstall'
     ) {
-        childProcess = []
         // Perform all file specific preprocessing stuff.
         const testModuleFilePaths = Helper.determineModuleLocations(
             configuration.test.injects.internal, configuration.knownExtensions,
@@ -177,7 +178,7 @@ if (global.process.argv.length > 2) {
         for (let buildConfiguration of buildConfigurations)
             for (let filePath of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(filePath) === -1)
-                    childProcess.push(run((new global.Function(
+                    childProcesses.push(run((new global.Function(
                         'global', 'self', 'buildConfiguration', 'path',
                         'additionalArguments', 'filePath', 'return ' +
                         `\`${buildConfiguration[global.process.argv[2]]}\``
@@ -190,13 +191,13 @@ if (global.process.argv.length > 2) {
     } else if (global.process.argv[2] === 'serve')
         // Provide a development environment where all assets are dynamically
         // bundled and updated on changes.
-        childProcess = run(
+        childProcesses.push(run(
             `${configuration.commandLine.serve} ${additionalArguments}`,
-            childProcessOptions)
+            childProcessOptions))
     // endregion
 }
 // / region handle child process interface
-if (childProcess === null) {
+if (childProcesses.length === 0) {
     // If no sub process could be started a message with all available
     // arguments is printed.
     if (configuration.library)
@@ -213,10 +214,7 @@ if (childProcess === null) {
 }
 // / endregion
 // / region trigger child process communication handler
-if (global.Array.isArray(childProcess))
-    for (let subChildProcess of childProcess)
-        Helper.handleChildProcess(subChildProcess)
-else
+for (let childProcess of childProcesses)
     Helper.handleChildProcess(childProcess)
 // / endregion
 // endregion
