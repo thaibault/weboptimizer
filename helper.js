@@ -209,7 +209,12 @@ export default class Helper {
                     value)
             return newObject
         }
-        if (global.Array.isArray(object)) {
+        if (Helper.isObject(object)) {
+            for (const key in object)
+                if (object.hasOwnProperty(key))
+                    object[key] = Helper.convertMapToPlainObjectRecursivly(
+                        object[key])
+        } else if (global.Array.isArray(object)) {
             let index = 0
             for (const value of object) {
                 object[index] = Helper.convertMapToPlainObjectRecursivly(value)

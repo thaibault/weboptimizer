@@ -51,7 +51,8 @@ for (const htmlOptions of configuration.files.html)
     try {
         fileSystem.accessSync(htmlOptions.template.substring(
             htmlOptions.template.lastIndexOf('!') + 1), fileSystem.F_OK)
-        configuration.plugins.push(new plugins.HTML(htmlOptions))
+        configuration.plugins.push(new plugins.HTML(
+            Helper.convertMapToPlainObjectRecursivly(htmlOptions)))
     } catch (error) {}
 // provide an offline manifest
 if (configuration.offline) {
@@ -65,14 +66,16 @@ if (configuration.offline) {
         configuration.offline.excludes.push(
             `${configuration.path.asset.javaScript}*.js?` +
             `${configuration.hashAlgorithm}=*`)
-    configuration.plugins.push(new plugins.Offline(configuration.offline))
+    configuration.plugins.push(new plugins.Offline(
+        Helper.convertMapToPlainObjectRecursivly(configuration.offline)))
 }
 if ((
     !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'test'
 ) && configuration.development.openBrowser)
     configuration.plugins.push(new plugins.openBrowser(
-        configuration.development.openBrowser))
+        Helper.convertMapToPlainObjectRecursivly(
+            configuration.development.openBrowser)))
 // // endregion
 // // region modules/assets
 Helper.extendObject(
@@ -87,13 +90,15 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     injects = {internal: moduleLocations.filePaths, external: []}
 } else {
     configuration.plugins.push(new plugins.ExtractText(
-        configuration.files.cascadingStyleSheet, {
-            allChunks: true,
-            disable: !configuration.files.cascadingStyleSheet}))
+        Helper.convertMapToPlainObjectRecursivly(
+            configuration.files.cascadingStyleSheet
+        ), {allChunks: true, disable: !configuration.files.cascadingStyleSheet}
+    ))
     // Optimizes webpack output
     if (configuration.module.optimizer.uglifyJS)
         configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
-            configuration.module.optimizer.uglifyJS))
+            Helper.convertMapToPlainObjectRecursivly(
+                configuration.module.optimizer.uglifyJS)))
     // // region in-place configured assets in the main html file
     if (!process.argv[1].endsWith('/webpack-dev-server'))
         configuration.plugins.push({apply: compiler => {
@@ -290,42 +295,55 @@ if (configuration.module.optimizer.image.content)
 const loader = {
     preprocessor: {
         less: 'less?' + global.JSON.stringify(
-            configuration.module.preprocessor.less),
+            Helper.convertMapToPlainObjectRecursivly(
+                configuration.module.preprocessor.less)),
         sass: 'sass?' + global.JSON.stringify(
-            configuration.module.preprocessor.sass),
+            Helper.convertMapToPlainObjectRecursivly(
+                configuration.module.preprocessor.sass)),
         scss: 'sass?' + global.JSON.stringify(
-            configuration.module.preprocessor.scss),
+            Helper.convertMapToPlainObjectRecursivly(
+                configuration.module.preprocessor.scss)),
         babel: 'babel?' + global.JSON.stringify(
-            configuration.module.preprocessor.modernJavaScript),
+            Helper.convertMapToPlainObjectRecursivly(
+                configuration.module.preprocessor.modernJavaScript)),
         coffee: 'coffee',
         jade: 'jade?' + global.JSON.stringify(
-            configuration.module.preprocessor.jade),
+            Helper.convertMapToPlainObjectRecursivly(
+                configuration.module.preprocessor.jade)),
         literateCoffee: 'coffee?literate'
     },
-    html: `html?${global.JSON.stringify(configuration.module.html)}`,
+    html: 'html?' + global.JSON.stringify(
+        Helper.convertMapToPlainObjectRecursivly(configuration.module.html)),
     cascadingStyleSheet: 'css?' + global.JSON.stringify(
-        configuration.module.cascadingStyleSheet),
-    style: `style?${global.JSON.stringify(configuration.module.style)}`,
+        Helper.convertMapToPlainObjectRecursivly(
+            configuration.module.cascadingStyleSheet)),
+    style: 'style?' + global.JSON.stringify(
+        Helper.convertMapToPlainObjectRecursivly(configuration.module.style)),
     postprocessor: {
         image: imageLoader,
         font: {
             eot: 'url?' + global.JSON.stringify(
-                configuration.module.optimizer.font.eot),
+                Helper.convertMapToPlainObjectRecursivly(
+                    configuration.module.optimizer.font.eot)),
             woff: 'url?' + global.JSON.stringify(
-                configuration.module.optimizer.font.woff),
+                Helper.convertMapToPlainObjectRecursivly(
+                    configuration.module.optimizer.font.woff)),
             ttf: 'url?' + global.JSON.stringify(
-                configuration.module.optimizer.font.ttf),
+                Helper.convertMapToPlainObjectRecursivly(
+                    configuration.module.optimizer.font.ttf)),
             svg: 'url?' + global.JSON.stringify(
-                configuration.module.optimizer.font.svg)
+                Helper.convertMapToPlainObjectRecursivly(
+                    configuration.module.optimizer.font.svg))
         },
         data: 'url?' + global.JSON.stringify(
-            configuration.module.optimizer.data)
+            Helper.convertMapToPlainObjectRecursivly(
+                configuration.module.optimizer.data))
     }
 }
 // / endregion
 // endregion
 // region configuration
-export default {
+export default Helper.convertMapToPlainObjectRecursivly({
     context: configuration.path.context,
     debug: configuration.debug,
     devtool: configuration.development.tool,
@@ -338,8 +356,7 @@ export default {
         extensions: configuration.knownExtensions,
         alias: configuration.module.aliases
     },
-    entry: Helper.convertMapToPlainObjectRecursivly(injects.internal),
-    externals: Helper.convertMapToPlainObjectRecursivly(injects.external),
+    entry: injects.internal, externals: injects.external,
     // endregion
     // region output
     output: {
@@ -480,7 +497,7 @@ export default {
     // configuration.
     html: configuration.module.optimizer.htmlMinifier,
     jade: configuration.module.preprocessor.jade
-}
+})
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
