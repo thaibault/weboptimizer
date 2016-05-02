@@ -171,7 +171,7 @@ export default class Helper {
                 filePath
             ) === `.${buildConfiguration.extension}`) {
                 result = type
-                return false
+                break
             }
         if (!result)
             for (const type of ['source', 'target'])
