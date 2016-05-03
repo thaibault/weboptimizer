@@ -13,40 +13,55 @@ try {
 
 import Helper from './helper.compiled'
 // endregion
-module.exports = function(source:string) {
+// region declarations
+declare function TemplateFunction(locals:Object):string
+declare function CompileFunction(
+    template:string, options:Object
+):TemplateFunction
+declare function EvaluationFunction(
+    request:string, template:string, source:string, compile:CompileFunction,
+    locals:Object
+):Object
+// endregion
+module.exports = function(source:string):string {
     if (this.cacheable)
         this.cacheable()
-    const query = Helper.extendObject(true, {
+    const query:Object = Helper.extendObject(true, {
         moduleAliases: [], knownExtensions: ['.jade', '.html', '.js', '.css'],
         context: './'
     }, this.options.jade || {}, loaderUtils.parseQuery(this.query))
-    const compile = (template, options = query.compiler) => (locals = {}) => {
+    const compile:CompileFunction = (
+        template:string, options:Object = query.compiler
+    ):TemplateFunction => (locals:Object = {}):string => {
         options = Helper.extendObject(true, {
             filename: template, doctype: 'html',
             compileDebug: this.debug || false
         }, options)
-        let templateFunction
+        let templateFunction:TemplateFunction
         if (options.isString) {
             delete options.isString
             templateFunction = jade.compile(template, options)
         } else
             templateFunction = jade.compileFile(template, options)
         return templateFunction(Helper.extendObject(true, {
-            require: request => {
-                const template = request.replace(/^(.+)\?[^?]+$/, '$1')
-                const queryMatch = request.match(/^.+\?([^?]+)$/, '$1')
-                let nestedLocals = {}
-                if (queryMatch)
-                    nestedLocals = (new Function(
+            require: (request:string):string => {
+                const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
+                const queryMatch:?Array<string> = request.match(
+                    /^.+\?([^?]+)$/, '$1')
+                let nestedLocals:Object = {}
+                if (queryMatch) {
+                    const evaluationFunction:EvaluationFunction = new Function(
                         'request', 'template', 'source', 'compile', 'locals',
-                        `return ${queryMatch[1]}`
-                    ))(request, template, source, compile, locals)
-                const options = Helper.extendObject(true, {
+                        `return ${queryMatch[1]}`)
+                    nestedLocals = evaluationFunction(
+                        request, template, source, compile, locals)
+                }
+                const options:Object = Helper.extendObject(true, {
                     encoding: 'utf-8'
                 }, nestedLocals.options || {})
                 if (options.isString)
                     return template
-                const templateFilePath = Helper.determineModulePath(
+                const templateFilePath:string = Helper.determineModulePath(
                     template, Helper.convertPlainObjectToMapRecursivly(
                         query.moduleAliases
                     ), query.knownExtensions, query.context)

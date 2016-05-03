@@ -19,6 +19,7 @@
         "babel-polyfill": "*",
         "babel-plugin-transform-flow-strip-types": "*",
         "babel-preset-es2015": "*",
+        "babel-preset-es2015-node": "*",
         "babel-preset-stage-0": "*",
         "coffee-loader": "*",
         "coffee-script": "*",
@@ -64,7 +65,7 @@
         "test.jade"
     ],
     "scripts": {
-        "build": "arguments='--plugins transform-flow-strip-types --presets es2015,stage-0 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments jadeLoader.compiled.js jadeLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
+        "build": "arguments='--plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments jadeLoader.compiled.js jadeLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
         "clear": "rm *.compiled.* &>/dev/null || true",
         "lint": "flow && eslint --ignore-pattern '*.compiled.js' '*.js' || true",
         "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js jadeLoader.compiled.js webpackConfigurator.compiled.js",
@@ -495,7 +496,7 @@
             }],
             "flowtype/space-before-type-colon": ["error", "never"],
             "flowtype/space-after-type-colon": ["error", "never"],
-            "flowtype/type-id-match": ["error", "^([A-Z][a-z0-9]+)+Type$"]
+            "flowtype/type-id-match": ["error", "^([A-Z][a-z0-9]+)+$"]
         },
         "settings": {"flowtype": {"onlyFilesWithFlowAnnotation": false}},
         "env": {"shared-node-browser": true}

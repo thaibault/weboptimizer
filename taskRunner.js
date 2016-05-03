@@ -16,7 +16,7 @@ import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 // endregion
 // region declaration
-declare function evaluationFunctionType(
+declare function EvaluationFunction(
     global:Object, self:{[key:string]:any},
     buildConfiguration:{[key:string]:any}, path:typeof path,
     additionalArguments:Array<string>, filePath:string
@@ -173,7 +173,7 @@ if (process.argv.length > 2) {
         for (const buildConfiguration of buildConfigurations)
             for (const filePath of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(filePath) === -1) {
-                    const evaluationFunction:evaluationFunctionType =
+                    const evaluationFunction:EvaluationFunction =
                         new Function(
                             'global', 'self', 'buildConfiguration', 'path',
                             'additionalArguments', 'filePath', 'return ' +

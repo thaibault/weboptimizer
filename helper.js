@@ -18,7 +18,7 @@ import type {InternalInject, ExternalInject} from './type'
 declare class Proxy {
     constructor(object:any, handler:Object):any
 }
-declare function evaluationFunctionType(
+declare function EvaluationFunction(
     global:Object, self:{[key:string]:any},
     resolve:(object:any, configuration:any, direct:boolean) => any,
     webOptimizerPath:string, currentPath:string, path:typeof path
@@ -106,7 +106,7 @@ export default class Helper {
                     `given source type "${currentObjectType}" (${index}. ` +
                     `argument).`)
             // Only deal with non-null/undefined values.
-            if (currentObject != null)
+            if (!(currentObject === null || currentObject === undefined))
                 if (currentObject instanceof Map)
                     for (const [key, value] of currentObject) {
                         const newValue = mergeValue(key, value)
@@ -464,7 +464,7 @@ export default class Helper {
         if (object instanceof Map)
             for (const [key, value] of object) {
                 if (key === '__execute__') {
-                    const evaluationFunction:evaluationFunctionType =
+                    const evaluationFunction:EvaluationFunction =
                     new Function(
                         'global', 'self', 'resolve', 'webOptimizerPath',
                         'currentPath', 'path', `return ${value}`)
