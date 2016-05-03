@@ -33,7 +33,7 @@ module.exports = function(source:string) {
             templateFunction = jade.compileFile(template, options)
         return templateFunction(Helper.extendObject(true, {
             require: request => {
-                let template = request.replace(/^(.+)\?[^?]+$/, '$1')
+                const template = request.replace(/^(.+)\?[^?]+$/, '$1')
                 const queryMatch = request.match(/^.+\?([^?]+)$/, '$1')
                 let nestedLocals = {}
                 if (queryMatch)
@@ -46,13 +46,14 @@ module.exports = function(source:string) {
                 }, nestedLocals.options || {})
                 if (options.isString)
                     return template
-                template = Helper.determineModulePath(
-                    template, query.moduleAliases, query.knownExtensions,
-                    query.context)
-                this.addDependency(template)
-                if (queryMatch || template.endsWith('.less'))
-                    return compile(template, options)(nestedLocals)
-                return fileSystem.readFileSync(template, options)
+                const templateFilePath = Helper.determineModulePath(
+                    template, Helper.convertPlainObjectToMapRecursivly(
+                        query.moduleAliases
+                    ), query.knownExtensions, query.context)
+                this.addDependency(templateFilePath)
+                if (queryMatch || templateFilePath.endsWith('.less'))
+                    return compile(templateFilePath, options)(nestedLocals)
+                return fileSystem.readFileSync(templateFilePath, options)
             }}, locals))
     }
     return compile(source, Helper.extendObject(true, {
