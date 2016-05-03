@@ -216,7 +216,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         configuration.knownExtensions, configuration.path.context,
         configuration.path.ignore)
     let javaScriptNeeded = false
-    if (global.Array.isArray(injects.internal))
+    if (Array.isArray(injects.internal))
         for (const moduleID of injects.internal) {
             const type = Helper.determineAssetType(Helper.determineModulePath(
                 moduleID, configuration.module.aliases,
@@ -262,7 +262,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                     filePath, configuration.path.ignore
                 ))
                     return callback(null, `umd ${request}`)
-                if (global.Array.isArray(injects.internal)) {
+                if (Array.isArray(injects.internal)) {
                     for (const internalModule of injects.internal)
                         if (Helper.determineModulePath(
                             internalModule, configuration.module.aliases,
@@ -271,7 +271,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                             return callback()
                     return callback(null, `umd ${request}`)
                 }
-                if (injects.internal instanceof global.Map) {
+                if (injects.internal instanceof Map) {
                     for (const [chunkName, moduleFilePath] of injects.internal)
                         if (Helper.determineModulePath(
                             moduleFilePath, configuration.module.aliases,
@@ -287,55 +287,55 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
 // // endregion
 // / endregion
 // / region loader
-let imageLoader = 'url?' + global.JSON.stringify(
+let imageLoader = 'url?' + JSON.stringify(
     configuration.module.optimizer.image.file)
 if (configuration.module.optimizer.image.content)
-    imageLoader += '!image?' + global.JSON.stringify(
+    imageLoader += '!image?' + JSON.stringify(
         configuration.module.optimizer.image.content)
 const loader = {
     preprocessor: {
-        less: 'less?' + global.JSON.stringify(
+        less: 'less?' + JSON.stringify(
             Helper.convertMapToPlainObjectRecursivly(
                 configuration.module.preprocessor.less)),
-        sass: 'sass?' + global.JSON.stringify(
+        sass: 'sass?' + JSON.stringify(
             Helper.convertMapToPlainObjectRecursivly(
                 configuration.module.preprocessor.sass)),
-        scss: 'sass?' + global.JSON.stringify(
+        scss: 'sass?' + JSON.stringify(
             Helper.convertMapToPlainObjectRecursivly(
                 configuration.module.preprocessor.scss)),
-        babel: 'babel?' + global.JSON.stringify(
+        babel: 'babel?' + JSON.stringify(
             Helper.convertMapToPlainObjectRecursivly(
                 configuration.module.preprocessor.modernJavaScript)),
         coffee: 'coffee',
-        jade: 'jade?' + global.JSON.stringify(
+        jade: 'jade?' + JSON.stringify(
             Helper.convertMapToPlainObjectRecursivly(
                 configuration.module.preprocessor.jade)),
         literateCoffee: 'coffee?literate'
     },
-    html: 'html?' + global.JSON.stringify(
-        Helper.convertMapToPlainObjectRecursivly(configuration.module.html)),
-    cascadingStyleSheet: 'css?' + global.JSON.stringify(
+    html: 'html?' + JSON.stringify(Helper.convertMapToPlainObjectRecursivly(
+        configuration.module.html)),
+    cascadingStyleSheet: 'css?' + JSON.stringify(
         Helper.convertMapToPlainObjectRecursivly(
             configuration.module.cascadingStyleSheet)),
-    style: 'style?' + global.JSON.stringify(
-        Helper.convertMapToPlainObjectRecursivly(configuration.module.style)),
+    style: 'style?' + JSON.stringify(Helper.convertMapToPlainObjectRecursivly(
+        configuration.module.style)),
     postprocessor: {
         image: imageLoader,
         font: {
-            eot: 'url?' + global.JSON.stringify(
+            eot: 'url?' + JSON.stringify(
                 Helper.convertMapToPlainObjectRecursivly(
                     configuration.module.optimizer.font.eot)),
-            woff: 'url?' + global.JSON.stringify(
+            woff: 'url?' + JSON.stringify(
                 Helper.convertMapToPlainObjectRecursivly(
                     configuration.module.optimizer.font.woff)),
-            ttf: 'url?' + global.JSON.stringify(
+            ttf: 'url?' + JSON.stringify(
                 Helper.convertMapToPlainObjectRecursivly(
                     configuration.module.optimizer.font.ttf)),
-            svg: 'url?' + global.JSON.stringify(
+            svg: 'url?' + JSON.stringify(
                 Helper.convertMapToPlainObjectRecursivly(
                     configuration.module.optimizer.font.svg))
         },
-        data: 'url?' + global.JSON.stringify(
+        data: 'url?' + JSON.stringify(
             Helper.convertMapToPlainObjectRecursivly(
                 configuration.module.optimizer.data))
     }

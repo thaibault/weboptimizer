@@ -37,7 +37,7 @@ module.exports = function(source:string) {
                 const queryMatch = request.match(/^.+\?([^?]+)$/, '$1')
                 let nestedLocals = {}
                 if (queryMatch)
-                    nestedLocals = (new global.Function(
+                    nestedLocals = (new Function(
                         'request', 'template', 'source', 'compile', 'locals',
                         `return ${queryMatch[1]}`
                     ))(request, template, source, compile, locals)

@@ -18,25 +18,23 @@ import Helper from './helper.compiled'
 // region controller
 const childProcessOptions = {cwd: configuration.path.context}
 const childProcesses:Array<ChildProcess> = []
-if (global.process.argv.length > 2) {
+if (process.argv.length > 2) {
     // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
     let dynamicConfiguration = {
-        givenCommandLineArguments: global.process.argv.slice()}
-    if (global.process.argv.length > 3)
+        givenCommandLineArguments: process.argv.slice()}
+    if (process.argv.length > 3)
         try {
-            const result = (new global.Function(
+            const result = (new Function(
                 'configuration',
-                `return ${global.process.argv[global.process.argv.length - 1]}`
+                `return ${process.argv[process.argv.length - 1]}`
             ))(configuration)
             if (
                 result !== null && typeof result === 'object' &&
-                !global.Array.isArray(result) &&
-                global.Object.prototype.toString.call(
-                    result
-                ) === '[object Object]'
+                !Array.isArray(result) &&
+                Object.prototype.toString.call(result) === '[object Object]'
             )
-                global.process.argv.pop()
+                process.argv.pop()
         } catch (error) {}
     let count = 0
     let filePath = `${configuration.path.context}.dynamicConfiguration-` +
@@ -51,8 +49,7 @@ if (global.process.argv.length > 2) {
         }
         count += 1
     }
-    fileSystem.writeFileSync(filePath, global.JSON.stringify(
-        dynamicConfiguration))
+    fileSystem.writeFileSync(filePath, JSON.stringify(dynamicConfiguration))
     // / region register exit handler to tidy up
     const exitHandler = function(error) {
         try {
@@ -60,15 +57,15 @@ if (global.process.argv.length > 2) {
         } catch (error) {}
         if (error)
             throw error
-        global.process.exit()
+        process.exit()
     }
-    global.process.on('exit', exitHandler)
-    global.process.on('SIGINT', exitHandler)
-    global.process.on('uncaughtException', exitHandler)
+    process.on('exit', exitHandler)
+    process.on('SIGINT', exitHandler)
+    process.on('uncaughtException', exitHandler)
     // / endregion
     // endregion
     // region handle clear
-    if (global.process.argv[2] === 'clear') {
+    if (process.argv[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
@@ -81,7 +78,7 @@ if (global.process.argv.length > 2) {
                 ))
                     return false
                 for (const [type, buildConfiguration] of configuration.build)
-                    if (new global.RegExp(
+                    if (new RegExp(
                         buildConfiguration.fileNamePattern
                     ).test(filePath)) {
                         if (stat.isDirectory()) {
@@ -98,14 +95,14 @@ if (global.process.argv.length > 2) {
         process.exit()
     }
     // endregion
-    let additionalArguments = global.process.argv.splice(3).join("' '")
+    let additionalArguments = process.argv.splice(3).join("' '")
     if (additionalArguments)
         additionalArguments = `'${additionalArguments}'`
     // region handle build
     const buildConfigurations = Helper.resolveBuildConfigurationFilePaths(
         configuration.build, configuration.path.asset.source,
         configuration.path.context, configuration.path.ignore)
-    if (global.process.argv[2] === 'build')
+    if (process.argv[2] === 'build')
         // Triggers complete asset compiling and bundles them into the final
         // productive output.
         childProcesses.push(run(
@@ -150,23 +147,21 @@ if (global.process.argv.length > 2) {
             }))
     // endregion
     // region handle lint
-    else if (global.process.argv[2] === 'lint')
+    else if (process.argv[2] === 'lint')
         // Lints files with respect to given linting configuration.
         childProcesses.push(run(
             `${configuration.commandLine.lint} ${additionalArguments}`,
             childProcessOptions))
     // endregion
     // region handle test
-    else if (global.process.argv[2] === 'test')
+    else if (process.argv[2] === 'test')
         // Runs all specified tests (typically in a real browser environment).
         childProcesses.push(run(
             `${configuration.commandLine.test} ${additionalArguments}`,
             childProcessOptions))
     // endregion
     // region handle preinstall
-    else if (
-        configuration.library && global.process.argv[2] === 'preinstall'
-    ) {
+    else if (configuration.library && process.argv[2] === 'preinstall') {
         // Perform all file specific preprocessing stuff.
         const testModuleFilePaths = Helper.determineModuleLocations(
             configuration.test.injects.internal, configuration.knownExtensions,
@@ -174,18 +169,20 @@ if (global.process.argv.length > 2) {
         ).filePaths
         for (const buildConfiguration of buildConfigurations)
             for (const filePath of buildConfiguration.filePaths)
-                if (testModuleFilePaths.indexOf(filePath) === -1)
-                    childProcesses.push(run((new global.Function(
+                if (testModuleFilePaths.indexOf(filePath) === -1) {
+                    const evaluatedValue:string = (new Function(
                         'global', 'self', 'buildConfiguration', 'path',
                         'additionalArguments', 'filePath', 'return ' +
-                        `\`${buildConfiguration[global.process.argv[2]]}\``
+                        `\`${buildConfiguration[process.argv[2]]}\``
                     ))(
                         global, configuration, buildConfiguration, path,
-                        additionalArguments, filePath
-                    ), childProcessOptions))
+                        additionalArguments, filePath)
+                    childProcesses.push(run(
+                        evaluatedValue, childProcessOptions))
+                }
     // endregion
     // region handle serve
-    } else if (global.process.argv[2] === 'serve')
+    } else if (process.argv[2] === 'serve')
         // Provide a development environment where all assets are dynamically
         // bundled and updated on changes.
         childProcesses.push(run(

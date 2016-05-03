@@ -12,6 +12,13 @@ try {
 
 import type {InternalInject, ExternalInject} from './type'
 // endregion
+// region declarations
+// NOTE: This declaration isn't needed if flow knows javaScript's native
+// "Proxy" in future.
+declare class Proxy {
+    constructor(object:any, handler:Object):any
+}
+// endregion
 // region methods
 /**
  * Provides a class of static methods with generic use cases.
@@ -26,7 +33,7 @@ export default class Helper {
     static isObject(object:mixed):boolean {
         return (
             object !== null && typeof object === 'object' &&
-            global.Object.getPrototypeOf(object) === global.Object.prototype)
+            Object.getPrototypeOf(object) === Object.prototype)
     }
     /**
      * Checks weather given object is a function.
@@ -37,34 +44,37 @@ export default class Helper {
     static isFunction(object:mixed):boolean {
         return !!object && {}.toString.call(object) === '[object Function]'
     }
-    static extendObject(target) {
-        let index = 1
-        let deep = false
-        if (typeof target === 'boolean') {
+    static extendObject(
+        targetOrDeepIndicator:boolean|{[key:string]:any}
+    ):{[key:string]:any} {
+        let index:number = 1
+        let deep:boolean = false
+        let target:{[key:string]:any}
+        if (typeof targetOrDeepIndicator === 'boolean') {
             // Handle a deep copy situation and skip deep indicator and target.
-            deep = target
+            deep = targetOrDeepIndicator
             target = arguments[1]
             index = 2
-        }
+        } else
+            target = targetOrDeepIndicator
         const mergeValue = (key, value) => {
             const targetValue = target[key]
             // Recurse if we're merging plain objects or arrays.
             if (deep && value && (
-                global.Array.isArray(value) || Helper.isObject(value) ||
-                value instanceof global.Map
+                Array.isArray(value) || Helper.isObject(value) ||
+                value instanceof Map
             )) {
                 let clone
-                if (global.Array.isArray(value))
-                    clone = targetValue && global.Array.isArray(
+                if (Array.isArray(value))
+                    clone = targetValue && Array.isArray(
                         targetValue
                     ) ? targetValue : []
-                else if (value instanceof global.Map)
+                else if (value instanceof Map)
                     clone = targetValue && (
-                        targetValue instanceof global.Map
+                        targetValue instanceof Map
                     ) ? Helper.addDynamicGetterAndSetter(
                         targetValue
-                    ) : Helper.addDynamicGetterAndSetter(
-                        new global.Map())
+                    ) : Helper.addDynamicGetterAndSetter(new Map())
                 else
                     clone = targetValue && Helper.isObject(
                         targetValue
@@ -89,7 +99,7 @@ export default class Helper {
                     `argument).`)
             // Only deal with non-null/undefined values.
             if (currentObject != null)
-                if (currentObject instanceof global.Map)
+                if (currentObject instanceof Map)
                     for (const [key, value] of currentObject) {
                         const newValue = mergeValue(key, value)
                         // Don't bring in undefined values.
@@ -184,7 +194,7 @@ export default class Helper {
         object:Object, debug = false
     ):Object {
         if (Helper.isObject(object)) {
-            const newObject = new global.Map()
+            const newObject = new Map()
             for (const key in object)
                 if (object.hasOwnProperty(key))
                     newObject.set(
@@ -192,7 +202,7 @@ export default class Helper {
                             object[key]))
             return Helper.addDynamicGetterAndSetter(newObject)
         }
-        if (global.Array.isArray(object)) {
+        if (Array.isArray(object)) {
             let index = 0
             for (const value of object) {
                 object[index] = Helper.convertPlainObjectToMapRecursivly(value)
@@ -202,7 +212,7 @@ export default class Helper {
         return object
     }
     static convertMapToPlainObjectRecursivly(object:Object):Object {
-        if (object instanceof global.Map) {
+        if (object instanceof Map) {
             const newObject = {}
             for (const [key, value] of object)
                 newObject[key] = Helper.convertMapToPlainObjectRecursivly(
@@ -214,7 +224,7 @@ export default class Helper {
                 if (object.hasOwnProperty(key))
                     object[key] = Helper.convertMapToPlainObjectRecursivly(
                         object[key])
-        } else if (global.Array.isArray(object)) {
+        } else if (Array.isArray(object)) {
             let index = 0
             for (const value of object) {
                 object[index] = Helper.convertMapToPlainObjectRecursivly(value)
@@ -229,7 +239,7 @@ export default class Helper {
     ) {
         if (object.__target__)
             return object
-        return new global.Proxy(object, {
+        return new Proxy(object, {
             get: (target, name) => {
                 if (name === '__target__')
                     return target
@@ -271,7 +281,7 @@ export default class Helper {
                     1
                 ) === buildConfigurations[
                     buildConfigurations.length - 1
-                ].extension && !(new global.RegExp(
+                ].extension && !(new RegExp(
                     buildConfigurations[
                         buildConfigurations.length - 1
                     ].fileNamePattern
@@ -376,7 +386,7 @@ export default class Helper {
                                 ).isFile()) {
                                     const localConfiguration =
                                     Helper.convertPlainObjectToMapRecursivly(
-                                        global.JSON.parse(
+                                        JSON.parse(
                                             fileSystem.readFileSync(
                                                 pathToPackageJSON, {
                                                     encoding: 'utf-8'})))
@@ -405,23 +415,25 @@ export default class Helper {
                 return true
         return false
     }
-    static resolve(object, configuration = null, direct = false) {
+    static resolve(
+        object:any, configuration:any = null, direct:boolean = false
+    ):any {
         // Processes all dynamically linked values in given object.
         if (!configuration)
             configuration = object
         if (!configuration.__initialized__) {
             configuration.__initialized__ = true
             const addProxy = object => {
-                if (global.Array.isArray(object)) {
+                if (Array.isArray(object)) {
                     let index = 0
                     for (const value of object) {
                         object[index] = addProxy(value)
                         index += 1
                     }
-                } else if (object instanceof global.Map) {
+                } else if (object instanceof Map) {
                     for (const [key, value] of object)
                         object[key] = addProxy(value)
-                    return new global.Proxy(object, {get: (target, name) => {
+                    return new Proxy(object, {get: (target, name) => {
                         if (name === '__target__')
                             return target
                         if (typeof target[name] === 'function')
@@ -439,10 +451,10 @@ export default class Helper {
             }
             addProxy(configuration)
         }
-        if (object instanceof global.Map)
+        if (object instanceof Map)
             for (const [key, value] of object) {
                 if (key === '__execute__')
-                    return Helper.resolve(new global.Function(
+                    return Helper.resolve(new Function(
                         'global', 'self', 'resolve', 'webOptimizerPath',
                         'currentPath', 'path', `return ${value}`
                     )(
@@ -451,12 +463,12 @@ export default class Helper {
                             subInitial = false
                         ) => Helper.resolve(
                             propertyName, subConfiguration, subInitial
-                        ), __dirname, global.process.cwd(), path
+                        ), __dirname, process.cwd(), path
                     ), configuration)
                 else if (!direct)
                     object[key] = Helper.resolve(value, configuration)
             }
-        else if (!direct && global.Array.isArray(object)) {
+        else if (!direct && Array.isArray(object)) {
             let index = 0
             for (const value of object) {
                 object[index] = Helper.resolve(value, configuration)
@@ -472,7 +484,7 @@ export default class Helper {
         // Determines all script modules to use as internal injects.
         const filePaths = []
         const directoryPaths = []
-        if (internals instanceof global.Map) {
+        if (internals instanceof Map) {
             const newInternals = []
             for (const [key, internal] of internals)
                 newInternals.push(internal)

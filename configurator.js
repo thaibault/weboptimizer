@@ -14,7 +14,7 @@ import Helper from './helper.compiled'
 // NOTE: "{configuration as currentConfiguration}" would result in a read only
 // variable.
 import {configuration} from './package'
-let currentConfiguration:Map = Helper.addDynamicGetterAndSetter(
+let currentConfiguration:{[key:string]:any} = Helper.addDynamicGetterAndSetter(
     Helper.convertPlainObjectToMapRecursivly(configuration))
 currentConfiguration.default.path.context = path.resolve(__dirname, '../../')
 if (
@@ -37,9 +37,9 @@ specificConfiguration.name = name
 var debug = currentConfiguration.default.debug
 if (specificConfiguration.debug !== undefined)
     debug = specificConfiguration.debug
-if (global.process.env.npm_config_production)
+if (process.env.npm_config_production)
     debug = false
-else if (global.process.env.npm_config_debug)
+else if (process.env.npm_config_debug)
     debug = true
 currentConfiguration.default.path.context += '/'
 // Merges final default configuration object depending on given target
@@ -79,8 +79,7 @@ while (true) {
 }
 if (filePath) {
     const runtimeInformation = Helper.convertPlainObjectToMapRecursivly(
-        global.JSON.parse(fileSystem.readFileSync(filePath, {
-            encoding: 'utf-8'})))
+        JSON.parse(fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
     // region apply test configuration
     if (
         runtimeInformation.givenCommandLineArguments.length > 2 &&
@@ -92,16 +91,16 @@ if (filePath) {
     Helper.extendObject(true, currentConfiguration, runtimeInformation)
     let result = null
     try {
-        result = (new global.Function(
+        result = (new Function(
             'configuration', 'return ' +
             runtimeInformation.givenCommandLineArguments[runtimeInformation
                 .givenCommandLineArguments.length - 1]
         ))(currentConfiguration)
     } catch (error) {}
     if (
-        result !== null && typeof result === 'object' && !global.Array.isArray(
+        result !== null && typeof result === 'object' && !Array.isArray(
             result
-        ) && global.Object.prototype.toString.call(
+        ) && Object.prototype.toString.call(
             result
         ) === '[object Object]'
     )
@@ -146,7 +145,7 @@ for (const html of currentConfiguration.files.html) {
         html.template.indexOf('!') !== -1 && typeof html.template !== 'object'
     ) {
         const templateRequestBackup = html.template
-        currentConfiguration.files.html[index].template = new global.String(
+        currentConfiguration.files.html[index].template = new String(
             html.template)
         currentConfiguration.files.html[index].template.replace = (
             string => () => string
