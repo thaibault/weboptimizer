@@ -23,10 +23,11 @@ if (
     path.basename(path.dirname(path.dirname(process.cwd()))) === 'node_modules'
 )
     currentConfiguration.default.path.context = process.cwd()
-let specificConfiguration = Helper.addDynamicGetterAndSetter(
-    Helper.convertPlainObjectToMapRecursivly(module.require(path.join(
-        currentConfiguration.default.path.context, 'package'))))
-const name = specificConfiguration.name
+let specificConfiguration:{[key:string]:any} =
+    Helper.addDynamicGetterAndSetter(
+        Helper.convertPlainObjectToMapRecursivly(module.require(path.join(
+            currentConfiguration.default.path.context, 'package'))))
+const name:string = specificConfiguration.name
 specificConfiguration = specificConfiguration.webOptimizer ||
     Helper.convertPlainObjectToMapRecursivly({})
 specificConfiguration.name = name
@@ -34,7 +35,7 @@ specificConfiguration.name = name
 // region loading default configuration
 // NOTE: Given node command line arguments results in "npm_config_*"
 // environment variables.
-var debug = currentConfiguration.default.debug
+let debug:boolean = currentConfiguration.default.debug
 if (specificConfiguration.debug !== undefined)
     debug = specificConfiguration.debug
 if (process.env.npm_config_production)
@@ -44,7 +45,7 @@ else if (process.env.npm_config_debug)
 currentConfiguration.default.path.context += '/'
 // Merges final default configuration object depending on given target
 // environment.
-const libraryConfiguration = currentConfiguration.library
+const libraryConfiguration:{[key:string]:any} = currentConfiguration.library
 if (debug)
     currentConfiguration = Helper.extendObject(
         true, currentConfiguration.default, currentConfiguration.debug)
@@ -64,10 +65,10 @@ currentConfiguration = Helper.extendObject(
     true, currentConfiguration, specificConfiguration)
 currentConfiguration.debug = debug
 // region load additional dynamically given configuration
-let count = 0
-let filePath = null
+let count:number = 0
+let filePath:?string = null
 while (true) {
-    const newFilePath = currentConfiguration.path.context +
+    const newFilePath:string = currentConfiguration.path.context +
         `.dynamicConfiguration-${count}.json`
     try {
         fileSystem.accessSync(newFilePath, fileSystem.F_OK)
@@ -78,8 +79,9 @@ while (true) {
     count += 1
 }
 if (filePath) {
-    const runtimeInformation = Helper.convertPlainObjectToMapRecursivly(
-        JSON.parse(fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
+    const runtimeInformation:{[key:string]:any} =
+        Helper.convertPlainObjectToMapRecursivly(
+            JSON.parse(fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
     // region apply test configuration
     if (
         runtimeInformation.givenCommandLineArguments.length > 2 &&
@@ -89,7 +91,7 @@ if (filePath) {
             true, currentConfiguration, currentConfiguration.test)
     // endregion
     Helper.extendObject(true, currentConfiguration, runtimeInformation)
-    let result = null
+    let result:any = null
     try {
         result = (new Function(
             'configuration', 'return ' +
@@ -97,36 +99,33 @@ if (filePath) {
                 .givenCommandLineArguments.length - 1]
         ))(currentConfiguration)
     } catch (error) {}
-    if (
-        result !== null && typeof result === 'object' && !Array.isArray(
-            result
-        ) && Object.prototype.toString.call(
-            result
-        ) === '[object Object]'
-    )
+    if (Helper.isObject(result))
         Helper.extendObject(true, currentConfiguration, result)
 }
 // endregion
 // / region build absolute paths
-for (const pathConfiguration of [
+for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
     currentConfiguration.path, currentConfiguration.path.asset
 ])
-    for (const key of ['source', 'target'])
-        if (pathConfiguration[key]) {
+    for (const key:string of ['source', 'target'])
+        if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(
                 currentConfiguration.path.context, Helper.resolve(
                     pathConfiguration[key], currentConfiguration)
             ) + '/'
-        }
 // / endregion
 currentConfiguration = Helper.resolve(currentConfiguration)
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.
-const defaultConfiguration = currentConfiguration.build.default
+const defaultConfiguration:{[key:string]:any} =
+    currentConfiguration.build.default
 delete currentConfiguration.build.default
-for (const [type, buildConfiguration] of currentConfiguration.build)
+for (
+    const [type:string, buildConfiguration:{[key:string]:any}] of
+    currentConfiguration.build
+)
     currentConfiguration.build[type] = Helper.extendObject(
         true, Helper.convertPlainObjectToMapRecursivly({}),
         defaultConfiguration, Helper.extendObject(
@@ -139,16 +138,18 @@ for (const [type, buildConfiguration] of currentConfiguration.build)
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations.
 */
-let index = 0
-for (const html of currentConfiguration.files.html) {
+let index:number = 0
+for (const html:{[key:string]:any} of currentConfiguration.files.html) {
     if (
         html.template.indexOf('!') !== -1 && typeof html.template !== 'object'
     ) {
-        const templateRequestBackup = html.template
+        const templateRequestBackup:string = html.template
         currentConfiguration.files.html[index].template = new String(
             html.template)
         currentConfiguration.files.html[index].template.replace = (
-            string => () => string
+            (string:string):Function => (
+                _search:RegExp|string, _replacement:string|Function
+            ):string => string
         )(templateRequestBackup)
     }
     index += 1

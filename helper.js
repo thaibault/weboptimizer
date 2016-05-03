@@ -18,6 +18,11 @@ import type {InternalInject, ExternalInject} from './type'
 declare class Proxy {
     constructor(object:any, handler:Object):any
 }
+declare function evaluationFunctionType(
+    global:Object, self:{[key:string]:any},
+    resolve:(object:any, configuration:any, direct:boolean) => any,
+    webOptimizerPath:string, currentPath:string, path:typeof path
+):string
 // endregion
 // region methods
 /**
@@ -42,7 +47,9 @@ export default class Helper {
      * otherwise.
      */
     static isFunction(object:mixed):boolean {
-        return !!object && {}.toString.call(object) === '[object Function]'
+        return Boolean(object) && {}.toString.call(
+            object
+        ) === '[object Function]'
     }
     static extendObject(
         targetOrDeepIndicator:boolean|{[key:string]:any}
@@ -57,7 +64,8 @@ export default class Helper {
             index = 2
         } else
             target = targetOrDeepIndicator
-        const mergeValue = (key, value) => {
+        // TODO Use template instead of "any"
+        const mergeValue = (key:string, value:any):any => {
             const targetValue = target[key]
             // Recurse if we're merging plain objects or arrays.
             if (deep && value && (
@@ -146,8 +154,10 @@ export default class Helper {
      * @returns Given callback function.
      */
     static walkDirectoryRecursivelySync(
-        directoryPath:string, callback:Function = (/* filePath, stat */) => {}
-    ):Function {
+        directoryPath:string, callback:((
+            filePath:string, stat:Object
+        ) => ?boolean) = (_filePath:string, _stat:Object) => {}
+    ):((filePath:string, stat:Object) => ?boolean) {
         /*
             Iterates recursively through given directory structure and calls
             given callback for each found entity. If "false" is returned and
@@ -453,11 +463,12 @@ export default class Helper {
         }
         if (object instanceof Map)
             for (const [key, value] of object) {
-                if (key === '__execute__')
-                    return Helper.resolve(new Function(
+                if (key === '__execute__') {
+                    const evaluationFunction:evaluationFunctionType =
+                    new Function(
                         'global', 'self', 'resolve', 'webOptimizerPath',
-                        'currentPath', 'path', `return ${value}`
-                    )(
+                        'currentPath', 'path', `return ${value}`)
+                    return Helper.resolve(evaluationFunction(
                         global, configuration, (
                             propertyName, subConfiguration = configuration,
                             subInitial = false
@@ -465,7 +476,7 @@ export default class Helper {
                             propertyName, subConfiguration, subInitial
                         ), __dirname, process.cwd(), path
                     ), configuration)
-                else if (!direct)
+                } else if (!direct)
                     object[key] = Helper.resolve(value, configuration)
             }
         else if (!direct && Array.isArray(object)) {

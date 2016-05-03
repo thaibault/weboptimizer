@@ -15,6 +15,13 @@ try {
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 // endregion
+// region declaration
+declare function evaluationFunctionType(
+    global:Object, self:{[key:string]:any},
+    buildConfiguration:{[key:string]:any}, path:typeof path,
+    additionalArguments:Array<string>, filePath:string
+):string
+// endregion
 // region controller
 const childProcessOptions = {cwd: configuration.path.context}
 const childProcesses:Array<ChildProcess> = []
@@ -29,11 +36,7 @@ if (process.argv.length > 2) {
                 'configuration',
                 `return ${process.argv[process.argv.length - 1]}`
             ))(configuration)
-            if (
-                result !== null && typeof result === 'object' &&
-                !Array.isArray(result) &&
-                Object.prototype.toString.call(result) === '[object Object]'
-            )
+            if (Helper.isObject(result))
                 process.argv.pop()
         } catch (error) {}
     let count = 0
@@ -170,15 +173,15 @@ if (process.argv.length > 2) {
         for (const buildConfiguration of buildConfigurations)
             for (const filePath of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(filePath) === -1) {
-                    const evaluatedValue:string = (new Function(
-                        'global', 'self', 'buildConfiguration', 'path',
-                        'additionalArguments', 'filePath', 'return ' +
-                        `\`${buildConfiguration[process.argv[2]]}\``
-                    ))(
+                    const evaluationFunction:evaluationFunctionType =
+                        new Function(
+                            'global', 'self', 'buildConfiguration', 'path',
+                            'additionalArguments', 'filePath', 'return ' +
+                            `\`${buildConfiguration[process.argv[2]]}\``)
+                    childProcesses.push(run(evaluationFunction(
                         global, configuration, buildConfiguration, path,
-                        additionalArguments, filePath)
-                    childProcesses.push(run(
-                        evaluatedValue, childProcessOptions))
+                        additionalArguments, filePath
+                    ), childProcessOptions))
                 }
     // endregion
     // region handle serve

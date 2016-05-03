@@ -453,20 +453,24 @@
         "plugins": ["jsdoc", "flowtype"],
         "extends": "google",
         "rules": {
-            "semi": ["error", "never"],
+            "arrow-parens": ["error", "always"],
+            "block-scoped-var": 0,
+            "no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
             "curly": ["error", "multi"],
             "indent": ["error", 4],
-            "block-scoped-var": 0,
-            "spaced-comment": ["error", "always", {"line": {"exceptions": [
-                "/usr/bin/env node"
-            ]}}],
             "new-cap": 0,
             "no-constant-condition": 0,
+            "no-new-func": 0,
+            "no-new-wrappers": 0,
             "require-jsdoc": ["error", {"require": {
                 "FunctionDeclaration": true,
                 "MethodDefinition": true,
                 "ClassDeclaration": true
             }}],
+            "semi": ["error", "never"],
+            "spaced-comment": ["error", "always", {"line": {"exceptions": [
+                "/usr/bin/env node"
+            ]}}],
             "valid-jsdoc": [0, {
                 "prefer": {"return": "returns"},
                 "requireParamDescription": false,
