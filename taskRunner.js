@@ -54,13 +54,14 @@ if (process.argv.length > 2) {
     }
     fileSystem.writeFileSync(filePath, JSON.stringify(dynamicConfiguration))
     // / region register exit handler to tidy up
-    const exitHandler = function(error) {
+    const exitHandler = function(error:?Error):?Error {
         try {
             fileSystem.unlinkSync(filePath)
         } catch (error) {}
         if (error)
             throw error
         process.exit()
+        return error
     }
     process.on('exit', exitHandler)
     process.on('SIGINT', exitHandler)
