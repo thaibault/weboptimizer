@@ -62,7 +62,7 @@ module.exports = function(source:string):string {
                 if (options.isString)
                     return template
                 const templateFilePath:string = Helper.determineModulePath(
-                    template, Helper.convertPlainObjectToMapRecursivly(
+                    template, Helper.convertPlainObjectToMap(
                         query.moduleAliases
                     ), query.knownExtensions, query.context)
                 this.addDependency(templateFilePath)

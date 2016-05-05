@@ -13,6 +13,9 @@ try {
 } catch (error) {}
 
 import configuration from './configurator.compiled'
+import type {
+    BuildConfiguration, ResolvedBuildConfiguration, ExitHandler, Mapping
+} from './type'
 import Helper from './helper.compiled'
 // endregion
 // region declaration
@@ -23,25 +26,25 @@ declare function EvaluationFunction(
 ):string
 // endregion
 // region controller
-const childProcessOptions = {cwd: configuration.path.context}
+const childProcessOptions:Object = {cwd: configuration.path.context}
 const childProcesses:Array<ChildProcess> = []
 if (process.argv.length > 2) {
     // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
-    let dynamicConfiguration = {
+    let dynamicConfiguration:Mapping = {
         givenCommandLineArguments: process.argv.slice()}
     if (process.argv.length > 3)
         try {
-            const result = (new Function(
+            const result:?Object = (new Function(
                 'configuration',
                 `return ${process.argv[process.argv.length - 1]}`
             ))(configuration)
             if (Helper.isObject(result))
                 process.argv.pop()
         } catch (error) {}
-    let count = 0
-    let filePath = `${configuration.path.context}.dynamicConfiguration-` +
-        `${count}.json`
+    let count:number = 0
+    let filePath:string = `${configuration.path.context}.` +
+        `dynamicConfiguration-${count}.json`
     while (true) {
         filePath = configuration.path.context +
             `.dynamicConfiguration-${count}.json`
@@ -54,7 +57,7 @@ if (process.argv.length > 2) {
     }
     fileSystem.writeFileSync(filePath, JSON.stringify(dynamicConfiguration))
     // / region register exit handler to tidy up
-    const exitHandler = function(error:?Error):?Error {
+    const exitHandler:ExitHandler = function(error:?Error):?Error {
         try {
             fileSystem.unlinkSync(filePath)
         } catch (error) {}
@@ -75,13 +78,15 @@ if (process.argv.length > 2) {
             configuration.path.context
         ))
             Helper.walkDirectoryRecursivelySync(configuration.path.target, (
-                filePath, stat
-            ) => {
+                filePath:string, stat:Object
+            ):?boolean => {
                 if (Helper.isFilePathInLocation(
                     filePath, configuration.path.ignore
                 ))
                     return false
-                for (const [type, buildConfiguration] of configuration.build)
+                for (const [
+                    type:string, buildConfiguration:BuildConfiguration
+                ] of configuration.build)
                     if (new RegExp(
                         buildConfiguration.fileNamePattern
                     ).test(filePath)) {
@@ -99,19 +104,20 @@ if (process.argv.length > 2) {
         process.exit()
     }
     // endregion
-    let additionalArguments = process.argv.splice(3).join("' '")
+    let additionalArguments:Array<string> = process.argv.splice(3).join("' '")
     if (additionalArguments)
         additionalArguments = `'${additionalArguments}'`
     // region handle build
-    const buildConfigurations = Helper.resolveBuildConfigurationFilePaths(
-        configuration.build, configuration.path.asset.source,
-        configuration.path.context, configuration.path.ignore)
+    const buildConfigurations:ResolvedBuildConfiguration =
+        Helper.resolveBuildConfigurationFilePaths(
+            configuration.build, configuration.path.asset.source,
+            configuration.path.context, configuration.path.ignore)
     if (process.argv[2] === 'build')
         // Triggers complete asset compiling and bundles them into the final
         // productive output.
         childProcesses.push(run(
             `${configuration.commandLine.build} ${additionalArguments}`,
-            childProcessOptions, error => {
+            childProcessOptions, (error:?Error):?Error => {
                 if (!error) {
                     // Determines all none javaScript entities which have been
                     // emitted as single javaScript module to remove.
@@ -121,8 +127,10 @@ if (process.argv.length > 2) {
                         configuration.knownExtensions,
                         configuration.path.context, configuration.path.ignore
                     ).internal
-                    for (const [moduleID, moduleFilePath] of modulesToEmit) {
-                        const type = Helper.determineAssetType(
+                    for (const [
+                        moduleID:string, moduleFilePath:string
+                    ] of modulesToEmit) {
+                        const type:?string = Helper.determineAssetType(
                             moduleFilePath, configuration.build,
                             configuration.path)
                         const filePath =
@@ -132,22 +140,27 @@ if (process.argv.length > 2) {
                         if (configuration.build[type] && configuration.build[
                             type
                         ].outputExtension !== 'js')
-                            for (const suffix of ['', '.map'])
+                            for (const suffix:string of ['', '.map'])
                                 fileSystem.access(
                                     filePath + suffix, fileSystem.F_OK,
-                                    error => {
+                                    (error:?Error):?Error => {
                                         if (!error)
                                             fileSystem.unlink(
                                                 filePath + suffix)
+                                        return error
                                     })
                     }
-                    for (const filePath of configuration.path.tidyUp)
+                    for (const filePath:string of configuration.path.tidyUp)
                         fileSystem.access(
-                            filePath, fileSystem.F_OK, error => {
+                            filePath, fileSystem.F_OK, (
+                                error:?Error
+                            ):?Error => {
                                 if (!error)
                                     fileSystem.unlink(filePath)
+                                return error
                             })
                 }
+                return error
             }))
     // endregion
     // region handle lint
@@ -167,12 +180,17 @@ if (process.argv.length > 2) {
     // region handle preinstall
     else if (configuration.library && process.argv[2] === 'preinstall') {
         // Perform all file specific preprocessing stuff.
-        const testModuleFilePaths = Helper.determineModuleLocations(
-            configuration.test.injects.internal, configuration.knownExtensions,
-            configuration.path.context, configuration.path.ignore
-        ).filePaths
-        for (const buildConfiguration of buildConfigurations)
-            for (const filePath of buildConfiguration.filePaths)
+        const testModuleFilePaths:Array<string> =
+            Helper.determineModuleLocations(
+                configuration.test.injects.internal,
+                configuration.knownExtensions,
+                configuration.path.context, configuration.path.ignore
+            ).filePaths
+        for (
+            const buildConfiguration:ResolvedBuildConfiguration of
+            buildConfigurations
+        )
+            for (const filePath:string of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(filePath) === -1) {
                     const evaluationFunction:EvaluationFunction =
                         new Function(
@@ -212,7 +230,7 @@ if (childProcesses.length === 0) {
 }
 // / endregion
 // / region trigger child process communication handler
-for (const childProcess of childProcesses)
+for (const childProcess:ChildProcess of childProcesses)
     Helper.handleChildProcess(childProcess)
 // / endregion
 // endregion

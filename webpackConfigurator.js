@@ -52,7 +52,7 @@ for (const htmlOptions of configuration.files.html)
         fileSystem.accessSync(htmlOptions.template.substring(
             htmlOptions.template.lastIndexOf('!') + 1), fileSystem.F_OK)
         configuration.plugins.push(new plugins.HTML(
-            Helper.convertMapToPlainObjectRecursivly(htmlOptions)))
+            Helper.convertMapToPlainObject(htmlOptions)))
     } catch (error) {}
 // provide an offline manifest
 if (configuration.offline) {
@@ -67,22 +67,22 @@ if (configuration.offline) {
             `${configuration.path.asset.javaScript}*.js?` +
             `${configuration.hashAlgorithm}=*`)
     configuration.plugins.push(new plugins.Offline(
-        Helper.convertMapToPlainObjectRecursivly(configuration.offline)))
+        Helper.convertMapToPlainObject(configuration.offline)))
 }
 if ((
     !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'test'
 ) && configuration.development.openBrowser)
     configuration.plugins.push(new plugins.openBrowser(
-        Helper.convertMapToPlainObjectRecursivly(
-            configuration.development.openBrowser)))
+        Helper.convertMapToPlainObject(configuration.development.openBrowser)))
 // // endregion
 // // region modules/assets
 Helper.extendObject(
     configuration.module.aliases, configuration.module.additionalAliases)
-const moduleLocations = Helper.determineModuleLocations(
-    configuration.injects.internal, configuration.knownExtensions,
-    configuration.path.context, configuration.path.ignore)
+const moduleLocations:{[key:string]:Array<string>} =
+    Helper.determineModuleLocations(
+        configuration.injects.internal, configuration.knownExtensions,
+        configuration.path.context, configuration.path.ignore)
 let injects:{internal:InternalInject; external:ExternalInject}
 let fallbackModuleDirectoryPaths:Array<string> = []
 if (configuration.givenCommandLineArguments[2] === 'test') {
@@ -90,14 +90,14 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     injects = {internal: moduleLocations.filePaths, external: []}
 } else {
     configuration.plugins.push(new plugins.ExtractText(
-        Helper.convertMapToPlainObjectRecursivly(
+        Helper.convertMapToPlainObject(
             configuration.files.cascadingStyleSheet
         ), {allChunks: true, disable: !configuration.files.cascadingStyleSheet}
     ))
     // Optimizes webpack output
     if (configuration.module.optimizer.uglifyJS)
         configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
-            Helper.convertMapToPlainObjectRecursivly(
+            Helper.convertMapToPlainObject(
                 configuration.module.optimizer.uglifyJS)))
     // // region in-place configured assets in the main html file
     if (!process.argv[1].endsWith('/webpack-dev-server'))
@@ -215,13 +215,14 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         ), configuration.test.injects.internal,
         configuration.knownExtensions, configuration.path.context,
         configuration.path.ignore)
-    let javaScriptNeeded = false
+    let javaScriptNeeded:boolean = false
     if (Array.isArray(injects.internal))
         for (const moduleID of injects.internal) {
-            const type = Helper.determineAssetType(Helper.determineModulePath(
-                moduleID, configuration.module.aliases,
-                configuration.knownExtensions, configuration.path.context
-            ), configuration.build, configuration.path)
+            const type:?string =
+                Helper.determineAssetType(Helper.determineModulePath(
+                    moduleID, configuration.module.aliases,
+                    configuration.knownExtensions, configuration.path.context
+                ), configuration.build, configuration.path)
             if (configuration.build[type] && configuration.build[
                 type
             ].outputExtension === 'js') {
@@ -231,7 +232,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         }
     else
         for (const [moduleName, moduleFilePath] of injects.internal) {
-            const type = Helper.determineAssetType(
+            const type:?string = Helper.determineAssetType(
                 Helper.determineModulePath(moduleFilePath),
                 configuration.build, configuration.path)
             if (configuration.build[type] && configuration.build[
@@ -253,7 +254,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             external dependency.
         */
         injects.external = (context, request, callback) => {
-            const filePath = Helper.determineModulePath(
+            const filePath:string = Helper.determineModulePath(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases, configuration.knownExtensions,
                 context)
@@ -294,56 +295,46 @@ if (configuration.module.optimizer.image.content)
         configuration.module.optimizer.image.content)
 const loader = {
     preprocessor: {
-        less: 'less?' + JSON.stringify(
-            Helper.convertMapToPlainObjectRecursivly(
-                configuration.module.preprocessor.less)),
-        sass: 'sass?' + JSON.stringify(
-            Helper.convertMapToPlainObjectRecursivly(
-                configuration.module.preprocessor.sass)),
-        scss: 'sass?' + JSON.stringify(
-            Helper.convertMapToPlainObjectRecursivly(
-                configuration.module.preprocessor.scss)),
-        babel: 'babel?' + JSON.stringify(
-            Helper.convertMapToPlainObjectRecursivly(
-                configuration.module.preprocessor.modernJavaScript)),
+        less: 'less?' + JSON.stringify(Helper.convertMapToPlainObject(
+            configuration.module.preprocessor.less)),
+        sass: 'sass?' + JSON.stringify(Helper.convertMapToPlainObject(
+            configuration.module.preprocessor.sass)),
+        scss: 'sass?' + JSON.stringify(Helper.convertMapToPlainObject(
+            configuration.module.preprocessor.scss)),
+        babel: 'babel?' + JSON.stringify(Helper.convertMapToPlainObject(
+            configuration.module.preprocessor.modernJavaScript)),
         coffee: 'coffee',
-        jade: 'jade?' + JSON.stringify(
-            Helper.convertMapToPlainObjectRecursivly(
-                configuration.module.preprocessor.jade)),
+        jade: 'jade?' + JSON.stringify(Helper.convertMapToPlainObject(
+            configuration.module.preprocessor.jade)),
         literateCoffee: 'coffee?literate'
     },
-    html: 'html?' + JSON.stringify(Helper.convertMapToPlainObjectRecursivly(
+    html: 'html?' + JSON.stringify(Helper.convertMapToPlainObject(
         configuration.module.html)),
     cascadingStyleSheet: 'css?' + JSON.stringify(
-        Helper.convertMapToPlainObjectRecursivly(
+        Helper.convertMapToPlainObject(
             configuration.module.cascadingStyleSheet)),
-    style: 'style?' + JSON.stringify(Helper.convertMapToPlainObjectRecursivly(
+    style: 'style?' + JSON.stringify(Helper.convertMapToPlainObject(
         configuration.module.style)),
     postprocessor: {
         image: imageLoader,
         font: {
-            eot: 'url?' + JSON.stringify(
-                Helper.convertMapToPlainObjectRecursivly(
-                    configuration.module.optimizer.font.eot)),
-            woff: 'url?' + JSON.stringify(
-                Helper.convertMapToPlainObjectRecursivly(
-                    configuration.module.optimizer.font.woff)),
-            ttf: 'url?' + JSON.stringify(
-                Helper.convertMapToPlainObjectRecursivly(
-                    configuration.module.optimizer.font.ttf)),
-            svg: 'url?' + JSON.stringify(
-                Helper.convertMapToPlainObjectRecursivly(
-                    configuration.module.optimizer.font.svg))
+            eot: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
+                configuration.module.optimizer.font.eot)),
+            woff: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
+                configuration.module.optimizer.font.woff)),
+            ttf: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
+                configuration.module.optimizer.font.ttf)),
+            svg: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
+                configuration.module.optimizer.font.svg))
         },
-        data: 'url?' + JSON.stringify(
-            Helper.convertMapToPlainObjectRecursivly(
-                configuration.module.optimizer.data))
+        data: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
+            configuration.module.optimizer.data))
     }
 }
 // / endregion
 // endregion
 // region configuration
-export default Helper.convertMapToPlainObjectRecursivly({
+export default Helper.convertMapToPlainObject({
     context: configuration.path.context,
     debug: configuration.debug,
     devtool: configuration.development.tool,

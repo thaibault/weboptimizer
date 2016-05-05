@@ -140,7 +140,7 @@
                 "html": [{
                     "debug": false,
                     "template": {
-                        "__execute__": "`html?${global.JSON.stringify(self.module.html)}!jade?${global.JSON.stringify(self.module.preprocessor.jade)}!${self.path.source}index.jade`"
+                        "__execute__": "`html?${JSON.stringify(self.module.html)}!jade?${JSON.stringify(self.module.preprocessor.jade)}!${self.path.source}index.jade`"
                     },
                     "hash": true,
                     "filename": "index.html",
@@ -361,7 +361,7 @@
                 }},
                 "files": {"html": [{
                     "template": {
-                        "__execute__": "`html?${global.JSON.stringify(self.module.html)}!jade?${global.JSON.stringify(self.module.preprocessor.jade)}!${webOptimizerPath}/test.jade`"
+                        "__execute__": "`html?${JSON.stringify(self.module.html)}!jade?${JSON.stringify(self.module.preprocessor.jade)}!${webOptimizerPath}/test.jade`"
                     },
                     "filename": "test.html"
                 }]}
@@ -472,6 +472,7 @@
             "spaced-comment": ["error", "always", {"line": {"exceptions": [
                 "/usr/bin/env node"
             ]}}],
+            "space-infix-ops": 0,
             "valid-jsdoc": [0, {
                 "prefer": {"return": "returns"},
                 "requireParamDescription": false,

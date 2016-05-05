@@ -1,6 +1,7 @@
 [ignore]
 .*/\.git
-.*[^.]\.compiled\.js
+.*/_.*\.js
+.*/.+\.compiled\.js
 .*/node_modules/config-chain/test/broken.json
 .*/node_modules/npmconf/test/fixtures/package.json
 
@@ -19,3 +20,6 @@ module.file_ext=.jsx
 module.file_ext=.compiled.jsx
 
 strip_root=true
+
+suppress_comment= \\(.\\|\n\\)*IgnoreTypeCheck
+traces=1
