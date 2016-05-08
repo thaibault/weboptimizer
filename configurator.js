@@ -14,10 +14,9 @@ import Helper from './helper.compiled'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
 // variable named "metaConfiguration".
 import {configuration as givenMetaConfiguration} from './package'
-import type {Mapping, MetaConfiguration, ResolvedCongfiguration} from
+import type {PlainObject, MetaConfiguration, ResolvedCongfiguration} from
     './type'
-let metaConfiguration:MetaConfiguration = Helper.addDynamicGetterAndSetter(
-    Helper.convertPlainObjectToMap(givenMetaConfiguration))
+let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 metaConfiguration.default.path.context = path.resolve(__dirname, '../../')
 if (
     path.basename(path.dirname(process.cwd())) === 'node_modules' ||
@@ -25,12 +24,10 @@ if (
     path.basename(path.dirname(path.dirname(process.cwd()))) === 'node_modules'
 )
     metaConfiguration.default.path.context = process.cwd()
-let specificConfiguration:Mapping = Helper.addDynamicGetterAndSetter(
-    Helper.convertPlainObjectToMap(module.require(path.join(
-        metaConfiguration.default.path.context, 'package'))))
+let specificConfiguration:PlainObject = module.require(path.join(
+    metaConfiguration.default.path.context, 'package'))
 const name:string = specificConfiguration.name
-specificConfiguration = specificConfiguration.webOptimizer ||
-    Helper.convertPlainObjectToMap({})
+specificConfiguration = specificConfiguration.webOptimizer || {}
 specificConfiguration.name = name
 // endregion
 // region loading default configuration
@@ -46,8 +43,8 @@ else if (process.env.npm_config_debug)
 metaConfiguration.default.path.context += '/'
 // Merges final default configuration object depending on given target
 // environment.
-const libraryConfiguration:{[key:string]:any} = metaConfiguration.library
-let configuration:Mapping
+const libraryConfiguration:PlainObject = metaConfiguration.library
+let configuration:PlainObject
 if (debug)
     configuration = Helper.extendObject(
         true, metaConfiguration.default, metaConfiguration.debug)
@@ -60,7 +57,7 @@ if (
     configuration = Helper.extendObject(
         true, configuration, libraryConfiguration)
 // endregion
-// region merging and evaluating default, test, dynamic and specific configs
+// region merging and evaluating default, test, dynamic and specific settings
 // Merges project specific configurations with default ones.
 configuration = Helper.extendObject(true, configuration, specificConfiguration)
 configuration.debug = debug
@@ -79,9 +76,8 @@ while (true) {
     count += 1
 }
 if (filePath) {
-    const runtimeInformation:{[key:string]:any} =
-        Helper.convertPlainObjectToMap(
-            JSON.parse(fileSystem.readFileSync(filePath, {encoding: 'utf-8'})))
+    const runtimeInformation:PlainObject = JSON.parse(
+        fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
     // region apply test configuration
     if (
         runtimeInformation.givenCommandLineArguments.length > 2 &&
@@ -90,15 +86,16 @@ if (filePath) {
         Helper.extendObject(true, configuration, configuration.test)
     // endregion
     Helper.extendObject(true, configuration, runtimeInformation)
-    let result:any = null
-    try {
-        result = (new Function(
-            'configuration', 'return ' +
+    let result:?PlainObject = null
+    const evaluationFunction = (configuration:PlainObject):?PlainObject => (
+        new Function('configuration', 'return ' +
             runtimeInformation.givenCommandLineArguments[runtimeInformation
                 .givenCommandLineArguments.length - 1]
-        ))(configuration)
+    )).apply(this, arguments)
+    try {
+        result = evaluationFunction(configuration)
     } catch (error) {}
-    if (Helper.isObject(result))
+    if (Helper.isPlainObject(result))
         Helper.extendObject(true, configuration, result)
 }
 // endregion
@@ -113,24 +110,18 @@ for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
                     pathConfiguration[key], configuration)
             ) + '/'
 // / endregion
-const resolvedConfiguration:ResolvedCongfiguration =
-    Helper.resolveMapping(configuration)
+const resolvedConfiguration:ResolvedCongfiguration = Helper.resolveMapping(
+    configuration)
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.
-const defaultConfiguration:{[key:string]:any} =
-    resolvedConfiguration.build.default
+const defaultConfiguration:PlainObject = resolvedConfiguration.build.default
 delete resolvedConfiguration.build.default
-for (
-    const [type:string, buildConfiguration:{[key:string]:any}] of
-    resolvedConfiguration.build
-)
-    resolvedConfiguration.build[type] = Helper.extendObject(
-        true, Helper.convertPlainObjectToMap({}),
-        defaultConfiguration, Helper.extendObject(
-            true, Helper.convertPlainObjectToMap({extension: type}),
-            buildConfiguration, Helper.convertPlainObjectToMap({type})))
+for (const type:string in resolvedConfiguration.build)
+    resolvedConfiguration.build[type] = Helper.extendObject(true, {
+    }, defaultConfiguration, Helper.extendObject(
+        true, {extension: type}, resolvedConfiguration.build[type], {type}))
 // endregion
 // region apply webpack html plugin workaround
 /*
@@ -138,7 +129,7 @@ for (
     configurations.
 */
 let index:number = 0
-for (const html:{[key:string]:any} of resolvedConfiguration.files.html) {
+for (const html:PlainObject of resolvedConfiguration.files.html) {
     if (
         html.template.indexOf('!') !== -1 && typeof html.template !== 'object'
     ) {

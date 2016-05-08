@@ -2,6 +2,8 @@
 // @flow
 // -*- coding: utf-8 -*-
 'use strict'
+// TODO search for all "configuration.*" and specify needed type for all
+// expected types.
 // region imports
 import {exec as run, ChildProcess} from 'child_process'
 import * as fileSystem from 'fs'
@@ -14,16 +16,10 @@ try {
 
 import configuration from './configurator.compiled'
 import type {
-    BuildConfiguration, ResolvedBuildConfiguration, ExitHandler, Mapping
+    BuildConfiguration, ResolvedCongfiguration, ExitHandlerFunction,
+    PlainObject
 } from './type'
 import Helper from './helper.compiled'
-// endregion
-// region declaration
-declare function EvaluationFunction(
-    global:Object, self:{[key:string]:any},
-    buildConfiguration:{[key:string]:any}, path:typeof path,
-    additionalArguments:Array<string>, filePath:string
-):string
 // endregion
 // region controller
 const childProcessOptions:Object = {cwd: configuration.path.context}
@@ -31,17 +27,19 @@ const childProcesses:Array<ChildProcess> = []
 if (process.argv.length > 2) {
     // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
-    let dynamicConfiguration:Mapping = {
+    let dynamicConfiguration:PlainObject = {
         givenCommandLineArguments: process.argv.slice()}
-    if (process.argv.length > 3)
+    if (process.argv.length > 3) {
+        const evaluationFunction = (
+            configuration:ResolvedCongfiguration
+        ):?PlainObject => (new Function(
+            'configuration', `return ${process.argv[process.argv.length - 1]}`
+        )).apply(this, arguments)
         try {
-            const result:?Object = (new Function(
-                'configuration',
-                `return ${process.argv[process.argv.length - 1]}`
-            ))(configuration)
-            if (Helper.isObject(result))
+            if (Helper.isPlainObject(evaluationFunction(configuration)))
                 process.argv.pop()
         } catch (error) {}
+    }
     let count:number = 0
     let filePath:string = `${configuration.path.context}.` +
         `dynamicConfiguration-${count}.json`
@@ -57,7 +55,7 @@ if (process.argv.length > 2) {
     }
     fileSystem.writeFileSync(filePath, JSON.stringify(dynamicConfiguration))
     // / region register exit handler to tidy up
-    const exitHandler:ExitHandler = function(error:?Error):?Error {
+    const exitHandler:ExitHandlerFunction = function(error:?Error):?Error {
         try {
             fileSystem.unlinkSync(filePath)
         } catch (error) {}
@@ -84,11 +82,9 @@ if (process.argv.length > 2) {
                     filePath, configuration.path.ignore
                 ))
                     return false
-                for (const [
-                    type:string, buildConfiguration:BuildConfiguration
-                ] of configuration.build)
+                for (const type:string in configuration.build)
                     if (new RegExp(
-                        buildConfiguration.fileNamePattern
+                        configuration.build[type].fileNamePattern
                     ).test(filePath)) {
                         if (stat.isDirectory()) {
                             removeDirectoryRecursivelySync(filePath, {
@@ -104,11 +100,11 @@ if (process.argv.length > 2) {
         process.exit()
     }
     // endregion
-    let additionalArguments:Array<string> = process.argv.splice(3).join("' '")
+    let additionalArguments:string = process.argv.splice(3).join("' '")
     if (additionalArguments)
         additionalArguments = `'${additionalArguments}'`
     // region handle build
-    const buildConfigurations:ResolvedBuildConfiguration =
+    const buildConfigurations:BuildConfiguration =
         Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore)
@@ -117,50 +113,48 @@ if (process.argv.length > 2) {
         // productive output.
         childProcesses.push(run(
             `${configuration.commandLine.build} ${additionalArguments}`,
-            childProcessOptions, (error:?Error):?Error => {
+            childProcessOptions, (error:?Error) => {
                 if (!error) {
                     // Determines all none javaScript entities which have been
                     // emitted as single javaScript module to remove.
-                    const modulesToEmit = Helper.resolveInjects(
-                        configuration.injects, buildConfigurations,
-                        configuration.test.injects.internal,
-                        configuration.knownExtensions,
-                        configuration.path.context, configuration.path.ignore
-                    ).internal
-                    for (const [
-                        moduleID:string, moduleFilePath:string
-                    ] of modulesToEmit) {
+                    const modulesToEmit:InternalInjection =
+                        Helper.resolveInjection(
+                            configuration.injection, buildConfigurations,
+                            configuration.test.injection.internal,
+                            configuration.knownExtensions,
+                            configuration.path.context, configuration.path.ignore
+                        ).internal
+                    for (const moduleID:string in modulesToEmit) {
                         const type:?string = Helper.determineAssetType(
-                            moduleFilePath, configuration.build,
+                            modulesToEmit[moduleID], configuration.build,
                             configuration.path)
                         const filePath =
                             configuration.files.javaScript.replace(
                                 '[name]', moduleID
                             ).replace(/\?[^?]+/, '')
-                        if (configuration.build[type] && configuration.build[
-                            type
-                        ].outputExtension !== 'js')
+                        if (
+                            typeof type === 'string' &&
+                            configuration.build[type] && configuration.build[
+                                type
+                            ].outputExtension !== 'js'
+                        )
                             for (const suffix:string of ['', '.map'])
                                 fileSystem.access(
-                                    filePath + suffix, fileSystem.F_OK,
-                                    (error:?Error):?Error => {
+                                    `${filePath}${suffix}`, fileSystem.F_OK,
+                                    (error:?Error) => {
                                         if (!error)
                                             fileSystem.unlink(
                                                 filePath + suffix)
-                                        return error
                                     })
                     }
                     for (const filePath:string of configuration.path.tidyUp)
-                        fileSystem.access(
-                            filePath, fileSystem.F_OK, (
-                                error:?Error
-                            ):?Error => {
-                                if (!error)
-                                    fileSystem.unlink(filePath)
-                                return error
-                            })
+                        fileSystem.access(filePath, fileSystem.F_OK, (
+                            error:?Error
+                        ) => {
+                            if (!error)
+                                fileSystem.unlink(filePath)
+                        })
                 }
-                return error
             }))
     // endregion
     // region handle lint
@@ -182,21 +176,22 @@ if (process.argv.length > 2) {
         // Perform all file specific preprocessing stuff.
         const testModuleFilePaths:Array<string> =
             Helper.determineModuleLocations(
-                configuration.test.injects.internal,
+                configuration.test.injection.internal,
                 configuration.knownExtensions,
                 configuration.path.context, configuration.path.ignore
             ).filePaths
-        for (
-            const buildConfiguration:ResolvedBuildConfiguration of
-            buildConfigurations
-        )
+        for (const buildConfiguration of buildConfigurations)
             for (const filePath:string of buildConfiguration.filePaths)
                 if (testModuleFilePaths.indexOf(filePath) === -1) {
-                    const evaluationFunction:EvaluationFunction =
-                        new Function(
-                            'global', 'self', 'buildConfiguration', 'path',
-                            'additionalArguments', 'filePath', 'return ' +
-                            `\`${buildConfiguration[process.argv[2]]}\``)
+                    const evaluationFunction = (
+                        global:Object, self:PlainObject,
+                        buildConfiguration:PlainObject, path:typeof path,
+                        additionalArguments:string, filePath:string
+                    ):string => (new Function(
+                        'global', 'self', 'buildConfiguration', 'path',
+                        'additionalArguments', 'filePath', 'return ' +
+                        `\`${buildConfiguration[process.argv[2]]}\``
+                    )).apply(this, arguments)
                     childProcesses.push(run(evaluationFunction(
                         global, configuration, buildConfiguration, path,
                         additionalArguments, filePath

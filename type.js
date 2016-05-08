@@ -7,56 +7,58 @@ import path from 'path'
 // endregion
 // region exports
 // / region data structure
-export type InternalInjects = string|Array<string>|{[key:string]:string}
-export type ExternalInjects = string|Function|RegExp|Array<ExternalInjects>
-export type Mapping = {[key:string]:any}
-export type Injects = {
-    internal:InternalInjects;
-    external:ExternalInjects
+export type PlainObject = {[key:string]:any}
+export type InternalInjection = string|Array<string>|PlainObject
+export type ExternalInjection = string|Function|RegExp|Array<ExternalInjection>
+export type Injection = {
+    internal:InternalInjection;
+    external:ExternalInjection
 }
-export type BuildConfiguration = {[key:string]:Function&{
-    [key:string]:Function&string
-}}
-export type ResolvedBuildConfiguration = Array<{
+export type BuildConfiguration = Array<{
     filePaths: Array<string>;
     extension:string;
     outputExtension:string;
-    [key:string]:Function&string
+    [key:string]:any
 }>
 export type Paths = {
     source:string;
     target:string;
-    asset:{[key:string]:Function&string};
+    asset:PlainObject;
     [key:string]:any;
 }
 export type MetaConfiguration = {
-    default:{debug:boolean;[key:string]:any};
-    debug:Mapping;
-    library:Mapping
+    default:{
+        debug:boolean;
+        [key:string]:any
+    };
+    debug:PlainObject;
+    library:PlainObject
+}
+export type HTMLConfiguration = {
+    template:string;
+    [key:string]:any
 }
 export type ResolvedCongfiguration = {
     debug:boolean;
-    build:BuildConfiguration;
-    injects:Injects;
+    build:PlainObject;
+    injection:Injection;
     path:Paths;
+    files:{html:Array<HTMLConfiguration>}
     [key:string]:any
 }
 // / endregion
 // / region function signatures
-export type ExitFunction = (error:?Error) => ?Error
+export type ExitHandlerFunction = (error:?Error) => ?Error
 export type EvaluationFunction = (
-    self:any,
-    resolve:(
-        object:any, configuration:?Mapping, deep:boolean,
-        evaluationIndicatorKey:string
-    ) => any,
-    webOptimizerPath:string, currentPath:string, path:typeof path
+    self:?PlainObject, webOptimizerPath:string, currentPath:string,
+    path:typeof path
 ) => any
 export type GetterFunction = (keyOrValue:any) => any
 export type SetterFunction = (key:any, value:any) => any
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean
+export type ProcedureFunction = () => ?null
 // / endregion
 // endregion
 // region vim modline

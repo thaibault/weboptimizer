@@ -18,7 +18,9 @@ plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Offline = module.require('offline-plugin')
 
-import type {InternalInject, ExternalInject} from './type'
+import type {
+    ExternalInjection, HTMLConfiguration, InternalInjection, ProcedureFunction
+} from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 
@@ -32,10 +34,11 @@ require.cache[require.resolve('html-loader')].exports = function() {
 }
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
-const loaderUtilsIsUrlRequestBackup = loaderUtilsModuleBackup.isUrlRequest
+const loaderUtilsIsUrlRequestBackup:(url:string) => boolean =
+    loaderUtilsModuleBackup.isUrlRequest
 require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
-    url
-) {
+    url:string
+):boolean {
     if (url.match(/^[a-z]+:.+/))
         return false
     return loaderUtilsIsUrlRequestBackup.apply(
@@ -47,12 +50,11 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // / region pre processing
 // // region plugins
 configuration.plugins = []
-for (const htmlOptions of configuration.files.html)
+for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
     try {
-        fileSystem.accessSync(htmlOptions.template.substring(
+        fileSystem.accessSync(htmlConfiguration.template.substring(
             htmlOptions.template.lastIndexOf('!') + 1), fileSystem.F_OK)
-        configuration.plugins.push(new plugins.HTML(
-            Helper.convertMapToPlainObject(htmlOptions)))
+        configuration.plugins.push(new plugins.HTML(htmlOptions))
     } catch (error) {}
 // provide an offline manifest
 if (configuration.offline) {
@@ -66,62 +68,62 @@ if (configuration.offline) {
         configuration.offline.excludes.push(
             `${configuration.path.asset.javaScript}*.js?` +
             `${configuration.hashAlgorithm}=*`)
-    configuration.plugins.push(new plugins.Offline(
-        Helper.convertMapToPlainObject(configuration.offline)))
+    configuration.plugins.push(new plugins.Offline(configuration.offline))
 }
 if ((
     !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'test'
 ) && configuration.development.openBrowser)
     configuration.plugins.push(new plugins.openBrowser(
-        Helper.convertMapToPlainObject(configuration.development.openBrowser)))
+        configuration.development.openBrowser))
 // // endregion
 // // region modules/assets
 Helper.extendObject(
     configuration.module.aliases, configuration.module.additionalAliases)
 const moduleLocations:{[key:string]:Array<string>} =
     Helper.determineModuleLocations(
-        configuration.injects.internal, configuration.knownExtensions,
+        configuration.injection.internal, configuration.knownExtensions,
         configuration.path.context, configuration.path.ignore)
-let injects:{internal:InternalInject; external:ExternalInject}
+let injection:{internal:InternalInjection; external:ExternalInjection}
 let fallbackModuleDirectoryPaths:Array<string> = []
 if (configuration.givenCommandLineArguments[2] === 'test') {
     fallbackModuleDirectoryPaths = moduleLocations.directoryPaths
-    injects = {internal: moduleLocations.filePaths, external: []}
+    injection = {internal: moduleLocations.filePaths, external: []}
 } else {
     configuration.plugins.push(new plugins.ExtractText(
-        Helper.convertMapToPlainObject(
-            configuration.files.cascadingStyleSheet
-        ), {allChunks: true, disable: !configuration.files.cascadingStyleSheet}
+        configuration.files.cascadingStyleSheet, {
+            allChunks: true, disable: !configuration.files.cascadingStyleSheet}
     ))
     // Optimizes webpack output
     if (configuration.module.optimizer.uglifyJS)
         configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
-            Helper.convertMapToPlainObject(
-                configuration.module.optimizer.uglifyJS)))
+            configuration.module.optimizer.uglifyJS))
     // // region in-place configured assets in the main html file
     if (!process.argv[1].endsWith('/webpack-dev-server'))
-        configuration.plugins.push({apply: compiler => {
-            compiler.plugin('emit', (compilation, callback) => {
+        configuration.plugins.push({apply: (compiler:Object) => {
+            compiler.plugin('emit', (
+                compilation:Object, callback:ProcedureFunction
+            ) => {
                 if (
                     configuration.inPlace.cascadingStyleSheet ||
                     configuration.inPlace.javaScript
                 )
                     dom.env(compilation.assets[configuration.files.html[
                         0
-                    ].filename].source(), (error, window) => {
+                    ].filename].source(), (error:?Error, window:Object) => {
                         if (configuration.inPlace.cascadingStyleSheet) {
-                            const urlPrefix = configuration.files
+                            const urlPrefix:string = configuration.files
                                 .cascadingStyleSheet.replace(
                                     '[contenthash]', '')
-                            const domNode = window.document.querySelector(
-                                `link[href^="${urlPrefix}"]`)
+                            const domNode:Object =
+                                window.document.querySelector(
+                                    `link[href^="${urlPrefix}"]`)
                             if (domNode) {
-                                let asset
+                                let asset:string
                                 for (asset in compilation.assets)
                                     if (asset.startsWith(urlPrefix))
                                         break
-                                const inPlaceDomNode =
+                                const inPlaceDomNode:Object =
                                     window.document.createElement('style')
                                 inPlaceDomNode.textContent =
                                     compilation.assets[asset].source()
@@ -142,12 +144,14 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                                     `selector: link[href^="${urlPrefix}"]`)
                         }
                         if (configuration.inPlace.javaScript) {
-                            const urlPrefix = configuration.files.javaScript
-                                .replace('[hash]', '')
-                            const domNode = window.document.querySelector(
-                                `script[src^="${urlPrefix}"]`)
+                            const urlPrefix:string =
+                                configuration.files.javaScript.replace(
+                                    '[hash]', '')
+                            const domNode:Object =
+                                window.document.querySelector(
+                                    `script[src^="${urlPrefix}"]`)
                             if (domNode) {
-                                let asset
+                                let asset:string
                                 for (asset in compilation.assets)
                                     if (asset.startsWith(urlPrefix))
                                         break
@@ -181,7 +185,9 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                 else
                     callback()
             })
-            compiler.plugin('after-emit', (compilation, callback) => {
+            compiler.plugin('after-emit', (
+                compilation:Object, callback:ProcedureFunction
+            ) => {
                 if (configuration.inPlace.cascadingStyleSheet)
                     removeDirectoryRecursivelySync(path.join(
                         configuration.path.asset.target,
@@ -192,13 +198,13 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                         configuration.path.asset.target,
                         configuration.files.javaScript.replace(
                             `?${configuration.hashAlgorithm}=[hash]`, ''))
-                    for (const filePath of [
+                    for (const filePath:string of [
                         assetFilePath, `${assetFilePath}.map`
                     ])
                         try {
                             fileSystem.unlinkSync(filePath)
                         } catch (error) {}
-                    const javaScriptPath = path.join(
+                    const javaScriptPath:string = path.join(
                         configuration.path.asset.target,
                         configuration.path.asset.javaScript)
                     if (fileSystem.readdirSync(javaScriptPath).length === 0)
@@ -208,16 +214,16 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             })
         }})
     // // endregion
-    injects = Helper.resolveInjects(
-        configuration.injects, Helper.resolveBuildConfigurationFilePaths(
+    injection = Helper.resolveInjection(
+        configuration.injection, Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore
-        ), configuration.test.injects.internal,
+        ), configuration.test.injection.internal,
         configuration.knownExtensions, configuration.path.context,
         configuration.path.ignore)
     let javaScriptNeeded:boolean = false
-    if (Array.isArray(injects.internal))
-        for (const moduleID of injects.internal) {
+    if (Array.isArray(injection.internal))
+        for (const moduleID:string of injection.internal) {
             const type:?string =
                 Helper.determineAssetType(Helper.determineModulePath(
                     moduleID, configuration.module.aliases,
@@ -231,9 +237,9 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             }
         }
     else
-        for (const [moduleName, moduleFilePath] of injects.internal) {
+        for (const moduleName:string in injection.internal) {
             const type:?string = Helper.determineAssetType(
-                Helper.determineModulePath(moduleFilePath),
+                Helper.determineModulePath(injection.internal[moduleName]),
                 configuration.build, configuration.path)
             if (configuration.build[type] && configuration.build[
                 type
@@ -253,7 +259,9 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             NOTE: Only native javaScript and json modules will be marked as
             external dependency.
         */
-        injects.external = (context, request, callback) => {
+        injection.external = (
+            context:string, request:string, callback:ProcedureFunction
+        ) => {
             const filePath:string = Helper.determineModulePath(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases, configuration.knownExtensions,
@@ -263,8 +271,8 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                     filePath, configuration.path.ignore
                 ))
                     return callback(null, `umd ${request}`)
-                if (Array.isArray(injects.internal)) {
-                    for (const internalModule of injects.internal)
+                if (Array.isArray(injection.internal)) {
+                    for (const internalModule:string of injection.internal)
                         if (Helper.determineModulePath(
                             internalModule, configuration.module.aliases,
                             configuration.knownExtensions, context
@@ -272,10 +280,11 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                             return callback()
                     return callback(null, `umd ${request}`)
                 }
-                if (injects.internal instanceof Map) {
-                    for (const [chunkName, moduleFilePath] of injects.internal)
+                if (injection.internal instanceof Map) {
+                    for (const chunkName:string in injection.internal)
                         if (Helper.determineModulePath(
-                            moduleFilePath, configuration.module.aliases,
+                            injection.internal[chunkName],
+                            configuration.module.aliases,
                             configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
@@ -288,53 +297,68 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
 // // endregion
 // / endregion
 // / region loader
-let imageLoader = 'url?' + JSON.stringify(
+let imageLoader:string = 'url?' + JSON.stringify(
     configuration.module.optimizer.image.file)
 if (configuration.module.optimizer.image.content)
     imageLoader += '!image?' + JSON.stringify(
         configuration.module.optimizer.image.content)
-const loader = {
+const loader:{
+    preprocessor:{
+        less:string;
+        sass:string;
+        scss:string;
+        babel:string;
+        coffee:string;
+        jade:string;
+        literateCoffee:string
+    };
+    html:string;
+    cascadingStyleSheet:string;
+    style:string;
+    postprocessor:{
+        image:string;
+        font:{
+            eot:string;
+            woff:string;
+            ttf:string;
+            svg:string
+        };
+        data:string
+    }
+} = {
     preprocessor: {
-        less: 'less?' + JSON.stringify(Helper.convertMapToPlainObject(
-            configuration.module.preprocessor.less)),
-        sass: 'sass?' + JSON.stringify(Helper.convertMapToPlainObject(
-            configuration.module.preprocessor.sass)),
-        scss: 'sass?' + JSON.stringify(Helper.convertMapToPlainObject(
-            configuration.module.preprocessor.scss)),
-        babel: 'babel?' + JSON.stringify(Helper.convertMapToPlainObject(
-            configuration.module.preprocessor.modernJavaScript)),
+        less: `less?${JSON.stringify(configuration.module.preprocessor.less)}`,
+        sass: `sass?${JSON.stringify(configuration.module.preprocessor.sass)}`,
+        scss: `sass?${JSON.stringify(configuration.module.preprocessor.scss)}`,
+        babel: 'babel?' + JSON.stringify(
+            configuration.module.preprocessor.modernJavaScript),
         coffee: 'coffee',
-        jade: 'jade?' + JSON.stringify(Helper.convertMapToPlainObject(
-            configuration.module.preprocessor.jade)),
+        jade: `jade?${JSON.stringify(configuration.module.preprocessor.jade)}`,
         literateCoffee: 'coffee?literate'
     },
-    html: 'html?' + JSON.stringify(Helper.convertMapToPlainObject(
-        configuration.module.html)),
+    html: `html?${JSON.stringify(configuration.module.html)}`,
     cascadingStyleSheet: 'css?' + JSON.stringify(
-        Helper.convertMapToPlainObject(
-            configuration.module.cascadingStyleSheet)),
-    style: 'style?' + JSON.stringify(Helper.convertMapToPlainObject(
-        configuration.module.style)),
+        configuration.module.cascadingStyleSheet),
+    style: `style?${JSON.stringify(configuration.module.style)}`,
     postprocessor: {
         image: imageLoader,
         font: {
-            eot: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
-                configuration.module.optimizer.font.eot)),
-            woff: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
-                configuration.module.optimizer.font.woff)),
-            ttf: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
-                configuration.module.optimizer.font.ttf)),
-            svg: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
-                configuration.module.optimizer.font.svg))
+            eot: 'url?' + JSON.stringify(
+                configuration.module.optimizer.font.eot),
+            woff: 'url?' + JSON.stringify(
+                configuration.module.optimizer.font.woff),
+            ttf: 'url?' + JSON.stringify(
+                configuration.module.optimizer.font.ttf),
+            svg: 'url?' + JSON.stringify(
+                configuration.module.optimizer.font.svg)
         },
-        data: 'url?' + JSON.stringify(Helper.convertMapToPlainObject(
-            configuration.module.optimizer.data))
+        data: `url?${JSON.stringify(configuration.module.optimizer.data)}`
     }
 }
 // / endregion
 // endregion
 // region configuration
-export default Helper.convertMapToPlainObject({
+export default {
     context: configuration.path.context,
     debug: configuration.debug,
     devtool: configuration.development.tool,
@@ -347,7 +371,7 @@ export default Helper.convertMapToPlainObject({
         extensions: configuration.knownExtensions,
         alias: configuration.module.aliases
     },
-    entry: injects.internal, externals: injects.external,
+    entry: injection.internal, externals: injection.external,
     // endregion
     // region output
     output: {
@@ -400,9 +424,10 @@ export default Helper.convertMapToPlainObject({
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: configuration.files.html.map(request =>
-                    request.template.substring(
-                        request.template.lastIndexOf('!') + 1))
+                exclude: configuration.files.html.map((
+                    request:string
+                ):string => request.template.substring(
+                    request.template.lastIndexOf('!') + 1))
             }
             // endregion
         ],
@@ -443,9 +468,10 @@ export default Helper.convertMapToPlainObject({
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: configuration.files.html.map(request =>
-                    request.template.substring(
-                        request.template.lastIndexOf('!') + 1))
+                exclude: configuration.files.html.map((
+                    request:string
+                ):string => request.template.substring(
+                    request.template.lastIndexOf('!') + 1))
             }
             // endregion
         ],
@@ -476,9 +502,10 @@ export default Helper.convertMapToPlainObject({
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.data),
-                exclude: (filePath:string) => configuration.knownExtensions.indexOf(
-                    path.extname(filePath)
-                ) !== -1
+                exclude: (filePath:string):boolean =>
+                    configuration.knownExtensions.indexOf(
+                        path.extname(filePath)
+                    ) !== -1
             }
             // endregion
         ]
@@ -488,7 +515,7 @@ export default Helper.convertMapToPlainObject({
     // configuration.
     html: configuration.module.optimizer.htmlMinifier,
     jade: configuration.module.preprocessor.jade
-})
+}
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

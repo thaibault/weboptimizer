@@ -12,9 +12,8 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, GetterFunction, SetterFunction,
-    ResolvedBuildConfiguration, EvaluationFunction, Injects, Paths,
-    TraverseFilesCallbackFunction, Mapping
+    GetterFunction, SetterFunction, BuildConfiguration, EvaluationFunction,
+    Injection, Paths, TraverseFilesCallbackFunction, PlainObject
 } from './type'
 // endregion
 // region declarations
@@ -29,13 +28,14 @@ declare class Proxy {
  * Provides a class of static methods with generic use cases.
  */
 export default class Helper {
+    // region boolean
     /**
      * Checks weather given object is a plain native object.
      * @param object - Object to check.
      * @returns Value "true" if given object is a plain javaScript object and
      * "false" otherwise.
      */
-    static isObject(object:mixed):boolean {
+    static isPlainObject(object:mixed):boolean {
         return (
             object !== null && typeof object === 'object' &&
             Object.getPrototypeOf(object) === Object.prototype)
@@ -52,142 +52,22 @@ export default class Helper {
         ) === '[object Function]'
     }
     /**
-     * Converts given plain object and all nested found objects to
-     * corresponding map.
-     * @param object - Object to convert to.
-     * @param deep - Indicates whether to perform a recursive conversion.
-     * @returns Given object as map.
+     * Determines whether given file path is within given list of file
+     * locations.
+     * @param filePath - Path to file to check.
+     * @param locationsToCheck - Locations to take into account.
+     * @returns Value "true" if given file path is within one of given
+     * locations or "false" otherwise.
      */
-    static convertPlainObjectToMap<Value>(
-        object:Value, deep:boolean = true
-    ):Value|Mapping {
-        if (typeof object === 'object' && Helper.isObject(object)) {
-            const newObject:Mapping = new Map()
-            for (const key:string in object)
-                if (object.hasOwnProperty(key)) {
-                    if (deep)
-                        object[key] = Helper.convertPlainObjectToMap(
-                            object[key], deep)
-                    newObject.set(key, object[key])
-                }
-            return newObject
-        }
-        if (deep)
-            if (Array.isArray(object)) {
-                let index:number = 0
-                for (const value:Object of object) {
-                    object[index] = Helper.convertPlainObjectToMap(value, deep)
-                    index += 1
-                }
-            } else if (object instanceof Map) {
-                for (const [key:mixed, value:mixed] of object)
-                    object.set(key, Helper.convertPlainObjectToMap(
-                        value, deep))
-            }
-        return object
+    static isFilePathInLocation(
+        filePath:string, locationsToCheck:Array<string>
+    ):boolean {
+        for (const pathToCheck:string of locationsToCheck)
+            if (path.resolve(filePath).startsWith(path.resolve(pathToCheck)))
+                return true
+        return false
     }
-    /**
-     * Converts given map and all nested found maps objects to corresponding
-     * object.
-     * @param object - Map to convert to.
-     * @param deep - Indicates whether to perform a recursive conversion.
-     * @returns Given map as object.
-     */
-    static convertMapToPlainObject<Value>(
-        object:Value, deep:boolean = true
-    ):Value|Mapping {
-        if (object instanceof Map) {
-            const newObject:Mapping = {}
-            for (let [key:any, value:mixed] of object) {
-                if (deep)
-                    value = Helper.convertMapToPlainObject(value, deep)
-                newObject[`${key}`] = value
-            }
-            return newObject
-        }
-        if (deep)
-            if (typeof object === 'object' && Helper.isObject(object)) {
-                for (const key:string in object)
-                    if (object.hasOwnProperty(key))
-                        object[key] = Helper.convertMapToPlainObject(
-                            object[key], deep)
-            } else if (Array.isArray(object)) {
-                let index:number = 0
-                for (const value:mixed of object) {
-                    object[index] = Helper.convertMapToPlainObject(value, deep)
-                    index += 1
-                }
-            }
-        return object
-    }
-    /**
-     * Adds dynamic getter and setter to any given data structure such as maps.
-     * @param object - Object to proxy.
-     * @callback getterWrapper - Function to wrap each property get.
-     * @callback setterWrapper - Function to wrap each property set.
-     * @param typesToExtend - Types which should be extended (Checks are
-     * performed via "value instanceof type".).
-     * @param deep - Indicates to perform a deep wrapping of specified types.
-     * performed via "value instanceof type".).
-     * @param containesMethodName - Method name to indicate if a key is stored
-     * in given data structure.
-     * @param getterMethodName - Method name to get a stored value by key.
-     * @param setterMethodName - Method name to set a stored value by key.
-     * @returns Returns given object wrapped with a dynamic getter proxy.
-     */
-    static addDynamicGetterAndSetter<Value>(
-        object:Value, getterWrapper:GetterFunction = (key:any):any => key,
-        setterWrapper:SetterFunction = (key:any, value:any):any => value,
-        typesToExtend:Array<mixed> = [Map], deep:boolean = true,
-        containesMethodName:string = 'has', getterMethodName:string = 'get',
-        setterMethodName:string = 'set',
-    ):Value {
-        if (deep)
-            if (typeof object === 'object' && Helper.isObject(object)) {
-                for (const key:string in object)
-                    if (object.hasOwnProperty(key))
-                        object[key] = Helper.addDynamicGetterAndSetter(
-                            object[key], getterWrapper, setterWrapper,
-                            typesToExtend, deep, containesMethodName,
-                            getterMethodName, setterMethodName)
-            } else if (object instanceof Map)
-                for (const [key:mixed, value:mixed] of object)
-                    object.set(key, Helper.addDynamicGetterAndSetter(
-                        value, getterWrapper, setterWrapper, typesToExtend,
-                        deep, containesMethodName, getterMethodName,
-                        setterMethodName))
-            else if (Array.isArray(object)) {
-                let index:number = 0
-                for (const value:mixed of object) {
-                    object[index] = Helper.addDynamicGetterAndSetter(
-                        value, getterWrapper, setterWrapper, typesToExtend,
-                        deep, containesMethodName, getterMethodName,
-                        setterMethodName)
-                    index += 1
-                }
-            }
-        for (const type:mixed of typesToExtend)
-            if (object instanceof type) {
-                if (object.__target__)
-                    return object
-                return new Proxy(object, {
-                    get: (target:Object, name:string):any => {
-                        if (name === '__target__')
-                            return target
-                        if (typeof target[name] === 'function')
-                            return target[name].bind(target)
-                        if (target[containesMethodName](name))
-                            return getterWrapper(target[getterMethodName](
-                                name))
-                        return target[name]
-                    },
-                    set: (target:Object, name:string, value:any):any =>
-                        target[setterMethodName](name, setterWrapper((
-                            name, value)))
-                })
-            }
-        return object
-    }
+    // endregion
     /**
      * Extends given target object with given sources object. As target and
      * sources many expandable types are allowed but target and sources have to
@@ -213,7 +93,7 @@ export default class Helper {
         const mergeValue = (key:string, value:any, targetValue:any):any => {
             // Recurse if we're merging plain objects or arrays.
             if (deep && value && (
-                Array.isArray(value) || Helper.isObject(value) ||
+                Array.isArray(value) || Helper.isPlainObject(value) ||
                 value instanceof Map
             )) {
                 let clone
@@ -224,11 +104,9 @@ export default class Helper {
                 else if (value instanceof Map)
                     clone = targetValue && (
                         targetValue instanceof Map
-                    ) ? Helper.addDynamicGetterAndSetter(
-                        targetValue
-                    ) : Helper.addDynamicGetterAndSetter(new Map())
+                    ) ? targetValue : new Map()
                 else
-                    clone = targetValue && Helper.isObject(
+                    clone = targetValue && Helper.isPlainObject(
                         targetValue
                     ) ? targetValue : {}
                 // Never move original objects, clone them.
@@ -251,7 +129,7 @@ export default class Helper {
             // Only deal with non-null/undefined values.
             if (!(source === null || source === undefined))
                 if (target instanceof Map && source instanceof Map)
-                    for (const [key:string, value] of source) {
+                    for (const [key:string, value:any] of source) {
                         const newValue = mergeValue(
                             key, value, target.get(key))
                         // Don't bring in undefined values.
@@ -299,7 +177,7 @@ export default class Helper {
     static walkDirectoryRecursivelySync(
         directoryPath:string, callback:TraverseFilesCallbackFunction = (
             _filePath:string, _stat:Object
-        ):any => {}
+        ):?boolean => true
     ):TraverseFilesCallbackFunction {
         fileSystem.readdirSync(directoryPath).forEach((fileName:string) => {
             const filePath:string = path.resolve(directoryPath, fileName)
@@ -313,7 +191,7 @@ export default class Helper {
     /**
      * Determines a asset type if given file.
      * @param filePath - Path to file to analyse.
-     * @param buildConfigurations - Meta informations for available asset
+     * @param buildConfiguration - Meta informations for available asset
      * types.
      * @param paths - List of paths to search if given path doesn't reference
      * a file directly.
@@ -321,22 +199,22 @@ export default class Helper {
      * determined.
      */
     static determineAssetType(
-        filePath:string, buildConfigurations:BuildConfiguration, paths:Paths
+        filePath:string, buildConfiguration:PlainObject, paths:Paths
     ):?string {
         let result:?string = null
-        for (const [type:string, buildConfiguration:{
-            [key:string]:string
-        }] of buildConfigurations)
+        for (const type:string in buildConfiguration)
             if (path.extname(
                 filePath
-            ) === `.${buildConfiguration.extension}`) {
+            ) === `.${buildConfiguration[type].extension}`) {
                 result = type
                 break
             }
         if (!result)
             for (const type:string of ['source', 'target'])
-                for (const [assetType:string, filePath:string] of paths.asset)
-                    if (filePath.startsWith(path.join(paths[type], filePath)))
+                for (const assetType:string in paths.asset)
+                    if (paths.asset[assetType].startsWith(path.join(
+                        paths[type], paths.asset[assetType]
+                    )))
                         return assetType
         return result
     }
@@ -345,7 +223,7 @@ export default class Helper {
      * matches each build configuration in given entry path and converts given
      * build configuration into a sorted array were javaScript files takes
      * precedence.
-     * @param configurations - Given build configurations.
+     * @param configuration - Given build configurations.
      * @param entryPath - Path to analyse nested structure.
      * @param context - Path to set paths relative to and determine relative
      * ignored paths to.
@@ -353,18 +231,14 @@ export default class Helper {
      * @returns Converted build configuration.
      */
     static resolveBuildConfigurationFilePaths(
-        configurations:BuildConfiguration, entryPath:string = './',
+        configuration:PlainObject, entryPath:string = './',
         context:string = './', pathsToIgnore:Array<string> = ['.git']
-    ):ResolvedBuildConfiguration {
+    ):BuildConfiguration {
         const buildConfigurations:Array<Object> = []
         let index:number = 0
-        for (
-            const [type:string, configuration:{[key:string]:string}] of
-            configurations
-        ) {
+        for (const type:string in configuration) {
             buildConfigurations.push(Helper.extendObject(
-                true, Helper.convertPlainObjectToMap({filePaths: [
-                ]}), configuration))
+                true, {filePaths: []}, configuration[type]))
             Helper.walkDirectoryRecursivelySync(entryPath, (
                 filePath:string, stat:Object
             ):?boolean => {
@@ -401,7 +275,7 @@ export default class Helper {
     /**
      * Determines all file and directory paths related to given internal
      * modules as array.
-     * @param internals - List of moduleIDs or module file paths.
+     * @param internalInjection - List of moduleIDs or module file paths.
      * @param knownExtensions - List of file extensions to take into account.
      * @param context - File path to resolve relative to.
      * @param pathsToIgnore - List of file path to ignore.
@@ -409,19 +283,24 @@ export default class Helper {
      * corresponding list of paths.
      */
     static determineModuleLocations(
-        internals:Mapping|Array<string>,
+        givenInternalInjection:string|PlainObject|Array<string>,
         knownExtensions:Array<string> = ['.js'], context:string = './',
         pathsToIgnore:Array<string> = ['.git']
     ):{[key:string]:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
-        if (internals instanceof Map) {
-            const newInternals:Array<string> = []
-            for (const [key:string, internal:string] of internals)
-                newInternals.push(internal)
-            internals = newInternals
-        }
-        for (const module:string of internals) {
+        let internalInjection:Array<string> = []
+        if (givenInternalInjection instanceof Array)
+            internalInjection = givenInternalInjection
+        else if (typeof givenInternalInjection === 'string')
+            internalInjection.push(givenInternalInjection)
+        else if (
+            givenInternalInjection instanceof Object &&
+            Helper.isPlainObject(givenInternalInjection)
+        )
+            for (const key:string in givenInternalInjection)
+                internalInjection.push(givenInternalInjection[key])
+        for (const module:string of internalInjection) {
             let filePath:string = path.resolve(
                 `${module}${knownExtensions[0]}`)
             let stat:?Object
@@ -454,13 +333,13 @@ export default class Helper {
             if (directoryPaths.indexOf(pathToAdd) === -1)
                 directoryPaths.push(pathToAdd)
         }
-        return Helper.convertPlainObjectToMap({filePaths, directoryPaths})
+        return {filePaths, directoryPaths}
     }
     /**
-     * Determines all concrete file paths for given injects which are marked
+     * Determines all concrete file paths for given injection which are marked
      * with the "__auto__" indicator.
-     * @param givenInjects - Given internal and external injects to take into
-     * account.
+     * @param givenInjection - Given internal and external injection to take
+     * into account.
      * @param buildConfigurations - Resolved build configuration.
      * @param modulesToExclude - A list of modules to exclude (specified by
      * path or id) or a mapping from chunk names to module ids.
@@ -468,24 +347,24 @@ export default class Helper {
      * @param context - File path to use as starting point.
      * @param pathsToIgnore - Paths which marks location to ignore (Relative
      * paths are resolved relatively to given context.).
-     * @returns Given injects with resolved marked indicators.
+     * @returns Given injection with resolved marked indicators.
      */
-    static resolveInjects(
-        givenInjects:Injects, buildConfigurations:ResolvedBuildConfiguration,
-        modulesToExclude:Mapping|Array<string>,
+    static resolveInjection(
+        givenInjection:Injection, buildConfigurations:BuildConfiguration,
+        modulesToExclude:PlainObject|Array<string>,
         knownExtensions:Array<string> = [
             '.js', '.css', '.svg', '.html'
         ], context:string = './', pathsToIgnore:Array<string> = ['.git']
-    ):Injects {
-        // TODO Copy
-        const injects:Injects = givenInjects
+    ):Injection {
+        const injection:Injection = Helper.extendObject(
+            true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
                 modulesToExclude, knownExtensions, context, pathsToIgnore
             ).filePaths
         for (const type:string of ['internal', 'external'])
-            if (givenInjects[type] === '__auto__') {
-                injects[type] = Helper.convertPlainObjectToMap({})
+            if (givenInjection[type] === '__auto__') {
+                injection[type] = {}
                 const injectedBaseNames:{[key:string]:Array<string>} = {}
                 for (const buildConfiguration:{
                     filePaths:Array<string>;
@@ -522,12 +401,12 @@ export default class Helper {
                                     configurations are expected to be sorted in
                                     this context).
                                 */
-                                if (injects[type][baseName])
-                                    injects[type][path.relative(
+                                if (injection[type][baseName])
+                                    injection[type][path.relative(
                                         context, moduleFilePath
                                     )] = moduleFilePath
                                 else
-                                    injects[type][baseName] = moduleFilePath
+                                    injection[type][baseName] = moduleFilePath
                                 injectedBaseNames[
                                     buildConfiguration.outputExtension
                                 ].push(baseName)
@@ -535,7 +414,75 @@ export default class Helper {
                         }
                 }
             }
-        return injects
+        return injection
+    }
+    /**
+     * Adds dynamic getter and setter to any given data structure such as maps.
+     * @param object - Object to proxy.
+     * @callback getterWrapper - Function to wrap each property get.
+     * @callback setterWrapper - Function to wrap each property set.
+     * @param typesToExtend - Types which should be extended (Checks are
+     * performed via "value instanceof type".).
+     * @param deep - Indicates to perform a deep wrapping of specified types.
+     * performed via "value instanceof type".).
+     * @param containesMethodName - Method name to indicate if a key is stored
+     * in given data structure.
+     * @param getterMethodName - Method name to get a stored value by key.
+     * @param setterMethodName - Method name to set a stored value by key.
+     * @returns Returns given object wrapped with a dynamic getter proxy.
+     */
+    static addDynamicGetterAndSetter<Value>(
+        object:Value, getterWrapper:GetterFunction = (key:any):any => key,
+        setterWrapper:SetterFunction = (key:any, value:any):any => value,
+        typesToExtend:Array<mixed> = [Map], deep:boolean = true,
+        containesMethodName:string = 'has', getterMethodName:string = 'get',
+        setterMethodName:string = 'set',
+    ):Value {
+        if (deep)
+            if (typeof object === 'object' && Helper.isPlainObject(object)) {
+                for (const key:string in object)
+                    if (object.hasOwnProperty(key))
+                        object[key] = Helper.addDynamicGetterAndSetter(
+                            object[key], getterWrapper, setterWrapper,
+                            typesToExtend, deep, containesMethodName,
+                            getterMethodName, setterMethodName)
+            } else if (object instanceof Map)
+                for (const [key:mixed, value:mixed] of object)
+                    object.set(key, Helper.addDynamicGetterAndSetter(
+                        value, getterWrapper, setterWrapper, typesToExtend,
+                        deep, containesMethodName, getterMethodName,
+                        setterMethodName))
+            else if (Array.isArray(object)) {
+                let index:number = 0
+                for (const value:mixed of object) {
+                    object[index] = Helper.addDynamicGetterAndSetter(
+                        value, getterWrapper, setterWrapper, typesToExtend,
+                        deep, containesMethodName, getterMethodName,
+                        setterMethodName)
+                    index += 1
+                }
+            }
+        for (const type:mixed of typesToExtend)
+            if (object instanceof type) {
+                if (object.__target__)
+                    return object
+                return new Proxy(object, {
+                    get: (target:Object, name:string):any => {
+                        if (name === '__target__')
+                            return target
+                        if (typeof target[name] === 'function')
+                            return target[name].bind(target)
+                        if (target[containesMethodName](name))
+                            return getterWrapper(target[getterMethodName](
+                                name))
+                        return target[name]
+                    },
+                    set: (target:Object, name:string, value:any):any =>
+                        target[setterMethodName](name, setterWrapper((
+                            name, value)))
+                })
+            }
+        return object
     }
     /**
      * Searches for nested mappings with given indicator key and resolves
@@ -549,7 +496,7 @@ export default class Helper {
      * @returns Evaluated given mapping.
      */
     static resolveMapping(
-        object:any, configuration:?Mapping = null, deep:boolean = true,
+        object:any, configuration:?PlainObject = null, deep:boolean = true,
         evaluationIndicatorKey:string = '__execute__'
     ):any {
         if (configuration === null && typeof object === 'object')
@@ -558,26 +505,22 @@ export default class Helper {
             Helper.addDynamicGetterAndSetter(
                 configuration, (value:any):any => Helper.resolveMapping(
                     value, configuration, false))
-        if (object instanceof Map)
-            for (const [key:string, value:mixed] of object)
+        if (Helper.isPlainObject(object))
+            for (const key:string in object)
                 if (key === evaluationIndicatorKey) {
-                    const evaluationFunction:EvaluationFunction = new Function(
-                        'self', 'resolve', 'webOptimizerPath',
-                        'currentPath', 'path', `return ${value}`)
+                    const evaluationFunction:EvaluationFunction = (
+                        self:?PlainObject, webOptimizerPath:string,
+                        currentPath:string, path:typeof path
+                    ):any => (new Function(
+                        'self', 'webOptimizerPath', 'currentPath', 'path',
+                        `return ${object[key]}`
+                    )).apply(this, arguments)
                     return Helper.resolveMapping(evaluationFunction(
-                        configuration, (
-                            object:any,
-                            subConfiguration:?Mapping = configuration,
-                            deep:boolean = false,
-                            subEvaluationIndicatorKey:string =
-                                evaluationIndicatorKey
-                        ):any => Helper.resolveMapping(
-                            object, subConfiguration, deep,
-                            subEvaluationIndicatorKey
-                        ), __dirname, process.cwd(), path
+                        configuration, __dirname, process.cwd(), path
                     ), configuration)
                 } else if (deep)
-                    object[key] = Helper.resolveMapping(value, configuration)
+                    object[key] = Helper.resolveMapping(
+                        object[key], configuration)
         else if (deep && Array.isArray(object)) {
             let index:number = 0
             for (const value:mixed of object) {
@@ -597,13 +540,11 @@ export default class Helper {
      * wasn't necessary.
      */
     static determineModulePath(
-        moduleID:string, moduleAliases:{
-            [key:string]:Function&string
-        } = Helper.convertPlainObjectToMap({}),
+        moduleID:string, moduleAliases:PlainObject = {},
         knownExtensions:Array<string> = ['.js'], context:string = './'
     ):string {
-        for (const [search:string, replacement:string] of moduleAliases)
-            moduleID = moduleID.replace(search, replacement)
+        for (const search:string in moduleAliases)
+            moduleID = moduleID.replace(search, moduleAliases[search])
         for (const moduleLocation:string of ['', 'node_modules', '../'])
             for (let fileName:string of ['__package__', '', 'index', 'main'])
                 for (const extension:string of knownExtensions) {
@@ -621,11 +562,10 @@ export default class Helper {
                                 if (fileSystem.statSync(
                                     pathToPackageJSON
                                 ).isFile()) {
-                                    const localConfiguration:Mapping =
-                                    Helper.convertPlainObjectToMap(
+                                    const localConfiguration:PlainObject =
                                         JSON.parse(fileSystem.readFileSync(
                                             pathToPackageJSON, {
-                                                encoding: 'utf-8'})))
+                                                encoding: 'utf-8'}))
                                     if (localConfiguration.main)
                                         fileName = localConfiguration.main
                                 }
@@ -642,22 +582,6 @@ export default class Helper {
                     } catch (error) {}
                 }
         return moduleID
-    }
-    /**
-     * Determines whether given file path is within given list of file
-     * locations.
-     * @param filePath - Path to file to check.
-     * @param locationsToCheck - Locations to take into account.
-     * @returns Value "true" if given file path is within one of given
-     * locations or "false" otherwise.
-     */
-    static isFilePathInLocation(
-        filePath:string, locationsToCheck:Array<string>
-    ):boolean {
-        for (const pathToCheck:string of locationsToCheck)
-            if (path.resolve(filePath).startsWith(path.resolve(pathToCheck)))
-                return true
-        return false
     }
 }
 // endregion

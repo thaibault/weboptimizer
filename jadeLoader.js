@@ -13,15 +13,9 @@ try {
 
 import Helper from './helper.compiled'
 // endregion
-// region declarations
-declare function TemplateFunction(locals:Object):string
-declare function CompileFunction(
-    template:string, options:Object
-):TemplateFunction
-declare function EvaluationFunction(
-    request:string, template:string, source:string, compile:CompileFunction,
-    locals:Object
-):Object
+// region types
+type TemplateFunction = (locals:Object) => string
+type CompileFunction = (template:string, options:Object) => TemplateFunction
 // endregion
 module.exports = function(source:string):string {
     if (this.cacheable)
@@ -50,9 +44,13 @@ module.exports = function(source:string):string {
                     /^.+\?([^?]+)$/, '$1')
                 let nestedLocals:Object = {}
                 if (queryMatch) {
-                    const evaluationFunction:EvaluationFunction = new Function(
+                    const evaluationFunction = (
+                        request:string, template:string, source:string,
+                        compile:CompileFunction, locals:Object
+                    ):Object => (new Function(
                         'request', 'template', 'source', 'compile', 'locals',
-                        `return ${queryMatch[1]}`)
+                        `return ${queryMatch[1]}`
+                    )).apply(this, arguments)
                     nestedLocals = evaluationFunction(
                         request, template, source, compile, locals)
                 }
@@ -62,9 +60,8 @@ module.exports = function(source:string):string {
                 if (options.isString)
                     return template
                 const templateFilePath:string = Helper.determineModulePath(
-                    template, Helper.convertPlainObjectToMap(
-                        query.moduleAliases
-                    ), query.knownExtensions, query.context)
+                    template, query.moduleAliases, query.knownExtensions,
+                    query.context)
                 this.addDependency(templateFilePath)
                 if (queryMatch || templateFilePath.endsWith('.less'))
                     return compile(templateFilePath, options)(nestedLocals)
