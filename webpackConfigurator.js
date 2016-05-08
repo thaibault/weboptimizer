@@ -53,8 +53,8 @@ configuration.plugins = []
 for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
     try {
         fileSystem.accessSync(htmlConfiguration.template.substring(
-            htmlOptions.template.lastIndexOf('!') + 1), fileSystem.F_OK)
-        configuration.plugins.push(new plugins.HTML(htmlOptions))
+            htmlConfiguration.template.lastIndexOf('!') + 1), fileSystem.F_OK)
+        configuration.plugins.push(new plugins.HTML(htmlConfiguration))
     } catch (error) {}
 // provide an offline manifest
 if (configuration.offline) {
