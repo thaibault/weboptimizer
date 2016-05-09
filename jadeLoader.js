@@ -47,10 +47,12 @@ module.exports = function(source:string):string {
                     const evaluationFunction = (
                         request:string, template:string, source:string,
                         compile:CompileFunction, locals:Object
-                    ):Object => (new Function(
-                        'request', 'template', 'source', 'compile', 'locals',
-                        `return ${queryMatch[1]}`
-                    )).apply(this, arguments)
+                    ):Object =>
+                        // IgnoreTypeCheck
+                        new Function(
+                            'request', 'template', 'source', 'compile',
+                            'locals', `return ${queryMatch[1]}`
+                        )(request, template, source, compile, locals)
                     nestedLocals = evaluationFunction(
                         request, template, source, compile, locals)
                 }

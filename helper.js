@@ -506,13 +506,9 @@ export default class Helper {
         if (Helper.isPlainObject(object))
             for (const key:string in object)
                 if (key === evaluationIndicatorKey) {
-                    const evaluationFunction:EvaluationFunction = (
-                        self:?PlainObject, webOptimizerPath:string,
-                        currentPath:string, path:typeof path
-                    ):any => (new Function(
+                    const evaluationFunction:EvaluationFunction = new Function(
                         'self', 'webOptimizerPath', 'currentPath', 'path',
-                        `return ${object[key]}`
-                    )).apply(this, arguments)
+                        `return ${object[key]}`)
                     return Helper.resolveMapping(evaluationFunction(
                         configuration, __dirname, process.cwd(), path
                     ), configuration)

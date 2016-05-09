@@ -32,9 +32,12 @@ if (process.argv.length > 2) {
     if (process.argv.length > 3) {
         const evaluationFunction = (
             configuration:ResolvedCongfiguration
-        ):?PlainObject => (new Function(
-            'configuration', `return ${process.argv[process.argv.length - 1]}`
-        )).apply(this, arguments)
+        ):?PlainObject =>
+            // IgnoreTypeCheck
+            new Function(
+                'configuration',
+                `return ${process.argv[process.argv.length - 1]}`
+            )(configuration)
         try {
             if (Helper.isPlainObject(evaluationFunction(configuration)))
                 process.argv.pop()
@@ -194,11 +197,15 @@ if (process.argv.length > 2) {
                         global:Object, self:PlainObject,
                         buildConfiguration:PlainObject, path:typeof path,
                         additionalArguments:string, filePath:string
-                    ):string => (new Function(
-                        'global', 'self', 'buildConfiguration', 'path',
-                        'additionalArguments', 'filePath', 'return ' +
-                        `\`${buildConfiguration[process.argv[2]]}\``
-                    )).apply(this, arguments)
+                    ):string =>
+                        // IgnoreTypeCheck
+                        new Function(
+                            'global', 'self', 'buildConfiguration', 'path',
+                            'additionalArguments', 'filePath', 'return ' +
+                            `\`${buildConfiguration[process.argv[2]]}\``
+                        )(
+                            global, self, buildConfiguration, path,
+                            additionalArguments, filePath)
                     childProcesses.push(run(evaluationFunction(
                         global, configuration, buildConfiguration, path,
                         additionalArguments, filePath

@@ -87,11 +87,12 @@ if (filePath) {
     // endregion
     Helper.extendObject(true, configuration, runtimeInformation)
     let result:?PlainObject = null
-    const evaluationFunction = (configuration:PlainObject):?PlainObject => (
+    const evaluationFunction = (configuration:PlainObject):?PlainObject =>
+        // IgnoreTypeCheck
         new Function('configuration', 'return ' +
             runtimeInformation.givenCommandLineArguments[runtimeInformation
                 .givenCommandLineArguments.length - 1]
-    )).apply(this, arguments)
+        )(configuration)
     try {
         result = evaluationFunction(configuration)
     } catch (error) {}
