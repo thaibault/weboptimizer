@@ -2,8 +2,6 @@
 // @flow
 // -*- coding: utf-8 -*-
 'use strict'
-// TODO search for all "configuration.*" and specify needed type for all
-// expected types.
 // region imports
 import {exec as run, ChildProcess} from 'child_process'
 import * as fileSystem from 'fs'
@@ -16,8 +14,8 @@ try {
 
 import configuration from './configurator.compiled'
 import type {
-    BuildConfiguration, ExitHandlerFunction, InternalInjection,
-    NormalizedInternalInjection, PlainObject, ResolvedCongfiguration
+    BuildConfiguration, ExitHandlerFunction, NormalizedInternalInjection,
+    PlainObject, ResolvedConfiguration
 } from './type'
 import Helper from './helper.compiled'
 // endregion
@@ -31,7 +29,7 @@ if (process.argv.length > 2) {
         givenCommandLineArguments: process.argv.slice()}
     if (process.argv.length > 3) {
         const evaluationFunction = (
-            configuration:ResolvedCongfiguration
+            configuration:ResolvedConfiguration
         ):?PlainObject =>
             // IgnoreTypeCheck
             new Function(
@@ -131,32 +129,35 @@ if (process.argv.length > 2) {
                                 configuration.path.ignore
                             ).internal)
                     for (const chunkName:string in internalInjection)
-                        for (const moduleID:string of internalInjection[
-                            chunkName
-                        ]) {
-                            const type:?string = Helper.determineAssetType(
-                                Helper.determineModuleFilePath(moduleID),
-                                configuration.build, configuration.path)
-                            const filePath =
-                                configuration.files.javaScript.replace(
-                                    '[name]', moduleID
-                                ).replace(/\?[^?]+/, '')
-                            if (
-                                typeof type === 'string' &&
-                                configuration.build[type] &&
-                                configuration.build[
-                                    type
-                                ].outputExtension !== 'js'
-                            )
-                                for (const suffix:string of ['', '.map'])
-                                    fileSystem.access(
-                                        `${filePath}${suffix}`,
-                                        fileSystem.F_OK, (error:?Error) => {
-                                            if (!error)
-                                                fileSystem.unlink(
-                                                    filePath + suffix)
-                                        })
-                        }
+                        if (internalInjection.hasOwnProperty(chunkName))
+                            for (const moduleID:string of internalInjection[
+                                chunkName
+                            ]) {
+                                const type:?string = Helper.determineAssetType(
+                                    Helper.determineModuleFilePath(moduleID),
+                                    configuration.build, configuration.path)
+                                const filePath =
+                                    configuration.files.javaScript.replace(
+                                        '[name]', moduleID
+                                    ).replace(/\?[^?]+/, '')
+                                if (
+                                    typeof type === 'string' &&
+                                    configuration.build[type] &&
+                                    configuration.build[
+                                        type
+                                    ].outputExtension !== 'js'
+                                )
+                                    for (const suffix:string of ['', '.map'])
+                                        fileSystem.access(
+                                            `${filePath}${suffix}`,
+                                            fileSystem.F_OK, (
+                                                error:?Error
+                                            ) => {
+                                                if (!error)
+                                                    fileSystem.unlink(
+                                                        filePath + suffix)
+                                            })
+                            }
                     for (const filePath:string of configuration.path.tidyUp)
                         fileSystem.access(filePath, fileSystem.F_OK, (
                             error:?Error

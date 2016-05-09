@@ -6,22 +6,32 @@
 import path from 'path'
 // endregion
 // region exports
-// / region data structure
+// / region generic
+export type GetterFunction = (keyOrValue:any) => any
+export type SetterFunction = (key:any, value:any) => any
+export type ProcedureFunction = () => ?null
 export type PlainObject = {[key:string]:any}
+// / endregion
+// / region injection
 export type NormalizedInternalInjection = {[key:string]:Array<string>}
 export type InternalInjection =
     string|Array<string>|{[key:string]:string|Array<string>}
-export type ExternalInjection = string|Function|RegExp|Array<ExternalInjection>
+export type ExternalInjection = string|((
+    context:string, request:string, callback:ProcedureFunction
+) => ?null)|RegExp|Array<ExternalInjection>
 export type Injection = {
     internal:InternalInjection;
     external:ExternalInjection
 }
-export type BuildConfiguration = Array<{
-    filePaths: Array<string>;
+// / endregion
+// / region configuration
+export type BuildConfigurationItem = {
+    filePaths:Array<string>;
     extension:string;
     outputExtension:string;
-    [key:string]:any
-}>
+    fileNamePattern:string
+}
+export type BuildConfiguration = Array<BuildConfigurationItem>
 export type Paths = {
     asset:{
         cascadingStyleSheet:string;
@@ -45,11 +55,12 @@ export type Paths = {
     target:string;
     tidyUp:Array<string>
 }
+export type DefaultConfiguration = {
+    debug:boolean;
+    path:{context:string}
+}
 export type MetaConfiguration = {
-    default:{
-        debug:boolean;
-        [key:string]:any
-    };
+    default:DefaultConfiguration;
     debug:PlainObject;
     library:PlainObject
 }
@@ -57,37 +68,31 @@ export type HTMLConfiguration = {
     template:string|String;
     filename:string
 }
-export type ResolvedCongfiguration = {
-    build:PlainObject;
-    commandLine:{
-        build:string;
-        lint:string;
-        serve:string;
-        test:string
-    };
+export type ResolvedConfiguration = {
+    name:string;
+    givenCommandLineArguments:Array<string>;
+
+
     debug:boolean;
-    development:{
-        openBrowser:PlainObject;
-        server:PlainObject;
-        tool:PlainObject
-    };
+    library:boolean;
+
+
     files:{
+        cascadingStyleSheet:string
         html:Array<HTMLConfiguration>;
         javaScript:string;
-        cascadingStyleSheet:string
     };
-    givenCommandLineArguments:Array<string>;
-    hashAlgorithm:string;
     injection:Injection;
     inPlace:{
         cascadingStyleSheet:boolean;
-        javaScript:boolean
+        externalLibrary:boolean;
+        javaScript:boolean;
+        otherMaximumFileSizeLimitInByte:number;
     };
     knownExtensions:Array<string>;
-    loader:PlainObject;
     module:{
-        aliases:PlainObject;
         additionalAliases:PlainObject;
+        aliases:PlainObject;
         cascadingStyleSheet:PlainObject;
         html:PlainObject;
         optimizer:{
@@ -95,7 +100,6 @@ export type ResolvedCongfiguration = {
             font:{
                 eot:PlainObject;
                 woff:PlainObject;
-                woff2:PlainObject;
                 ttf:PlainObject;
                 svg:PlainObject
             };
@@ -112,23 +116,38 @@ export type ResolvedCongfiguration = {
         };
         style:PlainObject
     };
-    name:string;
     path:Paths;
+    offline:PlainObject;
+
+
+    build:PlainObject;
+    commandLine:{
+        build:string;
+        lint:string;
+        serve:string;
+        test:string
+    };
+    development:{
+        openBrowser:PlainObject;
+        server:PlainObject;
+        tool:PlainObject
+    };
+    hashAlgorithm:string;
+    loader:PlainObject;
+
+
     test:{injection:Injection}
 }
 // / endregion
-// / region function signatures
+// / region specific callbacks
 export type ExitHandlerFunction = (error:?Error) => ?Error
 export type EvaluationFunction = (
     self:?PlainObject, webOptimizerPath:string, currentPath:string,
     path:typeof path
 ) => any
-export type GetterFunction = (keyOrValue:any) => any
-export type SetterFunction = (key:any, value:any) => any
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean
-export type ProcedureFunction = () => ?null
 // / endregion
 // endregion
 // region vim modline

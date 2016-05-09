@@ -29,7 +29,7 @@ import Helper from './helper.compiled'
 // Monkey-Patch html loader to retrieve html loader options since the
 // "webpack-html-plugin" doesn't preserve the original loader interface.
 import htmlLoaderModuleBackup from 'html-loader'
-require.cache[require.resolve('html-loader')].exports = function() {
+require.cache[require.resolve('html-loader')].exports = function():any {
     Helper.extendObject(true, this.options, module, this.options)
     return htmlLoaderModuleBackup.apply(this, arguments)
 }
@@ -227,17 +227,20 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
     const normalizedInternalInjection:NormalizedInternalInjection =
         Helper.normalizeInternalInjection(injection.internal)
     for (const chunkName:string in normalizedInternalInjection)
-        for (const moduleID:string of normalizedInternalInjection[chunkName]) {
-            const type:?string = Helper.determineAssetType(
-                Helper.determineModuleFilePath(moduleID), configuration.build,
-                configuration.path)
-            if (type && configuration.build[type] && configuration.build[
-                type
-            ].outputExtension === 'js') {
-                javaScriptNeeded = true
-                break
+        if (normalizedInternalInjection.hasOwnProperty(chunkName))
+            for (const moduleID:string of normalizedInternalInjection[
+                chunkName
+            ]) {
+                const type:?string = Helper.determineAssetType(
+                    Helper.determineModuleFilePath(moduleID),
+                    configuration.build, configuration.path)
+                if (type && configuration.build[type] && configuration.build[
+                    type
+                ].outputExtension === 'js') {
+                    javaScriptNeeded = true
+                    break
+                }
             }
-        }
     if (!javaScriptNeeded)
         configuration.files.javaScript = path.join(
             configuration.path.asset.javaScript, '.__dummy__.compiled.js')
@@ -251,7 +254,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         */
         injection.external = (
             context:string, request:string, callback:ProcedureFunction
-        ) => {
+        ):?null => {
             const filePath:string = Helper.determineModuleFilePath(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases, configuration.knownExtensions,
@@ -386,8 +389,9 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
                 )].concat(moduleLocations.directoryPaths),
-                exclude: (filePath:string) => Helper.isFilePathInLocation(
-                    filePath, configuration.path.ignore)
+                exclude: (filePath:string):boolean =>
+                    Helper.isFilePathInLocation(
+                        filePath, configuration.path.ignore)
             }, {
                 test: /\.coffee$/,
                 loader: loader.preprocessor.coffee,

@@ -12,9 +12,9 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, EvaluationFunction, GetterFunction, Injection,
-    InternalInjection, NormalizedInternalInjection, Paths, PlainObject,
-    SetterFunction, TraverseFilesCallbackFunction
+    BuildConfiguration, BuildConfigurationItem, EvaluationFunction,
+    GetterFunction, Injection, InternalInjection, NormalizedInternalInjection,
+    Paths, PlainObject, SetterFunction, TraverseFilesCallbackFunction
 } from './type'
 // endregion
 // region declarations
@@ -74,7 +74,7 @@ export default class Helper {
      * sources many expandable types are allowed but target and sources have to
      * to come from the same type.
      * @param targetOrDeepIndicator - Maybe the target or deep indicator.
-     * @param ..._targetAndOrSources - Target and at least one source object.
+     * @param _targetAndOrSources - Target and at least one source object.
      * @returns Returns given target extended with all given sources.
      */
     static extendObject(
@@ -172,7 +172,7 @@ export default class Helper {
      * callback for each found file. Callback gets file path and corresponding
      * stat object as argument.
      * @param directoryPath - Path to directory structure to traverse.
-     * @callback callback - Function to invoke for each traversed file.
+     * @param callback - Function to invoke for each traversed file.
      * @returns Given callback function.
      */
     static walkDirectoryRecursivelySync(
@@ -236,34 +236,32 @@ export default class Helper {
         configuration:PlainObject, entryPath:string = './',
         context:string = './', pathsToIgnore:Array<string> = ['.git']
     ):BuildConfiguration {
-        const buildConfigurations:Array<Object> = []
+        const buildConfiguration:BuildConfiguration = []
         let index:number = 0
-        for (const type:string in configuration) {
-            buildConfigurations.push(Helper.extendObject(
-                true, {filePaths: []}, configuration[type]))
-            Helper.walkDirectoryRecursivelySync(entryPath, (
-                filePath:string, stat:Object
-            ):?boolean => {
-                for (const pathToIgnore:string of pathsToIgnore)
-                    if (filePath.startsWith(path.resolve(
-                        context, pathToIgnore
-                    )))
+        for (const type:string in configuration)
+            if (configuration.hasOwnProperty(type)) {
+                const newBuildConfigurationItem:BuildConfigurationItem =
+                    Helper.extendObject(true, {filePaths: []}, configuration[
+                        type])
+                Helper.walkDirectoryRecursivelySync(entryPath, ((
+                    index:number, buildConfigurationItem:BuildConfigurationItem
+                ):TraverseFilesCallbackFunction => (
+                    filePath:string, stat:Object
+                ):?boolean => {
+                    if (Helper.isFilePathInLocation(filePath, pathsToIgnore))
                         return false
-                if (stat.isFile() && path.extname(filePath).substring(
-                    1
-                ) === buildConfigurations[
-                    buildConfigurations.length - 1
-                ].extension && !(new RegExp(
-                    buildConfigurations[
-                        buildConfigurations.length - 1
-                    ].fileNamePattern
-                )).test(filePath))
-                    buildConfigurations[index].filePaths.push(filePath)
-            })
-            index += 1
-        }
-        return buildConfigurations.sort((
-            first:{[key:string]:string}, second:{[key:string]:string}
+                    if (stat.isFile() && path.extname(filePath).substring(
+                        1
+                    ) === buildConfigurationItem.extension && !(new RegExp(
+                        buildConfigurationItem.fileNamePattern
+                    )).test(filePath))
+                        buildConfigurationItem.filePaths.push(filePath)
+                })(index, newBuildConfigurationItem))
+                buildConfiguration.push(newBuildConfigurationItem)
+                index += 1
+            }
+        return buildConfiguration.sort((
+            first:BuildConfigurationItem, second:BuildConfigurationItem
         ):number => {
             if (first.outputExtension !== second.outputExtension) {
                 if (first.outputExtension === 'js')
@@ -294,16 +292,17 @@ export default class Helper {
             Helper.normalizeInternalInjection(
                 internalInjection)
         for (const chunkName:string in normalizedInternalInjection)
-            for (const moduleID:string of normalizedInternalInjection[
-                chunkName
-            ]) {
-                const filePath:string = Helper.determineModuleFilePath(
-                    moduleID, moduleAliases, knownExtensions, context)
-                filePaths.push(filePath)
-                const directoryPath:string = path.dirname(filePath)
-                if (directoryPaths.indexOf(directoryPath) === -1)
-                    directoryPaths.push(directoryPath)
-            }
+            if (normalizedInternalInjection.hasOwnProperty(chunkName))
+                for (const moduleID:string of normalizedInternalInjection[
+                    chunkName
+                ]) {
+                    const filePath:string = Helper.determineModuleFilePath(
+                        moduleID, moduleAliases, knownExtensions, context)
+                    filePaths.push(filePath)
+                    const directoryPath:string = path.dirname(filePath)
+                    if (directoryPaths.indexOf(directoryPath) === -1)
+                        directoryPaths.push(directoryPath)
+                }
         return {filePaths, directoryPaths}
     }
     /**
@@ -417,8 +416,8 @@ export default class Helper {
     /**
      * Adds dynamic getter and setter to any given data structure such as maps.
      * @param object - Object to proxy.
-     * @callback getterWrapper - Function to wrap each property get.
-     * @callback setterWrapper - Function to wrap each property set.
+     * @param getterWrapper - Function to wrap each property get.
+     * @param setterWrapper - Function to wrap each property set.
      * @param typesToExtend - Types which should be extended (Checks are
      * performed via "value instanceof type".).
      * @param deep - Indicates to perform a deep wrapping of specified types.
@@ -538,7 +537,8 @@ export default class Helper {
         knownExtensions:Array<string> = ['.js'], context:string = './'
     ):string {
         for (const search:string in moduleAliases)
-            moduleID = moduleID.replace(search, moduleAliases[search])
+            if (moduleAliases.hasOwnProperty(search))
+                moduleID = moduleID.replace(search, moduleAliases[search])
         for (const moduleLocation:string of ['', 'node_modules', '../'])
             for (let fileName:string of ['__package__', '', 'index', 'main'])
                 for (const extension:string of knownExtensions) {

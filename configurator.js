@@ -14,8 +14,9 @@ import Helper from './helper.compiled'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
 // variable named "metaConfiguration".
 import {configuration as givenMetaConfiguration} from './package'
-import type {PlainObject, MetaConfiguration, ResolvedCongfiguration} from
-    './type'
+import type {
+    DefaultConfiguration, MetaConfiguration, PlainObject, ResolvedConfiguration
+} from './type'
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 metaConfiguration.default.path.context = path.resolve(__dirname, '../../')
 if (
@@ -44,7 +45,7 @@ metaConfiguration.default.path.context += '/'
 // Merges final default configuration object depending on given target
 // environment.
 const libraryConfiguration:PlainObject = metaConfiguration.library
-let configuration:PlainObject
+let configuration:DefaultConfiguration
 if (debug)
     configuration = Helper.extendObject(
         true, metaConfiguration.default, metaConfiguration.debug)
@@ -111,7 +112,7 @@ for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
                     pathConfiguration[key], configuration)
             ) + '/'
 // / endregion
-const resolvedConfiguration:ResolvedCongfiguration = Helper.resolveMapping(
+const resolvedConfiguration:ResolvedConfiguration = Helper.resolveMapping(
     configuration)
 // endregion
 // region consolidate file specific build configuration
@@ -120,9 +121,11 @@ const resolvedConfiguration:ResolvedCongfiguration = Helper.resolveMapping(
 const defaultConfiguration:PlainObject = resolvedConfiguration.build.default
 delete resolvedConfiguration.build.default
 for (const type:string in resolvedConfiguration.build)
-    resolvedConfiguration.build[type] = Helper.extendObject(true, {
-    }, defaultConfiguration, Helper.extendObject(
-        true, {extension: type}, resolvedConfiguration.build[type], {type}))
+    if (resolvedConfiguration.build.hasOwnProperty(type))
+        resolvedConfiguration.build[type] = Helper.extendObject(true, {
+        }, defaultConfiguration, Helper.extendObject(
+            true, {extension: type}, resolvedConfiguration.build[type], {type})
+        )
 // endregion
 // region apply webpack html plugin workaround
 /*
@@ -135,7 +138,7 @@ for (const html:PlainObject of resolvedConfiguration.files.html) {
         html.template.indexOf('!') !== -1 && typeof html.template !== 'object'
     ) {
         const newTemplateString:Object = new String(html.template)
-        newTemplateString.replace = ((string:string) => (
+        newTemplateString.replace = ((string:string):Function => (
             _search:RegExp|string, _replacement:string|(
                 ...matches:Array<string>
             ) => string

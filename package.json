@@ -73,8 +73,200 @@
     },
     "configuration": {
         "default": {
-            "debug": false, "library": true,
-            "injection": {"internal": [], "external": []},
+            "debug": false,
+            "library": true,
+
+
+            "files": {
+                "cascadingStyleSheet": {
+                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+                },
+                "html": [{
+                    "debug": false,
+                    "filename": "index.html",
+                    "hash": true,
+                    "inject": "body",
+                    "minify": {
+                        "__execute__": "self.module.optimizer.htmlMinifier"
+                    },
+                    "template": {
+                        "__execute__": "`html?${JSON.stringify(self.module.html)}!jade?${JSON.stringify(self.module.preprocessor.jade)}!${self.path.source}index.jade`"
+                    }
+                }],
+                "javaScript": {
+                    "__execute__": "`${self.path.asset.javaScript}index.js?${self.hashAlgorithm}=[hash]`"
+                }
+            },
+            "injection": {
+                "external": [],
+                "internal": []
+            },
+            "inPlace": {
+                "cascadingStyleSheet": true,
+                "externalLibrary": true,
+                "javaScript": false,
+                "otherMaximumFileSizeLimitInByte": 40960
+            },
+            "knownExtensions": [
+                ".compiled", "",
+
+                ".compiled.js", ".js", ".coffee", ".coffee.md", ".litcoffee",
+
+                ".compiled.html", ".html", ".jade",
+
+                ".compiled.css", ".css", ".scss", ".sass", ".less",
+
+                ".compiled.eot", ".eot",
+                ".compiled.woff", ".woff", ".compiled.woff2", ".woff2",
+                ".compiled.ttf", ".ttf",
+
+                ".compiled.svg", ".svg",
+
+                ".compiled.png", ".png",
+                ".compiled.jpg", ".jpg",
+                ".compiled.ico", ".ico",
+                ".compiled.gif", ".gif"
+            ],
+            "module": {
+                "additionalAliases": {},
+                "aliases": {},
+                "cascadingStyleSheet": {},
+                "html": {
+                    "config": "html",
+                    "attrs": ["img:src", "link:href", "a:href"]
+                },
+                "optimizer": {
+                    "data": {
+                        "limit": {
+                            "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                        },
+                        "name": {
+                            "__execute__": "`/${self.path.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                        }
+                    },
+                    "font": {
+                        "eot": {
+                            "limit": {
+                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                            },
+                            "name": {
+                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            }
+                        },
+                        "svg": {
+                            "limit": {
+                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                            },
+                            "mimetype": "image/svg+xml",
+                            "name": {
+                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            }
+                        },
+                        "ttf": {
+                            "limit": {
+                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                            },
+                            "mimetype": "application/octet-stream",
+                            "name": {
+                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            }
+                        },
+                        "woff": {
+                            "limit": {
+                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                            },
+                            "name": {
+                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            }
+                        }
+                    },
+                    "htmlMinifier": {
+                        "caseSensitive": true,
+                        "collapseBooleanAttributes": true,
+                        "collapseInlineTagWhitespace": true,
+                        "collapseWhitespace": true,
+                        "collapseWhitespace": true,
+                        "conservativeCollapse": true,
+                        "ignoreCustomComments": [{
+                            "__execute__": "/^\\|?[a-z]{2}[A-Z]{2}:/"
+                        }],
+                        "ignoreCustomFragments": [
+                            {"__execute__": "/<%[\\s\\S]*?%>/"},
+                            {"__execute__": "/<\\?[\\s\\S]*?\\?>/"},
+                            {"__execute__": "/<link[^>]*>/"},
+                            {"__execute__": "/<img[^>]*>/"}
+                        ],
+                        "includeAutoGeneratedTags": false,
+                        "removeAttributeQuotes": false,
+                        "removeComments": true,
+                        "removeCommentsFromCDATA": true,
+                        "removeCDATASectionsFromCDATA": true,
+                        "removeTagWhitespace": false,
+                        "removeRedundantAttributes": false,
+                        "removeEmptyAttributes": false,
+                        "removeScriptTypeAttributes": true,
+                        "removeStyleLinkTypeAttributes": true,
+                        "removeOptionalTags": false,
+                        "removeEmptyElements": false,
+                        "useShortDoctype": false,
+                        "lint": false,
+                        "keepClosingSlash": true,
+                        "maxLineLength": 9999999999999999999999999999999,
+                        "minifyJS": {
+                            "__execute__": "self.module.optimizer.uglifyJS"
+                        },
+                        "minifyCSS": false,
+                        "minifyURLs": false,
+                        "preserveLineBreaks": true,
+                        "preventAttributesEscaping": true,
+                        "processScripts": [],
+                        "processConditionalComments": false,
+                        "quoteCharacter": "\""
+                    },
+                    "image": {
+                        "content": {
+                            "optimizationLevel": 7,
+                            "bypassOnDebug": true,
+                            "verbose": false
+                        },
+                        "file": {
+                            "limit": {
+                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                            },
+                            "name": {
+                                "__execute__": "`/${self.path.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            }
+                        }
+                    },
+                    "uglifyJS": {"compress": {"warnings": false}}
+                },
+                "preprocessor": {
+                    "jade": {
+                        "moduleAliases": {
+                            "__execute__": "self.module.aliases"
+                        },
+                        "knownExtensions": {"__execute__": "self.knownExtensions"},
+                        "context": {"__execute__": "self.path.context"},
+                        "compiler": {
+                            "pretty": false,
+                            "debug": false,
+                            "cache": true
+                        },
+                        "locals": {"includeManifest": {
+                            "__execute__": "!!self.offline"
+                        }}
+                    },
+                    "less": {},
+                    "modernJavaScript": {
+                        "cacheDirectory": true,
+                        "presets": ["es2015", "stage-0"],
+                        "plugins": ["transform-flow-strip-types"]
+                    },
+                    "sass": {"indentedSyntax": true},
+                    "scss": {}
+                },
+                "style": {"insertAt": "top", "singleton": true}
+            },
             "path": {
                 "asset": {
                     "cascadingStyleSheet": "cascadingStyleSheet/",
@@ -100,31 +292,6 @@
                     {"__execute__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"}
                 ]
             },
-            "inPlace": {
-                "cascadingStyleSheet": true, "javaScript": false,
-                "otherMaximumFileSizeLimitInByte": 40960,
-                "externalLibrary": true
-            },
-            "knownExtensions": [
-                ".compiled", "",
-
-                ".compiled.js", ".js", ".coffee", ".coffee.md", ".litcoffee",
-
-                ".compiled.html", ".html", ".jade",
-
-                ".compiled.css", ".css", ".scss", ".sass", ".less",
-
-                ".compiled.eot", ".eot",
-                ".compiled.woff", ".woff", ".compiled.woff2", ".woff2",
-                ".compiled.ttf", ".ttf",
-
-                ".compiled.svg", ".svg",
-
-                ".compiled.png", ".png",
-                ".compiled.jpg", ".jpg",
-                ".compiled.ico", ".ico",
-                ".compiled.gif", ".gif"
-            ],
             "offline": {
                 "caches": "all",
                 "scope": "/",
@@ -136,202 +303,8 @@
                     "__execute__": "`*.map?${self.hashAlgorithm}=*`"
                 }]
             },
-            "files": {
-                "html": [{
-                    "debug": false,
-                    "template": {
-                        "__execute__": "`html?${JSON.stringify(self.module.html)}!jade?${JSON.stringify(self.module.preprocessor.jade)}!${self.path.source}index.jade`"
-                    },
-                    "hash": true,
-                    "filename": "index.html",
-                    "inject": "body",
-                    "minify": {"__execute__": "self.module.optimizer.htmlMinifier"}
-                }],
-                "cascadingStyleSheet": {
-                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
-                },
-                "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}index.js?${self.hashAlgorithm}=[hash]`"
-                }
-            },
-            "module": {
-                "aliases": {}, "additionalAliases": {},
-                "preprocessor": {
-                    "jade": {
-                        "moduleAliases": {
-                            "__execute__": "self.module.aliases"
-                        },
-                        "knownExtensions": {"__execute__": "self.knownExtensions"},
-                        "context": {"__execute__": "self.path.context"},
-                        "compiler": {
-                            "pretty": false,
-                            "debug": false,
-                            "cache": true
-                        },
-                        "locals": {"includeManifest": {
-                            "__execute__": "!!self.offline"
-                        }}
-                    },
-                    "less": {},
-                    "sass": {"indentedSyntax": true},
-                    "scss": {},
-                    "modernJavaScript": {
-                        "cacheDirectory": true,
-                        "presets": ["es2015", "stage-0"],
-                        "plugins": ["transform-flow-strip-types"]
-                    }
-                },
-                "html": {
-                    "config": "html", "attrs": ["img:src", "link:href", "a:href"]
-                },
-                "cascadingStyleSheet": {},
-                "style": {"insertAt": "top", "singleton": true},
-                "optimizer": {
-                    "uglifyJS": {"compress": {"warnings": false}},
-                    "htmlMinifier": {
-                        "collapseWhitespace": true,
-                        "removeComments": true,
-                        "removeCommentsFromCDATA": true,
-                        "removeCDATASectionsFromCDATA": true,
-                        "collapseWhitespace": true,
-                        "conservativeCollapse": true,
-                        "collapseInlineTagWhitespace": true,
-                        "preserveLineBreaks": true,
-                        "collapseBooleanAttributes": true,
-                        "removeTagWhitespace": false,
-                        "removeAttributeQuotes": false,
-                        "removeRedundantAttributes": false,
-                        "preventAttributesEscaping": true,
-                        "useShortDoctype": false,
-                        "removeEmptyAttributes": false,
-                        "removeScriptTypeAttributes": true,
-                        "removeStyleLinkTypeAttributes": true,
-                        "removeOptionalTags": false,
-                        "removeEmptyElements": false,
-                        "lint": false,
-                        "keepClosingSlash": true,
-                        "caseSensitive": true,
-                        "minifyJS": {
-                            "__execute__": "self.module.optimizer.uglifyJS"
-                        },
-                        "minifyCSS": false,
-                        "minifyURLs": false,
-                        "includeAutoGeneratedTags": false,
-                        "ignoreCustomComments": [{
-                            "__execute__": "/^\\|?[a-z]{2}[A-Z]{2}:/"
-                        }],
-                        "ignoreCustomFragments": [
-                            {"__execute__": "/<%[\\s\\S]*?%>/"},
-                            {"__execute__": "/<\\?[\\s\\S]*?\\?>/"},
-                            {"__execute__": "/<link[^>]*>/"},
-                            {"__execute__": "/<img[^>]*>/"}
-                        ],
-                        "processScripts": [],
-                        "processConditionalComments": false,
-                        "maxLineLength": 9999999999999999999999999999999,
-                        "customEventAttributes": [],
-                        "customAttrAssign": [],
-                        "customAttrSurround": [],
-                        "customAttrCollapse": {"__execute__": "/a^/"},
-                        "quoteCharacter": "\""
-                    },
-                    "image": {
-                        "file": {
-                            "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                            },
-                            "name": {
-                                "__execute__": "`/${self.path.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
-                            }
-                        },
-                        "content": {
-                            "optimizationLevel": 7,
-                            "bypassOnDebug": true,
-                            "verbose": false
-                        }
-                    },
-                    "data": {
-                        "limit": {
-                            "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                        },
-                        "name": {
-                            "__execute__": "`/${self.path.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
-                        }
-                    },
-                    "font": {
-                        "eot": {
-                            "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                            },
-                            "name": {
-                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
-                            }
-                        },
-                        "woff": {
-                            "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                            },
-                            "name": {
-                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
-                            }
-                        },
-                        "ttf": {
-                            "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                            },
-                            "mimetype": "application/octet-stream",
-                            "name": {
-                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
-                            }
-                        },
-                        "svg": {
-                            "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                            },
-                            "mimetype": "image/svg+xml",
-                            "name": {
-                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
-                            }
-                        }
-                    }
-                }
-            },
 
 
-
-            "hashAlgorithm": "md5",
-            "commandLine": {
-                "build": {
-                    "__execute__": "`webpack --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --progress --display-chunks --display-reasons --display-error-details`"
-                },
-                "serve": {
-                    "__execute__": "`webpack-dev-server --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --inline --colors`"
-                },
-                "test": {"__execute__": "self.commandLine.serve"},
-                "lint": {
-                    "__execute__": "`eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
-                }
-            },
-            "loader": {
-                "modulesDirectories": [
-                    "web_loaders", "web_modules", "node_loaders",
-                    "node_modules", "../"
-                ],
-                "extensions": [
-                    "", ".webpack-loader.js", ".web-loader.js", ".loader.js",
-                    "-loader.compiled.js", "-loader.js", "Loader.compiled.js",
-                    "Loader.js", ".js"
-                ],
-                "alias": {"jade": "webOptimizer/jade"}
-            },
-            "development": {
-                "server": {
-                    "contentBase": {"__execute__": "self.path.source"},
-                    "historyApiFallback": true,
-                    "stats": {"colors": true}
-                },
-                "tool": null, "openBrowser": null
-            },
             "build": {
                 "default": {
                     "outputExtension": "js",
@@ -349,38 +322,65 @@
                 "sass": {"outputExtension": "css"},
                 "scss": {"outputExtension": "css"}
             },
-
+            "commandLine": {
+                "build": {
+                    "__execute__": "`webpack --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --progress --display-chunks --display-reasons --display-error-details`"
+                },
+                "lint": {
+                    "__execute__": "`eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
+                },
+                "serve": {
+                    "__execute__": "`webpack-dev-server --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --inline --colors`"
+                },
+                "test": {"__execute__": "self.commandLine.serve"}
+            },
+            "development": {
+                "openBrowser": null,
+                "server": {
+                    "contentBase": {"__execute__": "self.path.source"},
+                    "historyApiFallback": true,
+                    "stats": {"colors": true}
+                },
+                "tool": null
+            },
+            "hashAlgorithm": "md5",
+            "loader": {
+                "alias": {"jade": "webOptimizer/jade"},
+                "extensions": [
+                    "", ".webpack-loader.js", ".web-loader.js", ".loader.js",
+                    "-loader.compiled.js", "-loader.js", "Loader.compiled.js",
+                    "Loader.js", ".js"
+                ],
+                "modulesDirectories": [
+                    "web_loaders", "web_modules", "node_loaders",
+                    "node_modules", "../"
+                ]
+            },
 
 
             "test": {
-                "offline": null,
-                "injection": {"internal": ["test/"]},
-                "module": {"additionalAliases": {
-                    "qunit.css": "qunitjs/qunit/qunit.css",
-                    "qunit": "qunitjs/qunit/qunit.js"
-                }},
                 "files": {"html": [{
                     "template": {
                         "__execute__": "`html?${JSON.stringify(self.module.html)}!jade?${JSON.stringify(self.module.preprocessor.jade)}!${webOptimizerPath}/test.jade`"
                     },
                     "filename": "test.html"
-                }]}
+                }]},
+                "injection": {"internal": ["test/"]},
+                "module": {"additionalAliases": {
+                    "qunit.css": "qunitjs/qunit/qunit.css",
+                    "qunit": "qunitjs/qunit/qunit.js"
+                }},
+                "offline": null
             }
         },
 
 
-
         "debug": {
             "debug": true,
-            "development": {
-                "tool": "#source-map",
-                "openBrowser": {"url": {
-                    "__execute__": "(function(sourceFilePath) {return `http://localhost:8080/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`})(self.files.html[0].template)"
-                }}
-            },
-            "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
-            "offline": null,
+
+
             "files": {"html": [{"debug": true}]},
+            "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
             "module": {
                 "preprocessor": {
                     "jade": {
@@ -404,12 +404,34 @@
                         "removeStyleLinkTypeAttributes": false
                     }
                 }
+            },
+            "offline": null,
+
+
+            "development": {
+                "openBrowser": {"url": {
+                    "__execute__": "(function(sourceFilePath) {return `http://localhost:8080/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`})(self.files.html[0].template)"
+                }},
+                "tool": "#source-map"
             }
         },
 
 
-
         "library": {
+            "files": {
+                "cascadingStyleSheet": {
+                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                },
+                "javaScript": {
+                    "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
+                }
+            },
+            "injection": {"internal": "__auto__"},
+            "inPlace": {
+                "cascadingStyleSheet": false, "javaScript": false,
+                "otherMaximumFileSizeLimitInByte": 1,
+                "externalLibrary": false
+            },
             "path": {
                 "source": "./", "target": "./",
                 "asset": {
@@ -426,21 +448,9 @@
                 }
             },
             "offline": null,
-            "inPlace": {
-                "cascadingStyleSheet": false, "javaScript": false,
-                "otherMaximumFileSizeLimitInByte": 1,
-                "externalLibrary": false
-            },
-            "injection": {"internal": "__auto__"},
-            "test": {"injection": {"internal": ["test"]}},
-            "files": {
-                "cascadingStyleSheet": {
-                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
-                },
-                "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
-                }
-            }
+
+
+            "test": {"injection": {"internal": ["test"]}}
         }
     },
     "eslintConfig": {
@@ -493,11 +503,11 @@
 
             "flowtype/require-parameter-type": "error",
             "flowtype/require-return-type": ["error", "always", {
-                "annotateUndefined": "always"
+                "annotateUndefined": "never"
             }],
             "flowtype/space-before-type-colon": ["error", "never"],
             "flowtype/space-after-type-colon": ["error", "never"],
-            "flowtype/type-id-match": ["error", "^([A-Z][a-z0-9]+)+$"]
+            "flowtype/type-id-match": ["error", "^([A-Z]+[a-z0-9]*)+$"]
         },
         "settings": {"flowtype": {"onlyFilesWithFlowAnnotation": false}},
         "env": {"shared-node-browser": true}
