@@ -133,14 +133,13 @@ for (const html:PlainObject of resolvedConfiguration.files.html) {
     if (
         html.template.indexOf('!') !== -1 && typeof html.template !== 'object'
     ) {
-        const templateRequestBackup:string = html.template
-        resolvedConfiguration.files.html[index].template = new String(
-            html.template)
-        resolvedConfiguration.files.html[index].template.replace = (
-            (string:string):Function => (
-                _search:RegExp|string, _replacement:string|Function
-            ):string => string
-        )(templateRequestBackup)
+        const newTemplateString:Object = new String(html.template)
+        newTemplateString.replace = ((string:string) => (
+            _search:RegExp|string, _replacement:string|(
+                ...matches:Array<string>
+            ) => string
+        ):string => string)(html.template)
+        html.template = newTemplateString
     }
     index += 1
 }

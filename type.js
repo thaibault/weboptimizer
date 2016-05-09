@@ -8,7 +8,9 @@ import path from 'path'
 // region exports
 // / region data structure
 export type PlainObject = {[key:string]:any}
-export type InternalInjection = string|Array<string>|PlainObject
+export type NormalizedInternalInjection = {[key:string]:Array<string>}
+export type InternalInjection =
+    string|Array<string>|{[key:string]:string|Array<string>}
 export type ExternalInjection = string|Function|RegExp|Array<ExternalInjection>
 export type Injection = {
     internal:InternalInjection;
@@ -21,10 +23,27 @@ export type BuildConfiguration = Array<{
     [key:string]:any
 }>
 export type Paths = {
+    asset:{
+        cascadingStyleSheet:string;
+        coffeeScript:string;
+        data:string;
+        font:string;
+        image:string;
+        javaScript:string;
+        less:string;
+        publicTarget:string;
+        sass:string;
+        scss:string;
+        source:string;
+        target:string;
+        template:string;
+    };
+    context:string;
+    ignore:Array<string>;
+    manifest:string;
     source:string;
     target:string;
-    asset:PlainObject;
-    [key:string]:any;
+    tidyUp:Array<string>
 }
 export type MetaConfiguration = {
     default:{
@@ -35,16 +54,67 @@ export type MetaConfiguration = {
     library:PlainObject
 }
 export type HTMLConfiguration = {
-    template:string;
-    [key:string]:any
+    template:string|String;
+    filename:string
 }
 export type ResolvedCongfiguration = {
-    debug:boolean;
     build:PlainObject;
+    commandLine:{
+        build:string;
+        lint:string;
+        serve:string;
+        test:string
+    };
+    debug:boolean;
+    development:{
+        openBrowser:PlainObject;
+        server:PlainObject;
+        tool:PlainObject
+    };
+    files:{
+        html:Array<HTMLConfiguration>;
+        javaScript:string;
+        cascadingStyleSheet:string
+    };
+    givenCommandLineArguments:Array<string>;
+    hashAlgorithm:string;
     injection:Injection;
+    inPlace:{
+        cascadingStyleSheet:boolean;
+        javaScript:boolean
+    };
+    knownExtensions:Array<string>;
+    loader:PlainObject;
+    module:{
+        aliases:PlainObject;
+        additionalAliases:PlainObject;
+        cascadingStyleSheet:PlainObject;
+        html:PlainObject;
+        optimizer:{
+            data:PlainObject;
+            font:{
+                eot:PlainObject;
+                woff:PlainObject;
+                woff2:PlainObject;
+                ttf:PlainObject;
+                svg:PlainObject
+            };
+            htmlMinifier:PlainObject;
+            image:{file:PlainObject};
+            uglifyJS:PlainObject
+        };
+        preprocessor:{
+            jade:PlainObject;
+            less:PlainObject;
+            modernJavaScript:PlainObject;
+            sass:PlainObject;
+            scss:PlainObject
+        };
+        style:PlainObject
+    };
+    name:string;
     path:Paths;
-    files:{html:Array<HTMLConfiguration>}
-    [key:string]:any
+    test:{injection:Injection}
 }
 // / endregion
 // / region function signatures

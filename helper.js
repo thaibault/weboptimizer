@@ -12,8 +12,9 @@ try {
 } catch (error) {}
 
 import type {
-    GetterFunction, SetterFunction, BuildConfiguration, EvaluationFunction,
-    Injection, Paths, TraverseFilesCallbackFunction, PlainObject
+    BuildConfiguration, EvaluationFunction, GetterFunction, Injection,
+    InternalInjection, NormalizedInternalInjection, Paths, PlainObject,
+    SetterFunction, TraverseFilesCallbackFunction
 } from './type'
 // endregion
 // region declarations
@@ -227,7 +228,8 @@ export default class Helper {
      * @param entryPath - Path to analyse nested structure.
      * @param context - Path to set paths relative to and determine relative
      * ignored paths to.
-     * @param pathsToIgnore - List of paths to ignore.
+     * @param pathsToIgnore - Paths which marks location to ignore (Relative
+     * paths are resolved relatively to given context.).
      * @returns Converted build configuration.
      */
     static resolveBuildConfigurationFilePaths(
@@ -276,64 +278,58 @@ export default class Helper {
      * Determines all file and directory paths related to given internal
      * modules as array.
      * @param internalInjection - List of moduleIDs or module file paths.
+     * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - List of file extensions to take into account.
      * @param context - File path to resolve relative to.
-     * @param pathsToIgnore - List of file path to ignore.
      * @returns Object with a file path and directory path key mapping to
      * corresponding list of paths.
      */
     static determineModuleLocations(
-        givenInternalInjection:string|PlainObject|Array<string>,
-        knownExtensions:Array<string> = ['.js'], context:string = './',
-        pathsToIgnore:Array<string> = ['.git']
+        internalInjection:InternalInjection, moduleAliases:PlainObject = {},
+        knownExtensions:Array<string> = ['.js'], context:string = './'
     ):{[key:string]:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
-        let internalInjection:Array<string> = []
-        if (givenInternalInjection instanceof Array)
-            internalInjection = givenInternalInjection
-        else if (typeof givenInternalInjection === 'string')
-            internalInjection.push(givenInternalInjection)
-        else if (
-            givenInternalInjection instanceof Object &&
-            Helper.isPlainObject(givenInternalInjection)
-        )
-            for (const key:string in givenInternalInjection)
-                internalInjection.push(givenInternalInjection[key])
-        for (const module:string of internalInjection) {
-            let filePath:string = path.resolve(
-                `${module}${knownExtensions[0]}`)
-            let stat:?Object
-            for (const extension:string of knownExtensions) {
-                filePath = path.resolve(`${module}${extension}`)
-                try {
-                    stat = fileSystem.statSync(filePath)
-                    break
-                } catch (error) {}
-            }
-            if (!stat)
-                continue
-            let pathToAdd:string
-            if (stat && stat.isDirectory()) {
-                pathToAdd = `${path.resolve(module)}/`
-                Helper.walkDirectoryRecursivelySync(module, (
-                    subFilePath:string
-                ):?boolean => {
-                    for (const pathToIgnore:string of pathsToIgnore)
-                        if (subFilePath.startsWith(path.resolve(
-                            context, pathToIgnore
-                        )))
-                            return false
-                    filePaths.push(subFilePath)
-                })
-            } else {
-                pathToAdd = `${path.resolve(path.dirname(module))}/`
+        const normalizedInternalInjection:NormalizedInternalInjection =
+            Helper.normalizeInternalInjection(
+                internalInjection)
+        for (const chunkName:string in normalizedInternalInjection)
+            for (const moduleID:string of normalizedInternalInjection[
+                chunkName
+            ]) {
+                const filePath:string = Helper.determineModuleFilePath(
+                    moduleID, moduleAliases, knownExtensions, context)
                 filePaths.push(filePath)
+                const directoryPath:string = path.dirname(filePath)
+                if (directoryPaths.indexOf(directoryPath) === -1)
+                    directoryPaths.push(directoryPath)
             }
-            if (directoryPaths.indexOf(pathToAdd) === -1)
-                directoryPaths.push(pathToAdd)
-        }
         return {filePaths, directoryPaths}
+    }
+    /**
+     * Every injection definition type can be represented as plain object
+     * (mapping from chunk name to array of module ids). This method converts
+     * each representation into the normalized plain object notation.
+     * @param internalInjection - Given internal injection to normalize.
+     * @returns Normalized representation of given internal injection.
+     */
+    static normalizeInternalInjection(
+        internalInjection:InternalInjection
+    ):NormalizedInternalInjection {
+        let result:NormalizedInternalInjection = {}
+        if (internalInjection instanceof Object && Helper.isPlainObject(
+            internalInjection
+        ))
+            for (const chunkName:string in internalInjection)
+                if (typeof internalInjection[chunkName] === 'string')
+                    result[chunkName] = [internalInjection[chunkName]]
+                else
+                    result[chunkName] = internalInjection[chunkName]
+        else if (typeof internalInjection === 'string')
+            result = {index: [internalInjection]}
+        else if (Array.isArray(internalInjection))
+            result = {index: internalInjection}
+        return result
     }
     /**
      * Determines all concrete file paths for given injection which are marked
@@ -343,6 +339,7 @@ export default class Helper {
      * @param buildConfigurations - Resolved build configuration.
      * @param modulesToExclude - A list of modules to exclude (specified by
      * path or id) or a mapping from chunk names to module ids.
+     * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - File extensions to take into account.
      * @param context - File path to use as starting point.
      * @param pathsToIgnore - Paths which marks location to ignore (Relative
@@ -351,8 +348,8 @@ export default class Helper {
      */
     static resolveInjection(
         givenInjection:Injection, buildConfigurations:BuildConfiguration,
-        modulesToExclude:PlainObject|Array<string>,
-        knownExtensions:Array<string> = [
+        modulesToExclude:InternalInjection,
+        moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
             '.js', '.css', '.svg', '.html'
         ], context:string = './', pathsToIgnore:Array<string> = ['.git']
     ):Injection {
@@ -360,7 +357,8 @@ export default class Helper {
             true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
-                modulesToExclude, knownExtensions, context, pathsToIgnore
+                modulesToExclude, moduleAliases, knownExtensions, context,
+                pathsToIgnore
             ).filePaths
         for (const type:string of ['internal', 'external'])
             if (givenInjection[type] === '__auto__') {
@@ -539,7 +537,7 @@ export default class Helper {
      * @returns File path or given module id if determinations has failed or
      * wasn't necessary.
      */
-    static determineModulePath(
+    static determineModuleFilePath(
         moduleID:string, moduleAliases:PlainObject = {},
         knownExtensions:Array<string> = ['.js'], context:string = './'
     ):string {

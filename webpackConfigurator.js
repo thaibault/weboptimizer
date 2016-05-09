@@ -19,7 +19,8 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Offline = module.require('offline-plugin')
 
 import type {
-    ExternalInjection, HTMLConfiguration, InternalInjection, ProcedureFunction
+    ExternalInjection, HTMLConfiguration, InternalInjection,
+    NormalizedInternalInjection, ProcedureFunction
 } from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -49,12 +50,12 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // region initialisation
 // / region pre processing
 // // region plugins
-configuration.plugins = []
+const pluginInstances:Array<Object> = []
 for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
     try {
         fileSystem.accessSync(htmlConfiguration.template.substring(
             htmlConfiguration.template.lastIndexOf('!') + 1), fileSystem.F_OK)
-        configuration.plugins.push(new plugins.HTML(htmlConfiguration))
+        pluginInstances.push(new plugins.HTML(htmlConfiguration))
     } catch (error) {}
 // provide an offline manifest
 if (configuration.offline) {
@@ -68,13 +69,13 @@ if (configuration.offline) {
         configuration.offline.excludes.push(
             `${configuration.path.asset.javaScript}*.js?` +
             `${configuration.hashAlgorithm}=*`)
-    configuration.plugins.push(new plugins.Offline(configuration.offline))
+    pluginInstances.push(new plugins.Offline(configuration.offline))
 }
 if ((
     !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'test'
 ) && configuration.development.openBrowser)
-    configuration.plugins.push(new plugins.openBrowser(
+    pluginInstances.push(new plugins.openBrowser(
         configuration.development.openBrowser))
 // // endregion
 // // region modules/assets
@@ -82,25 +83,26 @@ Helper.extendObject(
     configuration.module.aliases, configuration.module.additionalAliases)
 const moduleLocations:{[key:string]:Array<string>} =
     Helper.determineModuleLocations(
-        configuration.injection.internal, configuration.knownExtensions,
-        configuration.path.context, configuration.path.ignore)
+        configuration.injection.internal, configuration.module.aliases,
+        configuration.knownExtensions, configuration.path.context,
+        configuration.path.ignore)
 let injection:{internal:InternalInjection; external:ExternalInjection}
 let fallbackModuleDirectoryPaths:Array<string> = []
 if (configuration.givenCommandLineArguments[2] === 'test') {
     fallbackModuleDirectoryPaths = moduleLocations.directoryPaths
     injection = {internal: moduleLocations.filePaths, external: []}
 } else {
-    configuration.plugins.push(new plugins.ExtractText(
+    pluginInstances.push(new plugins.ExtractText(
         configuration.files.cascadingStyleSheet, {
             allChunks: true, disable: !configuration.files.cascadingStyleSheet}
     ))
     // Optimizes webpack output
     if (configuration.module.optimizer.uglifyJS)
-        configuration.plugins.push(new webpack.optimize.UglifyJsPlugin(
+        pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
             configuration.module.optimizer.uglifyJS))
     // // region in-place configured assets in the main html file
     if (!process.argv[1].endsWith('/webpack-dev-server'))
-        configuration.plugins.push({apply: (compiler:Object) => {
+        pluginInstances.push({apply: (compiler:Object) => {
             compiler.plugin('emit', (
                 compilation:Object, callback:ProcedureFunction
             ) => {
@@ -218,30 +220,18 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         configuration.injection, Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore
-        ), configuration.test.injection.internal,
+        ), configuration.test.injection.internal, configuration.module.aliases,
         configuration.knownExtensions, configuration.path.context,
         configuration.path.ignore)
     let javaScriptNeeded:boolean = false
-    if (Array.isArray(injection.internal))
-        for (const moduleID:string of injection.internal) {
-            const type:?string =
-                Helper.determineAssetType(Helper.determineModulePath(
-                    moduleID, configuration.module.aliases,
-                    configuration.knownExtensions, configuration.path.context
-                ), configuration.build, configuration.path)
-            if (configuration.build[type] && configuration.build[
-                type
-            ].outputExtension === 'js') {
-                javaScriptNeeded = true
-                break
-            }
-        }
-    else
-        for (const moduleName:string in injection.internal) {
+    const normalizedInternalInjection:NormalizedInternalInjection =
+        Helper.normalizeInternalInjection(injection.internal)
+    for (const chunkName:string in normalizedInternalInjection)
+        for (const moduleID:string of normalizedInternalInjection[chunkName]) {
             const type:?string = Helper.determineAssetType(
-                Helper.determineModulePath(injection.internal[moduleName]),
-                configuration.build, configuration.path)
-            if (configuration.build[type] && configuration.build[
+                Helper.determineModuleFilePath(moduleID), configuration.build,
+                configuration.path)
+            if (type && configuration.build[type] && configuration.build[
                 type
             ].outputExtension === 'js') {
                 javaScriptNeeded = true
@@ -262,7 +252,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         injection.external = (
             context:string, request:string, callback:ProcedureFunction
         ) => {
-            const filePath:string = Helper.determineModulePath(
+            const filePath:string = Helper.determineModuleFilePath(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases, configuration.knownExtensions,
                 context)
@@ -273,7 +263,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                     return callback(null, `umd ${request}`)
                 if (Array.isArray(injection.internal)) {
                     for (const internalModule:string of injection.internal)
-                        if (Helper.determineModulePath(
+                        if (Helper.determineModuleFilePath(
                             internalModule, configuration.module.aliases,
                             configuration.knownExtensions, context
                         ) === filePath)
@@ -282,7 +272,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                 }
                 if (injection.internal instanceof Map) {
                     for (const chunkName:string in injection.internal)
-                        if (Helper.determineModulePath(
+                        if (Helper.determineModuleFilePath(
                             injection.internal[chunkName],
                             configuration.module.aliases,
                             configuration.knownExtensions, context
@@ -366,7 +356,7 @@ export default {
     // region input
     resolveLoader: configuration.loader,
     resolve: {
-        root: [configuration.path.asset.source],
+        root: [(configuration.path.asset.source: string)],
         fallback: fallbackModuleDirectoryPaths,
         extensions: configuration.knownExtensions,
         alias: configuration.module.aliases
@@ -425,9 +415,9 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.template),
                 exclude: configuration.files.html.map((
-                    request:string
-                ):string => request.template.substring(
-                    request.template.lastIndexOf('!') + 1))
+                    htmlConfiguration:HTMLConfiguration
+                ):string => htmlConfiguration.template.substring(
+                    htmlConfiguration.template.lastIndexOf('!') + 1))
             }
             // endregion
         ],
@@ -469,9 +459,9 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.template),
                 exclude: configuration.files.html.map((
-                    request:string
-                ):string => request.template.substring(
-                    request.template.lastIndexOf('!') + 1))
+                    htmlConfiguration:HTMLConfiguration
+                ):string => htmlConfiguration.template.substring(
+                    htmlConfiguration.template.lastIndexOf('!') + 1))
             }
             // endregion
         ],
@@ -510,7 +500,7 @@ export default {
             // endregion
         ]
     },
-    plugins: configuration.plugins,
+    plugins: pluginInstances,
     // Let the "html-loader" access full html minifier processing
     // configuration.
     html: configuration.module.optimizer.htmlMinifier,

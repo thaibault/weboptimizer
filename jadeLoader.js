@@ -59,7 +59,7 @@ module.exports = function(source:string):string {
                 }, nestedLocals.options || {})
                 if (options.isString)
                     return template
-                const templateFilePath:string = Helper.determineModulePath(
+                const templateFilePath:string = Helper.determineModuleFilePath(
                     template, query.moduleAliases, query.knownExtensions,
                     query.context)
                 this.addDependency(templateFilePath)

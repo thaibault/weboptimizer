@@ -16,8 +16,8 @@ try {
 
 import configuration from './configurator.compiled'
 import type {
-    BuildConfiguration, ResolvedCongfiguration, ExitHandlerFunction,
-    PlainObject
+    BuildConfiguration, ExitHandlerFunction, InternalInjection,
+    NormalizedInternalInjection, PlainObject, ResolvedCongfiguration
 } from './type'
 import Helper from './helper.compiled'
 // endregion
@@ -117,36 +117,43 @@ if (process.argv.length > 2) {
                 if (!error) {
                     // Determines all none javaScript entities which have been
                     // emitted as single javaScript module to remove.
-                    const modulesToEmit:InternalInjection =
-                        Helper.resolveInjection(
-                            configuration.injection, buildConfigurations,
-                            configuration.test.injection.internal,
-                            configuration.knownExtensions,
-                            configuration.path.context, configuration.path.ignore
-                        ).internal
-                    for (const moduleID:string in modulesToEmit) {
-                        const type:?string = Helper.determineAssetType(
-                            modulesToEmit[moduleID], configuration.build,
-                            configuration.path)
-                        const filePath =
-                            configuration.files.javaScript.replace(
-                                '[name]', moduleID
-                            ).replace(/\?[^?]+/, '')
-                        if (
-                            typeof type === 'string' &&
-                            configuration.build[type] && configuration.build[
-                                type
-                            ].outputExtension !== 'js'
-                        )
-                            for (const suffix:string of ['', '.map'])
-                                fileSystem.access(
-                                    `${filePath}${suffix}`, fileSystem.F_OK,
-                                    (error:?Error) => {
-                                        if (!error)
-                                            fileSystem.unlink(
-                                                filePath + suffix)
-                                    })
-                    }
+                    const internalInjection:NormalizedInternalInjection =
+                        Helper.normalizeInternalInjection(
+                            Helper.resolveInjection(
+                                configuration.injection, buildConfigurations,
+                                configuration.test.injection.internal,
+                                configuration.module.aliases,
+                                configuration.knownExtensions,
+                                configuration.path.context,
+                                configuration.path.ignore
+                            ).internal)
+                    for (const chunkName:string in internalInjection)
+                        for (const moduleID:string of internalInjection[
+                            chunkName
+                        ]) {
+                            const type:?string = Helper.determineAssetType(
+                                Helper.determineModuleFilePath(moduleID),
+                                configuration.build, configuration.path)
+                            const filePath =
+                                configuration.files.javaScript.replace(
+                                    '[name]', moduleID
+                                ).replace(/\?[^?]+/, '')
+                            if (
+                                typeof type === 'string' &&
+                                configuration.build[type] &&
+                                configuration.build[
+                                    type
+                                ].outputExtension !== 'js'
+                            )
+                                for (const suffix:string of ['', '.map'])
+                                    fileSystem.access(
+                                        `${filePath}${suffix}`,
+                                        fileSystem.F_OK, (error:?Error) => {
+                                            if (!error)
+                                                fileSystem.unlink(
+                                                    filePath + suffix)
+                                        })
+                        }
                     for (const filePath:string of configuration.path.tidyUp)
                         fileSystem.access(filePath, fileSystem.F_OK, (
                             error:?Error
@@ -177,7 +184,7 @@ if (process.argv.length > 2) {
         const testModuleFilePaths:Array<string> =
             Helper.determineModuleLocations(
                 configuration.test.injection.internal,
-                configuration.knownExtensions,
+                configuration.module.aliases, configuration.knownExtensions,
                 configuration.path.context, configuration.path.ignore
             ).filePaths
         for (const buildConfiguration of buildConfigurations)

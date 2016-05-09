@@ -74,26 +74,26 @@
     "configuration": {
         "default": {
             "debug": false, "library": true,
-            "injects": {"internal": [], "external": []},
+            "injection": {"internal": [], "external": []},
             "path": {
-                "source": "source/", "target": "build/",
                 "asset": {
-                    "source": {"__execute__": "self.path.source"},
-                    "target": {"__execute__": "self.path.target"},
-                    "publicTarget": "",
                     "cascadingStyleSheet": "cascadingStyleSheet/",
-                    "javaScript": "javaScript/",
                     "coffeeScript": "coffeeScript/",
-                    "less": "less/",
-                    "scss": "scss/",
-                    "sass": "sass/",
+                    "data": "data/",
                     "font": "font/",
                     "image": "image/",
-                    "template": "template/",
-                    "data": "data/"
+                    "javaScript": "javaScript/",
+                    "less": "less/",
+                    "publicTarget": "",
+                    "sass": "sass/",
+                    "scss": "scss/",
+                    "source": {"__execute__": "self.path.source"},
+                    "target": {"__execute__": "self.path.target"},
+                    "template": "template/"
                 },
-                "manifest": "manifest.appcache",
                 "ignore": ["node_modules", ".git"],
+                "manifest": "manifest.appcache",
+                "source": "source/", "target": "build/",
                 "tidyUp": [
                     {"__execute__": "path.join(self.path.target, path.basename(self.path.manifest, '.appcache') + '.html')"},
                     {"__execute__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js')"},
@@ -354,7 +354,7 @@
 
             "test": {
                 "offline": null,
-                "injects": {"internal": ["test/"]},
+                "injection": {"internal": ["test/"]},
                 "module": {"additionalAliases": {
                     "qunit.css": "qunitjs/qunit/qunit.css",
                     "qunit": "qunitjs/qunit/qunit.js"
@@ -431,8 +431,8 @@
                 "otherMaximumFileSizeLimitInByte": 1,
                 "externalLibrary": false
             },
-            "injects": {"internal": "__auto__"},
-            "test": {"injects": {"internal": ["test"]}},
+            "injection": {"internal": "__auto__"},
+            "test": {"injection": {"internal": ["test"]}},
             "files": {
                 "cascadingStyleSheet": {
                     "__execute__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
