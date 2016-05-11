@@ -72,13 +72,11 @@ export type ResolvedConfiguration = {
     name:string;
     givenCommandLineArguments:Array<string>;
 
-
     debug:boolean;
     library:boolean;
 
-
     files:{
-        cascadingStyleSheet:string
+        cascadingStyleSheet:string;
         html:Array<HTMLConfiguration>;
         javaScript:string;
     };
@@ -119,7 +117,6 @@ export type ResolvedConfiguration = {
     path:Paths;
     offline:PlainObject;
 
-
     build:PlainObject;
     commandLine:{
         build:string;
@@ -134,7 +131,6 @@ export type ResolvedConfiguration = {
     };
     hashAlgorithm:string;
     loader:PlainObject;
-
 
     test:{injection:Injection}
 }
