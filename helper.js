@@ -38,7 +38,7 @@ export default class Helper {
      */
     static isPlainObject(object:mixed):boolean {
         return (
-            object !== null && typeof object === 'object' &&
+            typeof object === 'object' && object !== null &&
             Object.getPrototypeOf(object) === Object.prototype)
     }
     /**
@@ -431,25 +431,25 @@ export default class Helper {
     static addDynamicGetterAndSetter<Value>(
         object:Value, getterWrapper:GetterFunction = (key:any):any => key,
         setterWrapper:SetterFunction = (key:any, value:any):any => value,
-        typesToExtend:Array<mixed> = [Map], deep:boolean = true,
-        containesMethodName:string = 'has', getterMethodName:string = 'get',
-        setterMethodName:string = 'set',
+        typesToExtend:Array<mixed> = [Object], deep:boolean = true,
+        containesMethodName:string = 'hasOwnProperty',
+        getterMethodName:string = '[]', setterMethodName:string = '[]',
     ):Value {
         if (deep)
-            if (typeof object === 'object' && Helper.isPlainObject(object)) {
+            if (object instanceof Map)
+                for (const [key:mixed, value:mixed] of object)
+                    object.set(key, Helper.addDynamicGetterAndSetter(
+                        value, getterWrapper, setterWrapper, typesToExtend,
+                        deep, containesMethodName, getterMethodName,
+                        setterMethodName))
+            else if (typeof object === 'object' && object !== null) {
                 for (const key:string in object)
                     if (object.hasOwnProperty(key))
                         object[key] = Helper.addDynamicGetterAndSetter(
                             object[key], getterWrapper, setterWrapper,
                             typesToExtend, deep, containesMethodName,
                             getterMethodName, setterMethodName)
-            } else if (object instanceof Map)
-                for (const [key:mixed, value:mixed] of object)
-                    object.set(key, Helper.addDynamicGetterAndSetter(
-                        value, getterWrapper, setterWrapper, typesToExtend,
-                        deep, containesMethodName, getterMethodName,
-                        setterMethodName))
-            else if (Array.isArray(object)) {
+            } else if (Array.isArray(object)) {
                 let index:number = 0
                 for (const value:mixed of object) {
                     object[index] = Helper.addDynamicGetterAndSetter(
@@ -469,14 +469,21 @@ export default class Helper {
                             return target
                         if (typeof target[name] === 'function')
                             return target[name].bind(target)
-                        if (target[containesMethodName](name))
+                        if (target[containesMethodName](name)) {
+                            if (getterMethodName === '[]')
+                                return getterWrapper(target[name])
                             return getterWrapper(target[getterMethodName](
                                 name))
+                        }
                         return target[name]
                     },
-                    set: (target:Object, name:string, value:any):any =>
-                        target[setterMethodName](name, setterWrapper((
-                            name, value)))
+                    set: (target:Object, name:string, value:any) => {
+                        if (setterMethodName === '[]')
+                            target[name] = setterWrapper(name, value)
+                        else
+                            target[setterMethodName](name, setterWrapper(
+                                name, value))
+                    }
                 })
             }
         return object
@@ -492,32 +499,37 @@ export default class Helper {
      * to evaluate.
      * @returns Evaluated given mapping.
      */
-    static resolveMapping(
+    static resolveDynamicDataStructure(
         object:any, configuration:?PlainObject = null, deep:boolean = true,
         evaluationIndicatorKey:string = '__execute__'
     ):any {
         if (configuration === null && typeof object === 'object')
             configuration = object
         if (configuration && !configuration.__target__)
-            Helper.addDynamicGetterAndSetter(
-                configuration, (value:any):any => Helper.resolveMapping(
-                    value, configuration, false))
-        if (Helper.isPlainObject(object))
+            configuration = Helper.addDynamicGetterAndSetter(
+                configuration, (value:any):any =>
+                    Helper.resolveDynamicDataStructure(
+                        value, configuration, false, evaluationIndicatorKey)
+            )
+        if (typeof object === 'object' && object !== null) {
             for (const key:string in object)
                 if (key === evaluationIndicatorKey) {
                     const evaluationFunction:EvaluationFunction = new Function(
                         'self', 'webOptimizerPath', 'currentPath', 'path',
                         `return ${object[key]}`)
-                    return Helper.resolveMapping(evaluationFunction(
-                        configuration, __dirname, process.cwd(), path
-                    ), configuration)
+                    return Helper.resolveDynamicDataStructure(
+                        evaluationFunction(
+                            configuration, __dirname, process.cwd(), path
+                        ), configuration, false, evaluationIndicatorKey)
                 } else if (deep)
-                    object[key] = Helper.resolveMapping(
-                        object[key], configuration)
-        else if (deep && Array.isArray(object)) {
+                    object[key] = Helper.resolveDynamicDataStructure(
+                        object[key], configuration, deep,
+                        evaluationIndicatorKey)
+        } else if (deep && Array.isArray(object)) {
             let index:number = 0
             for (const value:mixed of object) {
-                object[index] = Helper.resolveMapping(value, configuration)
+                object[index] = Helper.resolveDynamicDataStructure(
+                    value, configuration, deep)
                 index += 1
             }
         }

@@ -15,7 +15,8 @@ import Helper from './helper.compiled'
 // variable named "metaConfiguration".
 import {configuration as givenMetaConfiguration} from './package'
 import type {
-    DefaultConfiguration, MetaConfiguration, PlainObject, ResolvedConfiguration
+    DefaultConfiguration, HTMLConfiguration, MetaConfiguration, PlainObject,
+    ResolvedConfiguration
 } from './type'
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 metaConfiguration.default.path.context = path.resolve(__dirname, '../../')
@@ -108,12 +109,12 @@ for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
     for (const key:string of ['source', 'target'])
         if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(
-                configuration.path.context, Helper.resolveMapping(
+                configuration.path.context, Helper.resolveDynamicDataStructure(
                     pathConfiguration[key], configuration)
             ) + '/'
 // / endregion
-const resolvedConfiguration:ResolvedConfiguration = Helper.resolveMapping(
-    configuration)
+const resolvedConfiguration:ResolvedConfiguration =
+    Helper.resolveDynamicDataStructure(configuration)
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
@@ -133,17 +134,21 @@ for (const type:string in resolvedConfiguration.build)
     configurations.
 */
 let index:number = 0
-for (const html:PlainObject of resolvedConfiguration.files.html) {
+for (
+    const htmlConguration:HTMLConfiguration of
+    resolvedConfiguration.files.html
+) {
     if (
-        html.template.indexOf('!') !== -1 && typeof html.template !== 'object'
+        typeof htmlConguration.template === 'string' &&
+        htmlConguration.template.indexOf('!') !== -1
     ) {
-        const newTemplateString:Object = new String(html.template)
+        const newTemplateString:Object = new String(htmlConguration.template)
         newTemplateString.replace = ((string:string):Function => (
             _search:RegExp|string, _replacement:string|(
                 ...matches:Array<string>
             ) => string
-        ):string => string)(html.template)
-        html.template = newTemplateString
+        ):string => string)(htmlConguration.template)
+        htmlConguration.template = newTemplateString
     }
     index += 1
 }

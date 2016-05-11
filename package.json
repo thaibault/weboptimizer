@@ -410,7 +410,7 @@
 
             "development": {
                 "openBrowser": {"url": {
-                    "__execute__": "(function(sourceFilePath) {return `http://localhost:8080/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`})(self.files.html[0].template)"
+                    "__execute__": "((sourceFilePath) => `http://localhost:8080/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`)(self.files.html[0].template)"
                 }},
                 "tool": "#source-map"
             }
