@@ -135,8 +135,7 @@ for (const type:string in resolvedConfiguration.build)
 */
 let index:number = 0
 for (
-    const htmlConguration:HTMLConfiguration of
-    resolvedConfiguration.files.html
+    const htmlConguration:HTMLConfiguration of resolvedConfiguration.files.html
 ) {
     if (
         typeof htmlConguration.template === 'string' &&

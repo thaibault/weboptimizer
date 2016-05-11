@@ -418,44 +418,44 @@ export default class Helper {
      * @param object - Object to proxy.
      * @param getterWrapper - Function to wrap each property get.
      * @param setterWrapper - Function to wrap each property set.
-     * @param typesToExtend - Types which should be extended (Checks are
-     * performed via "value instanceof type".).
-     * @param deep - Indicates to perform a deep wrapping of specified types.
-     * performed via "value instanceof type".).
-     * @param containesMethodName - Method name to indicate if a key is stored
-     * in given data structure.
      * @param getterMethodName - Method name to get a stored value by key.
      * @param setterMethodName - Method name to set a stored value by key.
+     * @param containesMethodName - Method name to indicate if a key is stored
+     * in given data structure.
+     * @param deep - Indicates to perform a deep wrapping of specified types.
+     * performed via "value instanceof type".).
+     * @param typesToExtend - Types which should be extended (Checks are
+     * performed via "value instanceof type".).
      * @returns Returns given object wrapped with a dynamic getter proxy.
      */
     static addDynamicGetterAndSetter<Value>(
         object:Value, getterWrapper:GetterFunction = (key:any):any => key,
         setterWrapper:SetterFunction = (key:any, value:any):any => value,
-        typesToExtend:Array<mixed> = [Object], deep:boolean = true,
-        containesMethodName:string = 'hasOwnProperty',
         getterMethodName:string = '[]', setterMethodName:string = '[]',
+        containesMethodName:string = 'hasOwnProperty', deep:boolean = true,
+        typesToExtend:Array<mixed> = [Object]
     ):Value {
         if (deep)
             if (object instanceof Map)
                 for (const [key:mixed, value:mixed] of object)
                     object.set(key, Helper.addDynamicGetterAndSetter(
-                        value, getterWrapper, setterWrapper, typesToExtend,
-                        deep, containesMethodName, getterMethodName,
-                        setterMethodName))
+                        value, getterWrapper, setterWrapper, getterMethodName,
+                        setterMethodName, containesMethodName, deep,
+                        typesToExtend))
             else if (typeof object === 'object' && object !== null) {
                 for (const key:string in object)
                     if (object.hasOwnProperty(key))
                         object[key] = Helper.addDynamicGetterAndSetter(
                             object[key], getterWrapper, setterWrapper,
-                            typesToExtend, deep, containesMethodName,
-                            getterMethodName, setterMethodName)
+                            getterMethodName, setterMethodName,
+                            containesMethodName, deep, typesToExtend)
             } else if (Array.isArray(object)) {
                 let index:number = 0
                 for (const value:mixed of object) {
                     object[index] = Helper.addDynamicGetterAndSetter(
-                        value, getterWrapper, setterWrapper, typesToExtend,
-                        deep, containesMethodName, getterMethodName,
-                        setterMethodName)
+                        value, getterWrapper, setterWrapper, getterMethodName,
+                        setterMethodName, containesMethodName, deep,
+                        typesToExtend)
                     index += 1
                 }
             }
@@ -463,8 +463,19 @@ export default class Helper {
             if (object instanceof type) {
                 if (object.__target__)
                     return object
-                return new Proxy(object, {
-                    get: (target:Object, name:string):any => {
+                const handler:{
+                    has?:(target:Object, name:string) => boolean;
+                    get?:(target:Object, name:string) => any;
+                    set?:(target:Object, name:string) => any
+                } = {}
+                if (containesMethodName)
+                    handler.has = (target:Object, name:string):boolean => {
+                        if (containesMethodName === '[]')
+                            return name in target
+                        return target[containesMethodName](name)
+                    }
+                if (containesMethodName && getterMethodName)
+                    handler.get = (target:Object, name:string):any => {
                         if (name === '__target__')
                             return target
                         if (typeof target[name] === 'function')
@@ -476,15 +487,16 @@ export default class Helper {
                                 name))
                         }
                         return target[name]
-                    },
-                    set: (target:Object, name:string, value:any) => {
+                    }
+                if (setterMethodName)
+                    handler.set = (target:Object, name:string, value:any) => {
                         if (setterMethodName === '[]')
                             target[name] = setterWrapper(name, value)
                         else
                             target[setterMethodName](name, setterWrapper(
                                 name, value))
                     }
-                })
+                return new Proxy(object, handler)
             }
         return object
     }
@@ -507,9 +519,10 @@ export default class Helper {
             configuration = object
         if (configuration && !configuration.__target__)
             configuration = Helper.addDynamicGetterAndSetter(
-                configuration, (value:any):any =>
+                configuration, ((value:any):any =>
                     Helper.resolveDynamicDataStructure(
                         value, configuration, false, evaluationIndicatorKey)
+                ), (key:any, value:any):any => value, '[]', ''
             )
         if (typeof object === 'object' && object !== null) {
             for (const key:string in object)
