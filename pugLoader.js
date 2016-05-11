@@ -4,7 +4,7 @@
 'use strict'
 // region imports
 import * as fileSystem from 'fs'
-import * as jade from 'jade'
+import * as pug from 'pug'
 import * as loaderUtils from 'loader-utils'
 // NOTE: Only needed for debugging this file.
 try {
@@ -21,9 +21,9 @@ module.exports = function(source:string):string {
     if (this.cacheable)
         this.cacheable()
     const query:Object = Helper.extendObject(true, {
-        moduleAliases: [], knownExtensions: ['.jade', '.html', '.js', '.css'],
+        moduleAliases: [], knownExtensions: ['.pug', '.html', '.js', '.css'],
         context: './'
-    }, this.options.jade || {}, loaderUtils.parseQuery(this.query))
+    }, this.options.pug || {}, loaderUtils.parseQuery(this.query))
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler
     ):TemplateFunction => (locals:Object = {}):string => {
@@ -34,9 +34,9 @@ module.exports = function(source:string):string {
         let templateFunction:TemplateFunction
         if (options.isString) {
             delete options.isString
-            templateFunction = jade.compile(template, options)
+            templateFunction = pug.compile(template, options)
         } else
-            templateFunction = jade.compileFile(template, options)
+            templateFunction = pug.compileFile(template, options)
         return templateFunction(Helper.extendObject(true, {
             require: (request:string):string => {
                 const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')

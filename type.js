@@ -106,7 +106,7 @@ export type ResolvedConfiguration = {
             uglifyJS:PlainObject
         };
         preprocessor:{
-            jade:PlainObject;
+            pug:PlainObject;
             less:PlainObject;
             modernJavaScript:PlainObject;
             sass:PlainObject;

@@ -302,7 +302,7 @@ const loader:{
         scss:string;
         babel:string;
         coffee:string;
-        jade:string;
+        pug:string;
         literateCoffee:string
     };
     html:string;
@@ -326,7 +326,7 @@ const loader:{
         babel: 'babel?' + JSON.stringify(
             configuration.module.preprocessor.modernJavaScript),
         coffee: 'coffee',
-        jade: `jade?${JSON.stringify(configuration.module.preprocessor.jade)}`,
+        pug: `pug?${JSON.stringify(configuration.module.preprocessor.pug)}`,
         literateCoffee: 'coffee?literate'
     },
     html: `html?${JSON.stringify(configuration.module.html)}`,
@@ -410,11 +410,11 @@ export default {
             // endregion
             // region html (templates)
             {
-                test: /\.jade$/,
+                test: /\.pug$/,
                 loader:
                     `file?name=${configuration.path.asset.template}` +
                     `[name].html?${configuration.hashAlgorithm}=[hash]!` +
-                    `extract!${loader.html}!${loader.preprocessor.jade}`,
+                    `extract!${loader.html}!${loader.preprocessor.pug}`,
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
@@ -508,7 +508,7 @@ export default {
     // Let the "html-loader" access full html minifier processing
     // configuration.
     html: configuration.module.optimizer.htmlMinifier,
-    jade: configuration.module.preprocessor.jade
+    pug: configuration.module.preprocessor.pug
 }
 // endregion
 // region vim modline

@@ -35,7 +35,7 @@
         "html-webpack-plugin": "*",
         "image-webpack-loader": "^1.6.3",
         "imports-loader": "^0.6.5",
-        "jade": "*",
+        "pug": "*",
         "jsdom": "*",
         "less": "*",
         "less-loader": "*",
@@ -61,14 +61,14 @@
         "webpackConfigurator.js",
         "webpackTestConfigurator.js",
         "helper.js",
-        "jadeLoader.js",
-        "test.jade"
+        "pugLoader.js",
+        "test.pug"
     ],
     "scripts": {
-        "build": "arguments='--plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments jadeLoader.compiled.js jadeLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
+        "build": "arguments='--plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments pugLoader.compiled.js pugLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
         "clear": "rm *.compiled.* &>/dev/null || true",
         "lint": "flow && eslint --ignore-pattern '*.compiled.js' '*.js' || true",
-        "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js jadeLoader.compiled.js webpackConfigurator.compiled.js",
+        "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js pugLoader.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build"
     },
     "configuration": {
@@ -90,7 +90,7 @@
                         "__execute__": "self.module.optimizer.htmlMinifier"
                     },
                     "template": {
-                        "__execute__": "`html?${JSON.stringify(self.module.html)}!jade?${JSON.stringify(self.module.preprocessor.jade)}!${self.path.source}index.jade`"
+                        "__execute__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
                     }
                 }],
                 "javaScript": {
@@ -112,7 +112,7 @@
 
                 ".compiled.js", ".js", ".coffee", ".coffee.md", ".litcoffee",
 
-                ".compiled.html", ".html", ".jade",
+                ".compiled.html", ".html", ".pug",
 
                 ".compiled.css", ".css", ".scss", ".sass", ".less",
 
@@ -241,7 +241,7 @@
                     "uglifyJS": {"compress": {"warnings": false}}
                 },
                 "preprocessor": {
-                    "jade": {
+                    "pug": {
                         "moduleAliases": {
                             "__execute__": "self.module.aliases"
                         },
@@ -345,7 +345,7 @@
             },
             "hashAlgorithm": "md5",
             "loader": {
-                "alias": {"jade": "webOptimizer/jade"},
+                "alias": {"pug": "webOptimizer/pug"},
                 "extensions": [
                     "", ".webpack-loader.js", ".web-loader.js", ".loader.js",
                     "-loader.compiled.js", "-loader.js", "Loader.compiled.js",
@@ -361,7 +361,7 @@
             "test": {
                 "files": {"html": [{
                     "template": {
-                        "__execute__": "`html?${JSON.stringify(self.module.html)}!jade?${JSON.stringify(self.module.preprocessor.jade)}!${webOptimizerPath}/test.jade`"
+                        "__execute__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${webOptimizerPath}/test.pug`"
                     },
                     "filename": "test.html"
                 }]},
@@ -383,7 +383,7 @@
             "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
             "module": {
                 "preprocessor": {
-                    "jade": {
+                    "pug": {
                         "compiler": {"pretty": true},
                         "locals": {"includeManifest": false}
                     },
