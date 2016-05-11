@@ -2,8 +2,6 @@
 .*/\.git
 .*/_.*\.js
 .*/.+\.compiled\.js
-.*/node_modules/config-chain/test/broken.json
-.*/node_modules/npmconf/test/fixtures/package.json
 
 [options]
 module.name_mapper='^\./configurator\.compiled$' -> './configurator'
