@@ -275,7 +275,9 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                             configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
-                if (Helper.isFilePathInLocation(
+                if (!path.resolve(filePath).startsWith(
+                    configuration.path.context
+                ) || Helper.isFilePathInLocation(
                     filePath, configuration.path.ignore
                 ))
                     return callback(null, `umd ${request}`)
