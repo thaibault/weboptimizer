@@ -14,10 +14,12 @@ import Helper from './helper.compiled'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
 // variable named "metaConfiguration".
 import {configuration as givenMetaConfiguration} from './package'
+/* eslint-disable no-unused-vars */
 import type {
     DefaultConfiguration, HTMLConfiguration, MetaConfiguration, PlainObject,
     ResolvedConfiguration
 } from './type'
+/* eslint-enable no-unused-vars */
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 metaConfiguration.default.path.context = path.resolve(__dirname, '../../')
 if (

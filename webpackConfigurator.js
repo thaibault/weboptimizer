@@ -260,6 +260,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                 configuration.module.aliases, configuration.knownExtensions,
                 context)
             if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
+                /* eslint-disable curly */
                 if (Array.isArray(injection.internal)) {
                     for (const internalModule:string of injection.internal)
                         if (Helper.determineModuleFilePath(
@@ -268,6 +269,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                         ) === filePath)
                             return callback()
                 } else if (injection.internal instanceof Map)
+                /* eslint-enable curly */
                     for (const chunkName:string in injection.internal)
                         if (Helper.determineModuleFilePath(
                             injection.internal[chunkName],
