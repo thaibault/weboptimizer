@@ -9,7 +9,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 
-import {* as pugLoader} from '../pugLoader.compiled.js'
+import * as pugLoader from '../pugLoader.compiled'
 // endregion
 console.log('test pug loader')
 // region vim modline

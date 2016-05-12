@@ -6,7 +6,9 @@
 [options]
 module.name_mapper='^\./configurator\.compiled$' -> './configurator'
 module.name_mapper='^\./helper\.compiled$' -> './helper'
+module.name_mapper='^\../helper\.compiled$' -> '../helper'
 module.name_mapper='^\./pugLoader\.compiled$' -> './pugLoader'
+module.name_mapper='^\../pugLoader\.compiled$' -> '../pugLoader'
 module.name_mapper='^\./taskRunner\.compiled$' -> './taskRunner'
 module.name_mapper='^\./webpackConfigurator\.compiled$' -> './webpackConfigurator'
 
