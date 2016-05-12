@@ -283,7 +283,7 @@
                     "target": {"__execute__": "self.path.target"},
                     "template": "template/"
                 },
-                "ignore": ["node_modules", "../../node_modules", ".git"],
+                "ignore": ["node_modules", ".git"],
                 "manifest": "manifest.appcache",
                 "source": "source/", "target": "build/",
                 "tidyUp": [
