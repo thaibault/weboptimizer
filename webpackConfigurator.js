@@ -260,10 +260,6 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                 configuration.module.aliases, configuration.knownExtensions,
                 context)
             if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
-                if (Helper.isFilePathInLocation(
-                    filePath, configuration.path.ignore
-                ))
-                    return callback(null, `umd ${request}`)
                 if (Array.isArray(injection.internal)) {
                     for (const internalModule:string of injection.internal)
                         if (Helper.determineModuleFilePath(
@@ -283,6 +279,10 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                             return callback()
                     return callback(null, `umd ${request}`)
                 }
+                if (Helper.isFilePathInLocation(
+                    filePath, configuration.path.ignore
+                ))
+                    return callback(null, `umd ${request}`)
             }
             return callback()
         }
