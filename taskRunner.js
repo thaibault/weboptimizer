@@ -138,8 +138,11 @@ if (process.argv.length > 2) {
                                     configuration.build, configuration.path)
                                 const filePath =
                                     configuration.files.javaScript.replace(
-                                        '[name]', moduleID
-                                    ).replace(/\?[^?]+/, '')
+                                        '[name]', path.join(path.relative(
+                                            path.dirname(moduleID),
+                                            configuration.path.context
+                                        ), path.basename(moduleID))
+                                    ).replace(/\?[^?]+$/, '')
                                 if (
                                     typeof type === 'string' &&
                                     configuration.build[type] &&
