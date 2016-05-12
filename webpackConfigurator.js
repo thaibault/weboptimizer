@@ -260,6 +260,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                 configuration.module.aliases, configuration.knownExtensions,
                 context)
             if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
+                console.log('\n\n', filePath, '\n')
                 if (Array.isArray(injection.internal)) {
                     for (const internalModule:string of injection.internal)
                         if (Helper.determineModuleFilePath(
@@ -267,9 +268,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                             configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
-                    return callback(null, `umd ${request}`)
-                }
-                if (injection.internal instanceof Map) {
+                } else if (injection.internal instanceof Map)
                     for (const chunkName:string in injection.internal)
                         if (Helper.determineModuleFilePath(
                             injection.internal[chunkName],
@@ -277,9 +276,13 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                             configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
-                    return callback(null, `umd ${request}`)
-                }
-                console.log(filePath, configuration.path.ignore)
+                console.log(
+                    '\n\n', 'A', filePath, configuration.path.ignore,
+                    Helper.isFilePathInLocation(
+                        filePath, configuration.path.ignore
+                    ),
+                    '\n'
+                )
                 if (Helper.isFilePathInLocation(
                     filePath, configuration.path.ignore
                 ))
