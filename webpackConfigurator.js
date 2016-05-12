@@ -279,6 +279,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
                             return callback()
                     return callback(null, `umd ${request}`)
                 }
+                console.log(filePath, configuration.path.ignore)
                 if (Helper.isFilePathInLocation(
                     filePath, configuration.path.ignore
                 ))
