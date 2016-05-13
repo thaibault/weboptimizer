@@ -71,7 +71,7 @@
         "lint": "flow && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
         "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js pugLoader.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build",
-        "test": "arguments='--plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments pugLoader.compiled.js pugLoader.js && babel $arguments test/pugLoader.compiled.js test/pugLoader.js && babel $arguments test/helper.compiled.js test/helper.js && test/pugLoader.compiled.js && test/helper.compiled.js"
+        "test": "arguments='--plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments pugLoader.compiled.js pugLoader.js && babel $arguments test/pugLoader.compiled.js test/pugLoader.js && babel $arguments test/helper.compiled.js test/helper.js && chmod +x test/* && test/pugLoader.compiled.js && test/helper.compiled.js || true"
     },
     "configuration": {
         "default": {

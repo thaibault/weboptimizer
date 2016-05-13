@@ -60,12 +60,12 @@ module.exports = function(source:string):string {
                     encoding: 'utf-8'
                 }, nestedLocals.options || {})
                 if (options.isString)
-                    return template
+                    return compile(template, options)(nestedLocals)
                 const templateFilePath:string = Helper.determineModuleFilePath(
                     template, query.moduleAliases, query.knownExtensions,
                     query.context)
                 this.addDependency(templateFilePath)
-                if (queryMatch || templateFilePath.endsWith('.less'))
+                if (queryMatch || templateFilePath.endsWith('.pug'))
                     return compile(templateFilePath, options)(nestedLocals)
                 return fileSystem.readFileSync(templateFilePath, options)
             }}, locals))
