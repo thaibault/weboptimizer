@@ -39,6 +39,7 @@ export type ResolvedBuildConfigurationItem = {
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
 export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
 export type Paths = {
+    apiDocumentation:string;
     asset:{
         cascadingStyleSheet:string;
         coffeeScript:string;

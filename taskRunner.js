@@ -171,6 +171,13 @@ if (process.argv.length > 2) {
                 }
             }))
     // endregion
+    // region handle api documentation generation
+    else if (process.argv[2] === 'document')
+        // Documents all specified api files.
+        chileProcesses.push(run(
+            `${configuration.commandLine.document} ${additionalArguments}`,
+            childProcessOptions))
+    // endregion
     // region handle lint
     else if (process.argv[2] === 'lint')
         // Lints files with respect to given linting configuration.
@@ -178,7 +185,7 @@ if (process.argv.length > 2) {
             `${configuration.commandLine.lint} ${additionalArguments}`,
             childProcessOptions))
     // endregion
-    // region handle test
+    // region handle test in browser
     else if (process.argv[2] === 'testInBrowser')
         // Runs all specified tests (typically in a real browser environment).
         childProcesses.push(run(
