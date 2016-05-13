@@ -336,7 +336,8 @@
                 "serve": {
                     "__execute__": "`webpack-dev-server --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --inline --colors`"
                 },
-                "test": {"__execute__": "self.commandLine.serve"}
+                "testInBrowser": {"__execute__": "self.commandLine.serve"},
+                "test": "./testBundle.js"
             },
             "development": {
                 "openBrowser": null,
@@ -362,7 +363,7 @@
             },
 
 
-            "test": {
+            "testBrowser": {
                 "files": {"html": [{
                     "template": {
                         "__execute__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${webOptimizerPath}/test.pug`"
@@ -454,7 +455,7 @@
             "offline": null,
 
 
-            "test": {"injection": {"internal": ["test"]}}
+            "testInBrowser": {"injection": {"internal": ["test"]}}
         }
     },
     "eslintConfig": {
