@@ -85,9 +85,9 @@ if (filePath) {
     // region apply test configuration
     if (
         runtimeInformation.givenCommandLineArguments.length > 2 &&
-        runtimeInformation.givenCommandLineArguments[2] === 'test'
+        runtimeInformation.givenCommandLineArguments[2] === 'testInBrowser'
     )
-        Helper.extendObject(true, configuration, configuration.test)
+        Helper.extendObject(true, configuration, configuration.testInBrowser)
     // endregion
     Helper.extendObject(true, configuration, runtimeInformation)
     let result:?PlainObject = null

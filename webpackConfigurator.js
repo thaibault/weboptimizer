@@ -73,7 +73,7 @@ if (configuration.offline) {
 }
 if ((
     !configuration.library ||
-    configuration.givenCommandLineArguments[2] === 'test'
+    configuration.givenCommandLineArguments[2] === 'testInBrowser'
 ) && configuration.development.openBrowser)
     pluginInstances.push(new plugins.openBrowser(
         configuration.development.openBrowser))
@@ -88,7 +88,7 @@ const moduleLocations:{[key:string]:Array<string>} =
         configuration.path.ignore)
 let injection:{internal:InternalInjection; external:ExternalInjection}
 let fallbackModuleDirectoryPaths:Array<string> = []
-if (configuration.givenCommandLineArguments[2] === 'test') {
+if (configuration.givenCommandLineArguments[2] === 'testInBrowser') {
     fallbackModuleDirectoryPaths = moduleLocations.directoryPaths
     injection = {internal: moduleLocations.filePaths, external: []}
 } else {
@@ -220,9 +220,9 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
         configuration.injection, Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore
-        ), configuration.test.injection.internal, configuration.module.aliases,
-        configuration.knownExtensions, configuration.path.context,
-        configuration.path.ignore)
+        ), configuration.testInBrowser.injection.internal,
+        configuration.module.aliases, configuration.knownExtensions,
+        configuration.path.context, configuration.path.ignore)
     let javaScriptNeeded:boolean = false
     const normalizedInternalInjection:NormalizedInternalInjection =
         Helper.normalizeInternalInjection(injection.internal)

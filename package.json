@@ -330,6 +330,7 @@
                 "build": {
                     "__execute__": "`webpack --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --progress --display-chunks --display-reasons --display-error-details`"
                 },
+                "document": "jsdoc *.compiled.js",
                 "lint": {
                     "__execute__": "`eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
                 },

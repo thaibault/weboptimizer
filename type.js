@@ -126,9 +126,11 @@ export type ResolvedConfiguration = {
     build:PlainObject;
     commandLine:{
         build:string;
+        document:string;
         lint:string;
         serve:string;
-        test:string
+        test:string;
+        testInBrowser:string
     };
     development:{
         openBrowser:PlainObject;
@@ -138,7 +140,7 @@ export type ResolvedConfiguration = {
     hashAlgorithm:string;
     loader:PlainObject;
 
-    test:{injection:Injection}
+    testInBrowser:{injection:Injection}
 }
 // / endregion
 // / region specific callbacks

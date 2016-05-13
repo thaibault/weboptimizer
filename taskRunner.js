@@ -122,7 +122,7 @@ if (process.argv.length > 2) {
                         Helper.normalizeInternalInjection(
                             Helper.resolveInjection(
                                 configuration.injection, buildConfigurations,
-                                configuration.test.injection.internal,
+                                configuration.testInBrowser.injection.internal,
                                 configuration.module.aliases,
                                 configuration.knownExtensions,
                                 configuration.path.context,
@@ -179,18 +179,18 @@ if (process.argv.length > 2) {
             childProcessOptions))
     // endregion
     // region handle test
-    else if (process.argv[2] === 'test')
+    else if (process.argv[2] === 'testInBrowser')
         // Runs all specified tests (typically in a real browser environment).
         childProcesses.push(run(
-            `${configuration.commandLine.test} ${additionalArguments}`,
-            childProcessOptions))
+            `${configuration.commandLine.testInBrowser} ` +
+            additionalArguments, childProcessOptions))
     // endregion
     // region handle preinstall
     else if (configuration.library && process.argv[2] === 'preinstall') {
         // Perform all file specific preprocessing stuff.
         const testModuleFilePaths:Array<string> =
             Helper.determineModuleLocations(
-                configuration.test.injection.internal,
+                configuration.testInBrowser.injection.internal,
                 configuration.module.aliases, configuration.knownExtensions,
                 configuration.path.context, configuration.path.ignore
             ).filePaths
@@ -231,12 +231,14 @@ if (childProcesses.length === 0) {
     // arguments is printed.
     if (configuration.library)
         console.log(
-            'Give one of "build", "clear", "lint", "test" or "preinstall" as' +
-            ' command line argument. You can provide a json string as second' +
-            ' parameter to dynamically overwrite some configurations.\n')
+            'Give one of "build", "clear", "document", "lint", "test", ' +
+            '"testInBrowser" or "preinstall" as command line argument. You ' +
+            'can provide a json string as second parameter to dynamically ' +
+            'overwrite some configurations.\n')
     else
         console.log(
-            'Give one of "build", "clear", "lint", "test" or "serve" as ' +
+            'Give one of "build", "clear", "document", "lint", "test", ' +
+            '"testInBrowser" or "serve" as ' +
             ' command line argument. You can provide a json string as second' +
             ' parameter to dynamically overwrite some configurations.\n')
     process.exit()
