@@ -36,8 +36,8 @@ export type ResolvedBuildConfigurationItem = {
     outputExtension:string;
     fileNamePattern:string
 }
-export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
 export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
+export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
 export type Paths = {
     apiDocumentation:string;
     asset:{
@@ -92,7 +92,7 @@ export type ResolvedConfiguration = {
         cascadingStyleSheet:boolean;
         externalLibrary:boolean;
         javaScript:boolean;
-        otherMaximumFileSizeLimitInByte:number;
+        otherMaximumFileSizeLimitInByte:number
     };
     knownExtensions:Array<string>;
     module:{

@@ -190,11 +190,6 @@ if (process.argv.length > 2) {
         // Documents all specified api files.
         Promise.all(processPromises).then(() =>
             processPromises.push(new Promise((resolve, reject) => {
-                console.log(
-                    `${configuration.commandLine.document} ` +
-                    additionalArguments)
-                resolve()
-                return
                 childProcesses.push(run(
                     `${configuration.commandLine.document} ` +
                     additionalArguments,
