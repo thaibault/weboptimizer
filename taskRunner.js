@@ -14,8 +14,8 @@ try {
 
 import configuration from './configurator.compiled'
 import type {
-    BuildConfiguration, ExitHandlerFunction, NormalizedInternalInjection,
-    PlainObject, ResolvedConfiguration
+    ErrorHandlerFunction, NormalizedInternalInjection,
+    PlainObject, ResolvedBuildConfiguration, ResolvedConfiguration
 } from './type'
 import Helper from './helper.compiled'
 // endregion
@@ -56,7 +56,7 @@ if (process.argv.length > 2) {
     }
     fileSystem.writeFileSync(filePath, JSON.stringify(dynamicConfiguration))
     // / region register exit handler to tidy up
-    const exitHandler:ExitHandlerFunction = function(error:?Error):?Error {
+    const exitHandler:ErrorHandlerFunction = function(error:?Error):?Error {
         try {
             fileSystem.unlinkSync(filePath)
         } catch (error) {}
@@ -105,7 +105,7 @@ if (process.argv.length > 2) {
     if (additionalArguments)
         additionalArguments = `'${additionalArguments}'`
     // region handle build
-    const buildConfigurations:BuildConfiguration =
+    const buildConfigurations:ResolvedBuildConfiguration =
         Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore)

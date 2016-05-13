@@ -231,6 +231,7 @@ if (configuration.givenCommandLineArguments[2] === 'test') {
             for (const moduleID:string of normalizedInternalInjection[
                 chunkName
             ]) {
+                // IgnoreTypeCheck
                 const type:?string = Helper.determineAssetType(
                     Helper.determineModuleFilePath(moduleID),
                     configuration.build, configuration.path)

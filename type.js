@@ -26,12 +26,18 @@ export type Injection = {
 // / endregion
 // / region configuration
 export type BuildConfigurationItem = {
+    extension:string;
+    outputExtension:string;
+    fileNamePattern:string
+}
+export type ResolvedBuildConfigurationItem = {
     filePaths:Array<string>;
     extension:string;
     outputExtension:string;
     fileNamePattern:string
 }
-export type BuildConfiguration = Array<BuildConfigurationItem>
+export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
+export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
 export type Paths = {
     asset:{
         cascadingStyleSheet:string;
@@ -136,7 +142,7 @@ export type ResolvedConfiguration = {
 }
 // / endregion
 // / region specific callbacks
-export type ExitHandlerFunction = (error:?Error) => ?Error
+export type ErrorHandlerFunction = (error:?Error) => ?Error
 export type EvaluationFunction = (
     self:?PlainObject, webOptimizerPath:string, currentPath:string,
     path:typeof path

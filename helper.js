@@ -12,9 +12,10 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, BuildConfigurationItem, EvaluationFunction,
-    GetterFunction, Injection, InternalInjection, NormalizedInternalInjection,
-    Paths, PlainObject, SetterFunction, TraverseFilesCallbackFunction
+    BuildConfiguration, EvaluationFunction, GetterFunction, Injection,
+    InternalInjection, NormalizedInternalInjection, Paths, PlainObject,
+    ResolvedBuildConfiguration, ResolvedBuildConfigurationItem, SetterFunction,
+    TraverseFilesCallbackFunction
 } from './type'
 // endregion
 // region declarations
@@ -200,7 +201,7 @@ export default class Helper {
      * determined.
      */
     static determineAssetType(
-        filePath:string, buildConfiguration:PlainObject, paths:Paths
+        filePath:string, buildConfiguration:BuildConfiguration, paths:Paths
     ):?string {
         let result:?string = null
         for (const type:string in buildConfiguration)
@@ -235,16 +236,17 @@ export default class Helper {
     static resolveBuildConfigurationFilePaths(
         configuration:PlainObject, entryPath:string = './',
         context:string = './', pathsToIgnore:Array<string> = ['.git']
-    ):BuildConfiguration {
-        const buildConfiguration:BuildConfiguration = []
+    ):ResolvedBuildConfiguration {
+        const buildConfiguration:ResolvedBuildConfiguration = []
         let index:number = 0
         for (const type:string in configuration)
             if (configuration.hasOwnProperty(type)) {
-                const newBuildConfigurationItem:BuildConfigurationItem =
+                const newItem:ResolvedBuildConfigurationItem =
                     Helper.extendObject(true, {filePaths: []}, configuration[
                         type])
                 Helper.walkDirectoryRecursivelySync(entryPath, ((
-                    index:number, buildConfigurationItem:BuildConfigurationItem
+                    index:number,
+                    buildConfigurationItem:ResolvedBuildConfigurationItem
                 ):TraverseFilesCallbackFunction => (
                     filePath:string, stat:Object
                 ):?boolean => {
@@ -256,12 +258,13 @@ export default class Helper {
                         buildConfigurationItem.fileNamePattern
                     )).test(filePath))
                         buildConfigurationItem.filePaths.push(filePath)
-                })(index, newBuildConfigurationItem))
-                buildConfiguration.push(newBuildConfigurationItem)
+                })(index, newItem))
+                buildConfiguration.push(newItem)
                 index += 1
             }
         return buildConfiguration.sort((
-            first:BuildConfigurationItem, second:BuildConfigurationItem
+            first:ResolvedBuildConfigurationItem,
+            second:ResolvedBuildConfigurationItem
         ):number => {
             if (first.outputExtension !== second.outputExtension) {
                 if (first.outputExtension === 'js')
@@ -346,7 +349,8 @@ export default class Helper {
      * @returns Given injection with resolved marked indicators.
      */
     static resolveInjection(
-        givenInjection:Injection, buildConfigurations:BuildConfiguration,
+        givenInjection:Injection,
+        buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:InternalInjection,
         moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
             '.js', '.css', '.svg', '.html'
@@ -363,11 +367,10 @@ export default class Helper {
             if (givenInjection[type] === '__auto__') {
                 injection[type] = {}
                 const injectedBaseNames:{[key:string]:Array<string>} = {}
-                for (const buildConfiguration:{
-                    filePaths:Array<string>;
-                    outputExtension:string;
-                    extension:string
-                } of buildConfigurations) {
+                for (
+                    const buildConfiguration:ResolvedBuildConfigurationItem of
+                    buildConfigurations
+                ) {
                     if (!injectedBaseNames[buildConfiguration.outputExtension])
                         injectedBaseNames[
                             buildConfiguration.outputExtension
