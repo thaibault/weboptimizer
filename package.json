@@ -367,7 +367,7 @@
             },
 
 
-            "testBrowser": {
+            "testInBrowser": {
                 "files": {"html": [{
                     "template": {
                         "__execute__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${webOptimizerPath}/test.pug`"
