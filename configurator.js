@@ -65,7 +65,7 @@ if (
 // Merges project specific configurations with default ones.
 configuration = Helper.extendObject(true, configuration, specificConfiguration)
 configuration.debug = debug
-// region load additional dynamically given configuration
+// / region load additional dynamically given configuration
 let count:number = 0
 let filePath:?string = null
 while (true) {
@@ -79,10 +79,11 @@ while (true) {
     filePath = newFilePath
     count += 1
 }
+// / endregion
 if (filePath) {
     const runtimeInformation:PlainObject = JSON.parse(
         fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
-    if (runtimeInformation.givenCommandLineArguments.length > 2)
+    if (runtimeInformation.givenCommandLineArguments.length > 2) {
         // region apply documentation configuration
         if (runtimeInformation.givenCommandLineArguments[2] === 'document')
             Helper.extendObject(
@@ -94,9 +95,10 @@ if (filePath) {
         )
             Helper.extendObject(
                 true, configuration, configuration.testInBrowser)
-        else
+        else if (runtimeInformation.givenCommandLineArguments[2] === 'test')
             Helper.extendObject(true, configuration, configuration.test)
         // endregion
+    }
     Helper.extendObject(true, configuration, runtimeInformation)
     let result:?PlainObject = null
     const evaluationFunction = (configuration:PlainObject):?PlainObject =>
@@ -111,7 +113,6 @@ if (filePath) {
     if (Helper.isPlainObject(result))
         Helper.extendObject(true, configuration, result)
 }
-// endregion
 // / region build absolute paths
 for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
     configuration.path, configuration.path.asset
