@@ -81,6 +81,7 @@
             "library": true,
 
 
+            "exportFormat": "umd",
             "files": {
                 "cascadingStyleSheet": {
                     "__execute__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
@@ -271,6 +272,17 @@
                 },
                 "style": {"insertAt": "top", "singleton": true}
             },
+            "offline": {
+                "caches": "all",
+                "scope": "/",
+                "updateStrategy": "hash",
+                "version": 0,
+                "ServiceWorker": {"output": "javaScript/serviceWorker.js"},
+                "AppCache": {"directory": "/"},
+                "excludes": [{
+                    "__execute__": "`*.map?${self.hashAlgorithm}=*`"
+                }]
+            },
             "path": {
                 "apiDocumentation": "apiDocumentation/",
                 "asset": {
@@ -299,17 +311,7 @@
                     {"__execute__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"}
                 ]
             },
-            "offline": {
-                "caches": "all",
-                "scope": "/",
-                "updateStrategy": "hash",
-                "version": 0,
-                "ServiceWorker": {"output": "javaScript/serviceWorker.js"},
-                "AppCache": {"directory": "/"},
-                "excludes": [{
-                    "__execute__": "`*.map?${self.hashAlgorithm}=*`"
-                }]
-            },
+            "target": "web",
 
 
             "build": {
@@ -369,6 +371,18 @@
             },
 
 
+            "document": {
+                "exportFormat": "var",
+                "optimizer": {"uglifyJS": null}
+            },
+
+
+            "test": {
+                "exportFormat": "commonjs2",
+                "target": "node"
+            },
+
+
             "testInBrowser": {
                 "files": {"html": [{
                     "template": {
@@ -376,7 +390,7 @@
                     },
                     "filename": "test.html"
                 }]},
-                "injection": {"internal": ["test/"]},
+                "injection": {"internal": ["test/"]}
                 "module": {"additionalAliases": {
                     "qunit.css": "qunitjs/qunit/qunit.css",
                     "qunit": "qunitjs/qunit/qunit.js"
@@ -461,7 +475,7 @@
             "offline": null,
 
 
-            "testInBrowser": {"injection": {"internal": ["test"]}}
+            "test": {"injection": {"internal": ["test"]}}
         }
     },
     "eslintConfig": {

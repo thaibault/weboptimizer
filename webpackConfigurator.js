@@ -88,7 +88,9 @@ const moduleLocations:{[key:string]:Array<string>} =
         configuration.path.ignore)
 let injection:{internal:InternalInjection; external:ExternalInjection}
 let fallbackModuleDirectoryPaths:Array<string> = []
-if (configuration.givenCommandLineArguments[2] === 'testInBrowser') {
+if (['test', 'testInBrowser'].includes(
+    configuration.givenCommandLineArguments[2]
+)) {
     fallbackModuleDirectoryPaths = moduleLocations.directoryPaths
     injection = {internal: moduleLocations.filePaths, external: []}
 } else {
@@ -97,10 +99,7 @@ if (configuration.givenCommandLineArguments[2] === 'testInBrowser') {
             allChunks: true, disable: !configuration.files.cascadingStyleSheet}
     ))
     // Optimizes webpack output
-    if (
-        configuration.module.optimizer.uglifyJS &&
-        configuration.givenCommandLineArguments[2] !== 'document'
-    )
+    if (configuration.module.optimizer.uglifyJS)
         pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
             configuration.module.optimizer.uglifyJS))
     // // region in-place configured assets in the main html file
@@ -286,7 +285,8 @@ if (configuration.givenCommandLineArguments[2] === 'testInBrowser') {
                 ) || Helper.isFilePathInLocation(
                     filePath, configuration.path.ignore
                 ))
-                    return callback(null, `umd ${request}`)
+                    return callback(
+                        null, `${configuration.exportFormat} ${request}`)
             }
             return callback()
         }
@@ -361,26 +361,27 @@ export default {
     devtool: configuration.development.tool,
     devserver: configuration.development.server,
     // region input
+    entry: injection.internal, externals: injection.external,
     resolveLoader: configuration.loader,
     resolve: {
-        root: [(configuration.path.asset.source: string)],
-        fallback: fallbackModuleDirectoryPaths,
+        alias: configuration.module.aliases,
         extensions: configuration.knownExtensions,
-        alias: configuration.module.aliases
+        fallback: fallbackModuleDirectoryPaths,
+        root: [(configuration.path.asset.source: string)]
     },
-    entry: injection.internal, externals: injection.external,
     // endregion
     // region output
     output: {
+        filename: configuration.files.javaScript,
+        hashFunction: configuration.hashAlgorithm,
+        library: configuration.name,
+        libraryTarget: configuration.exportFormat,
         path: configuration.path.asset.target,
         // publicPath: configuration.path.asset.publicTarget,
-        filename: configuration.files.javaScript,
         pathinfo: configuration.debug,
-        hashFunction: configuration.hashAlgorithm,
-        libraryTarget: 'umd',
         umdNamedDefine: configuration.name,
-        library: configuration.name
     },
+    target: configuration.target,
     // endregion
     module: {
         preLoaders: [
@@ -507,10 +508,10 @@ export default {
             // endregion
         ]
     },
+    html: configuration.module.optimizer.htmlMinifier,
     plugins: pluginInstances,
     // Let the "html-loader" access full html minifier processing
     // configuration.
-    html: configuration.module.optimizer.htmlMinifier,
     pug: configuration.module.preprocessor.pug
 }
 // endregion

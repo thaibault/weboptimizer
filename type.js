@@ -82,6 +82,7 @@ export type ResolvedConfiguration = {
     debug:boolean;
     library:boolean;
 
+    exportFormat:'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
     files:{
         cascadingStyleSheet:string;
         html:Array<HTMLConfiguration>;
@@ -121,8 +122,11 @@ export type ResolvedConfiguration = {
         };
         style:PlainObject
     };
-    path:Paths;
     offline:PlainObject;
+    path:Paths;
+    target:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|\
+        'electron-renderer';
+
 
     build:PlainObject;
     commandLine:{
@@ -140,6 +144,10 @@ export type ResolvedConfiguration = {
     };
     hashAlgorithm:string;
     loader:PlainObject;
+
+    document:PlainObject;
+
+    test:PlainObject:
 
     testInBrowser:{injection:Injection}
 }

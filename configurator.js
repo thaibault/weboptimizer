@@ -82,13 +82,21 @@ while (true) {
 if (filePath) {
     const runtimeInformation:PlainObject = JSON.parse(
         fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
-    // region apply test configuration
-    if (
-        runtimeInformation.givenCommandLineArguments.length > 2 &&
-        runtimeInformation.givenCommandLineArguments[2] === 'testInBrowser'
-    )
-        Helper.extendObject(true, configuration, configuration.testInBrowser)
-    // endregion
+    if (runtimeInformation.givenCommandLineArguments.length > 2)
+        // region apply documentation configuration
+        if (runtimeInformation.givenCommandLineArguments[2] === 'document')
+            Helper.extendObject(
+                true, configuration, configuration.documentation)
+        // endregion
+        // region apply test configuration
+        else if (
+            runtimeInformation.givenCommandLineArguments[2] === 'testInBrowser'
+        )
+            Helper.extendObject(
+                true, configuration, configuration.testInBrowser)
+        else
+            Helper.extendObject(true, configuration, configuration.test)
+        // endregion
     Helper.extendObject(true, configuration, runtimeInformation)
     let result:?PlainObject = null
     const evaluationFunction = (configuration:PlainObject):?PlainObject =>
