@@ -282,7 +282,11 @@ qunit.test('resolveInjection', () => {
     qunit.deepEqual(Helper.resolveInjection(
         {internal: 'a.js', external: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
-    ), {internal: ['a.js'], external: []})
+    ), {internal: 'a.js', external: []})
+    qunit.deepEqual(Helper.resolveInjection(
+        {internal: ['a'], external: []},
+        Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
+    ), {internal: ['a'], external: []})
     qunit.deepEqual(Helper.resolveInjection(
         {internal: '__auto__', external: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
