@@ -100,7 +100,7 @@ if (configuration.givenCommandLineArguments[2] === 'testInBrowser') {
     if (
         configuration.module.optimizer.uglifyJS &&
         configuration.givenCommandLineArguments[2] !== 'document'
-    ) {
+    )
         pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
             configuration.module.optimizer.uglifyJS))
     // // region in-place configured assets in the main html file
