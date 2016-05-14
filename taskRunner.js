@@ -14,8 +14,8 @@ try {
 
 import configuration from './configurator.compiled'
 import type {
-    ErrorHandlerFunction, NormalizedInternalInjection,
-    PlainObject, ResolvedBuildConfiguration, ResolvedConfiguration
+    ErrorHandlerFunction, NormalizedInternalInjection, PlainObject,
+    PromiseCallbackFunction, ResolvedBuildConfiguration, ResolvedConfiguration
 } from './type'
 import Helper from './helper.compiled'
 // endregion
@@ -118,127 +118,124 @@ if (process.argv.length > 2) {
     if (['build', 'document', 'test'].includes(process.argv[2]))
         // Triggers complete asset compiling and bundles them into the final
         // productive output.
-        processPromises.push(new Promise((resolve, reject) =>
-            childProcesses.push(run(
-                `${configuration.commandLine.build} ${additionalArguments}`,
-                childProcessOptions, (error:?Error) => {
-                    if (error)
-                        reject(error)
-                    else {
-                        /*
-                            Determines all none javaScript entities which have
-                            been emitted as single javaScript module to remove.
-                        */
-                        const internalInjection:NormalizedInternalInjection =
-                            Helper.normalizeInternalInjection(
-                                Helper.resolveInjection(
-                                    configuration.injection,
-                                    buildConfigurations,
-                                    configuration.testInBrowser.injection
-                                        .internal,
-                                    configuration.module.aliases,
-                                    configuration.knownExtensions,
-                                    configuration.path.context,
-                                    configuration.path.ignore
-                                ).internal)
-                        for (const chunkName:string in internalInjection)
-                            if (internalInjection.hasOwnProperty(chunkName))
-                                for (
-                                    const moduleID:string of internalInjection[
-                                        chunkName]
-                                ) {
-                                    const type:?string =
-                                        Helper.determineAssetType(
-                                            Helper.determineModuleFilePath(
-                                                moduleID),
-                                            configuration.build,
-                                            configuration.path)
-                                    const filePath:string =
-                                        configuration.files.javaScript.replace(
-                                            '[name]', path.join(path.relative(
-                                                path.dirname(moduleID),
-                                                configuration.path.context
-                                            ), path.basename(moduleID))
-                                        ).replace(/\?[^?]+$/, '')
-                                    if (
-                                        typeof type === 'string' &&
-                                        configuration.build[type] &&
-                                        configuration.build[
-                                            type
-                                        ].outputExtension !== 'js'
-                                    )
-                                        for (const suffix:string of [
-                                            '', '.map'
-                                        ])
-                                            try {
-                                                fileSystem.unlinkSync(
-                                                    filePath + suffix)
-                                            } catch (error) {}
-                                }
-                        for (
-                            const filePath:string of configuration.path.tidyUp
-                        )
-                            try {
-                                fileSystem.unlinkSync(filePath)
-                            } catch (error) {}
-                        resolve()
-                    }
-                }))))
+        processPromises.push(new Promise((
+            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
+        ):number => childProcesses.push(run(
+            `${configuration.commandLine.build} ${additionalArguments}`,
+            childProcessOptions, (error:?Error) => {
+                if (error)
+                    reject(error)
+                else {
+                    /*
+                        Determines all none javaScript entities which have been
+                        emitted as single javaScript module to remove.
+                    */
+                    const internalInjection:NormalizedInternalInjection =
+                        Helper.normalizeInternalInjection(
+                            Helper.resolveInjection(
+                                configuration.injection,
+                                buildConfigurations,
+                                configuration.testInBrowser.injection.internal,
+                                configuration.module.aliases,
+                                configuration.knownExtensions,
+                                configuration.path.context,
+                                configuration.path.ignore
+                            ).internal)
+                    for (const chunkName:string in internalInjection)
+                        if (internalInjection.hasOwnProperty(chunkName))
+                            for (const moduleID:string of internalInjection[
+                                chunkName
+                            ]) {
+                                const type:?string = Helper.determineAssetType(
+                                    Helper.determineModuleFilePath(moduleID),
+                                    configuration.build, configuration.path)
+                                const filePath:string =
+                                    configuration.files.javaScript.replace(
+                                        '[name]', path.join(path.relative(
+                                            path.dirname(moduleID),
+                                            configuration.path.context
+                                        ), path.basename(moduleID))
+                                    ).replace(/\?[^?]+$/, '')
+                                if (
+                                    typeof type === 'string' &&
+                                    configuration.build[type] &&
+                                    configuration.build[
+                                        type
+                                    ].outputExtension !== 'js'
+                                )
+                                    for (const suffix:string of ['', '.map'])
+                                        try {
+                                            fileSystem.unlinkSync(
+                                                filePath + suffix)
+                                        } catch (error) {}
+                            }
+                    for (
+                        const filePath:string of configuration.path.tidyUp
+                    )
+                        try {
+                            fileSystem.unlinkSync(filePath)
+                        } catch (error) {}
+                    resolve()
+                }
+            }))))
     // endregion
     // region handle api documentation generation
     if (process.argv[2] === 'document')
         // Documents all specified api files.
-        Promise.all(processPromises).then(() =>
-            processPromises.push(new Promise((resolve, reject) => {
-                childProcesses.push(run(
-                    `${configuration.commandLine.document} ` +
-                    additionalArguments,
-                    childProcessOptions, (error:?Error) => {
-                        if (error)
-                            reject(error)
-                        else
-                            resolve()
-                    }))
-            })))
+        Promise.all(processPromises).then(():number =>
+            processPromises.push(new Promise((
+                resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
+            ):number => childProcesses.push(run(
+                `${configuration.commandLine.document} ${additionalArguments}`,
+                childProcessOptions, (error:?Error) => {
+                    if (error)
+                        reject(error)
+                    else
+                        resolve()
+                }))
+            )))
     // endregion
     // region handle lint
     else if (process.argv[2] === 'lint')
         // Lints files with respect to given linting configuration.
-        processPromises.push(new Promise((resolve, reject) =>
-            childProcesses.push(run(
-                `${configuration.commandLine.lint} ${additionalArguments}`,
-                childProcessOptions, (error:?Error) => {
-                    if (error)
-                        reject(error)
-                    else
-                        resolve()
-                }))))
+        processPromises.push(new Promise((
+            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
+        ):number => childProcesses.push(run(
+            `${configuration.commandLine.lint} ${additionalArguments}`,
+            childProcessOptions, (error:?Error) => {
+                if (error)
+                    reject(error)
+                else
+                    resolve()
+            }))))
     // endregion
     // region handle test
     else if (process.argv[2] === 'test')
         // Runs all specified tests (typically in a real browser environment).
-        processPromises.push(new Promise((resolve, reject) =>
-            childProcesses.push(run(
-                `${configuration.commandLine.test} ${additionalArguments}`,
-                childProcessOptions, (error:?Error) => {
-                    if (error)
-                        reject(error)
-                    else
-                        resolve()
-                }))))
+        processPromises.push(new Promise((
+            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
+        ):number => childProcesses.push(run(
+            `${configuration.commandLine.test} ${additionalArguments}`,
+            childProcessOptions, (error:?Error) => {
+                if (error)
+                    reject(error)
+                else
+                    resolve()
+            }))))
     // endregion
      // region handle test in browser
     else if (process.argv[2] === 'testInBrowser')
         // Runs all specified tests in a real browser environment.
-        processPromises.push(new Promise((resolve, reject) =>
-            childProcesses.push(run(
-                `${configuration.commandLine.testInBrowser} ` +
-                additionalArguments, childProcessOptions, (error:?Error) => {
-                    if (error)
-                        reject(error)
-                    else
-                        resolve()
-                }))))
+        processPromises.push(new Promise((
+            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
+        ):number => childProcesses.push(run(
+            `${configuration.commandLine.testInBrowser} ` +
+            additionalArguments, childProcessOptions, (error:?Error) => {
+                if (error)
+                    reject(error)
+                else
+                    resolve()
+            }))))
     // endregion
     // region handle preinstall
     else if (configuration.library && process.argv[2] === 'preinstall') {
@@ -265,31 +262,34 @@ if (process.argv.length > 2) {
                         )(
                             global, self, buildConfiguration, path,
                             additionalArguments, filePath)
-                    processPromises.push(new Promise((resolve, reject) =>
-                        childProcesses.push(run(evaluationFunction(
-                            global, configuration, buildConfiguration, path,
-                            additionalArguments, filePath
-                            ), childProcessOptions, (error:?Error) => {
-                                if (error)
-                                    reject(error)
-                                else
-                                    resolve()
-                            }))))
+                    processPromises.push(new Promise((
+                        resolve:PromiseCallbackFunction,
+                        reject:PromiseCallbackFunction
+                    ):number => childProcesses.push(run(evaluationFunction(
+                        global, configuration, buildConfiguration, path,
+                        additionalArguments, filePath
+                        ), childProcessOptions, (error:?Error) => {
+                            if (error)
+                                reject(error)
+                            else
+                                resolve()
+                        }))))
                 }
     // endregion
     // region handle serve
     } else if (process.argv[2] === 'serve')
         // Provide a development environment where all assets are dynamically
         // bundled and updated on changes.
-        processPromises.push(new Promise((resolve, reject) =>
-            childProcesses.push(run(
-                `${configuration.commandLine.serve} ${additionalArguments}`,
-                childProcessOptions, (error:?Error) => {
-                    if (error)
-                        reject(error)
-                    else
-                        resolve()
-                }))))
+        processPromises.push(new Promise((
+            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
+        ):number => childProcesses.push(run(
+            `${configuration.commandLine.serve} ${additionalArguments}`,
+            childProcessOptions, (error:?Error) => {
+                if (error)
+                    reject(error)
+                else
+                    resolve()
+            }))))
     // endregion
 }
 // / region handle child process interface

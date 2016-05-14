@@ -122,11 +122,11 @@ export type ResolvedConfiguration = {
         };
         style:PlainObject
     };
-    offline:PlainObject;
+    offline:{excludes:Array<string>};
     path:Paths;
-    target:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|\
-        'electron-renderer';
-
+    /* eslint-disable max-len */
+    target:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
+    /* eslint-enable max-len */
 
     build:PlainObject;
     commandLine:{
@@ -147,7 +147,7 @@ export type ResolvedConfiguration = {
 
     document:PlainObject;
 
-    test:PlainObject:
+    test:PlainObject;
 
     testInBrowser:{injection:Injection}
 }
@@ -161,6 +161,7 @@ export type EvaluationFunction = (
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean
+export type PromiseCallbackFunction = (reason:any) => ?Promise
 // / endregion
 // endregion
 // region vim modline

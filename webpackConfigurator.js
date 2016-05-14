@@ -59,8 +59,6 @@ for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
     } catch (error) {}
 // provide an offline manifest
 if (configuration.offline) {
-    if (!configuration.offline.excludes)
-        configuration.offline.excludes = []
     if (configuration.inPlace.cascadingStyleSheet)
         configuration.offline.excludes.push(
             `${configuration.path.asset.cascadingStyleSheet}*.css?` +
@@ -233,7 +231,6 @@ if (['test', 'testInBrowser'].includes(
             for (const moduleID:string of normalizedInternalInjection[
                 chunkName
             ]) {
-                // IgnoreTypeCheck
                 const type:?string = Helper.determineAssetType(
                     Helper.determineModuleFilePath(moduleID),
                     configuration.build, configuration.path)
@@ -379,7 +376,7 @@ export default {
         path: configuration.path.asset.target,
         // publicPath: configuration.path.asset.publicTarget,
         pathinfo: configuration.debug,
-        umdNamedDefine: configuration.name,
+        umdNamedDefine: configuration.name
     },
     target: configuration.target,
     // endregion

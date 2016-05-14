@@ -234,7 +234,7 @@ export default class Helper {
      * @returns Converted build configuration.
      */
     static resolveBuildConfigurationFilePaths(
-        configuration:PlainObject, entryPath:string = './',
+        configuration:BuildConfiguration, entryPath:string = './',
         context:string = './', pathsToIgnore:Array<string> = ['.git']
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
@@ -271,6 +271,7 @@ export default class Helper {
                     return -1
                 if (second.outputExtension === 'js')
                     return 1
+                return first.outputExtension < second.outputExtension ? -1 : 1
             }
             return 0
         })
@@ -288,7 +289,7 @@ export default class Helper {
     static determineModuleLocations(
         internalInjection:InternalInjection, moduleAliases:PlainObject = {},
         knownExtensions:Array<string> = ['.js'], context:string = './'
-    ):{[key:string]:Array<string>} {
+    ):{filePaths:Array<string>;directoryPaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
         const normalizedInternalInjection:NormalizedInternalInjection =
@@ -321,13 +322,19 @@ export default class Helper {
         let result:NormalizedInternalInjection = {}
         if (internalInjection instanceof Object && Helper.isPlainObject(
             internalInjection
-        ))
+        )) {
+            let hasContent:boolean = false
             for (const chunkName:string in internalInjection)
-                if (typeof internalInjection[chunkName] === 'string')
-                    result[chunkName] = [internalInjection[chunkName]]
-                else
-                    result[chunkName] = internalInjection[chunkName]
-        else if (typeof internalInjection === 'string')
+                if (internalInjection.hasOwnProperty(chunkName)) {
+                    hasContent = true
+                    if (Array.isArray(internalInjection[chunkName]))
+                        result[chunkName] = internalInjection[chunkName]
+                    else
+                        result[chunkName] = [internalInjection[chunkName]]
+                }
+            if (!hasContent)
+                result = {index: []}
+        } else if (typeof internalInjection === 'string')
             result = {index: [internalInjection]}
         else if (Array.isArray(internalInjection))
             result = {index: internalInjection}

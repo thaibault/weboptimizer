@@ -19,8 +19,27 @@ import Helper from '../helper.compiled'
 // endregion
 qunit.module('helper')
 qunit.load()
+// region mockups
+const buildConfiguration:BuildConfiguration = {
+    other: {
+        extension: 'other',
+        fileNamePattern: '',
+        outputExtension: 'other'
+    },
+    javaScript: {
+        extension: 'js',
+        fileNamePattern: '',
+        outputExtension: 'js'
+    },
+    example: {
+        extension: 'example',
+        fileNamePattern: '',
+        outputExtension: 'example'
+    }
+}
+// endregion
 // region tests
-// / boolean
+// / region boolean
 qunit.test('isPlainObject', () => {
     qunit.ok(Helper.isPlainObject({}))
     qunit.ok(Helper.isPlainObject({a: 1}))
@@ -160,6 +179,7 @@ qunit.test('walkDirectoryRecursivelySync', () => {
 })
 qunit.test('determineAssetType', () => {
     const paths:Paths = {
+        apiDocumentation: '',
         asset: {
             cascadingStyleSheet: '',
             coffeeScript: '',
@@ -182,14 +202,10 @@ qunit.test('determineAssetType', () => {
         target: '',
         tidyUp: []
     }
-    const buildConfiguration:BuildConfiguration = {}
 
     qunit.strictEqual(Helper.determineAssetType(
         './', buildConfiguration, paths
     ), null)
-    buildConfiguration.javaScript = {
-        extension: 'js'
-    }
     qunit.strictEqual(Helper.determineAssetType(
         'a.js', buildConfiguration, paths
     ), 'javaScript')
@@ -198,7 +214,88 @@ qunit.test('determineAssetType', () => {
     ), null)
 })
 qunit.test('resolveBuildConfigurationFilePaths', () => {
-    // TODO
+    qunit.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
+    qunit.deepEqual(Helper.resolveBuildConfigurationFilePaths(
+        buildConfiguration
+    ), [
+        {
+            extension: 'js',
+            fileNamePattern: '',
+            filePaths: [],
+            outputExtension: 'js'
+        }, {
+            extension: 'example',
+            fileNamePattern: '',
+            filePaths: [],
+            outputExtension: 'example'
+        }, {
+            extension: 'other',
+            fileNamePattern: '',
+            filePaths: [],
+            outputExtension: 'other'
+        }
+    ])
+})
+qunit.test('determineModuleLocations', () => {
+    qunit.deepEqual(Helper.determineModuleLocations({}), {
+        filePaths: [],
+        directoryPaths: []
+    })
+    qunit.deepEqual(Helper.determineModuleLocations('example'), {
+        filePaths: ['example'],
+        directoryPaths: ['.']
+    })
+    qunit.deepEqual(Helper.determineModuleLocations(['example']), {
+        filePaths: ['example'],
+        directoryPaths: ['.']
+    })
+    qunit.deepEqual(Helper.determineModuleLocations({example: 'example'}), {
+        filePaths: ['example'],
+        directoryPaths: ['.']
+    })
+    qunit.deepEqual(Helper.determineModuleLocations('helper'), {
+        filePaths: ['helper.js'],
+        directoryPaths: ['.']
+    })
+    qunit.deepEqual(Helper.determineModuleLocations({helper: ['helper']}), {
+        filePaths: ['helper.js'],
+        directoryPaths: ['.']
+    })
+})
+qunit.test('normalizeInternalInjection', () => {
+    qunit.deepEqual(Helper.normalizeInternalInjection([]), {index: []})
+    qunit.deepEqual(Helper.normalizeInternalInjection({}), {index: []})
+    qunit.deepEqual(Helper.normalizeInternalInjection('example'), {
+        index: ['example']})
+    qunit.deepEqual(Helper.normalizeInternalInjection(['example']), {
+        index: ['example']})
+    qunit.deepEqual(Helper.normalizeInternalInjection({a: 'example'}), {
+        a: ['example']})
+    qunit.deepEqual(Helper.normalizeInternalInjection({a: ['example']}), {
+        a: ['example']})
+})
+qunit.test('resolveInjection', () => {
+    qunit.deepEqual(Helper.resolveInjection(
+        {internal: [], external: []},
+        Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
+    ), {internal: [], external: []})
+    qunit.deepEqual(Helper.resolveInjection(
+        {internal: 'a.js', external: []},
+        Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
+    ), {internal: ['a.js'], external: []})
+    qunit.deepEqual(Helper.resolveInjection(
+        {internal: '__auto__', external: []},
+        Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
+    ), {internal: {}, external: []})
+})
+// TODO
+qunit.test('addDynamicGetterAndSette', () => {
+    qunit.ok(true)
+})
+qunit.test('resolveDynamicDataStructure', () => {
+    qunit.ok(true)
+})
+qunit.test('determineModuleFilePath', () => {
     qunit.ok(true)
 })
 // endregion
