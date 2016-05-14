@@ -115,7 +115,7 @@ if (process.argv.length > 2) {
         Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore)
-    if (['build', 'document'].includes(process.argv[2]))
+    if (['build', 'document', 'test'].includes(process.argv[2]))
         // Triggers complete asset compiling and bundles them into the final
         // productive output.
         processPromises.push(new Promise((resolve, reject) =>
@@ -214,9 +214,22 @@ if (process.argv.length > 2) {
                         resolve()
                 }))))
     // endregion
-    // region handle test in browser
-    else if (process.argv[2] === 'testInBrowser')
+    // region handle test
+    else if (process.argv[2] === 'test')
         // Runs all specified tests (typically in a real browser environment).
+        processPromises.push(new Promise((resolve, reject) =>
+            childProcesses.push(run(
+                `${configuration.commandLine.test} ${additionalArguments}`,
+                childProcessOptions, (error:?Error) => {
+                    if (error)
+                        reject(error)
+                    else
+                        resolve()
+                }))))
+    // endregion
+     // region handle test in browser
+    else if (process.argv[2] === 'testInBrowser')
+        // Runs all specified tests in a real browser environment.
         processPromises.push(new Promise((resolve, reject) =>
             childProcesses.push(run(
                 `${configuration.commandLine.testInBrowser} ` +
