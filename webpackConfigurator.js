@@ -97,7 +97,10 @@ if (configuration.givenCommandLineArguments[2] === 'testInBrowser') {
             allChunks: true, disable: !configuration.files.cascadingStyleSheet}
     ))
     // Optimizes webpack output
-    if (configuration.module.optimizer.uglifyJS)
+    if (
+        configuration.module.optimizer.uglifyJS &&
+        configuration.givenCommandLineArguments[2] !== 'document'
+    ) {
         pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
             configuration.module.optimizer.uglifyJS))
     // // region in-place configured assets in the main html file
