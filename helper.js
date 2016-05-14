@@ -439,7 +439,7 @@ export default class Helper {
      * @returns Returns given object wrapped with a dynamic getter proxy.
      */
     static addDynamicGetterAndSetter<Value>(
-        object:Value, getterWrapper:GetterFunction = (key:any):any => key,
+        object:Value, getterWrapper:GetterFunction = (value:any):any => value,
         setterWrapper:SetterFunction = (key:any, value:any):any => value,
         getterMethodName:string = '[]', setterMethodName:string = '[]',
         containesMethodName:string = 'hasOwnProperty', deep:boolean = true,
@@ -527,7 +527,7 @@ export default class Helper {
     ):any {
         if (configuration === null && typeof object === 'object')
             configuration = object
-        if (configuration && !configuration.__target__)
+        if (deep && configuration && !configuration.__target__)
             configuration = Helper.addDynamicGetterAndSetter(
                 configuration, ((value:any):any =>
                     Helper.resolveDynamicDataStructure(
@@ -552,7 +552,7 @@ export default class Helper {
             let index:number = 0
             for (const value:mixed of object) {
                 object[index] = Helper.resolveDynamicDataStructure(
-                    value, configuration, deep)
+                    value, configuration, deep, evaluationIndicatorKey)
                 index += 1
             }
         }

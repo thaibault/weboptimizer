@@ -292,15 +292,88 @@ qunit.test('resolveInjection', () => {
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
     ), {internal: {}, external: []})
 })
-// TODO
-qunit.test('addDynamicGetterAndSette', () => {
-    qunit.ok(true)
+qunit.test('addDynamicGetterAndSetter', () => {
+    qunit.strictEqual(Helper.addDynamicGetterAndSetter(null), null)
+    qunit.strictEqual(Helper.addDynamicGetterAndSetter(true), true)
+    qunit.notDeepEqual(Helper.addDynamicGetterAndSetter({}), {})
+    qunit.ok(Helper.addDynamicGetterAndSetter({}).__target__ instanceof Object)
+    qunit.deepEqual(Helper.addDynamicGetterAndSetter({}).__target__, {})
+    const mockup = {}
+    qunit.strictEqual(
+        Helper.addDynamicGetterAndSetter(mockup).__target__, mockup)
+    qunit.deepEqual(Helper.addDynamicGetterAndSetter({a: 1}, (value:any):any =>
+        value + 2
+    ).a, 3)
+    qunit.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: 1}}, (
+        value:any
+    ):any => (value instanceof Object) ? value : value + 2).a.a, 3)
+    qunit.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: [{a: 1}]}}, (
+        value:any
+    ):any => (value instanceof Object) ? value : value + 2).a.a[0].a, 3)
+    qunit.deepEqual(Helper.addDynamicGetterAndSetter(
+        {a: {a: 1}}, (value:any):any =>
+            (value instanceof Object) ? value : value + 2,
+        (key:any, value:any):any => value, '[]', '[]', 'hasOwnProperty', false
+    ).a.a, 1)
+    qunit.deepEqual(Helper.addDynamicGetterAndSetter(
+        {a: 1}, (value:any):any =>
+            (value instanceof Object) ? value : value + 2,
+        (key:any, value:any):any => value, '[]', '[]', 'hasOwnProperty', false,
+        []
+    ).a, 1)
+    // IgnoreTypeCheck
+    qunit.deepEqual(Helper.addDynamicGetterAndSetter(
+        {a: new Map([['a', 1]])}, (value:any):any =>
+            (value instanceof Object) ? value : value + 2,
+        (key:any, value:any):any => value, 'get', 'set', 'has', true, [Map]
+    ).a.a, 3)
 })
 qunit.test('resolveDynamicDataStructure', () => {
-    qunit.ok(true)
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(null), null)
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(false), false)
+    qunit.deepEqual(Helper.resolveDynamicDataStructure('1'), '1')
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(3), 3)
+    qunit.deepEqual(Helper.resolveDynamicDataStructure({}), {})
+    qunit.deepEqual(Helper.resolveDynamicDataStructure({__execute__: '1'}), 1)
+    qunit.deepEqual(
+        Helper.resolveDynamicDataStructure({__execute__: "'1'"}), '1')
+    qunit.deepEqual(
+        Helper.resolveDynamicDataStructure({a: {__execute__: "'a'"}}),
+        {a: 'a'})
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+        {a: {__execute__: 'self.a'}}, {a: 1}
+    ), {a: 1})
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+        {a: {__execute__: 'self.a'}}, {a: 1}, false
+    ), {a: {__execute__: 'self.a'}})
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+        {a: {__execute__: 'self.a'}}, {a: 1}, true, '__run__'
+    ), {a: {__execute__: 'self.a'}})
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+        {a: {__run__: 'self.a'}}, {a: 1}, true, '__run__'
+    ), {a: 1})
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+        {a: [{__run__: 'self.a'}]}, {a: 1}, true, '__run__'
+    ), {a: [1]})
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+        {a: {__execute__: 'self.b'}, b: 2}
+    ), {a: 2, b: 2})
+    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+        {a: {__execute__: 'self.b'}, b: {__execute__: 'self.c'}, c: 2}
+    ), {a: 2, b: 2, c: 2})
 })
 qunit.test('determineModuleFilePath', () => {
-    qunit.ok(true)
+    qunit.strictEqual(Helper.determineModuleFilePath('a'), 'a')
+    qunit.strictEqual(Helper.determineModuleFilePath('a', {a: 'b'}), 'b')
+    qunit.strictEqual(Helper.determineModuleFilePath('bba', {a: 'b'}), 'bbb')
+    qunit.strictEqual(Helper.determineModuleFilePath('helper'), 'helper.js')
+    qunit.strictEqual(
+        Helper.determineModuleFilePath('helper', {}, []), 'helper')
+    qunit.strictEqual(
+        Helper.determineModuleFilePath('helper', {}, ['.js'], '../'), 'helper')
+    qunit.strictEqual(
+        Helper.determineModuleFilePath('helper', {}, ['.js'], './'),
+        'helper.js')
 })
 // endregion
 // region vim modline

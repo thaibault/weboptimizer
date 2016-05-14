@@ -83,7 +83,7 @@ while (true) {
 if (filePath) {
     const runtimeInformation:PlainObject = JSON.parse(
         fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
-    if (runtimeInformation.givenCommandLineArguments.length > 2) {
+    if (runtimeInformation.givenCommandLineArguments.length > 2)
         // region apply documentation configuration
         if (runtimeInformation.givenCommandLineArguments[2] === 'document')
             Helper.extendObject(
@@ -98,7 +98,6 @@ if (filePath) {
         else if (runtimeInformation.givenCommandLineArguments[2] === 'test')
             Helper.extendObject(true, configuration, configuration.test)
         // endregion
-    }
     Helper.extendObject(true, configuration, runtimeInformation)
     let result:?PlainObject = null
     const evaluationFunction = (configuration:PlainObject):?PlainObject =>
