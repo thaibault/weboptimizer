@@ -141,7 +141,7 @@ for (
 ) {
     if (
         typeof htmlConguration.template === 'string' &&
-        htmlConguration.template.indexOf('!') !== -1
+        htmlConguration.template.includes('!')
     ) {
         const newTemplateString:Object = new String(htmlConguration.template)
         newTemplateString.replace = ((string:string):Function => (

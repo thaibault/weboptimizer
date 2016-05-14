@@ -303,7 +303,7 @@ export default class Helper {
                         moduleID, moduleAliases, knownExtensions, context)
                     filePaths.push(filePath)
                     const directoryPath:string = path.dirname(filePath)
-                    if (directoryPaths.indexOf(directoryPath) === -1)
+                    if (!directoryPaths.includes(directoryPath))
                         directoryPaths.push(directoryPath)
                 }
         return {filePaths, directoryPaths}
@@ -379,9 +379,9 @@ export default class Helper {
                         const moduleFilePath:string of
                         buildConfiguration.filePaths
                     )
-                        if (moduleFilePathsToExclude.indexOf(
+                        if (!moduleFilePathsToExclude.includes(
                             moduleFilePath
-                        ) === -1) {
+                        )) {
                             const baseName:string = path.basename(
                                 moduleFilePath,
                                 `.${buildConfiguration.extension}`)
@@ -389,9 +389,9 @@ export default class Helper {
                                 Ensure that each output type has only one
                                 source representation.
                             */
-                            if (injectedBaseNames[
+                            if (!injectedBaseNames[
                                 buildConfiguration.outputExtension
-                            ].indexOf(baseName) === -1) {
+                            ].includes(baseName)) {
                                 /*
                                     Ensure that if same basenames and different
                                     output types can be distinguished by their

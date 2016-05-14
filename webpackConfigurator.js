@@ -501,9 +501,8 @@ export default {
                     configuration.path.asset.source,
                     configuration.path.asset.data),
                 exclude: (filePath:string):boolean =>
-                    configuration.knownExtensions.indexOf(
-                        path.extname(filePath)
-                    ) !== -1
+                    configuration.knownExtensions.includes(
+                        path.extname(filePath))
             }
             // endregion
         ]

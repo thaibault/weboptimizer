@@ -153,7 +153,7 @@ if (process.argv.length > 2) {
                                                 moduleID),
                                             configuration.build,
                                             configuration.path)
-                                    const filePath =
+                                    const filePath:string =
                                         configuration.files.javaScript.replace(
                                             '[name]', path.join(path.relative(
                                                 path.dirname(moduleID),
@@ -251,7 +251,7 @@ if (process.argv.length > 2) {
             ).filePaths
         for (const buildConfiguration of buildConfigurations)
             for (const filePath:string of buildConfiguration.filePaths)
-                if (testModuleFilePaths.indexOf(filePath) === -1) {
+                if (!testModuleFilePaths.includes(filePath)) {
                     const evaluationFunction = (
                         global:Object, self:PlainObject,
                         buildConfiguration:PlainObject, path:typeof path,
