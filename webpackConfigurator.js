@@ -268,9 +268,14 @@ if (injection.external === '__implicit__')
                 configuration.path.context
             ) || Helper.isFilePathInLocation(
                 filePath, configuration.path.ignore
-            ) && !configuration.inPlace.externalLibrary)
+            ) && !configuration.inPlace.externalLibrary) {
+                console.log(
+                    configuration.inPlace.externalLibrary,
+                    `${configuration.exportFormat} ${request}`
+                )
                 return callback(
                     null, `${configuration.exportFormat} ${request}`)
+            }
         }
         return callback()
     }

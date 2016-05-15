@@ -390,6 +390,7 @@
                     },
                     "filename": "test.html"
                 }]},
+                "inPlace": {"externalLibrary": true},
                 "injection": {"internal": ["test/"]},
                 "module": {
                     "additionalAliases": {
