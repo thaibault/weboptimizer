@@ -85,166 +85,156 @@ const moduleLocations:{[key:string]:Array<string>} =
         configuration.knownExtensions, configuration.path.context,
         configuration.path.ignore)
 let injection:{internal:InternalInjection; external:ExternalInjection}
-let fallbackModuleDirectoryPaths:Array<string> = []
-if (['test', 'testInBrowser'].includes(
-    configuration.givenCommandLineArguments[2]
-)) {
-    fallbackModuleDirectoryPaths = moduleLocations.directoryPaths
-    injection = {internal: moduleLocations.filePaths, external: []}
-} else {
-    pluginInstances.push(new plugins.ExtractText(
-        configuration.files.cascadingStyleSheet, {
-            allChunks: true, disable: !configuration.files.cascadingStyleSheet}
-    ))
-    // Optimizes webpack output
-    if (configuration.module.optimizer.uglifyJS)
-        pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
-            configuration.module.optimizer.uglifyJS))
-    // // region in-place configured assets in the main html file
-    if (!process.argv[1].endsWith('/webpack-dev-server'))
-        pluginInstances.push({apply: (compiler:Object) => {
-            compiler.plugin('emit', (
-                compilation:Object, callback:ProcedureFunction
-            ) => {
-                if (
-                    configuration.inPlace.cascadingStyleSheet ||
-                    configuration.inPlace.javaScript
-                )
-                    dom.env(compilation.assets[configuration.files.html[
+pluginInstances.push(new plugins.ExtractText(
+    configuration.files.cascadingStyleSheet, {
+        allChunks: true, disable: !configuration.files.cascadingStyleSheet}
+))
+// Optimizes webpack output
+if (configuration.module.optimizer.uglifyJS)
+    pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
+        configuration.module.optimizer.uglifyJS))
+// /// region in-place configured assets in the main html file
+if (!process.argv[1].endsWith('/webpack-dev-server'))
+    pluginInstances.push({apply: (compiler:Object) => {
+        compiler.plugin('emit', (
+            compilation:Object, callback:ProcedureFunction
+        ) => {
+            if (
+                configuration.inPlace.cascadingStyleSheet ||
+                configuration.inPlace.javaScript
+            )
+                dom.env(compilation.assets[configuration.files.html[
+                    0
+                ].filename].source(), (error:?Error, window:Object) => {
+                    if (configuration.inPlace.cascadingStyleSheet) {
+                        const urlPrefix:string = configuration.files
+                            .cascadingStyleSheet.replace(
+                                '[contenthash]', '')
+                        const domNode:Object = window.document.querySelector(
+                            `link[href^="${urlPrefix}"]`)
+                        if (domNode) {
+                            let asset:string
+                            for (asset in compilation.assets)
+                                if (asset.startsWith(urlPrefix))
+                                    break
+                            const inPlaceDomNode:Object =
+                                window.document.createElement('style')
+                            inPlaceDomNode.textContent =
+                                compilation.assets[asset].source()
+                            domNode.parentNode.insertBefore(
+                                inPlaceDomNode, domNode)
+                            domNode.parentNode.removeChild(domNode)
+                            /*
+                                NOTE: This doesn't prevent webpack from
+                                creating this file if present in another chunk
+                                so removing it (and a potential source map
+                                file) later in the "done" hook.
+                            */
+                            delete compilation.assets[asset]
+                        } else
+                            console.warn(
+                                'No referenced cascading style sheet file in' +
+                                ' resulting markup found with ' +
+                                `selector: link[href^="${urlPrefix}"]`)
+                    }
+                    if (configuration.inPlace.javaScript) {
+                        const urlPrefix:string =
+                            configuration.files.javaScript.replace(
+                                '[hash]', '')
+                        const domNode:Object = window.document.querySelector(
+                            `script[src^="${urlPrefix}"]`)
+                        if (domNode) {
+                            let asset:string
+                            for (asset in compilation.assets)
+                                if (asset.startsWith(urlPrefix))
+                                    break
+                            domNode.textContent = compilation.assets[
+                                asset
+                            ].source()
+                            domNode.removeAttribute('src')
+                            /*
+                                NOTE: This doesn't prevent webpack from
+                                creating this file if present in another chunk
+                                so removing it (and a potential source map
+                                file) later in the "done" hook.
+                            */
+                            delete compilation.assets[asset]
+                        } else
+                            console.warn(
+                                'No referenced javaScript file in resulting ' +
+                                'markup found with selector: ' +
+                                `script[src^="${urlPrefix}"]`)
+                    }
+                    compilation.assets[configuration.files.html[
                         0
-                    ].filename].source(), (error:?Error, window:Object) => {
-                        if (configuration.inPlace.cascadingStyleSheet) {
-                            const urlPrefix:string = configuration.files
-                                .cascadingStyleSheet.replace(
-                                    '[contenthash]', '')
-                            const domNode:Object =
-                                window.document.querySelector(
-                                    `link[href^="${urlPrefix}"]`)
-                            if (domNode) {
-                                let asset:string
-                                for (asset in compilation.assets)
-                                    if (asset.startsWith(urlPrefix))
-                                        break
-                                const inPlaceDomNode:Object =
-                                    window.document.createElement('style')
-                                inPlaceDomNode.textContent =
-                                    compilation.assets[asset].source()
-                                domNode.parentNode.insertBefore(
-                                    inPlaceDomNode, domNode)
-                                domNode.parentNode.removeChild(domNode)
-                                /*
-                                    NOTE: This doesn't prevent webpack from
-                                    creating this file if present in another
-                                    chunk so removing it (and a potential
-                                    source map file) later in the "done" hook.
-                                */
-                                delete compilation.assets[asset]
-                            } else
-                                console.warn(
-                                    'No referenced cascading style sheet ' +
-                                    'file in resulting markup found with ' +
-                                    `selector: link[href^="${urlPrefix}"]`)
-                        }
-                        if (configuration.inPlace.javaScript) {
-                            const urlPrefix:string =
-                                configuration.files.javaScript.replace(
-                                    '[hash]', '')
-                            const domNode:Object =
-                                window.document.querySelector(
-                                    `script[src^="${urlPrefix}"]`)
-                            if (domNode) {
-                                let asset:string
-                                for (asset in compilation.assets)
-                                    if (asset.startsWith(urlPrefix))
-                                        break
-                                domNode.textContent = compilation.assets[
-                                    asset
-                                ].source()
-                                domNode.removeAttribute('src')
-                                /*
-                                    NOTE: This doesn't prevent webpack from
-                                    creating this file if present in another
-                                    chunk so removing it (and a potential
-                                    source map file) later in the "done" hook.
-                                */
-                                delete compilation.assets[asset]
-                            } else
-                                console.warn(
-                                    'No referenced javaScript file in ' +
-                                    'resulting markup found with selector: ' +
-                                    `script[src^="${urlPrefix}"]`)
-                        }
+                    ].filename] = new WebpackRawSource(
                         compilation.assets[configuration.files.html[
                             0
-                        ].filename] = new WebpackRawSource(
-                            compilation.assets[configuration.files.html[
-                                0
-                            ].filename].source().replace(
-                                /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
-                            ) + window.document.documentElement.outerHTML)
-                        callback()
-                    })
-                else
+                        ].filename].source().replace(
+                            /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
+                        ) + window.document.documentElement.outerHTML)
                     callback()
-            })
-            compiler.plugin('after-emit', (
-                compilation:Object, callback:ProcedureFunction
-            ) => {
-                if (configuration.inPlace.cascadingStyleSheet)
-                    removeDirectoryRecursivelySync(path.join(
-                        configuration.path.asset.target,
-                        configuration.path.asset.cascadingStyleSheet
-                    ), {glob: false})
-                if (configuration.inPlace.javaScript) {
-                    const assetFilePath = path.join(
-                        configuration.path.asset.target,
-                        configuration.files.javaScript.replace(
-                            `?${configuration.hashAlgorithm}=[hash]`, ''))
-                    for (const filePath:string of [
-                        assetFilePath, `${assetFilePath}.map`
-                    ])
-                        try {
-                            fileSystem.unlinkSync(filePath)
-                        } catch (error) {}
-                    const javaScriptPath:string = path.join(
-                        configuration.path.asset.target,
-                        configuration.path.asset.javaScript)
-                    if (fileSystem.readdirSync(javaScriptPath).length === 0)
-                        fileSystem.rmdirSync(javaScriptPath)
-                }
+                })
+            else
                 callback()
-            })
-        }})
-    // // endregion
-    injection = Helper.resolveInjection(
-        configuration.injection, Helper.resolveBuildConfigurationFilePaths(
-            configuration.build, configuration.path.asset.source,
-            configuration.path.context, configuration.path.ignore
-        ), configuration.testInBrowser.injection.internal,
-        configuration.module.aliases, configuration.knownExtensions,
-        configuration.path.context, configuration.path.ignore)
-    let javaScriptNeeded:boolean = false
-    const normalizedInternalInjection:NormalizedInternalInjection =
-        Helper.normalizeInternalInjection(injection.internal)
-    for (const chunkName:string in normalizedInternalInjection)
-        if (normalizedInternalInjection.hasOwnProperty(chunkName))
-            for (const moduleID:string of normalizedInternalInjection[
-                chunkName
-            ]) {
-                const type:?string = Helper.determineAssetType(
-                    Helper.determineModuleFilePath(moduleID),
-                    configuration.build, configuration.path)
-                if (type && configuration.build[type] && configuration.build[
-                    type
-                ].outputExtension === 'js') {
-                    javaScriptNeeded = true
-                    break
-                }
+        })
+        compiler.plugin('after-emit', (
+            compilation:Object, callback:ProcedureFunction
+        ) => {
+            if (configuration.inPlace.cascadingStyleSheet)
+                removeDirectoryRecursivelySync(path.join(
+                    configuration.path.asset.target,
+                    configuration.path.asset.cascadingStyleSheet
+                ), {glob: false})
+            if (configuration.inPlace.javaScript) {
+                const assetFilePath = path.join(
+                    configuration.path.asset.target,
+                    configuration.files.javaScript.replace(
+                        `?${configuration.hashAlgorithm}=[hash]`, ''))
+                for (const filePath:string of [
+                    assetFilePath, `${assetFilePath}.map`
+                ])
+                    try {
+                        fileSystem.unlinkSync(filePath)
+                    } catch (error) {}
+                const javaScriptPath:string = path.join(
+                    configuration.path.asset.target,
+                    configuration.path.asset.javaScript)
+                if (fileSystem.readdirSync(javaScriptPath).length === 0)
+                    fileSystem.rmdirSync(javaScriptPath)
             }
-    if (!javaScriptNeeded)
-        configuration.files.javaScript = path.join(
-            configuration.path.asset.javaScript, '.__dummy__.compiled.js')
-}
+            callback()
+        })
+    }})
+// /// endregion
+injection = Helper.resolveInjection(
+    configuration.injection, Helper.resolveBuildConfigurationFilePaths(
+        configuration.build, configuration.path.asset.source,
+        configuration.path.context, configuration.path.ignore
+    ), configuration.testInBrowser.injection.internal,
+    configuration.module.aliases, configuration.knownExtensions,
+    configuration.path.context, configuration.path.ignore)
+let javaScriptNeeded:boolean = false
+const normalizedInternalInjection:NormalizedInternalInjection =
+    Helper.normalizeInternalInjection(injection.internal)
+for (const chunkName:string in normalizedInternalInjection)
+    if (normalizedInternalInjection.hasOwnProperty(chunkName))
+        for (const moduleID:string of normalizedInternalInjection[
+            chunkName
+        ]) {
+            const type:?string = Helper.determineAssetType(
+                Helper.determineModuleFilePath(moduleID),
+                configuration.build, configuration.path)
+            if (type && configuration.build[type] && configuration.build[
+                type
+            ].outputExtension === 'js') {
+                javaScriptNeeded = true
+                break
+            }
+        }
+if (!javaScriptNeeded)
+    configuration.files.javaScript = path.join(
+        configuration.path.asset.javaScript, '.__dummy__.compiled.js')
 if (!configuration.inPlace.externalLibrary)
     /*
         We only want to process modules from local context in library mode,
@@ -358,7 +348,7 @@ export default {
     resolve: {
         alias: configuration.module.aliases,
         extensions: configuration.knownExtensions,
-        fallback: fallbackModuleDirectoryPaths,
+        fallback: moduleLocations.directoryPaths,
         root: [(configuration.path.asset.source: string)]
     },
     // endregion
