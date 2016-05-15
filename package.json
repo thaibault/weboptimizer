@@ -312,7 +312,9 @@
             },
             "target": "web",
 
-            "assetPattern": {},
+            "assetPattern": {"assetPattern": {
+                "javaScript": "'use strict'\n{1}"
+            }},
             "build": {
                 "default": {
                     "outputExtension": "js",
