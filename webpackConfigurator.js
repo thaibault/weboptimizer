@@ -293,7 +293,6 @@ if (injection.external === '__implicit__')
         }
         return callback()
     }
-console.log(configuration.injection)
 // // endregion
 // / endregion
 // / region loader
