@@ -92,7 +92,7 @@ if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
         configuration.module.optimizer.uglifyJS))
 // /// region in-place configured assets in the main html file
-if (!process.argv[1].endsWith('/webpack-dev-server'))
+if (!process.argv[1].endsWith('/webpack-dev-server')) {
     pluginInstances.push({apply: (compiler:Object) => {
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
@@ -222,6 +222,7 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
             callback()
         })
     }})
+}
 // /// endregion
 const injection:Injection = Helper.resolveInjection(
     configuration.injection, Helper.resolveBuildConfigurationFilePaths(
