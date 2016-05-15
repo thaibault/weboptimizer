@@ -384,7 +384,7 @@
                 "module": {"optimizer": {"uglifyJS": null}},
 
                 "assetPattern": {
-                    "javaScript": "#!/usr/bin/env node\n// @flow\n// -*- coding: utf-8 -*-\n'use strict'\n{1}"
+                    "javaScript": "#!/usr/bin/env node\n\n// -*- coding: utf-8 -*-\n'use strict'\n{1}"
                 }
             },
 
