@@ -19,8 +19,8 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Offline = module.require('offline-plugin')
 
 import type {
-    ExternalInjection, HTMLConfiguration, Injection,
-    NormalizedInternalInjection, ProcedureFunction
+    HTMLConfiguration, Injection, NormalizedInternalInjection,
+    ProcedureFunction
 } from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -268,14 +268,9 @@ if (injection.external === '__implicit__')
                 configuration.path.context
             ) || Helper.isFilePathInLocation(
                 filePath, configuration.path.ignore
-            ) && !configuration.inPlace.externalLibrary) {
-                console.log(
-                    configuration.inPlace.externalLibrary,
-                    `${configuration.exportFormat} ${request}`
-                )
+            ) && !configuration.inPlace.externalLibrary)
                 return callback(
                     null, `${configuration.exportFormat} ${request}`)
-            }
         }
         return callback()
     }

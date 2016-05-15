@@ -67,13 +67,13 @@
         "test.pug"
     ],
     "scripts": {
-        "build": "arguments='--plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments configurator.compiled.js configurator.js && babel $arguments taskRunner.compiled.js taskRunner.js && babel $arguments pugLoader.compiled.js pugLoader.js && babel $arguments webpackConfigurator.compiled.js webpackConfigurator.js",
+        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js",
         "clear": "rm *.compiled.* &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null || true",
         "document": "npm run build && jsdoc --destination apiDocumentation *.compiled.js",
         "lint": "flow && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
         "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js pugLoader.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build",
-        "test": "arguments='--plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && babel $arguments helper.compiled.js helper.js && babel $arguments pugLoader.compiled.js pugLoader.js && babel $arguments test/pugLoader.compiled.js test/pugLoader.js && babel $arguments test/helper.compiled.js test/helper.js && chmod +x test/* && test/pugLoader.compiled.js && test/helper.compiled.js || true"
+        "test": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/pugLoader.compiled.js && test/helper.compiled.js || true"
     },
     "configuration": {
         "default": {
