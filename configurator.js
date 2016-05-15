@@ -86,8 +86,7 @@ if (filePath) {
     if (runtimeInformation.givenCommandLineArguments.length > 2)
         // region apply documentation configuration
         if (runtimeInformation.givenCommandLineArguments[2] === 'document')
-            Helper.extendObject(
-                true, configuration, configuration.documentation)
+            Helper.extendObject(true, configuration, configuration.document)
         // endregion
         // region apply test configuration
         else if (

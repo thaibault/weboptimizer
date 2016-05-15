@@ -370,7 +370,7 @@
 
             "document": {
                 "exportFormat": "var",
-                "optimizer": {"uglifyJS": null}
+                "module": {"optimizer": {"uglifyJS": null}}
             },
 
             "test": {
