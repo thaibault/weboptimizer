@@ -216,7 +216,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         Promise.all(processPromises).then(():number =>
             processPromises.push(new Promise((
                 resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-            ):number => childProcesses.push(run(
+            ):ChildProcess => Helper.handleChildProcess(run(
                 `${configuration.commandLine.test} ${additionalArguments}`,
                 childProcessOptions, (error:?Error) => {
                     if (error)
