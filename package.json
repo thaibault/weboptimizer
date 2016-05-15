@@ -375,8 +375,8 @@
 
             "test": {
                 "exportFormat": "commonjs2",
-                "target": "node",
                 "injection": {"internal": ["test/"]},
+                "target": "node"
             },
 
             "testInBrowser": {
