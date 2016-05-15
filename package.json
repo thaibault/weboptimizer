@@ -379,7 +379,6 @@
                     "__execute__": "`${self.path.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                 }},
                 "injection": {"internal": ["test/"]},
-                "inPlace": {"externalLibrary": false},
                 "target": "node"
             },
 
@@ -391,7 +390,6 @@
                     "filename": "test.html"
                 }]},
                 "injection": {"internal": ["test/"]},
-                "inPlace": {"externalLibrary": false},
                 "module": {"additionalAliases": {
                     "qunit.css": "qunitjs/qunit/qunit.css",
                     "qunit": "qunitjs/qunit/qunit.js"

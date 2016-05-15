@@ -19,7 +19,7 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Offline = module.require('offline-plugin')
 
 import type {
-    ExternalInjection, HTMLConfiguration, InternalInjection,
+    ExternalInjection, HTMLConfiguration, Injection,
     NormalizedInternalInjection, ProcedureFunction
 } from './type'
 import configuration from './configurator.compiled'
@@ -84,7 +84,6 @@ const moduleLocations:{[key:string]:Array<string>} =
         configuration.injection.internal, configuration.module.aliases,
         configuration.knownExtensions, configuration.path.context,
         configuration.path.ignore)
-let injection:{internal:InternalInjection; external:ExternalInjection}
 pluginInstances.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet, {
         allChunks: true, disable: !configuration.files.cascadingStyleSheet}))
@@ -206,7 +205,7 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
         })
     }})
 // /// endregion
-injection = Helper.resolveInjection(
+const injection:Injection = Helper.resolveInjection(
     configuration.injection, Helper.resolveBuildConfigurationFilePaths(
         configuration.build, configuration.path.asset.source,
         configuration.path.context, configuration.path.ignore
