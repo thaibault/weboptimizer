@@ -473,7 +473,7 @@
             "test": {
                 "files": {"javaScript": {
                     "__execute__": "`${self.path.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
-                },
+                }},
                 "injection": {"internal": ["test"]}
             },
 
