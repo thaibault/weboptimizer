@@ -102,13 +102,11 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
                     const type:?string = Helper.determineAssetType(
                         filePath.replace(/\?[^?]+$/, ''), configuration.build,
                         configuration.path)
-                    console.log()
-                    console.log(filePath, type, configuration.assetPattern[type])
-                    console.log()
                     if (type && configuration.assetPattern[type])
                         compilation.assets[filePath] = new WebpackRawSource(
                             configuration.assetPattern[type].replace(
-                                /{1}/, compilation.assets[filePath].source()))
+                                /\{1\}/g, compilation.assets[filePath].source(
+                                ).replace(/\$/g, '$$$')))
                 }
             callback()
         })
