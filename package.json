@@ -384,7 +384,6 @@
                 }},
                 "injection": {"internal": "test/"},
                 "target": "node",
-                "module": {"optimizer": {"uglifyJS": null}},
 
                 "assetPattern": {
                     "javaScript": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict'\n{1}"
