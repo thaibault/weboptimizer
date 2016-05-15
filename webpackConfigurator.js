@@ -98,13 +98,14 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
             compilation:Object, callback:ProcedureFunction
         ) => {
             for (const filePath in compilation.assets)
-                if (compilation.assets.hasOwnProperty(filePath))
+                if (compilation.assets.hasOwnProperty(filePath)) {
                     const type:?string = Helper.determineAssetType(
                         filePath, configuration.build, configuration.path)
                     if (configuration.assetPattern[type])
                         compilation.assets[filePath] = new WebpackRawSource(
                             configuration.assetPattern[type].replace(
                                 /{1}/, compilation.assets[filePath].source()))
+                }
         })
     }})
     pluginInstances.push({apply: (compiler:Object) => {
