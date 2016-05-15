@@ -379,7 +379,8 @@
                     "__execute__": "`${self.path.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                 }},
                 "injection": {"internal": ["test/"]},
-                "target": "node"
+                "target": "node",
+                "module": {"optimizer": {"uglifyJS": null}}
             },
 
             "testInBrowser": {
@@ -390,10 +391,13 @@
                     "filename": "test.html"
                 }]},
                 "injection": {"internal": ["test/"]},
-                "module": {"additionalAliases": {
-                    "qunit.css": "qunitjs/qunit/qunit.css",
-                    "qunit": "qunitjs/qunit/qunit.js"
-                }},
+                "module": {
+                    "additionalAliases": {
+                        "qunit.css": "qunitjs/qunit/qunit.css",
+                        "qunit": "qunitjs/qunit/qunit.js"
+                    },
+                    {"optimizer": {"uglifyJS": null}}
+                },
                 "offline": null
             }
         },

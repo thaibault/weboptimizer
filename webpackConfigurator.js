@@ -221,7 +221,10 @@ for (const chunkName:string in normalizedInternalInjection)
             chunkName
         ]) {
             const type:?string = Helper.determineAssetType(
-                Helper.determineModuleFilePath(moduleID),
+                Helper.determineModuleFilePath(
+                    moduleID, configuration.module.aliases,
+                    configuration.knownExtensions, configuration.path.context
+                ),
                 configuration.build, configuration.path)
             if (type && configuration.build[type] && configuration.build[
                 type
