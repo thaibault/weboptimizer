@@ -233,7 +233,7 @@ for (const chunkName:string in normalizedInternalInjection)
 if (!javaScriptNeeded)
     configuration.files.javaScript = path.join(
         configuration.path.asset.javaScript, '.__dummy__.compiled.js')
-if (!configuration.inPlace.externalLibrary)
+if (injection.external === '__implicit__')
     /*
         We only want to process modules from local context in library mode,
         since a concrete project using this library should combine all assets
@@ -265,7 +265,7 @@ if (!configuration.inPlace.externalLibrary)
                 configuration.path.context
             ) || Helper.isFilePathInLocation(
                 filePath, configuration.path.ignore
-            ))
+            ) && !configuration.inPlace.externalLibrary)
                 return callback(
                     null, `${configuration.exportFormat} ${request}`)
         }
