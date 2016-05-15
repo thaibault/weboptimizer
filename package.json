@@ -80,7 +80,6 @@
             "debug": false,
             "library": true,
 
-
             "exportFormat": "umd",
             "files": {
                 "cascadingStyleSheet": {
@@ -313,7 +312,6 @@
             },
             "target": "web",
 
-
             "build": {
                 "default": {
                     "outputExtension": "js",
@@ -370,18 +368,16 @@
                 ]
             },
 
-
             "document": {
                 "exportFormat": "var",
                 "optimizer": {"uglifyJS": null}
             },
 
-
             "test": {
                 "exportFormat": "commonjs2",
-                "target": "node"
+                "target": "node",
+                "injection": {"internal": ["test/"]},
             },
-
 
             "testInBrowser": {
                 "files": {"html": [{
@@ -399,10 +395,8 @@
             }
         },
 
-
         "debug": {
             "debug": true,
-
 
             "files": {"html": [{"debug": true}]},
             "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
@@ -432,7 +426,6 @@
             },
             "offline": null,
 
-
             "development": {
                 "openBrowser": {"url": {
                     "__execute__": "((sourceFilePath) => `http://localhost:8080/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`)(self.files.html[0].template)"
@@ -440,7 +433,6 @@
                 "tool": "#source-map"
             }
         },
-
 
         "library": {
             "files": {
@@ -479,6 +471,8 @@
             }}},
 
             "test": {"injection": {"internal": ["test"]}}
+
+            "testInBrowser": {"injection": {"internal": ["test"]}}
         }
     },
     "eslintConfig": {
