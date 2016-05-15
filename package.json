@@ -342,7 +342,7 @@
                 "serve": {
                     "__execute__": "`webpack-dev-server --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --inline --colors`"
                 },
-                "test": "./testBundle.compiled.js",
+                "test": "chmod +x ./testBundle.compiled.js && ./testBundle.compiled.js",
                 "testInBrowser": {"__execute__": "self.commandLine.serve"}
             },
             "development": {
