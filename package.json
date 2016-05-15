@@ -332,6 +332,7 @@
                 "sass": {"outputExtension": "css"},
                 "scss": {"outputExtension": "css"}
             },
+            "buildDefinition": {"TARGET": {"__execute__": "self.target"}},
             "commandLine": {
                 "build": {
                     "__execute__": "`webpack --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --progress --display-chunks --display-reasons --display-error-details`"

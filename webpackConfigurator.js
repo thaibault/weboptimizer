@@ -75,6 +75,7 @@ if ((
 ) && configuration.development.openBrowser)
     pluginInstances.push(new plugins.openBrowser(
         configuration.development.openBrowser))
+pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
 // // endregion
 // // region modules/assets
 Helper.extendObject(
