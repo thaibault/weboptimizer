@@ -97,6 +97,20 @@ if (!process.argv[1].endsWith('/webpack-dev-server'))
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
         ) => {
+            for (const filePath in compilation.assets)
+                if (compilation.assets.hasOwnProperty(filePath))
+                    const type:?string = Helper.determineAssetType(
+                        filePath, configuration.build, configuration.path)
+                    if (configuration.assetPattern[type])
+                        compilation.assets[filePath] = new WebpackRawSource(
+                            configuration.assetPattern[type].replace(
+                                /{1}/, compilation.assets[filePath].source()))
+        })
+    }})
+    pluginInstances.push({apply: (compiler:Object) => {
+        compiler.plugin('emit', (
+            compilation:Object, callback:ProcedureFunction
+        ) => {
             if (
                 configuration.inPlace.cascadingStyleSheet ||
                 configuration.inPlace.javaScript

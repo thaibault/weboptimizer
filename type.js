@@ -128,6 +128,7 @@ export type ResolvedConfiguration = {
     target:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
     /* eslint-enable max-len */
 
+    assetPattern:{[key:string]:string};
     build:PlainObject;
     commandLine:{
         build:string;
