@@ -23,23 +23,24 @@ import Helper from './helper.compiled'
 const childProcessOptions:Object = {cwd: configuration.path.context}
 const childProcesses:Array<ChildProcess> = []
 const processPromises:Array<Promise> = []
-if (process.argv.length > 2) {
+if (configuration.givenCommandLineArguments.length > 2) {
     // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
     let dynamicConfiguration:PlainObject = {
-        givenCommandLineArguments: process.argv.slice()}
-    if (process.argv.length > 3) {
+        givenCommandLineArguments:
+            configuration.givenCommandLineArguments.slice()}
+    if (configuration.givenCommandLineArguments.length > 3) {
         const evaluationFunction = (
             configuration:ResolvedConfiguration
         ):?PlainObject =>
             // IgnoreTypeCheck
-            new Function(
-                'configuration',
-                `return ${process.argv[process.argv.length - 1]}`
+            new Function('configuration', 'return ' +
+                configuration.givenCommandLineArguments[
+                    configuration.givenCommandLineArguments.length - 1]
             )(configuration)
         try {
             if (Helper.isPlainObject(evaluationFunction(configuration)))
-                process.argv.pop()
+                configuration.givenCommandLineArguments.pop()
         } catch (error) {}
     }
     let count:number = 0
@@ -72,7 +73,7 @@ if (process.argv.length > 2) {
     // / endregion
     // endregion
     // region handle clear
-    if (process.argv[2] === 'clear') {
+    if (configuration.givenCommandLineArguments[2] === 'clear') {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
@@ -115,7 +116,9 @@ if (process.argv.length > 2) {
         Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore)
-    if (['build', 'document', 'test'].includes(process.argv[2]))
+    // TODO add "test"
+    console.log(configuration)
+    if (['build', 'document'].includes(process.argv[2]))
         // Triggers complete asset compiling and bundles them into the final
         // productive output.
         processPromises.push(new Promise((
@@ -180,7 +183,7 @@ if (process.argv.length > 2) {
             }))))
     // endregion
     // region handle api documentation generation
-    if (process.argv[2] === 'document')
+    if (configuration.givenCommandLineArguments[2] === 'document')
         // Documents all specified api files.
         Promise.all(processPromises).then(():number =>
             processPromises.push(new Promise((
@@ -196,7 +199,7 @@ if (process.argv.length > 2) {
             )))
     // endregion
     // region handle lint
-    else if (process.argv[2] === 'lint')
+    else if (configuration.givenCommandLineArguments[2] === 'lint')
         // Lints files with respect to given linting configuration.
         processPromises.push(new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
@@ -210,7 +213,7 @@ if (process.argv.length > 2) {
             }))))
     // endregion
     // region handle test
-    else if (process.argv[2] === 'test')
+    else if (configuration.givenCommandLineArguments[2] === 'test')
         // Runs all specified tests (typically in a real browser environment).
         Promise.all(processPromises).then(():number =>
             processPromises.push(new Promise((
@@ -225,7 +228,7 @@ if (process.argv.length > 2) {
                 })))))
     // endregion
      // region handle test in browser
-    else if (process.argv[2] === 'testInBrowser')
+    else if (configuration.givenCommandLineArguments[2] === 'testInBrowser')
         // Runs all specified tests in a real browser environment.
         processPromises.push(new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
@@ -239,7 +242,10 @@ if (process.argv.length > 2) {
             }))))
     // endregion
     // region handle preinstall
-    else if (configuration.library && process.argv[2] === 'preinstall') {
+    else if (
+        configuration.library &&
+        configuration.givenCommandLineArguments[2] === 'preinstall'
+    ) {
         // Perform all file specific preprocessing stuff.
         const testModuleFilePaths:Array<string> =
             Helper.determineModuleLocations(
@@ -258,8 +264,10 @@ if (process.argv.length > 2) {
                         // IgnoreTypeCheck
                         new Function(
                             'global', 'self', 'buildConfiguration', 'path',
-                            'additionalArguments', 'filePath', 'return ' +
-                            `\`${buildConfiguration[process.argv[2]]}\``
+                            'additionalArguments', 'filePath', 'return `' +
+                            buildConfiguration[
+                                configuration.givenCommandLineArguments[2]
+                            ] + '`'
                         )(
                             global, self, buildConfiguration, path,
                             additionalArguments, filePath)
@@ -278,7 +286,7 @@ if (process.argv.length > 2) {
                 }
     // endregion
     // region handle serve
-    } else if (process.argv[2] === 'serve')
+    } else if (configuration.givenCommandLineArguments[2] === 'serve')
         // Provide a development environment where all assets are dynamically
         // bundled and updated on changes.
         processPromises.push(new Promise((

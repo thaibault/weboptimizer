@@ -80,37 +80,38 @@ while (true) {
     count += 1
 }
 // / endregion
-if (filePath) {
-    const runtimeInformation:PlainObject = JSON.parse(
-        fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
-    if (runtimeInformation.givenCommandLineArguments.length > 2)
-        // region apply documentation configuration
-        if (runtimeInformation.givenCommandLineArguments[2] === 'document')
-            Helper.extendObject(true, configuration, configuration.document)
-        // endregion
-        // region apply test configuration
-        else if (
-            runtimeInformation.givenCommandLineArguments[2] === 'testInBrowser'
-        )
-            Helper.extendObject(
-                true, configuration, configuration.testInBrowser)
-        else if (runtimeInformation.givenCommandLineArguments[2] === 'test')
-            Helper.extendObject(true, configuration, configuration.test)
-        // endregion
-    Helper.extendObject(true, configuration, runtimeInformation)
-    let result:?PlainObject = null
-    const evaluationFunction = (configuration:PlainObject):?PlainObject =>
-        // IgnoreTypeCheck
-        new Function('configuration', 'return ' +
-            runtimeInformation.givenCommandLineArguments[runtimeInformation
-                .givenCommandLineArguments.length - 1]
-        )(configuration)
-    try {
-        result = evaluationFunction(configuration)
-    } catch (error) {}
-    if (Helper.isPlainObject(result))
-        Helper.extendObject(true, configuration, result)
+let runtimeInformation:PlainObject = {
+    givenCommandLineArguments: process.argv
 }
+if (filePath)
+    runtimeInformation = JSON.parse(
+        fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
+if (runtimeInformation.givenCommandLineArguments.length > 2)
+    // region apply documentation configuration
+    if (runtimeInformation.givenCommandLineArguments[2] === 'document')
+        Helper.extendObject(true, configuration, configuration.document)
+    // endregion
+    // region apply test configuration
+    else if (
+        runtimeInformation.givenCommandLineArguments[2] === 'testInBrowser'
+    )
+        Helper.extendObject(true, configuration, configuration.testInBrowser)
+    else if (runtimeInformation.givenCommandLineArguments[2] === 'test')
+        Helper.extendObject(true, configuration, configuration.test)
+    // endregion
+Helper.extendObject(true, configuration, runtimeInformation)
+let result:?PlainObject = null
+const evaluationFunction = (configuration:PlainObject):?PlainObject =>
+    // IgnoreTypeCheck
+    new Function('configuration', 'return ' +
+        runtimeInformation.givenCommandLineArguments[runtimeInformation
+            .givenCommandLineArguments.length - 1]
+    )(configuration)
+try {
+    result = evaluationFunction(configuration)
+} catch (error) {}
+if (Helper.isPlainObject(result))
+    Helper.extendObject(true, configuration, result)
 // / region build absolute paths
 for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
     configuration.path, configuration.path.asset
