@@ -212,16 +212,17 @@ if (process.argv.length > 2) {
     // region handle test
     else if (process.argv[2] === 'test')
         // Runs all specified tests (typically in a real browser environment).
-        processPromises.push(new Promise((
-            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ):number => childProcesses.push(run(
-            `${configuration.commandLine.test} ${additionalArguments}`,
-            childProcessOptions, (error:?Error) => {
-                if (error)
-                    reject(error)
-                else
-                    resolve()
-            }))))
+        Promise.all(processPromises).then(():number =>
+            processPromises.push(new Promise((
+                resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
+            ):number => childProcesses.push(run(
+                `${configuration.commandLine.test} ${additionalArguments}`,
+                childProcessOptions, (error:?Error) => {
+                    if (error)
+                        reject(error)
+                    else
+                        resolve()
+                })))))
     // endregion
      // region handle test in browser
     else if (process.argv[2] === 'testInBrowser')
