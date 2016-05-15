@@ -396,7 +396,7 @@
                         "qunit.css": "qunitjs/qunit/qunit.css",
                         "qunit": "qunitjs/qunit/qunit.js"
                     },
-                    {"optimizer": {"uglifyJS": null}}
+                    "optimizer": {"uglifyJS": null}
                 },
                 "offline": null
             }
