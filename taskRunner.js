@@ -124,9 +124,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
         ):number => childProcesses.push(run(
             `${configuration.commandLine.build} ${additionalArguments}`,
             childProcessOptions, (error:?Error) => {
-                if (error)
+                if (error) {
                     reject(error)
-                else {
+                    throw Error(error)
+                } else {
                     /*
                         Determines all none javaScript entities which have been
                         emitted as single javaScript module to remove.
@@ -189,9 +190,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
             ):number => childProcesses.push(run(
                 `${configuration.commandLine.document} ${additionalArguments}`,
                 childProcessOptions, (error:?Error) => {
-                    if (error)
+                    if (error) {
                         reject(error)
-                    else
+                        throw Error(error)
+                    } else
                         resolve()
                 }))
             )))
@@ -204,9 +206,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
         ):number => childProcesses.push(run(
             `${configuration.commandLine.lint} ${additionalArguments}`,
             childProcessOptions, (error:?Error) => {
-                if (error)
+                if (error) {
                     reject(error)
-                else
+                    throw Error(error)
+                } else
                     resolve()
             }))))
     // endregion
@@ -219,9 +222,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
             ):number => childProcesses.push(run(
                 `${configuration.commandLine.test} ${additionalArguments}`,
                 childProcessOptions, (error:?Error) => {
-                    if (error)
+                    if (error) {
                         reject(error)
-                    else
+                        throw Error(error)
+                    } else
                         resolve()
                 })))))
     // endregion
@@ -233,9 +237,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
         ):number => childProcesses.push(run(
             `${configuration.commandLine.testInBrowser} ` +
             additionalArguments, childProcessOptions, (error:?Error) => {
-                if (error)
+                if (error) {
                     reject(error)
-                else
+                    throw Error(error)
+                } else
                     resolve()
             }))))
     // endregion
@@ -276,9 +281,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         global, configuration, buildConfiguration, path,
                         additionalArguments, filePath
                         ), childProcessOptions, (error:?Error) => {
-                            if (error)
+                            if (error) {
                                 reject(error)
-                            else
+                                throw Error(error)
+                            } else
                                 resolve()
                         }))))
                 }
@@ -292,9 +298,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
         ):number => childProcesses.push(run(
             `${configuration.commandLine.serve} ${additionalArguments}`,
             childProcessOptions, (error:?Error) => {
-                if (error)
+                if (error) {
                     reject(error)
-                else
+                    throw Error(error)
+                } else
                     resolve()
             }))))
     // endregion
