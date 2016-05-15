@@ -470,7 +470,7 @@
                 "__execute__": "`jsdoc --destination '${self.path.apiDocumentation}' '${self.path.asset.javaScript}'*.compiled.js`"
             }}},
 
-            "test": {"injection": {"internal": ["test"]}}
+            "test": {"injection": {"internal": ["test"]}},
 
             "testInBrowser": {"injection": {"internal": ["test"]}}
         }
