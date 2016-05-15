@@ -375,7 +375,11 @@
 
             "test": {
                 "exportFormat": "commonjs2",
+                "files": {"javaScript": {
+                    "__execute__": "`${self.path.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
+                }},
                 "injection": {"internal": ["test/"]},
+                "inPlace": {"externalLibrary": false},
                 "target": "node"
             },
 
@@ -387,6 +391,7 @@
                     "filename": "test.html"
                 }]},
                 "injection": {"internal": ["test/"]},
+                "inPlace": {"externalLibrary": false},
                 "module": {"additionalAliases": {
                     "qunit.css": "qunitjs/qunit/qunit.css",
                     "qunit": "qunitjs/qunit/qunit.js"
@@ -470,17 +475,9 @@
                 "__execute__": "`jsdoc --destination '${self.path.apiDocumentation}' '${self.path.asset.javaScript}'*.compiled.js`"
             }}},
 
-            "test": {
-                "files": {"javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
-                }},
-                "injection": {"internal": ["test"]}
-            },
+            "test": {"injection": {"internal": ["test"]}},
 
-            "testInBrowser": {
-                "injection": {"internal": ["test"],
-                "inPlace": {"externalLibrary": false}
-            }
+            "testInBrowser": {"injection": {"internal": ["test"]}}
         }
     },
     "eslintConfig": {

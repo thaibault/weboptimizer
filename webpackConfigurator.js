@@ -87,8 +87,7 @@ const moduleLocations:{[key:string]:Array<string>} =
 let injection:{internal:InternalInjection; external:ExternalInjection}
 pluginInstances.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet, {
-        allChunks: true, disable: !configuration.files.cascadingStyleSheet}
-))
+        allChunks: true, disable: !configuration.files.cascadingStyleSheet}))
 // Optimizes webpack output
 if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
