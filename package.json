@@ -336,7 +336,7 @@
                     "__execute__": "`webpack --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --progress --display-chunks --display-reasons --display-error-details`"
                 },
                 "document": {
-                    "__execute__": "`jsdoc --destination '${self.path.apiDocumentation}' '${self.path.asset.javaScript}'*.compiled.js`"
+                    "__execute__": "`jsdoc --destination '${self.path.apiDocumentation}' '${self.path.asset.javaScript}'*.js`"
                 },
                 "lint": {
                     "__execute__": "`eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
@@ -344,8 +344,8 @@
                 "serve": {
                     "__execute__": "`webpack-dev-server --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --inline --colors`"
                 },
-                "testInBrowser": {"__execute__": "self.commandLine.serve"},
-                "test": "./testBundle.js"
+                "test": "./testBundle.js",
+                "testInBrowser": {"__execute__": "self.commandLine.serve"}
             },
             "development": {
                 "openBrowser": null,
@@ -474,6 +474,9 @@
             },
             "offline": null,
 
+            "document": {"commandLine": {"document": {
+                "__execute__": "`jsdoc --destination '${self.path.apiDocumentation}' '${self.path.asset.javaScript}'*.compiled.js`"
+            }}}
 
             "test": {"injection": {"internal": ["test"]}}
         }
