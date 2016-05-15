@@ -86,11 +86,12 @@ let runtimeInformation:PlainObject = {
 if (filePath) {
     runtimeInformation = JSON.parse(
         fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
-    fileSystem.unlink(filePath, (error) => {
+    fileSystem.unlink(filePath, (error:?Error) => {
         if (error)
             throw error
     })
-} if (runtimeInformation.givenCommandLineArguments.length > 2)
+}
+if (runtimeInformation.givenCommandLineArguments.length > 2)
     // region apply documentation configuration
     if (runtimeInformation.givenCommandLineArguments[2] === 'document')
         Helper.extendObject(true, configuration, configuration.document)

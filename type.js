@@ -130,6 +130,7 @@ export type ResolvedConfiguration = {
 
     assetPattern:{[key:string]:string};
     build:PlainObject;
+    buildDefinition:PlainObject;
     commandLine:{
         build:string;
         document:string;
