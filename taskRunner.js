@@ -116,9 +116,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore)
-    // TODO add "test"
-    console.log(configuration)
-    if (['build', 'document'].includes(process.argv[2]))
+    if (['build', 'document', 'test'].includes(process.argv[2]))
         // Triggers complete asset compiling and bundles them into the final
         // productive output.
         processPromises.push(new Promise((

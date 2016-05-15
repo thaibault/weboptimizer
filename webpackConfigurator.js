@@ -244,50 +244,45 @@ if (['test', 'testInBrowser'].includes(
     if (!javaScriptNeeded)
         configuration.files.javaScript = path.join(
             configuration.path.asset.javaScript, '.__dummy__.compiled.js')
-    if (!configuration.inPlace.externalLibrary)
-        /*
-            We only want to process modules from local context in library mode,
-            since a concrete project using this library should combine all
-            assets (and deduplicate them) for optimal bundling results.
-            NOTE: Only native javaScript and json modules will be marked as
-            external dependency.
-        */
-        injection.external = (
-            context:string, request:string, callback:ProcedureFunction
-        ):?null => {
-            const filePath:string = Helper.determineModuleFilePath(
-                request.substring(request.lastIndexOf('!') + 1),
-                configuration.module.aliases, configuration.knownExtensions,
-                context)
-            if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
-                /* eslint-disable curly */
-                if (Array.isArray(injection.internal)) {
-                    for (const internalModule:string of injection.internal)
-                        if (Helper.determineModuleFilePath(
-                            internalModule, configuration.module.aliases,
-                            configuration.knownExtensions, context
-                        ) === filePath)
-                            return callback()
-                } else if (injection.internal instanceof Map)
-                /* eslint-enable curly */
-                    for (const chunkName:string in injection.internal)
-                        if (Helper.determineModuleFilePath(
-                            injection.internal[chunkName],
-                            configuration.module.aliases,
-                            configuration.knownExtensions, context
-                        ) === filePath)
-                            return callback()
-                if (!path.resolve(filePath).startsWith(
-                    configuration.path.context
-                ) || Helper.isFilePathInLocation(
-                    filePath, configuration.path.ignore
-                ))
-                    return callback(
-                        null, `${configuration.exportFormat} ${request}`)
-            }
-            return callback()
-        }
 }
+if (!configuration.inPlace.externalLibrary)
+    /*
+        We only want to process modules from local context in library mode,
+        since a concrete project using this library should combine all assets
+        (and deduplicate them) for optimal bundling results. NOTE: Only native
+        javaScript and json modules will be marked as external dependency.
+    */
+    injection.external = (
+        context:string, request:string, callback:ProcedureFunction
+    ):?null => {
+        const filePath:string = Helper.determineModuleFilePath(
+            request.substring(request.lastIndexOf('!') + 1),
+            configuration.module.aliases, configuration.knownExtensions,
+            context)
+        if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
+            const normalizedInternalInjection:NormalizedInternalInjection =
+                Helper.normalizeInternalInjection(injection.internal)
+            for (const chunkName:string in normalizedInternalInjection)
+                if (normalizedInternalInjection.hasOwnProperty(chunkName))
+                    for (
+                        const moduleID:string of
+                        normalizedInternalInjection[chunkName]
+                    )
+                        if (Helper.determineModuleFilePath(
+                            moduleID, configuration.module.aliases,
+                            configuration.knownExtensions, context
+                        ) === filePath)
+                            return callback()
+            if (!path.resolve(filePath).startsWith(
+                configuration.path.context
+            ) || Helper.isFilePathInLocation(
+                filePath, configuration.path.ignore
+            ))
+                return callback(
+                    null, `${configuration.exportFormat} ${request}`)
+        }
+        return callback()
+    }
 // // endregion
 // / endregion
 // / region loader
