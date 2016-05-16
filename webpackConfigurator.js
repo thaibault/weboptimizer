@@ -78,8 +78,6 @@ if ((
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
 // // endregion
 // // region modules/assets
-Helper.extendObject(
-    configuration.module.aliases, configuration.module.additionalAliases)
 const moduleLocations:{[key:string]:Array<string>} =
     Helper.determineModuleLocations(
         configuration.injection.internal, configuration.module.aliases,

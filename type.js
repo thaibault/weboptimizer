@@ -118,7 +118,6 @@ export type ResolvedConfiguration = {
     };
     knownExtensions:Array<string>;
     module:{
-        additionalAliases:PlainObject;
         aliases:PlainObject;
         cascadingStyleSheet:PlainObject;
         html:PlainObject;

@@ -65,11 +65,11 @@
         "webpackTestConfigurator.js",
         "helper.js",
         "pugLoader.js",
-        "testBrowser.js",
+        "loadBrowserAPI.js",
         "test.pug"
     ],
     "scripts": {
-        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command testBrowser.compiled.js testBrowser.js",
+        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command loadBrowserAPI.compiled.js loadBrowserAPI.js",
         "clear": "rm *.compiled.* &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null || true",
         "document": "npm run build && jsdoc --destination apiDocumentation *.compiled.js",
         "lint": "flow && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
@@ -134,8 +134,11 @@
                 ".compiled.gif", ".gif"
             ],
             "module": {
-                "additionalAliases": {},
-                "aliases": {},
+                "aliases": {
+                    "qunit.css": "qunitjs/qunit/qunit.css",
+                    "qunit": "qunitjs/qunit/qunit.js",
+                    "webOptimizer/loadBrowserAPI": "webOptimizer/loadBrowserAPI.compiled"
+                },
                 "cascadingStyleSheet": {},
                 "html": {
                     "config": "html",
@@ -387,13 +390,6 @@
                     "__execute__": "`${self.path.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                 }},
                 "injection": {"internal": "test/"},
-                "module": {
-                    "additionalAliases": {
-                        "qunit.css": "qunitjs/qunit/qunit.css",
-                        "qunit": "qunitjs/qunit/qunit.js",
-                        "webOptimizer/testBrowser": "webOptimizer/testBrowser.compiled"
-                    }
-                },
                 "target": "node",
 
                 "assetPattern": {
@@ -410,14 +406,7 @@
                 }]},
                 "inPlace": {"externalLibrary": true},
                 "injection": {"internal": "test/"},
-                "module": {
-                    "additionalAliases": {
-                        "qunit.css": "qunitjs/qunit/qunit.css",
-                        "qunit": "qunitjs/qunit/qunit.js",
-                        "webOptimizer/testBrowser": "webOptimizer/testBrowser.compiled"
-                    },
-                    "optimizer": {"uglifyJS": null}
-                },
+                "module": {"optimizer": {"uglifyJS": null}},
                 "offline": null
             }
         },
