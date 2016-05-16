@@ -356,11 +356,9 @@ const loader:{
 // / endregion
 // endregion
 console.log(configuration.module.aliases)
-configuration.module.aliases = {
-    'qunit$': 'qunitjs/qunit/qunit.js',
-    'qunit.css$': 'qunitjs/qunit/qunit.css',
-    'webOptimizer/loadBrowserAPI$': 'webOptimizer/loadBrowserAPI.compiled'
-}
+configuration.module.aliases[
+    'webOptimizer/loadBrowserAPI$'
+] = 'webOptimizer/loadBrowserAPI.compiled'
 console.log(configuration.module.aliases)
 // region configuration
 export default {
