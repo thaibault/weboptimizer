@@ -135,9 +135,8 @@
             ],
             "module": {
                 "aliases": {
-                    "qunit.css": "qunitjs/qunit/qunit.css",
-                    "qunit": "qunitjs/qunit/qunit.js",
-                    "webOptimizer/loadBrowserAPI": "webOptimizer/loadBrowserAPI.compiled"
+                    "qunit.css$": "qunitjs/qunit/qunit.css",
+                    "webOptimizer/loadBrowserAPI$": "webOptimizer/loadBrowserAPI.compiled"
                 },
                 "cascadingStyleSheet": {},
                 "html": {
