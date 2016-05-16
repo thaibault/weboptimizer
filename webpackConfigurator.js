@@ -355,11 +355,6 @@ const loader:{
 }
 // / endregion
 // endregion
-console.log(configuration.module.aliases)
-configuration.module.aliases[
-    'webOptimizer/loadBrowserAPI$'
-] = 'webOptimizer/loadBrowserAPI.compiled'
-console.log(configuration.module.aliases)
 // region configuration
 export default {
     context: configuration.path.context,

@@ -65,11 +65,11 @@
         "webpackTestConfigurator.js",
         "helper.js",
         "pugLoader.js",
-        "loadBrowserAPI.js",
+        "browserAPI.js",
         "test.pug"
     ],
     "scripts": {
-        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command loadBrowserAPI.compiled.js loadBrowserAPI.js",
+        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command browserAPI.compiled.js browserAPI.js",
         "clear": "rm *.compiled.* &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null || true",
         "document": "npm run build && jsdoc --destination apiDocumentation *.compiled.js",
         "lint": "flow && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
@@ -136,7 +136,7 @@
             "module": {
                 "aliases": {
                     "qunit.css$": "qunitjs/qunit/qunit.css",
-                    "webOptimizer/loadBrowserAPI$": "webOptimizer/loadBrowserAPI.compiled"
+                    "webOptimizer/browserAPI$": "webOptimizer/browserAPI.compiled"
                 },
                 "cascadingStyleSheet": {},
                 "html": {
