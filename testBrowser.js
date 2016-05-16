@@ -37,10 +37,8 @@ const onDomContentLoaded:(window:Window, location:Location) => ?null = (
 }
 // endregion
 // region ensure presence of common browser environment
-let qunit
 if (TARGET === 'node') {
     // region mock browser environment
-    qunit = require('qunit-cli')
     const dom = require('jsdom')
     dom.env(`
     <!doctype html>
@@ -89,18 +87,13 @@ if (TARGET === 'node') {
                 writable: false
             })
             onDomContentLoaded(window, window.location)
-            qunit.load()
         }
     })
     // endregion
-} else {
-    // IgnoreTypeCheck
-    qunit = require('qunit')
+} else
     window.document.addEventListener('DOMContentLoaded', () => {
         onDomContentLoaded(window, window.location)
-        qunit.start()
     })
-}
 // endregion
 export default (
     callback:OnDomContentLoadedListenerFunction
