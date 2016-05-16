@@ -8,9 +8,30 @@ import path from 'path'
 // region exports
 // / region generic
 export type GetterFunction = (keyOrValue:any) => any
-export type SetterFunction = (key:any, value:any) => any
+export type Location = {
+    hash:string;
+    search:string;
+    pathname:string;
+    port:string;
+    hostname:string;
+    host:string;
+    protocol:string;
+    origin:string;
+    href:string;
+    username:string;
+    password:string;
+    assign:Function;
+    reload:Function;
+    replace:Function;
+    toString:() => string
+}
 export type ProcedureFunction = () => ?null
 export type PlainObject = {[key:string]:any}
+export type SetterFunction = (key:any, value:any) => any
+export type Window = {
+    document:Object;
+    location:Location
+}
 // / endregion
 // / region injection
 export type NormalizedInternalInjection = {[key:string]:Array<string>}
@@ -160,6 +181,9 @@ export type EvaluationFunction = (
     self:?PlainObject, webOptimizerPath:string, currentPath:string,
     path:typeof path
 ) => any
+export type OnDomContentLoadedListenerFunction = (
+    window:Window, location:Location
+) => ?null
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean

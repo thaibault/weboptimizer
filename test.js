@@ -1,0 +1,111 @@
+#!/usr/bin/env node
+// @flow
+// -*- coding: utf-8 -*-
+'use strict'
+/* !
+    region header
+    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+    License
+    -------
+
+    This library written by Torben Sickert stand under a creative commons naming
+    3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
+    endregion
+*/
+// region imports
+import type {
+    Location, OnDomContentLoadedListenerFunction, Window
+} from './type'
+ // endregion
+// region declaration
+declare var TARGET:string
+declare var window:Window
+// endregion
+// region constants
+const onDomContentLoadedListener:Array<OnDomContentLoadedListenerFunction> = []
+// endregion
+// region functions
+const onDomContentLoaded:(window:Window, location:Location) => ?null = (
+    window:Window, location:Location
+) => {
+    for (
+        const callback:OnDomContentLoadedListenerFunction of
+        onDomContentLoadedListener
+    )
+        callback(window, location)
+}
+// endregion
+// region ensure presence of common browser environment
+let qunit
+if (TARGET === 'node') {
+    // region mock browser environment
+    qunit = require('qunit-cli')
+    const dom = require('jsdom')
+    dom.env(`
+    <!doctype html>
+        <html>
+            <head>
+                <meta charset="UTF-8">
+                <!--Prevent browser caching-->
+                <meta http-equiv="cache-control" content="no-cache">
+                <meta http-equiv="expires" content="0">
+                <meta http-equiv="pragma" content="no-cache">
+                <title>test</title>
+                <link
+                    href="/node_modules/qunitjs/qunit/qunit.css"
+                    rel="stylesheet" type="text/css"
+                >
+            </head>
+        <body>
+            <div id="qunit"></div>
+            <div id="qunit-fixture"></div>
+        </body>
+    </html>
+    `, (error:?Error, window:Object) => {
+        if (error)
+            throw error
+        else {
+            Object.defineProperty(window, 'location', {
+                value: {
+                    hash: '',
+                    search: '',
+                    pathname: '/path',
+                    port: '',
+                    hostname: 'localhost',
+                    host: 'localhost',
+                    protocol: 'http:',
+                    origin: 'http://localhost',
+                    href: 'http://localhost/path',
+                    username: '',
+                    password: '',
+                    assign: () => {},
+                    reload: () => {},
+                    replace: () => {},
+                    toString: function():string {
+                        return this.href
+                    }
+                },
+                writable: false
+            })
+            onDomContentLoaded(window, window.location)
+            qunit.load()
+        }
+    })
+    // endregion
+} else {
+    // IgnoreTypeCheck
+    qunit = require('qunit')
+    window.document.addEventListener('DOMContentLoaded', () => {
+        onDomContentLoaded(window, window.location)
+        qunit.start()
+    })
+}
+// endregion
+export default (
+    callback:OnDomContentLoadedListenerFunction
+):number => onDomContentLoadedListener.push(callback)
+// region vim modline
+// vim: set tabstop=4 shiftwidth=4 expandtab:
+// vim: foldmethod=marker foldmarker=region,endregion:
+// endregion
