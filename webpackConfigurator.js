@@ -280,6 +280,22 @@ if (injection.external === '__implicit__')
             configuration.module.aliases, configuration.knownExtensions,
             context)
         if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
+            // NOTE: We apply alias on externals additionally.
+            for (const alias in configuration.module.aliases)
+                if (alias.endsWith('$'))
+                    if (request === alias.substring(0, alias.length - 1))
+                        request = configuration.module.aliases[alias]
+                else
+                    request.replace(alias, configuration.module.aliases[alias])
+            if (request.match(
+                /^webOptimizer\/browserAPI(?:.compiled)(?:.js)?/
+            ))
+                /*
+                    NOTE: The browser api needs processing since there exists
+                    needed compile flags to avoid loading a complete node
+                    browser api into a real browser.
+                */
+                return callback()
             const normalizedInternalInjection:NormalizedInternalInjection =
                 Helper.normalizeInternalInjection(injection.internal)
             for (const chunkName:string in normalizedInternalInjection)

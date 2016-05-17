@@ -134,10 +134,7 @@
                 ".compiled.gif", ".gif"
             ],
             "module": {
-                "aliases": {
-                    "qunit.css$": "qunitjs/qunit/qunit.css",
-                    "webOptimizer/browserAPI$": "webOptimizer/browserAPI.compiled"
-                },
+                "aliases": {},
                 "cascadingStyleSheet": {},
                 "html": {
                     "config": "html",
