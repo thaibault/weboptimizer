@@ -134,7 +134,9 @@
                 ".compiled.gif", ".gif"
             ],
             "module": {
-                "aliases": {},
+                "aliases": {
+                    "webOptimizer/browserAPI$": "webOptimizer/browserAPI.compiled"
+                },
                 "cascadingStyleSheet": {},
                 "html": {
                     "config": "html",
