@@ -59,14 +59,15 @@
         "qunit-cli": "*"
     },
     "files": [
+        "browserAPI.js",
         "configurator.js",
-        "taskRunner.js",
-        "webpackConfigurator.js",
-        "webpackTestConfigurator.js",
         "helper.js",
         "pugLoader.js",
-        "browserAPI.js",
-        "test.pug"
+        "taskRunner.js",
+        "test.pug",
+        "type.js",
+        "webpackConfigurator.js",
+        "webpackTestConfigurator.js"
     ],
     "scripts": {
         "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command browserAPI.compiled.js browserAPI.js",
