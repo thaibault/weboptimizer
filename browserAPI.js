@@ -1,4 +1,4 @@
-//#!/usr/bin/env node
+// #!/usr/bin/env node
 // @flow
 // -*- coding: utf-8 -*-
 'use strict'

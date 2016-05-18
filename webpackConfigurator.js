@@ -282,10 +282,10 @@ if (injection.external === '__implicit__')
         if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
             // NOTE: We apply alias on externals additionally.
             for (const alias in configuration.module.aliases)
-                if (alias.endsWith('$'))
+                if (alias.endsWith('$')) {
                     if (request === alias.substring(0, alias.length - 1))
                         request = configuration.module.aliases[alias]
-                else
+                } else
                     request.replace(alias, configuration.module.aliases[alias])
             if (request.match(
                 /^webOptimizer\/browserAPI(?:.compiled)(?:.js)?/
