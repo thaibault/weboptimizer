@@ -345,7 +345,7 @@
                     "__execute__": "`jsdoc --destination '${self.path.apiDocumentation}' '${self.path.asset.javaScript}'*.js`"
                 },
                 "lint": {
-                    "__execute__": "`eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
+                    "__execute__": "`[ -f .flowconfig ] && flow || [ ! -f .flowconfig ] && eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
                 },
                 "serve": {
                     "__execute__": "`webpack-dev-server --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --inline --colors`"
