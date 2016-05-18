@@ -32,6 +32,7 @@
         "extract-loader": "0.0.2",
         "extract-text-webpack-plugin": "^1.0.1",
         "file-loader": "*",
+        "flow-bin": "*",
         "html-loader": "*",
         "html-webpack-plugin": "*",
         "image-webpack-loader": "^1.6.3",
@@ -54,7 +55,6 @@
         "webpack-load-plugins": "*"
     },
     "devDependencies": {
-        "flow-bin": "*",
         "source-map-support": "*",
         "qunit-cli": "*"
     },
