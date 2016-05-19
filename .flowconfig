@@ -1,3 +1,4 @@
+# NOTE: Uses OCaml regular expressions.
 [ignore]
 .*/\.git
 .*/_.*\.js
