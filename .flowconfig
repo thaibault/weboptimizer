@@ -5,6 +5,8 @@
 .*/.+\.compiled\.js
 
 [options]
+esproposal.class_static_fields=enable
+
 module.name_mapper='^\./configurator\.compiled$' -> './configurator'
 module.name_mapper='^\./helper\.compiled$' -> './helper'
 module.name_mapper='^\../helper\.compiled$' -> '../helper'
