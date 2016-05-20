@@ -137,14 +137,13 @@ if (configuration.givenCommandLineArguments.length > 2) {
         // productive output.
         processPromises.push(new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ):number => childProcesses.push(spawnChildProcess(
-            configuration.commandLine.build.command,
-            (configuration.commandLine.build.arguments || []).concat(
-                additionalArguments
-            ), childProcessOptions, (error:?Error) => {
-                if (error)
-                    reject(error)
-                else {
+        ) => {
+            const childProcess:ChildProcess = spawnChildProcess(
+                configuration.commandLine.build.command, (
+                    configuration.commandLine.build.arguments || []
+                ).concat(additionalArguments), childProcessOptions)
+            childProcess.on('close', (returnCode:number) => {
+                if (returnCode === 0) {
                     /*
                         Determines all none javaScript entities which have been
                         emitted as single javaScript module to remove.
@@ -202,8 +201,12 @@ if (configuration.givenCommandLineArguments.length > 2) {
                             fileSystem.unlinkSync(filePath)
                         } catch (error) {}
                     resolve()
-                }
-            }))))
+                } else
+                    reject(new Error(
+                        `Task exited with error code ${returnCode}`))
+            })
+            childProcesses.push(childProcess)
+        }))
     // endregion
     // region handle preinstall
     else if (
@@ -255,16 +258,20 @@ if (configuration.givenCommandLineArguments.length > 2) {
     const handleTask = (type:string):number => processPromises.push(
         new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ):number => childProcesses.push(spawnChildProcess(
-            configuration.commandLine[type].command,
-            (configuration.commandLine[type].arguments || []).concat(
-                additionalArguments
-            ), childProcessOptions, (error:?Error) => {
-                if (error)
-                    reject(error)
-                else
+        ) => {
+            const childProcess:ChildProcess = spawnChildProcess(
+                configuration.commandLine[type].command, (
+                    configuration.commandLine[type].arguments || []
+                ).concat(additionalArguments), childProcessOptions)
+            childProcess.on('close', (returnCode:number) => {
+                if (returnCode === 0)
                     resolve()
-            }))))
+                else
+                    reject(new Error(
+                        `Task exited with error code ${returnCode}`))
+            })
+            childProcesses.push(childProcess)
+        }))
     // / region synchronous
     for (const type of ['document', 'test'])
         if (configuration.givenCommandLineArguments[2] === type) {
