@@ -20,6 +20,7 @@
         "babel-polyfill": "*",
         "babel-plugin-transform-flow-strip-types": "*",
         "babel-preset-es2015": "*",
+        "babel-preset-es2015-loose": "*",
         "babel-preset-es2015-node": "*",
         "babel-preset-stage-0": "*",
         "coffee-loader": "*",
@@ -267,7 +268,7 @@
                     "less": {},
                     "modernJavaScript": {
                         "cacheDirectory": true,
-                        "presets": ["es2015", "stage-0"],
+                        "presets": ["es2015-loose", "stage-0"],
                         "plugins": ["transform-flow-strip-types"]
                     },
                     "sass": {"indentedSyntax": true},
