@@ -74,7 +74,7 @@
         "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command browserAPI.compiled.js browserAPI.js",
         "clear": "rm *.compiled.* &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null || true",
         "document": "npm run build && jsdoc --destination apiDocumentation *.compiled.js",
-        "lint": "flow && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
+        "lint": "flow --color always --strip-root && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
         "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js test.compiled.js pugLoader.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build",
         "test": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/pugLoader.compiled.js && test/helper.compiled.js || true"
@@ -346,7 +346,7 @@
                     "__execute__": "`jsdoc --destination '${self.path.apiDocumentation}' '${self.path.asset.javaScript}'*.js`"
                 },
                 "lint": {
-                    "__execute__": "`[ -f .flowconfig ] && flow || [ ! -f .flowconfig ] && eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
+                    "__execute__": "`[ -f .flowconfig ] && flow --color always --strip-root || [ ! -f .flowconfig ] && eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
                 },
                 "serve": {
                     "__execute__": "`webpack-dev-server --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --inline --colors`"
