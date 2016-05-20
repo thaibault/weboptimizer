@@ -34,8 +34,10 @@ import Helper from './helper.compiled'
 // endregion
 // region controller
 const childProcessOptions:Object = {
-    cwd: configuration.path.context, shell: true, stdio: 'inherit',
-    env: process.env
+    cwd: configuration.path.context,
+    env: process.env,
+    shell: true,
+    stdio: 'inherit'
 }
 const childProcesses:Array<ChildProcess> = []
 const processPromises:Array<Promise> = []
