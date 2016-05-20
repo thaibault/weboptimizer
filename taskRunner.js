@@ -205,41 +205,6 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 }
             }))))
     // endregion
-    // region handle api documentation generation
-    if (configuration.givenCommandLineArguments[2] === 'document')
-        // Documents all specified api files.
-        Promise.all(processPromises).then(():number =>
-            processPromises.push(new Promise((
-                resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-            ):number => childProcesses.push(spawnChildProcess(
-                configuration.commandLine.document.command,
-                (configuration.commandLine.document.arguments || []).concat(
-                    additionalArguments
-                ), childProcessOptions, (error:?Error) => {
-                    if (error)
-                        reject(error)
-                    else
-                        resolve()
-                }))
-            )))
-    // endregion
-    // region handle test
-    else if (configuration.givenCommandLineArguments[2] === 'test')
-        // Runs all specified tests (typically in a real browser environment).
-        Promise.all(processPromises).then(():number =>
-            processPromises.push(new Promise((
-                resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-            ):ChildProcess => spawnChildProcess(
-                configuration.commandLine.test.command,
-                (configuration.commandLine.test.arguments || []).concat(
-                    additionalArguments
-                ), childProcessOptions, (error:?Error) => {
-                    if (error)
-                        reject(error)
-                    else
-                        resolve()
-                }))))
-    // endregion
     // region handle preinstall
     else if (
         configuration.library &&
@@ -284,28 +249,37 @@ if (configuration.givenCommandLineArguments.length > 2) {
                                 resolve()
                         }))))
                 }
+    }
     // endregion
-    } else
-        // region handle remaining tasks
-        for (const type of ['lint', 'testInBrowser', 'typeCheck', 'serve'])
-            if (configuration.givenCommandLineArguments[2] === type) {
-                // Lints files with respect to given linting configuration.
-                processPromises.push(new Promise((
-                    resolve:PromiseCallbackFunction,
-                    reject:PromiseCallbackFunction
-                ):number => childProcesses.push(spawnChildProcess(
-                    configuration.commandLine[type].command,
-                    (configuration.commandLine[type].arguments || []).concat(
-                        additionalArguments
-                    ), childProcessOptions, (error:?Error) => {
-                        if (error)
-                            reject(error)
-                        else
-                            resolve()
-                    }))))
-                break
-            }
-        // endregion
+    // region handle remaining tasks
+    const handleTask = (type:string):number => processPromises.push(
+        new Promise((
+            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
+        ):number => childProcesses.push(spawnChildProcess(
+            configuration.commandLine[type].command,
+            (configuration.commandLine[type].arguments || []).concat(
+                additionalArguments
+            ), childProcessOptions, (error:?Error) => {
+                if (error)
+                    reject(error)
+                else
+                    resolve()
+            }))))
+    // / region synchronous
+    for (const type of ['document', 'test'])
+        if (configuration.givenCommandLineArguments[2] === type) {
+            Promise.all(processPromises).then(():number => handleTask(type))
+            break
+        }
+    // / endregion
+    // / region asynchronous
+    for (const type of ['lint', 'testInBrowser', 'typeCheck', 'serve'])
+        if (configuration.givenCommandLineArguments[2] === type) {
+            handleTask(type)
+            break
+        }
+    // / endregion
+    // endregion
 }
 // / region handle child process interface
 if (childProcesses.length === 0) {
