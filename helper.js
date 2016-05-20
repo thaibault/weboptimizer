@@ -169,10 +169,8 @@ export default class Helper {
      * @returns Given child process meta data.
      */
     static handleChildProcess(childProcess:ChildProcess):ChildProcess {
-        childProcess.stdout.on('data', process.stdout.write.bind(
-            process.stdout))
-        childProcess.stderr.on('data', process.stderr.write.bind(
-            process.stderr))
+        childProcess.stdout.pipe(process.stdout)
+        childProcess.stderr.pipe(process.stderr)
         childProcess.on('close', (returnCode:number) => {
             if (returnCode !== 0)
                 console.error(`Task exited with error code ${returnCode}`)
