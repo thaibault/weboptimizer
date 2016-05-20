@@ -229,7 +229,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         Promise.all(processPromises).then(():number =>
             processPromises.push(new Promise((
                 resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-            ):ChildProcess => Helper.handleChildProcess(spawnChildProcess(
+            ):ChildProcess => spawnChildProcess(
                 configuration.commandLine.test.command,
                 (configuration.commandLine.test.arguments || []).concat(
                     additionalArguments
@@ -238,7 +238,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         reject(error)
                     else
                         resolve()
-                })))))
+                }))))
     // endregion
     // region handle preinstall
     else if (
@@ -273,7 +273,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     processPromises.push(new Promise((
                         resolve:PromiseCallbackFunction,
                         reject:PromiseCallbackFunction
-                    ):number => childProcesses.push(execChildProcess(
+                    ):number => Helper.handleChildProcess(execChildProcess(
                         evaluationFunction(
                             global, configuration, buildConfiguration, path,
                             additionalArguments, filePath
@@ -325,10 +325,6 @@ if (childProcesses.length === 0) {
             'overwrite some configurations.\n')
     process.exit()
 }
-// / endregion
-// / region trigger child process communication handler
-for (const childProcess:ChildProcess of childProcesses)
-    Helper.handleChildProcess(childProcess)
 // / endregion
 // endregion
 // region vim modline
