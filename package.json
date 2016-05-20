@@ -340,19 +340,49 @@
             }},
             "commandLine": {
                 "build": {
-                    "__execute__": "`webpack --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --progress --display-chunks --display-reasons --display-error-details`"
+                    "command": "webpack",
+                    "arguments": [
+                        "--config",
+                        {"__execute__": "`${webOptimizerPath}/webpackConfigurator.compiled.js`"},
+                        "--progress",
+                        "--display-chunks",
+                        "--display-reasons",
+                        "--display-error-details"
+                    ]
                 },
                 "document": {
-                    "__execute__": "`jsdoc --destination '${self.path.apiDocumentation}' '${self.path.asset.javaScript}'*.js`"
+                    "command": "jsdoc",
+                    "arguments": [
+                        "--destination",
+                        {"__execute__": "self.path.apiDocumentation"},
+                        {"__execute__": "`'${self.path.asset.javaScript}'*.js`"}
+                    ]
                 },
                 "lint": {
-                    "__execute__": "`[ -f .flowconfig ] && flow --color always --strip-root || [ ! -f .flowconfig ] && eslint --config '${webOptimizerPath}/package.json' --ignore-pattern '${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}' '**/*.js'`"
+                    "command": "eslint",
+                    "arguments": [
+                        "--config",
+                        {"__execute__": "`'${webOptimizerPath}/package.json'`"},
+                        "--ignore-pattern",
+                        {"__execute__": "`'${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
+                        "'**/*.js'"
+                    ]
                 },
                 "serve": {
-                    "__execute__": "`webpack-dev-server --config '${webOptimizerPath}/webpackConfigurator.compiled.js' --inline --colors`"
+                    "command": "webpack-dev-server",
+                    "arguments": [
+                        "--config",
+                        {"__execute__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"},
+                        "--inline",
+                        "--colors"
+                    ]
                 },
-                "test": "chmod +x ./testBundle.compiled.js && ./testBundle.compiled.js",
-                "testInBrowser": {"__execute__": "self.commandLine.serve"}
+                "test": {"command": "./testBundle.compiled.js"},
+                "testInBrowser": {"__execute__": "self.commandLine.serve"},
+                "typeCheck": {
+                    "command": "flow",
+                    "arguments": ["--color", "always", "--strip-root"]
+                }
             },
             "development": {
                 "openBrowser": null,

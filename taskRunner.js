@@ -14,7 +14,9 @@
     endregion
 */
 // region imports
-import {exec as run, ChildProcess} from 'child_process'
+import {
+    ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
+} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
 import {sync as removeDirectoryRecursivelySync} from 'rimraf'
@@ -32,7 +34,7 @@ import Helper from './helper.compiled'
 // endregion
 // region controller
 const childProcessOptions:Object = {
-    cwd: configuration.path.context, shell: true
+    cwd: configuration.path.context, shell: true, stdio: 'inherit'
 }
 const childProcesses:Array<ChildProcess> = []
 const processPromises:Array<Promise> = []
@@ -121,9 +123,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         process.exit()
     }
     // endregion
-    let additionalArguments:string = process.argv.splice(3).join("' '")
-    if (additionalArguments)
-        additionalArguments = `'${additionalArguments}'`
+    const additionalArguments:Array<string> = process.argv.splice(3)
     // region handle build
     const buildConfigurations:ResolvedBuildConfiguration =
         Helper.resolveBuildConfigurationFilePaths(
@@ -134,9 +134,11 @@ if (configuration.givenCommandLineArguments.length > 2) {
         // productive output.
         processPromises.push(new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ):number => childProcesses.push(run(
-            `${configuration.commandLine.build} ${additionalArguments}`,
-            childProcessOptions, (error:?Error) => {
+        ):number => childProcesses.push(spawnChildProcess(
+            configuration.commandLine.build.command,
+            (configuration.commandLine.build.arguments || []).concat(
+                additionalArguments
+            ), childProcessOptions, (error:?Error) => {
                 if (error)
                     reject(error)
                 else {
@@ -172,16 +174,23 @@ if (configuration.givenCommandLineArguments.length > 2) {
                                     ).replace(/\?[^?]+$/, '')
                                 if (
                                     typeof type === 'string' &&
-                                    configuration.build[type] &&
-                                    configuration.build[
-                                        type
-                                    ].outputExtension !== 'js'
+                                    configuration.build[type]
                                 )
-                                    for (const suffix:string of ['', '.map'])
+                                    if (configuration.build[
+                                        type
+                                    ].outputExtension === 'js')
                                         try {
-                                            fileSystem.unlinkSync(
-                                                filePath + suffix)
+                                            fileSystem.chmodSync(
+                                                filePath, '755')
                                         } catch (error) {}
+                                    else
+                                        for (const suffix:string of [
+                                            '', '.map'
+                                        ])
+                                            try {
+                                                fileSystem.unlinkSync(
+                                                    filePath + suffix)
+                                            } catch (error) {}
                             }
                     for (
                         const filePath:string of configuration.path.tidyUp
@@ -199,9 +208,11 @@ if (configuration.givenCommandLineArguments.length > 2) {
         Promise.all(processPromises).then(():number =>
             processPromises.push(new Promise((
                 resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-            ):number => childProcesses.push(run(
-                `${configuration.commandLine.document} ${additionalArguments}`,
-                childProcessOptions, (error:?Error) => {
+            ):number => childProcesses.push(spawnChildProcess(
+                configuration.commandLine.document.command,
+                (configuration.commandLine.document.arguments || []).concat(
+                    additionalArguments
+                ), childProcessOptions, (error:?Error) => {
                     if (error)
                         reject(error)
                     else
@@ -209,48 +220,22 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 }))
             )))
     // endregion
-    // region handle lint
-    else if (configuration.givenCommandLineArguments[2] === 'lint')
-        // Lints files with respect to given linting configuration.
-        processPromises.push(new Promise((
-            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ):number => childProcesses.push(run(
-            `${configuration.commandLine.lint} ${additionalArguments}`,
-            childProcessOptions, (error:?Error) => {
-                if (error)
-                    reject(error)
-                else
-                    resolve()
-            }))))
-    // endregion
     // region handle test
     else if (configuration.givenCommandLineArguments[2] === 'test')
         // Runs all specified tests (typically in a real browser environment).
         Promise.all(processPromises).then(():number =>
             processPromises.push(new Promise((
                 resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-            ):ChildProcess => Helper.handleChildProcess(run(
-                `${configuration.commandLine.test} ${additionalArguments}`,
-                childProcessOptions, (error:?Error) => {
+            ):ChildProcess => Helper.handleChildProcess(spawnChildProcess(
+                configuration.commandLine.test.command,
+                (configuration.commandLine.test.arguments || []).concat(
+                    additionalArguments
+                ), childProcessOptions, (error:?Error) => {
                     if (error)
                         reject(error)
                     else
                         resolve()
                 })))))
-    // endregion
-     // region handle test in browser
-    else if (configuration.givenCommandLineArguments[2] === 'testInBrowser')
-        // Runs all specified tests in a real browser environment.
-        processPromises.push(new Promise((
-            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ):number => childProcesses.push(run(
-            `${configuration.commandLine.testInBrowser} ` +
-            additionalArguments, childProcessOptions, (error:?Error) => {
-                if (error)
-                    reject(error)
-                else
-                    resolve()
-            }))))
     // endregion
     // region handle preinstall
     else if (
@@ -270,7 +255,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     const evaluationFunction = (
                         global:Object, self:PlainObject,
                         buildConfiguration:PlainObject, path:typeof path,
-                        additionalArguments:string, filePath:string
+                        additionalArguments:Array<string>, filePath:string
                     ):string =>
                         // IgnoreTypeCheck
                         new Function(
@@ -285,9 +270,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     processPromises.push(new Promise((
                         resolve:PromiseCallbackFunction,
                         reject:PromiseCallbackFunction
-                    ):number => childProcesses.push(run(evaluationFunction(
-                        global, configuration, buildConfiguration, path,
-                        additionalArguments, filePath
+                    ):number => childProcesses.push(execChildProcess(
+                        evaluationFunction(
+                            global, configuration, buildConfiguration, path,
+                            additionalArguments, filePath
                         ), childProcessOptions, (error:?Error) => {
                             if (error)
                                 reject(error)
@@ -296,21 +282,27 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         }))))
                 }
     // endregion
-    // region handle serve
-    } else if (configuration.givenCommandLineArguments[2] === 'serve')
-        // Provide a development environment where all assets are dynamically
-        // bundled and updated on changes.
-        processPromises.push(new Promise((
-            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ):number => childProcesses.push(run(
-            `${configuration.commandLine.serve} ${additionalArguments}`,
-            childProcessOptions, (error:?Error) => {
-                if (error)
-                    reject(error)
-                else
-                    resolve()
-            }))))
-    // endregion
+    } else
+        // region handle remaining tasks
+        for (const type of ['lint', 'testInBrowser', 'typeCheck', 'serve'])
+            if (configuration.givenCommandLineArguments[2] === type) {
+                // Lints files with respect to given linting configuration.
+                processPromises.push(new Promise((
+                    resolve:PromiseCallbackFunction,
+                    reject:PromiseCallbackFunction
+                ):number => childProcesses.push(spawnChildProcess(
+                    configuration.commandLine[type].command,
+                    (configuration.commandLine[type].arguments || []).concat(
+                        additionalArguments
+                    ), childProcessOptions, (error:?Error) => {
+                        if (error)
+                            reject(error)
+                        else
+                            resolve()
+                    }))))
+                break
+            }
+        // endregion
 }
 // / region handle child process interface
 if (childProcesses.length === 0) {

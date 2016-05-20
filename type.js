@@ -107,6 +107,10 @@ export type HTMLConfiguration = {
     template:string|String;
     filename:string
 }
+export type Command = {
+    command: string;
+    arguments:Array<string>
+}
 export type ResolvedConfiguration = {
     name:string;
     givenCommandLineArguments:Array<string>;
@@ -163,12 +167,13 @@ export type ResolvedConfiguration = {
     build:PlainObject;
     buildDefinition:PlainObject;
     commandLine:{
-        build:string;
-        document:string;
-        lint:string;
-        serve:string;
-        test:string;
-        testInBrowser:string
+        build:Command;
+        document:Command;
+        lint:Command;
+        serve:Command;
+        test:Command;
+        testInBrowser:Command,
+        typeCheck:Command
     };
     development:{
         openBrowser:PlainObject;
