@@ -273,8 +273,8 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     processPromises.push(new Promise((
                         resolve:PromiseCallbackFunction,
                         reject:PromiseCallbackFunction
-                    ):number => Helper.handleChildProcess(execChildProcess(
-                        evaluationFunction(
+                    ):ChildProcess => Helper.handleChildProcess(
+                        execChildProcess(evaluationFunction(
                             global, configuration, buildConfiguration, path,
                             additionalArguments, filePath
                         ), childProcessOptions, (error:?Error) => {
