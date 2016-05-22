@@ -171,7 +171,7 @@ export default class Helper {
     static handleChildProcess(childProcess:ChildProcess):ChildProcess {
         childProcess.stdout.pipe(process.stdout)
         childProcess.stderr.pipe(process.stderr)
-        childProcess.on('close', (returnCode:number) => {
+        childProcess.on('close', (returnCode:number):void => {
             if (returnCode !== 0)
                 console.error(`Task exited with error code ${returnCode}`)
         })
@@ -190,7 +190,9 @@ export default class Helper {
             _filePath:string, _stat:Object
         ):?boolean => true
     ):TraverseFilesCallbackFunction {
-        fileSystem.readdirSync(directoryPath).forEach((fileName:string) => {
+        fileSystem.readdirSync(directoryPath).forEach((
+            fileName:string
+        ):void => {
             const filePath:string = path.resolve(directoryPath, fileName)
             const stat:Object = fileSystem.statSync(filePath)
             if (callback(filePath, stat) !== false && stat && stat.isDirectory(
@@ -508,7 +510,9 @@ export default class Helper {
                         return target[name]
                     }
                 if (setterMethodName)
-                    handler.set = (target:Object, name:string, value:any) => {
+                    handler.set = (
+                        target:Object, name:string, value:any
+                    ):void => {
                         if (setterMethodName === '[]')
                             target[name] = setterWrapper(name, value)
                         else

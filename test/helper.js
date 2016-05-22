@@ -40,7 +40,7 @@ const buildConfiguration:BuildConfiguration = {
 // endregion
 // region tests
 // / region boolean
-qunit.test('isPlainObject', () => {
+qunit.test('isPlainObject', ():void => {
     qunit.ok(Helper.isPlainObject({}))
     qunit.ok(Helper.isPlainObject({a: 1}))
     /* eslint-disable no-new-object */
@@ -55,11 +55,11 @@ qunit.test('isPlainObject', () => {
     qunit.notOk(Helper.isPlainObject(true))
     qunit.notOk(Helper.isPlainObject(undefined))
 })
-qunit.test('isFunction', () => {
+qunit.test('isFunction', ():void => {
     qunit.ok(Helper.isFunction(Object))
     qunit.ok(Helper.isFunction(new Function('return 1')))
-    qunit.ok(Helper.isFunction(function() {}))
-    qunit.ok(Helper.isFunction(() => {}))
+    qunit.ok(Helper.isFunction(function():void {}))
+    qunit.ok(Helper.isFunction(():void => {}))
 
     qunit.notOk(Helper.isFunction(null))
     qunit.notOk(Helper.isFunction(false))
@@ -69,14 +69,14 @@ qunit.test('isFunction', () => {
     qunit.notOk(Helper.isFunction({}))
     qunit.notOk(Helper.isFunction(new Boolean()))
 })
-qunit.test('isFilePathInLocation', () => {
+qunit.test('isFilePathInLocation', ():void => {
     qunit.ok(Helper.isFilePathInLocation('./', ['./']))
     qunit.ok(Helper.isFilePathInLocation('./', ['../']))
 
     qunit.notOk(Helper.isFilePathInLocation('../', ['./']))
 })
 // / endregion
-qunit.test('extendObject', () => {
+qunit.test('extendObject', ():void => {
     qunit.deepEqual(Helper.extendObject({}), {})
     qunit.deepEqual(Helper.extendObject(true, {}), {})
     qunit.deepEqual(Helper.extendObject({a: 1}), {a: 1})
@@ -127,7 +127,7 @@ qunit.test('extendObject', () => {
         new Map([['a', new Map([['a', [3, 4]]])]])
     ), new Map([['a', new Map([['a', [3, 4]]])]]))
 })
-qunit.test('handleChildProcess', () => {
+qunit.test('handleChildProcess', ():void => {
     /**
      * A mockup duplex stream for mocking "stdout" and "strderr" process
      * connections.
@@ -168,16 +168,16 @@ qunit.test('handleChildProcess', () => {
 
     qunit.strictEqual(Helper.handleChildProcess(childProcess), childProcess)
 })
-qunit.test('walkDirectoryRecursivelySync', () => {
+qunit.test('walkDirectoryRecursivelySync', ():void => {
     const filePaths:Array<string> = []
-    const callback:TraverseFilesCallbackFunction = (filePath:string) => {
+    const callback:TraverseFilesCallbackFunction = (filePath:string):void => {
         filePaths.push(filePath)
     }
     Helper.walkDirectoryRecursivelySync('./', callback)
 
     qunit.ok(filePaths.length > 0)
 })
-qunit.test('determineAssetType', () => {
+qunit.test('determineAssetType', ():void => {
     const paths:Paths = {
         apiDocumentation: '',
         asset: {
@@ -213,7 +213,7 @@ qunit.test('determineAssetType', () => {
         'a.css', buildConfiguration, paths
     ), null)
 })
-qunit.test('resolveBuildConfigurationFilePaths', () => {
+qunit.test('resolveBuildConfigurationFilePaths', ():void => {
     qunit.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
     qunit.deepEqual(Helper.resolveBuildConfigurationFilePaths(
         buildConfiguration
@@ -236,7 +236,7 @@ qunit.test('resolveBuildConfigurationFilePaths', () => {
         }
     ])
 })
-qunit.test('determineModuleLocations', () => {
+qunit.test('determineModuleLocations', ():void => {
     qunit.deepEqual(Helper.determineModuleLocations({}), {
         filePaths: [],
         directoryPaths: []
@@ -262,7 +262,7 @@ qunit.test('determineModuleLocations', () => {
         directoryPaths: ['.']
     })
 })
-qunit.test('normalizeInternalInjection', () => {
+qunit.test('normalizeInternalInjection', ():void => {
     qunit.deepEqual(Helper.normalizeInternalInjection([]), {index: []})
     qunit.deepEqual(Helper.normalizeInternalInjection({}), {index: []})
     qunit.deepEqual(Helper.normalizeInternalInjection('example'), {
@@ -274,7 +274,7 @@ qunit.test('normalizeInternalInjection', () => {
     qunit.deepEqual(Helper.normalizeInternalInjection({a: ['example']}), {
         a: ['example']})
 })
-qunit.test('resolveInjection', () => {
+qunit.test('resolveInjection', ():void => {
     qunit.deepEqual(Helper.resolveInjection(
         {internal: [], external: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
@@ -292,7 +292,7 @@ qunit.test('resolveInjection', () => {
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
     ), {internal: {}, external: []})
 })
-qunit.test('addDynamicGetterAndSetter', () => {
+qunit.test('addDynamicGetterAndSetter', ():void => {
     qunit.strictEqual(Helper.addDynamicGetterAndSetter(null), null)
     qunit.strictEqual(Helper.addDynamicGetterAndSetter(true), true)
     qunit.notDeepEqual(Helper.addDynamicGetterAndSetter({}), {})
@@ -328,7 +328,7 @@ qunit.test('addDynamicGetterAndSetter', () => {
         (key:any, value:any):any => value, 'get', 'set', 'has', true, [Map]
     ).a.a, 3)
 })
-qunit.test('resolveDynamicDataStructure', () => {
+qunit.test('resolveDynamicDataStructure', ():void => {
     qunit.deepEqual(Helper.resolveDynamicDataStructure(null), null)
     qunit.deepEqual(Helper.resolveDynamicDataStructure(false), false)
     qunit.deepEqual(Helper.resolveDynamicDataStructure('1'), '1')
@@ -362,7 +362,7 @@ qunit.test('resolveDynamicDataStructure', () => {
         {a: {__execute__: 'self.b'}, b: {__execute__: 'self.c'}, c: 2}
     ), {a: 2, b: 2, c: 2})
 })
-qunit.test('determineModuleFilePath', () => {
+qunit.test('determineModuleFilePath', ():void => {
     qunit.strictEqual(Helper.determineModuleFilePath('a'), 'a')
     qunit.strictEqual(Helper.determineModuleFilePath('a', {a: 'b'}), 'b')
     qunit.strictEqual(Helper.determineModuleFilePath('bba', {a: 'b'}), 'bbb')

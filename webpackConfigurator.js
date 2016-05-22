@@ -103,10 +103,10 @@ if (configuration.module.optimizer.uglifyJS)
         configuration.module.optimizer.uglifyJS))
 // /// region in-place configured assets in the main html file
 if (!process.argv[1].endsWith('/webpack-dev-server')) {
-    pluginInstances.push({apply: (compiler:Object) => {
+    pluginInstances.push({apply: (compiler:Object):void => {
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
-        ) => {
+        ):void => {
             for (const filePath:string in compilation.assets)
                 if (compilation.assets.hasOwnProperty(filePath)) {
                     const type:?string = Helper.determineAssetType(
@@ -121,17 +121,17 @@ if (!process.argv[1].endsWith('/webpack-dev-server')) {
             callback()
         })
     }})
-    pluginInstances.push({apply: (compiler:Object) => {
+    pluginInstances.push({apply: (compiler:Object):void => {
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
-        ) => {
+        ):void => {
             if (
                 configuration.inPlace.cascadingStyleSheet ||
                 configuration.inPlace.javaScript
             )
                 dom.env(compilation.assets[configuration.files.html[
                     0
-                ].filename].source(), (error:?Error, window:Object) => {
+                ].filename].source(), (error:?Error, window:Object):void => {
                     if (configuration.inPlace.cascadingStyleSheet) {
                         const urlPrefix:string = configuration.files
                             .cascadingStyleSheet.replace(
@@ -206,7 +206,7 @@ if (!process.argv[1].endsWith('/webpack-dev-server')) {
         })
         compiler.plugin('after-emit', (
             compilation:Object, callback:ProcedureFunction
-        ) => {
+        ):void => {
             if (configuration.inPlace.cascadingStyleSheet)
                 removeDirectoryRecursivelySync(path.join(
                     configuration.path.asset.target,
@@ -274,7 +274,7 @@ if (injection.external === '__implicit__')
     */
     injection.external = (
         context:string, request:string, callback:ProcedureFunction
-    ):?null => {
+    ):void => {
         const filePath:string = Helper.determineModuleFilePath(
             request.substring(request.lastIndexOf('!') + 1),
             configuration.module.aliases, configuration.knownExtensions,

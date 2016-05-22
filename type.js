@@ -36,7 +36,7 @@ export type Location = {
     replace:Function;
     toString:() => string
 }
-export type ProcedureFunction = () => ?null
+export type ProcedureFunction = () => void
 export type PlainObject = {[key:string]:any}
 export type SetterFunction = (key:any, value:any) => any
 export type Window = {
@@ -50,7 +50,7 @@ export type InternalInjection =
     string|Array<string>|{[key:string]:string|Array<string>}
 export type ExternalInjection = string|((
     context:string, request:string, callback:ProcedureFunction
-) => ?null)|RegExp|Array<ExternalInjection>
+) => void)|RegExp|Array<ExternalInjection>
 export type Injection = {
     internal:InternalInjection;
     external:ExternalInjection
@@ -198,7 +198,7 @@ export type EvaluationFunction = (
 ) => any
 export type OnDomContentLoadedListenerFunction = (
     window:Window, location:Location
-) => ?null
+) => void
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean

@@ -137,12 +137,12 @@ if (configuration.givenCommandLineArguments.length > 2) {
         // productive output.
         processPromises.push(new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ) => {
+        ):void => {
             const childProcess:ChildProcess = spawnChildProcess(
                 configuration.commandLine.build.command, (
                     configuration.commandLine.build.arguments || []
                 ).concat(additionalArguments), childProcessOptions)
-            childProcess.on('close', (returnCode:number) => {
+            childProcess.on('close', (returnCode:number):void => {
                 if (returnCode === 0) {
                     /*
                         Determines all none javaScript entities which have been
@@ -245,7 +245,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         execChildProcess(evaluationFunction(
                             global, configuration, buildConfiguration, path,
                             additionalArguments, filePath
-                        ), childProcessOptions, (error:?Error) => {
+                        ), childProcessOptions, (error:?Error):void => {
                             if (error)
                                 reject(error)
                             else
@@ -258,12 +258,12 @@ if (configuration.givenCommandLineArguments.length > 2) {
     const handleTask = (type:string):number => processPromises.push(
         new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ) => {
+        ):void => {
             const childProcess:ChildProcess = spawnChildProcess(
                 configuration.commandLine[type].command, (
                     configuration.commandLine[type].arguments || []
                 ).concat(additionalArguments), childProcessOptions)
-            childProcess.on('close', (returnCode:number) => {
+            childProcess.on('close', (returnCode:number):void => {
                 if (returnCode === 0)
                     resolve()
                 else

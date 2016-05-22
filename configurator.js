@@ -97,7 +97,7 @@ let runtimeInformation:PlainObject = {
 if (filePath) {
     runtimeInformation = JSON.parse(
         fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
-    fileSystem.unlink(filePath, (error:?Error) => {
+    fileSystem.unlink(filePath, (error:?Error):void => {
         if (error)
             throw error
     })

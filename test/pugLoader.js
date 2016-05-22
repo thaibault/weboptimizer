@@ -16,7 +16,7 @@ qunit.module('pugLoader')
 qunit.load()
 // region mockup
 const context:{
-    addDependency:() => ?null;
+    addDependency:() => void;
     options:{pug?:{
         locals?:Object;
         compiler?:Object
@@ -26,7 +26,7 @@ const context:{
     loaders:Array<Object>;
     loaderIndex:number
 } = {
-    addDependency: () => {},
+    addDependency: ():void => {},
     options: {},
     query: '',
     debug: true,
@@ -35,10 +35,10 @@ const context:{
 }
 // endregion
 // region tests
-qunit.test('loader', () => {
+qunit.test('loader', ():void => {
     qunit.strictEqual(pugLoader.call(context, 'a'), '<a></a>')
     const complexContext = Helper.extendObject(true, {}, context, {
-        cacheable: () => {},
+        cacheable: ():void => {},
         options: {pug: {
             locals: {test: 'hans'},
             compiler: {pretty: true}

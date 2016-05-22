@@ -26,9 +26,7 @@ declare var window:Window
 const onDomContentLoadedListener:Array<OnDomContentLoadedListenerFunction> = []
 // endregion
 // region functions
-const onDomContentLoaded:(window:Window, location:Location) => ?null = (
-    window:Window, location:Location
-) => {
+const onDomContentLoaded = (window:Window, location:Location):void => {
     for (
         const callback:OnDomContentLoadedListenerFunction of
         onDomContentLoadedListener
@@ -60,7 +58,7 @@ if (TARGET === 'node') {
             <div id="qunit-fixture"></div>
         </body>
     </html>
-    `, (error:?Error, window:Object) => {
+    `, (error:?Error, window:Object):void => {
         if (error)
             throw error
         else {
@@ -77,9 +75,9 @@ if (TARGET === 'node') {
                     href: 'http://localhost/path',
                     username: '',
                     password: '',
-                    assign: () => {},
-                    reload: () => {},
-                    replace: () => {},
+                    assign: ():void => {},
+                    reload: ():void => {},
+                    replace: ():void => {},
                     toString: function():string {
                         return this.href
                     }
@@ -91,7 +89,7 @@ if (TARGET === 'node') {
     })
     // endregion
 } else
-    window.document.addEventListener('DOMContentLoaded', () => {
+    window.document.addEventListener('DOMContentLoaded', ():void => {
         onDomContentLoaded(window, window.location)
     })
 // endregion

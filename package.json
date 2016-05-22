@@ -569,11 +569,11 @@
 
             "flowtype/require-parameter-type": "error",
             "flowtype/require-return-type": ["error", "always", {
-                "annotateUndefined": "never"
+                "annotateUndefined": "always"
             }],
             "flowtype/space-before-type-colon": ["error", "never"],
             "flowtype/space-after-type-colon": ["error", "never"],
-            "flowtype/type-id-match": ["error", "^([A-Z]+[a-z0-9]*)+$"]
+            "flowtype/type-id-match": ["error", "^([$_]*[A-Z]+[a-z0-9]*)+$"]
         },
         "settings": {"flowtype": {"onlyFilesWithFlowAnnotation": false}},
         "env": {"shared-node-browser": true}
