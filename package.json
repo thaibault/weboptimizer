@@ -529,6 +529,10 @@
         "parser": "babel-eslint",
         "plugins": ["jsdoc", "flowtype"],
         "extends": "google",
+        "env": {
+            "browser": true,
+            "node": true
+        },
         "rules": {
             "arrow-parens": ["error", "always"],
             "block-scoped-var": 0,
