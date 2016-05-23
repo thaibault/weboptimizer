@@ -520,19 +520,19 @@
         }
     },
     "eslintConfig": {
-        "parserOptions": {
-            "ecmaVersion": 7,
-            "sourceType": "module",
-            "impliedStrict": true,
-            "ecmaFeatures": {}
-        },
-        "parser": "babel-eslint",
-        "plugins": ["jsdoc", "flowtype"],
-        "extends": "google",
         "env": {
             "browser": true,
             "node": true
         },
+        "extends": "google",
+        "parserOptions": {
+            "ecmaFeatures": {},
+            "ecmaVersion": 7,
+            "impliedStrict": true,
+            "sourceType": "module"
+        },
+        "parser": "babel-eslint",
+        "plugins": ["jsdoc", "flowtype"],
         "rules": {
             "arrow-parens": ["error", "always"],
             "block-scoped-var": 0,
@@ -579,7 +579,6 @@
             "flowtype/space-after-type-colon": ["error", "never"],
             "flowtype/type-id-match": ["error", "^([$_]*[A-Z]+[a-z0-9]*)+$"]
         },
-        "settings": {"flowtype": {"onlyFilesWithFlowAnnotation": false}},
-        "env": {"shared-node-browser": true}
+        "settings": {"flowtype": {"onlyFilesWithFlowAnnotation": false}}
     }
 }
