@@ -288,25 +288,19 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // / endregion
     // endregion
 }
-// / region handle child process interface
-if (childProcesses.length === 0) {
-    // If no sub process could be started a message with all available
-    // arguments is printed.
-    if (configuration.library)
-        console.log(
-            'Give one of "build", "clear", "document", "lint", "test", ' +
-            '"testInBrowser" or "preinstall" as command line argument. You ' +
-            'can provide a json string as second parameter to dynamically ' +
-            'overwrite some configurations.\n')
-    else
-        console.log(
-            'Give one of "build", "clear", "document", "lint", "test", ' +
-            '"testInBrowser" or "serve" as command line argument. You can ' +
-            'provide a json string as second parameter to dynamically ' +
-            'overwrite some configurations.\n')
-    process.exit()
-}
-// / endregion
+const possibleArguments:Array<string> = [
+    'build', 'clear', 'document', 'lint', 'test', 'testInBrowser', 'preinstall'
+]
+if (!configuration.library)
+    possibleArguments.push('serve')
+if (
+    configuration.givenCommandLineArguments.length < 3 ||
+    !possibleArguments.includes(configuration.givenCommandLineArguments[2])
+)
+    console.log(
+        `Give one of "${possibleArguments.join('", "')}" as command line ` +
+        'argument. You can provide a json string as second parameter to ' +
+        'dynamically overwrite some configurations.\n')
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

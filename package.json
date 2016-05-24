@@ -510,9 +510,11 @@
             },
             "offline": null,
 
-            "document": {"commandLine": {"document": {
-                "__execute__": "`jsdoc --destination '${self.path.apiDocumentation}' '${self.path.asset.javaScript}'*.compiled.js`"
-            }}},
+            "document": {"commandLine": {"document": {"arguments": [
+                "--destination",
+                {"__execute__": "self.path.apiDocumentation"},
+                {"__execute__": "`'${self.path.asset.javaScript}'*.compiled.js`"}
+            ]}}},
 
             "test": {"injection": {"internal": "test"}},
 
