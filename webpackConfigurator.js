@@ -402,12 +402,15 @@ export default {
     output: {
         filename: configuration.files.javaScript,
         hashFunction: configuration.hashAlgorithm,
-        library: configuration.name,
+        library: configuration.name.replace(/^[^a-zA-Z_$]/, '').replace(
+            /[^0-9a-zA-Z_$]+([a-zA-Z0-9])/g, (
+                fullMatch:string, firstLetter:string
+            ):string => firstLetter.toUpperCase()),
         libraryTarget: configuration.exportFormat,
         path: configuration.path.asset.target,
         // publicPath: configuration.path.asset.publicTarget,
         pathinfo: configuration.debug,
-        umdNamedDefine: configuration.name
+        umdNamedDefine: true
     },
     target: configuration.target,
     // endregion
