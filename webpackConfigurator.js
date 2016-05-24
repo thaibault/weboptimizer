@@ -313,9 +313,12 @@ if (injection.external === '__implicit__')
                 configuration.path.context
             ) || Helper.isFilePathInLocation(
                 filePath, configuration.path.ignore
-            ) && !configuration.inPlace.externalLibrary)
+            ) && !configuration.inPlace.externalLibrary) {
+                if (configuration.exportFormat === 'var')
+                    request = Helper.convertToValidVariableName(request)
                 return callback(
                     null, `${configuration.exportFormat} ${request}`)
+            }
         }
         return callback()
     }
@@ -402,10 +405,9 @@ export default {
     output: {
         filename: configuration.files.javaScript,
         hashFunction: configuration.hashAlgorithm,
-        library: configuration.name.replace(/^[^a-zA-Z_$]/, '').replace(
-            /[^0-9a-zA-Z_$]+([a-zA-Z0-9])/g, (
-                fullMatch:string, firstLetter:string
-            ):string => firstLetter.toUpperCase()),
+        library: configuration.exportFormat === 'var' ?
+            Helper.convertToValidVariableName(configuration.name) :
+            configuration.name,
         libraryTarget: configuration.exportFormat,
         path: configuration.path.asset.target,
         // publicPath: configuration.path.asset.publicTarget,

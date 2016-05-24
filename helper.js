@@ -82,6 +82,17 @@ export default class Helper {
     }
     // endregion
     /**
+     * Translates given name into a valid javaScript one.
+     * @param name - Name to convert.
+     * @returns Converted name is returned.
+     */
+    static convertToValidVariableName(name:string):string {
+        return name.replace(/^[^a-zA-Z_$]+/, '').replace(
+            /[^0-9a-zA-Z_$]+([a-zA-Z0-9])/g, (
+                fullMatch:string, firstLetter:string
+            ):string => firstLetter.toUpperCase())
+    }
+    /**
      * Extends given target object with given sources object. As target and
      * sources many expandable types are allowed but target and sources have to
      * to come from the same type.

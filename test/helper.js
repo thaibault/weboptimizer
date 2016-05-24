@@ -76,6 +76,16 @@ qunit.test('isFilePathInLocation', ():void => {
     qunit.notOk(Helper.isFilePathInLocation('../', ['./']))
 })
 // / endregion
+qunit.test('convertToValidVariableName', ():void => {
+    qunit.strictEqual(Helper.convertToValidVariableName(''), '')
+    qunit.strictEqual(Helper.convertToValidVariableName('a'), 'a')
+    qunit.strictEqual(Helper.convertToValidVariableName('_a'), '_a')
+    qunit.strictEqual(Helper.convertToValidVariableName('_a_a'), '_a_a')
+    qunit.strictEqual(Helper.convertToValidVariableName('_a-a'), '_aA')
+    qunit.strictEqual(Helper.convertToValidVariableName('-a-a'), 'aA')
+    qunit.strictEqual(Helper.convertToValidVariableName('-a--a'), 'aA')
+    qunit.strictEqual(Helper.convertToValidVariableName('--a--a'), 'aA')
+})
 qunit.test('extendObject', ():void => {
     qunit.deepEqual(Helper.extendObject({}), {})
     qunit.deepEqual(Helper.extendObject(true, {}), {})
