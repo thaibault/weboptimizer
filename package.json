@@ -543,6 +543,7 @@
             "no-constant-condition": 0,
             "no-new-func": 0,
             "no-new-wrappers": 0,
+            "quote-props": ["error", "as-needed", {"numbers": true}],
             "require-jsdoc": ["error", {"require": {
                 "FunctionDeclaration": true,
                 "MethodDefinition": true,
