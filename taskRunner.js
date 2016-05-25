@@ -289,7 +289,8 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // endregion
 }
 const possibleArguments:Array<string> = [
-    'build', 'clear', 'document', 'lint', 'test', 'testInBrowser', 'preinstall'
+    'build', 'clear', 'document', 'lint', 'test', 'testInBrowser', 'typeCheck',
+    'preinstall'
 ]
 if (!configuration.library)
     possibleArguments.push('serve')
