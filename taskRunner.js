@@ -79,6 +79,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         count += 1
     }
     fileSystem.writeFileSync(filePath, JSON.stringify(dynamicConfiguration))
+    const additionalArguments:Array<string> = process.argv.splice(3)
     // / region register exit handler to tidy up
     const exitHandler:ErrorHandlerFunction = function(error:?Error):?Error {
         try {
@@ -129,10 +130,8 @@ if (configuration.givenCommandLineArguments.length > 2) {
             removeDirectoryRecursivelySync(
                 configuration.path.apiDocumentation, {glob: false})
         } catch (error) {}
-        process.exit()
     }
     // endregion
-    const additionalArguments:Array<string> = process.argv.splice(3)
     // region handle build
     const buildConfigurations:ResolvedBuildConfiguration =
         Helper.resolveBuildConfigurationFilePaths(
