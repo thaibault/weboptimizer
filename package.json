@@ -365,6 +365,8 @@
                         {"__execute__": "`'${webOptimizerPath}/package.json'`"},
                         "--ignore-pattern",
                         {"__execute__": "`'${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
+                        "--ignore-pattern",
+                        {"__execute__": "`'${self.path.apiDocumentation}'`"},
                         "'**/*.js'"
                     ]
                 },
