@@ -409,7 +409,13 @@
 
             "document": {
                 "exportFormat": "var",
-                "module": {"optimizer": {"uglifyJS": null}}
+                "module": {
+                    "optimizer": {"uglifyJS": null},
+                    "preprocessor": {"modernJavaScript": {"presets": [
+                        "es2015-node", "stage-0"
+                    ]}}
+                },
+                "target": "node"
             },
 
             "test": {
