@@ -41,6 +41,10 @@ const childProcessOptions:Object = {
 }
 const childProcesses:Array<ChildProcess> = []
 const processPromises:Array<Promise> = []
+const possibleArguments:Array<string> = [
+    'build', 'clear', 'document', 'lint', 'test', 'testInBrowser', 'typeCheck',
+    'preinstall'
+]
 if (configuration.givenCommandLineArguments.length > 2) {
     // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
@@ -91,7 +95,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // / endregion
     // endregion
     // region handle clear
-    if (configuration.givenCommandLineArguments[2] === 'clear') {
+    if (possibleArguments.includes(
+        configuration.givenCommandLineArguments[2]
+    )) {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
@@ -288,10 +294,6 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // / endregion
     // endregion
 }
-const possibleArguments:Array<string> = [
-    'build', 'clear', 'document', 'lint', 'test', 'testInBrowser', 'typeCheck',
-    'preinstall'
-]
 if (!configuration.library)
     possibleArguments.push('serve')
 if (
