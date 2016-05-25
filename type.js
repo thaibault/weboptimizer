@@ -196,9 +196,7 @@ export type EvaluationFunction = (
     self:?PlainObject, webOptimizerPath:string, currentPath:string,
     path:typeof path
 ) => any
-export type OnDomContentLoadedListenerFunction = (
-    window:Window, location:Location
-) => void
+export type OnDomContentLoadedListenerFunction = (window:Window) => void
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean

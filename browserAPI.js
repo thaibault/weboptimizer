@@ -14,9 +14,7 @@
     endregion
 */
 // region imports
-import type {
-    Location, OnDomContentLoadedListenerFunction, Window
-} from './type'
+import type {OnDomContentLoadedListenerFunction, Window} from './type'
  // endregion
 // region declaration
 declare var TARGET:string
@@ -26,12 +24,12 @@ declare var window:Window
 const onDomContentLoadedListener:Array<OnDomContentLoadedListenerFunction> = []
 // endregion
 // region functions
-const onDomContentLoaded = (window:Window, location:Location):void => {
+const onDomContentLoaded = (window:Window):void => {
     for (
         const callback:OnDomContentLoadedListenerFunction of
         onDomContentLoadedListener
     )
-        callback(window, location)
+        callback(window)
 }
 // endregion
 // region ensure presence of common browser environment
@@ -84,13 +82,13 @@ if (TARGET === 'node') {
                 },
                 writable: false
             })
-            onDomContentLoaded(window, window.location)
+            onDomContentLoaded(window)
         }
     })
     // endregion
 } else
     window.document.addEventListener('DOMContentLoaded', ():void => {
-        onDomContentLoaded(window, window.location)
+        onDomContentLoaded(window)
     })
 // endregion
 export default (
