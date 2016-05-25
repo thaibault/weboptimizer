@@ -523,6 +523,10 @@
             "offline": null,
 
             "document": {"commandLine": {"document": {"arguments": [
+                "--package",
+                "./package.json",
+                "--readme",
+                "./readme.md",
                 "--destination",
                 {"__execute__": "self.path.apiDocumentation"},
                 {"__execute__": "`'${self.path.asset.javaScript}'*.compiled.js`"}
