@@ -19,6 +19,15 @@ import path from 'path'
 // region exports
 // / region generic
 export type GetterFunction = (keyOrValue:any) => any
+export type ProcedureFunction = () => void
+export type PlainObject = {[key:string]:any}
+export type SetterFunction = (key:any, value:any) => any
+// // region browser
+export type DomNode = any
+export type LocalStorage = {
+    getItem(key:string):any;
+    setItem(key:string, value:any):void;
+}
 export type Location = {
     hash:string;
     search:string;
@@ -36,13 +45,12 @@ export type Location = {
     replace:Function;
     toString:() => string
 }
-export type ProcedureFunction = () => void
-export type PlainObject = {[key:string]:any}
-export type SetterFunction = (key:any, value:any) => any
 export type Window = {
     document:Object;
-    location:Location
+    location:Location;
+    localStorage:LocalStorage;
 }
+// // endregion
 // / endregion
 // / region injection
 export type NormalizedInternalInjection = {[key:string]:Array<string>}
