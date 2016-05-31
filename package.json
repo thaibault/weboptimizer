@@ -57,8 +57,8 @@
         "sass-loader": "*"
     },
     "devDependencies": {
-        "source-map-support": "*",
-        "qunit-cli": "*"
+        "source-map-support": ">=0.4.0",
+        "qunit-cli": ">=0.2.0"
     },
     "files": [
         "browserAPI.js",
@@ -486,7 +486,7 @@
                 "openBrowser": {"url": {
                     "__execute__": "((sourceFilePath) => `http://localhost:8080/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`)(self.files.html[0].template)"
                 }},
-                "tool": "#source-map"
+                "tool": "#eval-cheap-module-source-map"
             }
         },
 
