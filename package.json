@@ -416,6 +416,7 @@
 
             "document": {
                 "exportFormat": "var",
+                "inPlace": {"externalLibrary": false},
                 "module": {
                     "optimizer": {"uglifyJS": null},
                     "preprocessor": {"modernJavaScript": {"presets": [
