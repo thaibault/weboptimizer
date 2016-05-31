@@ -397,7 +397,6 @@ export default {
     resolve: {
         alias: configuration.module.aliases,
         extensions: configuration.knownExtensions,
-        fallback: moduleLocations.directoryPaths,
         root: [(configuration.path.asset.source: string)]
     },
     // endregion
