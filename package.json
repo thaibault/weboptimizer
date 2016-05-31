@@ -359,7 +359,7 @@
                         "./readme.md",
                         "--destination",
                         {"__execute__": "self.path.apiDocumentation"},
-                        {"__execute__": "`'${self.path.asset.javaScript}'*.js`"}
+                        {"__execute__": "`'${path.join(self.path.source, self.path.asset.javaScript)}'*.js`"}
                     ]
                 },
                 "lint": {
@@ -427,7 +427,7 @@
             "test": {
                 "exportFormat": "commonjs2",
                 "files": {"javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
+                    "__execute__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                 }},
                 "injection": {"internal": "test/"},
                 "target": "node",
@@ -529,7 +529,7 @@
                 "./readme.md",
                 "--destination",
                 {"__execute__": "self.path.apiDocumentation"},
-                {"__execute__": "`'${self.path.asset.javaScript}'*.compiled.js`"}
+                {"__execute__": "`'${path.join(self.path.source, self.path.asset.javaScript)}'*.compiled.js`"}
             ]}}},
 
             "test": {"injection": {"internal": "test"}},
