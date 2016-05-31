@@ -360,7 +360,7 @@
                         "./readme.md",
                         "--destination",
                         {"__execute__": "self.path.apiDocumentation"},
-                        {"__execute__": "`'${path.join(self.path.source, self.path.asset.javaScript)}'*.js`"}
+                        {"__execute__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.js`"}
                     ]
                 },
                 "lint": {
@@ -530,7 +530,7 @@
                 "./readme.md",
                 "--destination",
                 {"__execute__": "self.path.apiDocumentation"},
-                {"__execute__": "`'${path.join(self.path.source, self.path.asset.javaScript)}'*.compiled.js`"}
+                {"__execute__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.compiled.js`"}
             ]}}},
 
             "test": {"injection": {"internal": "test"}},
