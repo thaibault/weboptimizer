@@ -415,15 +415,13 @@
             },
 
             "document": {
-                "exportFormat": "var",
                 "inPlace": {"externalLibrary": false},
                 "module": {
                     "optimizer": {"uglifyJS": null},
                     "preprocessor": {"modernJavaScript": {"presets": [
                         "es2015-node", "stage-0"
                     ]}}
-                },
-                "target": "node"
+                }
             },
 
             "test": {
@@ -524,15 +522,19 @@
             },
             "offline": null,
 
-            "document": {"commandLine": {"document": {"arguments": [
-                "--package",
-                "./package.json",
-                "--readme",
-                "./readme.md",
-                "--destination",
-                {"__execute__": "self.path.apiDocumentation"},
-                {"__execute__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.compiled.js`"}
-            ]}}},
+            "document": {
+                "commandLine": {"document": {"arguments": [
+                    "--package",
+                    "./package.json",
+                    "--readme",
+                    "./readme.md",
+                    "--destination",
+                    {"__execute__": "self.path.apiDocumentation"},
+                    {"__execute__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.compiled.js`"}
+                ]}},
+                "exportFormat": "var",
+                "target": "node"
+            },
 
             "test": {"injection": {"internal": "test"}},
 
