@@ -163,7 +163,8 @@ export type ResolvedConfiguration = {
             sass:PlainObject;
             scss:PlainObject
         };
-        style:PlainObject
+        style:PlainObject;
+        skipParseRegularExpression:RegExp|Array<RegExp>;
     };
     offline:{excludes:Array<string>};
     path:Paths;

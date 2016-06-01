@@ -397,6 +397,7 @@ export default {
     resolve: {
         alias: configuration.module.aliases,
         extensions: configuration.knownExtensions,
+        noParse: configuration.module.skipParseRegularExpression,
         root: [(configuration.path.asset.source: string)]
     },
     // endregion

@@ -145,6 +145,7 @@
                     "config": "html",
                     "attrs": ["img:src", "link:href", "a:href"]
                 },
+                "skipParseRegularExpression": [],
                 "optimizer": {
                     "data": {
                         "limit": {
