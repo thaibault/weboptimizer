@@ -279,14 +279,12 @@ if (injection.external === '__implicit__')
             request.substring(request.lastIndexOf('!') + 1),
             configuration.module.aliases, configuration.knownExtensions,
             context)
+        console.log(request, filePath)
         if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
             // NOTE: We apply alias on externals additionally.
-            for (const alias in configuration.module.aliases)
-                if (alias.endsWith('$')) {
-                    if (request === alias.substring(0, alias.length - 1))
-                        request = configuration.module.aliases[alias]
-                } else
-                    request.replace(alias, configuration.module.aliases[alias])
+            Helper.applyAliases(
+                request.substring(request.lastIndexOf('!') + 1),
+                configuration.module.aliases)
             if (request.match(
                 /^webOptimizer\/browserAPI(?:.compiled)(?:.js)?/
             ))

@@ -372,6 +372,16 @@ qunit.test('resolveDynamicDataStructure', ():void => {
         {a: {__execute__: 'self.b'}, b: {__execute__: 'self.c'}, c: 2}
     ), {a: 2, b: 2, c: 2})
 })
+qunit.test('applyAliases', ():void => {
+    qunit.strictEqual(Helper.applyAliases('', {}), '')
+    qunit.strictEqual(Helper.applyAliases('', {a: 'b'}), '')
+    qunit.strictEqual(Helper.applyAliases('a', {}), 'a')
+    qunit.strictEqual(Helper.applyAliases('a', {a: 'b'}), 'b')
+    qunit.strictEqual(Helper.applyAliases('a', {a$: 'b'}), 'b')
+    qunit.strictEqual(Helper.applyAliases('aa', {a$: 'b'}), 'aa')
+    qunit.strictEqual(Helper.applyAliases('bba', {a: 'b'}), 'bbb')
+    qunit.strictEqual(Helper.applyAliases('helper', {}), 'helper')
+})
 qunit.test('determineModuleFilePath', ():void => {
     qunit.strictEqual(Helper.determineModuleFilePath('a'), 'a')
     qunit.strictEqual(Helper.determineModuleFilePath('a', {a: 'b'}), 'b')

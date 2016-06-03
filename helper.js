@@ -585,6 +585,21 @@ export default class Helper {
     /**
      * Determines a concrete file path for given module id.
      * @param moduleID - Module id to determine.
+     * @param aliases - Mapping of aliases to take into account.
+     * @returns The alias applied given module id.
+     */
+    static applyAliases(moduleID:string, aliases:PlainObject):string {
+        for (const alias:string in aliases)
+            if (alias.endsWith('$')) {
+                if (moduleID === alias.substring(0, alias.length - 1))
+                    moduleID = aliases[alias]
+            } else
+                moduleID = moduleID.replace(alias, aliases[alias])
+        return moduleID
+    }
+    /**
+     * Determines a concrete file path for given module id.
+     * @param moduleID - Module id to determine.
      * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - List of known extensions.
      * @param context - File path to determine relative to.
@@ -595,9 +610,7 @@ export default class Helper {
         moduleID:string, moduleAliases:PlainObject = {},
         knownExtensions:Array<string> = ['.js'], context:string = './'
     ):string {
-        for (const search:string in moduleAliases)
-            if (moduleAliases.hasOwnProperty(search))
-                moduleID = moduleID.replace(search, moduleAliases[search])
+        moduleID = Helper.applyAliases(moduleID, moduleAliases)
         for (const moduleLocation:string of ['', 'node_modules', '../'])
             for (let fileName:string of ['__package__', '', 'index', 'main'])
                 for (const extension:string of knownExtensions) {
