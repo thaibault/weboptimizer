@@ -69,8 +69,8 @@ if (configuration.givenCommandLineArguments.length > 2) {
     let filePath:string = `${configuration.path.context}.` +
         `dynamicConfiguration-${count}.json`
     while (true) {
-        filePath = configuration.path.context +
-            `.dynamicConfiguration-${count}.json`
+        filePath = `${configuration.path.context}.dynamicConfiguration-` +
+            `${count}.json`
         try {
             fileSystem.accessSync(filePath, fileSystem.F_OK)
         } catch (error) {

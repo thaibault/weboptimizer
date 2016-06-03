@@ -95,8 +95,8 @@ let runtimeInformation:PlainObject = {
     givenCommandLineArguments: process.argv
 }
 if (filePath) {
-    runtimeInformation = JSON.parse(
-        fileSystem.readFileSync(filePath, {encoding: 'utf-8'}))
+    runtimeInformation = JSON.parse(fileSystem.readFileSync(filePath, {
+        encoding: 'utf-8'}))
     fileSystem.unlink(filePath, (error:?Error):void => {
         if (error)
             throw error
