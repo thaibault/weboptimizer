@@ -70,6 +70,12 @@ for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
         pluginInstances.push(new plugins.HTML(htmlConfiguration))
         htmlAvailable = true
     } catch (error) {}
+// favicon generation
+if (htmlAvailable && configuration.favicon)
+    try {
+        fileSystem.accessSync(configuration.favicon.logo, fileSystem.F_OK)
+        pluginInstances.push(new FaviconsWebpackPlugin(configuration.favicon))
+    } catch (error) {}
 // provide offline functionality
 if (configuration.offline) {
     if (configuration.inPlace.cascadingStyleSheet)
@@ -90,15 +96,8 @@ if ((
     pluginInstances.push(new plugins.openBrowser(
         configuration.development.openBrowser))
 // provide build environment
+console.log(configuration.buildDefinition)
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
-// favicon generation
-if (htmlAvailable && configuration.favicon)
-    try {
-        fileSystem.accessSync(configuration.favicon.icon, fileSystem.F_OK)
-        // TODO
-        console.log(htmlAvailable, configuration.favicon)
-        pluginInstances.push(new FaviconsWebpackPlugin(configuration.favicon))
-    } catch (error) {}
 // // endregion
 // // region modules/assets
 const moduleLocations:{[key:string]:Array<string>} =
