@@ -68,8 +68,9 @@ for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
         fileSystem.accessSync(htmlConfiguration.template.substring(
             htmlConfiguration.template.lastIndexOf('!') + 1), fileSystem.F_OK)
         pluginInstances.push(new plugins.HTML(htmlConfiguration))
+        htmlAvailable = true
     } catch (error) {}
-// provide an offline manifest
+// provide offline functionality
 if (configuration.offline) {
     if (configuration.inPlace.cascadingStyleSheet)
         configuration.offline.excludes.push(
@@ -81,7 +82,7 @@ if (configuration.offline) {
             `${configuration.hashAlgorithm}=*`)
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
-// provide offline functionality
+// opens browser automatically
 if ((
     !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'testInBrowser'
@@ -91,7 +92,7 @@ if ((
 // provide build environment
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
 // favicon generation
-if (htmlAvailable && configuration.path.asset.favicon)
+if (htmlAvailable && configuration.path.asset)
     try {
         fileSystem.accessSync(
             configuration.path.asset.favicon, fileSystem.F_OK)

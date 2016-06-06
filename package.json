@@ -296,6 +296,9 @@
                     "cascadingStyleSheet": "cascadingStyleSheet/",
                     "coffeeScript": "coffeeScript/",
                     "data": "data/",
+                    "favicon": {
+                        "__execute__": "`${self.path.asset.image}favicon.png`"
+                    },
                     "font": "font/",
                     "image": "image/",
                     "javaScript": "javaScript/",
@@ -519,10 +522,7 @@
                     "font": "./",
                     "image": "./",
                     "template": "./",
-                    "data": "./",
-                    "favicon": {
-                        "__execute__": "`${self.path.asset.image}favicon.png`"
-                    }
+                    "data": "./"
                 }
             },
             "offline": null,
