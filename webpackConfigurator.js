@@ -96,7 +96,6 @@ if ((
     pluginInstances.push(new plugins.openBrowser(
         configuration.development.openBrowser))
 // provide build environment
-console.log(configuration.buildDefinition)
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
 // // endregion
 // // region modules/assets
