@@ -30,6 +30,7 @@
         "eslint-plugin-jsdoc": ">=2.3.1",
         "extract-loader": ">=0.0.2",
         "extract-text-webpack-plugin": ">=1.0.1",
+        "favicons-webpack-plugin": ">=0.0.6",
         "file-loader": ">=0.8.5",
         "flow-bin": ">=0.26.0",
         "html-loader": ">=0.4.3",
@@ -518,7 +519,10 @@
                     "font": "./",
                     "image": "./",
                     "template": "./",
-                    "data": "./"
+                    "data": "./",
+                    "favicon": {
+                        "__execute__": "`${self.path.asset.image}favicon.png`"
+                    }
                 }
             },
             "offline": null,

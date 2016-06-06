@@ -62,6 +62,7 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // / region pre processing
 // // region plugins
 const pluginInstances:Array<Object> = []
+let htmlAvailable:boolean = false
 for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
     try {
         fileSystem.accessSync(htmlConfiguration.template.substring(
@@ -80,13 +81,23 @@ if (configuration.offline) {
             `${configuration.hashAlgorithm}=*`)
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
+// provide offline functionality
 if ((
     !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'testInBrowser'
 ) && configuration.development.openBrowser)
     pluginInstances.push(new plugins.openBrowser(
         configuration.development.openBrowser))
+// provide build environment
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
+// favicon generation
+if (htmlAvailable && configuration.path.asset.favicon)
+    try {
+        fileSystem.accessSync(
+            configuration.path.asset.favicon, fileSystem.F_OK)
+        pluginInstances.push(new FaviconsWebpackPlugin(
+            configuration.path.asset.favicon))
+    } catch (error) {}
 // // endregion
 // // region modules/assets
 const moduleLocations:{[key:string]:Array<string>} =
