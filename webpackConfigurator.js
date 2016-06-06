@@ -92,12 +92,12 @@ if ((
 // provide build environment
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
 // favicon generation
-if (htmlAvailable && configuration.path.asset)
+if (htmlAvailable && configuration.favicon)
     try {
-        fileSystem.accessSync(
-            configuration.path.asset.favicon, fileSystem.F_OK)
-        pluginInstances.push(new FaviconsWebpackPlugin(
-            configuration.path.asset.favicon))
+        fileSystem.accessSync(configuration.favicon.icon, fileSystem.F_OK)
+        // TODO
+        console.log(htmlAvailable, configuration.favicon)
+        pluginInstances.push(new FaviconsWebpackPlugin(configuration.favicon))
     } catch (error) {}
 // // endregion
 // // region modules/assets

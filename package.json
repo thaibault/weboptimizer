@@ -87,6 +87,28 @@
             "library": true,
 
             "exportFormat": "umd",
+            "favicon": {
+                "logo": {"__execute__": "path.join(self.path.asset.source, self.path.asset.favicon)"},
+                "prefix": "favicons-[hash]/",
+                "emitStats": false,
+                "statsFilename": "iconStats.json",
+                "persistentCache": true,
+                "inject": true,
+                "background": "white",
+                "title": {"__execute__": "self.name"},
+                "icons": {
+                    "android": true,
+                    "appleIcon": true,
+                    "appleStartup": true,
+                    "coast": true,
+                    "favicons": true,
+                    "firefox": true,
+                    "opengraph": true,
+                    "twitter": true,
+                    "yandex": true,
+                    "windows": true
+                }
+            },
             "files": {
                 "cascadingStyleSheet": {
                     "__execute__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
