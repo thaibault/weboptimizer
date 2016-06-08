@@ -283,6 +283,11 @@ qunit.test('normalizeInternalInjection', ():void => {
         a: ['example']})
     qunit.deepEqual(Helper.normalizeInternalInjection({a: ['example']}), {
         a: ['example']})
+    qunit.deepEqual(Helper.normalizeInternalInjection(
+        {a: ['example'], b: []}
+    ), {a: ['example']})
+    qunit.deepEqual(Helper.normalizeInternalInjection({a: [], b: []}), {
+        index: []})
 })
 qunit.test('resolveInjection', ():void => {
     qunit.deepEqual(Helper.resolveInjection(

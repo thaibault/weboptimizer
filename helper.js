@@ -346,15 +346,23 @@ export default class Helper {
             internalInjection
         )) {
             let hasContent:boolean = false
+            const chunkNamesToDelete:Array<string> = []
             for (const chunkName:string in internalInjection)
-                if (internalInjection.hasOwnProperty(chunkName)) {
-                    hasContent = true
+                if (internalInjection.hasOwnProperty(chunkName))
                     if (Array.isArray(internalInjection[chunkName]))
-                        result[chunkName] = internalInjection[chunkName]
-                    else
+                        if (internalInjection[chunkName].length > 0) {
+                            hasContent = true
+                            result[chunkName] = internalInjection[chunkName]
+                        } else
+                            chunkNamesToDelete.push(chunkName)
+                    else {
+                        hasContent = true
                         result[chunkName] = [internalInjection[chunkName]]
-                }
-            if (!hasContent)
+                    }
+            if (hasContent)
+                for (const chunkName:string of chunkNamesToDelete)
+                    delete result[chunkName]
+            else
                 result = {index: []}
         } else if (typeof internalInjection === 'string')
             result = {index: [internalInjection]}
