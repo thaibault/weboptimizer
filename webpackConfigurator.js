@@ -400,7 +400,7 @@ export default {
     devtool: configuration.development.tool,
     devserver: configuration.development.server,
     // region input
-    entry: injection.internal, externals: injection.external,
+    entry: normalizedInternalInjection, externals: injection.external,
     resolveLoader: configuration.loader,
     resolve: {
         alias: configuration.module.aliases,
