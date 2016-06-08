@@ -74,7 +74,8 @@ for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
 if (htmlAvailable && configuration.favicon)
     try {
         fileSystem.accessSync(configuration.favicon.logo, fileSystem.F_OK)
-        pluginInstances.push(new FaviconsWebpackPlugin(configuration.favicon))
+        pluginInstances.push(new plugins.FaviconsWebpackPlugin(
+            configuration.favicon))
     } catch (error) {}
 // provide offline functionality
 if (configuration.offline) {

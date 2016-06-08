@@ -127,6 +127,10 @@ export type ResolvedConfiguration = {
     library:boolean;
 
     exportFormat:'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
+    favicon:{
+        logo:string;
+        [key:string]:any
+    };
     files:{
         cascadingStyleSheet:string;
         html:Array<HTMLConfiguration>;
