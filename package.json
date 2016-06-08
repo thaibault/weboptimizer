@@ -481,7 +481,12 @@
         "debug": {
             "debug": true,
 
-            "files": {"html": [{"debug": true}]},
+            "files": {
+                "html": [{"debug": true}],
+                "javaScript": {
+                    "__execute__": "`${self.path.asset.javaScript}[name].js?${self.hashAlgorithm}=[hash]`"
+                }
+            },
             "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
             "module": {
                 "preprocessor": {
