@@ -258,8 +258,8 @@ for (const chunkID:string of configuration.injection.vendorChunkIDs)
     if (normalizedInternalInjection.hasOwnProperty(chunkID))
         pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
             name: chunkID,
-            filename: `${self.path.asset.javaScript}[name].js?` +
-                `${self.hashAlgorithm}=[hash]`,
+            filename: `${configuration.path.asset.javaScript}[name].js?` +
+                `${configuration.hashAlgorithm}=[hash]`,
             children: true
         }))
 for (const chunkName:string in normalizedInternalInjection)
