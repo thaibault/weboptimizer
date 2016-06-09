@@ -19,7 +19,7 @@ import * as pug from 'pug'
 import * as loaderUtils from 'loader-utils'
 // NOTE: Only needed for debugging this file.
 try {
-    module.require('source-map-support/register')
+    require('source-map-support/register')
 } catch (error) {}
 
 import Helper from './helper.compiled'

@@ -18,7 +18,7 @@ import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
 try {
-    module.require('source-map-support/register')
+    require('source-map-support/register')
 } catch (error) {}
 
 import Helper from './helper.compiled'
@@ -39,7 +39,8 @@ if (
     path.basename(path.dirname(path.dirname(process.cwd()))) === 'node_modules'
 )
     metaConfiguration.default.path.context = process.cwd()
-let specificConfiguration:PlainObject = module.require(path.join(
+// IgnoreTypeCheck
+let specificConfiguration:PlainObject = require(path.join(
     metaConfiguration.default.path.context, 'package'))
 const name:string = specificConfiguration.name
 specificConfiguration = specificConfiguration.webOptimizer || {}

@@ -20,14 +20,15 @@ import path from 'path'
 import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
-    module.require('source-map-support/register')
+    require('source-map-support/register')
 } catch (error) {}
 import webpack from 'webpack'
-const plugins = module.require('webpack-load-plugins')()
+const plugins = require('webpack-load-plugins')()
 plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
-plugins.Offline = module.require('offline-plugin')
+plugins.Favicon = require('favicons-webpack-plugin')
+plugins.Offline = require('offline-plugin')
 
 import type {
     HTMLConfiguration, Injection, NormalizedInternalInjection,
@@ -80,8 +81,7 @@ if (htmlAvailable && configuration.favicon) {
     } catch (error) {
     } finally {
         if (faviconAvailable)
-            pluginInstances.push(new plugins.FaviconsWebpackPlugin(
-                configuration.favicon))
+            pluginInstances.push(new plugins.Favicon(configuration.favicon))
     }
 }
 // /// endregion
