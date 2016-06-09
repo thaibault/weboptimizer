@@ -401,9 +401,6 @@ const loader:{
 }
 // / endregion
 // endregion
-console.log(
-    normalizedInternalInjection
-    )
 // region configuration
 export default {
     context: configuration.path.context,
