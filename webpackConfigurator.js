@@ -72,12 +72,18 @@ for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
     } catch (error) {}
 // /// endregion
 // /// region generate favicons
-if (htmlAvailable && configuration.favicon)
+if (htmlAvailable && configuration.favicon) {
+    let faviconAvailable:boolean = false
     try {
         fileSystem.accessSync(configuration.favicon.logo, fileSystem.F_OK)
-        pluginInstances.push(new plugins.FaviconsWebpackPlugin(
-            configuration.favicon))
-    } catch (error) {}
+        faviconAvailable = true
+    } catch (error) {
+    } finally {
+        if (faviconAvailable)
+            pluginInstances.push(new plugins.FaviconsWebpackPlugin(
+                configuration.favicon))
+    }
+}
 // /// endregion
 // /// region provide offline functionality
 if (configuration.offline) {
