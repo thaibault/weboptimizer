@@ -61,6 +61,7 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // region initialisation
 // // region plugins
 const pluginInstances:Array<Object> = []
+// /// region generate html file
 let htmlAvailable:boolean = false
 for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
     try {
@@ -69,14 +70,16 @@ for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
         pluginInstances.push(new plugins.HTML(htmlConfiguration))
         htmlAvailable = true
     } catch (error) {}
-// favicon generation
+// /// endregion
+// /// region generate favicons
 if (htmlAvailable && configuration.favicon)
     try {
         fileSystem.accessSync(configuration.favicon.logo, fileSystem.F_OK)
         pluginInstances.push(new plugins.FaviconsWebpackPlugin(
             configuration.favicon))
     } catch (error) {}
-// provide offline functionality
+// /// endregion
+// /// region provide offline functionality
 if (configuration.offline) {
     if (configuration.inPlace.cascadingStyleSheet)
         configuration.offline.excludes.push(
@@ -88,25 +91,29 @@ if (configuration.offline) {
             `${configuration.hashAlgorithm}=*`)
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
-// opens browser automatically
+// /// endregion
+// /// region opens browser automatically
 if ((
     !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'testInBrowser'
 ) && configuration.development.openBrowser)
     pluginInstances.push(new plugins.openBrowser(
         configuration.development.openBrowser))
-// provide build environment
+// /// endregion
+// /// region provide build environment
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
+// /// endregion
 // /// region modules/assets
 const moduleLocations:{[key:string]:Array<string>} =
     Helper.determineModuleLocations(
         configuration.injection.internal, configuration.module.aliases,
         configuration.knownExtensions, configuration.path.context,
         configuration.path.ignore)
+// //// region extract cascading style sheets
 pluginInstances.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet, {
         allChunks: true, disable: !configuration.files.cascadingStyleSheet}))
-// Optimizes webpack output
+// //// endregion
 if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
         configuration.module.optimizer.uglifyJS))
@@ -253,16 +260,19 @@ const injection:Injection = Helper.resolveInjection(
 let javaScriptNeeded:boolean = false
 const normalizedInternalInjection:NormalizedInternalInjection =
     Helper.normalizeInternalInjection(injection.internal)
-// generate vendor chunks
+// //// region generate vendor chunks
 for (const chunkID:string of configuration.injection.vendorChunkIDs)
     if (normalizedInternalInjection.hasOwnProperty(chunkID))
         pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
-            name: chunkID,
+            async: false,
+            children: false,
             filename: `${configuration.path.asset.javaScript}[name].js?` +
                 `${configuration.hashAlgorithm}=[hash]`,
-            children: true,
-            minChunks: Infinity
+            minChunks: Infinity,
+            name: chunkID
         }))
+// //// endregion
+// //// region mark empty java script modules as dummy
 for (const chunkName:string in normalizedInternalInjection)
     if (normalizedInternalInjection.hasOwnProperty(chunkName))
         for (const moduleID:string of normalizedInternalInjection[
@@ -284,6 +294,8 @@ for (const chunkName:string in normalizedInternalInjection)
 if (!javaScriptNeeded)
     configuration.files.javaScript = path.join(
         configuration.path.asset.javaScript, '.__dummy__.compiled.js')
+// //// endregion
+// //// region performs implicit external logic
 if (injection.external === '__implicit__')
     /*
         We only want to process modules from local context in library mode,
@@ -338,6 +350,7 @@ if (injection.external === '__implicit__')
         }
         return callback()
     }
+// //// endregion
 // /// endregion
 // // endregion
 // / region loader
