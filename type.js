@@ -61,7 +61,8 @@ export type ExternalInjection = string|((
 ) => void)|RegExp|Array<ExternalInjection>
 export type Injection = {
     internal:InternalInjection;
-    external:ExternalInjection
+    external:ExternalInjection;
+    vendorChunkIDs:Array<string>
 }
 // / endregion
 // / region configuration

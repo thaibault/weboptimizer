@@ -291,21 +291,21 @@ qunit.test('normalizeInternalInjection', ():void => {
 })
 qunit.test('resolveInjection', ():void => {
     qunit.deepEqual(Helper.resolveInjection(
-        {internal: [], external: []},
+        {internal: [], external: [], vendorChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
-    ), {internal: [], external: []})
+    ), {internal: [], external: [], vendorChunkIDs: []})
     qunit.deepEqual(Helper.resolveInjection(
-        {internal: 'a.js', external: []},
+        {internal: 'a.js', external: [], vendorChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
-    ), {internal: 'a.js', external: []})
+    ), {internal: 'a.js', external: [], vendorChunkIDs: []})
     qunit.deepEqual(Helper.resolveInjection(
-        {internal: ['a'], external: []},
+        {internal: ['a'], external: [], vendorChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
-    ), {internal: ['a'], external: []})
+    ), {internal: ['a'], external: [], vendorChunkIDs: []})
     qunit.deepEqual(Helper.resolveInjection(
-        {internal: '__auto__', external: []},
+        {internal: '__auto__', external: [], vendorChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
-    ), {internal: {}, external: []})
+    ), {internal: {}, external: [], vendorChunkIDs: []})
 })
 qunit.test('addDynamicGetterAndSetter', ():void => {
     qunit.strictEqual(Helper.addDynamicGetterAndSetter(null), null)
