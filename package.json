@@ -92,7 +92,7 @@
                     "__execute__": "path.join(self.path.asset.source, self.path.asset.favicon)"
                 },
                 "prefix": {
-                    "__execute__": "`${self.path.image}favicons-[hash]/`"
+                    "__execute__": "`${self.path.asset.image}favicons-[hash]/`"
                 },
                 "emitStats": false,
                 "statsFilename": "iconStats.json",
