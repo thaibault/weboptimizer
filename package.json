@@ -88,8 +88,12 @@
 
             "exportFormat": "umd",
             "favicon": {
-                "logo": {"__execute__": "path.join(self.path.asset.source, self.path.asset.favicon)"},
-                "prefix": "favicons-[hash]/",
+                "logo": {
+                    "__execute__": "path.join(self.path.asset.source, self.path.asset.favicon)"
+                },
+                "prefix": {
+                    "__execute__": "`${self.path.image}favicons-[hash]/`"
+                },
                 "emitStats": false,
                 "statsFilename": "iconStats.json",
                 "persistentCache": true,
