@@ -131,7 +131,8 @@
             },
             "injection": {
                 "external": "__implicit__",
-                "internal": []
+                "internal": [],
+                "vendorChunkIDs": ["vendor"]
             },
             "inPlace": {
                 "cascadingStyleSheet": true,

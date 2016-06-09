@@ -59,7 +59,6 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // / endregion
 // endregion
 // region initialisation
-// / region pre processing
 // // region plugins
 const pluginInstances:Array<Object> = []
 let htmlAvailable:boolean = false
@@ -98,8 +97,7 @@ if ((
         configuration.development.openBrowser))
 // provide build environment
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
-// // endregion
-// // region modules/assets
+// /// region modules/assets
 const moduleLocations:{[key:string]:Array<string>} =
     Helper.determineModuleLocations(
         configuration.injection.internal, configuration.module.aliases,
@@ -112,7 +110,7 @@ pluginInstances.push(new plugins.ExtractText(
 if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
         configuration.module.optimizer.uglifyJS))
-// /// region in-place configured assets in the main html file
+// //// region in-place configured assets in the main html file
 if (!process.argv[1].endsWith('/webpack-dev-server')) {
     pluginInstances.push({apply: (compiler:Object):void => {
         compiler.plugin('emit', (
@@ -244,7 +242,7 @@ if (!process.argv[1].endsWith('/webpack-dev-server')) {
         })
     }})
 }
-// /// endregion
+// //// endregion
 const injection:Injection = Helper.resolveInjection(
     configuration.injection, Helper.resolveBuildConfigurationFilePaths(
         configuration.build, configuration.path.asset.source,
@@ -255,6 +253,15 @@ const injection:Injection = Helper.resolveInjection(
 let javaScriptNeeded:boolean = false
 const normalizedInternalInjection:NormalizedInternalInjection =
     Helper.normalizeInternalInjection(injection.internal)
+// generate vendor chunks
+for (const chunkID:string of configuration.injection.vendorChunkIDs)
+    if (normalizedInternalInjection.hasOwnProperty(chunkID))
+        pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
+            name: chunkID,
+            filename: `${self.path.asset.javaScript}[name].js?` +
+                `${self.hashAlgorithm}=[hash]`,
+            children: true
+        }))
 for (const chunkName:string in normalizedInternalInjection)
     if (normalizedInternalInjection.hasOwnProperty(chunkName))
         for (const moduleID:string of normalizedInternalInjection[
@@ -330,8 +337,8 @@ if (injection.external === '__implicit__')
         }
         return callback()
     }
+// /// endregion
 // // endregion
-// / endregion
 // / region loader
 let imageLoader:string = 'url?' + JSON.stringify(
     configuration.module.optimizer.image.file)
