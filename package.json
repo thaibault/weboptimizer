@@ -92,7 +92,7 @@
                     "__execute__": "path.join(self.path.asset.source, self.path.asset.favicon)"
                 },
                 "prefix": {
-                    "__execute__": "`${self.path.asset.image}favicons-[hash]/`"
+                    "__execute__": "path.join(self.path.asset.image, 'favicons-[hash]')"
                 },
                 "emitStats": false,
                 "statsFilename": "iconStats.json",
@@ -284,7 +284,9 @@
                         "moduleAliases": {
                             "__execute__": "self.module.aliases"
                         },
-                        "knownExtensions": {"__execute__": "self.knownExtensions"},
+                        "knownExtensions": {
+                            "__execute__": "self.knownExtensions"
+                        },
                         "context": {"__execute__": "self.path.context"},
                         "compiler": {
                             "pretty": false,
@@ -308,10 +310,13 @@
             },
             "offline": {
                 "caches": "all",
-                "scope": "/",
-                "updateStrategy": "hash",
-                "version": 0,
-                "ServiceWorker": {"output": "javaScript/serviceWorker.js"},
+                "publicPath": "/",
+                "updateStrategy": "changed",
+                "version": "[hash]",
+                "relativePaths": false,
+                "ServiceWorker": {"output": {
+                    "__execute__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
+                }},
                 "AppCache": {"directory": "/"},
                 "excludes": [{
                     "__execute__": "`*.map?${self.hashAlgorithm}=*`"
