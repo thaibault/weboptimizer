@@ -260,7 +260,8 @@ for (const chunkID:string of configuration.injection.vendorChunkIDs)
             name: chunkID,
             filename: `${configuration.path.asset.javaScript}[name].js?` +
                 `${configuration.hashAlgorithm}=[hash]`,
-            children: true
+            children: true,
+            minChunks: Infinity
         }))
 for (const chunkName:string in normalizedInternalInjection)
     if (normalizedInternalInjection.hasOwnProperty(chunkName))
@@ -400,6 +401,9 @@ const loader:{
 }
 // / endregion
 // endregion
+console.log(
+    normalizedInternalInjection
+    )
 // region configuration
 export default {
     context: configuration.path.context,
