@@ -42,8 +42,8 @@ const childProcessOptions:Object = {
 const childProcesses:Array<ChildProcess> = []
 const processPromises:Array<Promise> = []
 const possibleArguments:Array<string> = [
-    'build', 'buildDLL', 'clear', 'document', 'lint', 'test', 'testInBrowser',
-    'typeCheck', 'preinstall'
+    'build', 'buildDLL', 'clear', 'document', 'lint', 'preinstall', 'test',
+    'testInBrowser', 'typeCheck'
 ]
 if (configuration.givenCommandLineArguments.length > 2) {
     // region temporary save dynamically given configurations
@@ -96,13 +96,18 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // / endregion
     // endregion
     // region handle clear
-    if (possibleArguments.includes(
-        configuration.givenCommandLineArguments[2]
-    )) {
-        // Removes all compiled files.
+    /*
+        NOTE: A build could depend on previously created dll packages so a
+        clean should not be performed automatically.
+    */
+    if (
+        configuration.givenCommandLineArguments[2] !== 'build' &&
+        possibleArguments.includes(configuration.givenCommandLineArguments[2])
+    ) {
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
         )) {
+            // Removes all compiled files.
             Helper.walkDirectoryRecursivelySync(configuration.path.target, (
                 filePath:string, stat:Object
             ):?boolean => {
@@ -282,8 +287,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 if (returnCode === 0)
                     resolve()
                 else
-                    reject(new Error(
-                        `Task exited with error code ${returnCode}`))
+                    reject(returnCode)
             })
             childProcesses.push(childProcess)
         }))
@@ -313,6 +317,10 @@ if (
         `Give one of "${possibleArguments.join('", "')}" as command line ` +
         'argument. You can provide a json string as second parameter to ' +
         'dynamically overwrite some configurations.\n')
+// endregion
+// region forward nested return codes
+Promise.all(processPromises).catch((returnCode:number) => process.exit(
+    returnCode))
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
