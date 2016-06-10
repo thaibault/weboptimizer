@@ -126,7 +126,7 @@ if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
         configuration.module.optimizer.uglifyJS))
 // //// region in-place configured assets in the main html file
-if (!process.argv[1].endsWith('/webpack-dev-server')) {
+if (htmlAvailable && !process.argv[1].endsWith('/webpack-dev-server')) {
     pluginInstances.push({apply: (compiler:Object):void => {
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
@@ -268,7 +268,30 @@ const injection:Injection = Helper.resolveInjection(
 let javaScriptNeeded:boolean = false
 const normalizedInternalInjection:NormalizedInternalInjection =
     Helper.normalizeInternalInjection(injection.internal)
-// //// region generate vendor chunks
+// //// region remove chunks if a corresponding dll package exists
+for (const chunkID:string in normalizedInternalInjection)
+    if (normalizedInternalInjection.hasOwnProperty(chunkID)) {
+        let dllPackageExists:boolean = false
+        try {
+            fileSystem.accessSync(
+                `${configuration.path.target}${chunkID}.dll-manifest.json`,
+                fileSystem.F_OK)
+            dllPackageExists = true
+        } catch (error) {
+        } finally {
+            if (dllPackageExists) {
+                delete normalizedInternalInjection[chunkID]
+                pluginInstances.push(new webpack.DllReferencePlugin({
+                    context: configuration.path.context,
+                    manifest: require(
+                        `${configuration.path.target}${chunkID}.` +
+                        'dll-manifest.json')
+                }))
+            }
+        }
+    }
+// //// endregion
+// //// region generate common chunks
 for (const chunkID:string of configuration.injection.vendorChunkIDs)
     if (normalizedInternalInjection.hasOwnProperty(chunkID))
         pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
@@ -359,13 +382,15 @@ if (injection.external === '__implicit__')
         return callback()
     }
 // //// endregion
+// //// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
     let dllChunkIDExists:boolean = false
     for (const chunkID:string in normalizedInternalInjection)
-        if (configuration.injection.dllChunkIDs.includes(chunkID))
-            dllChunkIDExists = true
-        else
-            delete normalizedInternalInjection[chunkID]
+        if (normalizedInternalInjection.hasOwnProperty(chunkID))
+            if (configuration.injection.dllChunkIDs.includes(chunkID))
+                dllChunkIDExists = true
+            else
+                delete normalizedInternalInjection[chunkID]
     if (dllChunkIDExists)
         pluginInstances.push(new webpack.DllPlugin({
             path: `${configuration.path.target}[name].dll-manifest.json`,
@@ -374,6 +399,7 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
     else
         throw Error('No dll chunk id found.')
 }
+// //// endregion
 // /// endregion
 // // endregion
 // / region loader
