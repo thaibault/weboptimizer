@@ -319,7 +319,7 @@ if (
         'dynamically overwrite some configurations.\n')
 // endregion
 // region forward nested return codes
-Promise.all(processPromises).catch((returnCode:number) => process.exit(
+Promise.all(processPromises).catch((returnCode:number):void => process.exit(
     returnCode))
 // endregion
 // region vim modline
