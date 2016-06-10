@@ -484,10 +484,14 @@ export default {
     output: {
         filename: configuration.files.javaScript,
         hashFunction: configuration.hashAlgorithm,
-        library: configuration.exportFormat === 'var' ?
-            Helper.convertToValidVariableName(configuration.name) :
+        library: (
+            configuration.exportFormat === 'var' ||
+            configuration.givenCommandLineArguments[2] === 'buildDLL'
+        ) ? Helper.convertToValidVariableName(configuration.name) :
             configuration.name,
-        libraryTarget: configuration.exportFormat,
+        libraryTarget: (
+            configuration.givenCommandLineArguments[2] === 'buildDLL'
+        ) ? 'var' : configuration.exportFormat,
         path: configuration.path.asset.target,
         // publicPath: configuration.path.asset.publicTarget,
         pathinfo: configuration.debug,
