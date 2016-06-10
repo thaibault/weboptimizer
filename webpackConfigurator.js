@@ -64,13 +64,15 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 const pluginInstances:Array<Object> = []
 // /// region generate html file
 let htmlAvailable:boolean = false
-for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
-    try {
-        fileSystem.accessSync(htmlConfiguration.template.substring(
-            htmlConfiguration.template.lastIndexOf('!') + 1), fileSystem.F_OK)
-        pluginInstances.push(new plugins.HTML(htmlConfiguration))
-        htmlAvailable = true
-    } catch (error) {}
+if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
+    for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
+        try {
+            fileSystem.accessSync(htmlConfiguration.template.substring(
+                htmlConfiguration.template.lastIndexOf('!') + 1
+            ), fileSystem.F_OK)
+            pluginInstances.push(new plugins.HTML(htmlConfiguration))
+            htmlAvailable = true
+        } catch (error) {}
 // /// endregion
 // /// region generate favicons
 if (htmlAvailable && configuration.favicon) {
@@ -86,7 +88,7 @@ if (htmlAvailable && configuration.favicon) {
 }
 // /// endregion
 // /// region provide offline functionality
-if (configuration.offline) {
+if (htmlAvailable && configuration.offline) {
     if (configuration.inPlace.cascadingStyleSheet)
         configuration.offline.excludes.push(
             `${configuration.path.asset.cascadingStyleSheet}*.css?` +
@@ -99,10 +101,10 @@ if (configuration.offline) {
 }
 // /// endregion
 // /// region opens browser automatically
-if ((
-    !configuration.library ||
+if (configuration.development.openBrowser && (
+    htmlAvailable && !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'testInBrowser'
-) && configuration.development.openBrowser)
+))
     pluginInstances.push(new plugins.openBrowser(
         configuration.development.openBrowser))
 // /// endregion
