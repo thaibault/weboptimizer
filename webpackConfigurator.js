@@ -357,11 +357,21 @@ if (injection.external === '__implicit__')
         return callback()
     }
 // //// endregion
-if (configuration.givenCommandLineArguments[2] === 'buildDLL')
-    pluginInstances.push(new webpack.DllPlugin({
-        path: `${configuration.path.target}[name].dll-manifest.json`,
-        name: '[name]DLLPackage'
-    }))
+if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
+    let dllChunkIDExists:boolean = false
+    for (const chunkID:string in normalizedInternalInjection)
+        if (configuration.injection.dllChunkIDs.includes(chunkID))
+            dllChunkIDExists = true
+        else
+            delete normalizedInternalInjection[chunkID]
+    if (dllChunkIDExists)
+        pluginInstances.push(new webpack.DllPlugin({
+            path: `${configuration.path.target}[name].dll-manifest.json`,
+            name: '[name]DLLPackage'
+        }))
+    else
+        throw Error('No dll chunk id found.')
+}
 // /// endregion
 // // endregion
 // / region loader
