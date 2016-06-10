@@ -62,7 +62,8 @@ export type ExternalInjection = string|((
 export type Injection = {
     internal:InternalInjection;
     external:ExternalInjection;
-    vendorChunkIDs:Array<string>
+    vendorChunkIDs:Array<string>;
+    dllChunkIDs:Array<string>
 }
 // / endregion
 // / region configuration

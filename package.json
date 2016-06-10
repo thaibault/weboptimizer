@@ -136,7 +136,8 @@
             "injection": {
                 "external": "__implicit__",
                 "internal": [],
-                "vendorChunkIDs": ["vendor"]
+                "vendorChunkIDs": ["vendor"],
+                "dllChunkIDs": ["vendor"]
             },
             "inPlace": {
                 "cascadingStyleSheet": true,
