@@ -42,8 +42,8 @@ const childProcessOptions:Object = {
 const childProcesses:Array<ChildProcess> = []
 const processPromises:Array<Promise> = []
 const possibleArguments:Array<string> = [
-    'build', 'clear', 'document', 'lint', 'test', 'testInBrowser', 'typeCheck',
-    'preinstall'
+    'build', 'buildDLL', 'clear', 'document', 'lint', 'test', 'testInBrowser',
+    'typeCheck', 'preinstall'
 ]
 if (configuration.givenCommandLineArguments.length > 2) {
     // region temporary save dynamically given configurations
@@ -102,7 +102,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         // Removes all compiled files.
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
-        ))
+        )) {
             Helper.walkDirectoryRecursivelySync(configuration.path.target, (
                 filePath:string, stat:Object
             ):?boolean => {
@@ -123,7 +123,17 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         break
                     }
             })
-        else
+            fileSystem.readdirSync(configuration.path.target).forEach((
+                fileName:string
+            ):void => {
+                if (
+                    fileName.length > '.dll-manifest.json'.length &&
+                    fileName.endsWith('.dll-manifest.json')
+                )
+                    fileSystem.unlinkSync(path.resolve(
+                        configuration.path.target, fileName))
+            })
+        } else
             removeDirectoryRecursivelySync(configuration.path.target, {
                 glob: false})
         try {
@@ -137,7 +147,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore)
-    if (['build', 'document', 'test'].includes(process.argv[2]))
+    if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2]))
         // Triggers complete asset compiling and bundles them into the final
         // productive output.
         processPromises.push(new Promise((

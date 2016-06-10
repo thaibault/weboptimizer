@@ -357,6 +357,11 @@ if (injection.external === '__implicit__')
         return callback()
     }
 // //// endregion
+if (configuration.givenCommandLineArguments[2] === 'buildDLL')
+    pluginInstances.push(new webpack.DllPlugin({
+        path: `${configuration.path.target}[name].dll-manifest.json`,
+        name: '[name]DLLPackage'
+    }))
 // /// endregion
 // // endregion
 // / region loader
