@@ -102,10 +102,9 @@ if (htmlAvailable && configuration.offline) {
 }
 // /// endregion
 // /// region opens browser automatically
-if (configuration.development.openBrowser && (
-    htmlAvailable && !configuration.library ||
-    configuration.givenCommandLineArguments[2] === 'testInBrowser'
-))
+if (configuration.development.openBrowser && (htmlAvailable && [
+    'serve', 'testInBrowser'
+].includes(configuration.givenCommandLineArguments[2])))
     pluginInstances.push(new plugins.OpenBrowser(
         configuration.development.openBrowser))
 // /// endregion
