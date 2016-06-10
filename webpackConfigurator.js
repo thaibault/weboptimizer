@@ -61,6 +61,8 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // / endregion
 // endregion
 // region initialisation
+let libraryName:string = configuration.exportFormat === 'var' ?
+    Helper.convertToValidVariableName(configuration.name) : configuration.name
 // // region plugins
 const pluginInstances:Array<Object> = []
 // /// region generate html file
@@ -271,27 +273,37 @@ let javaScriptNeeded:boolean = false
 const normalizedInternalInjection:NormalizedInternalInjection =
     Helper.normalizeInternalInjection(injection.internal)
 // //// region remove chunks if a corresponding dll package exists
-for (const chunkID:string in normalizedInternalInjection)
-    if (normalizedInternalInjection.hasOwnProperty(chunkID)) {
-        let dllPackageExists:boolean = false
-        try {
-            fileSystem.accessSync(
-                `${configuration.path.target}${chunkID}.dll-manifest.json`,
-                fileSystem.F_OK)
-            dllPackageExists = true
-        } catch (error) {
-        } finally {
-            if (dllPackageExists) {
-                delete normalizedInternalInjection[chunkID]
-                pluginInstances.push(new webpack.DllReferencePlugin({
-                    context: configuration.path.context,
-                    manifest: require(
-                        `${configuration.path.target}${chunkID}.` +
-                        'dll-manifest.json')
-                }))
+if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
+    for (const chunkID:string in normalizedInternalInjection)
+        if (normalizedInternalInjection.hasOwnProperty(chunkID)) {
+            let dllPackageExists:boolean = false
+            try {
+                fileSystem.accessSync(
+                    `${configuration.path.target}${chunkID}.dll-manifest.json`,
+                    fileSystem.F_OK)
+                dllPackageExists = true
+            } catch (error) {
+            } finally {
+                if (dllPackageExists) {
+                    delete normalizedInternalInjection[chunkID]
+                    // TODO check return codes for.
+                    // TODO dll package should be inserted as raw an not with
+                    // a webpack require wrapper to be available for the other
+                    // module!
+                    // Maybe there isn't any need to use "var" injection after
+                    // that
+                    // maybe "node" as target fulfills our needs
+                    normalizedInternalInjection[`${chunkID}DLLPackage`] = [
+                        `${configuration.path.target}${chunkID}`]
+                    pluginInstances.push(new webpack.DllReferencePlugin({
+                        context: configuration.path.context,
+                        manifest: require(
+                            `${configuration.path.target}${chunkID}.` +
+                            'dll-manifest.json')
+                    }))
+                }
             }
         }
-    }
 // //// endregion
 // //// region generate common chunks
 for (const chunkID:string of configuration.injection.vendorChunkIDs)
@@ -393,12 +405,13 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
                 dllChunkIDExists = true
             else
                 delete normalizedInternalInjection[chunkID]
-    if (dllChunkIDExists)
+    if (dllChunkIDExists) {
+        libraryName = '[name]DLLPackage'
         pluginInstances.push(new webpack.DllPlugin({
             path: `${configuration.path.target}[name].dll-manifest.json`,
-            name: '[name]DLLPackage'
+            name: libraryName
         }))
-    else
+    } else
         throw Error('No dll chunk id found.')
 }
 // //// endregion
@@ -484,11 +497,7 @@ export default {
     output: {
         filename: configuration.files.javaScript,
         hashFunction: configuration.hashAlgorithm,
-        library: (
-            configuration.exportFormat === 'var' ||
-            configuration.givenCommandLineArguments[2] === 'buildDLL'
-        ) ? Helper.convertToValidVariableName(configuration.name) :
-            configuration.name,
+        library: libraryName,
         libraryTarget: (
             configuration.givenCommandLineArguments[2] === 'buildDLL'
         ) ? 'var' : configuration.exportFormat,
