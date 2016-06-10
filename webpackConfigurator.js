@@ -29,6 +29,7 @@ plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Offline = require('offline-plugin')
+plugins.OpenBrowser = plugins.openBrowser
 
 import type {
     HTMLConfiguration, Injection, NormalizedInternalInjection,
@@ -105,7 +106,7 @@ if (configuration.development.openBrowser && (
     htmlAvailable && !configuration.library ||
     configuration.givenCommandLineArguments[2] === 'testInBrowser'
 ))
-    pluginInstances.push(new plugins.openBrowser(
+    pluginInstances.push(new plugins.OpenBrowser(
         configuration.development.openBrowser))
 // /// endregion
 // /// region provide build environment
