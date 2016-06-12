@@ -350,7 +350,6 @@
                 "manifest": "manifest.appcache",
                 "source": "source/", "target": "build/",
                 "tidyUp": [
-                    {"__execute__": "path.join(self.path.target, path.basename(self.path.manifest, '.appcache') + '.html')"},
                     {"__execute__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js')"},
                     {"__execute__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"}
                 ]
