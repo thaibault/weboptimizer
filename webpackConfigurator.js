@@ -278,6 +278,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string in normalizedInternalInjection)
         if (normalizedInternalInjection.hasOwnProperty(chunkID)) {
             let dllPackageExists:boolean = false
+            // TODO check return codes for.
             try {
                 fileSystem.accessSync(
                     `${configuration.path.target}${chunkID}.dll-manifest.json`,
@@ -287,11 +288,17 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             } finally {
                 if (dllPackageExists) {
                     delete normalizedInternalInjection[chunkID]
-                    // TODO check return codes for.
+                    let sourceMapExists:boolean = false
+                    try {
+                        fileSystem.accessSync(
+                            `${configuration.path.target}${chunkID}.js.map`,
+                            fileSystem.F_OK)
+                        sourceMapExists = true
+                    } catch (error) {
+                    } finally {
                     pluginInstances.push(new plugins.AddAssetHtmlPlugin({
                         filename: `${configuration.path.target}${chunkID}.js`,
-                        // TODO check
-                        includeSourcemap: true
+                        includeSourcemap: sourceMapExists
                     }))
                     pluginInstances.push(new webpack.DllReferencePlugin({
                         context: configuration.path.context,
