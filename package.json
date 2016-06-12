@@ -319,7 +319,7 @@
                 "ServiceWorker": {"output": {
                     "__execute__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
                 }},
-                "AppCache": {"directory": "/"},
+                "AppCache": {"directory": ""},
                 "excludes": [{
                     "__execute__": "`*.map?${self.hashAlgorithm}=*`"
                 }]
