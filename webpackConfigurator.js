@@ -27,7 +27,7 @@ const plugins = require('webpack-load-plugins')()
 plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
-plugin.AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
+plugins.AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Offline = require('offline-plugin')
 plugins.OpenBrowser = plugins.openBrowser
@@ -290,6 +290,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                     // TODO check return codes for.
                     pluginInstances.push(new plugins.AddAssetHtmlPlugin({
                         filename: `${configuration.path.target}${chunkID}.js`,
+                        // TODO check
                         includeSourcemap: true
                     }))
                     pluginInstances.push(new webpack.DllReferencePlugin({
