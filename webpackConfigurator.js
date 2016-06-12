@@ -129,7 +129,7 @@ if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
         configuration.module.optimizer.uglifyJS))
 // //// region in-place configured assets in the main html file
-if (htmlAvailable && ['serve', 'testInBrowser'].includes(
+if (htmlAvailable && !['serve', 'testInBrowser'].includes(
     configuration.givenCommandLineArguments[2]
 )) {
     pluginInstances.push({apply: (compiler:Object):void => {
