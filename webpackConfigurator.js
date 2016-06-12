@@ -278,7 +278,6 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string in normalizedInternalInjection)
         if (normalizedInternalInjection.hasOwnProperty(chunkID)) {
             let dllPackageExists:boolean = false
-            // TODO check return codes for.
             try {
                 fileSystem.accessSync(
                     `${configuration.path.target}${chunkID}.dll-manifest.json`,
