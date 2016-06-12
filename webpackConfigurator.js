@@ -294,8 +294,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                             `${configuration.path.target}${chunkID}.js.map`,
                             fileSystem.F_OK)
                         sourceMapExists = true
-                    } catch (error) {
-                    } finally {
+                    } catch (error) {}
                     pluginInstances.push(new plugins.AddAssetHtmlPlugin({
                         filename: `${configuration.path.target}${chunkID}.js`,
                         includeSourcemap: sourceMapExists
