@@ -27,6 +27,7 @@ const plugins = require('webpack-load-plugins')()
 plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
+plugin.AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Offline = require('offline-plugin')
 plugins.OpenBrowser = plugins.openBrowser
@@ -287,14 +288,10 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 if (dllPackageExists) {
                     delete normalizedInternalInjection[chunkID]
                     // TODO check return codes for.
-                    // TODO dll package should be inserted as raw an not with
-                    // a webpack require wrapper to be available for the other
-                    // module!
-                    // Maybe there isn't any need to use "var" injection after
-                    // that
-                    // maybe "node" as target fulfills our needs
-                    normalizedInternalInjection[`${chunkID}DLLPackage`] = [
-                        `${configuration.path.target}${chunkID}`]
+                    pluginInstances.push(new plugins.AddAssetHtmlPlugin({
+                        filename: `${configuration.path.target}${chunkID}.js`,
+                        includeSourcemap: true
+                    }))
                     pluginInstances.push(new webpack.DllReferencePlugin({
                         context: configuration.path.context,
                         manifest: require(
