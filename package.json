@@ -312,7 +312,7 @@
             },
             "offline": {
                 "caches": "all",
-                "publicPath": "/",
+                "publicPath": "",
                 "updateStrategy": "changed",
                 "version": "[hash]",
                 "relativePaths": false,
