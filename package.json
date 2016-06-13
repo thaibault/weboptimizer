@@ -500,7 +500,11 @@
                     "__execute__": "`${self.path.asset.javaScript}[name].js?${self.hashAlgorithm}=[hash]`"
                 }
             },
-            "inPlace": {"otherMaximumFileSizeLimitInByte": 1},
+            "inPlace": {
+                "cascadingStyleSheet": false,
+                "javaScript": false,
+                "otherMaximumFileSizeLimitInByte": 1
+            },
             "module": {
                 "preprocessor": {
                     "pug": {
