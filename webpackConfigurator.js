@@ -154,17 +154,17 @@ pluginInstances.push({apply: (compiler:Object):void => {
 }})
 // //// endregion
 // //// region in-place configured assets in the main html file
-if (htmlAvailable && !['serve', 'testInBrowser', 'watch'].includes(
+if (htmlAvailable && !['serve', 'testInBrowser'].includes(
     configuration.givenCommandLineArguments[2]
 ))
     pluginInstances.push({apply: (compiler:Object):void => {
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
         ):void => {
-            if (
+            if (configuration.files.html[0].filename in compilation.assets && (
                 configuration.inPlace.cascadingStyleSheet ||
                 configuration.inPlace.javaScript
-            )
+            ))
                 dom.env(compilation.assets[configuration.files.html[
                     0
                 ].filename].source(), (error:?Error, window:Object):void => {
