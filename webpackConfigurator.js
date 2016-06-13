@@ -33,7 +33,7 @@ plugins.Offline = require('offline-plugin')
 plugins.OpenBrowser = plugins.openBrowser
 
 import type {
-    HTMLConfiguration, Injection, NormalizedInternalInjection,
+    DomNode, HTMLConfiguration, Injection, NormalizedInternalInjection,
     ProcedureFunction
 } from './type'
 import configuration from './configurator.compiled'
@@ -125,31 +125,35 @@ pluginInstances.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet, {
         allChunks: true, disable: !configuration.files.cascadingStyleSheet}))
 // //// endregion
+// //// region perform javaScript minification/optimisation
 if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
         configuration.module.optimizer.uglifyJS))
+// //// endregion
+// //// region apply module pattern
+pluginInstances.push({apply: (compiler:Object):void => {
+    compiler.plugin('emit', (
+        compilation:Object, callback:ProcedureFunction
+    ):void => {
+        for (const filePath:string in compilation.assets)
+            if (compilation.assets.hasOwnProperty(filePath)) {
+                const type:?string = Helper.determineAssetType(
+                    filePath.replace(/\?[^?]+$/, ''), configuration.build,
+                    configuration.path)
+                if (type && configuration.assetPattern[type])
+                    compilation.assets[filePath] = new WebpackRawSource(
+                        configuration.assetPattern[type].replace(
+                            /\{1\}/g, compilation.assets[filePath].source(
+                            ).replace(/\$/g, '$$$')))
+            }
+        callback()
+    })
+}})
+// //// endregion
 // //// region in-place configured assets in the main html file
 if (htmlAvailable && !['serve', 'testInBrowser'].includes(
     configuration.givenCommandLineArguments[2]
-)) {
-    pluginInstances.push({apply: (compiler:Object):void => {
-        compiler.plugin('emit', (
-            compilation:Object, callback:ProcedureFunction
-        ):void => {
-            for (const filePath:string in compilation.assets)
-                if (compilation.assets.hasOwnProperty(filePath)) {
-                    const type:?string = Helper.determineAssetType(
-                        filePath.replace(/\?[^?]+$/, ''), configuration.build,
-                        configuration.path)
-                    if (type && configuration.assetPattern[type])
-                        compilation.assets[filePath] = new WebpackRawSource(
-                            configuration.assetPattern[type].replace(
-                                /\{1\}/g, compilation.assets[filePath].source(
-                                ).replace(/\$/g, '$$$')))
-                }
-            callback()
-        })
-    }})
+))
     pluginInstances.push({apply: (compiler:Object):void => {
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
@@ -165,14 +169,14 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                         const urlPrefix:string = configuration.files
                             .cascadingStyleSheet.replace(
                                 '[contenthash]', '')
-                        const domNode:Object = window.document.querySelector(
+                        const domNode:DomNode = window.document.querySelector(
                             `link[href^="${urlPrefix}"]`)
                         if (domNode) {
                             let asset:string
                             for (asset in compilation.assets)
                                 if (asset.startsWith(urlPrefix))
                                     break
-                            const inPlaceDomNode:Object =
+                            const inPlaceDomNode:DomNode =
                                 window.document.createElement('style')
                             inPlaceDomNode.textContent =
                                 compilation.assets[asset].source()
@@ -196,7 +200,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                         const urlPrefix:string =
                             configuration.files.javaScript.replace(
                                 '[hash]', '')
-                        const domNode:Object = window.document.querySelector(
+                        const domNode:DomNode = window.document.querySelector(
                             `script[src^="${urlPrefix}"]`)
                         if (domNode) {
                             let asset:string
@@ -261,7 +265,6 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
             callback()
         })
     }})
-}
 // //// endregion
 const injection:Injection = Helper.resolveInjection(
     configuration.injection, Helper.resolveBuildConfigurationFilePaths(
@@ -418,6 +421,23 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
         throw Error('No dll chunk id found.')
 }
 // //// endregion
+// /// endregion
+// /// region apply final dom modifications/fixes
+pluginInstances.push({apply: (compiler:Object):void => {
+    compiler.plugin('emit', (
+        compilation:Object, callback:ProcedureFunction
+    ):void => {
+        dom.env(compilation.assets[configuration.files.html[
+            0
+        ].filename].source(), (error:?Error, window:Object):void => {
+            for (const domNode:DomNode of window.document.querySelectorAll(
+                `script[src*="${configuration.hashAlgorithm}="]`
+            ))
+                console.log('A', domNode)
+            callback()
+        })
+    })
+}})
 // /// endregion
 // // endregion
 // / region loader
