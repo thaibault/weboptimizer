@@ -323,7 +323,7 @@ for (const chunkID:string of configuration.injection.vendorChunkIDs)
             name: chunkID
         }))
 // //// endregion
-// //// region mark empty java script modules as dummy
+// //// region mark empty javaScript modules as dummy
 for (const chunkName:string in normalizedInternalInjection)
     if (normalizedInternalInjection.hasOwnProperty(chunkName))
         for (const moduleID:string of normalizedInternalInjection[
@@ -423,33 +423,34 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
 // //// endregion
 // /// endregion
 // /// region apply final dom modifications/fixes
-pluginInstances.push({apply: (compiler:Object):void => {
-    compiler.plugin('emit', (
-        compilation:Object, callback:ProcedureFunction
-    ):void => {
-        dom.env(compilation.assets[configuration.files.html[
-            0
-        ].filename].source(), (error:?Error, window:Object):void => {
-            for (const domNode:DomNode of window.document.querySelectorAll(
-                `script[src*="?${configuration.hashAlgorithm}="]`
-            ))
-                domNode.setAttribute('src', domNode.getAttribute(
-                    'src'
-                ).replace(new RegExp(
-                    `(\\?${configuration.hashAlgorithm}=[^&]+).*$`
-                ), '$1'))
-            compilation.assets[configuration.files.html[
+if (htmlAvailable)
+    pluginInstances.push({apply: (compiler:Object):void => {
+        compiler.plugin('emit', (
+            compilation:Object, callback:ProcedureFunction
+        ):void => {
+            dom.env(compilation.assets[configuration.files.html[
                 0
-            ].filename] = new WebpackRawSource(
+            ].filename].source(), (error:?Error, window:Object):void => {
+                for (const domNode:DomNode of window.document.querySelectorAll(
+                    `script[src*="?${configuration.hashAlgorithm}="]`
+                ))
+                    domNode.setAttribute('src', domNode.getAttribute(
+                        'src'
+                    ).replace(new RegExp(
+                        `(\\?${configuration.hashAlgorithm}=[^&]+).*$`
+                    ), '$1'))
                 compilation.assets[configuration.files.html[
                     0
-                ].filename].source().replace(
-                    /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
-                ) + window.document.documentElement.outerHTML)
-            callback()
+                ].filename] = new WebpackRawSource(
+                    compilation.assets[configuration.files.html[
+                        0
+                    ].filename].source().replace(
+                        /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
+                    ) + window.document.documentElement.outerHTML)
+                callback()
+            })
         })
-    })
-}})
+    }})
 // /// endregion
 // // endregion
 // / region loader
