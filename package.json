@@ -315,10 +315,10 @@
                 "excludes": [{
                     "__execute__": "`*.map?${self.hashAlgorithm}=*`"
                 }],
-                "externals": ["/", "manifest.html"],
+                "externals": ["//", "manifest.html"],
                 "publicPath": "",
                 "relativePaths": false,
-                "rewrites": {"index.html": "/"},
+                "rewrites": {"index.html": "//"},
                 "updateStrategy": "changed",
                 "version": "[hash]",
                 "AppCache": {"directory": ""},
