@@ -456,6 +456,8 @@ if (htmlAvailable)
                         ) + window.document.documentElement.outerHTML)
                     callback()
                 })
+            else
+                callback()
         })
     }})
 // /// endregion
