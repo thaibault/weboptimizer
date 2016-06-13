@@ -154,7 +154,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
 }})
 // //// endregion
 // //// region in-place configured assets in the main html file
-if (htmlAvailable && !['serve', 'testInBrowser'].includes(
+if (htmlAvailable && !['serve', 'testInBrowser', 'watch'].includes(
     configuration.givenCommandLineArguments[2]
 ))
     pluginInstances.push({apply: (compiler:Object):void => {
@@ -438,8 +438,7 @@ if (htmlAvailable)
                     for (
                         const domNode:DomNode of
                         window.document.querySelectorAll(
-                            `script[src*="?${configuration.hashAlgorithm}="]`)
-                    )
+                            `script[src*="?${configuration.hashAlgorithm}="]`))
                         domNode.setAttribute('src', domNode.getAttribute(
                             'src'
                         ).replace(new RegExp(
