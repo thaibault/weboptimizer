@@ -311,18 +311,20 @@
                 "style": {"insertAt": "top", "singleton": true}
             },
             "offline": {
-                "caches": "all",
-                "publicPath": "",
-                "updateStrategy": "changed",
-                "version": "[hash]",
-                "relativePaths": false,
-                "ServiceWorker": {"output": {
-                    "__execute__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
-                }},
-                "AppCache": {"directory": ""},
+                "caches": {"main": ["/", "index.html", "manifest.html", ":rest:"]},
                 "excludes": [{
                     "__execute__": "`*.map?${self.hashAlgorithm}=*`"
-                }]
+                }],
+                "externals": ["/", "manifest.html"],
+                "publicPath": "",
+                "relativePaths": false,
+                "rewrites": {"index.html": "/"},
+                "updateStrategy": "changed",
+                "version": "[hash]",
+                "AppCache": {"directory": ""},
+                "ServiceWorker": {"output": {
+                    "__execute__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
+                }}
             },
             "path": {
                 "apiDocumentation": "apiDocumentation/",
