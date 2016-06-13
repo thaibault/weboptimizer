@@ -431,27 +431,30 @@ if (htmlAvailable)
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
         ):void => {
-            dom.env(compilation.assets[configuration.files.html[
-                0
-            ].filename].source(), (error:?Error, window:Object):void => {
-                for (const domNode:DomNode of window.document.querySelectorAll(
-                    `script[src*="?${configuration.hashAlgorithm}="]`
-                ))
-                    domNode.setAttribute('src', domNode.getAttribute(
-                        'src'
-                    ).replace(new RegExp(
-                        `(\\?${configuration.hashAlgorithm}=[^&]+).*$`
-                    ), '$1'))
-                compilation.assets[configuration.files.html[
+            if (configuration.files.html[0].filename in compilation.assets)
+                dom.env(compilation.assets[configuration.files.html[
                     0
-                ].filename] = new WebpackRawSource(
+                ].filename].source(), (error:?Error, window:Object):void => {
+                    for (
+                        const domNode:DomNode of
+                        window.document.querySelectorAll(
+                            `script[src*="?${configuration.hashAlgorithm}="]`)
+                    )
+                        domNode.setAttribute('src', domNode.getAttribute(
+                            'src'
+                        ).replace(new RegExp(
+                            `(\\?${configuration.hashAlgorithm}=[^&]+).*$`
+                        ), '$1'))
                     compilation.assets[configuration.files.html[
                         0
-                    ].filename].source().replace(
-                        /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
-                    ) + window.document.documentElement.outerHTML)
-                callback()
-            })
+                    ].filename] = new WebpackRawSource(
+                        compilation.assets[configuration.files.html[
+                            0
+                        ].filename].source().replace(
+                            /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
+                        ) + window.document.documentElement.outerHTML)
+                    callback()
+                })
         })
     }})
 // /// endregion
