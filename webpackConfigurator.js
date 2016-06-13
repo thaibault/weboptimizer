@@ -243,27 +243,29 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
         compiler.plugin('after-emit', (
             compilation:Object, callback:ProcedureFunction
         ):void => {
-            if (configuration.inPlace.cascadingStyleSheet)
-                removeDirectoryRecursivelySync(path.join(
-                    configuration.path.asset.target,
-                    configuration.path.asset.cascadingStyleSheet
-                ), {glob: false})
-            if (configuration.inPlace.javaScript) {
-                const assetFilePath = path.join(
-                    configuration.path.asset.target,
-                    configuration.files.javaScript.replace(
-                        `?${configuration.hashAlgorithm}=[hash]`, ''))
-                for (const filePath:string of [
-                    assetFilePath, `${assetFilePath}.map`
-                ])
-                    try {
-                        fileSystem.unlinkSync(filePath)
-                    } catch (error) {}
-                const javaScriptPath:string = path.join(
-                    configuration.path.asset.target,
-                    configuration.path.asset.javaScript)
-                if (fileSystem.readdirSync(javaScriptPath).length === 0)
-                    fileSystem.rmdirSync(javaScriptPath)
+            if (configuration.files.html[0].filename in compilation.assets) {
+                if (configuration.inPlace.cascadingStyleSheet)
+                    removeDirectoryRecursivelySync(path.join(
+                        configuration.path.asset.target,
+                        configuration.path.asset.cascadingStyleSheet
+                    ), {glob: false})
+                if (configuration.inPlace.javaScript) {
+                    const assetFilePath = path.join(
+                        configuration.path.asset.target,
+                        configuration.files.javaScript.replace(
+                            `?${configuration.hashAlgorithm}=[hash]`, ''))
+                    for (const filePath:string of [
+                        assetFilePath, `${assetFilePath}.map`
+                    ])
+                        try {
+                            fileSystem.unlinkSync(filePath)
+                        } catch (error) {}
+                    const javaScriptPath:string = path.join(
+                        configuration.path.asset.target,
+                        configuration.path.asset.javaScript)
+                    if (fileSystem.readdirSync(javaScriptPath).length === 0)
+                        fileSystem.rmdirSync(javaScriptPath)
+                }
             }
             callback()
         })
