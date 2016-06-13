@@ -140,11 +140,14 @@ pluginInstances.push({apply: (compiler:Object):void => {
                 const type:?string = Helper.determineAssetType(
                     filePath.replace(/\?[^?]+$/, ''), configuration.build,
                     configuration.path)
-                if (type && configuration.assetPattern[type])
-                    compilation.assets[filePath] = new WebpackRawSource(
-                        configuration.assetPattern[type].replace(
-                            /\{1\}/g, compilation.assets[filePath].source(
-                            ).replace(/\$/g, '$$$')))
+                if (type && configuration.assetPattern[type]) {
+                    const source:?string = compilation.assets[filePath].source(
+                    )
+                    if (typeof source === 'string')
+                        compilation.assets[filePath] = new WebpackRawSource(
+                            configuration.assetPattern[type].replace(
+                                /\{1\}/g, source.replace(/\$/g, '$$$')))
+                }
             }
         callback()
     })
