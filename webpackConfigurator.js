@@ -148,7 +148,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
                     if (typeof source === 'string')
                         console.log(request, filePath)
                         compilation.assets[request] = new WebpackRawSource(
-                            configuration.assetPattern[type].replace(
+                            configuration.assetPattern[type].pattern.replace(
                                 /\{1\}/g, source.replace(/\$/g, '$$$')))
                 }
             }
