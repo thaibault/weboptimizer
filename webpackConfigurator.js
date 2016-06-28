@@ -135,16 +135,19 @@ pluginInstances.push({apply: (compiler:Object):void => {
     compiler.plugin('emit', (
         compilation:Object, callback:ProcedureFunction
     ):void => {
-        for (const filePath:string in compilation.assets)
-            if (compilation.assets.hasOwnProperty(filePath)) {
+        for (const request:string in compilation.assets)
+            if (compilation.assets.hasOwnProperty(request)) {
+                const filePath:string = request.replace(/\?[^?]+$/, '')
                 const type:?string = Helper.determineAssetType(
-                    filePath.replace(/\?[^?]+$/, ''), configuration.build,
-                    configuration.path)
-                if (type && configuration.assetPattern[type]) {
-                    const source:?string = compilation.assets[filePath].source(
-                    )
+                    filePath, configuration.build, configuration.path)
+                if (type && configuration.assetPattern[type] && !(new RegExp(
+                    configuration.assetPattern[type]
+                        .excludeFilePathRegularExpression
+                )).test(filePath)) {
+                    const source:?string = compilation.assets[request].source()
                     if (typeof source === 'string')
-                        compilation.assets[filePath] = new WebpackRawSource(
+                        console.log(request, filePath)
+                        compilation.assets[request] = new WebpackRawSource(
                             configuration.assetPattern[type].replace(
                                 /\{1\}/g, source.replace(/\$/g, '$$$')))
                 }

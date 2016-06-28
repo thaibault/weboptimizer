@@ -359,7 +359,10 @@
             },
             "target": "web",
 
-            "assetPattern": {"javaScript": "'use strict';\n{1}"},
+            "assetPattern": {"javaScript": {
+                "excludeFilePathRegularExpression": "^(?:.*/)?vendor.js$",
+                "pattern": "'use strict';\n{1}"
+            }},
             "build": {
                 "default": {
                     "outputExtension": "js",
