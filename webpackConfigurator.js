@@ -146,7 +146,6 @@ pluginInstances.push({apply: (compiler:Object):void => {
                 )).test(filePath)) {
                     const source:?string = compilation.assets[request].source()
                     if (typeof source === 'string')
-                        console.log(request, filePath)
                         compilation.assets[request] = new WebpackRawSource(
                             configuration.assetPattern[type].pattern.replace(
                                 /\{1\}/g, source.replace(/\$/g, '$$$')))
@@ -403,6 +402,7 @@ if (injection.external === '__implicit__')
             ) && !configuration.inPlace.externalLibrary) {
                 if (configuration.exportFormat === 'var')
                     request = Helper.convertToValidVariableName(request)
+                console.log(configuration.exportFormat, filePath, request)
                 return callback(
                     null, `${configuration.exportFormat} ${request}`)
             }
