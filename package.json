@@ -138,8 +138,8 @@
             "injection": {
                 "external": "__implicit__",
                 "internal": [],
-                "vendorChunkIDs": ["vendor"],
-                "dllChunkIDs": ["vendor"]
+                "vendorChunkIDs": ["vendor", "developmentHelper"],
+                "dllChunkIDs": ["vendor", "developmentHelper"]
             },
             "inPlace": {
                 "cascadingStyleSheet": true,
@@ -360,7 +360,7 @@
             "target": "web",
 
             "assetPattern": {"javaScript": {
-                "excludeFilePathRegularExpression": "^(?:.*/)?vendor.js$",
+                "excludeFilePathRegularExpression": "^(?:.*/)?(?:developmentHelper|vendor).js$",
                 "pattern": "'use strict';\n{1}"
             }},
             "build": {
