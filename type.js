@@ -62,7 +62,7 @@ export type ExternalInjection = string|((
 export type Injection = {
     internal:InternalInjection;
     external:ExternalInjection;
-    vendorChunkIDs:Array<string>;
+    commonChunkIDs:Array<string>;
     dllChunkIDs:Array<string>
 }
 // / endregion
@@ -178,7 +178,10 @@ export type ResolvedConfiguration = {
     target:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
     /* eslint-enable max-len */
 
-    assetPattern:{[key:string]:string};
+    assetPattern:{[key:string]:{
+        excludeFilePathRegularExpression:string;
+        pattern:string
+    }};
     build:PlainObject;
     buildDefinition:PlainObject;
     commandLine:{

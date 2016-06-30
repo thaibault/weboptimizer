@@ -291,23 +291,23 @@ qunit.test('normalizeInternalInjection', ():void => {
 })
 qunit.test('resolveInjection', ():void => {
     qunit.deepEqual(Helper.resolveInjection(
-        {internal: [], external: [], vendorChunkIDs: [], dllChunkIDs: []},
+        {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
-    ), {internal: [], external: [], vendorChunkIDs: [], dllChunkIDs: []})
+    ), {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []})
     qunit.deepEqual(Helper.resolveInjection(
-        {internal: 'a.js', external: [], vendorChunkIDs: [], dllChunkIDs: []},
+        {internal: 'a.js', external: [], commonChunkIDs: [], dllChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
-    ), {internal: 'a.js', external: [], vendorChunkIDs: [], dllChunkIDs: []})
+    ), {internal: 'a.js', external: [], commonChunkIDs: [], dllChunkIDs: []})
     qunit.deepEqual(Helper.resolveInjection(
-        {internal: ['a'], external: [], vendorChunkIDs: [], dllChunkIDs: []},
+        {internal: ['a'], external: [], commonChunkIDs: [], dllChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
-    ), {internal: ['a'], external: [], vendorChunkIDs: [], dllChunkIDs: []})
+    ), {internal: ['a'], external: [], commonChunkIDs: [], dllChunkIDs: []})
     qunit.deepEqual(Helper.resolveInjection(
         {
-            internal: '__auto__', external: [], vendorChunkIDs: [],
+            internal: '__auto__', external: [], commonChunkIDs: [],
             dllChunkIDs: []
         }, Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
-    ), {internal: {}, external: [], vendorChunkIDs: [], dllChunkIDs: []})
+    ), {internal: {}, external: [], commonChunkIDs: [], dllChunkIDs: []})
 })
 qunit.test('addDynamicGetterAndSetter', ():void => {
     qunit.strictEqual(Helper.addDynamicGetterAndSetter(null), null)

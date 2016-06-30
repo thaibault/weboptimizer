@@ -286,40 +286,33 @@ const normalizedInternalInjection:NormalizedInternalInjection =
 // //// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string in normalizedInternalInjection)
-        if (normalizedInternalInjection.hasOwnProperty(chunkID)) {
-            let dllPackageExists:boolean = false
+        if (normalizedInternalInjection.hasOwnProperty(chunkID))
             try {
                 fileSystem.accessSync(
                     `${configuration.path.target}${chunkID}.dll-manifest.json`,
                     fileSystem.F_OK)
-                dllPackageExists = true
-            } catch (error) {
-            } finally {
-                if (dllPackageExists) {
-                    delete normalizedInternalInjection[chunkID]
-                    let sourceMapExists:boolean = false
-                    try {
-                        fileSystem.accessSync(
-                            `${configuration.path.target}${chunkID}.js.map`,
-                            fileSystem.F_OK)
-                        sourceMapExists = true
-                    } catch (error) {}
-                    pluginInstances.push(new plugins.AddAssetHtmlPlugin({
-                        filename: `${configuration.path.target}${chunkID}.js`,
-                        includeSourcemap: sourceMapExists
-                    }))
-                    pluginInstances.push(new webpack.DllReferencePlugin({
-                        context: configuration.path.context,
-                        manifest: require(
-                            `${configuration.path.target}${chunkID}.` +
-                            'dll-manifest.json')
-                    }))
-                }
-            }
-        }
+                delete normalizedInternalInjection[chunkID]
+                let sourceMapExists:boolean = false
+                try {
+                    fileSystem.accessSync(
+                        `${configuration.path.target}${chunkID}.js.map`,
+                        fileSystem.F_OK)
+                    sourceMapExists = true
+                } catch (error) {}
+                pluginInstances.push(new plugins.AddAssetHtmlPlugin({
+                    filename: `${configuration.path.target}${chunkID}.js`,
+                    includeSourcemap: sourceMapExists
+                }))
+                pluginInstances.push(new webpack.DllReferencePlugin({
+                    context: configuration.path.context,
+                    manifest: require(
+                        `${configuration.path.target}${chunkID}.` +
+                        'dll-manifest.json')
+                }))
+            } catch (error) {}
 // //// endregion
 // //// region generate common chunks
-for (const chunkID:string of configuration.injection.vendorChunkIDs)
+for (const chunkID:string of configuration.injection.commonChunkIDs)
     if (normalizedInternalInjection.hasOwnProperty(chunkID))
         pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
             async: false,
@@ -327,7 +320,8 @@ for (const chunkID:string of configuration.injection.vendorChunkIDs)
             filename: `${configuration.path.asset.javaScript}[name].js?` +
                 `${configuration.hashAlgorithm}=[hash]`,
             minChunks: Infinity,
-            name: chunkID
+            name: chunkID,
+            minSize: 0
         }))
 // //// endregion
 // //// region mark empty javaScript modules as dummy
