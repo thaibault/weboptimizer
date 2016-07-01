@@ -120,6 +120,7 @@
                     "__execute__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
                 },
                 "html": [{
+                    "chunksSortMode": "auto",
                     "debug": false,
                     "filename": "index.html",
                     "hash": true,
@@ -424,8 +425,12 @@
                     "arguments": [
                         "--config",
                         {"__execute__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"},
-                        "--inline",
-                        "--colors"
+                        "--colors",
+                        "--compress",
+                        "--host",
+                        "0.0.0.0",
+                        "--open",
+                        "--history-api-fallback"
                     ]
                 },
                 "test": {"command": "./testBundle.compiled.js"},
