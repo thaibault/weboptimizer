@@ -551,11 +551,14 @@ export default class Helper {
      * @param deep - Indicates weather to perform a recursive resolving.
      * @param evaluationIndicatorKey - Indicator property name to mark a value
      * to evaluate.
+     * @param executionIndicatorKey - Indicator property name to mark a value
+     * to evaluate.
      * @returns Evaluated given mapping.
      */
     static resolveDynamicDataStructure(
         object:any, configuration:?PlainObject = null, deep:boolean = true,
-        evaluationIndicatorKey:string = '__execute__'
+        evaluationIndicatorKey:string = '__evaluate__',
+        executionIndicatorKey:string = '__execute__'
     ):any {
         if (configuration === null && typeof object === 'object')
             configuration = object
@@ -563,28 +566,34 @@ export default class Helper {
             configuration = Helper.addDynamicGetterAndSetter(
                 configuration, ((value:any):any =>
                     Helper.resolveDynamicDataStructure(
-                        value, configuration, false, evaluationIndicatorKey)
+                        value, configuration, false, evaluationIndicatorKey,
+                        executionIndicatorKey)
                 ), (key:any, value:any):any => value, '[]', ''
             )
         if (typeof object === 'object' && object !== null) {
             for (const key:string in object)
-                if (key === evaluationIndicatorKey) {
+                if ([evaluationIndicatorKey, executionIndicatorKey].includes(
+                    key
+                )) {
                     const evaluationFunction:EvaluationFunction = new Function(
                         'self', 'webOptimizerPath', 'currentPath', 'path',
-                        `return ${object[key]}`)
+                        `${key === evaluationIndicatorKey ? 'return' : ''} ` +
+                        object[key])
                     return Helper.resolveDynamicDataStructure(
                         evaluationFunction(
                             configuration, __dirname, process.cwd(), path
-                        ), configuration, false, evaluationIndicatorKey)
+                        ), configuration, false, evaluationIndicatorKey,
+                        executionIndicatorKey)
                 } else if (deep)
                     object[key] = Helper.resolveDynamicDataStructure(
                         object[key], configuration, deep,
-                        evaluationIndicatorKey)
+                        evaluationIndicatorKey, executionIndicatorKey)
         } else if (deep && Array.isArray(object)) {
             let index:number = 0
             for (const value:mixed of object) {
                 object[index] = Helper.resolveDynamicDataStructure(
-                    value, configuration, deep, evaluationIndicatorKey)
+                    value, configuration, deep, evaluationIndicatorKey,
+                    executionIndicatorKey)
                 index += 1
             }
         }

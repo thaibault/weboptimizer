@@ -351,21 +351,21 @@ qunit.test('resolveDynamicDataStructure', ():void => {
     qunit.deepEqual(Helper.resolveDynamicDataStructure('1'), '1')
     qunit.deepEqual(Helper.resolveDynamicDataStructure(3), 3)
     qunit.deepEqual(Helper.resolveDynamicDataStructure({}), {})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure({__execute__: '1'}), 1)
+    qunit.deepEqual(Helper.resolveDynamicDataStructure({__evaluate__: '1'}), 1)
     qunit.deepEqual(
-        Helper.resolveDynamicDataStructure({__execute__: "'1'"}), '1')
+        Helper.resolveDynamicDataStructure({__evaluate__: "'1'"}), '1')
     qunit.deepEqual(
-        Helper.resolveDynamicDataStructure({a: {__execute__: "'a'"}}),
+        Helper.resolveDynamicDataStructure({a: {__evaluate__: "'a'"}}),
         {a: 'a'})
     qunit.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__execute__: 'self.a'}}, {a: 1}
+        {a: {__evaluate__: 'self.a'}}, {a: 1}
     ), {a: 1})
     qunit.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__execute__: 'self.a'}}, {a: 1}, false
-    ), {a: {__execute__: 'self.a'}})
+        {a: {__evaluate__: 'self.a'}}, {a: 1}, false
+    ), {a: {__evaluate__: 'self.a'}})
     qunit.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__execute__: 'self.a'}}, {a: 1}, true, '__run__'
-    ), {a: {__execute__: 'self.a'}})
+        {a: {__evaluate__: 'self.a'}}, {a: 1}, true, '__run__'
+    ), {a: {__evaluate__: 'self.a'}})
     qunit.deepEqual(Helper.resolveDynamicDataStructure(
         {a: {__run__: 'self.a'}}, {a: 1}, true, '__run__'
     ), {a: 1})
@@ -373,11 +373,15 @@ qunit.test('resolveDynamicDataStructure', ():void => {
         {a: [{__run__: 'self.a'}]}, {a: 1}, true, '__run__'
     ), {a: [1]})
     qunit.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__execute__: 'self.b'}, b: 2}
+        {a: {__evaluate__: 'self.b'}, b: 2}
     ), {a: 2, b: 2})
     qunit.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__execute__: 'self.b'}, b: {__execute__: 'self.c'}, c: 2}
+        {a: {__evaluate__: 'self.b'}, b: {__evaluate__: 'self.c'}, c: 2}
     ), {a: 2, b: 2, c: 2})
+    qunit.deepEqual(Helper.resolveDynamicDataStructure({a: {
+        __execute__: 'return self.b'
+    }, b: {__execute__: 'return self.c'}, c: 2
+    }), {a: 2, b: 2, c: 2})
 })
 qunit.test('applyAliases', ():void => {
     qunit.strictEqual(Helper.applyAliases('', {}), '')

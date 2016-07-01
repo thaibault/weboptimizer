@@ -91,17 +91,17 @@
             "exportFormat": "umd",
             "favicon": {
                 "logo": {
-                    "__execute__": "path.join(self.path.asset.source, self.path.asset.favicon)"
+                    "__evaluate__": "path.join(self.path.asset.source, self.path.asset.favicon)"
                 },
                 "prefix": {
-                    "__execute__": "path.join(self.path.asset.image, 'favicons-[hash]/')"
+                    "__evaluate__": "path.join(self.path.asset.image, 'favicons-[hash]/')"
                 },
                 "emitStats": false,
                 "statsFilename": "iconStats.json",
                 "persistentCache": true,
                 "inject": true,
                 "background": "white",
-                "title": {"__execute__": "self.name"},
+                "title": {"__evaluate__": "self.name"},
                 "icons": {
                     "android": true,
                     "appleIcon": true,
@@ -117,7 +117,7 @@
             },
             "files": {
                 "cascadingStyleSheet": {
-                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+                    "__evaluate__": "`${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
                 },
                 "html": [{
                     "chunksSortMode": "auto",
@@ -126,14 +126,14 @@
                     "hash": true,
                     "inject": "body",
                     "minify": {
-                        "__execute__": "self.module.optimizer.htmlMinifier"
+                        "__evaluate__": "self.module.optimizer.htmlMinifier"
                     },
                     "template": {
-                        "__execute__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
+                        "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
                     }
                 }],
                 "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}index.js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${self.path.asset.javaScript}index.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "injection": {
@@ -181,45 +181,45 @@
                 "optimizer": {
                     "data": {
                         "limit": {
-                            "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                            "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                         },
                         "name": {
-                            "__execute__": "`/${self.path.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__evaluate__": "`/${self.path.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "font": {
                         "eot": {
                             "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "svg": {
                             "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "mimetype": "image/svg+xml",
                             "name": {
-                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "ttf": {
                             "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "mimetype": "application/octet-stream",
                             "name": {
-                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "woff": {
                             "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__execute__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         }
                     },
@@ -231,13 +231,13 @@
                         "collapseWhitespace": true,
                         "conservativeCollapse": true,
                         "ignoreCustomComments": [{
-                            "__execute__": "/^\\|?[a-z]{2}[A-Z]{2}:/"
+                            "__evaluate__": "/^\\|?[a-z]{2}[A-Z]{2}:/"
                         }],
                         "ignoreCustomFragments": [
-                            {"__execute__": "/<%[\\s\\S]*?%>/"},
-                            {"__execute__": "/<\\?[\\s\\S]*?\\?>/"},
-                            {"__execute__": "/<link[^>]*>/"},
-                            {"__execute__": "/<img[^>]*>/"}
+                            {"__evaluate__": "/<%[\\s\\S]*?%>/"},
+                            {"__evaluate__": "/<\\?[\\s\\S]*?\\?>/"},
+                            {"__evaluate__": "/<link[^>]*>/"},
+                            {"__evaluate__": "/<img[^>]*>/"}
                         ],
                         "includeAutoGeneratedTags": false,
                         "removeAttributeQuotes": false,
@@ -256,7 +256,7 @@
                         "keepClosingSlash": true,
                         "maxLineLength": 9999999999999999999999999999999,
                         "minifyJS": {
-                            "__execute__": "self.module.optimizer.uglifyJS"
+                            "__evaluate__": "self.module.optimizer.uglifyJS"
                         },
                         "minifyCSS": false,
                         "minifyURLs": false,
@@ -274,10 +274,10 @@
                         },
                         "file": {
                             "limit": {
-                                "__execute__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__execute__": "`/${self.path.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         }
                     },
@@ -286,19 +286,19 @@
                 "preprocessor": {
                     "pug": {
                         "moduleAliases": {
-                            "__execute__": "self.module.aliases"
+                            "__evaluate__": "self.module.aliases"
                         },
                         "knownExtensions": {
-                            "__execute__": "self.knownExtensions"
+                            "__evaluate__": "self.knownExtensions"
                         },
-                        "context": {"__execute__": "self.path.context"},
+                        "context": {"__evaluate__": "self.path.context"},
                         "compiler": {
                             "pretty": false,
                             "debug": false,
                             "cache": true
                         },
                         "locals": {"includeManifest": {
-                            "__execute__": "!!self.offline"
+                            "__evaluate__": "!!self.offline"
                         }}
                     },
                     "less": {},
@@ -315,7 +315,7 @@
             "offline": {
                 "caches": {"main": ["index.html", "manifest.html", ":rest:"]},
                 "excludes": [{
-                    "__execute__": "`*.map?${self.hashAlgorithm}=*`"
+                    "__evaluate__": "`*.map?${self.hashAlgorithm}=*`"
                 }],
                 "externals": ["//", "manifest.html"],
                 "publicPath": "",
@@ -325,7 +325,7 @@
                 "version": "[hash]",
                 "AppCache": {"directory": ""},
                 "ServiceWorker": {"output": {
-                    "__execute__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
+                    "__evaluate__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
                 }}
             },
             "path": {
@@ -335,7 +335,7 @@
                     "coffeeScript": "coffeeScript/",
                     "data": "data/",
                     "favicon": {
-                        "__execute__": "`${self.path.asset.image}favicon.png`"
+                        "__evaluate__": "`${self.path.asset.image}favicon.png`"
                     },
                     "font": "font/",
                     "image": "image/",
@@ -344,18 +344,18 @@
                     "publicTarget": "",
                     "sass": "sass/",
                     "scss": "scss/",
-                    "source": {"__execute__": "self.path.source"},
-                    "target": {"__execute__": "self.path.target"},
+                    "source": {"__evaluate__": "self.path.source"},
+                    "target": {"__evaluate__": "self.path.target"},
                     "template": "template/"
                 },
                 "ignore": ["node_modules", ".git", {
-                    "__execute__": "self.path.apiDocumentation"
+                    "__evaluate__": "self.path.apiDocumentation"
                 }],
                 "manifest": "manifest.appcache",
                 "source": "source/", "target": "build/",
                 "tidyUp": [
-                    {"__execute__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js')"},
-                    {"__execute__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"}
+                    {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js')"},
+                    {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"}
                 ]
             },
             "target": "web",
@@ -368,7 +368,7 @@
                 "default": {
                     "outputExtension": "js",
                     "preinstall": {
-                        "__execute__": "`touch '${self.path.target}\\${self.path.asset[buildConfiguration.type]}\\${path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`)}.compiled.\\${buildConfiguration.outputExtension}'`"
+                        "__evaluate__": "`touch '${self.path.target}\\${self.path.asset[buildConfiguration.type]}\\${path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`)}.compiled.\\${buildConfiguration.outputExtension}'`"
                     },
                     "fileNamePattern": "^.+\\.compiled(?:\\.[^.]+(?:\\.map)?)?$"
                 },
@@ -382,14 +382,14 @@
                 "scss": {"outputExtension": "css"}
             },
             "buildDefinition": {"TARGET": {
-                "__execute__": "`'${self.target}'`"
+                "__evaluate__": "`'${self.target}'`"
             }},
             "commandLine": {
                 "build": {
                     "command": "webpack",
                     "arguments": [
                         "--config",
-                        {"__execute__": "`${webOptimizerPath}/webpackConfigurator.compiled.js`"},
+                        {"__evaluate__": "`${webOptimizerPath}/webpackConfigurator.compiled.js`"},
                         "--progress",
                         "--display-chunks",
                         "--display-reasons",
@@ -404,19 +404,19 @@
                         "--readme",
                         "./readme.md",
                         "--destination",
-                        {"__execute__": "self.path.apiDocumentation"},
-                        {"__execute__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.js`"}
+                        {"__evaluate__": "self.path.apiDocumentation"},
+                        {"__evaluate__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.js`"}
                     ]
                 },
                 "lint": {
                     "command": "eslint",
                     "arguments": [
                         "--config",
-                        {"__execute__": "`'${webOptimizerPath}/package.json'`"},
+                        {"__evaluate__": "`'${webOptimizerPath}/package.json'`"},
                         "--ignore-pattern",
-                        {"__execute__": "`'${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
+                        {"__evaluate__": "`'${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
                         "--ignore-pattern",
-                        {"__execute__": "`'${self.path.apiDocumentation}'`"},
+                        {"__evaluate__": "`'${self.path.apiDocumentation}'`"},
                         "'**/*.js'"
                     ]
                 },
@@ -424,17 +424,18 @@
                     "command": "webpack-dev-server",
                     "arguments": [
                         "--config",
-                        {"__execute__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"},
+                        {"__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"},
+                        "--host", "0.0.0.0",
+                        "--port", {
+                            "__evaluate__": "self.development.server.port"
+                        },
                         "--colors",
                         "--compress",
-                        "--host",
-                        "0.0.0.0",
-                        "--open",
                         "--history-api-fallback"
                     ]
                 },
                 "test": {"command": "./testBundle.compiled.js"},
-                "testInBrowser": {"__execute__": "self.commandLine.serve"},
+                "testInBrowser": {"__evaluate__": "self.commandLine.serve"},
                 "typeCheck": {
                     "command": "flow",
                     "arguments": ["--color", "always", "--strip-root"]
@@ -443,9 +444,12 @@
             "development": {
                 "openBrowser": null,
                 "server": {
-                    "contentBase": {"__execute__": "self.path.source"},
+                    "contentBase": {"__evaluate__": "self.path.source"},
                     "historyApiFallback": true,
-                    "stats": {"colors": true}
+                    "stats": {"colors": true},
+                    "host": "localhost",
+                    "port": 8080,
+                    "protocol": "http"
                 },
                 "tool": null
             },
@@ -476,7 +480,7 @@
             "test": {
                 "exportFormat": "commonjs2",
                 "files": {"javaScript": {
-                    "__execute__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                 }},
                 "injection": {"internal": "test/"},
                 "target": "node",
@@ -489,7 +493,7 @@
             "testInBrowser": {
                 "files": {"html": [{
                     "template": {
-                        "__execute__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${webOptimizerPath}/test.pug`"
+                        "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${webOptimizerPath}/test.pug`"
                     },
                     "filename": "test.html"
                 }]},
@@ -506,7 +510,7 @@
             "files": {
                 "html": [{"debug": true}],
                 "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}[name].js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${self.path.asset.javaScript}[name].js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "inPlace": {
@@ -542,7 +546,7 @@
 
             "development": {
                 "openBrowser": {"url": {
-                    "__execute__": "((sourceFilePath) => `http://localhost:8080/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`)(self.files.html[0].template)"
+                    "__evaluate__": "((sourceFilePath) => `${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`)(self.files.html[0].template)"
                 }},
                 "tool": "#eval-cheap-module-source-map"
             }
@@ -551,10 +555,10 @@
         "library": {
             "files": {
                 "cascadingStyleSheet": {
-                    "__execute__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                    "__evaluate__": "`${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
                 },
                 "javaScript": {
-                    "__execute__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "injection": {"internal": "__auto__"},
@@ -587,8 +591,8 @@
                     "--readme",
                     "./readme.md",
                     "--destination",
-                    {"__execute__": "self.path.apiDocumentation"},
-                    {"__execute__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.compiled.js`"}
+                    {"__evaluate__": "self.path.apiDocumentation"},
+                    {"__evaluate__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.compiled.js`"}
                 ]}},
                 "exportFormat": "var",
                 "target": "node"
