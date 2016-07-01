@@ -29,8 +29,10 @@ plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 plugins.Favicon = require('favicons-webpack-plugin')
+plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
-plugins.OpenBrowser = plugins.openBrowser
+console.log(plugins)
+plugins.Browser = plugins.Browser
 
 import type {
     DomNode, HTMLConfiguration, Injection, NormalizedInternalInjection,
