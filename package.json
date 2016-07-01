@@ -557,7 +557,7 @@
 
             "development": {
                 "browser": {
-                    "browser": "default",
+                    "browser": "xdg-open",
                     "port": {"__evaluate__": "self.development.server.port"}
                 },
                 "tool": "#eval-cheap-module-source-map"
