@@ -65,7 +65,8 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 let libraryName:string = configuration.exportFormat === 'var' ?
     Helper.convertToValidVariableName(configuration.name) : configuration.name
 // // region plugins
-const pluginInstances:Array<Object> = []
+const pluginInstances:Array<Object> = [
+    new webpack.optimize.OccurrenceOrderPlugin(true)]
 // /// region generate html file
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
@@ -457,13 +458,16 @@ if (htmlAvailable)
         })
     }})
 // /// endregion
+// /// region add automatic image compression
+// NOTE: This plugin should be loaded at last to ensure that all emitted images
+// ran through.
+pluginInstances.push(new plugins.Imagemin(
+    configuration.module.optimizer.image.content))
+// /// endregion
 // // endregion
 // / region loader
 let imageLoader:string = 'url?' + JSON.stringify(
     configuration.module.optimizer.image.file)
-if (configuration.module.optimizer.image.content)
-    imageLoader += '!image?' + JSON.stringify(
-        configuration.module.optimizer.image.content)
 const loader:{
     preprocessor:{
         less:string;

@@ -36,7 +36,7 @@
         "flow-bin": ">=0.26.0",
         "html-loader": ">=0.4.3",
         "html-webpack-plugin": ">=2.19.0",
-        "image-webpack-loader": ">=1.8.0",
+        "imagemin-webpack-plugin": ">=1.0.7",
         "imports-loader": ">=0.6.5",
         "pug": ">=2.0.0-alpha8",
         "jsdoc": ">=3.4.0",
@@ -268,9 +268,20 @@
                     },
                     "image": {
                         "content": {
-                            "optimizationLevel": 7,
-                            "bypassOnDebug": true,
-                            "verbose": false
+                            "disable": {"__evaluate__": "self.debug"},
+                            "optipng": {"optimizationLevel": 7},
+                            "gifsicle": {
+                                "optimizationLevel": 3,
+                                "interlanced": false,
+                                "colors": 256
+                            },
+                            "jpegtran": {
+                                "progressive": true,
+                                "arithmetic": true
+                            },
+                            "svgo": {},
+                            "pngquant": null,
+                            "plugins": []
                         },
                         "file": {
                             "limit": {
