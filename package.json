@@ -559,7 +559,7 @@
                 "browser": {
                     "browser": "default",
                     "port": {"__evaluate__": "self.development.server.port"}
-                }},
+                },
                 "tool": "#eval-cheap-module-source-map"
             }
         },
