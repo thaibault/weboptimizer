@@ -110,7 +110,7 @@ if (htmlAvailable && configuration.offline) {
 if (configuration.development.browser && (htmlAvailable && [
     'serve', 'testInBrowser'
 ].includes(configuration.givenCommandLineArguments[2])))
-    pluginInstances.push(new plugins.OpenBrowser(
+    pluginInstances.push(new plugins.Browser(
         configuration.development.browser))
 // /// endregion
 // /// region provide build environment
