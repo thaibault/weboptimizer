@@ -623,7 +623,9 @@
 
             "testInBrowser": {"injection": {"internal": {
                 "vendor": ["jquery", "qunitjs"],
-                "index": {"__evaluate__": "['test'].concat(self.injection.internal.developmentHelper)"},
+                "index": {
+                    "__evaluate__": "['test'].concat(self.injection.internal.developmentHelper)"
+                }
             }}}
         }
     },
