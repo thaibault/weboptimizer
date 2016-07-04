@@ -442,7 +442,8 @@
                         },
                         "--colors",
                         "--compress",
-                        "--history-api-fallback"
+                        "--history-api-fallback",
+                        "--inline", "--hot"
                     ]
                 },
                 "test": {"command": "./testBundle.compiled.js"},
