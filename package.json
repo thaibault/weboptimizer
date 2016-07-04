@@ -510,10 +510,10 @@
                 }]},
                 "inPlace": {"externalLibrary": true},
                 "injection": {"internal": {
-                    "developmentModules": {
+                    "developmentHelper": {
                         "__evaluate__": "(self.debug) ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : []"
                     },
-                    "index": "test/",
+                    "index": {"__evaluate__": "['test/'].concat(self.injection.internal.developmentHelper)"},
                     "vendor": ["jquery", "qunitjs"]
                 }},
                 "module": {"optimizer": {"uglifyJS": null}},
@@ -622,7 +622,8 @@
             "test": {"injection": {"internal": "test"}},
 
             "testInBrowser": {"injection": {"internal": {
-                "vendor": ["jquery", "qunitjs"], "index": "test"
+                "vendor": ["jquery", "qunitjs"],
+                "index": {"__evaluate__": "['test'].concat(self.injection.internal.developmentHelper)"},
             }}}
         }
     },
