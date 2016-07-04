@@ -28,7 +28,7 @@ plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
-plugins.Browser = require('webpack-browser-plugin')
+plugins.OpenBrowser = plugins.openBrowser
 plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
@@ -107,11 +107,11 @@ if (htmlAvailable && configuration.offline) {
 }
 // /// endregion
 // /// region opens browser automatically
-if (configuration.development.browser && (htmlAvailable && [
+if (configuration.development.openBrowser && (htmlAvailable && [
     'serve', 'testInBrowser'
 ].includes(configuration.givenCommandLineArguments[2])))
-    pluginInstances.push(new plugins.Browser(
-        configuration.development.browser))
+    pluginInstances.push(new plugins.OpenBrowser(
+        configuration.development.openBrowser))
 // /// endregion
 // /// region provide build environment
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))

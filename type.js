@@ -159,7 +159,10 @@ export type ResolvedConfiguration = {
                 svg:PlainObject
             };
             htmlMinifier:PlainObject;
-            image:{file:PlainObject};
+            image:{
+                content:PlainObject;
+                file:PlainObject
+            };
             uglifyJS:PlainObject
         };
         preprocessor:{
