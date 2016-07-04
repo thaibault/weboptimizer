@@ -510,7 +510,7 @@
                 }]},
                 "inPlace": {"externalLibrary": true},
                 "injection": {"internal": {
-                    "vendor": "qunitjs", "index": "test/"
+                    "vendor": ["jquery", "qunitjs"], "index": "test/"
                 }},
                 "module": {"optimizer": {"uglifyJS": null}},
                 "offline": null
@@ -614,7 +614,7 @@
             "test": {"injection": {"internal": "test"}},
 
             "testInBrowser": {"injection": {"internal": {
-                "vendor": "qunitjs", "index": "test"
+                "vendor": ["jquery", "qunitjs"], "index": "test"
             }}}
         }
     },
