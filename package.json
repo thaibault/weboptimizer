@@ -442,8 +442,7 @@
                         },
                         "--colors",
                         "--compress",
-                        "--history-api-fallback",
-                        "--inline", "--hot"
+                        "--history-api-fallback"
                     ]
                 },
                 "test": {"command": "./testBundle.compiled.js"},
@@ -511,7 +510,11 @@
                 }]},
                 "inPlace": {"externalLibrary": true},
                 "injection": {"internal": {
-                    "vendor": ["jquery", "qunitjs"], "index": "test/"
+                    "developmentModules": {
+                        "__evaluate__": "(self.debug) ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : []"
+                    },
+                    "index": "test/",
+                    "vendor": ["jquery", "qunitjs"]
                 }},
                 "module": {"optimizer": {"uglifyJS": null}},
                 "offline": null
