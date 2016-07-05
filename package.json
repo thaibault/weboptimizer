@@ -513,7 +513,7 @@
                     "developmentHelper": {
                         "__evaluate__": "(self.debug) ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : []"
                     },
-                    "index": {"__evaluate__": "['test/'].concat(self.injection.internal.developmentHelper)"},
+                    "index": {"__evaluate__": "['test/'].concat(self.testInBrowser.injection.internal.developmentHelper)"},
                     "vendor": ["jquery", "qunitjs"]
                 }},
                 "module": {"optimizer": {"uglifyJS": null}},
@@ -624,7 +624,7 @@
             "testInBrowser": {"injection": {"internal": {
                 "vendor": ["jquery", "qunitjs"],
                 "index": {
-                    "__evaluate__": "['test'].concat(self.injection.internal.developmentHelper)"
+                    "__evaluate__": "['test'].concat(self.testInBrowser.injection.internal.developmentHelper)"
                 }
             }}}
         }
