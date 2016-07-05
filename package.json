@@ -510,11 +510,15 @@
                 }]},
                 "inPlace": {"externalLibrary": true},
                 "injection": {"internal": {
+                    "vendor": {
+                        "__evaluate__": "['jquery', 'qunitjs'].concat(self.testInBrowser.injection.internal.developmentHelper)"
+                    },
                     "developmentHelper": {
                         "__evaluate__": "(self.debug) ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : []"
                     },
-                    "index": {"__evaluate__": "['test/'].concat(self.testInBrowser.injection.internal.developmentHelper)"},
-                    "vendor": ["jquery", "qunitjs"]
+                    "index": {
+                        "__evaluate__": "['test/'].concat(self.testInBrowser.injection.internal.developmentHelper)"
+                    }
                 }},
                 "module": {"optimizer": {"uglifyJS": null}},
                 "offline": null
@@ -622,7 +626,9 @@
             "test": {"injection": {"internal": "test"}},
 
             "testInBrowser": {"injection": {"internal": {
-                "vendor": ["jquery", "qunitjs"],
+                "vendor": {
+                    "__evaluate__": "['jquery', 'qunitjs'].concat(self.testInBrowser.injection.internal.developmentHelper)"
+                },
                 "index": {
                     "__evaluate__": "['test'].concat(self.testInBrowser.injection.internal.developmentHelper)"
                 }
