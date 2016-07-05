@@ -404,10 +404,18 @@ export default class Helper {
             /* eslint-disable curly */
             if (typeof injection[type] === 'object') {
                 for (const chunkName:string in injection[type])
-                    if (injection[type][chunkName] === '__auto__')
-                        injection[type][chunkName] = Helper.getAutoChunk(
+                    if (injection[type][chunkName] === '__auto__') {
+                        injection[type][chunkName] = []
+                        const modules:{
+                            [key:string]:string
+                        } = Helper.getAutoChunk(
                             buildConfigurations, moduleFilePathsToExclude,
                             context)
+                        for (const chunkName:string in modules)
+                            if (modules.hasOwnProperty(chunkName))
+                                injection[type][chunkName].push(
+                                    modules[chunkName])
+                    }
             } else if (injection[type] === '__auto__')
             /* eslint-enable curly */
                 injection[type] = Helper.getAutoChunk(

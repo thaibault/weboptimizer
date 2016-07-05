@@ -180,7 +180,7 @@ qunit.test('handleChildProcess', ():void => {
 })
 qunit.test('walkDirectoryRecursivelySync', ():void => {
     const filePaths:Array<string> = []
-    const callback:TraverseFilesCallbackFunction = (filePath:string):void => {
+    const callback:TraverseFilesCallbackFunction = (filePath:string):false => {
         filePaths.push(filePath)
         return false
     }
@@ -324,7 +324,7 @@ qunit.test('resolveInjection', ():void => {
             buildConfiguration, './', './', ['.git', 'node_modules']
         ), [], {}, [], './', ['.git', 'node_modules']
     ), {
-        internal: {index: {}}, external: [], commonChunkIDs: [],
+        internal: {index: []}, external: [], commonChunkIDs: [],
         dllChunkIDs: []
     })
 })

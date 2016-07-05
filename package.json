@@ -374,7 +374,7 @@
             "target": "web",
 
             "assetPattern": {"javaScript": {
-                "excludeFilePathRegularExpression": "^(?:.*/)?(?:developmentHelper|vendor).js$",
+                "excludeFilePathRegularExpression": "^(?:.*/)?(?:developmentHelper|vendor)(?:\\.compiled)?\\.js$",
                 "pattern": "'use strict';\n{1}"
             }},
             "build": {

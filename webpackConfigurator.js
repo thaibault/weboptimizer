@@ -378,8 +378,6 @@ if (injection.external === '__implicit__')
                     browser api into a real browser.
                 */
                 return callback()
-            const normalizedInternalInjection:NormalizedInternalInjection =
-                Helper.normalizeInternalInjection(injection.internal)
             for (const chunkName:string in normalizedInternalInjection)
                 if (normalizedInternalInjection.hasOwnProperty(chunkName))
                     for (
