@@ -370,7 +370,7 @@ if (injection.external === '__implicit__')
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
             if (request.match(
-                /^webOptimizer\/browserAPI(?:.compiled)(?:.js)?/
+                /^webOptimizer\/browserAPI(?:\.compiled)?(?:\.js)?/
             ))
                 /*
                     NOTE: The browser api needs processing since there exists
