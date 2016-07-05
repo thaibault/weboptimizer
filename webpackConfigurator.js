@@ -524,6 +524,167 @@ const loader:{
 }
 // / endregion
 // endregion
+console.log({
+    context: configuration.path.context,
+    debug: configuration.debug,
+    devtool: configuration.development.tool,
+    devserver: configuration.development.server,
+    // region input
+    entry: normalizedInternalInjection, externals: injection.external,
+    resolveLoader: configuration.loader,
+    resolve: {
+        alias: configuration.module.aliases,
+        extensions: configuration.knownExtensions,
+        root: [(configuration.path.asset.source: string)]
+    },
+    // endregion
+    // region output
+    output: {
+        filename: configuration.files.javaScript,
+        hashFunction: configuration.hashAlgorithm,
+        library: libraryName,
+        libraryTarget: (
+            configuration.givenCommandLineArguments[2] === 'buildDLL'
+        ) ? 'var' : configuration.exportFormat,
+        path: configuration.path.asset.target,
+        // publicPath: configuration.path.asset.publicTarget,
+        pathinfo: configuration.debug,
+        umdNamedDefine: true
+    },
+    target: configuration.target,
+    // endregion
+    module: {
+        noParse: configuration.module.skipParseRegularExpression,
+        preLoaders: [
+            // Convert to native web types.
+            // region script
+            {
+                test: /\.js$/,
+                loader: loader.preprocessor.babel,
+                include: [path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.javaScript
+                )].concat(moduleLocations.directoryPaths),
+                exclude: (filePath:string):boolean =>
+                    Helper.isFilePathInLocation(
+                        filePath, configuration.path.ignore)
+            }, {
+                test: /\.coffee$/,
+                loader: loader.preprocessor.coffee,
+                include: [path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.coffeeScript
+                )].concat(moduleLocations.directoryPaths)
+            }, {
+                test: /\.(?:coffee\.md|litcoffee)$/,
+                loader: loader.preprocessor.literateCoffee,
+                include: [path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.coffeeScript
+                )].concat(moduleLocations.directoryPaths)
+            },
+            // endregion
+            // region html (templates)
+            {
+                test: /\.pug$/,
+                loader:
+                    `file?name=${configuration.path.asset.template}` +
+                    `[name].html?${configuration.hashAlgorithm}=[hash]!` +
+                    `extract!${loader.html}!${loader.preprocessor.pug}`,
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.template),
+                exclude: configuration.files.html.map((
+                    htmlConfiguration:HTMLConfiguration
+                ):string => htmlConfiguration.template.substring(
+                    htmlConfiguration.template.lastIndexOf('!') + 1))
+            }
+            // endregion
+        ],
+        loaders: [
+            // Loads dependencies.
+            // region style
+            {
+                test: /\.less$/,
+                loader: plugins.extractText.extract(
+                    loader.style,
+                    `${loader.cascadingStyleSheet}!${loader.preprocessor.less}`
+                )
+            }, {
+                test: /\.sass$/,
+                loader: plugins.extractText.extract(
+                    loader.style,
+                    `${loader.cascadingStyleSheet}!${loader.preprocessor.sass}`
+                )
+            }, {
+                test: /\.scss$/,
+                loader: plugins.extractText.extract(
+                    loader.style,
+                    `${loader.cascadingStyleSheet}!${loader.preprocessor.scss}`
+                )
+            }, {
+                test: /\.css$/,
+                loader: plugins.extractText.extract(
+                    loader.style, loader.cascadingStyleSheet)
+            },
+            // endregion
+            // region html (templates)
+            {
+                test: /\.html$/,
+                loader:
+                    `file?name=${configuration.path.asset.template}` +
+                    `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
+                    `extract!${loader.html}`,
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.template),
+                exclude: configuration.files.html.map((
+                    htmlConfiguration:HTMLConfiguration
+                ):string => htmlConfiguration.template.substring(
+                    htmlConfiguration.template.lastIndexOf('!') + 1))
+            }
+            // endregion
+        ],
+        postLoaders: [
+            // Optimize loaded assets.
+            // region font
+            {
+                test: /\.eot(?:\?v=\d+\.\d+\.\d+)?$/,
+                loader: loader.postprocessor.font.eot
+            }, {test: /\.woff2?$/, loader: loader.postprocessor.font.woff}, {
+                test: /\.ttf(?:\?v=\d+\.\d+\.\d+)?$/,
+                loader: loader.postprocessor.font.ttf
+            }, {
+                test: /\.svg(?:\?v=\d+\.\d+\.\d+)?$/,
+                loader: loader.postprocessor.font.svg
+            },
+            // endregion
+            // region image
+            {
+                test: /\.(?:png|jpg|ico|gif)$/,
+                loader: loader.postprocessor.image
+            },
+            // endregion
+            // region data
+            {
+                test: /.+/,
+                loader: loader.postprocessor.data,
+                include: path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.data),
+                exclude: (filePath:string):boolean =>
+                    configuration.knownExtensions.includes(
+                        path.extname(filePath))
+            }
+            // endregion
+        ]
+    },
+    html: configuration.module.optimizer.htmlMinifier,
+    plugins: pluginInstances,
+    // Let the "html-loader" access full html minifier processing
+    // configuration.
+    pug: configuration.module.preprocessor.pug
+})
 // region configuration
 export default {
     context: configuration.path.context,
