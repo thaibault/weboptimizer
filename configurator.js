@@ -160,10 +160,9 @@ for (const type:string in resolvedConfiguration.build)
     NOTE: Provides a workaround to handle a bug with changed loader
     configurations.
 */
-let index:number = 0
 for (
     const htmlConguration:HTMLConfiguration of resolvedConfiguration.files.html
-) {
+)
     if (
         typeof htmlConguration.template === 'string' &&
         htmlConguration.template.includes('!')
@@ -176,8 +175,6 @@ for (
         ):string => string)(htmlConguration.template)
         htmlConguration.template = newTemplateString
     }
-    index += 1
-}
 // endregion
 export default resolvedConfiguration
 // region vim modline
