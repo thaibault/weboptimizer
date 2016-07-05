@@ -182,9 +182,9 @@ qunit.test('walkDirectoryRecursivelySync', ():void => {
     const filePaths:Array<string> = []
     const callback:TraverseFilesCallbackFunction = (filePath:string):void => {
         filePaths.push(filePath)
+        return false
     }
     Helper.walkDirectoryRecursivelySync('./', callback)
-
     qunit.ok(filePaths.length > 0)
 })
 qunit.test('determineAssetType', ():void => {
@@ -226,7 +226,7 @@ qunit.test('determineAssetType', ():void => {
 qunit.test('resolveBuildConfigurationFilePaths', ():void => {
     qunit.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
     qunit.deepEqual(Helper.resolveBuildConfigurationFilePaths(
-        buildConfiguration
+        buildConfiguration, './', './', ['.git', 'node_modules']
     ), [
         {
             extension: 'js',
@@ -292,22 +292,49 @@ qunit.test('normalizeInternalInjection', ():void => {
 qunit.test('resolveInjection', ():void => {
     qunit.deepEqual(Helper.resolveInjection(
         {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []},
-        Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
+        Helper.resolveBuildConfigurationFilePaths(
+            buildConfiguration, './', './', ['.git', 'node_modules']
+        ), [], {}, [], './', ['.git', 'node_modules']
     ), {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []})
     qunit.deepEqual(Helper.resolveInjection(
         {internal: 'a.js', external: [], commonChunkIDs: [], dllChunkIDs: []},
-        Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
+        Helper.resolveBuildConfigurationFilePaths(
+            buildConfiguration, './', './', ['.git', 'node_modules']
+        ), [], {}, [], './', ['.git', 'node_modules']
     ), {internal: 'a.js', external: [], commonChunkIDs: [], dllChunkIDs: []})
     qunit.deepEqual(Helper.resolveInjection(
         {internal: ['a'], external: [], commonChunkIDs: [], dllChunkIDs: []},
-        Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
+        Helper.resolveBuildConfigurationFilePaths(
+            buildConfiguration, './', './', ['.git', 'node_modules']
+        ), [], {}, [], './', ['.git', 'node_modules']
     ), {internal: ['a'], external: [], commonChunkIDs: [], dllChunkIDs: []})
     qunit.deepEqual(Helper.resolveInjection(
         {
             internal: '__auto__', external: [], commonChunkIDs: [],
             dllChunkIDs: []
-        }, Helper.resolveBuildConfigurationFilePaths(buildConfiguration), []
+        }, Helper.resolveBuildConfigurationFilePaths(
+            buildConfiguration, './', './', ['.git', 'node_modules']
+        ), [], {}, [], './', ['.git', 'node_modules']
     ), {internal: {}, external: [], commonChunkIDs: [], dllChunkIDs: []})
+    qunit.deepEqual(Helper.resolveInjection(
+        {
+            internal: {index: '__auto__'}, external: [], commonChunkIDs: [],
+            dllChunkIDs: []
+        }, Helper.resolveBuildConfigurationFilePaths(
+            buildConfiguration, './', './', ['.git', 'node_modules']
+        ), [], {}, [], './', ['.git', 'node_modules']
+    ), {
+        internal: {index: {}}, external: [], commonChunkIDs: [],
+        dllChunkIDs: []
+    })
+})
+qunit.test('getAutoChunk', ():void => {
+    qunit.deepEqual(Helper.getAutoChunk(
+        Helper.resolveBuildConfigurationFilePaths(
+            buildConfiguration, './', './', ['.git', 'node_modules']), [
+                '.git', 'node_modules'
+            ], './'
+    ), {})
 })
 qunit.test('addDynamicGetterAndSetter', ():void => {
     qunit.strictEqual(Helper.addDynamicGetterAndSetter(null), null)

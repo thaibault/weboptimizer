@@ -581,7 +581,7 @@
                     "__evaluate__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
-            "injection": {"internal": "__auto__"},
+            "injection": {"internal": {"index": "__auto__"}},
             "inPlace": {
                 "cascadingStyleSheet": false, "javaScript": false,
                 "otherMaximumFileSizeLimitInByte": 1,

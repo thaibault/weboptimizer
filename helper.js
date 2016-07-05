@@ -401,57 +401,74 @@ export default class Helper {
                 pathsToIgnore
             ).filePaths
         for (const type:string of ['internal', 'external'])
-            if (givenInjection[type] === '__auto__') {
-                injection[type] = {}
-                const injectedBaseNames:{[key:string]:Array<string>} = {}
-                for (
-                    const buildConfiguration:ResolvedBuildConfigurationItem of
-                    buildConfigurations
-                ) {
-                    if (!injectedBaseNames[buildConfiguration.outputExtension])
+            /* eslint-disable curly */
+            if (typeof injection[type] === 'object') {
+                for (const chunkName:string in injection[type])
+                    if (injection[type][chunkName] === '__auto__')
+                        injection[type][chunkName] = Helper.getAutoChunk(
+                            buildConfigurations, moduleFilePathsToExclude,
+                            context)
+            } else if (injection[type] === '__auto__')
+            /* eslint-enable curly */
+                injection[type] = Helper.getAutoChunk(
+                    buildConfigurations, moduleFilePathsToExclude, context)
+        return injection
+    }
+    /**
+     * Determines all module file paths.
+     * @param buildConfigurations - Resolved build configuration.
+     * @param moduleFilePathsToExclude - A list of modules file paths to
+     * exclude (specified by path or id) or a mapping from chunk names to
+     * module ids.
+     * @param context - File path to use as starting point.
+     * @returns All determined module file paths.
+     */
+    static getAutoChunk(
+        buildConfigurations:ResolvedBuildConfiguration,
+        moduleFilePathsToExclude:Array<string>, context:string
+    ):{[key:string]:string} {
+        const result:{[key:string]:string} = {}
+        const injectedBaseNames:{[key:string]:Array<string>} = {}
+        for (
+            const buildConfiguration:ResolvedBuildConfigurationItem of
+            buildConfigurations
+        ) {
+            if (!injectedBaseNames[buildConfiguration.outputExtension])
+                injectedBaseNames[
+                    buildConfiguration.outputExtension
+                ] = []
+            for (const moduleFilePath:string of buildConfiguration.filePaths)
+                if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
+                    const baseName:string = path.basename(
+                        moduleFilePath, `.${buildConfiguration.extension}`)
+                    /*
+                        Ensure that each output type has only one source
+                        representation.
+                    */
+                    if (!injectedBaseNames[
+                        buildConfiguration.outputExtension
+                    ].includes(baseName)) {
+                        /*
+                            Ensure that if same basenames and different output
+                            types can be distinguished by their extension
+                            (JavaScript-Modules remains without extension since
+                            they will be handled first because the build
+                            configurations are expected to be sorted in this
+                            context).
+                        */
+                        if (result[baseName])
+                            result[path.relative(
+                                context, moduleFilePath
+                            )] = moduleFilePath
+                        else
+                            result[baseName] = moduleFilePath
                         injectedBaseNames[
                             buildConfiguration.outputExtension
-                        ] = []
-                    for (
-                        const moduleFilePath:string of
-                        buildConfiguration.filePaths
-                    )
-                        if (!moduleFilePathsToExclude.includes(
-                            moduleFilePath
-                        )) {
-                            const baseName:string = path.basename(
-                                moduleFilePath,
-                                `.${buildConfiguration.extension}`)
-                            /*
-                                Ensure that each output type has only one
-                                source representation.
-                            */
-                            if (!injectedBaseNames[
-                                buildConfiguration.outputExtension
-                            ].includes(baseName)) {
-                                /*
-                                    Ensure that if same basenames and different
-                                    output types can be distinguished by their
-                                    extension (JavaScript-Modules remains
-                                    without extension since they will be
-                                    handled first because the build
-                                    configurations are expected to be sorted in
-                                    this context).
-                                */
-                                if (injection[type][baseName])
-                                    injection[type][path.relative(
-                                        context, moduleFilePath
-                                    )] = moduleFilePath
-                                else
-                                    injection[type][baseName] = moduleFilePath
-                                injectedBaseNames[
-                                    buildConfiguration.outputExtension
-                                ].push(baseName)
-                            }
-                        }
+                        ].push(baseName)
+                    }
                 }
-            }
-        return injection
+        }
+        return result
     }
     /**
      * Adds dynamic getter and setter to any given data structure such as maps.
