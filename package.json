@@ -138,7 +138,9 @@
             },
             "injection": {
                 "external": "__implicit__",
-                "internal": [],
+                "internal": {"developmentHelper": {
+                    "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2]) ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : []"
+                }},
                 "commonChunkIDs": ["vendor"],
                 "dllChunkIDs": ["vendor", "developmentHelper"]
             },
@@ -511,9 +513,6 @@
                 "inPlace": {"externalLibrary": true},
                 "injection": {"internal": {
                     "vendor": ["jquery", "qunitjs"],
-                    "developmentHelper": {
-                        "__evaluate__": "(self.debug) ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : []"
-                    },
                     "index": ["test/"]
                 }},
                 "module": {"optimizer": {"uglifyJS": null}},
