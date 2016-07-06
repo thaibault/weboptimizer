@@ -66,13 +66,14 @@ if (debug)
         true, metaConfiguration.default, metaConfiguration.debug)
 else
     configuration = metaConfiguration.default
+if (typeof configuration.library === 'object')
+    Helper.extendObject(libraryConfiguration, configuration.library)
 if (
     specificConfiguration.library === true ||
     specificConfiguration.library === undefined && configuration.library
 )
     configuration = Helper.extendObject(
         true, configuration, libraryConfiguration)
-console.log(configuration.injection.internal)
 // endregion
 // region merging and evaluating default, test, dynamic and specific settings
 // Merges project specific configurations with default ones.
