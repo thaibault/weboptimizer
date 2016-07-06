@@ -565,8 +565,9 @@ export default {
                     configuration.path.asset.javaScript
                 )].concat(moduleLocations.directoryPaths),
                 exclude: (filePath:string):boolean =>
-                    Helper.isFilePathInLocation(
-                        filePath, configuration.path.ignore)
+                    Helper.isFilePathInLocation(filePath.replace(
+                        /^(.+)(?:\?[^?])$/, '$1'
+                    ), configuration.path.ignore)
             }, {
                 test: /\.coffee$/,
                 loader: loader.preprocessor.coffee,
@@ -673,7 +674,8 @@ export default {
                     configuration.path.asset.data),
                 exclude: (filePath:string):boolean =>
                     configuration.knownExtensions.includes(
-                        path.extname(filePath))
+                        path.extname(filePath.replace(
+                            /^(.+)(?:\?[^?])$/, '$1')))
             }
             // endregion
         ]
