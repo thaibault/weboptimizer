@@ -319,8 +319,7 @@ for (const chunkID:string of configuration.injection.commonChunkIDs)
         pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
             async: false,
             children: false,
-            filename: `${configuration.path.asset.javaScript}[name].js?` +
-                `${configuration.hashAlgorithm}=[hash]`,
+            filename: configuration.files.javaScript,
             minChunks: Infinity,
             name: chunkID,
             minSize: 0
