@@ -590,7 +590,9 @@
             "inPlace": {
                 "cascadingStyleSheet": false, "javaScript": false,
                 "otherMaximumFileSizeLimitInByte": 1,
-                "externalLibrary": false
+                "externalLibrary": {
+                    "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL'"
+                }
             },
             "path": {
                 "source": "./", "target": "./",
