@@ -518,9 +518,9 @@
         "debug": {
             "debug": true,
 
-            "injection": {"developmentHelper": {
+            "injection": {"internal": {"developmentHelper": {
                 "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : []"
-            }},
+            }}},
             "files": {
                 "html": [{"debug": true}],
                 "javaScript": {
@@ -565,11 +565,15 @@
                 "tool": "#eval-cheap-module-source-map"
             },
 
+            "library": {"injection": {"internal": {"vendor": {
+                "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['jquery', 'qunitjs'] : []"
+            }}}},
+
             "testInBrowser": {
                 "development": {"openBrowser": {"url": {
                     "__evaluate__": "((sourceFilePath) => `${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}?notrycatch&noglobals`)(self.files.html[0].template)"
                 }}},
-                "injection": {"vendor": ["jquery", "qunitjs"]}
+                "injection": {"internal": {"vendor": ["jquery", "qunitjs"]}}
             }
         },
 
@@ -582,12 +586,7 @@
                     "__evaluate__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
-            "injection": {"internal": {
-                "vendor": {
-                    "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['jquery', 'qunitjs'] : []"
-                },
-                "index": "__auto__"
-            }},
+            "injection": {"internal": {"index": "__auto__"}},
             "inPlace": {
                 "cascadingStyleSheet": false, "javaScript": false,
                 "otherMaximumFileSizeLimitInByte": 1,

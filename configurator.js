@@ -72,6 +72,7 @@ if (
 )
     configuration = Helper.extendObject(
         true, configuration, libraryConfiguration)
+console.log(configuration.injection.internal)
 // endregion
 // region merging and evaluating default, test, dynamic and specific settings
 // Merges project specific configurations with default ones.
