@@ -67,7 +67,7 @@ if (debug)
 else
     configuration = metaConfiguration.default
 if (typeof configuration.library === 'object')
-    Helper.extendObject(libraryConfiguration, configuration.library)
+    Helper.extendObject(true, libraryConfiguration, configuration.library)
 if (
     specificConfiguration.library === true ||
     specificConfiguration.library === undefined && configuration.library

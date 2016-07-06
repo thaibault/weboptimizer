@@ -411,10 +411,10 @@ export default class Helper {
                         } = Helper.getAutoChunk(
                             buildConfigurations, moduleFilePathsToExclude,
                             context)
-                        for (const chunkName:string in modules)
-                            if (modules.hasOwnProperty(chunkName))
+                        for (const subChunkName:string in modules)
+                            if (modules.hasOwnProperty(subChunkName))
                                 injection[type][chunkName].push(
-                                    modules[chunkName])
+                                    modules[subChunkName])
                     }
             } else if (injection[type] === '__auto__')
             /* eslint-enable curly */
