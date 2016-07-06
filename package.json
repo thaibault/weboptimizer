@@ -139,7 +139,7 @@
             "injection": {
                 "external": "__implicit__",
                 "internal": {"developmentHelper": {
-                    "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2]) ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : []"
+                    "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : []"
                 }},
                 "commonChunkIDs": ["vendor"],
                 "dllChunkIDs": ["vendor", "developmentHelper"]
@@ -581,7 +581,12 @@
                     "__evaluate__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
-            "injection": {"internal": {"index": "__auto__"}},
+            "injection": {"internal": {
+                "vendor": {
+                    "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['jquery', 'qunitjs'] : []"
+                },
+                "index": "__auto__"
+            }},
             "inPlace": {
                 "cascadingStyleSheet": false, "javaScript": false,
                 "otherMaximumFileSizeLimitInByte": 1,
@@ -620,10 +625,7 @@
 
             "test": {"injection": {"internal": "test"}},
 
-            "testInBrowser": {"injection": {"internal": {
-                "vendor": ["jquery", "qunitjs"],
-                "index": ["test"]
-            }}}
+            "testInBrowser": {"injection": {"internal": {"index": "test"}}}
         }
     },
     "eslintConfig": {
