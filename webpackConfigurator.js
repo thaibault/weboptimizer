@@ -566,7 +566,7 @@ export default {
                 )].concat(moduleLocations.directoryPaths),
                 exclude: (filePath:string):boolean =>
                     Helper.isFilePathInLocation(filePath.replace(
-                        /^(.+)(?:\?[^?])$/, '$1'
+                        /^(.+)(?:\?[^?]*)$/, '$1'
                     ), configuration.path.ignore)
             }, {
                 test: /\.coffee$/,
@@ -675,7 +675,7 @@ export default {
                 exclude: (filePath:string):boolean =>
                     configuration.knownExtensions.includes(
                         path.extname(filePath.replace(
-                            /^(.+)(?:\?[^?])$/, '$1')))
+                            /^(.+)(?:\?[^?]*)$/, '$1')))
             }
             // endregion
         ]
