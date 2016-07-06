@@ -100,10 +100,11 @@ if (configuration.givenCommandLineArguments.length > 2) {
         NOTE: A build could depend on previously created dll packages so a
         clean should not be performed automatically.
     */
-    if (
-        configuration.givenCommandLineArguments[2] !== 'build' &&
-        possibleArguments.includes(configuration.givenCommandLineArguments[2])
-    ) {
+    if (!['serve', 'build', 'testInBrowser'].includes(
+        configuration.givenCommandLineArguments[2]
+    ) && possibleArguments.includes(
+        configuration.givenCommandLineArguments[2]
+    )) {
         if (path.resolve(configuration.path.target) === path.resolve(
             configuration.path.context
         )) {
