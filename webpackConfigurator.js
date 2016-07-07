@@ -442,9 +442,7 @@ if (htmlAvailable)
                             `script[src*="?${configuration.hashAlgorithm}="]`))
                         domNode.setAttribute('src', domNode.getAttribute(
                             'src'
-                        ).replace(new RegExp(
-                            `(\\?${configuration.hashAlgorithm}=[^&]+).*$`
-                        ), '$1'))
+                        ).replace(/&amp;/g, '&')
                     compilation.assets[configuration.files.html[
                         0
                     ].filename] = new WebpackRawSource(
