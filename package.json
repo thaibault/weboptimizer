@@ -566,14 +566,16 @@
             },
 
             "library": {"injection": {"internal": {"vendor": {
-                "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['jquery', 'qunitjs'] : []"
+                "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['jquery', 'qunitjs', 'webOptimizer/browserAPI'] : []"
             }}}},
 
             "testInBrowser": {
                 "development": {"openBrowser": {"url": {
                     "__evaluate__": "((sourceFilePath) => `${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}?notrycatch&noglobals`)(self.files.html[0].template)"
                 }}},
-                "injection": {"internal": {"vendor": ["jquery", "qunitjs"]}}
+                "injection": {"internal": {"vendor": [
+                    "jquery", "qunitjs", "webOptimizer/browserAPI"
+                ]}}
             }
         },
 
@@ -628,7 +630,7 @@
             "test": {"injection": {"internal": "test"}},
 
             "testInBrowser": {"injection": {"internal": {"index": {
-                "__evaluate__": "['test'].concat(self.debug && 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'testInBrowser' ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` ; [])"
+                "__evaluate__": "['test'].concat(self.debug && 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'testInBrowser' ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` : [])"
             }}}}
         }
     },
