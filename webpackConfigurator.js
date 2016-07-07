@@ -436,14 +436,22 @@ if (htmlAvailable)
                 dom.env(compilation.assets[configuration.files.html[
                     0
                 ].filename].source(), (error:?Error, window:Object):void => {
-                    for (
-                        const domNode:DomNode of
-                        window.document.querySelectorAll(
-                            `script[src*="?${configuration.hashAlgorithm}="]`)
-                    )
-                        domNode.setAttribute('src', domNode.getAttribute(
-                            'src'
-                        ).replace(/&amp;/g, '&'))
+                    const linkables:{[key:string]:string} = {
+                        script: 'src', link: 'href'}
+                    for (const tagName:string in linkables)
+                        for (
+                            const domNode:DomNode of
+                            window.document.querySelectorAll(
+                                `${tagName}[${linkables[tagName]}*="?` +
+                                `${configuration.hashAlgorithm}="]`)
+                        )
+                            domNode.setAttribute(
+                                linkables[tagName], domNode.getAttribute(
+                                    linkables[tagName]
+                                ).replace(new RegExp(
+                                    `(\\?${configuration.hashAlgorithm}=` +
+                                    '[^&]+).*$'
+                                ), '$1'))
                     compilation.assets[configuration.files.html[
                         0
                     ].filename] = new WebpackRawSource(

@@ -627,7 +627,9 @@
 
             "test": {"injection": {"internal": "test"}},
 
-            "testInBrowser": {"injection": {"internal": {"index": "test"}}}
+            "testInBrowser": {"injection": {"internal": {"index": {
+                "__evaluate__": "['test'].concat(self.debug && 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'testInBrowser' ? `webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}` ; [])"
+            }}}}
         }
     },
     "eslintConfig": {
