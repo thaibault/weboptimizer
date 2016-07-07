@@ -439,10 +439,11 @@ if (htmlAvailable)
                     for (
                         const domNode:DomNode of
                         window.document.querySelectorAll(
-                            `script[src*="?${configuration.hashAlgorithm}="]`))
+                            `script[src*="?${configuration.hashAlgorithm}="]`)
+                    )
                         domNode.setAttribute('src', domNode.getAttribute(
                             'src'
-                        ).replace(/&amp;/g, '&')
+                        ).replace(/&amp;/g, '&'))
                     compilation.assets[configuration.files.html[
                         0
                     ].filename] = new WebpackRawSource(
