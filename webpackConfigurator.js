@@ -288,34 +288,31 @@ const normalizedInternalInjection:NormalizedInternalInjection =
 // //// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string in normalizedInternalInjection)
-        if (normalizedInternalInjection.hasOwnProperty(chunkID))
+        if (
+            normalizedInternalInjection.hasOwnProperty(chunkID) &&
+            configuration.dllManifestFilePaths.includes(
+                `${configuration.path.target}${chunkID}.dll-manifest.json`)
+        )
+            let sourceMapExists:boolean = false
+            // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and
+            // everywhere else
+            const fileName:string = configuration.files.javaScript.replace(
+                /^(.+)(?:\?[^?]*)$/, '$1'
+            ).replace(/\[name\]/g, chunkID)
             try {
                 fileSystem.accessSync(
-                    `${configuration.path.target}${chunkID}.dll-manifest.json`,
+                    `${configuration.path.target}${fileName}.map`,
                     fileSystem.F_OK)
-                delete normalizedInternalInjection[chunkID]
-                let sourceMapExists:boolean = false
-                // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and everywhere else
-                const fileName:string = configuration.files.javaScript.replace(
-                    /^(.+)(?:\?[^?]*)$/, '$1'
-                ).replace(/\[name\]/g, chunkID)
-                try {
-                    fileSystem.accessSync(
-                        `${configuration.path.target}${fileName}.map`,
-                        fileSystem.F_OK)
-                    sourceMapExists = true
-                } catch (error) {}
-                pluginInstances.push(new plugins.AddAssetHtmlPlugin({
-                    filename: `${configuration.path.target}${fileName}`,
-                    includeSourcemap: sourceMapExists
-                }))
-                pluginInstances.push(new webpack.DllReferencePlugin({
-                    context: configuration.path.context,
-                    manifest: require(
-                        `${configuration.path.target}${chunkID}.` +
-                        'dll-manifest.json')
-                }))
+                sourceMapExists = true
             } catch (error) {}
+            pluginInstances.push(new plugins.AddAssetHtmlPlugin({
+                filename: `${configuration.path.target}${fileName}`,
+                includeSourcemap: sourceMapExists
+            }))
+            pluginInstances.push(new webpack.DllReferencePlugin({
+                context: configuration.path.context, manifest: require(
+                    `${configuration.path.target}${chunkID}.dll-manifest.json`)
+            }))
 // //// endregion
 // //// region generate common chunks
 for (const chunkID:string of configuration.injection.commonChunkIDs)

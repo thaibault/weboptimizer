@@ -124,6 +124,7 @@ export type Command = {
 export type ResolvedConfiguration = {
     name:string;
     givenCommandLineArguments:Array<string>;
+    dllManifestFilePaths:Array<string>;
 
     debug:boolean;
     library:boolean;

@@ -142,6 +142,12 @@ for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
                     pathConfiguration[key], configuration)
             ) + '/'
 // / endregion
+configuration.dllManifestFilePaths = []
+fileSystem.readdirSync(directoryPath).forEach((fileName:string):void => {
+    if (fileName.match(/^.*\.dll-manifest\.json$/))
+        configuration.dllManifestFilePaths.push(path.resolve(
+            directoryPath, fileName))
+})
 const resolvedConfiguration:ResolvedConfiguration =
     Helper.resolveDynamicDataStructure(configuration)
 // endregion
