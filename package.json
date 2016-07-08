@@ -133,7 +133,7 @@
                     }
                 }],
                 "javaScript": {
-                    "__evaluate__": "`${self.path.asset.javaScript}index.js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${self.path.asset.javaScript}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "injection": {

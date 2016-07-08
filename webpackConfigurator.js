@@ -316,16 +316,17 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
         }
 // //// endregion
 // //// region generate common chunks
-for (const chunkID:string of configuration.injection.commonChunkIDs)
-    if (normalizedInternalInjection.hasOwnProperty(chunkID))
-        pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
-            async: false,
-            children: false,
-            filename: configuration.files.javaScript,
-            minChunks: Infinity,
-            name: chunkID,
-            minSize: 0
-        }))
+if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
+    for (const chunkID:string of configuration.injection.commonChunkIDs)
+        if (normalizedInternalInjection.hasOwnProperty(chunkID))
+            pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
+                async: false,
+                children: false,
+                filename: configuration.files.javaScript,
+                minChunks: Infinity,
+                name: chunkID,
+                minSize: 0
+            }))
 // //// endregion
 // //// region mark empty javaScript modules as dummy
 for (const chunkName:string in normalizedInternalInjection)
