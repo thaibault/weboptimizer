@@ -223,7 +223,7 @@ export type OnDomContentLoadedListenerFunction = (window:Window) => void
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean
-export type PromiseCallbackFunction = (reason:any) => ?Promise
+export type PromiseCallbackFunction = (reason:any) => ?Promise<any>
 // / endregion
 // endregion
 // region vim modline

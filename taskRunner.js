@@ -40,7 +40,7 @@ const childProcessOptions:Object = {
     stdio: 'inherit'
 }
 const childProcesses:Array<ChildProcess> = []
-const processPromises:Array<Promise> = []
+const processPromises:Array<Promise<any>> = []
 const possibleArguments:Array<string> = [
     'build', 'buildDLL', 'clear', 'document', 'lint', 'preinstall', 'test',
     'testInBrowser', 'typeCheck'
