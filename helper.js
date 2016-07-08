@@ -604,11 +604,19 @@ export default class Helper {
                         'self', 'webOptimizerPath', 'currentPath', 'path',
                         `${key === evaluationIndicatorKey ? 'return' : ''} ` +
                         object[key])
-                    return Helper.resolveDynamicDataStructure(
-                        evaluationFunction(
-                            configuration, __dirname, process.cwd(), path
-                        ), configuration, false, evaluationIndicatorKey,
-                        executionIndicatorKey)
+                    try {
+                        return Helper.resolveDynamicDataStructure(
+                            evaluationFunction(
+                                configuration, __dirname, process.cwd(), path
+                            ), configuration, false, evaluationIndicatorKey,
+                            executionIndicatorKey)
+                    } catch (error) {
+                        throw Error(
+                            'Error during ' + (
+                                key === evaluationIndicatorKey ? 'executing' :
+                                'evaluating'
+                            ) + ` "${object[key]}": ` + error)
+                    }
                 } else if (deep)
                     object[key] = Helper.resolveDynamicDataStructure(
                         object[key], configuration, deep,

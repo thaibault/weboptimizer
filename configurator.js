@@ -75,6 +75,16 @@ if (
     configuration = Helper.extendObject(
         true, configuration, libraryConfiguration)
 // endregion
+// region determine existing pre compiled dll manifests
+configuration.dllManifestFilePaths = []
+fileSystem.readdirSync(configuration.path.context).forEach((
+    fileName:string
+):void => {
+    if (fileName.match(/^.*\.dll-manifest\.json$/))
+        configuration.dllManifestFilePaths.push(path.resolve(
+            configuration.path.context, fileName))
+})
+// endregion
 // region merging and evaluating default, test, dynamic and specific settings
 // Merges project specific configurations with default ones.
 configuration = Helper.extendObject(true, configuration, specificConfiguration)
@@ -142,14 +152,6 @@ for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
                     pathConfiguration[key], configuration)
             ) + '/'
 // / endregion
-configuration.dllManifestFilePaths = []
-fileSystem.readdirSync(configuration.path.context).forEach((
-    fileName:string
-):void => {
-    if (fileName.match(/^.*\.dll-manifest\.json$/))
-        configuration.dllManifestFilePaths.push(path.resolve(
-            configuration.path.context, fileName))
-})
 const resolvedConfiguration:ResolvedConfiguration =
     Helper.resolveDynamicDataStructure(configuration)
 // endregion
