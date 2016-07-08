@@ -292,7 +292,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             normalizedInternalInjection.hasOwnProperty(chunkID) &&
             configuration.dllManifestFilePaths.includes(
                 `${configuration.path.target}${chunkID}.dll-manifest.json`)
-        )
+        ) {
             let sourceMapExists:boolean = false
             // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and
             // everywhere else
@@ -313,6 +313,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 context: configuration.path.context, manifest: require(
                     `${configuration.path.target}${chunkID}.dll-manifest.json`)
             }))
+        }
 // //// endregion
 // //// region generate common chunks
 for (const chunkID:string of configuration.injection.commonChunkIDs)

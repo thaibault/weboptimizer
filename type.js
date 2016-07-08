@@ -106,7 +106,8 @@ export type Paths = {
 }
 export type DefaultConfiguration = {
     debug:boolean;
-    path:{context:string}
+    path:{context:string};
+    dllManifestFilePaths:Array<string>;
 }
 export type MetaConfiguration = {
     default:DefaultConfiguration;
