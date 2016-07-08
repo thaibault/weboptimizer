@@ -5,7 +5,7 @@
 // region imports
 import {ChildProcess} from 'child_process'
 import {Duplex as DuplexStream} from 'stream'
-import * as qunit from 'qunit-cli'
+import * as QUnit from 'qunit-cli'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
@@ -17,8 +17,8 @@ import type {
 } from '../type'
 import Helper from '../helper.compiled'
 // endregion
-qunit.module('helper')
-qunit.load()
+QUnit.module('helper')
+QUnit.load()
 // region mockups
 const buildConfiguration:BuildConfiguration = {
     other: {
@@ -40,104 +40,104 @@ const buildConfiguration:BuildConfiguration = {
 // endregion
 // region tests
 // / region boolean
-qunit.test('isPlainObject', ():void => {
-    qunit.ok(Helper.isPlainObject({}))
-    qunit.ok(Helper.isPlainObject({a: 1}))
+QUnit.test('isPlainObject', (assert:Object):void => {
+    assert.ok(Helper.isPlainObject({}))
+    assert.ok(Helper.isPlainObject({a: 1}))
     /* eslint-disable no-new-object */
-    qunit.ok(Helper.isPlainObject(new Object()))
+    assert.ok(Helper.isPlainObject(new Object()))
     /* eslint-enable no-new-object */
 
-    qunit.notOk(Helper.isPlainObject(new String()))
-    qunit.notOk(Helper.isPlainObject(Object))
-    qunit.notOk(Helper.isPlainObject(null))
-    qunit.notOk(Helper.isPlainObject(0))
-    qunit.notOk(Helper.isPlainObject(1))
-    qunit.notOk(Helper.isPlainObject(true))
-    qunit.notOk(Helper.isPlainObject(undefined))
+    assert.notOk(Helper.isPlainObject(new String()))
+    assert.notOk(Helper.isPlainObject(Object))
+    assert.notOk(Helper.isPlainObject(null))
+    assert.notOk(Helper.isPlainObject(0))
+    assert.notOk(Helper.isPlainObject(1))
+    assert.notOk(Helper.isPlainObject(true))
+    assert.notOk(Helper.isPlainObject(undefined))
 })
-qunit.test('isFunction', ():void => {
-    qunit.ok(Helper.isFunction(Object))
-    qunit.ok(Helper.isFunction(new Function('return 1')))
-    qunit.ok(Helper.isFunction(function():void {}))
-    qunit.ok(Helper.isFunction(():void => {}))
+QUnit.test('isFunction', (assert:Object):void => {
+    assert.ok(Helper.isFunction(Object))
+    assert.ok(Helper.isFunction(new Function('return 1')))
+    assert.ok(Helper.isFunction(function():void {}))
+    assert.ok(Helper.isFunction(():void => {}))
 
-    qunit.notOk(Helper.isFunction(null))
-    qunit.notOk(Helper.isFunction(false))
-    qunit.notOk(Helper.isFunction(0))
-    qunit.notOk(Helper.isFunction(1))
-    qunit.notOk(Helper.isFunction(undefined))
-    qunit.notOk(Helper.isFunction({}))
-    qunit.notOk(Helper.isFunction(new Boolean()))
+    assert.notOk(Helper.isFunction(null))
+    assert.notOk(Helper.isFunction(false))
+    assert.notOk(Helper.isFunction(0))
+    assert.notOk(Helper.isFunction(1))
+    assert.notOk(Helper.isFunction(undefined))
+    assert.notOk(Helper.isFunction({}))
+    assert.notOk(Helper.isFunction(new Boolean()))
 })
-qunit.test('isFilePathInLocation', ():void => {
-    qunit.ok(Helper.isFilePathInLocation('./', ['./']))
-    qunit.ok(Helper.isFilePathInLocation('./', ['../']))
+QUnit.test('isFilePathInLocation', (assert:Object):void => {
+    assert.ok(Helper.isFilePathInLocation('./', ['./']))
+    assert.ok(Helper.isFilePathInLocation('./', ['../']))
 
-    qunit.notOk(Helper.isFilePathInLocation('../', ['./']))
+    assert.notOk(Helper.isFilePathInLocation('../', ['./']))
 })
 // / endregion
-qunit.test('convertToValidVariableName', ():void => {
-    qunit.strictEqual(Helper.convertToValidVariableName(''), '')
-    qunit.strictEqual(Helper.convertToValidVariableName('a'), 'a')
-    qunit.strictEqual(Helper.convertToValidVariableName('_a'), '_a')
-    qunit.strictEqual(Helper.convertToValidVariableName('_a_a'), '_a_a')
-    qunit.strictEqual(Helper.convertToValidVariableName('_a-a'), '_aA')
-    qunit.strictEqual(Helper.convertToValidVariableName('-a-a'), 'aA')
-    qunit.strictEqual(Helper.convertToValidVariableName('-a--a'), 'aA')
-    qunit.strictEqual(Helper.convertToValidVariableName('--a--a'), 'aA')
+QUnit.test('convertToValidVariableName', (assert:Object):void => {
+    assert.strictEqual(Helper.convertToValidVariableName(''), '')
+    assert.strictEqual(Helper.convertToValidVariableName('a'), 'a')
+    assert.strictEqual(Helper.convertToValidVariableName('_a'), '_a')
+    assert.strictEqual(Helper.convertToValidVariableName('_a_a'), '_a_a')
+    assert.strictEqual(Helper.convertToValidVariableName('_a-a'), '_aA')
+    assert.strictEqual(Helper.convertToValidVariableName('-a-a'), 'aA')
+    assert.strictEqual(Helper.convertToValidVariableName('-a--a'), 'aA')
+    assert.strictEqual(Helper.convertToValidVariableName('--a--a'), 'aA')
 })
-qunit.test('extendObject', ():void => {
-    qunit.deepEqual(Helper.extendObject({}), {})
-    qunit.deepEqual(Helper.extendObject(true, {}), {})
-    qunit.deepEqual(Helper.extendObject({a: 1}), {a: 1})
-    qunit.deepEqual(Helper.extendObject({a: 1}, {a: 2}), {a: 2})
-    qunit.deepEqual(Helper.extendObject({}, {a: 1}, {a: 2}), {a: 2})
-    qunit.deepEqual(Helper.extendObject({}, {a: 1}, {a: 2}), {a: 2})
-    qunit.deepEqual(Helper.extendObject(
+QUnit.test('extendObject', (assert:Object):void => {
+    assert.deepEqual(Helper.extendObject({}), {})
+    assert.deepEqual(Helper.extendObject(true, {}), {})
+    assert.deepEqual(Helper.extendObject({a: 1}), {a: 1})
+    assert.deepEqual(Helper.extendObject({a: 1}, {a: 2}), {a: 2})
+    assert.deepEqual(Helper.extendObject({}, {a: 1}, {a: 2}), {a: 2})
+    assert.deepEqual(Helper.extendObject({}, {a: 1}, {a: 2}), {a: 2})
+    assert.deepEqual(Helper.extendObject(
         {a: 1, b: {a: 1}}, {a: 2, b: {b: 1}}
     ), {a: 2, b: {b: 1}})
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         true, {a: 1, b: {a: 1}}, {a: 2, b: {b: 1}}
     ), {a: 2, b: {a: 1, b: 1}})
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         true, {a: 1, b: {a: []}}, {a: 2, b: {b: 1}}
     ), {a: 2, b: {a: [], b: 1}})
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         true, {a: {a: [1, 2]}}, {a: {a: [3, 4]}}
     ), {a: {a: [3, 4]}})
 
-    qunit.deepEqual(Helper.extendObject(new Map()), new Map())
-    qunit.deepEqual(Helper.extendObject(true, new Map()), new Map())
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(new Map()), new Map())
+    assert.deepEqual(Helper.extendObject(true, new Map()), new Map())
+    assert.deepEqual(Helper.extendObject(
         new Map([['a', 1]])
     ), new Map([['a', 1]]))
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         new Map([['a', 1]]), new Map([['a', 2]])
     ), new Map([['a', 2]]))
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         new Map(), new Map([['a', 1]]), new Map([['a', 2]])
     ), new Map([['a', 2]]))
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         new Map(), new Map([['a', 1]]), new Map([['a', 2]])
     ), new Map([['a', 2]]))
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         new Map([['a', 1], ['b', new Map([['a', 1]])]]),
         new Map([['a', 2], ['b', new Map([['b', 1]])]])
     ), new Map([['a', 2], ['b', new Map([['b', 1]])]]))
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         true, new Map([['a', 1], ['b', new Map([['a', 1]])]]),
         new Map([['a', 2], ['b', new Map([['b', 1]])]])
     ), new Map([['a', 2], ['b', new Map([['a', 1], ['b', 1]])]]))
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         true, new Map([['a', 1], ['b', new Map([['a', []]])]]),
         new Map([['a', 2], ['b', new Map([['b', 1]])]])
     ), new Map([['a', 2], ['b', new Map([['a', []], ['b', 1]])]]))
-    qunit.deepEqual(Helper.extendObject(
+    assert.deepEqual(Helper.extendObject(
         true, new Map([['a', new Map([['a', [1, 2]]])]]),
         new Map([['a', new Map([['a', [3, 4]]])]])
     ), new Map([['a', new Map([['a', [3, 4]]])]]))
 })
-qunit.test('handleChildProcess', ():void => {
+QUnit.test('handleChildProcess', (assert:Object):void => {
     /**
      * A mockup duplex stream for mocking "stdout" and "strderr" process
      * connections.
@@ -176,18 +176,18 @@ qunit.test('handleChildProcess', ():void => {
     childProcess.stdout = stdoutMockupDuplexStream
     childProcess.stderr = stderrMockupDuplexStream
 
-    qunit.strictEqual(Helper.handleChildProcess(childProcess), childProcess)
+    assert.strictEqual(Helper.handleChildProcess(childProcess), childProcess)
 })
-qunit.test('walkDirectoryRecursivelySync', ():void => {
+QUnit.test('walkDirectoryRecursivelySync', (assert:Object):void => {
     const filePaths:Array<string> = []
     const callback:TraverseFilesCallbackFunction = (filePath:string):false => {
         filePaths.push(filePath)
         return false
     }
     Helper.walkDirectoryRecursivelySync('./', callback)
-    qunit.ok(filePaths.length > 0)
+    assert.ok(filePaths.length > 0)
 })
-qunit.test('determineAssetType', ():void => {
+QUnit.test('determineAssetType', (assert:Object):void => {
     const paths:Paths = {
         apiDocumentation: '',
         asset: {
@@ -213,19 +213,19 @@ qunit.test('determineAssetType', ():void => {
         tidyUp: []
     }
 
-    qunit.strictEqual(Helper.determineAssetType(
+    assert.strictEqual(Helper.determineAssetType(
         './', buildConfiguration, paths
     ), null)
-    qunit.strictEqual(Helper.determineAssetType(
+    assert.strictEqual(Helper.determineAssetType(
         'a.js', buildConfiguration, paths
     ), 'javaScript')
-    qunit.strictEqual(Helper.determineAssetType(
+    assert.strictEqual(Helper.determineAssetType(
         'a.css', buildConfiguration, paths
     ), null)
 })
-qunit.test('resolveBuildConfigurationFilePaths', ():void => {
-    qunit.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
-    qunit.deepEqual(Helper.resolveBuildConfigurationFilePaths(
+QUnit.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
+    assert.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
+    assert.deepEqual(Helper.resolveBuildConfigurationFilePaths(
         buildConfiguration, './', './', ['.git', 'node_modules']
     ), [
         {
@@ -246,69 +246,69 @@ qunit.test('resolveBuildConfigurationFilePaths', ():void => {
         }
     ])
 })
-qunit.test('determineModuleLocations', ():void => {
-    qunit.deepEqual(Helper.determineModuleLocations({}), {
+QUnit.test('determineModuleLocations', (assert:Object):void => {
+    assert.deepEqual(Helper.determineModuleLocations({}), {
         filePaths: [],
         directoryPaths: []
     })
-    qunit.deepEqual(Helper.determineModuleLocations('example'), {
+    assert.deepEqual(Helper.determineModuleLocations('example'), {
         filePaths: ['example'],
         directoryPaths: ['.']
     })
-    qunit.deepEqual(Helper.determineModuleLocations(['example']), {
+    assert.deepEqual(Helper.determineModuleLocations(['example']), {
         filePaths: ['example'],
         directoryPaths: ['.']
     })
-    qunit.deepEqual(Helper.determineModuleLocations({example: 'example'}), {
+    assert.deepEqual(Helper.determineModuleLocations({example: 'example'}), {
         filePaths: ['example'],
         directoryPaths: ['.']
     })
-    qunit.deepEqual(Helper.determineModuleLocations('helper'), {
+    assert.deepEqual(Helper.determineModuleLocations('helper'), {
         filePaths: ['helper.js'],
         directoryPaths: ['.']
     })
-    qunit.deepEqual(Helper.determineModuleLocations({helper: ['helper']}), {
+    assert.deepEqual(Helper.determineModuleLocations({helper: ['helper']}), {
         filePaths: ['helper.js'],
         directoryPaths: ['.']
     })
 })
-qunit.test('normalizeInternalInjection', ():void => {
-    qunit.deepEqual(Helper.normalizeInternalInjection([]), {index: []})
-    qunit.deepEqual(Helper.normalizeInternalInjection({}), {index: []})
-    qunit.deepEqual(Helper.normalizeInternalInjection('example'), {
+QUnit.test('normalizeInternalInjection', (assert:Object):void => {
+    assert.deepEqual(Helper.normalizeInternalInjection([]), {index: []})
+    assert.deepEqual(Helper.normalizeInternalInjection({}), {index: []})
+    assert.deepEqual(Helper.normalizeInternalInjection('example'), {
         index: ['example']})
-    qunit.deepEqual(Helper.normalizeInternalInjection(['example']), {
+    assert.deepEqual(Helper.normalizeInternalInjection(['example']), {
         index: ['example']})
-    qunit.deepEqual(Helper.normalizeInternalInjection({a: 'example'}), {
+    assert.deepEqual(Helper.normalizeInternalInjection({a: 'example'}), {
         a: ['example']})
-    qunit.deepEqual(Helper.normalizeInternalInjection({a: ['example']}), {
+    assert.deepEqual(Helper.normalizeInternalInjection({a: ['example']}), {
         a: ['example']})
-    qunit.deepEqual(Helper.normalizeInternalInjection(
+    assert.deepEqual(Helper.normalizeInternalInjection(
         {a: ['example'], b: []}
     ), {a: ['example']})
-    qunit.deepEqual(Helper.normalizeInternalInjection({a: [], b: []}), {
+    assert.deepEqual(Helper.normalizeInternalInjection({a: [], b: []}), {
         index: []})
 })
-qunit.test('resolveInjection', ():void => {
-    qunit.deepEqual(Helper.resolveInjection(
+QUnit.test('resolveInjection', (assert:Object):void => {
+    assert.deepEqual(Helper.resolveInjection(
         {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', './', ['.git', 'node_modules']
         ), [], {}, [], './', ['.git', 'node_modules']
     ), {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []})
-    qunit.deepEqual(Helper.resolveInjection(
+    assert.deepEqual(Helper.resolveInjection(
         {internal: 'a.js', external: [], commonChunkIDs: [], dllChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', './', ['.git', 'node_modules']
         ), [], {}, [], './', ['.git', 'node_modules']
     ), {internal: 'a.js', external: [], commonChunkIDs: [], dllChunkIDs: []})
-    qunit.deepEqual(Helper.resolveInjection(
+    assert.deepEqual(Helper.resolveInjection(
         {internal: ['a'], external: [], commonChunkIDs: [], dllChunkIDs: []},
         Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', './', ['.git', 'node_modules']
         ), [], {}, [], './', ['.git', 'node_modules']
     ), {internal: ['a'], external: [], commonChunkIDs: [], dllChunkIDs: []})
-    qunit.deepEqual(Helper.resolveInjection(
+    assert.deepEqual(Helper.resolveInjection(
         {
             internal: '__auto__', external: [], commonChunkIDs: [],
             dllChunkIDs: []
@@ -316,7 +316,7 @@ qunit.test('resolveInjection', ():void => {
             buildConfiguration, './', './', ['.git', 'node_modules']
         ), [], {}, [], './', ['.git', 'node_modules']
     ), {internal: {}, external: [], commonChunkIDs: [], dllChunkIDs: []})
-    qunit.deepEqual(Helper.resolveInjection(
+    assert.deepEqual(Helper.resolveInjection(
         {
             internal: {index: '__auto__'}, external: [], commonChunkIDs: [],
             dllChunkIDs: []
@@ -328,108 +328,110 @@ qunit.test('resolveInjection', ():void => {
         dllChunkIDs: []
     })
 })
-qunit.test('getAutoChunk', ():void => {
-    qunit.deepEqual(Helper.getAutoChunk(
+QUnit.test('getAutoChunk', (assert:Object):void => {
+    assert.deepEqual(Helper.getAutoChunk(
         Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', './', ['.git', 'node_modules']), [
                 '.git', 'node_modules'
             ], './'
     ), {})
 })
-qunit.test('addDynamicGetterAndSetter', ():void => {
-    qunit.strictEqual(Helper.addDynamicGetterAndSetter(null), null)
-    qunit.strictEqual(Helper.addDynamicGetterAndSetter(true), true)
-    qunit.notDeepEqual(Helper.addDynamicGetterAndSetter({}), {})
-    qunit.ok(Helper.addDynamicGetterAndSetter({}).__target__ instanceof Object)
-    qunit.deepEqual(Helper.addDynamicGetterAndSetter({}).__target__, {})
+QUnit.test('addDynamicGetterAndSetter', (assert:Object):void => {
+    assert.strictEqual(Helper.addDynamicGetterAndSetter(null), null)
+    assert.strictEqual(Helper.addDynamicGetterAndSetter(true), true)
+    assert.notDeepEqual(Helper.addDynamicGetterAndSetter({}), {})
+    assert.ok(Helper.addDynamicGetterAndSetter({
+    }).__target__ instanceof Object)
+    assert.deepEqual(Helper.addDynamicGetterAndSetter({}).__target__, {})
     const mockup = {}
-    qunit.strictEqual(
+    assert.strictEqual(
         Helper.addDynamicGetterAndSetter(mockup).__target__, mockup)
-    qunit.deepEqual(Helper.addDynamicGetterAndSetter({a: 1}, (value:any):any =>
-        value + 2
-    ).a, 3)
-    qunit.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: 1}}, (
+    assert.deepEqual(Helper.addDynamicGetterAndSetter({a: 1}, (
+        value:any
+    ):any => value + 2).a, 3)
+    assert.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: 1}}, (
         value:any
     ):any => (value instanceof Object) ? value : value + 2).a.a, 3)
-    qunit.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: [{a: 1}]}}, (
+    assert.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: [{a: 1}]}}, (
         value:any
     ):any => (value instanceof Object) ? value : value + 2).a.a[0].a, 3)
-    qunit.deepEqual(Helper.addDynamicGetterAndSetter(
+    assert.deepEqual(Helper.addDynamicGetterAndSetter(
         {a: {a: 1}}, (value:any):any =>
             (value instanceof Object) ? value : value + 2,
         (key:any, value:any):any => value, '[]', '[]', 'hasOwnProperty', false
     ).a.a, 1)
-    qunit.deepEqual(Helper.addDynamicGetterAndSetter(
+    assert.deepEqual(Helper.addDynamicGetterAndSetter(
         {a: 1}, (value:any):any =>
             (value instanceof Object) ? value : value + 2,
         (key:any, value:any):any => value, '[]', '[]', 'hasOwnProperty', false,
         []
     ).a, 1)
     // IgnoreTypeCheck
-    qunit.deepEqual(Helper.addDynamicGetterAndSetter(
+    assert.deepEqual(Helper.addDynamicGetterAndSetter(
         {a: new Map([['a', 1]])}, (value:any):any =>
             (value instanceof Object) ? value : value + 2,
         (key:any, value:any):any => value, 'get', 'set', 'has', true, [Map]
     ).a.a, 3)
 })
-qunit.test('resolveDynamicDataStructure', ():void => {
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(null), null)
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(false), false)
-    qunit.deepEqual(Helper.resolveDynamicDataStructure('1'), '1')
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(3), 3)
-    qunit.deepEqual(Helper.resolveDynamicDataStructure({}), {})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure({__evaluate__: '1'}), 1)
-    qunit.deepEqual(
+QUnit.test('resolveDynamicDataStructure', (assert:Object):void => {
+    assert.deepEqual(Helper.resolveDynamicDataStructure(null), null)
+    assert.deepEqual(Helper.resolveDynamicDataStructure(false), false)
+    assert.deepEqual(Helper.resolveDynamicDataStructure('1'), '1')
+    assert.deepEqual(Helper.resolveDynamicDataStructure(3), 3)
+    assert.deepEqual(Helper.resolveDynamicDataStructure({}), {})
+    assert.deepEqual(
+        Helper.resolveDynamicDataStructure({__evaluate__: '1'}), 1)
+    assert.deepEqual(
         Helper.resolveDynamicDataStructure({__evaluate__: "'1'"}), '1')
-    qunit.deepEqual(
+    assert.deepEqual(
         Helper.resolveDynamicDataStructure({a: {__evaluate__: "'a'"}}),
         {a: 'a'})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+    assert.deepEqual(Helper.resolveDynamicDataStructure(
         {a: {__evaluate__: 'self.a'}}, {a: 1}
     ), {a: 1})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+    assert.deepEqual(Helper.resolveDynamicDataStructure(
         {a: {__evaluate__: 'self.a'}}, {a: 1}, false
     ), {a: {__evaluate__: 'self.a'}})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+    assert.deepEqual(Helper.resolveDynamicDataStructure(
         {a: {__evaluate__: 'self.a'}}, {a: 1}, true, '__run__'
     ), {a: {__evaluate__: 'self.a'}})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+    assert.deepEqual(Helper.resolveDynamicDataStructure(
         {a: {__run__: 'self.a'}}, {a: 1}, true, '__run__'
     ), {a: 1})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+    assert.deepEqual(Helper.resolveDynamicDataStructure(
         {a: [{__run__: 'self.a'}]}, {a: 1}, true, '__run__'
     ), {a: [1]})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+    assert.deepEqual(Helper.resolveDynamicDataStructure(
         {a: {__evaluate__: 'self.b'}, b: 2}
     ), {a: 2, b: 2})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure(
+    assert.deepEqual(Helper.resolveDynamicDataStructure(
         {a: {__evaluate__: 'self.b'}, b: {__evaluate__: 'self.c'}, c: 2}
     ), {a: 2, b: 2, c: 2})
-    qunit.deepEqual(Helper.resolveDynamicDataStructure({a: {
+    assert.deepEqual(Helper.resolveDynamicDataStructure({a: {
         __execute__: 'return self.b'
     }, b: {__execute__: 'return self.c'}, c: 2
     }), {a: 2, b: 2, c: 2})
 })
-qunit.test('applyAliases', ():void => {
-    qunit.strictEqual(Helper.applyAliases('', {}), '')
-    qunit.strictEqual(Helper.applyAliases('', {a: 'b'}), '')
-    qunit.strictEqual(Helper.applyAliases('a', {}), 'a')
-    qunit.strictEqual(Helper.applyAliases('a', {a: 'b'}), 'b')
-    qunit.strictEqual(Helper.applyAliases('a', {a$: 'b'}), 'b')
-    qunit.strictEqual(Helper.applyAliases('aa', {a$: 'b'}), 'aa')
-    qunit.strictEqual(Helper.applyAliases('bba', {a: 'b'}), 'bbb')
-    qunit.strictEqual(Helper.applyAliases('helper', {}), 'helper')
+QUnit.test('applyAliases', (assert:Object):void => {
+    assert.strictEqual(Helper.applyAliases('', {}), '')
+    assert.strictEqual(Helper.applyAliases('', {a: 'b'}), '')
+    assert.strictEqual(Helper.applyAliases('a', {}), 'a')
+    assert.strictEqual(Helper.applyAliases('a', {a: 'b'}), 'b')
+    assert.strictEqual(Helper.applyAliases('a', {a$: 'b'}), 'b')
+    assert.strictEqual(Helper.applyAliases('aa', {a$: 'b'}), 'aa')
+    assert.strictEqual(Helper.applyAliases('bba', {a: 'b'}), 'bbb')
+    assert.strictEqual(Helper.applyAliases('helper', {}), 'helper')
 })
-qunit.test('determineModuleFilePath', ():void => {
-    qunit.strictEqual(Helper.determineModuleFilePath('a'), 'a')
-    qunit.strictEqual(Helper.determineModuleFilePath('a', {a: 'b'}), 'b')
-    qunit.strictEqual(Helper.determineModuleFilePath('bba', {a: 'b'}), 'bbb')
-    qunit.strictEqual(Helper.determineModuleFilePath('helper'), 'helper.js')
-    qunit.strictEqual(
+QUnit.test('determineModuleFilePath', (assert:Object):void => {
+    assert.strictEqual(Helper.determineModuleFilePath('a'), 'a')
+    assert.strictEqual(Helper.determineModuleFilePath('a', {a: 'b'}), 'b')
+    assert.strictEqual(Helper.determineModuleFilePath('bba', {a: 'b'}), 'bbb')
+    assert.strictEqual(Helper.determineModuleFilePath('helper'), 'helper.js')
+    assert.strictEqual(
         Helper.determineModuleFilePath('helper', {}, []), 'helper')
-    qunit.strictEqual(
+    assert.strictEqual(
         Helper.determineModuleFilePath('helper', {}, ['.js'], '../'), 'helper')
-    qunit.strictEqual(
+    assert.strictEqual(
         Helper.determineModuleFilePath('helper', {}, ['.js'], './'),
         'helper.js')
 })

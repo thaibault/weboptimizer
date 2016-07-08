@@ -33,7 +33,7 @@ const onDomContentLoaded = (window:Window):void => {
 }
 // endregion
 // region ensure presence of common browser environment
-if (TARGET === 'node') {
+if (typeof TARGET === 'undefined' || TARGET === 'node') {
     // region mock browser environment
     const dom = require('jsdom')
     dom.env(`

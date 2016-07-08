@@ -39,9 +39,14 @@ if (
     path.basename(path.dirname(path.dirname(process.cwd()))) === 'node_modules'
 )
     metaConfiguration.default.path.context = process.cwd()
-// IgnoreTypeCheck
-let specificConfiguration:PlainObject = require(path.join(
-    metaConfiguration.default.path.context, 'package'))
+let specificConfiguration:PlainObject
+try {
+    // IgnoreTypeCheck
+    specificConfiguration = require(path.join(
+        metaConfiguration.default.path.context, 'package'))
+} catch (error) {
+    specificConfiguration = {name: 'mockup'}
+}
 const name:string = specificConfiguration.name
 specificConfiguration = specificConfiguration.webOptimizer || {}
 specificConfiguration.name = name

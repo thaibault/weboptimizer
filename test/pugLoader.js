@@ -3,7 +3,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import * as qunit from 'qunit-cli'
+import * as QUnit from 'qunit-cli'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
@@ -12,9 +12,9 @@ try {
 import Helper from '../helper.compiled'
 import pugLoader from '../pugLoader.compiled'
 // endregion
-qunit.module('pugLoader')
-qunit.load()
-// region mockup
+QUnit.module('pugLoader')
+QUnit.load()
+//  region mockup
 const context:{
     addDependency:() => void;
     options:{pug?:{
@@ -35,8 +35,8 @@ const context:{
 }
 // endregion
 // region tests
-qunit.test('loader', ():void => {
-    qunit.strictEqual(pugLoader.call(context, 'a'), '<a></a>')
+QUnit.test('loader', (assert:Object):void => {
+    assert.strictEqual(pugLoader.call(context, 'a'), '<a></a>')
     const complexContext = Helper.extendObject(true, {}, context, {
         cacheable: ():void => {},
         options: {pug: {
@@ -44,10 +44,10 @@ qunit.test('loader', ():void => {
             compiler: {pretty: true}
         }}
     })
-    qunit.strictEqual(pugLoader.call(
+    assert.strictEqual(pugLoader.call(
         complexContext, 'a #{test}'
     ), '<a>hans</a>')
-    qunit.strictEqual(pugLoader.call(
+    assert.strictEqual(pugLoader.call(
         complexContext, "a\n!= require('a test?{options: {isString: true}}')"
     ), '<a></a><a>test</a>')
 })
