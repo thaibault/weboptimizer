@@ -310,10 +310,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
 }
 if (!configuration.library)
     possibleArguments.push('serve')
-if (
+if (require.main === module && (
     configuration.givenCommandLineArguments.length < 3 ||
     !possibleArguments.includes(configuration.givenCommandLineArguments[2])
-)
+))
     console.log(
         `Give one of "${possibleArguments.join('", "')}" as command line ` +
         'argument. You can provide a json string as second parameter to ' +

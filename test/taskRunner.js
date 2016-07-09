@@ -9,14 +9,13 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 // endregion
-QUnit.module('webpackConfigurator')
+QUnit.module('taskRunner')
 QUnit.load()
 // region tests
-QUnit.test('webpackConfigurator', (assert:Object):void => {
-    assert.ok(require(
-        '../webpackConfigurator.compiled'
-    ).default.entry.index.includes(__filename.replace(
-        /\.compiled\.js$/, '.js')))
+QUnit.test('taskRunner', (assert:Object):void => {
+    // TODO
+    console.log(require('../taskRunner.compiled'))
+    assert.ok(true)
 })
 // endregion
 // region vim modline

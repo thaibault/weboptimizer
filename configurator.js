@@ -46,6 +46,7 @@ try {
         metaConfiguration.default.path.context, 'package'))
 } catch (error) {
     specificConfiguration = {name: 'mockup'}
+    metaConfiguration.default.path.context = process.cwd()
 }
 const name:string = specificConfiguration.name
 specificConfiguration = specificConfiguration.webOptimizer || {}
