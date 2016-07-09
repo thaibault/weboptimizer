@@ -310,6 +310,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
 }
 if (!configuration.library)
     possibleArguments.push('serve')
+// IgnoreTypeCheck
 if (require.main === module && (
     configuration.givenCommandLineArguments.length < 3 ||
     !possibleArguments.includes(configuration.givenCommandLineArguments[2])

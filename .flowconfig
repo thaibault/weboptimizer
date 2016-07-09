@@ -7,6 +7,8 @@
 [options]
 esproposal.class_static_fields=enable
 
+module.name_mapper='^\./browserAPI\.compiled$' -> './browserAPI'
+module.name_mapper='^\../browserAPI\.compiled$' -> '../browserAPI'
 module.name_mapper='^\./configurator\.compiled$' -> './configurator'
 module.name_mapper='^\../configurator\.compiled$' -> '../configurator'
 module.name_mapper='^\./helper\.compiled$' -> './helper'
@@ -14,7 +16,9 @@ module.name_mapper='^\../helper\.compiled$' -> '../helper'
 module.name_mapper='^\./pugLoader\.compiled$' -> './pugLoader'
 module.name_mapper='^\../pugLoader\.compiled$' -> '../pugLoader'
 module.name_mapper='^\./taskRunner\.compiled$' -> './taskRunner'
+module.name_mapper='^\../taskRunner\.compiled$' -> '../taskRunner'
 module.name_mapper='^\./webpackConfigurator\.compiled$' -> './webpackConfigurator'
+module.name_mapper='^\../webpackConfigurator\.compiled$' -> '../webpackConfigurator'
 
 module.file_ext=.js
 module.file_ext=.compiled.js

@@ -9,10 +9,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 import browserAPI from '../browserAPI.compiled'
-import type {Window} from 'webOptimizer/type'
-// endregion
-// region declaration
-declare var TARGET:string
+import type {Window} from '../type'
 // endregion
 QUnit.module('browserAPI')
 browserAPI((window:Window):void => {

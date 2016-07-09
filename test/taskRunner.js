@@ -13,9 +13,7 @@ QUnit.module('taskRunner')
 QUnit.load()
 // region tests
 QUnit.test('taskRunner', (assert:Object):void => {
-    // TODO
-    console.log(require('../taskRunner.compiled'))
-    assert.ok(true)
+    assert.deepEqual(require('../taskRunner.compiled'), {})
 })
 // endregion
 // region vim modline
