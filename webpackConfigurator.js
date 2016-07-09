@@ -293,6 +293,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             configuration.dllManifestFilePaths.includes(
                 `${configuration.path.target}${chunkID}.dll-manifest.json`)
         ) {
+            delete normalizedInternalInjection[chunkID]
             let sourceMapExists:boolean = false
             // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and
             // everywhere else
