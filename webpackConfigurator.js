@@ -67,8 +67,9 @@ let libraryName:string = configuration.exportFormat === 'var' ?
     Helper.convertToValidVariableName(configuration.name) : configuration.name
 // // region plugins
 const pluginInstances:Array<Object> = [
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(true)]
+if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
+    pluginInstances.push(new webpack.HotModuleReplacementPlugin())
 // /// region generate html file
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
