@@ -157,12 +157,11 @@ for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
     configuration.path, configuration.path.asset
 ])
     for (const key:string of ['source', 'target'])
-        if (pathConfiguration[key]) {
+        if (pathConfiguration[key])
             pathConfiguration[key] = path.resolve(
                 configuration.path.context, Helper.resolveDynamicDataStructure(
                     pathConfiguration[key], configuration)
             ) + '/'
-        }
 // / endregion
 const resolvedConfiguration:ResolvedConfiguration =
     Helper.resolveDynamicDataStructure(configuration)
