@@ -67,6 +67,7 @@ let libraryName:string = configuration.exportFormat === 'var' ?
     Helper.convertToValidVariableName(configuration.name) : configuration.name
 // // region plugins
 const pluginInstances:Array<Object> = [
+    new webpack.HotModuleReplacementPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(true)]
 // /// region generate html file
 let htmlAvailable:boolean = false
