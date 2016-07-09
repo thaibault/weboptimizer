@@ -81,16 +81,6 @@ if (
     configuration = Helper.extendObject(
         true, configuration, libraryConfiguration)
 // endregion
-// region determine existing pre compiled dll manifests
-configuration.dllManifestFilePaths = []
-fileSystem.readdirSync(configuration.path.context).forEach((
-    fileName:string
-):void => {
-    if (fileName.match(/^.*\.dll-manifest\.json$/))
-        configuration.dllManifestFilePaths.push(path.resolve(
-            configuration.path.context, fileName))
-})
-// endregion
 // region merging and evaluating default, test, dynamic and specific settings
 // Merges project specific configurations with default ones.
 configuration = Helper.extendObject(true, configuration, specificConfiguration)
@@ -109,7 +99,6 @@ while (true) {
     filePath = newFilePath
     count += 1
 }
-// / endregion
 let runtimeInformation:PlainObject = {
     givenCommandLineArguments: process.argv
 }
@@ -134,6 +123,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
     else if (runtimeInformation.givenCommandLineArguments[2] === 'test')
         Helper.extendObject(true, configuration, configuration.test)
     // endregion
+// / endregion
 Helper.extendObject(true, configuration, runtimeInformation)
 let result:?PlainObject = null
 const evaluationFunction = (configuration:PlainObject):?PlainObject =>
@@ -147,16 +137,32 @@ try {
 } catch (error) {}
 if (Helper.isPlainObject(result))
     Helper.extendObject(true, configuration, result)
+// / region determine existing pre compiled dll manifests file paths
+configuration.dllManifestFilePaths = []
+let targetDirectory:?Object = null
+try {
+    targetDirectory = fileSystem.statSync(configuration.path.target)
+} catch (error) {}
+if (targetDirectory && targetDirectory.isDirectory())
+    fileSystem.readdirSync(configuration.path.target).forEach((
+        fileName:string
+    ):void => {
+        if (fileName.match(/^.*\.dll-manifest\.json$/))
+            configuration.dllManifestFilePaths.push(path.resolve(
+                configuration.path.target, fileName))
+    })
+// / endregion
 // / region build absolute paths
 for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
     configuration.path, configuration.path.asset
 ])
     for (const key:string of ['source', 'target'])
-        if (pathConfiguration[key])
+        if (pathConfiguration[key]) {
             pathConfiguration[key] = path.resolve(
                 configuration.path.context, Helper.resolveDynamicDataStructure(
                     pathConfiguration[key], configuration)
             ) + '/'
+        }
 // / endregion
 const resolvedConfiguration:ResolvedConfiguration =
     Helper.resolveDynamicDataStructure(configuration)
