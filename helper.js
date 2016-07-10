@@ -599,7 +599,7 @@ export default class Helper {
             for (const key:string in object)
                 if ([evaluationIndicatorKey, executionIndicatorKey].includes(
                     key
-                )) {
+                ))
                     try {
                         const evaluationFunction:EvaluationFunction =
                             new Function(
@@ -619,7 +619,7 @@ export default class Helper {
                                 'evaluating'
                             ) + ` "${object[key]}": ` + error)
                     }
-                } else if (deep)
+                else if (deep)
                     object[key] = Helper.resolveDynamicDataStructure(
                         object[key], configuration, deep,
                         evaluationIndicatorKey, executionIndicatorKey)

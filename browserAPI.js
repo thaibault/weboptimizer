@@ -24,7 +24,9 @@ declare var window:Window
 const onDomContentLoadedListener:Array<OnDomContentLoadedListenerFunction> = []
 // endregion
 // region functions
+let windowWithLoadedDomContent:?Window = null
 const onDomContentLoaded = (window:Window):void => {
+    windowWithLoadedDomContent = window
     for (
         const callback:OnDomContentLoadedListenerFunction of
         onDomContentLoadedListener
@@ -93,7 +95,12 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
 // endregion
 export default (
     callback:OnDomContentLoadedListenerFunction
-):number => onDomContentLoadedListener.push(callback)
+):void => {
+    if (windowWithLoadedDomContent)
+        callback(windowWithLoadedDomContent)
+    else
+        onDomContentLoadedListener.push(callback)
+}
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
