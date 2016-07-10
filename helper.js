@@ -600,11 +600,13 @@ export default class Helper {
                 if ([evaluationIndicatorKey, executionIndicatorKey].includes(
                     key
                 )) {
-                    const evaluationFunction:EvaluationFunction = new Function(
-                        'self', 'webOptimizerPath', 'currentPath', 'path',
-                        `${key === evaluationIndicatorKey ? 'return' : ''} ` +
-                        object[key])
                     try {
+                        const evaluationFunction:EvaluationFunction =
+                            new Function(
+                                'self', 'webOptimizerPath', 'currentPath',
+                                'path', ((
+                                    key === evaluationIndicatorKey
+                                ) ? 'return ' : '') + object[key])
                         return Helper.resolveDynamicDataStructure(
                             evaluationFunction(
                                 configuration, __dirname, process.cwd(), path
