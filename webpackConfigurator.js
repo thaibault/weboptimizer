@@ -68,8 +68,6 @@ let libraryName:string = configuration.exportFormat === 'var' ?
 // // region plugins
 const pluginInstances:Array<Object> = [
     new webpack.optimize.OccurrenceOrderPlugin(true)]
-if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
-    pluginInstances.push(new webpack.HotModuleReplacementPlugin())
 // /// region generate html file
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
