@@ -12,10 +12,13 @@ import browserAPI from '../browserAPI.compiled'
 import type {Window} from '../type'
 // endregion
 QUnit.module('browserAPI')
-browserAPI((window:Window):void => {
+browserAPI((window:Window, alreadyLoaded:boolean):void => {
     QUnit.load()
     // region tests
     QUnit.test('browserAPI', (assert:Object):void => {
+        assert.notOk(alreadyLoaded)
+        browserAPI((window:Window, alreadyLoaded:boolean):void => assert.ok(
+            alreadyLoaded))
         assert.ok(window.hasOwnProperty('document'))
         assert.ok(window.document.hasOwnProperty('location'))
         assert.ok(window.document.querySelector('body') instanceof Object)

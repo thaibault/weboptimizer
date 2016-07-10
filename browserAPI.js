@@ -31,7 +31,7 @@ const onDomContentLoaded = (window:Window):void => {
         const callback:OnDomContentLoadedListenerFunction of
         onDomContentLoadedListener
     )
-        callback(window)
+        callback(window, false)
 }
 // endregion
 // region ensure presence of common browser environment
@@ -97,7 +97,7 @@ export default (
     callback:OnDomContentLoadedListenerFunction
 ):void => {
     if (windowWithLoadedDomContent)
-        callback(windowWithLoadedDomContent)
+        callback(windowWithLoadedDomContent, true)
     else
         onDomContentLoadedListener.push(callback)
 }
