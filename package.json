@@ -519,7 +519,7 @@
             "debug": true,
 
             "injection": {"internal": {"developmentHelper": {
-                "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`, 'webpack/hot/dev-server'] : []"
+                "__evaluate__": "2 < self.givenCommandLineArguments.length ? (['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []).concat(!['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? 'webpack/hot/dev-server') : []"
             }}},
             "files": {
                 "html": [{"debug": true}],
@@ -578,7 +578,7 @@
                         "jquery", "qunitjs", "webOptimizer/browserAPI"
                     ],
                     "index": {
-                        "__evaluate__": "['test/'].concat(self.debug && self.dllManifestFilePaths.length && 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'testInBrowser' ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`, 'webpack/hot/dev-server'] : [])"
+                        "__evaluate__": "['test/'].concat(self.debug && self.dllManifestFilePaths.length ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`, 'webpack/hot/dev-server'] : [])"
                     }
                 }}
             }
@@ -635,7 +635,7 @@
             "test": {"injection": {"internal": "test"}},
 
             "testInBrowser": {"injection": {"internal": {"index": {
-                "__evaluate__": "['test'].concat(self.debug && self.dllManifestFilePaths.length && 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'testInBrowser' ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`, 'webpack/hot/dev-server'] : [])"
+                "__evaluate__": "['test'].concat(self.debug && self.dllManifestFilePaths.length ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`, 'webpack/hot/dev-server'] : [])"
             }}}}
         }
     },
