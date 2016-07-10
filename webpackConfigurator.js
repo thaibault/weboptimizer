@@ -617,25 +617,25 @@ export default {
             // region style
             {
                 test: /\.less$/,
-                loader: plugins.extractText.extract(
+                loader: plugins.ExtractText.extract(
                     loader.style,
                     `${loader.cascadingStyleSheet}!${loader.preprocessor.less}`
                 )
             }, {
                 test: /\.sass$/,
-                loader: plugins.extractText.extract(
+                loader: plugins.ExtractText.extract(
                     loader.style,
                     `${loader.cascadingStyleSheet}!${loader.preprocessor.sass}`
                 )
             }, {
                 test: /\.scss$/,
-                loader: plugins.extractText.extract(
+                loader: plugins.ExtractText.extract(
                     loader.style,
                     `${loader.cascadingStyleSheet}!${loader.preprocessor.scss}`
                 )
             }, {
                 test: /\.css$/,
-                loader: plugins.extractText.extract(
+                loader: plugins.ExtractText.extract(
                     loader.style, loader.cascadingStyleSheet)
             },
             // endregion
