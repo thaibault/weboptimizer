@@ -371,7 +371,9 @@
             "target": "web",
 
             "assetPattern": {"javaScript": {
-                "excludeFilePathRegularExpression": "^(?:.*/)?(?:developmentHelper|vendor)(?:\\.compiled)?\\.js$",
+                "excludeFilePathRegularExpression": {
+                    "__evaluate__": "`^(?:.*/)?(?:developmentHelper|vendor${self.debug ? '|index': ''})(?:\\.compiled)?\\.js$`"
+                },
                 "pattern": "'use strict';\n{1}"
             }},
             "build": {
