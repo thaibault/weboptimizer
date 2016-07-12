@@ -17,6 +17,9 @@
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
+
+import autoprefixer from 'autoprefixer'
+import postcssImport from 'postcss-import'
 import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
@@ -24,9 +27,10 @@ try {
 } catch (error) {}
 import webpack from 'webpack'
 const plugins = require('webpack-load-plugins')()
+import {RawSource as WebpackRawSource} from 'webpack-sources'
+
 plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
-import {RawSource as WebpackRawSource} from 'webpack-sources'
 plugins.AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 plugins.OpenBrowser = plugins.openBrowser
 plugins.Favicon = require('favicons-webpack-plugin')
@@ -480,10 +484,11 @@ let imageLoader:string = 'url?' + JSON.stringify(
     configuration.module.optimizer.image.file)
 const loader:{
     preprocessor:{
+        cascadingStyleSheet:string;
         less:string;
         sass:string;
         scss:string;
-        babel:string;
+        javaScript:string;
         coffee:string;
         pug:string;
         literateCoffee:string
@@ -503,14 +508,17 @@ const loader:{
     }
 } = {
     preprocessor: {
+        cascadingStyleSheet: 'postcss',
+        javaScript: 'babel?' + JSON.stringify(
+            configuration.module.preprocessor.modernJavaScript),
+        pug: `pug?${JSON.stringify(configuration.module.preprocessor.pug)}`,
+        // TODO deprecated
+        coffee: 'coffee',
+        literateCoffee: 'coffee?literate'
         less: `less?${JSON.stringify(configuration.module.preprocessor.less)}`,
         sass: `sass?${JSON.stringify(configuration.module.preprocessor.sass)}`,
         scss: `sass?${JSON.stringify(configuration.module.preprocessor.scss)}`,
-        babel: 'babel?' + JSON.stringify(
-            configuration.module.preprocessor.modernJavaScript),
-        coffee: 'coffee',
-        pug: `pug?${JSON.stringify(configuration.module.preprocessor.pug)}`,
-        literateCoffee: 'coffee?literate'
+        //
     },
     html: `html?${JSON.stringify(configuration.module.html)}`,
     cascadingStyleSheet: 'css?' + JSON.stringify(
@@ -570,7 +578,7 @@ export default {
             // region script
             {
                 test: /\.js$/,
-                loader: loader.preprocessor.babel,
+                loader: loader.preprocessor.javaScript,
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.javaScript
@@ -615,6 +623,7 @@ export default {
         loaders: [
             // Loads dependencies.
             // region style
+            // TODO deprecated
             {
                 test: /\.less$/,
                 loader: plugins.ExtractText.extract(
@@ -633,10 +642,22 @@ export default {
                     loader.style,
                     `${loader.cascadingStyleSheet}!${loader.preprocessor.scss}`
                 )
-            }, {
+            },
+            //
+            {
                 test: /\.css$/,
                 loader: plugins.ExtractText.extract(
-                    loader.style, loader.cascadingStyleSheet)
+                    loader.style,
+                    `${loader.preprocessor.cascadingStyleSheet}!` +
+                    loader.cascadingStyleSheet),
+                include: [path.join(
+                    configuration.path.asset.source,
+                    configuration.path.asset.cascadingStyleSheet
+                )].concat(moduleLocations.directoryPaths),
+                exclude: (filePath:string):boolean =>
+                    Helper.isFilePathInLocation(filePath.replace(
+                        /^(.+)(?:\?[^?]*)$/, '$1'
+                    ), configuration.path.ignore)
             },
             // endregion
             // region html (templates)
@@ -691,11 +712,15 @@ export default {
             // endregion
         ]
     },
+    postcss: ():void => [
+        autoprefixer,
+        postcssImport({addDependencyTo: webpack})
+    ]
     html: configuration.module.optimizer.htmlMinifier,
-    plugins: pluginInstances,
     // Let the "html-loader" access full html minifier processing
     // configuration.
-    pug: configuration.module.preprocessor.pug
+    pug: configuration.module.preprocessor.pug,
+    plugins: pluginInstances
 }
 // endregion
 // region vim modline
