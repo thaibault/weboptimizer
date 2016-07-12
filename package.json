@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "A generic web optimizer, (module) bundler and development environment.",
     "homepage": "http://torben.website/webOptimizer",
-    "license": "ISC",
+    "license": "CC-BY-3.0",
     "bin": {"webOptimizer": "taskRunner.compiled.js"},
     "main": "webpackConfigurator.compiled.js",
     "keywords": [
