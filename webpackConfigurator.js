@@ -514,10 +514,10 @@ const loader:{
         pug: `pug?${JSON.stringify(configuration.module.preprocessor.pug)}`,
         // TODO deprecated
         coffee: 'coffee',
-        literateCoffee: 'coffee?literate'
+        literateCoffee: 'coffee?literate',
         less: `less?${JSON.stringify(configuration.module.preprocessor.less)}`,
         sass: `sass?${JSON.stringify(configuration.module.preprocessor.sass)}`,
-        scss: `sass?${JSON.stringify(configuration.module.preprocessor.scss)}`,
+        scss: `sass?${JSON.stringify(configuration.module.preprocessor.scss)}`
         //
     },
     html: `html?${JSON.stringify(configuration.module.html)}`,
@@ -712,10 +712,9 @@ export default {
             // endregion
         ]
     },
-    postcss: ():void => [
-        autoprefixer,
-        postcssImport({addDependencyTo: webpack})
-    ]
+    postcss: ():Array<Object> => [
+        autoprefixer, postcssImport({addDependencyTo: webpack})
+    ],
     html: configuration.module.optimizer.htmlMinifier,
     // Let the "html-loader" access full html minifier processing
     // configuration.

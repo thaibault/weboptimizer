@@ -39,6 +39,7 @@
         "html-webpack-plugin": ">=2.22.0",
         "imagemin-webpack-plugin": ">=1.0.7",
         "imports-loader": ">=0.6.5",
+        "postcss-import": ">=8.1.2",
         "postcss-loader": ">=0.9.1",
         "pug": ">=2.0.0-alpha8",
         "jsdoc": ">=3.4.0",
