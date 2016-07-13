@@ -662,9 +662,10 @@
         "rules": {
             "arrow-parens": ["error", "always"],
             "block-scoped-var": 0,
-            "no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
             "curly": ["error", "multi"],
             "indent": ["error", 4],
+            "max-nested-callbacks": ["error", 10],
+            "no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
             "new-cap": 0,
             "no-constant-condition": 0,
             "no-new-func": 0,
