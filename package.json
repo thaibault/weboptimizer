@@ -317,6 +317,7 @@
                     "less": {},
                     "modernJavaScript": {
                         "cacheDirectory": true,
+                        "compact": true,
                         "presets": ["es2015-loose", "stage-0"],
                         "plugins": ["transform-flow-strip-types"]
                     },
