@@ -4,6 +4,9 @@
 .*/_.*\.js
 .*/.+\.compiled\.js
 
+# temporary excludes
+.+/systemjs-builder/test/fixtures/sourcemaps-expectations/.+\.json
+
 [options]
 esproposal.class_static_fields=enable
 
