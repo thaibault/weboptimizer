@@ -24,9 +24,10 @@ export type PlainObject = {[key:string]:any}
 export type SetterFunction = (key:any, value:any) => any
 // // region browser
 export type DomNode = any
-export type LocalStorage = {
+export type Storage = {
     getItem(key:string):any;
     setItem(key:string, value:any):void;
+    removeItem(key:string, value:any):void;
 }
 export type Location = {
     hash:string;
@@ -48,7 +49,8 @@ export type Location = {
 export type Window = {
     document:Object;
     location:Location;
-    localStorage:LocalStorage;
+    localStorage:Storage;
+    sessionStorage:Storage;
 }
 // // endregion
 // / endregion
