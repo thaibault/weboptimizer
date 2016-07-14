@@ -27,8 +27,8 @@ try {
 
 import configuration from './configurator.compiled'
 import type {
-    ErrorHandlerFunction, NormalizedInternalInjection, PlainObject,
-    PromiseCallbackFunction, ResolvedBuildConfiguration, ResolvedConfiguration
+    NormalizedInternalInjection, PlainObject, PromiseCallbackFunction,
+    ResolvedBuildConfiguration, ResolvedConfiguration
 } from './type'
 import Helper from './helper.compiled'
 // endregion
@@ -39,12 +39,15 @@ const childProcessOptions:Object = {
     shell: true,
     stdio: 'inherit'
 }
+const closeEventNames:Array<string> = [
+    'exit', 'close', 'uncaughtException', 'SIGINT', 'SIGTERM', 'SIGQUIT']
 const childProcesses:Array<ChildProcess> = []
 const processPromises:Array<Promise<any>> = []
 const possibleArguments:Array<string> = [
     'build', 'buildDLL', 'clear', 'document', 'lint', 'preinstall', 'test',
     'testInBrowser', 'typeCheck'
 ]
+const closeEventHandlers:Array<Function> = []
 if (configuration.givenCommandLineArguments.length > 2) {
     // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
@@ -81,18 +84,14 @@ if (configuration.givenCommandLineArguments.length > 2) {
     fileSystem.writeFileSync(filePath, JSON.stringify(dynamicConfiguration))
     const additionalArguments:Array<string> = process.argv.splice(3)
     // / region register exit handler to tidy up
-    const exitHandler:ErrorHandlerFunction = function(error:?Error):?Error {
+    closeEventHandlers.push(function(error:?Error):?Error {
         try {
             fileSystem.unlinkSync(filePath)
         } catch (error) {}
         if (error)
             throw error
-        process.exit()
         return error
-    }
-    process.on('exit', exitHandler)
-    process.on('SIGINT', exitHandler)
-    process.on('uncaughtException', exitHandler)
+    })
     // / endregion
     // endregion
     // region handle clear
@@ -153,9 +152,67 @@ if (configuration.givenCommandLineArguments.length > 2) {
         Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore)
-    if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2]))
-        // Triggers complete asset compiling and bundles them into the final
-        // productive output.
+    if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2])) {
+        const tidyUp = ():void => {
+            /*
+                Determines all none javaScript entities which have been emitted
+                as single javaScript module to remove.
+            */
+            const internalInjection:NormalizedInternalInjection =
+                Helper.normalizeInternalInjection(
+                    Helper.resolveInjection(
+                        configuration.injection,
+                        buildConfigurations,
+                        configuration.testInBrowser.injection.internal,
+                        configuration.module.aliases,
+                        configuration.knownExtensions,
+                        configuration.path.context,
+                        configuration.path.ignore
+                    ).internal)
+            for (const chunkName:string in internalInjection)
+                if (internalInjection.hasOwnProperty(chunkName))
+                    for (const moduleID:string of internalInjection[
+                        chunkName
+                    ]) {
+                        const type:?string = Helper.determineAssetType(
+                            Helper.determineModuleFilePath(moduleID),
+                            configuration.build, configuration.path)
+                        // TODO replace all placeholder like [hash] [id] ...
+                        const filePath:string =
+                            configuration.files.javaScript.replace(
+                                '[name]', path.join(path.relative(
+                                    path.dirname(moduleID),
+                                    configuration.path.context
+                                ), path.basename(moduleID))
+                            ).replace(/\?[^?]+$/, '')
+                        if (typeof type === 'string' && configuration.build[
+                            type
+                        ])
+                            if (configuration.build[
+                                type
+                            ].outputExtension === 'js')
+                                try {
+                                    fileSystem.chmodSync(filePath, '755')
+                                } catch (error) {}
+                            else
+                                for (const suffix:string of ['', '.map'])
+                                    try {
+                                        fileSystem.unlinkSync(
+                                            filePath + suffix)
+                                    } catch (error) {}
+                    }
+            for (
+                const filePath:string of configuration.path.tidyUp
+            )
+                try {
+                    fileSystem.unlinkSync(filePath)
+                } catch (error) {}
+        }
+        closeEventHandlers.push(tidyUp)
+        /*
+            Triggers complete asset compiling and bundles them into the final
+            productive output.
+        */
         processPromises.push(new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
         ):void => {
@@ -163,75 +220,19 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 configuration.commandLine.build.command, (
                     configuration.commandLine.build.arguments || []
                 ).concat(additionalArguments), childProcessOptions)
-            childProcess.on('close', (returnCode:number):void => {
-                if (returnCode === 0) {
-                    /*
-                        Determines all none javaScript entities which have been
-                        emitted as single javaScript module to remove.
-                    */
-                    const internalInjection:NormalizedInternalInjection =
-                        Helper.normalizeInternalInjection(
-                            Helper.resolveInjection(
-                                configuration.injection,
-                                buildConfigurations,
-                                configuration.testInBrowser.injection.internal,
-                                configuration.module.aliases,
-                                configuration.knownExtensions,
-                                configuration.path.context,
-                                configuration.path.ignore
-                            ).internal)
-                    for (const chunkName:string in internalInjection)
-                        if (internalInjection.hasOwnProperty(chunkName))
-                            for (const moduleID:string of internalInjection[
-                                chunkName
-                            ]) {
-                                const type:?string = Helper.determineAssetType(
-                                    Helper.determineModuleFilePath(moduleID),
-                                    configuration.build, configuration.path)
-                                // TODO replace all placeholder like [hash] [id] ...
-                                const filePath:string =
-                                    configuration.files.javaScript.replace(
-                                        '[name]', path.join(path.relative(
-                                            path.dirname(moduleID),
-                                            configuration.path.context
-                                        ), path.basename(moduleID))
-                                    ).replace(/\?[^?]+$/, '')
-                                if (
-                                    typeof type === 'string' &&
-                                    configuration.build[type]
-                                )
-                                    if (configuration.build[
-                                        type
-                                    ].outputExtension === 'js')
-                                        try {
-                                            fileSystem.chmodSync(
-                                                filePath, '755')
-                                        } catch (error) {}
-                                    else
-                                        for (const suffix:string of [
-                                            '', '.map'
-                                        ])
-                                            try {
-                                                fileSystem.unlinkSync(
-                                                    filePath + suffix)
-                                            } catch (error) {}
-                            }
-                    for (
-                        const filePath:string of configuration.path.tidyUp
-                    )
-                        try {
-                            fileSystem.unlinkSync(filePath)
-                        } catch (error) {}
-                    resolve()
-                } else
-                    reject(new Error(
-                        `Task exited with error code ${returnCode}`))
-            })
+            for (const closeEventName:string of closeEventNames)
+                childProcess.on(closeEventName, (returnCode:?number):void => {
+                    if (typeof returnCode !== 'number' || returnCode === 0)
+                        tidyUp()
+                    else
+                        reject(new Error(
+                            `Task exited with error code ${returnCode}`))
+                })
             childProcesses.push(childProcess)
         }))
     // endregion
     // region handle preinstall
-    else if (
+    } else if (
         configuration.library &&
         configuration.givenCommandLineArguments[2] === 'preinstall'
     ) {
@@ -309,6 +310,16 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // / endregion
     // endregion
 }
+let finished:boolean = false
+const closeHandler = function():void {
+    if (!finished)
+        for (const closeEventHandler:Function of closeEventHandlers)
+            closeEventHandler.apply(this, arguments)
+    finished = true
+    process.exit()
+}
+for (const closeEventName:string of closeEventNames)
+    process.on(closeEventName, closeHandler)
 if (!configuration.library)
     possibleArguments.push('serve')
 // IgnoreTypeCheck

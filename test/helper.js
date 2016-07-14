@@ -12,8 +12,7 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, ErrorHandlerFunction, Paths,
-    TraverseFilesCallbackFunction
+    BuildConfiguration, Paths, TraverseFilesCallbackFunction
 } from '../type'
 import Helper from '../helper.compiled'
 // endregion
@@ -161,8 +160,7 @@ QUnit.test('handleChildProcess', (assert:Object):void => {
          * otherwise.
          */
         _write(
-            chunk:Buffer|string, encoding:string,
-            callback:ErrorHandlerFunction
+            chunk:Buffer|string, encoding:string, callback:Function
         ):boolean {
             callback(new Error('test'))
             return true

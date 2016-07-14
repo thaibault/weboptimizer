@@ -222,7 +222,6 @@ export type ResolvedConfiguration = {
 }
 // / endregion
 // / region specific callbacks
-export type ErrorHandlerFunction = (error:?Error) => ?Error
 export type EvaluationFunction = (
     self:?PlainObject, webOptimizerPath:string, currentPath:string,
     path:typeof path
