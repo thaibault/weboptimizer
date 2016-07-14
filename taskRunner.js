@@ -98,9 +98,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // region handle clear
     /*
         NOTE: A build could depend on previously created dll packages so a
-        clean should not be performed automatically.
+        clean should not be performed in that case.
     */
-    if (!['serve', 'build', 'testInBrowser'].includes(
+    if (!['build', 'serve', 'testInBrowser'].includes(
         configuration.givenCommandLineArguments[2]
     ) && possibleArguments.includes(
         configuration.givenCommandLineArguments[2]
@@ -188,6 +188,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                                 const type:?string = Helper.determineAssetType(
                                     Helper.determineModuleFilePath(moduleID),
                                     configuration.build, configuration.path)
+                                // TODO replace all placeholder like [hash] [id] ...
                                 const filePath:string =
                                     configuration.files.javaScript.replace(
                                         '[name]', path.join(path.relative(
