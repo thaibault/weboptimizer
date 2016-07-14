@@ -232,9 +232,10 @@
                         "collapseWhitespace": true,
                         "collapseWhitespace": true,
                         "conservativeCollapse": true,
-                        "ignoreCustomComments": [{
-                            "__evaluate__": "/^\\|?[a-z]{2}[A-Z]{2}:/"
-                        }],
+                        "ignoreCustomComments": [
+                            {"__evaluate__": "/^\\|?[a-z]{2}[A-Z]{2}:/"},
+                            {"__evaluate__": "^[a-z]{2}[A-Z]{2}$"}
+                        ],
                         "ignoreCustomFragments": [
                             {"__evaluate__": "/<%[\\s\\S]*?%>/"},
                             {"__evaluate__": "/<\\?[\\s\\S]*?\\?>/"},
