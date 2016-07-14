@@ -28,7 +28,7 @@
         "css-loader": ">=0.23.1",
         "eslint": ">=3.0.1",
         "eslint-config-google": ">=0.5.0",
-        "eslint-plugin-flowtype": ">=2.2.7",
+        "eslint-plugin-flowtype": ">=2.3.1",
         "eslint-plugin-jsdoc": ">=2.3.1",
         "extract-loader": ">=0.0.2",
         "extract-text-webpack-plugin": ">=1.0.1",
@@ -64,7 +64,7 @@
     },
     "devDependencies": {
         "qunit-cli": ">=0.2.0",
-        "source-map-support": ">=0.4.0"
+        "source-map-support": ">=0.4.2"
     },
     "files": [
         "browserAPI.js",
