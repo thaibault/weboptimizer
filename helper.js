@@ -604,12 +604,13 @@ export default class Helper {
                         const evaluationFunction:EvaluationFunction =
                             new Function(
                                 'self', 'webOptimizerPath', 'currentPath',
-                                'path', ((
+                                'path', 'helper', ((
                                     key === evaluationIndicatorKey
                                 ) ? 'return ' : '') + object[key])
                         return Helper.resolveDynamicDataStructure(
                             evaluationFunction(
-                                configuration, __dirname, process.cwd(), path
+                                configuration, __dirname, process.cwd(), path,
+                                Helper
                             ), configuration, false, evaluationIndicatorKey,
                             executionIndicatorKey)
                     } catch (error) {

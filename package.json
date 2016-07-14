@@ -131,7 +131,7 @@
                         "__evaluate__": "self.module.optimizer.htmlMinifier"
                     },
                     "template": {
-                        "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
+                        "__execute__": "const html = helper.extendObject(true, self.module.html); html.minify = null; return `html?${JSON.stringify(html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
                     }
                 }],
                 "javaScript": {
