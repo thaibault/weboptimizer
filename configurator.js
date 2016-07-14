@@ -33,12 +33,15 @@ import type {
 /* eslint-enable no-unused-vars */
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 metaConfiguration.default.path.context = path.resolve(__dirname, '../../')
+metaConfiguration.default.contextType = 'main'
 if (
     path.basename(path.dirname(process.cwd())) === 'node_modules' ||
     path.basename(path.dirname(process.cwd())) === '.staging' &&
     path.basename(path.dirname(path.dirname(process.cwd()))) === 'node_modules'
-)
+) {
     metaConfiguration.default.path.context = process.cwd()
+    metaConfiguration.default.contextType = 'dependency'
+}
 let specificConfiguration:PlainObject
 try {
     // IgnoreTypeCheck

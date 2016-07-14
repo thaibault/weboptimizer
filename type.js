@@ -107,6 +107,7 @@ export type Paths = {
     tidyUp:Array<string>
 }
 export type DefaultConfiguration = {
+    contextType:string;
     debug:boolean;
     path:{
         context:string;
@@ -129,6 +130,7 @@ export type Command = {
     arguments:Array<string>
 }
 export type ResolvedConfiguration = {
+    contextType:string;
     name:string;
     givenCommandLineArguments:Array<string>;
     dllManifestFilePaths:Array<string>;
