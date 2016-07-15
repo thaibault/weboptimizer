@@ -136,6 +136,11 @@ QUnit.test('extendObject', (assert:Object):void => {
         new Map([['a', new Map([['a', [3, 4]]])]])
     ), new Map([['a', new Map([['a', [3, 4]]])]]))
 })
+// region process handler
+QUnit.test('getProcessCloseHandler', (assert:Object):void =>
+    assert.strictEqual(typeof Helper.getProcessCloseHandler(
+        ():void => {}, ():void => {}
+    ), 'function'))
 QUnit.test('handleChildProcess', (assert:Object):void => {
     /**
      * A mockup duplex stream for mocking "stdout" and "strderr" process
@@ -176,6 +181,7 @@ QUnit.test('handleChildProcess', (assert:Object):void => {
 
     assert.strictEqual(Helper.handleChildProcess(childProcess), childProcess)
 })
+// endregion
 QUnit.test('walkDirectoryRecursivelySync', (assert:Object):void => {
     const filePaths:Array<string> = []
     const callback:TraverseFilesCallbackFunction = (filePath:string):false => {

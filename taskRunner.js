@@ -220,19 +220,14 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 configuration.commandLine.build.arguments || []
             ).concat(additionalArguments)
             console.log(
-                `Running "${configuration.commandLine.build.command}` +
-                ` ${commandLineArguments.join(' ')}"`)
+                `Running "${configuration.commandLine.build.command} ` +
+                `${commandLineArguments.join(' ')}"`)
             const childProcess:ChildProcess = spawnChildProcess(
                 configuration.commandLine.build.command, commandLineArguments,
                 childProcessOptions)
             for (const closeEventName:string of closeEventNames)
-                childProcess.on(closeEventName, (returnCode:?number):void => {
-                    if (typeof returnCode !== 'number' || returnCode === 0)
-                        tidyUp()
-                    else
-                        reject(new Error(
-                            `Task exited with error code ${returnCode}`))
-                })
+                childProcess.on(closeEventName, Helper.getProcessCloseHandler(
+                    resolve, reject, closeEventName, tidyUp))
             childProcesses.push(childProcess)
         }))
     // endregion
@@ -280,7 +275,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                                 if (error)
                                     reject(error)
                                 else
-                                    resolve()
+                                    resolve('exit')
                             }))
                     }))
                 }
@@ -295,32 +290,28 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 configuration.commandLine[type].arguments || []
             ).concat(additionalArguments)
             console.log(
-                `Running "${configuration.commandLine[type].command}` +
+                `Running "${configuration.commandLine[type].command} ` +
                 `${commandLineArguments.join(' ')}"`)
             const childProcess:ChildProcess = spawnChildProcess(
                 configuration.commandLine[type].command, commandLineArguments,
                 childProcessOptions)
-            childProcess.on('close', (returnCode:number):void => {
-                if (returnCode === 0)
-                    resolve()
-                else
-                    reject(returnCode)
-            })
+            for (const closeEventName:string of closeEventNames)
+                childProcess.on(closeEventName, Helper.getProcessCloseHandler(
+                    resolve, reject, closeEventName))
             childProcesses.push(childProcess)
         }))
     // / region synchronous
-    for (const type of ['document', 'test'])
-        if (configuration.givenCommandLineArguments[2] === type) {
-            Promise.all(processPromises).then(():number => handleTask(type))
-            break
-        }
+    if (['document', 'test'].includes(
+        configuration.givenCommandLineArguments[2]
+    ))
+        Promise.all(processPromises).then(():number => handleTask(
+            configuration.givenCommandLineArguments[2]))
     // / endregion
     // / region asynchronous
-    for (const type of ['lint', 'testInBrowser', 'typeCheck', 'serve'])
-        if (configuration.givenCommandLineArguments[2] === type) {
-            handleTask(type)
-            break
-        }
+    else if (['lint', 'testInBrowser', 'typeCheck', 'serve'].includes(
+        configuration.givenCommandLineArguments[2]
+    ))
+        handleTask(configuration.givenCommandLineArguments[2])
     // / endregion
     // endregion
 }
@@ -330,7 +321,6 @@ const closeHandler = function():void {
         for (const closeEventHandler:Function of closeEventHandlers)
             closeEventHandler.apply(this, arguments)
     finished = true
-    process.exit()
 }
 for (const closeEventName:string of closeEventNames)
     process.on(closeEventName, closeHandler)
@@ -347,8 +337,9 @@ if (require.main === module && (
         'dynamically overwrite some configurations.\n')
 // endregion
 // region forward nested return codes
-Promise.all(processPromises).catch((returnCode:number):void => process.exit(
-    returnCode))
+Promise.all(processPromises).catch((error:Error):void => process.exit(
+    // IgnoreTypeCheck
+    error.returnCode))
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
