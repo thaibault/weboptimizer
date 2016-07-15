@@ -216,10 +216,15 @@ if (configuration.givenCommandLineArguments.length > 2) {
         processPromises.push(new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
         ):void => {
+            const commandLineArguments:Array<string> = (
+                configuration.commandLine.build.arguments || []
+            ).concat(additionalArguments)
+            console.log(
+                `Running "${configuration.commandLine.build.command}` +
+                ` ${commandLineArguments.join(' ')}"`)
             const childProcess:ChildProcess = spawnChildProcess(
-                configuration.commandLine.build.command, (
-                    configuration.commandLine.build.arguments || []
-                ).concat(additionalArguments), childProcessOptions)
+                configuration.commandLine.build.command, commandLineArguments,
+                childProcessOptions)
             for (const closeEventName:string of closeEventNames)
                 childProcess.on(closeEventName, (returnCode:?number):void => {
                     if (typeof returnCode !== 'number' || returnCode === 0)
@@ -264,16 +269,20 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     processPromises.push(new Promise((
                         resolve:PromiseCallbackFunction,
                         reject:PromiseCallbackFunction
-                    ):ChildProcess => Helper.handleChildProcess(
-                        execChildProcess(evaluationFunction(
+                    ):void => {
+                        const command:string = evaluationFunction(
                             global, configuration, buildConfiguration, path,
-                            additionalArguments, filePath
-                        ), childProcessOptions, (error:?Error):void => {
-                            if (error)
-                                reject(error)
-                            else
-                                resolve()
-                        }))))
+                            additionalArguments, filePath)
+                        console.log(`Running "${command}"`)
+                        Helper.handleChildProcess(execChildProcess(
+                            command, childProcessOptions,
+                            (error:?Error):void => {
+                                if (error)
+                                    reject(error)
+                                else
+                                    resolve()
+                            }))
+                    }))
                 }
     }
     // endregion
@@ -282,10 +291,15 @@ if (configuration.givenCommandLineArguments.length > 2) {
         new Promise((
             resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
         ):void => {
+            const commandLineArguments:Array<string> = (
+                configuration.commandLine[type].arguments || []
+            ).concat(additionalArguments)
+            console.log(
+                `Running "${configuration.commandLine[type].command}` +
+                `${commandLineArguments.join(' ')}"`)
             const childProcess:ChildProcess = spawnChildProcess(
-                configuration.commandLine[type].command, (
-                    configuration.commandLine[type].arguments || []
-                ).concat(additionalArguments), childProcessOptions)
+                configuration.commandLine[type].command, commandLineArguments,
+                childProcessOptions)
             childProcess.on('close', (returnCode:number):void => {
                 if (returnCode === 0)
                     resolve()
