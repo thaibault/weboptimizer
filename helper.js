@@ -115,17 +115,12 @@ export default class Helper {
         } else
             target = targetOrDeepIndicator
         const mergeValue = (key:string, value:any, targetValue:any):any => {
-            // Recurse if we're merging plain objects or arrays.
+            // Recurse if we're merging plain objects or maps.
             if (deep && value && (
-                Array.isArray(value) || Helper.isPlainObject(value) ||
-                value instanceof Map
+                Helper.isPlainObject(value) || value instanceof Map
             )) {
-                let clone
-                if (Array.isArray(value))
-                    clone = targetValue && Array.isArray(
-                        targetValue
-                    ) ? targetValue : []
-                else if (value instanceof Map)
+                let clone:any
+                if (value instanceof Map)
                     clone = targetValue && (
                         targetValue instanceof Map
                     ) ? targetValue : new Map()

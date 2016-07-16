@@ -84,7 +84,7 @@ if (
     configuration = Helper.extendObject(
         true, configuration, libraryConfiguration)
 // endregion
-// region merging and evaluating default, test, dynamic and specific settings
+// region merging and evaluating default, test, specific and dynamic settings
 // Merges project specific configurations with default ones.
 configuration = Helper.extendObject(true, configuration, specificConfiguration)
 configuration.debug = debug
@@ -129,14 +129,13 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
 // / endregion
 Helper.extendObject(true, configuration, runtimeInformation)
 let result:?PlainObject = null
-const evaluationFunction = (configuration:PlainObject):?PlainObject =>
-    // IgnoreTypeCheck
-    new Function('configuration', 'return ' +
-        runtimeInformation.givenCommandLineArguments[runtimeInformation
-            .givenCommandLineArguments.length - 1]
-    )(configuration)
 try {
-    result = evaluationFunction(configuration)
+    // IgnoreTypeCheck
+    result = ((configuration:PlainObject):?PlainObject => new Function(
+        'configuration', 'return ' +
+            runtimeInformation.givenCommandLineArguments[runtimeInformation
+                .givenCommandLineArguments.length - 1]
+    )(configuration))(configuration)
 } catch (error) {}
 if (Helper.isPlainObject(result))
     Helper.extendObject(true, configuration, result)
@@ -183,7 +182,7 @@ for (const type:string in resolvedConfiguration.build)
 // endregion
 // region apply webpack html plugin workaround
 /*
-    NOTE: Provides a workaround to handle a bug with changed loader
+    NOTE: Provides a workaround to handle a bug with chained loader
     configurations.
 */
 for (

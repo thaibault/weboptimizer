@@ -86,6 +86,7 @@ QUnit.test('convertToValidVariableName', (assert:Object):void => {
     assert.strictEqual(Helper.convertToValidVariableName('--a--a'), 'aA')
 })
 QUnit.test('extendObject', (assert:Object):void => {
+    assert.deepEqual(Helper.extendObject([]), [])
     assert.deepEqual(Helper.extendObject({}), {})
     assert.deepEqual(Helper.extendObject(true, {}), {})
     assert.deepEqual(Helper.extendObject({a: 1}), {a: 1})
@@ -104,6 +105,14 @@ QUnit.test('extendObject', (assert:Object):void => {
     assert.deepEqual(Helper.extendObject(
         true, {a: {a: [1, 2]}}, {a: {a: [3, 4]}}
     ), {a: {a: [3, 4]}})
+    return
+    target:Object = {a: [1, 2]}
+    Helper.extendObject(true, target, {a: [3, 4]})
+    assert.deepEqual(target, {a: [3, 4]})
+    assert.deepEqual(
+        Helper.extendObject(true, {a: 1}, {a: 2}, {a: 3}), {a: 3})
+    assert.deepEqual(Helper.extendObject(true, [1], [1, 2]), [1, 2])
+    assert.deepEqual(Helper.extendObject(true, [1, 2], [1]), [1])
 
     assert.deepEqual(Helper.extendObject(new Map()), new Map())
     assert.deepEqual(Helper.extendObject(true, new Map()), new Map())
