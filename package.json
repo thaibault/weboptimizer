@@ -129,11 +129,12 @@
                     "inject": "body",
                     "minify": {
                         "__evaluate__": "self.module.optimizer.htmlMinifier"
+                    },
+                    "template": {
+                        "__evaluate__": "`html?${JSON.stringify(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
                     }
                 },
-                "html": [{"template": {
-                    "__evaluate__": "`html?${JSON.stringify(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
-                }}],
+                "html": [{}],
                 "javaScript": {
                     "__evaluate__": "`${self.path.asset.javaScript}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
                 }
