@@ -141,33 +141,22 @@ export default class Helper {
                 targetType += ' Map'
             if (source instanceof Map)
                 sourceType += ' Map'
-            if (targetType !== sourceType)
-                throw Error(
-                    `Can't merge given target type "${targetType}" with ` +
-                    `given source type "${sourceType}" (${index}. argument).`)
-            // Only deal with non-undefined values.
-            if (source !== undefined)
+            if (targetType === sourceType)
                 if (target instanceof Map && source instanceof Map)
-                    for (const [key:string, value:any] of source) {
-                        const newValue = mergeValue(
-                            key, value, target.get(key))
-                        // Don't bring in undefined values.
-                        if (typeof newValue !== 'undefined')
-                            target.set(key, newValue)
-                    }
+                    for (const [key:string, value:any] of source)
+                        target.set(key, mergeValue(key, value, target.get(
+                            key)))
                 else if (Helper.isPlainObject(target) && Helper.isPlainObject(
                     source
                 )) {
                     for (const key:string in source)
-                        if (source.hasOwnProperty(key)) {
-                            const newValue = mergeValue(
+                        if (source.hasOwnProperty(key))
+                            target[key] = mergeValue(
                                 key, source[key], target[key])
-                            // Don't bring in undefined values.
-                            if (typeof newValue !== 'undefined')
-                                target[key] = newValue
-                        }
                 } else
                     target = source
+            else
+                target = source
             index += 1
         }
         return target

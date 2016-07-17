@@ -40,108 +40,125 @@ const buildConfiguration:BuildConfiguration = {
 // region tests
 // / region boolean
 QUnit.test('isPlainObject', (assert:Object):void => {
-    assert.ok(Helper.isPlainObject({}))
-    assert.ok(Helper.isPlainObject({a: 1}))
     /* eslint-disable no-new-object */
-    assert.ok(Helper.isPlainObject(new Object()))
+    for (const okValue:any of [{}, {a: 1}, new Object()])
     /* eslint-enable no-new-object */
-
-    assert.notOk(Helper.isPlainObject(new String()))
-    assert.notOk(Helper.isPlainObject(Object))
-    assert.notOk(Helper.isPlainObject(null))
-    assert.notOk(Helper.isPlainObject(0))
-    assert.notOk(Helper.isPlainObject(1))
-    assert.notOk(Helper.isPlainObject(true))
-    assert.notOk(Helper.isPlainObject(undefined))
+        assert.ok(Helper.isPlainObject(okValue))
+    for (const notOkValue:any of [
+        new String(), Object, null, 0, 1, true, undefined
+    ])
+        assert.notOk(Helper.isPlainObject(notOkValue))
 })
 QUnit.test('isFunction', (assert:Object):void => {
-    assert.ok(Helper.isFunction(Object))
-    assert.ok(Helper.isFunction(new Function('return 1')))
-    assert.ok(Helper.isFunction(function():void {}))
-    assert.ok(Helper.isFunction(():void => {}))
-
-    assert.notOk(Helper.isFunction(null))
-    assert.notOk(Helper.isFunction(false))
-    assert.notOk(Helper.isFunction(0))
-    assert.notOk(Helper.isFunction(1))
-    assert.notOk(Helper.isFunction(undefined))
-    assert.notOk(Helper.isFunction({}))
-    assert.notOk(Helper.isFunction(new Boolean()))
+    for (const okValue:any of [
+        Object, new Function('return 1'), function():void {}, ():void => {}
+    ])
+        assert.ok(Helper.isFunction(okValue))
+    for (const notOkValue:any of [
+        null, false, 0, 1, undefined, {}, new Boolean()
+    ])
+        assert.notOk(Helper.isFunction(notOkValue))
 })
 QUnit.test('isFilePathInLocation', (assert:Object):void => {
-    assert.ok(Helper.isFilePathInLocation('./', ['./']))
-    assert.ok(Helper.isFilePathInLocation('./', ['../']))
-
-    assert.notOk(Helper.isFilePathInLocation('../', ['./']))
+    for (const okArguments:Array<any> of [
+        ['./', ['./']], ['./', ['../']]
+    ])
+        assert.ok(Helper.isFilePathInLocation.apply(this, okArguments))
+    for (const notOkArguments:Array<any> of [['../', ['./']]])
+        assert.notOk(Helper.isFilePathInLocation.apply(this, notOkArguments))
 })
 // / endregion
 QUnit.test('convertToValidVariableName', (assert:Object):void => {
-    assert.strictEqual(Helper.convertToValidVariableName(''), '')
-    assert.strictEqual(Helper.convertToValidVariableName('a'), 'a')
-    assert.strictEqual(Helper.convertToValidVariableName('_a'), '_a')
-    assert.strictEqual(Helper.convertToValidVariableName('_a_a'), '_a_a')
-    assert.strictEqual(Helper.convertToValidVariableName('_a-a'), '_aA')
-    assert.strictEqual(Helper.convertToValidVariableName('-a-a'), 'aA')
-    assert.strictEqual(Helper.convertToValidVariableName('-a--a'), 'aA')
-    assert.strictEqual(Helper.convertToValidVariableName('--a--a'), 'aA')
+    for (const test:Array<string> of [
+        ['', ''],
+        ['a', 'a'],
+        ['_a', '_a'],
+        ['_a_a', '_a_a'],
+        ['_a-a', '_aA'],
+        ['-a-a', 'aA'],
+        ['-a--a', 'aA'],
+        ['--a--a', 'aA']
+    ])
+        assert.strictEqual(Helper.convertToValidVariableName(test[0]), test[1])
 })
 QUnit.test('extendObject', (assert:Object):void => {
-    assert.deepEqual(Helper.extendObject([]), [])
-    assert.deepEqual(Helper.extendObject({}), {})
-    assert.deepEqual(Helper.extendObject(true, {}), {})
-    assert.deepEqual(Helper.extendObject({a: 1}), {a: 1})
-    assert.deepEqual(Helper.extendObject({a: 1}, {a: 2}), {a: 2})
-    assert.deepEqual(Helper.extendObject({}, {a: 1}, {a: 2}), {a: 2})
-    assert.deepEqual(Helper.extendObject({}, {a: 1}, {a: 2}), {a: 2})
-    assert.deepEqual(Helper.extendObject(
-        {a: 1, b: {a: 1}}, {a: 2, b: {b: 1}}
-    ), {a: 2, b: {b: 1}})
-    assert.deepEqual(Helper.extendObject(
-        true, {a: 1, b: {a: 1}}, {a: 2, b: {b: 1}}
-    ), {a: 2, b: {a: 1, b: 1}})
-    assert.deepEqual(Helper.extendObject(
-        true, {a: 1, b: {a: []}}, {a: 2, b: {b: 1}}
-    ), {a: 2, b: {a: [], b: 1}})
-    assert.deepEqual(Helper.extendObject(
-        true, {a: {a: [1, 2]}}, {a: {a: [3, 4]}}
-    ), {a: {a: [3, 4]}})
+    for (const test:any of [
+        [[[]], []],
+        [[{}], {}],
+        [[{a: 1}], {a: 1}],
+        [[{a: 1}, {a: 2}], {a: 2}],
+        [[{}, {a: 1}, {a: 2}], {a: 2}],
+        [[{}, {a: 1}, {a: 2}], {a: 2}],
+        [[{a: 1, b: {a: 1}}, {a: 2, b: {b: 1}}], {a: 2, b: {b: 1}}],
+        [[[1, 2], [1]], [1]],
+        [[new Map()], new Map()],
+        [[new Map([['a', 1]])], new Map([['a', 1]])],
+        [[new Map([['a', 1]]), new Map([['a', 2]])], new Map([['a', 2]])],
+        [
+            [new Map(), new Map([['a', 1]]), new Map([['a', 2]])],
+            new Map([['a', 2]])
+        ],
+        [
+            [new Map(), new Map([['a', 1]]), new Map([['a', 2]])],
+            new Map([['a', 2]])
+        ],
+        [
+            [
+                new Map([['a', 1], ['b', new Map([['a', 1]])]]),
+                new Map([['a', 2], ['b', new Map([['b', 1]])]])
+            ],
+            new Map([['a', 2], ['b', new Map([['b', 1]])]])
+        ],
+        [[true, {}], {}],
+        [
+            [true, {a: 1, b: {a: 1}}, {a: 2, b: {b: 1}}],
+            {a: 2, b: {a: 1, b: 1}}
+        ],
+        [
+            [true, {a: 1, b: {a: []}}, {a: 2, b: {b: 1}}],
+            {a: 2, b: {a: [], b: 1}}
+        ],
+        [[true, {a: {a: [1, 2]}}, {a: {a: [3, 4]}}], {a: {a: [3, 4]}}],
+        [
+            [true, {a: {a: [1, 2]}}, {a: {a: null}}],
+            {a: {a: null}}
+        ],
+        [[true, {a: {a: [1, 2]}}, {a: true}], {a: true}],
+        [[true, {a: {a: [1, 2]}}, false], false],
+        [[true, {a: {a: [1, 2]}}, undefined], undefined],
+        [[true, {a: 1}, {a: 2}, {a: 3}], {a: 3}],
+        [[true, [1], [1, 2]], [1, 2]],
+        [[true, [1, 2], [1]], [1]],
+        [[true, new Map()], new Map()],
+        [
+            [
+                true, new Map([['a', 1], ['b', new Map([['a', 1]])]]),
+                new Map([['a', 2], ['b', new Map([['b', 1]])]])
+            ],
+            new Map([['a', 2], ['b', new Map([['a', 1], ['b', 1]])]])
+        ],
+        [
+            [
+                true, new Map([['a', 1], ['b', new Map([['a', []]])]]),
+                new Map([['a', 2], ['b', new Map([['b', 1]])]])
+            ],
+            new Map([['a', 2], ['b', new Map([['a', []], ['b', 1]])]])
+        ],
+        [
+            [
+                true, new Map([['a', new Map([['a', [1, 2]]])]]),
+                new Map([['a', new Map([['a', [3, 4]]])]])
+            ],
+            new Map([['a', new Map([['a', [3, 4]]])]])
+        ]
+    ])
+        assert.deepEqual(
+            Helper.extendObject.apply(this, test[0]), test[1])
+    assert.strictEqual(Helper.extendObject([1, 2], undefined), undefined)
+    assert.strictEqual(Helper.extendObject([1, 2], null), null)
     const target:Object = {a: [1, 2]}
     Helper.extendObject(true, target, {a: [3, 4]})
     assert.deepEqual(target, {a: [3, 4]})
-    assert.deepEqual(
-        Helper.extendObject(true, {a: 1}, {a: 2}, {a: 3}), {a: 3})
-    assert.deepEqual(Helper.extendObject(true, [1], [1, 2]), [1, 2])
-    assert.deepEqual(Helper.extendObject(true, [1, 2], [1]), [1])
-    assert.deepEqual(Helper.extendObject(new Map()), new Map())
-    assert.deepEqual(Helper.extendObject(true, new Map()), new Map())
-    assert.deepEqual(Helper.extendObject(
-        new Map([['a', 1]])
-    ), new Map([['a', 1]]))
-    assert.deepEqual(Helper.extendObject(
-        new Map([['a', 1]]), new Map([['a', 2]])
-    ), new Map([['a', 2]]))
-    assert.deepEqual(Helper.extendObject(
-        new Map(), new Map([['a', 1]]), new Map([['a', 2]])
-    ), new Map([['a', 2]]))
-    assert.deepEqual(Helper.extendObject(
-        new Map(), new Map([['a', 1]]), new Map([['a', 2]])
-    ), new Map([['a', 2]]))
-    assert.deepEqual(Helper.extendObject(
-        new Map([['a', 1], ['b', new Map([['a', 1]])]]),
-        new Map([['a', 2], ['b', new Map([['b', 1]])]])
-    ), new Map([['a', 2], ['b', new Map([['b', 1]])]]))
-    assert.deepEqual(Helper.extendObject(
-        true, new Map([['a', 1], ['b', new Map([['a', 1]])]]),
-        new Map([['a', 2], ['b', new Map([['b', 1]])]])
-    ), new Map([['a', 2], ['b', new Map([['a', 1], ['b', 1]])]]))
-    assert.deepEqual(Helper.extendObject(
-        true, new Map([['a', 1], ['b', new Map([['a', []]])]]),
-        new Map([['a', 2], ['b', new Map([['b', 1]])]])
-    ), new Map([['a', 2], ['b', new Map([['a', []], ['b', 1]])]]))
-    assert.deepEqual(Helper.extendObject(
-        true, new Map([['a', new Map([['a', [1, 2]]])]]),
-        new Map([['a', new Map([['a', [3, 4]]])]])
-    ), new Map([['a', new Map([['a', [3, 4]]])]]))
 })
 // region process handler
 QUnit.test('getProcessCloseHandler', (assert:Object):void =>
@@ -223,7 +240,8 @@ QUnit.test('determineAssetType', (assert:Object):void => {
         target: '',
         tidyUp: []
     }
-
+    // TODO make more generic with for loops and in all other test files in all
+    // projects
     assert.strictEqual(Helper.determineAssetType(
         './', buildConfiguration, paths
     ), null)
