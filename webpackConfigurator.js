@@ -75,9 +75,7 @@ const pluginInstances:Array<Object> = [
 // /// region generate html file
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
-    for (let htmlConfiguration:HTMLConfiguration of configuration.files.html) {
-        htmlConfiguration = Helper.extendObject(
-            true, htmlConfiguration, configuration.files.defaultHTML)
+    for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
         try {
             fileSystem.accessSync(htmlConfiguration.template.substring(
                 htmlConfiguration.template.lastIndexOf('!') + 1
@@ -85,7 +83,6 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             pluginInstances.push(new plugins.HTML(htmlConfiguration))
             htmlAvailable = true
         } catch (error) {}
-    }
 // /// endregion
 // /// region generate favicons
 if (htmlAvailable && configuration.favicon) {

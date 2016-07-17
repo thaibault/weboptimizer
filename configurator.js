@@ -186,20 +186,23 @@ for (const type:string in resolvedConfiguration.build)
     configurations.
 */
 for (
-    const htmlConguration:HTMLConfiguration of resolvedConfiguration.files.html
-)
+    let htmlConfiguration:HTMLConfiguration of resolvedConfiguration.files.html
+) {
+    Helper.extendObject(
+        true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)
     if (
-        typeof htmlConguration.template === 'string' &&
-        htmlConguration.template.includes('!')
+        typeof htmlConfiguration.template === 'string' &&
+        htmlConfiguration.template.includes('!')
     ) {
-        const newTemplateString:Object = new String(htmlConguration.template)
+        const newTemplateString:Object = new String(htmlConfiguration.template)
         newTemplateString.replace = ((string:string):Function => (
             _search:RegExp|string, _replacement:string|(
                 ...matches:Array<string>
             ) => string
-        ):string => string)(htmlConguration.template)
-        htmlConguration.template = newTemplateString
+        ):string => string)(htmlConfiguration.template)
+        htmlConfiguration.template = newTemplateString
     }
+}
 // endregion
 export default resolvedConfiguration
 // region vim modline
