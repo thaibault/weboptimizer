@@ -145,6 +145,7 @@ export type ResolvedConfiguration = {
     };
     files:{
         cascadingStyleSheet:string;
+        defaultHTML:HTMLConfiguration;
         html:Array<HTMLConfiguration>;
         javaScript:string;
     };

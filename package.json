@@ -121,7 +121,7 @@
                 "cascadingStyleSheet": {
                     "__evaluate__": "self.debug ? null : `${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
                 },
-                "html": [{
+                "defaultHTML": {
                     "chunksSortMode": "auto",
                     "debug": false,
                     "filename": "index.html",
@@ -129,11 +129,11 @@
                     "inject": "body",
                     "minify": {
                         "__evaluate__": "self.module.optimizer.htmlMinifier"
-                    },
-                    "template": {
-                        "__evaluate__": "`html?${JSON.stringify(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
                     }
-                }],
+                },
+                "html": [{"template": {
+                    "__evaluate__": "`html?${JSON.stringify(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
+                }}],
                 "javaScript": {
                     "__evaluate__": "`${self.path.asset.javaScript}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
                 }
@@ -509,12 +509,12 @@
             },
 
             "testInBrowser": {
-                "files": {"html": [{
+                "files": {"defaultHTML": {
                     "template": {
                         "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${webOptimizerPath}/test.pug`"
                     },
                     "filename": "test.html"
-                }]},
+                }},
                 "inPlace": {"externalLibrary": true},
                 "injection": {"internal": {"index": "test/"}},
                 "module": {"optimizer": {"uglifyJS": null}},
@@ -529,7 +529,7 @@
                 "__evaluate__": "self.contextType === 'main' && 2 < self.givenCommandLineArguments.length ? (['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []).concat(!['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? 'webpack/hot/dev-server' : []) : []"
             }}},
             "files": {
-                "html": [{"debug": true}],
+                "defaultHTML": {"debug": true},
                 "javaScript": {
                     "__evaluate__": "`${self.path.asset.javaScript}[name].js?${self.hashAlgorithm}=[hash]`"
                 }
