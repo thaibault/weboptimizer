@@ -110,7 +110,7 @@ export default class Helper {
         if (typeof targetOrDeepIndicator === 'boolean') {
             // Handle a deep copy situation and skip deep indicator and target.
             deep = targetOrDeepIndicator
-            target = arguments[1]
+            target = arguments[index]
             index = 2
         } else
             target = targetOrDeepIndicator
@@ -145,8 +145,8 @@ export default class Helper {
                 throw Error(
                     `Can't merge given target type "${targetType}" with ` +
                     `given source type "${sourceType}" (${index}. argument).`)
-            // Only deal with non-null/undefined values.
-            if (!(source === null || source === undefined))
+            // Only deal with non-undefined values.
+            if (source !== undefined)
                 if (target instanceof Map && source instanceof Map)
                     for (const [key:string, value:any] of source) {
                         const newValue = mergeValue(
@@ -155,7 +155,9 @@ export default class Helper {
                         if (typeof newValue !== 'undefined')
                             target.set(key, newValue)
                     }
-                else if (target instanceof Object && source instanceof Object)
+                else if (Helper.isPlainObject(target) && Helper.isPlainObject(
+                    source
+                )) {
                     for (const key:string in source)
                         if (source.hasOwnProperty(key)) {
                             const newValue = mergeValue(
@@ -164,6 +166,8 @@ export default class Helper {
                             if (typeof newValue !== 'undefined')
                                 target[key] = newValue
                         }
+                } else
+                    target = source
             index += 1
         }
         return target
