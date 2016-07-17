@@ -568,7 +568,7 @@
 
             "development": {
                 "openBrowser": {"url": {
-                    "__evaluate__": "((sourceFilePath) => `${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`)(self.files.html[0].template)"
+                    "__evaluate__": "((sourceFilePath) => `${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}`)(self.files.defaultHTML.template)"
                 }},
                 "tool": "#eval-cheap-module-source-map"
             },
@@ -579,7 +579,7 @@
 
             "testInBrowser": {
                 "development": {"openBrowser": {"url": {
-                    "__evaluate__": "((sourceFilePath) => `${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}?notrycatch&noglobals`)(self.files.html[0].template)"
+                    "__evaluate__": "((sourceFilePath) => `${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${path.basename(sourceFilePath.substring(sourceFilePath.lastIndexOf('!') + 1)).replace(/\\.[^.]+$/, '.html')}?notrycatch&noglobals`)(self.files.defaultHTML.template)"
                 }}},
                 "injection": {"internal": {
                     "vendor": [
