@@ -31,10 +31,14 @@ type CompileFunction = (template:string, options:Object) => TemplateFunction
 module.exports = function(source:string):string {
     if (this.cacheable)
         this.cacheable()
-    const query:Object = Helper.extendObject(true, {
-        moduleAliases: [], knownExtensions: ['.pug', '.html', '.js', '.css'],
-        context: './'
-    }, this.options.pug || {}, loaderUtils.parseQuery(this.query))
+    const query:Object = Helper.convertSubstringInPlainObject(
+        Helper.extendObject(true, {
+            moduleAliases: [],
+            knownExtensions: ['.pug', '.html', '.js', '.css'],
+            context: './'
+        }, this.options.pug || {}, loaderUtils.parseQuery(this.query)),
+        /#%%%#/g, '!'
+    )
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler
     ):TemplateFunction => (locals:Object = {}):string => {

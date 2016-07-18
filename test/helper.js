@@ -68,6 +68,18 @@ QUnit.test('isFilePathInLocation', (assert:Object):void => {
         assert.notOk(Helper.isFilePathInLocation.apply(this, notOkArguments))
 })
 // / endregion
+QUnit.test('convertSubstringInPlainObject', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [{}, /a/, '', {}],
+        [{a: 'a'}, /a/, 'b', {a: 'b'}],
+        [{a: 'aa'}, /a/, 'b', {a: 'ba'}],
+        [{a: 'aa'}, /a/g, 'b', {a: 'bb'}],
+        [{a: {a: 'aa'}}, /a/g, 'b', {a: {a: 'bb'}}]
+    ])
+        assert.deepEqual(Helper.convertSubstringInPlainObject(
+            test[0], test[1], test[2]
+        ), test[3])
+})
 QUnit.test('convertToValidVariableName', (assert:Object):void => {
     for (const test:Array<string> of [
         ['', ''],

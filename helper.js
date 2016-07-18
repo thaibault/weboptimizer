@@ -82,6 +82,26 @@ export default class Helper {
     }
     // endregion
     /**
+     * Replaces given pattern in each value in given object recursively with
+     * given string replacement.
+     * @param object - Object to convert substrings in.
+     * @param pattern - Regular expression to replace.
+     * @param replacement - String to use as replacement for found patterns.
+     * @returns Converted object with replaced patterns.
+     */
+    static convertSubstringInPlainObject(
+        object:PlainObject, pattern:RegExp, replacement:string
+    ):PlainObject {
+        for (const key:string in object)
+            if (object.hasOwnProperty(key))
+                if (typeof object[key] === 'object')
+                    object[key] = Helper.convertSubstringInPlainObject(
+                        object[key], pattern, replacement)
+                else if (typeof object[key] === 'string')
+                    object[key] = object[key].replace(pattern, replacement)
+        return object
+    }
+    /**
      * Translates given name into a valid javaScript one.
      * @param name - Name to convert.
      * @returns Converted name is returned.
