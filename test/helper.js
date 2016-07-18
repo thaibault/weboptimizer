@@ -254,15 +254,13 @@ QUnit.test('determineAssetType', (assert:Object):void => {
     }
     // TODO make more generic with for loops and in all other test files in all
     // projects
-    assert.strictEqual(Helper.determineAssetType(
-        './', buildConfiguration, paths
-    ), null)
-    assert.strictEqual(Helper.determineAssetType(
-        'a.js', buildConfiguration, paths
-    ), 'javaScript')
-    assert.strictEqual(Helper.determineAssetType(
-        'a.css', buildConfiguration, paths
-    ), null)
+    for (const test:Array<any> of [
+        [['./', buildConfiguration, paths], null],
+        [['a.js', buildConfiguration, paths], 'javaScript'],
+        [['a.css', buildConfiguration, paths], null]
+    ])
+        assert.strictEqual(
+            Helper.determineAssetType.apply(this, test[0]), test[1])
 })
 QUnit.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
     assert.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
@@ -288,86 +286,106 @@ QUnit.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
     ])
 })
 QUnit.test('determineModuleLocations', (assert:Object):void => {
-    assert.deepEqual(Helper.determineModuleLocations({}), {
-        filePaths: [],
-        directoryPaths: []
-    })
-    assert.deepEqual(Helper.determineModuleLocations('example'), {
-        filePaths: ['example'],
-        directoryPaths: ['.']
-    })
-    assert.deepEqual(Helper.determineModuleLocations(['example']), {
-        filePaths: ['example'],
-        directoryPaths: ['.']
-    })
-    assert.deepEqual(Helper.determineModuleLocations({example: 'example'}), {
-        filePaths: ['example'],
-        directoryPaths: ['.']
-    })
-    assert.deepEqual(Helper.determineModuleLocations('helper'), {
-        filePaths: ['helper.js'],
-        directoryPaths: ['.']
-    })
-    assert.deepEqual(Helper.determineModuleLocations({helper: ['helper']}), {
-        filePaths: ['helper.js'],
-        directoryPaths: ['.']
-    })
+    for (const test:Array<any> of [
+        [{}, {filePaths: [], directoryPaths: []}],
+        ['example', {filePaths: ['example'], directoryPaths: ['.']}],
+        ['example', {filePaths: ['example'], directoryPaths: ['.']}],
+        [{example: 'example'}, {
+            filePaths: ['example'], directoryPaths: ['.']
+        }],
+        ['helper', {filePaths: ['helper.js'], directoryPaths: ['.']}],
+        [{helper: ['helper']}, {
+            filePaths: ['helper.js'], directoryPaths: ['.']
+        }]
+    ])
+        assert.deepEqual(Helper.determineModuleLocations(test[0]), test[1])
 })
 QUnit.test('normalizeInternalInjection', (assert:Object):void => {
-    assert.deepEqual(Helper.normalizeInternalInjection([]), {index: []})
-    assert.deepEqual(Helper.normalizeInternalInjection({}), {index: []})
-    assert.deepEqual(Helper.normalizeInternalInjection('example'), {
-        index: ['example']})
-    assert.deepEqual(Helper.normalizeInternalInjection(['example']), {
-        index: ['example']})
-    assert.deepEqual(Helper.normalizeInternalInjection({a: 'example'}), {
-        a: ['example']})
-    assert.deepEqual(Helper.normalizeInternalInjection({a: ['example']}), {
-        a: ['example']})
-    assert.deepEqual(Helper.normalizeInternalInjection(
-        {a: ['example'], b: []}
-    ), {a: ['example']})
-    assert.deepEqual(Helper.normalizeInternalInjection({a: [], b: []}), {
-        index: []})
+    for (const test:Array<any> of [
+        [[], {index: []}],
+        [{}, {index: []}],
+        ['example', {index: ['example']}],
+        [['example'], {index: ['example']}],
+        [{a: 'example'}, {a: ['example']}],
+        [{a: ['example']}, {a: ['example']}],
+        [{a: ['example'], b: []}, {a: ['example']}],
+        [{a: [], b: []}, {index: []}]
+    ])
+        assert.deepEqual(Helper.normalizeInternalInjection(test[0]), test[1])
 })
 QUnit.test('resolveInjection', (assert:Object):void => {
-    assert.deepEqual(Helper.resolveInjection(
-        {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []},
-        Helper.resolveBuildConfigurationFilePaths(
-            buildConfiguration, './', './', ['.git', 'node_modules']
-        ), [], {}, [], './', ['.git', 'node_modules']
-    ), {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []})
-    assert.deepEqual(Helper.resolveInjection(
-        {internal: 'a.js', external: [], commonChunkIDs: [], dllChunkIDs: []},
-        Helper.resolveBuildConfigurationFilePaths(
-            buildConfiguration, './', './', ['.git', 'node_modules']
-        ), [], {}, [], './', ['.git', 'node_modules']
-    ), {internal: 'a.js', external: [], commonChunkIDs: [], dllChunkIDs: []})
-    assert.deepEqual(Helper.resolveInjection(
-        {internal: ['a'], external: [], commonChunkIDs: [], dllChunkIDs: []},
-        Helper.resolveBuildConfigurationFilePaths(
-            buildConfiguration, './', './', ['.git', 'node_modules']
-        ), [], {}, [], './', ['.git', 'node_modules']
-    ), {internal: ['a'], external: [], commonChunkIDs: [], dllChunkIDs: []})
-    assert.deepEqual(Helper.resolveInjection(
-        {
-            internal: '__auto__', external: [], commonChunkIDs: [],
-            dllChunkIDs: []
-        }, Helper.resolveBuildConfigurationFilePaths(
-            buildConfiguration, './', './', ['.git', 'node_modules']
-        ), [], {}, [], './', ['.git', 'node_modules']
-    ), {internal: {}, external: [], commonChunkIDs: [], dllChunkIDs: []})
-    assert.deepEqual(Helper.resolveInjection(
-        {
-            internal: {index: '__auto__'}, external: [], commonChunkIDs: [],
-            dllChunkIDs: []
-        }, Helper.resolveBuildConfigurationFilePaths(
-            buildConfiguration, './', './', ['.git', 'node_modules']
-        ), [], {}, [], './', ['.git', 'node_modules']
-    ), {
-        internal: {index: []}, external: [], commonChunkIDs: [],
-        dllChunkIDs: []
-    })
+    for (const test:Array<any> of [
+        [
+            [
+                {
+                    internal: [], external: [], commonChunkIDs: [],
+                    dllChunkIDs: []
+                },
+                Helper.resolveBuildConfigurationFilePaths(
+                    buildConfiguration, './', './', ['.git', 'node_modules']
+                ), [], {}, [], './', ['.git', 'node_modules']
+            ],
+            {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []}
+        ],
+        [
+            [
+                {
+                    internal: 'a.js', external: [], commonChunkIDs: [],
+                    dllChunkIDs: []
+                },
+                Helper.resolveBuildConfigurationFilePaths(
+                    buildConfiguration, './', './', ['.git', 'node_modules']
+                ), [], {}, [], './', ['.git', 'node_modules']
+            ],
+            {
+                internal: 'a.js', external: [], commonChunkIDs: [],
+                dllChunkIDs: []
+            }
+        ],
+        [
+            [
+                {
+                    internal: ['a'], external: [], commonChunkIDs: [],
+                    dllChunkIDs: []
+                },
+                Helper.resolveBuildConfigurationFilePaths(
+                    buildConfiguration, './', './', ['.git', 'node_modules']
+                ), [], {}, [], './', ['.git', 'node_modules']
+            ],
+            {
+                internal: ['a'], external: [], commonChunkIDs: [],
+                dllChunkIDs: []
+            }
+        ],
+        [
+            [
+                {
+                    internal: '__auto__', external: [], commonChunkIDs: [],
+                    dllChunkIDs: []
+                },
+                Helper.resolveBuildConfigurationFilePaths(
+                    buildConfiguration, './', './', ['.git', 'node_modules']
+                ), [], {}, [], './', ['.git', 'node_modules']
+            ],
+            {internal: {}, external: [], commonChunkIDs: [], dllChunkIDs: []}
+        ],
+        [
+            [
+                {
+                    internal: {index: '__auto__'}, external: [],
+                    commonChunkIDs: [], dllChunkIDs: []
+                },
+                Helper.resolveBuildConfigurationFilePaths(
+                    buildConfiguration, './', './', ['.git', 'node_modules']
+                ), [], {}, [], './', ['.git', 'node_modules']
+            ],
+            {
+                internal: {index: []}, external: [], commonChunkIDs: [],
+                dllChunkIDs: []
+            }
+        ]
+    ])
+        assert.deepEqual(Helper.resolveInjection.apply(this, test[0]), test[1])
 })
 QUnit.test('getAutoChunk', (assert:Object):void => {
     assert.deepEqual(Helper.getAutoChunk(
@@ -383,10 +401,10 @@ QUnit.test('addDynamicGetterAndSetter', (assert:Object):void => {
     assert.notDeepEqual(Helper.addDynamicGetterAndSetter({}), {})
     assert.ok(Helper.addDynamicGetterAndSetter({
     }).__target__ instanceof Object)
-    assert.deepEqual(Helper.addDynamicGetterAndSetter({}).__target__, {})
     const mockup = {}
     assert.strictEqual(
         Helper.addDynamicGetterAndSetter(mockup).__target__, mockup)
+    assert.deepEqual(Helper.addDynamicGetterAndSetter({}).__target__, {})
     assert.deepEqual(Helper.addDynamicGetterAndSetter({a: 1}, (
         value:any
     ):any => value + 2).a, 3)
@@ -415,66 +433,71 @@ QUnit.test('addDynamicGetterAndSetter', (assert:Object):void => {
     ).a.a, 3)
 })
 QUnit.test('resolveDynamicDataStructure', (assert:Object):void => {
-    assert.deepEqual(Helper.resolveDynamicDataStructure(null), null)
-    assert.deepEqual(Helper.resolveDynamicDataStructure(false), false)
-    assert.deepEqual(Helper.resolveDynamicDataStructure('1'), '1')
-    assert.deepEqual(Helper.resolveDynamicDataStructure(3), 3)
-    assert.deepEqual(Helper.resolveDynamicDataStructure({}), {})
-    assert.deepEqual(
-        Helper.resolveDynamicDataStructure({__evaluate__: '1'}), 1)
-    assert.deepEqual(
-        Helper.resolveDynamicDataStructure({__evaluate__: "'1'"}), '1')
-    assert.deepEqual(
-        Helper.resolveDynamicDataStructure({a: {__evaluate__: "'a'"}}),
-        {a: 'a'})
-    assert.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__evaluate__: 'self.a'}}, {a: 1}
-    ), {a: 1})
-    assert.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__evaluate__: 'self.a'}}, {a: 1}, false
-    ), {a: {__evaluate__: 'self.a'}})
-    assert.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__evaluate__: 'self.a'}}, {a: 1}, true, '__run__'
-    ), {a: {__evaluate__: 'self.a'}})
-    assert.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__run__: 'self.a'}}, {a: 1}, true, '__run__'
-    ), {a: 1})
-    assert.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: [{__run__: 'self.a'}]}, {a: 1}, true, '__run__'
-    ), {a: [1]})
-    assert.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__evaluate__: 'self.b'}, b: 2}
-    ), {a: 2, b: 2})
-    assert.deepEqual(Helper.resolveDynamicDataStructure(
-        {a: {__evaluate__: 'self.b'}, b: {__evaluate__: 'self.c'}, c: 2}
-    ), {a: 2, b: 2, c: 2})
-    assert.deepEqual(Helper.resolveDynamicDataStructure({a: {
-        __execute__: 'return self.b'
-    }, b: {__execute__: 'return self.c'}, c: 2
-    }), {a: 2, b: 2, c: 2})
+    for (const test:Array<any> of [
+        [[null], null],
+        [[false], false],
+        [['1'], '1'],
+        [[3], 3],
+        [[{}], {}],
+        [[{__evaluate__: '1'}], 1],
+        [[{__evaluate__: "'1'"}], '1'],
+        [[{a: {__evaluate__: "'a'"}}], {a: 'a'}],
+        [[{a: {__evaluate__: 'self.a'}}, {a: 1}], {a: 1}],
+        [
+            [{a: {__evaluate__: 'self.a'}}, {a: 1}, false],
+            {a: {__evaluate__: 'self.a'}}
+        ],
+        [
+            [{a: {__evaluate__: 'self.a'}}, {a: 1}, true, '__run__'],
+            {a: {__evaluate__: 'self.a'}}
+        ],
+        [[{a: {__run__: 'self.a'}}, {a: 1}, true, '__run__'], {a: 1}],
+        [[{a: [{__run__: 'self.a'}]}, {a: 1}, true, '__run__'], {a: [1]}],
+        [[{a: {__evaluate__: 'self.b'}, b: 2}], {a: 2, b: 2}],
+        [
+            [{a: {__evaluate__: 'self.b'}, b: {__evaluate__: 'self.c'}, c: 2}],
+            {a: 2, b: 2, c: 2}
+        ],
+        [
+            [
+                {
+                    a: {__execute__: 'return self.b'},
+                    b: {__execute__: 'return self.c'},
+                    c: 2
+                }
+            ],
+            {a: 2, b: 2, c: 2}
+        ]
+    ])
+        assert.deepEqual(Helper.resolveDynamicDataStructure.apply(
+            this, test[0]
+        ), test[1])
 })
 QUnit.test('applyAliases', (assert:Object):void => {
-    assert.strictEqual(Helper.applyAliases('', {}), '')
-    assert.strictEqual(Helper.applyAliases('', {a: 'b'}), '')
-    assert.strictEqual(Helper.applyAliases('a', {}), 'a')
-    assert.strictEqual(Helper.applyAliases('a', {a: 'b'}), 'b')
-    assert.strictEqual(Helper.applyAliases('a', {a$: 'b'}), 'b')
-    assert.strictEqual(Helper.applyAliases('aa', {a$: 'b'}), 'aa')
-    assert.strictEqual(Helper.applyAliases('bba', {a: 'b'}), 'bbb')
-    assert.strictEqual(Helper.applyAliases('helper', {}), 'helper')
+    for (const test:Array<any> of [
+        ['', {}, ''],
+        ['', {a: 'b'}, ''],
+        ['a', {}, 'a'],
+        ['a', {a: 'b'}, 'b'],
+        ['a', {a$: 'b'}, 'b'],
+        ['aa', {a$: 'b'}, 'aa'],
+        ['bba', {a: 'b'}, 'bbb'],
+        ['helper', {}, 'helper']
+    ])
+        assert.strictEqual(Helper.applyAliases(test[0], test[1]), test[2])
 })
 QUnit.test('determineModuleFilePath', (assert:Object):void => {
-    assert.strictEqual(Helper.determineModuleFilePath('a'), 'a')
-    assert.strictEqual(Helper.determineModuleFilePath('a', {a: 'b'}), 'b')
-    assert.strictEqual(Helper.determineModuleFilePath('bba', {a: 'b'}), 'bbb')
-    assert.strictEqual(Helper.determineModuleFilePath('helper'), 'helper.js')
-    assert.strictEqual(
-        Helper.determineModuleFilePath('helper', {}, []), 'helper')
-    assert.strictEqual(
-        Helper.determineModuleFilePath('helper', {}, ['.js'], '../'), 'helper')
-    assert.strictEqual(
-        Helper.determineModuleFilePath('helper', {}, ['.js'], './'),
-        'helper.js')
+    for (const test:Array<any> of [
+        [['a'], 'a'],
+        [['a', {a: 'b'}], 'b'],
+        [['bba', {a: 'b'}], 'bbb'],
+        [['helper'], 'helper.js'],
+        [['helper', {}, []], 'helper'],
+        [['helper', {}, ['.js'], '../'], 'helper'],
+        [['helper', {}, ['.js'], './'], 'helper.js']
+    ])
+        assert.strictEqual(
+            Helper.determineModuleFilePath.apply(this, test[0]), test[1])
 })
 // endregion
 // region vim modline
