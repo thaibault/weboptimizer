@@ -252,8 +252,6 @@ QUnit.test('determineAssetType', (assert:Object):void => {
         target: '',
         tidyUp: []
     }
-    // TODO make more generic with for loops and in all other test files in all
-    // projects
     for (const test:Array<any> of [
         [['./', buildConfiguration, paths], null],
         [['a.js', buildConfiguration, paths], 'javaScript'],
