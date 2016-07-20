@@ -137,7 +137,11 @@
                 "html": [{}],
                 "javaScript": {
                     "__evaluate__": "`${self.path.asset.javaScript}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
-                }
+                },
+                "additional": [
+                    "robots.txt", "404.html", "crossdomain.xml", "humans.txt",
+                    ".htaccess", "license.txt", "favicon.ico"
+                ]
             },
             "injection": {
                 "external": "__implicit__",

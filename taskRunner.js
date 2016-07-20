@@ -208,6 +208,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     fileSystem.unlinkSync(filePath)
                 } catch (error) {}
         }
+        // TODO call "tityUp" only once
+        // TODO copy "configuration.files.additional" files in
+        // "consfiguration.path.source" to "configuration.path.target" if they
+        // exists
         closeEventHandlers.push(tidyUp)
         /*
             Triggers complete asset compiling and bundles them into the final
