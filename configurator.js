@@ -32,6 +32,10 @@ import type {
 } from './type'
 /* eslint-enable no-unused-vars */
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
+/*
+    To assume two folder up from this file is usually resilient again dealing
+    with projects where current working directory isn't the projects directory.
+*/
 metaConfiguration.default.path.context = path.resolve(__dirname, '../../')
 metaConfiguration.default.contextType = 'main'
 if (
@@ -39,9 +43,23 @@ if (
     path.basename(path.dirname(process.cwd())) === '.staging' &&
     path.basename(path.dirname(path.dirname(process.cwd()))) === 'node_modules'
 ) {
+    /*
+        NOTE: If we are dealing was a dependency project use current directory
+        as context.
+    */
     metaConfiguration.default.path.context = process.cwd()
     metaConfiguration.default.contextType = 'dependency'
-}
+} else
+    /*
+        NOTE: If the current working directory references this file via a
+        linked "node_modules" folder using current working directory as context
+        is a better assumption than two folders up the hierarchy.
+    */
+    try {
+        if (fileSystem.lstatSync(path.join(process.cwd(
+        ), 'node_modules')).isSymbolicLink())
+            metaConfiguration.default.path.context = process.cwd()
+    } catch (error) {}
 let specificConfiguration:PlainObject
 try {
     // IgnoreTypeCheck
