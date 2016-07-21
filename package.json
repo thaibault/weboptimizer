@@ -147,7 +147,9 @@
                 "commonChunkIDs": ["vendor"],
                 "dllChunkIDs": ["vendor", "developmentHelper"],
                 "external": "__implicit__",
-                "implicitExcludePattern": [{"__evaluate__": "/module\\.js$/"}],
+                "implicitExcludePattern": [
+                    {"__evaluate__": "/\\/webpack\\/buildin\\/module\\.js$/"}
+                ],
                 "internal": []
             },
             "inPlace": {
