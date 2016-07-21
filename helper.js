@@ -231,6 +231,7 @@ export default class Helper {
         return childProcess
     }
     // endregion
+    // region file handler
     /**
      * Iterates through given directory structure recursively and calls given
      * callback for each found file. Callback gets file path and corresponding
@@ -254,6 +255,58 @@ export default class Helper {
                 Helper.walkDirectoryRecursivelySync(filePath, callback)
         })
         return callback
+    }
+    /**
+     * Copies given source file via path to given target directory location
+     * with same target name as source file has or copy to given complete
+     * target file path.
+     * @param sourcePath - Path to file to copy.
+     * @param targetPath - Target directory or complete file location to copy
+     * to.
+     * @returns Determined target file path.
+     */
+    static copyFileSync(sourcePath:string, targetPath:string):string {
+        /*
+            NOTE: If target path references a directory a new file with the
+            same name will be created.
+        */
+        try {
+            if (fileSystem.lstatSync(targetPath).isDirectory())
+                targetPath = path.join(targetPath, path.basename(sourcePath))
+        } catch (error) {}
+        fileSystem.writeFileSync(targetPath, fileSystem.readFileSync(
+            sourcePath))
+        return targetPath
+    }
+    /**
+     * Copies given source directory via path to given target directory
+     * location with same target name as source file has or copy to given
+     * complete target directory path.
+     * @param sourcePath - Path to directory to copy.
+     * @param targetPath - Target directory or complete directory location to
+     * copy in.
+     * @returns Determined target directory path.
+     */
+    static copyDirectoryRecursiveSync(
+        sourcePath:string, targetPath:string
+    ):string {
+        try {
+            // Check if folder needs to be created or integrated.
+            if (fileSystem.lstatSync(targetPath).isDirectory())
+                targetPath = path.join(targetPath, path.basename(sourcePath))
+        } catch (error) {}
+        fileSystem.mkdirSync(targetPath)
+        Helper.walkDirectoryRecursivelySync(sourcePath, (
+            currentSourcePath:string, stat:Object
+        ):void => {
+            const currentTargetPath:string = path.join(
+                targetPath, currentSourcePath.substring(sourcePath.length))
+            if (stat.isDirectory())
+                fileSystem.mkdirSync(currentTargetPath)
+            else
+                Helper.copyFileSync(currentSourcePath, currentTargetPath)
+        })
+        return targetPath
     }
     /**
      * Determines a asset type if given file.
@@ -522,6 +575,59 @@ export default class Helper {
         return result
     }
     /**
+     * Determines a concrete file path for given module id.
+     * @param moduleID - Module id to determine.
+     * @param moduleAliases - Mapping of aliases to take into account.
+     * @param knownExtensions - List of known extensions.
+     * @param context - File path to determine relative to.
+     * @returns File path or given module id if determinations has failed or
+     * wasn't necessary.
+     */
+    static determineModuleFilePath(
+        moduleID:string, moduleAliases:PlainObject = {},
+        knownExtensions:Array<string> = ['.js'], context:string = './'
+    ):string {
+        moduleID = Helper.applyAliases(moduleID, moduleAliases)
+        for (const moduleLocation:string of ['', 'node_modules', '../'])
+            for (let fileName:string of ['__package__', '', 'index', 'main'])
+                for (const extension:string of knownExtensions) {
+                    let moduleFilePath:string = moduleID
+                    if (!moduleFilePath.startsWith('/'))
+                        moduleFilePath = path.join(
+                            context, moduleLocation, moduleFilePath)
+                    if (fileName === '__package__') {
+                        try {
+                            if (fileSystem.statSync(
+                                moduleFilePath
+                            ).isDirectory()) {
+                                const pathToPackageJSON:string = path.join(
+                                    moduleFilePath, 'package.json')
+                                if (fileSystem.statSync(
+                                    pathToPackageJSON
+                                ).isFile()) {
+                                    const localConfiguration:PlainObject =
+                                        JSON.parse(fileSystem.readFileSync(
+                                            pathToPackageJSON, {
+                                                encoding: 'utf-8'}))
+                                    if (localConfiguration.main)
+                                        fileName = localConfiguration.main
+                                }
+                            }
+                        } catch (error) {}
+                        if (fileName === '__package__')
+                            continue
+                    }
+                    moduleFilePath = path.join(moduleFilePath, fileName)
+                    moduleFilePath += extension
+                    try {
+                        if (fileSystem.statSync(moduleFilePath).isFile())
+                            return moduleFilePath
+                    } catch (error) {}
+                }
+        return moduleID
+    }
+    // endregion
+    /**
      * Adds dynamic getter and setter to any given data structure such as maps.
      * @param object - Object to proxy.
      * @param getterWrapper - Function to wrap each property get.
@@ -691,58 +797,6 @@ export default class Helper {
                     moduleID = aliases[alias]
             } else
                 moduleID = moduleID.replace(alias, aliases[alias])
-        return moduleID
-    }
-    /**
-     * Determines a concrete file path for given module id.
-     * @param moduleID - Module id to determine.
-     * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - List of known extensions.
-     * @param context - File path to determine relative to.
-     * @returns File path or given module id if determinations has failed or
-     * wasn't necessary.
-     */
-    static determineModuleFilePath(
-        moduleID:string, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = ['.js'], context:string = './'
-    ):string {
-        moduleID = Helper.applyAliases(moduleID, moduleAliases)
-        for (const moduleLocation:string of ['', 'node_modules', '../'])
-            for (let fileName:string of ['__package__', '', 'index', 'main'])
-                for (const extension:string of knownExtensions) {
-                    let moduleFilePath:string = moduleID
-                    if (!moduleFilePath.startsWith('/'))
-                        moduleFilePath = path.join(
-                            context, moduleLocation, moduleFilePath)
-                    if (fileName === '__package__') {
-                        try {
-                            if (fileSystem.statSync(
-                                moduleFilePath
-                            ).isDirectory()) {
-                                const pathToPackageJSON:string = path.join(
-                                    moduleFilePath, 'package.json')
-                                if (fileSystem.statSync(
-                                    pathToPackageJSON
-                                ).isFile()) {
-                                    const localConfiguration:PlainObject =
-                                        JSON.parse(fileSystem.readFileSync(
-                                            pathToPackageJSON, {
-                                                encoding: 'utf-8'}))
-                                    if (localConfiguration.main)
-                                        fileName = localConfiguration.main
-                                }
-                            }
-                        } catch (error) {}
-                        if (fileName === '__package__')
-                            continue
-                    }
-                    moduleFilePath = path.join(moduleFilePath, fileName)
-                    moduleFilePath += extension
-                    try {
-                        if (fileSystem.statSync(moduleFilePath).isFile())
-                            return moduleFilePath
-                    } catch (error) {}
-                }
         return moduleID
     }
 }

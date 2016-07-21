@@ -49,7 +49,7 @@ const possibleArguments:Array<string> = [
 ]
 const closeEventHandlers:Array<Function> = []
 if (configuration.givenCommandLineArguments.length > 2) {
-    // region temporary save dynamically given configurations
+    // region tempora ry save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
     let dynamicConfiguration:PlainObject = {
         givenCommandLineArguments:
@@ -153,11 +153,15 @@ if (configuration.givenCommandLineArguments.length > 2) {
             configuration.build, configuration.path.asset.source,
             configuration.path.context, configuration.path.ignore)
     if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2])) {
-        const tidyUp = ():void => {
+        let tidiedUp:boolean = false
+        const tidyUp:Function = ():void => {
             /*
                 Determines all none javaScript entities which have been emitted
                 as single javaScript module to remove.
             */
+            if (tidiedUp)
+                return
+            tidiedUp = true
             const internalInjection:NormalizedInternalInjection =
                 Helper.normalizeInternalInjection(
                     Helper.resolveInjection(
@@ -208,10 +212,6 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     fileSystem.unlinkSync(filePath)
                 } catch (error) {}
         }
-        // TODO call "tityUp" only once
-        // TODO copy "configuration.files.additional" files in
-        // "consfiguration.path.source" to "configuration.path.target" if they
-        // exists
         closeEventHandlers.push(tidyUp)
         /*
             Triggers complete asset compiling and bundles them into the final
@@ -229,9 +229,30 @@ if (configuration.givenCommandLineArguments.length > 2) {
             const childProcess:ChildProcess = spawnChildProcess(
                 configuration.commandLine.build.command, commandLineArguments,
                 childProcessOptions)
+            const copyAdditionalFilesAndTidyUp:Function = ():void => {
+                for (
+                    const filePath:string of
+                    configuration.files.additionalPaths
+                ) {
+                    const sourcePath:string = path.join(
+                        configuration.path.source, filePath)
+                    try {
+                        if (fileSystem.lstatSync(sourcePath).isDirectory())
+                            Helper.copyDirectoryRecursiveSync(
+                                sourcePath, configuration.path.target)
+                        else
+                            Helper.copyFileSync(
+                                sourcePath, configuration.path.target)
+                    } catch (error) {
+                        break
+                    }
+                }
+                tidyUp()
+            }
             for (const closeEventName:string of closeEventNames)
                 childProcess.on(closeEventName, Helper.getProcessCloseHandler(
-                    resolve, reject, closeEventName, tidyUp))
+                    resolve, reject, closeEventName,
+                    copyAdditionalFilesAndTidyUp))
             childProcesses.push(childProcess)
         }))
     // endregion

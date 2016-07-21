@@ -144,6 +144,7 @@ export type ResolvedConfiguration = {
         [key:string]:any
     };
     files:{
+        additionalPaths:Array<string>;
         cascadingStyleSheet:string;
         defaultHTML:HTMLConfiguration;
         html:Array<HTMLConfiguration>;

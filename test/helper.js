@@ -5,6 +5,8 @@
 // region imports
 import {ChildProcess} from 'child_process'
 import {Duplex as DuplexStream} from 'stream'
+import * as fileSystem from 'fs'
+import path from 'path'
 import * as QUnit from 'qunit-cli'
 // NOTE: Only needed for debugging this file.
 try {
@@ -218,6 +220,7 @@ QUnit.test('handleChildProcess', (assert:Object):void => {
     assert.strictEqual(Helper.handleChildProcess(childProcess), childProcess)
 })
 // endregion
+// region file handler
 QUnit.test('walkDirectoryRecursivelySync', (assert:Object):void => {
     const filePaths:Array<string> = []
     const callback:TraverseFilesCallbackFunction = (filePath:string):false => {
@@ -226,6 +229,18 @@ QUnit.test('walkDirectoryRecursivelySync', (assert:Object):void => {
     }
     Helper.walkDirectoryRecursivelySync('./', callback)
     assert.ok(filePaths.length > 0)
+})
+QUnit.test('copyFileSync', (assert:Object):void => {
+    assert.ok(Helper.copyFileSync(
+        path.join(__dirname, 'helper.js'),
+        path.join(__dirname, 'test.compiled.js')
+    ).endsWith('/test.compiled.js'))
+    fileSystem.unlinkSync(path.join(__dirname, 'test.compiled.js'))
+})
+QUnit.test('copyDirectoryRecursiveSync', (assert:Object):void => {
+    assert.ok(Helper.copyDirectoryRecursiveSync(
+        __dirname, path.resolve(__dirname, '../test.compiled')
+    ).endsWith('/test.compiled'))
 })
 QUnit.test('determineAssetType', (assert:Object):void => {
     const paths:Paths = {
@@ -393,6 +408,20 @@ QUnit.test('getAutoChunk', (assert:Object):void => {
             ], './'
     ), {})
 })
+QUnit.test('determineModuleFilePath', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [['a'], 'a'],
+        [['a', {a: 'b'}], 'b'],
+        [['bba', {a: 'b'}], 'bbb'],
+        [['helper'], 'helper.js'],
+        [['helper', {}, []], 'helper'],
+        [['helper', {}, ['.js'], '../'], 'helper'],
+        [['helper', {}, ['.js'], './'], 'helper.js']
+    ])
+        assert.strictEqual(
+            Helper.determineModuleFilePath.apply(this, test[0]), test[1])
+})
+// endregion
 QUnit.test('addDynamicGetterAndSetter', (assert:Object):void => {
     assert.strictEqual(Helper.addDynamicGetterAndSetter(null), null)
     assert.strictEqual(Helper.addDynamicGetterAndSetter(true), true)
@@ -483,19 +512,6 @@ QUnit.test('applyAliases', (assert:Object):void => {
         ['helper', {}, 'helper']
     ])
         assert.strictEqual(Helper.applyAliases(test[0], test[1]), test[2])
-})
-QUnit.test('determineModuleFilePath', (assert:Object):void => {
-    for (const test:Array<any> of [
-        [['a'], 'a'],
-        [['a', {a: 'b'}], 'b'],
-        [['bba', {a: 'b'}], 'bbb'],
-        [['helper'], 'helper.js'],
-        [['helper', {}, []], 'helper'],
-        [['helper', {}, ['.js'], '../'], 'helper'],
-        [['helper', {}, ['.js'], './'], 'helper.js']
-    ])
-        assert.strictEqual(
-            Helper.determineModuleFilePath.apply(this, test[0]), test[1])
 })
 // endregion
 // region vim modline
