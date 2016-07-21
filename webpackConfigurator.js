@@ -548,7 +548,7 @@ export default {
     context: configuration.path.context,
     debug: configuration.debug,
     devtool: configuration.development.tool,
-    devserver: configuration.development.server,
+    devServer: configuration.development.server,
     // region input
     entry: normalizedInternalInjection, externals: injection.external,
     resolveLoader: configuration.loader,

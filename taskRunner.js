@@ -251,8 +251,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
             }
             for (const closeEventName:string of closeEventNames)
                 childProcess.on(closeEventName, Helper.getProcessCloseHandler(
-                    resolve, reject, closeEventName,
-                    copyAdditionalFilesAndTidyUp))
+                    resolve, reject, closeEventName, (
+                        process.argv[2] === 'build'
+                    ) ? copyAdditionalFilesAndTidyUp : tidyUp))
             childProcesses.push(childProcess)
         }))
     // endregion
