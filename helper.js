@@ -43,6 +43,19 @@ declare class Proxy {
 export default class Helper {
     // region boolean
     /**
+     * Checks weather one of the given pattern matches given string.
+     * @param target - Target to check in pattern for.
+     * @param pattern - List of pattern to check for.
+     * @returns Value "true" if given object is matches by at leas one of the
+     * given pattern and "false" otherwise.
+     */
+    static isAnyMatching(target:string, pattern:Array<RegExp>):boolean {
+        for (const currentPattern:RegExp of pattern)
+            if (currentPattern.test(target))
+                return true
+        return false
+    }
+    /**
      * Checks weather given object is a plain native object.
      * @param object - Object to check.
      * @returns Value "true" if given object is a plain javaScript object and

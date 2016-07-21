@@ -62,10 +62,11 @@ export type ExternalInjection = string|((
     context:string, request:string, callback:ProcedureFunction
 ) => void)|RegExp|Array<ExternalInjection>
 export type Injection = {
-    internal:InternalInjection;
-    external:ExternalInjection;
     commonChunkIDs:Array<string>;
-    dllChunkIDs:Array<string>
+    dllChunkIDs:Array<string>;
+    external:ExternalInjection;
+    implicitExcludePattern:Array<RegExp>;
+    internal:InternalInjection;
 }
 // / endregion
 // / region configuration

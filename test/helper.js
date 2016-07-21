@@ -41,10 +41,28 @@ const buildConfiguration:BuildConfiguration = {
 // endregion
 // region tests
 // / region boolean
+QUnit.test('isAnyMatching', (assert:Object):void => {
+    for (const test:Array<any> of [
+        ['test', [/test/]],
+        ['test', [/a/, /b/, /es/]]
+    ])
+        assert.ok(Helper.isAnyMatching.apply(this, test))
+    for (const test:Array<any> of [
+        ['', []],
+        ['test', [/tes$/]],
+        ['test', [/^est/]],
+        ['test', [/^est$/]]
+    ])
+        assert.notOk(Helper.isAnyMatching.apply(this, test))
+})
 QUnit.test('isPlainObject', (assert:Object):void => {
-    /* eslint-disable no-new-object */
-    for (const okValue:any of [{}, {a: 1}, new Object()])
-    /* eslint-enable no-new-object */
+    for (const okValue:any of [
+        {},
+        {a: 1},
+        /* eslint-disable no-new-object */
+        new Object()
+        /* eslint-enable no-new-object */
+    ])
         assert.ok(Helper.isPlainObject(okValue))
     for (const notOkValue:any of [
         new String(), Object, null, 0, 1, true, undefined

@@ -376,14 +376,16 @@ if (injection.external === '__implicit__')
             Helper.applyAliases(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
+            /*
+                NOTE: The browser api needs processing since there exists
+                needed compile flags to avoid loading a complete node browser
+                api into a real browser.
+            */
             if (request.match(
                 /^webOptimizer\/browserAPI(?:\.compiled)?(?:\.js)?/
+            ) || Helper.isAnyMatching(
+                request, configuration.injection.implicitExcludePattern
             ))
-                /*
-                    NOTE: The browser api needs processing since there exists
-                    needed compile flags to avoid loading a complete node
-                    browser api into a real browser.
-                */
                 return callback()
             for (const chunkName:string in normalizedInternalInjection)
                 if (normalizedInternalInjection.hasOwnProperty(chunkName))
