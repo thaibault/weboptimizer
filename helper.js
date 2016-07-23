@@ -95,6 +95,28 @@ export default class Helper {
     }
     // endregion
     /**
+     * Converts given serialized or base64 encoded string into a java script
+     * one if possible.
+     * @param serializedObject - Object as string.
+     * @param scope - An optional scope which will be used to evaluate given
+     * object in.
+     * @param name - The name under given scope will be available.
+     * @returns The parsed object if possible and null otherwise.
+     */
+    static parseEncodedObject(
+        serializedObject:string, scope:Object = {}, name:string = 'scope'
+    ):?PlainObject {
+        if (!serializedObject.startsWith('{'))
+            serializedObject = Buffer.from(
+                serializedObject, 'base64'
+            ).toString('utf8')
+        try {
+            // IgnoreTypeCheck
+            return new Function(name, `return ${serializedObject}`)(scope)
+        } catch (error) {}
+        return null
+    }
+    /**
      * Replaces given pattern in each value in given object recursively with
      * given string replacement.
      * @param object - Object to convert substrings in.

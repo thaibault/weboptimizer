@@ -28,7 +28,7 @@ try {
 import configuration from './configurator.compiled'
 import type {
     NormalizedInternalInjection, PlainObject, PromiseCallbackFunction,
-    ResolvedBuildConfiguration, ResolvedConfiguration
+    ResolvedBuildConfiguration
 } from './type'
 import Helper from './helper.compiled'
 // endregion
@@ -49,25 +49,18 @@ const possibleArguments:Array<string> = [
 ]
 const closeEventHandlers:Array<Function> = []
 if (configuration.givenCommandLineArguments.length > 2) {
-    // region tempora ry save dynamically given configurations
+    // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
-    let dynamicConfiguration:PlainObject = {
-        givenCommandLineArguments:
-            configuration.givenCommandLineArguments.slice()}
-    if (configuration.givenCommandLineArguments.length > 3) {
-        const evaluationFunction = (
-            configuration:ResolvedConfiguration
-        ):?PlainObject =>
-            // IgnoreTypeCheck
-            new Function('configuration', 'return ' +
-                configuration.givenCommandLineArguments[
-                    configuration.givenCommandLineArguments.length - 1]
-            )(configuration)
-        try {
-            if (Helper.isPlainObject(evaluationFunction(configuration)))
-                configuration.givenCommandLineArguments.pop()
-        } catch (error) {}
-    }
+    let dynamicConfiguration:PlainObject = {givenCommandLineArguments:
+        configuration.givenCommandLineArguments.slice()}
+    if (
+        configuration.givenCommandLineArguments.length > 3 &&
+        Helper.parseEncodedObject(
+            configuration.givenCommandLineArguments[
+                configuration.givenCommandLineArguments.length - 1],
+            configuration, 'configuration')
+    )
+        configuration.givenCommandLineArguments.pop()
     let count:number = 0
     let filePath:string = `${configuration.path.context}.` +
         `dynamicConfiguration-${count}.json`

@@ -88,6 +88,28 @@ QUnit.test('isFilePathInLocation', (assert:Object):void => {
         assert.notOk(Helper.isFilePathInLocation.apply(this, notOkArguments))
 })
 // / endregion
+QUnit.test('parseEncodedObject', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [['{}'], {}],
+        [['{a: 2}'], {a: 2}],
+        [['{a: scope.a}', {a: 2}], {a: 2}],
+        [['{a: {a: scope.a}}', {a: 2}], {a: {a: 2}}],
+        [['{a: {a: b.a}}', {a: 2}, 'b'], {a: {a: 2}}],
+        [[new Buffer('{}').toString('base64')], {}],
+        [[new Buffer('{a: 2}').toString('base64')], {a: 2}],
+        [[new Buffer('{a: scope.a}').toString('base64'), {a: 2}], {a: 2}],
+        [
+            [new Buffer('{a: {a: scope.a}}').toString('base64'),
+            {a: 2}], {a: {a: 2}}
+        ],
+        [
+            [new Buffer('{a: {a: b.a}}').toString('base64'), {a: 2}, 'b'],
+            {a: {a: 2}}
+        ]
+    ])
+        assert.deepEqual(
+            Helper.parseEncodedObject.apply(this, test[0]), test[1])
+})
 QUnit.test('convertSubstringInPlainObject', (assert:Object):void => {
     for (const test:Array<any> of [
         [{}, /a/, '', {}],

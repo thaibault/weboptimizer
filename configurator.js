@@ -147,14 +147,11 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
 // / endregion
 Helper.extendObject(true, configuration, runtimeInformation)
 let result:?PlainObject = null
-try {
-    // IgnoreTypeCheck
-    result = ((configuration:PlainObject):?PlainObject => new Function(
-        'configuration', 'return ' +
-            runtimeInformation.givenCommandLineArguments[runtimeInformation
-                .givenCommandLineArguments.length - 1]
-    )(configuration))(configuration)
-} catch (error) {}
+if (runtimeInformation.givenCommandLineArguments.length > 3)
+    result = Helper.parseEncodedObject(
+        runtimeInformation.givenCommandLineArguments[runtimeInformation
+            .givenCommandLineArguments.length - 1],
+        configuration, 'configuration')
 if (Helper.isPlainObject(result))
     Helper.extendObject(true, configuration, result)
 // / region determine existing pre compiled dll manifests file paths
