@@ -279,7 +279,7 @@
                     },
                     "image": {
                         "content": {
-                            "disable": {"__evaluate__": "self.debug"},
+                            "disable": {"__evaluate__": "self.debug || true"},
                             "optipng": {"optimizationLevel": 7},
                             "gifsicle": {
                                 "optimizationLevel": 3,
