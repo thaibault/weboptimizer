@@ -454,7 +454,7 @@
                     "arguments": [
                         "--config",
                         {"__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"},
-                        "--hot",
+                        {"__evaluate__": "self.debug ? '--hot' : ''"},
                         "--host", "0.0.0.0",
                         "--port", {
                             "__evaluate__": "self.development.server.port"
