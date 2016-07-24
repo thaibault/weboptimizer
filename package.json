@@ -346,10 +346,13 @@
                 "rewrites": {"index.html": "/"},
                 "updateStrategy": "changed",
                 "version": "[hash]",
-                "AppCache": {"directory": ""},
-                "ServiceWorker": {"output": {
-                    "__evaluate__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
-                }}
+                "AppCache": {"directory": "/"},
+                "ServiceWorker": {
+                    "output": {
+                        "__evaluate__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
+                    },
+                    "navigateFallbackURL": "/"
+                }
             },
             "path": {
                 "apiDocumentation": "apiDocumentation/",
