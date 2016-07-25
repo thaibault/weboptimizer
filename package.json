@@ -336,16 +336,13 @@
                 "style": {"insertAt": "top", "singleton": true}
             },
             "offline": {
-                "caches": {"main": [
-                    "/", "index.html", "manifest.html", ":rest:"
-                ]},
+                "caches": {"main": ["index.html", "manifest.html", ":rest:"]},
                 "excludes": [{
                     "__evaluate__": "`*.map?${self.hashAlgorithm}=*`"
                 }],
-                "externals": ["/", "manifest.html"],
+                "externals": ["manifest.html"],
                 "publicPath": "/",
                 "relativePaths": false,
-                "rewrites": {"index.html": "/"},
                 "updateStrategy": "changed",
                 "version": "[hash]",
                 "AppCache": {"directory": "/"},
