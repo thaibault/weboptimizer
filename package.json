@@ -338,8 +338,8 @@
             "offline": {
                 "caches": {"main": ["index.html", "manifest.html", ":rest:"]},
                 "excludes": [
-                    {"__evaluate__": "`*.map?${self.hashAlgorithm}=*`"},
-                    "*/.cache"
+                    {"__evaluate__": "**/`*.map?${self.hashAlgorithm}=*`"},
+                    "**/.*"
                 ],
                 "externals": ["manifest.html"],
                 "publicPath": "/",
