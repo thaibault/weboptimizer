@@ -348,10 +348,11 @@
                 "version": "[hash]",
                 "AppCache": {"directory": "/"},
                 "ServiceWorker": {
+                    "events": true,
+                    "navigateFallbackURL": "/",
                     "output": {
                         "__evaluate__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
-                    },
-                    "navigateFallbackURL": "/"
+                    }
                 }
             },
             "path": {
