@@ -343,7 +343,7 @@
                     "__evaluate__": "`*.map?${self.hashAlgorithm}=*`"
                 }],
                 "externals": ["/", "manifest.html"],
-                "publicPath": "",
+                "publicPath": "/",
                 "relativePaths": false,
                 "rewrites": {"index.html": "/"},
                 "updateStrategy": "changed",
