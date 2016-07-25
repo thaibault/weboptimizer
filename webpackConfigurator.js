@@ -98,7 +98,9 @@ if (htmlAvailable && configuration.favicon) {
 }
 // /// endregion
 // /// region provide offline functionality
-if (htmlAvailable && configuration.offline) {
+if (htmlAvailable && configuration.offline && ![
+    'serve', 'testInBrowser'
+].includes(configuration.givenCommandLineArguments[2])) {
     if (configuration.inPlace.cascadingStyleSheet)
         configuration.offline.excludes.push(
             `${configuration.path.asset.cascadingStyleSheet}*.css?` +
