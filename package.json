@@ -337,10 +337,10 @@
             },
             "offline": {
                 "caches": {"main": ["index.html", "manifest.html", ":rest:"]},
-                "excludes": [{
-                    "__evaluate__": "`*.map?${self.hashAlgorithm}=*`",
+                "excludes": [
+                    {"__evaluate__": "`*.map?${self.hashAlgorithm}=*`"},
                     "*/.cache"
-                }],
+                ],
                 "externals": ["manifest.html"],
                 "publicPath": "/",
                 "relativePaths": false,
