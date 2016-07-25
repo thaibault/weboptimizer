@@ -341,7 +341,7 @@
                     {"__evaluate__": "`**/*.map?${self.hashAlgorithm}=*`"},
                     "**/.*"
                 ],
-                "externals": ["manifest.html"],
+                "externals": ["index.html", "manifest.html"],
                 "publicPath": "/",
                 "relativePaths": false,
                 "updateStrategy": "changed",
