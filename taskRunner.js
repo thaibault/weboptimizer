@@ -277,7 +277,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                             'additionalArguments', 'filePath', 'return `' +
                             buildConfiguration[
                                 configuration.givenCommandLineArguments[2]
-                            ] + '`'
+                            ].trim() + '`'
                         )(
                             global, self, buildConfiguration, path,
                             additionalArguments, filePath)
