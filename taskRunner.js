@@ -216,9 +216,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
             const commandLineArguments:Array<string> = (
                 configuration.commandLine.build.arguments || []
             ).concat(additionalArguments)
-            console.log(
+            console.log((
                 `Running "${configuration.commandLine.build.command} ` +
-                `${commandLineArguments.join(' ')}"`)
+                `${commandLineArguments.join(' ')}"`
+            ).trim())
             const childProcess:ChildProcess = spawnChildProcess(
                 configuration.commandLine.build.command, commandLineArguments,
                 childProcessOptions)
@@ -308,9 +309,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
             const commandLineArguments:Array<string> = (
                 configuration.commandLine[type].arguments || []
             ).concat(additionalArguments)
-            console.log(
+            console.log((
                 `Running "${configuration.commandLine[type].command} ` +
-                `${commandLineArguments.join(' ')}"`)
+                `${commandLineArguments.join(' ')}"`
+            ).trim())
             const childProcess:ChildProcess = spawnChildProcess(
                 configuration.commandLine[type].command, commandLineArguments,
                 childProcessOptions)
