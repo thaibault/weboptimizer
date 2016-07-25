@@ -98,17 +98,19 @@ if (htmlAvailable && configuration.favicon) {
 }
 // /// endregion
 // /// region provide offline functionality
-if (htmlAvailable && configuration.offline && ![
-    'serve', 'testInBrowser'
-].includes(configuration.givenCommandLineArguments[2])) {
-    if (configuration.inPlace.cascadingStyleSheet)
-        configuration.offline.excludes.push(
-            `${configuration.path.asset.cascadingStyleSheet}*.css?` +
-            `${configuration.hashAlgorithm}=*`)
-    if (configuration.inPlace.javaScript)
-        configuration.offline.excludes.push(
-            `${configuration.path.asset.javaScript}*.js?` +
-            `${configuration.hashAlgorithm}=*`)
+if (htmlAvailable && configuration.offline) {
+    if (!['serve', 'testInBrowser'].includes(
+        configuration.givenCommandLineArguments[2]
+    )) {
+        if (configuration.inPlace.cascadingStyleSheet)
+            configuration.offline.excludes.push(
+                `${configuration.path.asset.cascadingStyleSheet}*.css?` +
+                `${configuration.hashAlgorithm}=*`)
+        if (configuration.inPlace.javaScript)
+            configuration.offline.excludes.push(
+                `${configuration.path.asset.javaScript}*.js?` +
+                `${configuration.hashAlgorithm}=*`)
+    }
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
 // /// endregion
