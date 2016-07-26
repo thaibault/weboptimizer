@@ -343,7 +343,7 @@
                     "**/.*"
                 ],
                 "externals": ["index.html"],
-                "publicPath": "",
+                "publicPath": "/",
                 "relativePaths": false,
                 "updateStrategy": "changed",
                 "version": "[hash]",
