@@ -349,7 +349,7 @@
                 "AppCache": {"directory": "/"},
                 "ServiceWorker": {
                     "events": true,
-                    "navigateFallbackURL": "/",
+                    "navigateFallbackURL": null,
                     "output": {
                         "__evaluate__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
                     }
