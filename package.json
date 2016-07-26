@@ -320,8 +320,8 @@
                             "debug": false,
                             "cache": true
                         },
-                        "locals": {"includeManifest": {
-                            "__evaluate__": "!!self.offline"
+                        "locals": {"offline": {
+                            "__evaluate__": "Boolean(self.offline)"
                         }}
                     },
                     "less": {},
@@ -415,9 +415,10 @@
                     "fileNamePattern": "^.+\\.compiled(?:\\.map)?$"
                 }
             },
-            "buildDefinition": {"TARGET": {
-                "__evaluate__": "`'${self.target}'`"
-            }},
+            "buildDefinition": {
+                "TARGET": {"__evaluate__": "`'${self.target}'`"},
+                "OFFLINE": {"__evaluate__": "Boolean(self.offline)"}
+            },
             "commandLine": {
                 "build": {
                     "command": "webpack",
@@ -559,10 +560,7 @@
             },
             "module": {
                 "preprocessor": {
-                    "pug": {
-                        "compiler": {"pretty": true},
-                        "locals": {"includeManifest": false}
-                    },
+                    "pug": {"compiler": {"pretty": true}},
                     "less": {"sourceMap": true}
                 },
                 "cascadingStyleSheet": {"sourceMap": true},
