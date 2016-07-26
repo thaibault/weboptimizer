@@ -571,7 +571,7 @@ export default {
             configuration.givenCommandLineArguments[2] === 'buildDLL'
         ) ? 'var' : configuration.exportFormat,
         path: configuration.path.asset.target,
-        // publicPath: configuration.path.asset.publicTarget,
+        publicPath: configuration.path.asset.publicTarget,
         pathinfo: configuration.debug,
         umdNamedDefine: true
     },
