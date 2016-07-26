@@ -336,12 +336,12 @@
                 "style": {"insertAt": "top", "singleton": true}
             },
             "offline": {
-                "caches": {"main": ["index.html", "manifest.html", ":rest:"]},
+                "caches": {"main": ["index.html", ":rest:"]},
                 "excludes": [
                     {"__evaluate__": "`**/*.map?${self.hashAlgorithm}=*`"},
                     "**/.*"
                 ],
-                "externals": ["index.html", "manifest.html"],
+                "externals": ["index.html"],
                 "publicPath": "/",
                 "relativePaths": false,
                 "updateStrategy": "changed",
