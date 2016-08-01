@@ -402,13 +402,19 @@ if (injection.external === '__implicit__')
                             configuration.knownExtensions, context
                         ) === filePath)
                             return callback()
-            if (!path.resolve(filePath).startsWith(
+            /*
+                NOTE: We mark dependencies as external if they does not contain
+                a loader in their request and aren't part of the current node
+                package.
+            */
+            if (!request.includes('!') && (!path.resolve(filePath).startsWith(
                 configuration.path.context
             ) || Helper.isFilePathInLocation(
                 filePath, configuration.path.ignore
-            ) && !configuration.inPlace.externalLibrary) {
+            ) && !configuration.inPlace.externalLibrary)) {
                 if (configuration.exportFormat === 'var')
                     request = Helper.convertToValidVariableName(request)
+                console.log(request)
                 return callback(
                     null, `${configuration.exportFormat} ${request}`)
             }
