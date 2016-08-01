@@ -20,8 +20,6 @@ import type {
     OnDomContentLoadedListenerFunction,
     Window
 } from './type'
-import * as fileSystem from 'fs'
-import path from 'path'
  // endregion
 // region declaration
 declare var TARGET:string
@@ -49,6 +47,8 @@ const registerOnDomContentLoaded:Function = (
 // region ensure presence of common browser environment
 if (typeof TARGET === 'undefined' || TARGET === 'node') {
     // region mock browser environment
+    const fileSystem:Object = require('fs')
+    const path:Object = require('path')
     const metaDOM:Object = require('jsdom')
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
