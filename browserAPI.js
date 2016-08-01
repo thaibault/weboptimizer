@@ -25,7 +25,7 @@ const onDomContentLoadedListener:Array<OnDomContentLoadedListenerFunction> = []
 // endregion
 // region functions
 let windowWithLoadedDomContent:?Window = null
-const onDomContentLoaded = (window:Window):void => {
+const onDomContentLoaded:Function = (window:Window):void => {
     windowWithLoadedDomContent = window
     for (
         const callback:OnDomContentLoadedListenerFunction of
@@ -33,12 +33,14 @@ const onDomContentLoaded = (window:Window):void => {
     )
         callback(window, false)
 }
+const registerOnDomContentLoaded:Function = (window:Window):void =>
+    window.document.addEventListener('DOMContentLoaded', ():void =>
+        onDomContentLoaded(window))
 // endregion
 // region ensure presence of common browser environment
-if (typeof TARGET === 'undefined' || TARGET === 'node') {
+if (typeof TARGET === 'undefined' || TARGET === 'node')
     // region mock browser environment
-    const dom = require('jsdom')
-    dom.env(`
+    require('jsdom').env({html: `
     <!doctype html>
         <html>
             <head>
@@ -58,44 +60,19 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
             <div id="qunit-fixture"></div>
         </body>
     </html>
-    `, (error:?Error, window:Object):void => {
+    `, url: 'http://localhost/path', created: (
+        error:?Error, window:Object
+    ):void => {
         if (error)
             throw error
-        else {
-            Object.defineProperty(window, 'location', {
-                value: {
-                    hash: '',
-                    search: '',
-                    pathname: '/path',
-                    port: '',
-                    hostname: 'localhost',
-                    host: 'localhost',
-                    protocol: 'http:',
-                    origin: 'http://localhost',
-                    href: 'http://localhost/path',
-                    username: '',
-                    password: '',
-                    assign: ():void => {},
-                    reload: ():void => {},
-                    replace: ():void => {},
-                    toString: function():string {
-                        return this.href
-                    }
-                },
-                writable: false
-            })
-            onDomContentLoaded(window)
-        }
-    })
+        else
+            registerOnDomContentLoaded(window)
+    }})
     // endregion
-} else
-    window.document.addEventListener('DOMContentLoaded', ():void => {
-        onDomContentLoaded(window)
-    })
+else
+    registerOnDomContentLoaded(window)
 // endregion
-export default (
-    callback:OnDomContentLoadedListenerFunction
-):void => {
+export default (callback:OnDomContentLoadedListenerFunction):void => {
     if (windowWithLoadedDomContent)
         callback(windowWithLoadedDomContent, true)
     else
