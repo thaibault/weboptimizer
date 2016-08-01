@@ -14,7 +14,14 @@
     endregion
 */
 // region imports
-import type {Browser, OnDomContentLoadedListenerFunction, Window} from './type'
+import type {
+    Browser,
+    DomNode,
+    OnDomContentLoadedListenerFunction,
+    Window
+} from './type'
+import * as fileSystem from 'fs'
+import path from 'path'
  // endregion
 // region declaration
 declare var TARGET:string
@@ -78,6 +85,23 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
                 </body>
             </html>
         `,
+        resourceLoader: (
+            resource:{
+                element:DomNode;
+                url:{[key:string]:string};
+                cookie:string;
+                baseUrl:string;
+                defaultFetch:(callback:(
+                    error:?Error, body:string
+                ) => void) => void
+            }, callback:(error:?Error, body:string) => void
+        ):void => {
+            if (resource.url.host === 'localhost')
+                return callback(null, fileSystem.readFileSync(path.join(
+                    process.cwd(), resource.url.pathname
+                ), {encoding: 'utf-8'}))
+            return resource.defaultFetch(callback)
+        },
         url: 'http://localhost',
         virtualConsole: metaDOM.createVirtualConsole().sendTo(console)
     })
