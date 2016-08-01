@@ -414,7 +414,6 @@ if (injection.external === '__implicit__')
             ) && !configuration.inPlace.externalLibrary)) {
                 if (configuration.exportFormat === 'var')
                     request = Helper.convertToValidVariableName(request)
-                console.log(request)
                 return callback(
                     null, `${configuration.exportFormat} ${request}`)
             }
