@@ -24,52 +24,65 @@ declare var window:Window
 const onDomContentLoadedListener:Array<OnDomContentLoadedListenerFunction> = []
 // endregion
 // region functions
-let windowWithLoadedDomContent:?Window = null
-const onDomContentLoaded:Function = (window:Window):void => {
-    windowWithLoadedDomContent = window
+let windowWithLoadedDomContent:?{window:Window;jsDOM:Object} = null
+const onDomContentLoaded:Function = (window:Window, jsDOM:?Object):void => {
+    windowWithLoadedDomContent = {window, jsDOM}
     for (
         const callback:OnDomContentLoadedListenerFunction of
         onDomContentLoadedListener
     )
-        callback(window, false)
+        callback({window, jsDOM}, false)
 }
-const registerOnDomContentLoaded:Function = (window:Window):void =>
+const registerOnDomContentLoaded:Function = (
+    window:Window, jsDOM:?Object = null
+):void =>
     window.document.addEventListener('DOMContentLoaded', ():void =>
-        onDomContentLoaded(window))
+        onDomContentLoaded(window, jsDOM))
 // endregion
 // region ensure presence of common browser environment
-if (typeof TARGET === 'undefined' || TARGET === 'node')
+if (typeof TARGET === 'undefined' || TARGET === 'node') {
     // region mock browser environment
-    require('jsdom').env({html: `
-    <!doctype html>
-        <html>
-            <head>
-                <meta charset="UTF-8">
-                <!--Prevent browser caching-->
-                <meta http-equiv="cache-control" content="no-cache">
-                <meta http-equiv="expires" content="0">
-                <meta http-equiv="pragma" content="no-cache">
-                <title>test</title>
-                <link
-                    href="/node_modules/qunitjs/qunit/qunit.css"
-                    rel="stylesheet" type="text/css"
-                >
-            </head>
-        <body>
-            <div id="qunit"></div>
-            <div id="qunit-fixture"></div>
-        </body>
-    </html>
-    `, url: 'http://localhost/path', created: (
-        error:?Error, window:Object
-    ):void => {
-        if (error)
-            throw error
-        else
-            registerOnDomContentLoaded(window)
-    }})
+    const jsDOM:Object = require('jsdom')
+    jsDOM.env({
+        created: (error:?Error, window:Object):void => {
+            if (error)
+                throw error
+            else
+                registerOnDomContentLoaded(window, jsDOM)
+        },
+        features: {
+            FetchExternalResources : [
+                'script', 'frame', 'iframe', 'link', 'img'
+            ],
+            ProcessExternalResources: ['script'],
+            SkipExternalResources: false
+        },
+        html: `
+            <!doctype html>
+                <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <!--Prevent browser caching-->
+                        <meta http-equiv="cache-control" content="no-cache">
+                        <meta http-equiv="expires" content="0">
+                        <meta http-equiv="pragma" content="no-cache">
+                        <title>test</title>
+                        <link
+                            href="/node_modules/qunitjs/qunit/qunit.css"
+                            rel="stylesheet" type="text/css"
+                        >
+                    </head>
+                <body>
+                    <div id="qunit"></div>
+                    <div id="qunit-fixture"></div>
+                </body>
+            </html>
+        `,
+        url: 'http://localhost',
+        virtualConsole: jsDOM.createVirtualConsole().sendTo(console)
+    })
     // endregion
-else
+} else
     registerOnDomContentLoaded(window)
 // endregion
 export default (callback:OnDomContentLoadedListenerFunction):void => {
