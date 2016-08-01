@@ -85,6 +85,7 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
                 </body>
             </html>
         `,
+        pool: 100,
         resourceLoader: (
             resource:{
                 element:DomNode;
