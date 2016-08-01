@@ -114,12 +114,16 @@ export type Paths = {
 export type DefaultConfiguration = {
     contextType:string;
     debug:boolean;
+    dllManifestFilePaths:Array<any>;
+    document:Object;
     path:{
+        asset:{[key:string]:string};
         context:string;
         target:string;
         [key:string]:string
     };
-    dllManifestFilePaths:Array<string>;
+    test:Object;
+    testInBrowser:Object
 }
 export type MetaConfiguration = {
     default:DefaultConfiguration;

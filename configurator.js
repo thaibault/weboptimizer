@@ -93,6 +93,7 @@ if (debug)
         true, metaConfiguration.default, metaConfiguration.debug)
 else
     configuration = metaConfiguration.default
+configuration.debug = debug
 if (typeof configuration.library === 'object')
     Helper.extendObject(true, libraryConfiguration, configuration.library)
 if (
@@ -103,9 +104,6 @@ if (
         true, configuration, libraryConfiguration)
 // endregion
 // region merging and evaluating default, test, specific and dynamic settings
-// Merges project specific configurations with default ones.
-configuration = Helper.extendObject(true, configuration, specificConfiguration)
-configuration.debug = debug
 // / region load additional dynamically given configuration
 let count:number = 0
 let filePath:?string = null
@@ -145,7 +143,8 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
         Helper.extendObject(true, configuration, configuration.test)
     // endregion
 // / endregion
-Helper.extendObject(true, configuration, runtimeInformation)
+Helper.extendObject(
+    true, configuration, specificConfiguration, runtimeInformation)
 let result:?PlainObject = null
 if (runtimeInformation.givenCommandLineArguments.length > 3)
     result = Helper.parseEncodedObject(
@@ -170,7 +169,7 @@ if (targetDirectory && targetDirectory.isDirectory())
     })
 // / endregion
 // / region build absolute paths
-for (const pathConfiguration:{[key:string]:{[key:string]:string}|string} of [
+for (const pathConfiguration:{[key:string]:any} of [
     configuration.path, configuration.path.asset
 ])
     for (const key:string of ['source', 'target'])
