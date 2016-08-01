@@ -31,7 +31,7 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 
 plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
-plugins.AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
+plugins.AddAssetHTMLPlugin = require('add-asset-html-webpack-plugin').default
 plugins.OpenBrowser = plugins.openBrowser
 plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Imagemin = require('imagemin-webpack-plugin').default
@@ -314,7 +314,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                     fileSystem.F_OK)
                 sourceMapExists = true
             } catch (error) {}
-            pluginInstances.push(new plugins.AddAssetHtmlPlugin({
+            pluginInstances.push(new plugins.AddAssetHTMLPlugin({
                 filename: `${configuration.path.target}${fileName}`,
                 includeSourcemap: sourceMapExists
             }))
