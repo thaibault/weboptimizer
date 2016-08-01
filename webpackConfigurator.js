@@ -315,7 +315,8 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 sourceMapExists = true
             } catch (error) {}
             pluginInstances.push(new plugins.AddAssetHTMLPlugin({
-                filename: `${configuration.path.target}${fileName}`,
+                filepath: `${configuration.path.target}${fileName}`,
+                hash: true,
                 includeSourcemap: sourceMapExists
             }))
             pluginInstances.push(new webpack.DllReferencePlugin({
