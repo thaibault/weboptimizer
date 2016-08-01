@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import type {OnDomContentLoadedListenerFunction, Window} from './type'
+import type {Browser, OnDomContentLoadedListenerFunction, Window} from './type'
  // endregion
 // region declaration
 declare var TARGET:string
@@ -24,34 +24,34 @@ declare var window:Window
 const onDomContentLoadedListener:Array<OnDomContentLoadedListenerFunction> = []
 // endregion
 // region functions
-let windowWithLoadedDomContent:?{window:Window;jsDOM:Object} = null
-const onDomContentLoaded:Function = (window:Window, jsDOM:?Object):void => {
-    windowWithLoadedDomContent = {window, jsDOM}
+let windowWithLoadedDomContent:?Browser = null
+const onDomContentLoaded:Function = (window:Window, metaDOM:?Object):void => {
+    windowWithLoadedDomContent = {window, metaDOM}
     for (
         const callback:OnDomContentLoadedListenerFunction of
         onDomContentLoadedListener
     )
-        callback({window, jsDOM}, false)
+        callback({window, metaDOM}, false)
 }
 const registerOnDomContentLoaded:Function = (
-    window:Window, jsDOM:?Object = null
+    window:Window, metaDOM:?Object = null
 ):void =>
     window.document.addEventListener('DOMContentLoaded', ():void =>
-        onDomContentLoaded(window, jsDOM))
+        onDomContentLoaded(window, metaDOM))
 // endregion
 // region ensure presence of common browser environment
 if (typeof TARGET === 'undefined' || TARGET === 'node') {
     // region mock browser environment
-    const jsDOM:Object = require('jsdom')
-    jsDOM.env({
+    const metaDOM:Object = require('jsdom')
+    metaDOM.env({
         created: (error:?Error, window:Object):void => {
             if (error)
                 throw error
             else
-                registerOnDomContentLoaded(window, jsDOM)
+                registerOnDomContentLoaded(window, metaDOM)
         },
         features: {
-            FetchExternalResources : [
+            FetchExternalResources: [
                 'script', 'frame', 'iframe', 'link', 'img'
             ],
             ProcessExternalResources: ['script'],
@@ -79,7 +79,7 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
             </html>
         `,
         url: 'http://localhost',
-        virtualConsole: jsDOM.createVirtualConsole().sendTo(console)
+        virtualConsole: metaDOM.createVirtualConsole().sendTo(console)
     })
     // endregion
 } else

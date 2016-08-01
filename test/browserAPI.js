@@ -9,18 +9,19 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 import browserAPI from '../browserAPI.compiled'
-import type {Window} from '../type'
+import type {Browser} from '../type'
 // endregion
 QUnit.module('browserAPI')
-browserAPI((window:Window):void => {
+browserAPI((browser:Browser):void => {
     QUnit.load()
     // region tests
     QUnit.test('browserAPI', (assert:Object):void => {
-        browserAPI((window:Window, alreadyLoaded:boolean):void => assert.ok(
+        browserAPI((browser:Browser, alreadyLoaded:boolean):void => assert.ok(
             alreadyLoaded))
-        assert.ok(window.hasOwnProperty('document'))
-        assert.ok(window.document.hasOwnProperty('location'))
-        assert.ok(window.document.querySelector('body') instanceof Object)
+        assert.ok(browser.window.hasOwnProperty('document'))
+        assert.ok(browser.window.document.hasOwnProperty('location'))
+        assert.ok(
+            browser.window.document.querySelector('body') instanceof Object)
     })
     // endregion
 })

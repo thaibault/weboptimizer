@@ -52,6 +52,10 @@ export type Window = {
     localStorage:Storage;
     sessionStorage:Storage;
 }
+export type Browser = {
+    window:Window;
+    metaDOM:?Object;
+}
 // // endregion
 // / endregion
 // / region injection
@@ -230,7 +234,7 @@ export type EvaluationFunction = (
     path:typeof path
 ) => any
 export type OnDomContentLoadedListenerFunction = (
-    window:Window, alreadyLoaded:boolean
+    browser:Browser, alreadyLoaded:boolean
 ) => void
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
