@@ -55,8 +55,6 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
                 throw error
             else
                 registerOnDomContentLoaded(window, metaDOM)
-            window.addEventListener('error', (event:Object):void =>
-                console.error(event.error.stack, event.error.detail))
         },
         features: {
             FetchExternalResources: [
@@ -86,7 +84,6 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
                 </body>
             </html>
         `,
-        pool: 100,
         resourceLoader: (
             resource:{
                 element:DomNode;
@@ -118,8 +115,7 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
             }
             return resource.defaultFetch(callback)
         },
-        url: 'http://localhost',
-        virtualConsole: metaDOM.createVirtualConsole().sendTo(console)
+        url: 'http://localhost'
     })
     // endregion
 } else
