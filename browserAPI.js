@@ -47,7 +47,6 @@ const registerOnDomContentLoaded:Function = (
 // region ensure presence of common browser environment
 if (typeof TARGET === 'undefined' || TARGET === 'node') {
     // region mock browser environment
-    const fileSystem:Object = require('fs')
     const path:Object = require('path')
     const metaDOM:Object = require('jsdom')
     metaDOM.env({
@@ -56,6 +55,8 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
                 throw error
             else
                 registerOnDomContentLoaded(window, metaDOM)
+            window.addEventListener('error', (event:Object):void =>
+                console.error(event.error.stack, event.error.detail))
         },
         features: {
             FetchExternalResources: [
@@ -89,7 +90,15 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
         resourceLoader: (
             resource:{
                 element:DomNode;
-                url:{[key:string]:string};
+                url:{
+                    hostname:string;
+                    host:string;
+                    port:?string;
+                    protocol:string;
+                    href:string;
+                    path:string;
+                    pathname:string;
+                };
                 cookie:string;
                 baseUrl:string;
                 defaultFetch:(callback:(
