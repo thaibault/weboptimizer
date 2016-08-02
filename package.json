@@ -531,10 +531,11 @@
 
             "testInBrowser": {
                 "files": {"defaultHTML": {
+                    "filename": "test.html",
+                    "inject": "head",
                     "template": {
                         "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${webOptimizerPath}/test.pug`"
                     },
-                    "filename": "test.html"
                 }},
                 "inPlace": {"externalLibrary": true},
                 "injection": {"internal": {"index": "test/"}},
