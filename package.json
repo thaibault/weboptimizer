@@ -72,7 +72,7 @@
         "browserAPI.js",
         "configurator.js",
         "helper.js",
-        "pug-clipugLoader.js",
+        "pugLoader.js",
         "taskRunner.js",
         "test.pug",
         "type.js",
