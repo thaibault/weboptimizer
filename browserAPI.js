@@ -115,7 +115,8 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
             }
             return resource.defaultFetch(callback)
         },
-        url: 'http://localhost'
+        url: 'http://localhost',
+        virtualConsole: metaDOM.createVirtualConsole().sendTo(console)
     })
     // endregion
 } else
