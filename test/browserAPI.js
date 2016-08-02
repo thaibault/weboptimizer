@@ -16,12 +16,20 @@ browserAPI((browser:Browser):void => {
     QUnit.load()
     // region tests
     QUnit.test('browserAPI', (assert:Object):void => {
-        browserAPI((browser:Browser, alreadyLoaded:boolean):void => assert.ok(
-            alreadyLoaded))
+        browserAPI((browser:Browser, alreadyCreated:boolean):void => assert.ok(
+            alreadyCreated))
+        assert.notOk(browser.debug)
         assert.ok(browser.window.hasOwnProperty('document'))
         assert.ok(browser.window.document.hasOwnProperty('location'))
         assert.ok(
             browser.window.document.querySelector('body') instanceof Object)
+        const done:Function = assert.async()
+        browser.window.document.addEventListener('DOMContentLoaded', (
+            event:Object
+        ):void => {
+            assert.ok(event)
+            done()
+        })
     })
     // endregion
 })

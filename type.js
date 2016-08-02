@@ -53,8 +53,9 @@ export type Window = {
     sessionStorage:Storage;
 }
 export type Browser = {
-    window:Window;
+    debug:boolean;
     metaDOM:?Object;
+    window:Window;
 }
 // // endregion
 // / endregion
@@ -237,9 +238,6 @@ export type EvaluationFunction = (
     self:?PlainObject, webOptimizerPath:string, currentPath:string,
     path:typeof path
 ) => any
-export type OnDomContentLoadedListenerFunction = (
-    browser:Browser, alreadyLoaded:boolean
-) => void
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean

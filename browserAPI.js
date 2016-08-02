@@ -14,35 +14,17 @@
     endregion
 */
 // region imports
-import type {
-    Browser,
-    DomNode,
-    OnDomContentLoadedListenerFunction,
-    Window
-} from './type'
+/* eslint-disable no-unused-vars */
+import type {Browser, DomNode, Window} from './type'
+/* eslint-enable no-unused-vars */
  // endregion
 // region declaration
 declare var TARGET:string
 declare var window:Window
 // endregion
-// region constants
-const onDomContentLoadedListener:Array<OnDomContentLoadedListenerFunction> = []
-// endregion
-// region functions
-let windowWithLoadedDomContent:?Browser = null
-const onDomContentLoaded:Function = (window:Window, metaDOM:?Object):void => {
-    windowWithLoadedDomContent = {window, metaDOM}
-    for (
-        const callback:OnDomContentLoadedListenerFunction of
-        onDomContentLoadedListener
-    )
-        callback({window, metaDOM}, false)
-}
-const registerOnDomContentLoaded:Function = (
-    window:Window, metaDOM:?Object = null
-):void =>
-    window.document.addEventListener('DOMContentLoaded', ():void =>
-        onDomContentLoaded(window, metaDOM))
+// region variables
+const onCreatedListener:Array<Function> = []
+let browser:Browser
 // endregion
 // region ensure presence of common browser environment
 if (typeof TARGET === 'undefined' || TARGET === 'node') {
@@ -51,10 +33,12 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
     const metaDOM:Object = require('jsdom')
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
+            browser = {debug: false, metaDOM, window}
             if (error)
                 throw error
             else
-                registerOnDomContentLoaded(window, metaDOM)
+                for (const callback:Function of onCreatedListener)
+                    callback(browser, false)
         },
         features: {
             FetchExternalResources: [
@@ -113,21 +97,31 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
                 resource.url.path = resource.url.pathname = path.join(
                     process.cwd(), resource.url.path)
             }
-            return resource.defaultFetch(callback)
+            if (browser.debug)
+                console.info(`Load resource "${resource.url.href}".`)
+            try {
+                return resource.defaultFetch(callback)
+            } catch (error) {
+                if (browser.debug)
+                    throw error
+                else
+                    console.warn(
+                        `Loading resource "${resource.url.href}" failed: ` +
+                        `${error}.`)
+            }
         },
         url: 'http://localhost',
         virtualConsole: metaDOM.createVirtualConsole().sendTo(console)
     })
     // endregion
-} else
-    registerOnDomContentLoaded(window)
-// endregion
-export default (callback:OnDomContentLoadedListenerFunction):void => {
-    if (windowWithLoadedDomContent)
-        callback(windowWithLoadedDomContent, true)
-    else
-        onDomContentLoadedListener.push(callback)
+} else {
+    browser = {debug: false, metaDOM: null, window}
+    for (const callback:Function of onCreatedListener)
+        callback(browser, false)
 }
+// endregion
+export default (callback:Function):?number =>
+    (browser) ? callback(browser, true) : onCreatedListener.push(callback)
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
