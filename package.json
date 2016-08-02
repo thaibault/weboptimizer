@@ -535,7 +535,7 @@
                     "inject": "head",
                     "template": {
                         "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${webOptimizerPath}/test.pug`"
-                    },
+                    }
                 }},
                 "inPlace": {"externalLibrary": true},
                 "injection": {"internal": {"index": "test/"}},
