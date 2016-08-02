@@ -55,6 +55,7 @@ export type Window = {
 }
 export type Browser = {
     debug:boolean;
+    domContentLoaded:boolean;
     metaDOM:?Object;
     window:Window;
 }

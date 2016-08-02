@@ -25,6 +25,7 @@ declare var window:Window
 // region variables
 const onCreatedListener:Array<Function> = []
 let browser:Browser
+let initialized:boolean = false
 // endregion
 // region ensure presence of common browser environment
 if (typeof TARGET === 'undefined' || TARGET === 'node') {
@@ -50,7 +51,11 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
     }
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
-            browser = {debug: false, metaDOM, window}
+            browser = {debug: false, domContentLoaded: false, metaDOM, window}
+            browser.window.document.addEventListener('DOMContentLoaded', (
+            ):void => {
+                browser.domContentLoaded = true
+            })
             if (error)
                 throw error
             else
@@ -105,11 +110,22 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
         virtualConsole
     })
     // endregion
-} else
-    browser = {debug: false, metaDOM: null, window}
+} else {
+    browser = {debug: false, domContentLoaded: false, metaDOM: null, window}
+    browser.window.document.addEventListener('DOMContentLoaded', (
+    ):void => {
+        browser.domContentLoaded = true
+    })
+}
 // endregion
-export default (callback:Function):?number =>
-    (browser) ? callback(browser, true) : onCreatedListener.push(callback)
+export default (callback:Function):any => {
+    if (typeof TARGET === 'undefined' || TARGET === 'node')
+        return (browser) ? callback(browser, true) : onCreatedListener.push(
+            callback)
+    const result:any = callback(browser, initialized)
+    initialized = true
+    return result
+}
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
