@@ -9,22 +9,21 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 import browserAPI from '../browserAPI.compiled'
-import type {Browser} from '../type'
+import type {BrowserAPI} from '../type'
 // endregion
 QUnit.module('browserAPI')
-browserAPI((browser:Browser):void => {
+browserAPI((api:BrowserAPI):void => {
     QUnit.load()
     // region tests
     QUnit.test('browserAPI', (assert:Object):void => {
-        browserAPI((browser:Browser, alreadyCreated:boolean):void => assert.ok(
+        browserAPI((api:BrowserAPI, alreadyCreated:boolean):void => assert.ok(
             alreadyCreated))
-        assert.notOk(browser.debug)
-        assert.ok(browser.window.hasOwnProperty('document'))
-        assert.ok(browser.window.document.hasOwnProperty('location'))
-        assert.ok(
-            browser.window.document.querySelector('body') instanceof Object)
+        assert.notOk(api.debug)
+        assert.ok(api.window.hasOwnProperty('document'))
+        assert.ok(api.window.document.hasOwnProperty('location'))
+        assert.ok(api.window.document.querySelector('body') instanceof Object)
         const done:Function = assert.async()
-        browser.window.document.addEventListener('DOMContentLoaded', (
+        api.window.document.addEventListener('DOMContentLoaded', (
             event:Object
         ):void => {
             assert.ok(event)
