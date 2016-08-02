@@ -31,6 +31,15 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
     // region mock browser environment
     const path:Object = require('path')
     const metaDOM:Object = require('jsdom')
+    const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
+        console, {omitJsdomErrors: true})
+    virtualConsole.on('jsdomError', (error):void => {
+        if (error.type === 'resource loading')
+            console.warn(
+                `Loading resource "${resource.url.href}" failed: ${error}.`)
+        else
+            console.error(error.stack, error.detail)
+    })
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
             browser = {debug: false, metaDOM, window}
@@ -99,19 +108,10 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
             }
             if (browser.debug)
                 console.info(`Load resource "${resource.url.href}".`)
-            try {
-                return resource.defaultFetch(callback)
-            } catch (error) {
-                if (browser.debug)
-                    throw error
-                else
-                    console.warn(
-                        `Loading resource "${resource.url.href}" failed: ` +
-                        `${error}.`)
-            }
+            return resource.defaultFetch(callback)
         },
         url: 'http://localhost',
-        virtualConsole: metaDOM.createVirtualConsole().sendTo(console)
+        virtualConsole
     })
     // endregion
 } else {
