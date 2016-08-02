@@ -26,7 +26,7 @@
         "babel-preset-es2015-node": ">=6.1.0",
         "babel-preset-stage-0": ">=6.5.0",
         "css-loader": ">=0.23.1",
-        "eslint": ">=3.2.0",
+        "eslint": ">=3.2.2",
         "eslint-config-google": ">=0.6.0",
         "eslint-plugin-flowtype": ">=2.4.0",
         "eslint-plugin-jsdoc": ">=2.3.1",
@@ -60,7 +60,7 @@
         "coffee-script": "*",
         "less": "*",
         "less-loader": "*",
-        "node-sass": "*",
+        "node-sass": ">=3.8.0",
         "sass-loader": "*"
     },
     "devDependencies": {
