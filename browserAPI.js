@@ -97,10 +97,16 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
                 ) => void) => void
             }, callback:(error:?Error, body:string) => void
         ):void => {
-            if (resource.url.host === 'localhost')
-                return callback(null, fileSystem.readFileSync(path.join(
-                    process.cwd(), resource.url.pathname
-                ), {encoding: 'utf-8'}))
+            if (resource.url.hostname === 'localhost') {
+                resource.url.host = resource.url.hostname = ''
+                resource.url.port = null
+                resource.url.protocol = 'file:'
+                resource.url.href = resource.url.href.replace(
+                    /^[a-zA-Z]+:\/\/localhost(?::[0-9]+)?/,
+                    `file://${process.cwd()}`)
+                resource.url.path = resource.url.pathname = path.join(
+                    process.cwd(), resource.url.path)
+            }
             return resource.defaultFetch(callback)
         },
         url: 'http://localhost',
