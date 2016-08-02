@@ -43,6 +43,7 @@
         "postcss-import": ">=8.1.2",
         "postcss-loader": ">=0.9.1",
         "pug": ">=2.0.0-beta4",
+        "pug-cli": ">=1.0.0-alpha6",
         "jsdoc": ">=3.4.0",
         "jsdom": ">=9.4.1",
         "loader-utils": ">=0.2.15",
@@ -71,20 +72,20 @@
         "browserAPI.js",
         "configurator.js",
         "helper.js",
-        "pugLoader.js",
+        "pug-clipugLoader.js",
         "taskRunner.js",
         "test.pug",
         "type.js",
         "webpackConfigurator.js"
     ],
     "scripts": {
-        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command browserAPI.compiled.js browserAPI.js",
-        "clear": "rm *.compiled.* &>/dev/null;rm --recursive *.compiled &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null || true",
+        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command browserAPI.compiled.js browserAPI.js && pug --pretty test.pug",
+        "clear": "rm *.compiled.* &>/dev/null;rm --recursive *.compiled &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null; rm *.html &>/dev/null || true",
         "document": "npm run build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
         "lint": "flow --color always --strip-root && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
-        "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js pugLoader.compiled.js webpackConfigurator.compiled.js",
+        "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js pugLoader.compiled.js webpackConfigurator.compiled.js test.html",
         "postinstall": "npm run build",
-        "test": "npm run clear && command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && chmod +x test/* && test/browserAPI.compiled.js && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
+        "test": "npm run clear && pug --pretty test.pug && command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && chmod +x test/* && test/browserAPI.compiled.js && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
     },
     "configuration": {
         "default": {

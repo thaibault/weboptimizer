@@ -29,6 +29,7 @@ let browser:Browser
 // region ensure presence of common browser environment
 if (typeof TARGET === 'undefined' || TARGET === 'node') {
     // region mock browser environment
+    const fileSystem:Object = require('fs')
     const path:Object = require('path')
     const metaDOM:Object = require('jsdom')
     const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
@@ -40,6 +41,13 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
         else
             console.error(error)
     })
+    let templateFilePath:string = path.join(__dirname, 'test.html')
+    try {
+        fileSystem.accessSync(templateFilePath, fileSystem.F_OK)
+    } catch (error) {
+        templateFilePath = path.join(
+            process.cwd(), __dirname, 'node_modules/webOptimizer/test.html')
+    }
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
             browser = {debug: false, metaDOM, window}
@@ -56,27 +64,7 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
             ProcessExternalResources: ['script'],
             SkipExternalResources: false
         },
-        html: `
-            <!doctype html>
-                <html>
-                    <head>
-                        <meta charset="UTF-8">
-                        <!--Prevent browser caching-->
-                        <meta http-equiv="cache-control" content="no-cache">
-                        <meta http-equiv="expires" content="0">
-                        <meta http-equiv="pragma" content="no-cache">
-                        <title>test</title>
-                        <link
-                            href="/node_modules/qunitjs/qunit/qunit.css"
-                            rel="stylesheet" type="text/css"
-                        >
-                    </head>
-                <body>
-                    <div id="qunit"></div>
-                    <div id="qunit-fixture"></div>
-                </body>
-            </html>
-        `,
+        html: fileSystem.readFileSync(templateFilePath, {encoding: 'utf-8'}),
         resourceLoader: (
             resource:{
                 element:DomNode;
@@ -117,11 +105,8 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
         virtualConsole
     })
     // endregion
-} else {
+} else
     browser = {debug: false, metaDOM: null, window}
-    for (const callback:Function of onCreatedListener)
-        callback(browser, false)
-}
 // endregion
 export default (callback:Function):?number =>
     (browser) ? callback(browser, true) : onCreatedListener.push(callback)
