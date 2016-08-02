@@ -15,7 +15,7 @@
 */
 // region imports
 /* eslint-disable no-unused-vars */
-import type {Browser, DomNode, Window} from './type'
+import type {BrowserAPI, DomNode, Window} from './type'
 /* eslint-enable no-unused-vars */
  // endregion
 // region declaration
@@ -24,8 +24,7 @@ declare var window:Window
 // endregion
 // region variables
 const onCreatedListener:Array<Function> = []
-let browser:Browser
-let initialized:boolean = false
+let browserAPI:BrowserAPI
 // endregion
 // region ensure presence of common browser environment
 if (typeof TARGET === 'undefined' || TARGET === 'node') {
@@ -51,16 +50,17 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
     }
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
-            browser = {debug: false, domContentLoaded: false, metaDOM, window}
-            browser.window.document.addEventListener('DOMContentLoaded', (
+            browserAPI = {
+                debug: false, domContentLoaded: false, metaDOM, window}
+            browserAPI.window.document.addEventListener('DOMContentLoaded', (
             ):void => {
-                browser.domContentLoaded = true
+                browserAPI.domContentLoaded = true
             })
             if (error)
                 throw error
             else
                 for (const callback:Function of onCreatedListener)
-                    callback(browser, false)
+                    callback(browserAPI, false)
         },
         features: {
             FetchExternalResources: [
@@ -99,7 +99,7 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
                 resource.url.path = resource.url.pathname = path.join(
                     process.cwd(), resource.url.path)
             }
-            if (browser.debug)
+            if (browserAPI.debug)
                 console.info(`Load resource "${resource.url.href}".`)
             return resource.defaultFetch(function(error:?Error):void {
                 if (!error)
@@ -111,20 +111,36 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
     })
     // endregion
 } else {
-    browser = {debug: false, domContentLoaded: false, metaDOM: null, window}
-    browser.window.document.addEventListener('DOMContentLoaded', (
-    ):void => {
-        browser.domContentLoaded = true
+    browserAPI = {debug: false, domContentLoaded: false, metaDOM: null, window}
+    window.document.addEventListener('DOMContentLoaded', ():void => {
+        browserAPI.domContentLoaded = true
+        for (const callback:Function of onCreatedListener)
+            callback(browserAPI, false)
     })
 }
 // endregion
 export default (callback:Function):any => {
+    // region initialize global context
+    /*
+        NOTE: We have to define window globally before anything is loaded to
+        ensure that all future instances share the same window object.
+    */
+    if (typeof global !== 'undefined' && global !== browserAPI.window) {
+        global.window = browserAPI.window
+        for (const key in browserAPI.window)
+            if (browserAPI.window.hasOwnProperty(
+                key
+            ) && !global.hasOwnProperty(key))
+                global[key] = browserAPI.window[key]
+    }
+    // endregion
     if (typeof TARGET === 'undefined' || TARGET === 'node')
-        return (browser) ? callback(browser, true) : onCreatedListener.push(
-            callback)
-    const result:any = callback(browser, initialized)
-    initialized = true
-    return result
+        return (browserAPI) ? callback(
+            browserAPI, true
+        ) : onCreatedListener.push(callback)
+    return (browserAPI.domContentLoaded) ? callback(
+        browserAPI, true
+    ) : onCreatedListener.push(callback)
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

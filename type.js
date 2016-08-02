@@ -53,7 +53,7 @@ export type Window = {
     sessionStorage:Storage;
     close:() => void;
 }
-export type Browser = {
+export type BrowserAPI = {
     debug:boolean;
     domContentLoaded:boolean;
     metaDOM:?Object;
