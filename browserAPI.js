@@ -33,13 +33,12 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
     const metaDOM:Object = require('jsdom')
     const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
         console, {omitJsdomErrors: true})
-    virtualConsole.on('jsdomError', (error):void => {
-        if (error.hasOwnProperty('resource'))
-            console.warn(
-                `Loading resource "${error.resource.url.href}" failed: ` +
-                `${error}.`)
+    virtualConsole.on('jsdomError', (error:Error):void => {
+        // IgnoreTypeCheck
+        if (error.type === 'resource loading')
+            console.warn(`Loading resource failed: ${error.toString()}.`)
         else
-            console.error(error.stack, error.detail)
+            console.error(error)
     })
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
@@ -109,10 +108,9 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
             }
             if (browser.debug)
                 console.info(`Load resource "${resource.url.href}".`)
-            return resource.defaultFetch(function(error):void {
-                if (error)
-                    error.resource = resource
-                callback.apply(this, arguments)
+            return resource.defaultFetch(function(error:?Error):void {
+                if (!error)
+                    callback.apply(this, arguments)
             })
         },
         url: 'http://localhost',
