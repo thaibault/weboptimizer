@@ -51,6 +51,7 @@ export type Window = {
     location:Location;
     localStorage:Storage;
     sessionStorage:Storage;
+    close:() => void;
 }
 export type Browser = {
     debug:boolean;
