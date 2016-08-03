@@ -31,7 +31,7 @@ browserAPI((api:BrowserAPI):void => {
         })
     })
     // endregion
-})
+}, false)
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

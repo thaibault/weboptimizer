@@ -122,13 +122,15 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
     })
 }
 // endregion
-export default (callback:Function):any => {
+export default (callback:Function, clear:boolean = true):any => {
     // region initialize global context
     /*
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.
     */
-    if (typeof global !== 'undefined' && global !== browserAPI.window) {
+    if (
+        clear && typeof global !== 'undefined' && global !== browserAPI.window
+    ) {
         global.window = browserAPI.window
         for (const key in browserAPI.window)
             if (browserAPI.window.hasOwnProperty(
