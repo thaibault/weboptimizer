@@ -41,12 +41,13 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
         else
             console.error(error)
     })
-    let templateFilePath:string = path.join(__dirname, 'test.html')
+    let templateFilePath:string = path.join(__dirname, 'test.compiled.html')
     try {
         fileSystem.accessSync(templateFilePath, fileSystem.F_OK)
     } catch (error) {
         templateFilePath = path.join(
-            process.cwd(), __dirname, 'node_modules/webOptimizer/test.html')
+            process.cwd(), __dirname,
+            'node_modules/webOptimizer/test.compiled.html')
     }
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
