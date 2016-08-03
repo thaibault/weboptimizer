@@ -36,7 +36,9 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
         console, {omitJsdomErrors: true})
     virtualConsole.on('jsdomError', (error:Error):void => {
         // IgnoreTypeCheck
-        if (error.type === 'resource loading')
+        if (!browserAPI.debug && [
+            'XMLHttpRequest', 'resource loading'
+        ].includes(error.type))
             console.warn(`Loading resource failed: ${error.toString()}.`)
         else
             console.error(error)
