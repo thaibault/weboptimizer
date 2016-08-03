@@ -378,7 +378,7 @@ if (injection.external === '__implicit__')
             context)
         if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
             // NOTE: We apply alias on externals additionally.
-            Helper.applyAliases(
+            request = Helper.applyAliases(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
             /*

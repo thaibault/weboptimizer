@@ -35,9 +35,9 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
     const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
         console, {omitJsdomErrors: true})
     virtualConsole.on('jsdomError', (error:Error):void => {
-        // IgnoreTypeCheck
         if (!browserAPI.debug && [
             'XMLHttpRequest', 'resource loading'
+        // IgnoreTypeCheck
         ].includes(error.type))
             console.warn(`Loading resource failed: ${error.toString()}.`)
         else
