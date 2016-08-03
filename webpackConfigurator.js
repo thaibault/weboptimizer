@@ -377,6 +377,7 @@ if (injection.external === '__implicit__')
             configuration.module.aliases, configuration.knownExtensions,
             context)
         if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
+            const originalRequest:string = request
             // NOTE: We apply alias on externals additionally.
             request = Helper.applyAliases(
                 request.substring(request.lastIndexOf('!') + 1),
@@ -408,7 +409,9 @@ if (injection.external === '__implicit__')
                 a loader in their request and aren't part of the current node
                 package.
             */
-            if (!request.includes('!') && (!path.resolve(filePath).startsWith(
+            if (!originalRequest.includes('!') && (!path.resolve(
+                filePath
+            ).startsWith(
                 configuration.path.context
             ) || Helper.isFilePathInLocation(
                 filePath, configuration.path.ignore
