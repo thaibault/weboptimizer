@@ -409,13 +409,14 @@ if (injection.external === '__implicit__')
                 a loader in their request and aren't part of the current node
                 package.
             */
-            if (!originalRequest.includes('!') && (!path.resolve(
-                filePath
-            ).startsWith(
+            if ((
+                configuration.inPlace.externalLibrary.shimmed &&
+                !originalRequest.includes('!')
+            ) && (!path.resolve(filePath).startsWith(
                 configuration.path.context
             ) || Helper.isFilePathInLocation(
                 filePath, configuration.path.ignore
-            ) && !configuration.inPlace.externalLibrary)) {
+            ) && !configuration.inPlace.externalLibrary.normal)) {
                 if (configuration.exportFormat === 'var')
                     request = Helper.convertToValidVariableName(request)
                 return callback(

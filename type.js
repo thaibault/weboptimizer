@@ -165,7 +165,10 @@ export type ResolvedConfiguration = {
     injection:Injection;
     inPlace:{
         cascadingStyleSheet:boolean;
-        externalLibrary:boolean;
+        externalLibrary:{
+            normal:boolean;
+            shimmed:boolean;
+        };
         javaScript:boolean;
         otherMaximumFileSizeLimitInByte:number
     };
