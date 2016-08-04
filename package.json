@@ -511,7 +511,7 @@
             },
 
             "document": {
-                "inPlace": {"externalLibrary": false},
+                "inPlace": {"externalLibrary": {"normal": false}},
                 "module": {
                     "optimizer": {"uglifyJS": null},
                     "preprocessor": {"modernJavaScript": {"presets": [
@@ -541,7 +541,7 @@
                         "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${webOptimizerPath}/test.pug`"
                     }
                 }},
-                "inPlace": {"externalLibrary": true},
+                "inPlace": {"externalLibrary": {"normal": true}},
                 "injection": {"internal": {"index": "test/"}},
                 "module": {"optimizer": {"uglifyJS": null}},
                 "offline": null
@@ -627,9 +627,9 @@
             "inPlace": {
                 "cascadingStyleSheet": false, "javaScript": false,
                 "otherMaximumFileSizeLimitInByte": 1,
-                "externalLibrary": {
+                "externalLibrary": {"normal": {
                     "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL'"
-                }
+                }}
             },
             "path": {
                 "source": "./", "target": "./",
