@@ -450,12 +450,12 @@ QUnit.test('getAutoChunk', (assert:Object):void => {
 })
 QUnit.test('determineModuleFilePath', (assert:Object):void => {
     for (const test:Array<any> of [
-        [['a'], 'a'],
-        [['a', {a: 'b'}], 'b'],
-        [['bba', {a: 'b'}], 'bbb'],
+        [['a', {}, [], './', []], 'a'],
+        [['a', {a: 'b'}, {}, [], './', []], 'b'],
+        [['bba', {a: 'b'}, {}, [], './', []], 'bbb'],
         [['helper'], 'helper.js'],
-        [['helper', {}, []], 'helper'],
-        [['helper', {}, ['.js'], '../'], 'helper'],
+        [['helper', {}, [], './', []], 'helper'],
+        [['helper', {}, ['.js'], '../', []], 'helper'],
         [['helper', {}, ['.js'], './'], 'helper.js']
     ])
         assert.strictEqual(

@@ -615,16 +615,24 @@ export default class Helper {
      * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - List of known extensions.
      * @param context - File path to determine relative to.
+     * @param relativeModuleFilePaths - List of relative file path to search
+     * for modules in.
+     * @param packageEntryFileNames - List of package entry file names to
+     * search for. The magic name "__package__" will search for an appreciate
+     * entry in a "package.json" file.
      * @returns File path or given module id if determinations has failed or
      * wasn't necessary.
      */
     static determineModuleFilePath(
         moduleID:string, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = ['.js'], context:string = './'
+        knownExtensions:Array<string> = ['.js'], context:string = './',
+        relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
+        packageEntryFileNames:Array<string> = [
+            '__package__', '', 'index', 'main']
     ):string {
         moduleID = Helper.applyAliases(moduleID, moduleAliases)
-        for (const moduleLocation:string of ['', 'node_modules', '../'])
-            for (let fileName:string of ['__package__', '', 'index', 'main'])
+        for (const moduleLocation:string of relativeModuleFilePaths)
+            for (let fileName:string of packageEntryFileNames)
                 for (const extension:string of knownExtensions) {
                     let moduleFilePath:string = moduleID
                     if (!moduleFilePath.startsWith('/'))
