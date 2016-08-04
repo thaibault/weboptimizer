@@ -202,7 +202,7 @@ export type ResolvedConfiguration = {
     offline:{excludes:Array<string>};
     path:Paths;
     /* eslint-disable max-len */
-    target:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
+    targetTechnology:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
     /* eslint-enable max-len */
 
     assetPattern:{[key:string]:{

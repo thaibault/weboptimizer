@@ -584,7 +584,7 @@ export default {
         pathinfo: configuration.debug,
         umdNamedDefine: true
     },
-    target: configuration.target,
+    target: configuration.targetTechnology,
     // endregion
     module: {
         noParse: configuration.module.skipParseRegularExpression,

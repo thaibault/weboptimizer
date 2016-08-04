@@ -388,7 +388,7 @@
                     {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"}
                 ]
             },
-            "target": "web",
+            "targetTechnology": "web",
 
             "assetPattern": {"javaScript": {
                 "excludeFilePathRegularExpression": {
@@ -418,8 +418,12 @@
                 }
             },
             "buildDefinition": {
-                "TARGET": {"__evaluate__": "`'${self.target}'`"},
-                "OFFLINE": {"__evaluate__": "Boolean(self.offline)"}
+                "DEBUG": {"__evaluate__": "self.debug"},
+                "EXPORT_FORMAT": {"__evaluate__": "`'${self.exportFormat}'`"},
+                "OFFLINE": {"__evaluate__": "Boolean(self.offline)"},
+                "TARGET_TECHNOLOGY": {
+                    "__evaluate__": "`'${self.targetTechnology}'`"
+                }
             },
             "commandLine": {
                 "build": {
@@ -522,7 +526,7 @@
                     "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                 }},
                 "injection": {"internal": "test/"},
-                "target": "node",
+                "targetTechnology": "node",
 
                 "assetPattern": {"javaScript": {
                     "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict'\n{1}"
@@ -655,7 +659,7 @@
                     {"__evaluate__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.compiled.js`"}
                 ]}},
                 "exportFormat": "var",
-                "target": "node"
+                "targetTechnology": "node"
             },
 
             "test": {"injection": {"internal": "test"}},
