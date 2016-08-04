@@ -383,7 +383,7 @@ if (injection.external === '__implicit__')
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
             if (Helper.isAnyMatching(
-                request, configuration.injection.implicitIncludePattern
+                request, configuration.injection.implicitExternalIncludePattern
             )) {
                 if (configuration.exportFormat === 'var')
                     request = Helper.convertToValidVariableName(request)
@@ -391,13 +391,7 @@ if (injection.external === '__implicit__')
                     null, `${configuration.exportFormat} ${request}`)
             }
             if (Helper.isAnyMatching(
-                request, configuration.injection.implicitExcludePattern
-            ))
-                return callback()
-            if (request.match(
-                /^webOptimizer\/browserAPI(?:\.compiled)?(?:\.js)?/
-            ) || Helper.isAnyMatching(
-                request, configuration.injection.implicitExcludePattern
+                request, configuration.injection.implicitExternalExcludePattern
             ))
                 return callback()
             for (const chunkName:string in normalizedInternalInjection)

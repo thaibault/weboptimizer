@@ -149,11 +149,11 @@
                 "commonChunkIDs": ["vendor"],
                 "dllChunkIDs": ["vendor", "developmentHelper"],
                 "external": "__implicit__",
-                "implicitExcludePattern": [
+                "implicitExternalExcludePattern": [
                     {"__evaluate__": "/^webOptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"},
                     {"__evaluate__": "/\\/webpack\\/buildin\\/module\\.js$/"}
                 ],
-                "implicitIncludePattern": [],
+                "implicitExternalIncludePattern": [],
                 "internal": []
             },
             "inPlace": {

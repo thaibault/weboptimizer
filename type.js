@@ -72,8 +72,8 @@ export type Injection = {
     commonChunkIDs:Array<string>;
     dllChunkIDs:Array<string>;
     external:ExternalInjection;
-    implicitExcludePattern:Array<RegExp|string>;
-    implicitIncludePattern:Array<RegExp|string>;
+    implicitExternalExcludePattern:Array<RegExp|string>;
+    implicitExternalIncludePattern:Array<RegExp|string>;
     internal:InternalInjection;
 }
 // / endregion
