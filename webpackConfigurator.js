@@ -382,11 +382,18 @@ if (injection.external === '__implicit__')
             request = Helper.applyAliases(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
-            /*
-                NOTE: The browser api needs processing since there exists
-                needed compile flags to avoid loading a complete node browser
-                api into a real browser.
-            */
+            if (Helper.isAnyMatching(
+                request, configuration.injection.implicitIncludePattern
+            )) {
+                if (configuration.exportFormat === 'var')
+                    request = Helper.convertToValidVariableName(request)
+                return callback(
+                    null, `${configuration.exportFormat} ${request}`)
+            }
+            if (Helper.isAnyMatching(
+                request, configuration.injection.implicitExcludePattern
+            ))
+                return callback()
             if (request.match(
                 /^webOptimizer\/browserAPI(?:\.compiled)?(?:\.js)?/
             ) || Helper.isAnyMatching(

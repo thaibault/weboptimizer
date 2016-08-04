@@ -43,15 +43,18 @@ const buildConfiguration:BuildConfiguration = {
 // / region boolean
 QUnit.test('isAnyMatching', (assert:Object):void => {
     for (const test:Array<any> of [
+        ['', ['']],
         ['test', [/test/]],
-        ['test', [/a/, /b/, /es/]]
+        ['test', [/a/, /b/, /es/]],
+        ['test', ['', 'test']]
     ])
         assert.ok(Helper.isAnyMatching.apply(this, test))
     for (const test:Array<any> of [
         ['', []],
         ['test', [/tes$/]],
         ['test', [/^est/]],
-        ['test', [/^est$/]]
+        ['test', [/^est$/]],
+        ['test', ['a']]
     ])
         assert.notOk(Helper.isAnyMatching.apply(this, test))
 })

@@ -49,9 +49,12 @@ export default class Helper {
      * @returns Value "true" if given object is matches by at leas one of the
      * given pattern and "false" otherwise.
      */
-    static isAnyMatching(target:string, pattern:Array<RegExp>):boolean {
-        for (const currentPattern:RegExp of pattern)
-            if (currentPattern.test(target))
+    static isAnyMatching(target:string, pattern:Array<string|RegExp>):boolean {
+        for (const currentPattern:RegExp|string of pattern)
+            if (typeof currentPattern === 'string') {
+                if (currentPattern === target)
+                    return true
+            } else if (currentPattern.test(target))
                 return true
         return false
     }
