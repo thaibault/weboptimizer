@@ -74,7 +74,7 @@ const pluginInstances:Array<Object> = [
     new webpack.optimize.OccurrenceOrderPlugin(true)]
 // /// region define modules to ignore
 for (const ignorePattern:string of configuration.injection.ignorePattern)
-    plugins.push(webpack.IgnorePlugin(new RegExp(ignorePattern)))
+    pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
 // /// endregion
 // /// region generate html file
 let htmlAvailable:boolean = false
