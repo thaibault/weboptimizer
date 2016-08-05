@@ -386,14 +386,20 @@ if (injection.external === '__implicit__')
             request = Helper.applyAliases(
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
-            if (Helper.isAnyMatching(
-                request, configuration.injection.implicitExternalIncludePattern
-            )) {
+            const applyExternalRequest:Function = ():void => {
+                if (originalRequest in configuration.injection.externalAliases)
+                    request = configuration.injection.externalAliases[
+                        originalRequest]
                 if (configuration.exportFormat === 'var')
-                    request = Helper.convertToValidVariableName(request)
+                    request = Helper.convertToValidVariableName(
+                        request, '0-9a-zA-Z_$\\.')
                 return callback(
                     null, `${configuration.exportFormat} ${request}`)
             }
+            if (Helper.isAnyMatching(
+                request, configuration.injection.implicitExternalIncludePattern
+            ))
+                return applyExternalRequest()
             if (Helper.isAnyMatching(
                 request, configuration.injection.implicitExternalExcludePattern
             ))
@@ -421,12 +427,8 @@ if (injection.external === '__implicit__')
                 configuration.path.context
             ) || Helper.isFilePathInLocation(
                 filePath, configuration.path.ignore
-            ))) {
-                if (configuration.exportFormat === 'var')
-                    request = Helper.convertToValidVariableName(request)
-                return callback(
-                    null, `${configuration.exportFormat} ${request}`)
-            }
+            )))
+                return applyExternalRequest()
         }
         return callback()
     }

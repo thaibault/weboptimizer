@@ -142,11 +142,15 @@ export default class Helper {
     /**
      * Translates given name into a valid javaScript one.
      * @param name - Name to convert.
+     * @param allowedSymbols - String of symbols which should be allowed within
+     * a variable name (not the first character).
      * @returns Converted name is returned.
      */
-    static convertToValidVariableName(name:string):string {
+    static convertToValidVariableName(
+        name:string, allowedSymbols:string = '0-9a-zA-Z_$'
+    ):string {
         return name.replace(/^[^a-zA-Z_$]+/, '').replace(
-            /[^0-9a-zA-Z_$]+([a-zA-Z0-9])/g, (
+            new RegExp(`[^${allowedSymbols}]+([a-zA-Z0-9])`, 'g'), (
                 fullMatch:string, firstLetter:string
             ):string => firstLetter.toUpperCase())
     }

@@ -72,6 +72,7 @@ export type Injection = {
     commonChunkIDs:Array<string>;
     dllChunkIDs:Array<string>;
     external:ExternalInjection;
+    externalAliases:{[key:string]:string};
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
     implicitExternalIncludePattern:Array<RegExp|string>;
