@@ -387,12 +387,16 @@ if (injection.external === '__implicit__')
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
             const applyExternalRequest:Function = ():void => {
-                if (originalRequest in configuration.injection.externalAliases)
-                    request = configuration.injection.externalAliases[
-                        originalRequest]
-                if (configuration.exportFormat === 'var')
+                if (configuration.exportFormat === 'var') {
+                    if (
+                        originalRequest in
+                        configuration.injection.externalAliases
+                    )
+                        request = configuration.injection.externalAliases[
+                            originalRequest]
                     request = Helper.convertToValidVariableName(
                         request, '0-9a-zA-Z_$\\.')
+                }
                 return callback(
                     null, `${configuration.exportFormat} ${request}`)
             }
