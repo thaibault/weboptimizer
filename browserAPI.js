@@ -41,7 +41,7 @@ if (typeof TARGET === 'undefined' || TARGET === 'node') {
         ].includes(error.type))
             console.warn(`Loading resource failed: ${error.toString()}.`)
         else
-            console.error(error)
+            console.error(error.stack, error.detail)
     })
     let templateFilePath:string = path.join(__dirname, 'test.compiled.html')
     try {
