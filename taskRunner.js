@@ -345,8 +345,6 @@ const closeHandler = function():void {
 }
 for (const closeEventName:string of closeEventNames)
     process.on(closeEventName, closeHandler)
-if (!configuration.library)
-    possibleArguments.push('serve')
 // IgnoreTypeCheck
 if (require.main === module && (
     configuration.givenCommandLineArguments.length < 3 ||
