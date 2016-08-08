@@ -92,7 +92,7 @@
             "debug": false,
             "library": true,
 
-            "exportFormat": "umd",
+            "exportFormat": {"self": "umd", "external": "umd"},
             "favicon": {
                 "logo": {
                     "__evaluate__": "path.join(self.path.asset.source, self.path.asset.favicon)"
@@ -419,8 +419,13 @@
             },
             "buildDefinition": {
                 "DEBUG": {"__evaluate__": "self.debug"},
-                "EXPORT_FORMAT": {"__evaluate__": "`'${self.exportFormat}'`"},
+                "EXTERNAL_EXPORT_FORMAT": {
+                    "__evaluate__": "`'${self.exportFormat.external}'`"
+                },
                 "OFFLINE": {"__evaluate__": "Boolean(self.offline)"},
+                "SELF_EXPORT_FORMAT": {
+                    "__evaluate__": "`'${self.exportFormat.self}'`"
+                },
                 "TARGET_TECHNOLOGY": {
                     "__evaluate__": "`'${self.targetTechnology}'`"
                 }
@@ -521,7 +526,7 @@
             },
 
             "test": {
-                "exportFormat": "commonjs2",
+                "exportFormat": {"external": "commonjs2"},
                 "files": {"javaScript": {
                     "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                 }},
@@ -663,7 +668,7 @@
                     {"__evaluate__": "self.path.apiDocumentation"},
                     {"__evaluate__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.compiled.js`"}
                 ]}},
-                "exportFormat": "var",
+                "exportFormat": {"self": "var"},
                 "targetTechnology": "node"
             },
 

@@ -85,6 +85,7 @@ export type BuildConfigurationItem = {
     outputExtension:string;
     fileNamePattern:string
 }
+export type ExportFormat = 'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
 export type ResolvedBuildConfigurationItem = {
     filePaths:Array<string>;
     extension:string;
@@ -153,7 +154,10 @@ export type ResolvedConfiguration = {
     debug:boolean;
     library:boolean;
 
-    exportFormat:'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
+    exportFormat:{
+        external:ExportFormat;
+        self:ExportFormat;
+    };
     favicon:{
         logo:string;
         [key:string]:any

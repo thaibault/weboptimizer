@@ -67,7 +67,7 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // / endregion
 // endregion
 // region initialisation
-let libraryName:string = configuration.exportFormat === 'var' ?
+let libraryName:string = configuration.exportFormat.self === 'var' ?
     Helper.convertToValidVariableName(configuration.name) : configuration.name
 // // region plugins
 const pluginInstances:Array<Object> = [
@@ -387,7 +387,7 @@ if (injection.external === '__implicit__')
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
             const applyExternalRequest:Function = ():void => {
-                if (configuration.exportFormat === 'var') {
+                if (configuration.exportFormat.external === 'var') {
                     if (
                         originalRequest in
                         configuration.injection.externalAliases
@@ -398,7 +398,7 @@ if (injection.external === '__implicit__')
                         request, '0-9a-zA-Z_$\\.')
                 }
                 return callback(
-                    null, `${configuration.exportFormat} ${request}`)
+                    null, `${configuration.exportFormat.external} ${request}`)
             }
             if (Helper.isAnyMatching(
                 request, configuration.injection.implicitExternalIncludePattern
@@ -590,7 +590,7 @@ export default {
         library: libraryName,
         libraryTarget: (
             configuration.givenCommandLineArguments[2] === 'buildDLL'
-        ) ? 'var' : configuration.exportFormat,
+        ) ? 'var' : configuration.exportFormat.self,
         path: configuration.path.asset.target,
         publicPath: configuration.path.asset.publicTarget,
         pathinfo: configuration.debug,
