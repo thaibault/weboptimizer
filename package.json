@@ -620,7 +620,7 @@
         },
 
         "library": {
-            "exportFormat": {"external": {
+            "exportFormat": {"self": {
                 "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'var' : 'umd'"
             }},
             "files": {
