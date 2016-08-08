@@ -218,6 +218,7 @@ for (
     }
 }
 // endregion
+console.log(resolvedConfiguration.injection)
 export default resolvedConfiguration
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
