@@ -534,7 +534,7 @@
                 "targetTechnology": "node",
 
                 "assetPattern": {"javaScript": {
-                    "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict'\n{1}"
+                    "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';\n{1}"
                 }}
             },
 
