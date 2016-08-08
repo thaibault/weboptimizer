@@ -44,9 +44,8 @@ const closeEventNames:Array<string> = [
 const childProcesses:Array<ChildProcess> = []
 const processPromises:Array<Promise<any>> = []
 const possibleArguments:Array<string> = [
-    'build', 'buildDLL', 'clear', 'document', 'lint', 'preinstall', 'test',
-    'testInBrowser', 'typeCheck'
-]
+    'build', 'buildDLL', 'clear', 'document', 'lint', 'preinstall', 'serve',
+    'test', 'testInBrowser', 'typeCheck']
 const closeEventHandlers:Array<Function> = []
 if (configuration.givenCommandLineArguments.length > 2) {
     // region temporary save dynamically given configurations
