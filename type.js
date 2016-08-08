@@ -180,6 +180,7 @@ export type ResolvedConfiguration = {
         otherMaximumFileSizeLimitInByte:number
     };
     knownExtensions:Array<string>;
+    libraryName:string;
     module:{
         aliases:PlainObject;
         cascadingStyleSheet:PlainObject;

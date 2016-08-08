@@ -644,6 +644,9 @@
                     "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve'].includes(self.givenCommandLineArguments[2])"
                 }}
             },
+            "libraryName": {
+                "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? ['application', '[name]']: null"
+            },
             "path": {
                 "source": "./", "target": "./",
                 "asset": {
