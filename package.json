@@ -625,10 +625,15 @@
             },
             "injection": {"internal": {"index": "__auto__"}},
             "inPlace": {
-                "cascadingStyleSheet": false, "javaScript": false,
+                "cascadingStyleSheet": {
+                    "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve'"
+                },
+                "javaScript": {
+                    "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve'"
+                },
                 "otherMaximumFileSizeLimitInByte": 1,
                 "externalLibrary": {"normal": {
-                    "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL'"
+                    "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve'].includes(self.givenCommandLineArguments[2])"
                 }}
             },
             "path": {
