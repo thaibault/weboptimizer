@@ -69,6 +69,8 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // region initialisation
 let libraryName:string = configuration.exportFormat.self === 'var' ?
     Helper.convertToValidVariableName(configuration.name) : configuration.name
+if ('libraryName' in configuration)
+    libraryName = configuration.libraryName
 // // region plugins
 const pluginInstances:Array<Object> = [
     new webpack.optimize.OccurrenceOrderPlugin(true)]
