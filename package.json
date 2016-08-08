@@ -14,7 +14,7 @@
         "type": "git", "url": "https://github.com/thaibault/webOptimizer.git"
     },
     "dependencies": {
-        "add-asset-html-webpack-plugin": ">=1.0.0",
+        "add-asset-html-webpack-plugin": ">=1.0.2",
         "autoprefixer": ">=6.4.0",
         "babel-cli": ">=6.11.4",
         "babel-eslint": ">=6.1.2",
