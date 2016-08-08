@@ -19,7 +19,7 @@ import type {BrowserAPI, DomNode, Window} from './type'
 /* eslint-enable no-unused-vars */
  // endregion
 // region declaration
-declare var TARGET:string
+declare var TARGET_TECHNOLOGY:string
 declare var window:Window
 // endregion
 // region variables
@@ -27,7 +27,7 @@ const onCreatedListener:Array<Function> = []
 let browserAPI:BrowserAPI
 // endregion
 // region ensure presence of common browser environment
-if (typeof TARGET === 'undefined' || TARGET === 'node') {
+if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
     const fileSystem:Object = require('fs')
     const path:Object = require('path')
@@ -140,7 +140,10 @@ export default (callback:Function, clear:boolean = true):any => {
                 global[key] = browserAPI.window[key]
     }
     // endregion
-    if (typeof TARGET === 'undefined' || TARGET === 'node')
+    if (
+        typeof TARGET_TECHNOLOGY === 'undefined' ||
+        TARGET_TECHNOLOGY === 'node'
+    )
         return (browserAPI) ? callback(
             browserAPI, true
         ) : onCreatedListener.push(callback)
