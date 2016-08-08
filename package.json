@@ -620,6 +620,9 @@
         },
 
         "library": {
+            "exportFormat": {"external": {
+                "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'var' : 'umd'"
+            }},
             "files": {
                 "cascadingStyleSheet": {
                     "__evaluate__": "self.debug ? null : `${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
