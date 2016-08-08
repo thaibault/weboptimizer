@@ -526,7 +526,7 @@
             },
 
             "test": {
-                "exportFormat": {"external": "commonjs2"},
+                "exportFormat": {"external": "commonjs2", "self": "commonjs2"},
                 "files": {"javaScript": {
                     "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                 }},
