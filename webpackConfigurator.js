@@ -31,7 +31,7 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 
 plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
-plugins.AddAssetHTMLPlugin = require('add-asset-html-webpack-plugin').default
+plugins.AddAssetHTMLPlugin = require('add-asset-html-webpack-plugin')
 plugins.OpenBrowser = plugins.openBrowser
 plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Imagemin = require('imagemin-webpack-plugin').default
