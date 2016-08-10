@@ -645,7 +645,7 @@
                 }}
             },
             "libraryName": {
-                "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [self.name, '[name]']: null"
+                "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [helper.convertToValidVariableName(self.name), '[name]']: null"
             },
             "path": {
                 "source": "./", "target": "./",

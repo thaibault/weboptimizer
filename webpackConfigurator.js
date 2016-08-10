@@ -71,7 +71,6 @@ let libraryName:string = configuration.exportFormat.self === 'var' ?
     Helper.convertToValidVariableName(configuration.name) : configuration.name
 if ('libraryName' in configuration)
     libraryName = configuration.libraryName
-console.log(libraryName)
 // // region plugins
 const pluginInstances:Array<Object> = [
     new webpack.optimize.OccurrenceOrderPlugin(true)]
