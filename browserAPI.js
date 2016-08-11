@@ -44,11 +44,14 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             // IgnoreTypeCheck
             console.error(error.stack, error.detail)
     })
-    let template:string = ''
+    let template:string
     try {
         // IgnoreTypeCheck
         template = require('TEMPLATE_FILE_REQUEST')
-    } catch (error) {}
+    } catch (error) {
+        template = fileSystem.readFileSync(path.join(
+            __dirname, 'test.compiled.html'))
+    }
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
             browserAPI = {
@@ -70,8 +73,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             ProcessExternalResources: ['script'],
             SkipExternalResources: false
         },
-        html: template || fileSystem.readFileSync(path.join(
-            __dirname, 'test.compiled.html')),
+        html: template,
         resourceLoader: (
             resource:{
                 element:DomNode;
