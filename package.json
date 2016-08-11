@@ -419,6 +419,7 @@
                 }
             },
             "buildDefinition": {
+                "CONTEXT_TYPE": {"__evaluate__": "self.contextType"},
                 "DEBUG": {"__evaluate__": "self.debug"},
                 "EXTERNAL_EXPORT_FORMAT": {
                     "__evaluate__": "`'${self.exportFormat.external}'`"

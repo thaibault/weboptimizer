@@ -565,7 +565,9 @@ export default {
     entry: normalizedInternalInjection, externals: injection.external,
     resolveLoader: configuration.loader,
     resolve: {
-        alias: configuration.module.aliases,
+        alias: Helper.extendObject(configuration.module.aliases, {
+            TEMPLATE_FILE_REQUEST$: configuration.files.defaultHTML.template
+        }),
         extensions: configuration.knownExtensions,
         root: [(configuration.path.asset.source: string)]
     },

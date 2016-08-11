@@ -830,7 +830,8 @@ export default class Helper {
                             'Error during ' + (
                                 key === evaluationIndicatorKey ? 'executing' :
                                 'evaluating'
-                            ) + ` "${object[key]}": ` + error)
+                            ) + ` "${object[key]}". There is maybe a ` +
+                            `dependency loop: ` + error)
                     }
                 else if (deep)
                     object[key] = Helper.resolveDynamicDataStructure(

@@ -15,7 +15,7 @@
 */
 // region imports
 /* eslint-disable no-unused-vars */
-import type {BrowserAPI, DomNode, ResolvedConfiguration, Window} from './type'
+import type {BrowserAPI, DomNode, Window} from './type'
 /* eslint-enable no-unused-vars */
  // endregion
 // region declaration
@@ -29,15 +29,9 @@ let browserAPI:BrowserAPI
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
-    const fileSystem = require('fs')
+    const fileSystem:Object = require('fs')
     const path:Object = require('path')
     const metaDOM:Object = require('jsdom')
-
-    const configuration:ResolvedConfiguration = require(
-        './configurator.compiled'
-    ).default
-    const Helper:Object = require('./helper.compiled').default
-
     const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
         console, {omitJsdomErrors: true})
     virtualConsole.on('jsdomError', (error:Error):void => {
@@ -50,13 +44,11 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             // IgnoreTypeCheck
             console.error(error.stack, error.detail)
     })
-    // TODO use html file configuration!
-    console.log(configuration.files.defaultHTML.template)
-    let templateFilePath:string = path.join(__dirname, 'test.compiled.html')
-    if (!Helper.isFileSync(templateFilePath))
-        templateFilePath = path.join(
-            process.cwd(), __dirname,
-            'node_modules/webOptimizer/test.compiled.html')
+    let template:string = ''
+    try {
+        // IgnoreTypeCheck
+        template = require('TEMPLATE_FILE_REQUEST')
+    } catch (error) {}
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
             browserAPI = {
@@ -78,7 +70,8 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             ProcessExternalResources: ['script'],
             SkipExternalResources: false
         },
-        html: fileSystem.readFileSync(templateFilePath, {encoding: 'utf-8'}),
+        html: template || fileSystem.readFileSync(path.join(
+            __dirname, 'test.compiled.html')),
         resourceLoader: (
             resource:{
                 element:DomNode;
