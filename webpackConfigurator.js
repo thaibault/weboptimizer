@@ -563,7 +563,11 @@ export default {
     devServer: configuration.development.server,
     // region input
     entry: normalizedInternalInjection, externals: injection.external,
-    resolveLoader: configuration.loader,
+    resolveLoader: {
+        alias: configuration.loader.aliases,
+        extensions: configuration.loader.extensions,
+        moduleDirectories: configuration.loader.moduleDirectories
+    },
     resolve: {
         alias: configuration.module.aliases,
         extensions: configuration.knownExtensions,

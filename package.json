@@ -505,7 +505,7 @@
             },
             "hashAlgorithm": "md5",
             "loader": {
-                "alias": {"pug": "webOptimizer/pug"},
+                "aliases": {"pug": "webOptimizer/pug"},
                 "extensions": [
                     "", ".webpack-loader.js", ".web-loader.js", ".loader.js",
                     "-loader.compiled.js", "-loader.js", "Loader.compiled.js",

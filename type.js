@@ -72,7 +72,7 @@ export type Injection = {
     commonChunkIDs:Array<string>;
     dllChunkIDs:Array<string>;
     external:ExternalInjection;
-    externalAliases:{[key:string]:string};
+    externalAliases:PlainObject;
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
     implicitExternalIncludePattern:Array<RegExp|string>;
@@ -237,7 +237,11 @@ export type ResolvedConfiguration = {
         tool:PlainObject
     };
     hashAlgorithm:string;
-    loader:PlainObject;
+    loader:{
+        aliases:PlainObject;
+        extensions:Array<string>;
+        moduleDirectories:Array<string>;
+    };
 
     document:PlainObject;
 
