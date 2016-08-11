@@ -195,7 +195,7 @@ for (const type:string in resolvedConfiguration.build)
 // NOTE: This alias couldn't be set in the "package.json" file since this would
 // result in an endless loop.
 resolvedConfiguration.module.aliases[
-    'webOptimizer/TEMPLATE_FILE_REQUEST'
+    'webOptimizer/TEMPLATE_FILE_REQUEST$'
 ] = resolvedConfiguration.files.defaultHTML.template
 // endregion
 // region apply webpack html plugin workaround
