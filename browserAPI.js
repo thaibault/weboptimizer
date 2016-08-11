@@ -15,7 +15,7 @@
 */
 // region imports
 /* eslint-disable no-unused-vars */
-import type {BrowserAPI, DomNode, Window} from './type'
+import type {BrowserAPI, DomNode, ResolvedConfiguration, Window} from './type'
 /* eslint-enable no-unused-vars */
  // endregion
 // region declaration
@@ -30,9 +30,14 @@ let browserAPI:BrowserAPI
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
     const fileSystem = require('fs')
-    const Helper:Object = require('./helper.compiled').default
     const path:Object = require('path')
     const metaDOM:Object = require('jsdom')
+
+    const configuration:ResolvedConfiguration = require(
+        './configuration.compiled'
+    ).default
+    const Helper:Object = require('./helper.compiled').default
+
     const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
         console, {omitJsdomErrors: true})
     virtualConsole.on('jsdomError', (error:Error):void => {
@@ -46,6 +51,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             console.error(error.stack, error.detail)
     })
     // TODO use html file configuration!
+    console.log(configuration.files.defaultHTML.template)
     let templateFilePath:string = path.join(__dirname, 'test.compiled.html')
     if (!Helper.isFileSync(templateFilePath))
         templateFilePath = path.join(
