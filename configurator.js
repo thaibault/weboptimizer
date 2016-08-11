@@ -201,7 +201,7 @@ resolvedConfiguration.loader.aliases.webOptimizerTemplateFileLoader =
         0, delimiterPosition)
 resolvedConfiguration.module.aliases.webOptimizerTemplateFilePath$ =
     resolvedConfiguration.files.defaultHTML.template.substring(
-        delimiterPosition)
+        delimiterPosition + 1)
 // endregion
 // region apply webpack html plugin workaround
 /*
