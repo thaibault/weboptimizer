@@ -565,10 +565,7 @@ export default {
     entry: normalizedInternalInjection, externals: injection.external,
     resolveLoader: configuration.loader,
     resolve: {
-        alias: Helper.extendObject(configuration.module.aliases, {
-            'webOptimizer/TEMPLATE_FILE_REQUEST$':
-                configuration.files.defaultHTML.template
-        }),
+        alias: configuration.module.aliases,
         extensions: configuration.knownExtensions,
         root: [(configuration.path.asset.source: string)]
     },
