@@ -544,7 +544,7 @@
                     "filename": "test.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${helper.fileExistsSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
+                        "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
                     }
                 }},
                 "inPlace": {"externalLibrary": {"normal": true}},
@@ -632,7 +632,7 @@
                     "filename": "playground.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${helper.fileExistsSync(`${self.path.source}playground.pug`) ? self.path.source : `${webOptimizerPath}/`}playground.pug`"
+                        "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? self.path.source : `${webOptimizerPath}/`}playground.pug`"
                     }
                 },
                 "javaScript": {
