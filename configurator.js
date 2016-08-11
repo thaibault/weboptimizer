@@ -110,11 +110,8 @@ let filePath:?string = null
 while (true) {
     const newFilePath:string = configuration.path.context +
         `.dynamicConfiguration-${count}.json`
-    try {
-        fileSystem.accessSync(newFilePath, fileSystem.F_OK)
-    } catch (error) {
+    if (!Helper.isFileSync(newFilePath))
         break
-    }
     filePath = newFilePath
     count += 1
 }

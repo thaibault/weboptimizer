@@ -82,26 +82,18 @@ for (const ignorePattern:string of configuration.injection.ignorePattern)
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
-        try {
-            fileSystem.accessSync(htmlConfiguration.template.substring(
-                htmlConfiguration.template.lastIndexOf('!') + 1
-            ), fileSystem.F_OK)
+        if (Helper.isFileSync(htmlConfiguration.template.substring(
+            htmlConfiguration.template.lastIndexOf('!') + 1
+        ))) {
             pluginInstances.push(new plugins.HTML(htmlConfiguration))
             htmlAvailable = true
-        } catch (error) {}
+        }
 // /// endregion
 // /// region generate favicons
-if (htmlAvailable && configuration.favicon) {
-    let faviconAvailable:boolean = false
-    try {
-        fileSystem.accessSync(configuration.favicon.logo, fileSystem.F_OK)
-        faviconAvailable = true
-    } catch (error) {
-    } finally {
-        if (faviconAvailable)
-            pluginInstances.push(new plugins.Favicon(configuration.favicon))
-    }
-}
+if (htmlAvailable && configuration.favicon && Helper.isFileSync(
+    configuration.favicon.logo
+))
+    pluginInstances.push(new plugins.Favicon(configuration.favicon))
 // /// endregion
 // /// region provide offline functionality
 if (htmlAvailable && configuration.offline) {
@@ -275,9 +267,8 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     for (const filePath:string of [
                         assetFilePath, `${assetFilePath}.map`
                     ])
-                        try {
+                        if (Helper.isFileSync(filePath))
                             fileSystem.unlinkSync(filePath)
-                        } catch (error) {}
                     const javaScriptPath:string = path.join(
                         configuration.path.asset.target,
                         configuration.path.asset.javaScript)
@@ -308,22 +299,16 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 `${configuration.path.target}${chunkID}.dll-manifest.json`)
         ) {
             delete normalizedInternalInjection[chunkID]
-            let sourceMapExists:boolean = false
             // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and
             // everywhere else
             const fileName:string = configuration.files.javaScript.replace(
                 /^(.+)(?:\?[^?]*)$/, '$1'
             ).replace(/\[name\]/g, chunkID)
-            try {
-                fileSystem.accessSync(
-                    `${configuration.path.target}${fileName}.map`,
-                    fileSystem.F_OK)
-                sourceMapExists = true
-            } catch (error) {}
             pluginInstances.push(new plugins.AddAssetHTMLPlugin({
                 filepath: `${configuration.path.target}${fileName}`,
                 hash: true,
-                includeSourcemap: sourceMapExists
+                includeSourcemap: Helper.isFileSync(
+                    `${configuration.path.target}${fileName}.map`)
             }))
             pluginInstances.push(new webpack.DllReferencePlugin({
                 context: configuration.path.context, manifest: require(

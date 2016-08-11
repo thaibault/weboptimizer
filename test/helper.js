@@ -264,6 +264,13 @@ QUnit.test('handleChildProcess', (assert:Object):void => {
 })
 // endregion
 // region file handler
+QUnit.test('isFileSync', (assert:Object):void => {
+    for (const filePath:string of [
+        __filename,
+        path.join(__dirname, path.basename(__filename))
+    ])
+        assert.ok(Helper.isFileSync(filePath))
+})
 QUnit.test('walkDirectoryRecursivelySync', (assert:Object):void => {
     const filePaths:Array<string> = []
     const callback:TraverseFilesCallbackFunction = (filePath:string):false => {

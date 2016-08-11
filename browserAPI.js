@@ -29,7 +29,8 @@ let browserAPI:BrowserAPI
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
-    const fileSystem:Object = require('fs')
+    const fileSystem = require('fs')
+    const Helper:Object = require('./helper.compiled').default
     const path:Object = require('path')
     const metaDOM:Object = require('jsdom')
     const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
@@ -44,14 +45,12 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             // IgnoreTypeCheck
             console.error(error.stack, error.detail)
     })
+    // TODO use html file configuration!
     let templateFilePath:string = path.join(__dirname, 'test.compiled.html')
-    try {
-        fileSystem.accessSync(templateFilePath, fileSystem.F_OK)
-    } catch (error) {
+    if (!Helper.isFileSync(templateFilePath))
         templateFilePath = path.join(
             process.cwd(), __dirname,
             'node_modules/webOptimizer/test.compiled.html')
-    }
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
             browserAPI = {

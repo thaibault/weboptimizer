@@ -66,11 +66,8 @@ if (configuration.givenCommandLineArguments.length > 2) {
     while (true) {
         filePath = `${configuration.path.context}.dynamicConfiguration-` +
             `${count}.json`
-        try {
-            fileSystem.accessSync(filePath, fileSystem.F_OK)
-        } catch (error) {
+        if (!Helper.isFileSync(filePath))
             break
-        }
         count += 1
     }
     fileSystem.writeFileSync(filePath, JSON.stringify(dynamicConfiguration))

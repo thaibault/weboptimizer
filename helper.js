@@ -275,6 +275,19 @@ export default class Helper {
     // endregion
     // region file handler
     /**
+     * Checks if given path points to a valid file.
+     * @param filePath - Path to file.
+     * @returns A boolean which indicates file existents.
+     */
+    static isFileSync(filePath:string):boolean {
+        try {
+            fileSystem.accessSync(filePath, fileSystem.F_OK)
+            return true
+        } catch (error) {
+            return false
+        }
+    }
+    /**
      * Iterates through given directory structure recursively and calls given
      * callback for each found file. Callback gets file path and corresponding
      * stat object as argument.
