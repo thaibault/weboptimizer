@@ -34,7 +34,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     const metaDOM:Object = require('jsdom')
 
     const configuration:ResolvedConfiguration = require(
-        './configuration.compiled'
+        './configurator.compiled'
     ).default
     const Helper:Object = require('./helper.compiled').default
 
