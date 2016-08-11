@@ -28,7 +28,7 @@
         "css-loader": ">=0.23.1",
         "eslint": ">=3.2.2",
         "eslint-config-google": ">=0.6.0",
-        "eslint-plugin-flowtype": ">=2.4.1",
+        "eslint-plugin-flowtype": ">=2.6.1",
         "eslint-plugin-jsdoc": ">=2.3.1",
         "exports-loader": ">=0.6.3",
         "extract-loader": ">=0.0.2",
@@ -42,10 +42,10 @@
         "imports-loader": ">=0.6.5",
         "postcss-import": ">=8.1.2",
         "postcss-loader": ">=0.9.1",
-        "pug": ">=2.0.0-beta4",
+        "pug": ">=2.0.0-beta5",
         "pug-cli": ">=1.0.0-alpha6",
         "jsdoc": ">=3.4.0",
-        "jsdom": ">=9.4.1",
+        "jsdom": ">=9.4.2",
         "loader-utils": ">=0.2.15",
         "offline-plugin": ">=4.0.0",
         "open-browser-webpack-plugin": ">=0.0.2",
@@ -86,7 +86,7 @@
         "lint": "flow --color always --strip-root && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
         "preinstall": "touch helper.compiled.js configurator.compiled.js taskRunner.compiled.js pugLoader.compiled.js webpackConfigurator.compiled.js test.compiled.html",
         "postinstall": "npm run build",
-        "test": "npm run clear && pug --pretty --extension compiled.html test.pug && command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command configurator.compiled.js configurator.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
+        "test": "npm run clear && pug --pretty --extension compiled.html test.pug && command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
     },
     "configuration": {
         "default": {
