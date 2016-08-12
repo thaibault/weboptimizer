@@ -323,9 +323,7 @@
                             "debug": false,
                             "cache": true
                         },
-                        "locals": {"offline": {
-                            "__evaluate__": "Boolean(self.offline)"
-                        }}
+                        "locals": {"configuration": {"__evaluate__": "self"}}
                     },
                     "less": {},
                     "modernJavaScript": {
