@@ -159,7 +159,7 @@ export default class Helper {
     ):PlainObject {
         for (const key:string in object)
             if (object.hasOwnProperty(key))
-                if (typeof object[key] === 'object')
+                if (Helper.isPlainObject(object[key]))
                     object[key] = Helper.convertSubstringInPlainObject(
                         object[key], pattern, replacement)
                 else if (typeof object[key] === 'string')
@@ -175,8 +175,7 @@ export default class Helper {
      * @returns Returns given target extended with all given sources.
      */
     static extendObject(
-        targetOrDeepIndicator:boolean|any,
-        ..._targetAndOrSources:Array<any>
+        targetOrDeepIndicator:boolean|any, ..._targetAndOrSources:Array<any>
     ):any {
         let index:number = 1
         let deep:boolean = false
@@ -189,6 +188,8 @@ export default class Helper {
         } else
             target = targetOrDeepIndicator
         const mergeValue = (key:string, value:any, targetValue:any):any => {
+            if (value === targetValue)
+                return targetValue
             // Recurse if we're merging plain objects or maps.
             if (deep && value && (
                 Helper.isPlainObject(value) || value instanceof Map
@@ -202,7 +203,6 @@ export default class Helper {
                     clone = targetValue && Helper.isPlainObject(
                         targetValue
                     ) ? targetValue : {}
-                // Never move original objects, clone them.
                 return Helper.extendObject(deep, clone, value)
             }
             return value
@@ -215,7 +215,7 @@ export default class Helper {
                 targetType += ' Map'
             if (source instanceof Map)
                 sourceType += ' Map'
-            if (targetType === sourceType)
+            if (targetType === sourceType && target !== source)
                 if (target instanceof Map && source instanceof Map)
                     for (const [key:string, value:any] of source)
                         target.set(key, mergeValue(key, value, target.get(
@@ -234,6 +234,38 @@ export default class Helper {
             index += 1
         }
         return target
+    }
+    /**
+     * Removes a proxies from given data structure recursivley.
+     * @param object - Object to proxy.
+     * @param seenObjects - Tracks all already processed obejcts to avoid
+     * endless loops (usually only needed for internal prupose).
+     * @returns Returns given object unwrapped from a dynamic proxy.
+     */
+    static unwrapProxy(object:any, seenObjects:Array<any> = []):any {
+        if (object !== null && typeof object === 'object') {
+            while (object.__target__)
+                object = object.__target__
+            const index:number = seenObjects.indexOf(object)
+            if (index !== -1)
+                return seenObjects[index]
+            seenObjects.push(object)
+            if (Array.isArray(object)) {
+                let index:number = 0
+                for (const value:mixed of object) {
+                    object[index] = Helper.unwrapProxy(value, seenObjects)
+                    index += 1
+                }
+            } else if (object instanceof Map)
+                for (const [key:mixed, value:mixed] of object)
+                    object.set(key, Helper.unwrapProxy(value, seenObjects))
+            else
+                for (const key:string in object)
+                    if (object.hasOwnProperty(key))
+                        object[key] = Helper.unwrapProxy(
+                            object[key], seenObjects)
+        }
+        return object
     }
     /**
      * Adds dynamic getter and setter to any given data structure such as maps.

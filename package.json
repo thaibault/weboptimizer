@@ -324,7 +324,7 @@
                             "cache": true
                         },
                         "locals": {"configuration": {
-                            "__postEvaluate__": "self"
+                            "__postEvaluate__": "helper.extendObject(true, {}, self)"
                         }}
                     },
                     "less": {},

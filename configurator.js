@@ -176,10 +176,10 @@ for (const pathConfiguration:{[key:string]:any} of [
                     pathConfiguration[key], configuration)
             ) + '/'
 // / endregion
-const resolvedConfiguration:ResolvedConfiguration =
+const resolvedConfiguration:ResolvedConfiguration = Helper.unwrapProxy(
     Helper.resolveDynamicDataStructure(Helper.resolveDynamicDataStructure(
         configuration
-    ), null, true, '__postEvaluate__', '__postExecute__')
+    ), null, true, '__postEvaluate__', '__postExecute__'))
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific

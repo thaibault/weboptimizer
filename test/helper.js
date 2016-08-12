@@ -195,6 +195,16 @@ QUnit.test('extendObject', (assert:Object):void => {
     Helper.extendObject(true, target, {a: [3, 4]})
     assert.deepEqual(target, {a: [3, 4]})
 })
+QUnit.test('unwrapProxy', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [{}, {}],
+        [{a: 'a'}, {a: 'a'}],
+        [{a: 'aa'}, {a: 'aa'}],
+        [{a: {__target__: 2}}, {a: 2}],
+        [{a: {__target__: {__target__: 2}}}, {a: 2}]
+    ])
+        assert.deepEqual(Helper.unwrapProxy(test[0]), test[1])
+})
 QUnit.test('addDynamicGetterAndSetter', (assert:Object):void => {
     assert.strictEqual(Helper.addDynamicGetterAndSetter(null), null)
     assert.strictEqual(Helper.addDynamicGetterAndSetter(true), true)

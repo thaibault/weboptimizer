@@ -37,8 +37,7 @@ module.exports = function(source:string):string {
             knownExtensions: ['.pug', '.html', '.js', '.css'],
             context: './'
         }, this.options.pug || {}, loaderUtils.parseQuery(this.query)),
-        /#%%%#/g, '!'
-    )
+        /#%%%#/g, '!')
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler
     ):TemplateFunction => (locals:Object = {}):string => {
