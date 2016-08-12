@@ -80,7 +80,7 @@
         "webpackConfigurator.js"
     ],
     "scripts": {
-        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command browserAPI.compiled.js browserAPI.js && pug --pretty --extension compiled.html test.pug",
+        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command helper.compiled.js helper.js && $command configurator.compiled.js configurator.js && $command taskRunner.compiled.js taskRunner.js && $command pugLoader.compiled.js pugLoader.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command browserAPI.compiled.js browserAPI.js",
         "clear": "rm *.compiled.* &>/dev/null;rm --recursive *.compiled &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null; rm *.html &>/dev/null || true",
         "document": "npm run build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
         "lint": "flow --color always --strip-root && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
@@ -134,7 +134,7 @@
                         "__evaluate__": "self.module.optimizer.htmlMinifier"
                     },
                     "template": {
-                        "__evaluate__": "`html?${JSON.stringify(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
                     }
                 },
                 "html": [{}],
@@ -532,7 +532,7 @@
                         "filename": "test.html",
                         "inject": "head",
                         "template": {
-                            "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
+                            "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
                         }
                     },
                     "javaScript": {
@@ -552,7 +552,7 @@
                     "filename": "test.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
                     }
                 }},
                 "inPlace": {"externalLibrary": {"normal": true}},
@@ -640,7 +640,7 @@
                     "filename": "playground.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? self.path.source : `${webOptimizerPath}/`}playground.pug`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? self.path.source : `${webOptimizerPath}/`}playground.pug`"
                     }
                 },
                 "javaScript": {

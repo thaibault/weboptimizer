@@ -501,7 +501,7 @@ pluginInstances.push(new plugins.Imagemin(
 // /// endregion
 // // endregion
 // / region loader
-let imageLoader:string = 'url?' + JSON.stringify(
+let imageLoader:string = 'url?' + Helper.convertCircularObjectToJSON(
     configuration.module.optimizer.image.file)
 const loader:{
     preprocessor:{
@@ -530,34 +530,41 @@ const loader:{
 } = {
     preprocessor: {
         cascadingStyleSheet: 'postcss',
-        javaScript: 'babel?' + JSON.stringify(
+        javaScript: 'babel?' + Helper.convertCircularObjectToJSON(
             configuration.module.preprocessor.modernJavaScript),
-        pug: `pug?${JSON.stringify(configuration.module.preprocessor.pug)}`,
+        pug: 'pug?' + Helper.convertCircularObjectToJSON(
+            configuration.module.preprocessor.pug),
         // TODO deprecated
         coffee: 'coffee',
         literateCoffee: 'coffee?literate',
-        less: `less?${JSON.stringify(configuration.module.preprocessor.less)}`,
-        sass: `sass?${JSON.stringify(configuration.module.preprocessor.sass)}`,
-        scss: `sass?${JSON.stringify(configuration.module.preprocessor.scss)}`
+        less: 'less?' + Helper.convertCircularObjectToJSON(
+            configuration.module.preprocessor.less),
+        sass: 'sass?' + Helper.convertCircularObjectToJSON(
+            configuration.module.preprocessor.sass),
+        scss: 'sass?' + Helper.convertCircularObjectToJSON(
+            configuration.module.preprocessor.scss)
         //
     },
-    html: `html?${JSON.stringify(configuration.module.html)}`,
-    cascadingStyleSheet: 'css?' + JSON.stringify(
+    html: 'html?' + Helper.convertCircularObjectToJSON(
+        configuration.module.html),
+    cascadingStyleSheet: 'css?' + Helper.convertCircularObjectToJSON(
         configuration.module.cascadingStyleSheet),
-    style: `style?${JSON.stringify(configuration.module.style)}`,
+    style: 'style?' + Helper.convertCircularObjectToJSON(
+        configuration.module.style),
     postprocessor: {
         image: imageLoader,
         font: {
-            eot: 'url?' + JSON.stringify(
+            eot: 'url?' + Helper.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.eot),
-            woff: 'url?' + JSON.stringify(
+            woff: 'url?' + Helper.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.woff),
-            ttf: 'url?' + JSON.stringify(
+            ttf: 'url?' + Helper.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.ttf),
-            svg: 'url?' + JSON.stringify(
+            svg: 'url?' + Helper.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.svg)
         },
-        data: `url?${JSON.stringify(configuration.module.optimizer.data)}`
+        data: 'url?' + Helper.convertCircularObjectToJSON(
+            configuration.module.optimizer.data)
     }
 }
 // / endregion

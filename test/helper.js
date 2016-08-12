@@ -91,27 +91,12 @@ QUnit.test('isFilePathInLocation', (assert:Object):void => {
         assert.notOk(Helper.isFilePathInLocation.apply(this, notOkArguments))
 })
 // / endregion
-QUnit.test('parseEncodedObject', (assert:Object):void => {
+// / region data handling
+QUnit.test('convertCircularObjectToJSON', (assert:Object):void => {
     for (const test:Array<any> of [
-        [['{}'], {}],
-        [['{a: 2}'], {a: 2}],
-        [['{a: scope.a}', {a: 2}], {a: 2}],
-        [['{a: {a: scope.a}}', {a: 2}], {a: {a: 2}}],
-        [['{a: {a: b.a}}', {a: 2}, 'b'], {a: {a: 2}}],
-        [[new Buffer('{}').toString('base64')], {}],
-        [[new Buffer('{a: 2}').toString('base64')], {a: 2}],
-        [[new Buffer('{a: scope.a}').toString('base64'), {a: 2}], {a: 2}],
-        [
-            [new Buffer('{a: {a: scope.a}}').toString('base64'),
-            {a: 2}], {a: {a: 2}}
-        ],
-        [
-            [new Buffer('{a: {a: b.a}}').toString('base64'), {a: 2}, 'b'],
-            {a: {a: 2}}
-        ]
+        [{}, '{}']
     ])
-        assert.deepEqual(
-            Helper.parseEncodedObject.apply(this, test[0]), test[1])
+        assert.deepEqual(Helper.convertCircularObjectToJSON(test[0]), test[1])
 })
 QUnit.test('convertSubstringInPlainObject', (assert:Object):void => {
     for (const test:Array<any> of [
@@ -124,19 +109,6 @@ QUnit.test('convertSubstringInPlainObject', (assert:Object):void => {
         assert.deepEqual(Helper.convertSubstringInPlainObject(
             test[0], test[1], test[2]
         ), test[3])
-})
-QUnit.test('convertToValidVariableName', (assert:Object):void => {
-    for (const test:Array<string> of [
-        ['', ''],
-        ['a', 'a'],
-        ['_a', '_a'],
-        ['_a_a', '_a_a'],
-        ['_a-a', '_aA'],
-        ['-a-a', 'aA'],
-        ['-a--a', 'aA'],
-        ['--a--a', 'aA']
-    ])
-        assert.strictEqual(Helper.convertToValidVariableName(test[0]), test[1])
 })
 QUnit.test('extendObject', (assert:Object):void => {
     for (const test:any of [
@@ -216,6 +188,98 @@ QUnit.test('extendObject', (assert:Object):void => {
     const target:Object = {a: [1, 2]}
     Helper.extendObject(true, target, {a: [3, 4]})
     assert.deepEqual(target, {a: [3, 4]})
+})
+QUnit.test('addDynamicGetterAndSetter', (assert:Object):void => {
+    assert.strictEqual(Helper.addDynamicGetterAndSetter(null), null)
+    assert.strictEqual(Helper.addDynamicGetterAndSetter(true), true)
+    assert.notDeepEqual(Helper.addDynamicGetterAndSetter({}), {})
+    assert.ok(Helper.addDynamicGetterAndSetter({
+    }).__target__ instanceof Object)
+    const mockup = {}
+    assert.strictEqual(
+        Helper.addDynamicGetterAndSetter(mockup).__target__, mockup)
+    assert.deepEqual(Helper.addDynamicGetterAndSetter({}).__target__, {})
+    assert.deepEqual(Helper.addDynamicGetterAndSetter({a: 1}, (
+        value:any
+    ):any => value + 2).a, 3)
+    assert.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: 1}}, (
+        value:any
+    ):any => (value instanceof Object) ? value : value + 2).a.a, 3)
+    assert.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: [{a: 1}]}}, (
+        value:any
+    ):any => (value instanceof Object) ? value : value + 2).a.a[0].a, 3)
+    assert.deepEqual(Helper.addDynamicGetterAndSetter(
+        {a: {a: 1}}, (value:any):any =>
+            (value instanceof Object) ? value : value + 2,
+        (key:any, value:any):any => value, '[]', '[]', 'hasOwnProperty', false
+    ).a.a, 1)
+    assert.deepEqual(Helper.addDynamicGetterAndSetter(
+        {a: 1}, (value:any):any =>
+            (value instanceof Object) ? value : value + 2,
+        (key:any, value:any):any => value, '[]', '[]', 'hasOwnProperty', false,
+        []
+    ).a, 1)
+    // IgnoreTypeCheck
+    assert.deepEqual(Helper.addDynamicGetterAndSetter(
+        {a: new Map([['a', 1]])}, (value:any):any =>
+            (value instanceof Object) ? value : value + 2,
+        (key:any, value:any):any => value, 'get', 'set', 'has', true, [Map]
+    ).a.a, 3)
+})
+QUnit.test('resolveDynamicDataStructure', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [[null], null],
+        [[false], false],
+        [['1'], '1'],
+        [[3], 3],
+        [[{}], {}],
+        [[{__evaluate__: '1'}], 1],
+        [[{__evaluate__: "'1'"}], '1'],
+        [[{a: {__evaluate__: "'a'"}}], {a: 'a'}],
+        [[{a: {__evaluate__: 'self.a'}}, {a: 1}], {a: 1}],
+        [
+            [{a: {__evaluate__: 'self.a'}}, {a: 1}, false],
+            {a: {__evaluate__: 'self.a'}}
+        ],
+        [
+            [{a: {__evaluate__: 'self.a'}}, {a: 1}, true, '__run__'],
+            {a: {__evaluate__: 'self.a'}}
+        ],
+        [[{a: {__run__: 'self.a'}}, {a: 1}, true, '__run__'], {a: 1}],
+        [[{a: [{__run__: 'self.a'}]}, {a: 1}, true, '__run__'], {a: [1]}],
+        [[{a: {__evaluate__: 'self.b'}, b: 2}], {a: 2, b: 2}],
+        [
+            [{a: {__evaluate__: 'self.b'}, b: {__evaluate__: 'self.c'}, c: 2}],
+            {a: 2, b: 2, c: 2}
+        ],
+        [
+            [
+                {
+                    a: {__execute__: 'return self.b'},
+                    b: {__execute__: 'return self.c'},
+                    c: 2
+                }
+            ],
+            {a: 2, b: 2, c: 2}
+        ]
+    ])
+        assert.deepEqual(Helper.resolveDynamicDataStructure.apply(
+            this, test[0]
+        ), test[1])
+})
+// / endregion
+QUnit.test('convertToValidVariableName', (assert:Object):void => {
+    for (const test:Array<string> of [
+        ['', ''],
+        ['a', 'a'],
+        ['_a', '_a'],
+        ['_a_a', '_a_a'],
+        ['_a-a', '_aA'],
+        ['-a-a', 'aA'],
+        ['-a--a', 'aA'],
+        ['--a--a', 'aA']
+    ])
+        assert.strictEqual(Helper.convertToValidVariableName(test[0]), test[1])
 })
 // region process handler
 QUnit.test('getProcessCloseHandler', (assert:Object):void =>
@@ -472,84 +536,6 @@ QUnit.test('determineModuleFilePath', (assert:Object):void => {
             Helper.determineModuleFilePath.apply(this, test[0]), test[1])
 })
 // endregion
-QUnit.test('addDynamicGetterAndSetter', (assert:Object):void => {
-    assert.strictEqual(Helper.addDynamicGetterAndSetter(null), null)
-    assert.strictEqual(Helper.addDynamicGetterAndSetter(true), true)
-    assert.notDeepEqual(Helper.addDynamicGetterAndSetter({}), {})
-    assert.ok(Helper.addDynamicGetterAndSetter({
-    }).__target__ instanceof Object)
-    const mockup = {}
-    assert.strictEqual(
-        Helper.addDynamicGetterAndSetter(mockup).__target__, mockup)
-    assert.deepEqual(Helper.addDynamicGetterAndSetter({}).__target__, {})
-    assert.deepEqual(Helper.addDynamicGetterAndSetter({a: 1}, (
-        value:any
-    ):any => value + 2).a, 3)
-    assert.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: 1}}, (
-        value:any
-    ):any => (value instanceof Object) ? value : value + 2).a.a, 3)
-    assert.deepEqual(Helper.addDynamicGetterAndSetter({a: {a: [{a: 1}]}}, (
-        value:any
-    ):any => (value instanceof Object) ? value : value + 2).a.a[0].a, 3)
-    assert.deepEqual(Helper.addDynamicGetterAndSetter(
-        {a: {a: 1}}, (value:any):any =>
-            (value instanceof Object) ? value : value + 2,
-        (key:any, value:any):any => value, '[]', '[]', 'hasOwnProperty', false
-    ).a.a, 1)
-    assert.deepEqual(Helper.addDynamicGetterAndSetter(
-        {a: 1}, (value:any):any =>
-            (value instanceof Object) ? value : value + 2,
-        (key:any, value:any):any => value, '[]', '[]', 'hasOwnProperty', false,
-        []
-    ).a, 1)
-    // IgnoreTypeCheck
-    assert.deepEqual(Helper.addDynamicGetterAndSetter(
-        {a: new Map([['a', 1]])}, (value:any):any =>
-            (value instanceof Object) ? value : value + 2,
-        (key:any, value:any):any => value, 'get', 'set', 'has', true, [Map]
-    ).a.a, 3)
-})
-QUnit.test('resolveDynamicDataStructure', (assert:Object):void => {
-    for (const test:Array<any> of [
-        [[null], null],
-        [[false], false],
-        [['1'], '1'],
-        [[3], 3],
-        [[{}], {}],
-        [[{__evaluate__: '1'}], 1],
-        [[{__evaluate__: "'1'"}], '1'],
-        [[{a: {__evaluate__: "'a'"}}], {a: 'a'}],
-        [[{a: {__evaluate__: 'self.a'}}, {a: 1}], {a: 1}],
-        [
-            [{a: {__evaluate__: 'self.a'}}, {a: 1}, false],
-            {a: {__evaluate__: 'self.a'}}
-        ],
-        [
-            [{a: {__evaluate__: 'self.a'}}, {a: 1}, true, '__run__'],
-            {a: {__evaluate__: 'self.a'}}
-        ],
-        [[{a: {__run__: 'self.a'}}, {a: 1}, true, '__run__'], {a: 1}],
-        [[{a: [{__run__: 'self.a'}]}, {a: 1}, true, '__run__'], {a: [1]}],
-        [[{a: {__evaluate__: 'self.b'}, b: 2}], {a: 2, b: 2}],
-        [
-            [{a: {__evaluate__: 'self.b'}, b: {__evaluate__: 'self.c'}, c: 2}],
-            {a: 2, b: 2, c: 2}
-        ],
-        [
-            [
-                {
-                    a: {__execute__: 'return self.b'},
-                    b: {__execute__: 'return self.c'},
-                    c: 2
-                }
-            ],
-            {a: 2, b: 2, c: 2}
-        ]
-    ])
-        assert.deepEqual(Helper.resolveDynamicDataStructure.apply(
-            this, test[0]
-        ), test[1])
-})
 QUnit.test('applyAliases', (assert:Object):void => {
     for (const test:Array<any> of [
         ['', {}, ''],

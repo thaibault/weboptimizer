@@ -97,8 +97,25 @@ export default class Helper {
         return false
     }
     // endregion
+    // region data handling
     /**
-     * Converts given serialized or base64 encoded string into a java script
+     * Converts given object into its serialized json representation by
+     * replacing circular references with a given provided value.
+     * @param object - Object to serialize.
+     * @param cicularReferenceValue - Value to use as replacement for circular
+     * references.
+     * @param numberOfSpaces - Number of spaces to use for string formatting.
+     */
+    static convertCircularObjectToJSON(
+        object:Object, cicularReferenceValue:any = '__circularReference__',
+        numberOfSpaces:number = 0
+    ):string {
+        return JSON.stringify(object, (key:string, value:any):any =>
+            value
+        , numberOfSpaces)
+    }
+    /**
+     * Converts given serialized or base64 encoded string into a javaScript
      * one if possible.
      * @param serializedObject - Object as string.
      * @param scope - An optional scope which will be used to evaluate given
@@ -138,21 +155,6 @@ export default class Helper {
                 else if (typeof object[key] === 'string')
                     object[key] = object[key].replace(pattern, replacement)
         return object
-    }
-    /**
-     * Translates given name into a valid javaScript one.
-     * @param name - Name to convert.
-     * @param allowedSymbols - String of symbols which should be allowed within
-     * a variable name (not the first character).
-     * @returns Converted name is returned.
-     */
-    static convertToValidVariableName(
-        name:string, allowedSymbols:string = '0-9a-zA-Z_$'
-    ):string {
-        return name.replace(/^[^a-zA-Z_$]+/, '').replace(
-            new RegExp(`[^${allowedSymbols}]+([a-zA-Z0-9])`, 'g'), (
-                fullMatch:string, firstLetter:string
-            ):string => firstLetter.toUpperCase())
     }
     /**
      * Extends given target object with given sources object. As target and
@@ -222,6 +224,180 @@ export default class Helper {
             index += 1
         }
         return target
+    }
+    /**
+     * Adds dynamic getter and setter to any given data structure such as maps.
+     * @param object - Object to proxy.
+     * @param getterWrapper - Function to wrap each property get.
+     * @param setterWrapper - Function to wrap each property set.
+     * @param getterMethodName - Method name to get a stored value by key.
+     * @param setterMethodName - Method name to set a stored value by key.
+     * @param containesMethodName - Method name to indicate if a key is stored
+     * in given data structure.
+     * @param deep - Indicates to perform a deep wrapping of specified types.
+     * performed via "value instanceof type".).
+     * @param typesToExtend - Types which should be extended (Checks are
+     * performed via "value instanceof type".).
+     * @returns Returns given object wrapped with a dynamic getter proxy.
+     */
+    static addDynamicGetterAndSetter<Value>(
+        object:Value, getterWrapper:GetterFunction = (value:any):any => value,
+        setterWrapper:SetterFunction = (key:any, value:any):any => value,
+        getterMethodName:string = '[]', setterMethodName:string = '[]',
+        containesMethodName:string = 'hasOwnProperty', deep:boolean = true,
+        typesToExtend:Array<mixed> = [Object]
+    ):Value {
+        if (deep)
+            if (object instanceof Map)
+                for (const [key:mixed, value:mixed] of object)
+                    object.set(key, Helper.addDynamicGetterAndSetter(
+                        value, getterWrapper, setterWrapper, getterMethodName,
+                        setterMethodName, containesMethodName, deep,
+                        typesToExtend))
+            else if (typeof object === 'object' && object !== null) {
+                for (const key:string in object)
+                    if (object.hasOwnProperty(key))
+                        object[key] = Helper.addDynamicGetterAndSetter(
+                            object[key], getterWrapper, setterWrapper,
+                            getterMethodName, setterMethodName,
+                            containesMethodName, deep, typesToExtend)
+            } else if (Array.isArray(object)) {
+                let index:number = 0
+                for (const value:mixed of object) {
+                    object[index] = Helper.addDynamicGetterAndSetter(
+                        value, getterWrapper, setterWrapper, getterMethodName,
+                        setterMethodName, containesMethodName, deep,
+                        typesToExtend)
+                    index += 1
+                }
+            }
+        for (const type:mixed of typesToExtend)
+            if (object instanceof type) {
+                if (object.__target__)
+                    return object
+                const handler:{
+                    has?:(target:Object, name:string) => boolean;
+                    get?:(target:Object, name:string) => any;
+                    set?:(target:Object, name:string) => any
+                } = {}
+                if (containesMethodName)
+                    handler.has = (target:Object, name:string):boolean => {
+                        if (containesMethodName === '[]')
+                            return name in target
+                        return target[containesMethodName](name)
+                    }
+                if (containesMethodName && getterMethodName)
+                    handler.get = (target:Object, name:string):any => {
+                        if (name === '__target__')
+                            return target
+                        if (typeof target[name] === 'function')
+                            return target[name].bind(target)
+                        if (target[containesMethodName](name)) {
+                            if (getterMethodName === '[]')
+                                return getterWrapper(target[name])
+                            return getterWrapper(target[getterMethodName](
+                                name))
+                        }
+                        return target[name]
+                    }
+                if (setterMethodName)
+                    handler.set = (
+                        target:Object, name:string, value:any
+                    ):void => {
+                        if (setterMethodName === '[]')
+                            target[name] = setterWrapper(name, value)
+                        else
+                            target[setterMethodName](name, setterWrapper(
+                                name, value))
+                    }
+                return new Proxy(object, handler)
+            }
+        return object
+    }
+    /**
+     * Searches for nested mappings with given indicator key and resolves
+     * marked values. Additionally all objects are wrapped with a proxy to
+     * dynamically resolve nested properties.
+     * @param object - Given mapping to resolve.
+     * @param configuration - Configuration context to resolve marked values.
+     * @param deep - Indicates weather to perform a recursive resolving.
+     * @param evaluationIndicatorKey - Indicator property name to mark a value
+     * to evaluate.
+     * @param executionIndicatorKey - Indicator property name to mark a value
+     * to evaluate.
+     * @returns Evaluated given mapping.
+     */
+    static resolveDynamicDataStructure(
+        object:any, configuration:?PlainObject = null, deep:boolean = true,
+        evaluationIndicatorKey:string = '__evaluate__',
+        executionIndicatorKey:string = '__execute__'
+    ):any {
+        if (configuration === null && typeof object === 'object')
+            configuration = object
+        if (deep && configuration && !configuration.__target__)
+            configuration = Helper.addDynamicGetterAndSetter(
+                configuration, ((value:any):any =>
+                    Helper.resolveDynamicDataStructure(
+                        value, configuration, false, evaluationIndicatorKey,
+                        executionIndicatorKey)
+                ), (key:any, value:any):any => value, '[]', ''
+            )
+        if (typeof object === 'object' && object !== null) {
+            for (const key:string in object)
+                if ([evaluationIndicatorKey, executionIndicatorKey].includes(
+                    key
+                ))
+                    try {
+                        const evaluationFunction:EvaluationFunction =
+                            new Function(
+                                'self', 'webOptimizerPath', 'currentPath',
+                                'path', 'helper', ((
+                                    key === evaluationIndicatorKey
+                                ) ? 'return ' : '') + object[key])
+                        return Helper.resolveDynamicDataStructure(
+                            evaluationFunction(
+                                configuration, __dirname, process.cwd(), path,
+                                Helper
+                            ), configuration, false, evaluationIndicatorKey,
+                            executionIndicatorKey)
+                    } catch (error) {
+                        throw Error(
+                            'Error during ' + (
+                                key === evaluationIndicatorKey ? 'executing' :
+                                'evaluating'
+                            ) + ` "${object[key]}". There is maybe a ` +
+                            `dependency loop: ` + error)
+                    }
+                else if (deep)
+                    object[key] = Helper.resolveDynamicDataStructure(
+                        object[key], configuration, deep,
+                        evaluationIndicatorKey, executionIndicatorKey)
+        } else if (deep && Array.isArray(object)) {
+            let index:number = 0
+            for (const value:mixed of object) {
+                object[index] = Helper.resolveDynamicDataStructure(
+                    value, configuration, deep, evaluationIndicatorKey,
+                    executionIndicatorKey)
+                index += 1
+            }
+        }
+        return object
+    }
+    // endregion
+    /**
+     * Translates given name into a valid javaScript one.
+     * @param name - Name to convert.
+     * @param allowedSymbols - String of symbols which should be allowed within
+     * a variable name (not the first character).
+     * @returns Converted name is returned.
+     */
+    static convertToValidVariableName(
+        name:string, allowedSymbols:string = '0-9a-zA-Z_$'
+    ):string {
+        return name.replace(/^[^a-zA-Z_$]+/, '').replace(
+            new RegExp(`[^${allowedSymbols}]+([a-zA-Z0-9])`, 'g'), (
+                fullMatch:string, firstLetter:string
+            ):string => firstLetter.toUpperCase())
     }
     // region process handler
     /**
@@ -690,164 +866,6 @@ export default class Helper {
         return moduleID
     }
     // endregion
-    /**
-     * Adds dynamic getter and setter to any given data structure such as maps.
-     * @param object - Object to proxy.
-     * @param getterWrapper - Function to wrap each property get.
-     * @param setterWrapper - Function to wrap each property set.
-     * @param getterMethodName - Method name to get a stored value by key.
-     * @param setterMethodName - Method name to set a stored value by key.
-     * @param containesMethodName - Method name to indicate if a key is stored
-     * in given data structure.
-     * @param deep - Indicates to perform a deep wrapping of specified types.
-     * performed via "value instanceof type".).
-     * @param typesToExtend - Types which should be extended (Checks are
-     * performed via "value instanceof type".).
-     * @returns Returns given object wrapped with a dynamic getter proxy.
-     */
-    static addDynamicGetterAndSetter<Value>(
-        object:Value, getterWrapper:GetterFunction = (value:any):any => value,
-        setterWrapper:SetterFunction = (key:any, value:any):any => value,
-        getterMethodName:string = '[]', setterMethodName:string = '[]',
-        containesMethodName:string = 'hasOwnProperty', deep:boolean = true,
-        typesToExtend:Array<mixed> = [Object]
-    ):Value {
-        if (deep)
-            if (object instanceof Map)
-                for (const [key:mixed, value:mixed] of object)
-                    object.set(key, Helper.addDynamicGetterAndSetter(
-                        value, getterWrapper, setterWrapper, getterMethodName,
-                        setterMethodName, containesMethodName, deep,
-                        typesToExtend))
-            else if (typeof object === 'object' && object !== null) {
-                for (const key:string in object)
-                    if (object.hasOwnProperty(key))
-                        object[key] = Helper.addDynamicGetterAndSetter(
-                            object[key], getterWrapper, setterWrapper,
-                            getterMethodName, setterMethodName,
-                            containesMethodName, deep, typesToExtend)
-            } else if (Array.isArray(object)) {
-                let index:number = 0
-                for (const value:mixed of object) {
-                    object[index] = Helper.addDynamicGetterAndSetter(
-                        value, getterWrapper, setterWrapper, getterMethodName,
-                        setterMethodName, containesMethodName, deep,
-                        typesToExtend)
-                    index += 1
-                }
-            }
-        for (const type:mixed of typesToExtend)
-            if (object instanceof type) {
-                if (object.__target__)
-                    return object
-                const handler:{
-                    has?:(target:Object, name:string) => boolean;
-                    get?:(target:Object, name:string) => any;
-                    set?:(target:Object, name:string) => any
-                } = {}
-                if (containesMethodName)
-                    handler.has = (target:Object, name:string):boolean => {
-                        if (containesMethodName === '[]')
-                            return name in target
-                        return target[containesMethodName](name)
-                    }
-                if (containesMethodName && getterMethodName)
-                    handler.get = (target:Object, name:string):any => {
-                        if (name === '__target__')
-                            return target
-                        if (typeof target[name] === 'function')
-                            return target[name].bind(target)
-                        if (target[containesMethodName](name)) {
-                            if (getterMethodName === '[]')
-                                return getterWrapper(target[name])
-                            return getterWrapper(target[getterMethodName](
-                                name))
-                        }
-                        return target[name]
-                    }
-                if (setterMethodName)
-                    handler.set = (
-                        target:Object, name:string, value:any
-                    ):void => {
-                        if (setterMethodName === '[]')
-                            target[name] = setterWrapper(name, value)
-                        else
-                            target[setterMethodName](name, setterWrapper(
-                                name, value))
-                    }
-                return new Proxy(object, handler)
-            }
-        return object
-    }
-    /**
-     * Searches for nested mappings with given indicator key and resolves
-     * marked values. Additionally all objects are wrapped with a proxy to
-     * dynamically resolve nested properties.
-     * @param object - Given mapping to resolve.
-     * @param configuration - Configuration context to resolve marked values.
-     * @param deep - Indicates weather to perform a recursive resolving.
-     * @param evaluationIndicatorKey - Indicator property name to mark a value
-     * to evaluate.
-     * @param executionIndicatorKey - Indicator property name to mark a value
-     * to evaluate.
-     * @returns Evaluated given mapping.
-     */
-    static resolveDynamicDataStructure(
-        object:any, configuration:?PlainObject = null, deep:boolean = true,
-        evaluationIndicatorKey:string = '__evaluate__',
-        executionIndicatorKey:string = '__execute__'
-    ):any {
-        if (configuration === null && typeof object === 'object')
-            configuration = object
-        if (deep && configuration && !configuration.__target__)
-            configuration = Helper.addDynamicGetterAndSetter(
-                configuration, ((value:any):any =>
-                    Helper.resolveDynamicDataStructure(
-                        value, configuration, false, evaluationIndicatorKey,
-                        executionIndicatorKey)
-                ), (key:any, value:any):any => value, '[]', ''
-            )
-        if (typeof object === 'object' && object !== null) {
-            for (const key:string in object)
-                if ([evaluationIndicatorKey, executionIndicatorKey].includes(
-                    key
-                ))
-                    try {
-                        const evaluationFunction:EvaluationFunction =
-                            new Function(
-                                'self', 'webOptimizerPath', 'currentPath',
-                                'path', 'helper', ((
-                                    key === evaluationIndicatorKey
-                                ) ? 'return ' : '') + object[key])
-                        return Helper.resolveDynamicDataStructure(
-                            evaluationFunction(
-                                configuration, __dirname, process.cwd(), path,
-                                Helper
-                            ), configuration, false, evaluationIndicatorKey,
-                            executionIndicatorKey)
-                    } catch (error) {
-                        throw Error(
-                            'Error during ' + (
-                                key === evaluationIndicatorKey ? 'executing' :
-                                'evaluating'
-                            ) + ` "${object[key]}". There is maybe a ` +
-                            `dependency loop: ` + error)
-                    }
-                else if (deep)
-                    object[key] = Helper.resolveDynamicDataStructure(
-                        object[key], configuration, deep,
-                        evaluationIndicatorKey, executionIndicatorKey)
-        } else if (deep && Array.isArray(object)) {
-            let index:number = 0
-            for (const value:mixed of object) {
-                object[index] = Helper.resolveDynamicDataStructure(
-                    value, configuration, deep, evaluationIndicatorKey,
-                    executionIndicatorKey)
-                index += 1
-            }
-        }
-        return object
-    }
     /**
      * Determines a concrete file path for given module id.
      * @param moduleID - Module id to determine.

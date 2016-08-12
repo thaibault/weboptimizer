@@ -177,7 +177,9 @@ for (const pathConfiguration:{[key:string]:any} of [
             ) + '/'
 // / endregion
 const resolvedConfiguration:ResolvedConfiguration =
-    Helper.resolveDynamicDataStructure(configuration)
+    Helper.resolveDynamicDataStructure(Helper.resolveDynamicDataStructure(
+        configuration
+    ), null, true, '__postEvaluate__', '__postExecute__')
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
