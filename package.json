@@ -542,6 +542,9 @@
                     }
                 },
                 "injection": {"internal": "test/"},
+                "module": {"preprocessor": {"pug": {"locals": {
+                    "rootPath": "../../"
+                }}}},
                 "targetTechnology": "node",
 
                 "assetPattern": {"javaScript": {
