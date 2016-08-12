@@ -529,9 +529,18 @@
 
             "test": {
                 "exportFormat": {"external": "commonjs2", "self": "commonjs2"},
-                "files": {"javaScript": {
-                    "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
-                }},
+                "files": {
+                    "defaultHTML": {
+                        "filename": "test.html",
+                        "inject": "head",
+                        "template": {
+                            "__evaluate__": "`html?${JSON.stringify(self.module.html)}!pug?${JSON.stringify(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
+                        }
+                    },
+                    "javaScript": {
+                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
+                    }
+                },
                 "injection": {"internal": "test/"},
                 "targetTechnology": "node",
 
