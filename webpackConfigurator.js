@@ -85,6 +85,13 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
         if (Helper.isFileSync(htmlConfiguration.template.substring(
             htmlConfiguration.template.lastIndexOf('!') + 1
         ))) {
+            if (
+                htmlConfiguration.template ===
+                configuration.files.defaultHTML.template
+            )
+                htmlConfiguration.template =
+                    htmlConfiguration.template.substring(
+                        htmlConfiguration.template.lastIndexOf('!') + 1)
             pluginInstances.push(new plugins.HTML(htmlConfiguration))
             htmlAvailable = true
         }
@@ -622,6 +629,20 @@ export default {
             },
             // endregion
             // region html (templates)
+            // NOTE: This ensures that will be used as a special loader alias.
+            {
+                // TODO escape regex
+                test: new RegExp(
+                    configuration.files.defaultHTML.template.substring(
+                        configuration.files.defaultHTML.template.lastIndexOf(
+                            '!'
+                        ) + 1)),
+                loader:
+                    configuration.files.defaultHTML.template.substring(
+                        0,
+                        configuration.files.defaultHTML.template.lastIndexOf(
+                            '!'))
+            },
             {
                 test: /\.pug$/,
                 loader:

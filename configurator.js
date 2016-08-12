@@ -196,10 +196,10 @@ for (const type:string in resolvedConfiguration.build)
 // result in an endless loop.
 const delimiterPosition:number =
     resolvedConfiguration.files.defaultHTML.template.lastIndexOf('!')
-resolvedConfiguration.loader.aliases.webOptimizerTemplateFileLoader =
+resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader =
     resolvedConfiguration.files.defaultHTML.template.substring(
         0, delimiterPosition)
-resolvedConfiguration.module.aliases.webOptimizerTemplateFilePath$ =
+resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath$ =
     resolvedConfiguration.files.defaultHTML.template.substring(
         delimiterPosition + 1)
 // endregion
