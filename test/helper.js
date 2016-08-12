@@ -93,8 +93,14 @@ QUnit.test('isFilePathInLocation', (assert:Object):void => {
 // / endregion
 // / region data handling
 QUnit.test('convertCircularObjectToJSON', (assert:Object):void => {
+    let testObject1:Object = {}
+    const testObject2:Object = {a: testObject1}
+    testObject1.a = testObject2
     for (const test:Array<any> of [
-        [{}, '{}']
+        [{}, '{}'],
+        [{a: null}, '{"a":null}'],
+        [{a: {a: 2}}, '{"a":{"a":2}}'],
+        [testObject1, '{"a":{"a":"__circularReference__"}}']
     ])
         assert.deepEqual(Helper.convertCircularObjectToJSON(test[0]), test[1])
 })

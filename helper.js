@@ -102,17 +102,27 @@ export default class Helper {
      * Converts given object into its serialized json representation by
      * replacing circular references with a given provided value.
      * @param object - Object to serialize.
-     * @param cicularReferenceValue - Value to use as replacement for circular
-     * references.
+     * @param determineCicularReferenceValue - Callback to create a fallback
+     * value depending on given redundant value.
      * @param numberOfSpaces - Number of spaces to use for string formatting.
      */
     static convertCircularObjectToJSON(
-        object:Object, cicularReferenceValue:any = '__circularReference__',
+        object:Object, determineCicularReferenceValue:((
+            key:string, value:any, seendObjects:Array<any>
+        ) => any) = ():string => '__circularReference__',
         numberOfSpaces:number = 0
     ):string {
-        return JSON.stringify(object, (key:string, value:any):any =>
-            value
-        , numberOfSpaces)
+        const seenObjects:Array<any> = []
+        return JSON.stringify(object, (key:string, value:any):any => {
+            if (typeof value === 'object' && value !== null) {
+                if (seenObjects.includes(value))
+                    return determineCicularReferenceValue(
+                        key, value, seenObjects)
+                seenObjects.push(value)
+                return value
+            }
+            return value
+        }, numberOfSpaces)
     }
     /**
      * Converts given serialized or base64 encoded string into a javaScript
@@ -325,62 +335,68 @@ export default class Helper {
      * to evaluate.
      * @param executionIndicatorKey - Indicator property name to mark a value
      * to evaluate.
+     * @param configurationKeyName - Name under the given configuration name
+     * should be provided to evaluation or execution contexts.
      * @returns Evaluated given mapping.
      */
     static resolveDynamicDataStructure(
         object:any, configuration:?PlainObject = null, deep:boolean = true,
         evaluationIndicatorKey:string = '__evaluate__',
-        executionIndicatorKey:string = '__execute__'
+        executionIndicatorKey:string = '__execute__',
+        configurationKeyName:string = 'self'
     ):any {
-        if (configuration === null && typeof object === 'object')
+        if (object === null || typeof object !== 'object')
+            return object
+        if (configuration === null)
             configuration = object
         if (deep && configuration && !configuration.__target__)
             configuration = Helper.addDynamicGetterAndSetter(
                 configuration, ((value:any):any =>
                     Helper.resolveDynamicDataStructure(
                         value, configuration, false, evaluationIndicatorKey,
-                        executionIndicatorKey)
-                ), (key:any, value:any):any => value, '[]', ''
-            )
-        if (typeof object === 'object' && object !== null) {
-            for (const key:string in object)
-                if ([evaluationIndicatorKey, executionIndicatorKey].includes(
-                    key
-                ))
-                    try {
-                        const evaluationFunction:EvaluationFunction =
-                            new Function(
-                                'self', 'webOptimizerPath', 'currentPath',
-                                'path', 'helper', ((
-                                    key === evaluationIndicatorKey
-                                ) ? 'return ' : '') + object[key])
-                        return Helper.resolveDynamicDataStructure(
-                            evaluationFunction(
-                                configuration, __dirname, process.cwd(), path,
-                                Helper
-                            ), configuration, false, evaluationIndicatorKey,
-                            executionIndicatorKey)
-                    } catch (error) {
-                        throw Error(
-                            'Error during ' + (
-                                key === evaluationIndicatorKey ? 'executing' :
-                                'evaluating'
-                            ) + ` "${object[key]}". There is maybe a ` +
-                            `dependency loop: ` + error)
-                    }
-                else if (deep)
-                    object[key] = Helper.resolveDynamicDataStructure(
-                        object[key], configuration, deep,
-                        evaluationIndicatorKey, executionIndicatorKey)
-        } else if (deep && Array.isArray(object)) {
+                        executionIndicatorKey, configurationKeyName)
+                ), (key:any, value:any):any => value, '[]', '')
+        if (Array.isArray(object) && deep) {
             let index:number = 0
             for (const value:mixed of object) {
                 object[index] = Helper.resolveDynamicDataStructure(
                     value, configuration, deep, evaluationIndicatorKey,
-                    executionIndicatorKey)
+                    executionIndicatorKey, configurationKeyName)
                 index += 1
             }
-        }
+        } else
+            for (const key:string in object)
+                if (object.hasOwnProperty(key))
+                    if ([
+                        evaluationIndicatorKey, executionIndicatorKey
+                    ].includes(key))
+                        try {
+                            const evaluationFunction:EvaluationFunction =
+                                new Function(
+                                    configurationKeyName, 'webOptimizerPath',
+                                    'currentPath', 'path', 'helper', ((
+                                        key === evaluationIndicatorKey
+                                    ) ? 'return ' : '') + object[key])
+                            return Helper.resolveDynamicDataStructure(
+                                evaluationFunction(
+                                    configuration, __dirname, process.cwd(),
+                                    path, Helper
+                                ), configuration, false,
+                                evaluationIndicatorKey,
+                                executionIndicatorKey,
+                                configurationKeyName)
+                        } catch (error) {
+                            throw Error(
+                                'Error during ' + (
+                                    key === evaluationIndicatorKey ?
+                                        'executing' : 'evaluating'
+                                ) + ` "${object[key]}": ${error}`)
+                        }
+                    else if (deep)
+                        object[key] = Helper.resolveDynamicDataStructure(
+                            object[key], configuration, deep,
+                            evaluationIndicatorKey, executionIndicatorKey,
+                            configurationKeyName)
         return object
     }
     // endregion

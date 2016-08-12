@@ -323,7 +323,9 @@
                             "debug": false,
                             "cache": true
                         },
-                        "locals": {"configuration": {"__evaluate__": "self"}}
+                        "locals": {"configuration": {
+                            "__postEvaluate__": "self"
+                        }}
                     },
                     "less": {},
                     "modernJavaScript": {
