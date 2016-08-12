@@ -11,8 +11,8 @@ try {
 import browserAPI from '../browserAPI.compiled'
 import type {BrowserAPI} from '../type'
 // endregion
-QUnit.module('browserAPI')
 browserAPI((api:BrowserAPI):void => {
+    QUnit.module('browserAPI')
     QUnit.load()
     // region tests
     QUnit.test('browserAPI', (assert:Object):void => {
@@ -23,9 +23,11 @@ browserAPI((api:BrowserAPI):void => {
         assert.ok(api.window.document.hasOwnProperty('location'))
         assert.ok(api.window.document.querySelector('body') instanceof Object)
         const done:Function = assert.async()
+        const timeoutID:number = setTimeout(done, 100)
         api.window.document.addEventListener('DOMContentLoaded', (
             event:Object
         ):void => {
+            clearTimeout(timeoutID)
             assert.ok(event)
             done()
         })

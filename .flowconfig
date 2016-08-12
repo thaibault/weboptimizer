@@ -3,6 +3,7 @@
 .*/\.git
 .*/_.*\.js
 .*/.+\.compiled\.js
+test.compiled
 
 # temporary excludes
 .+/systemjs-builder/test/fixtures/sourcemaps-expectations/.+\.json

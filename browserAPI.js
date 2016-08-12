@@ -47,7 +47,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     let template:string
     try {
         // IgnoreTypeCheck
-        require.context('webOptimizerDefaultTemplateFilePath')
+        require('webOptimizerDefaultTemplateFilePath')
     } catch (error) {
         template = fileSystem.readFileSync(path.join(
             __dirname, 'test.compiled.html'))
@@ -55,7 +55,8 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
             browserAPI = {
-                debug: false, domContentLoaded: false, metaDOM, window}
+                debug: false, domContentLoaded: false, metaDOM, window,
+                windowLoaded: false}
             browserAPI.window.document.addEventListener('DOMContentLoaded', (
             ):void => {
                 browserAPI.domContentLoaded = true
@@ -74,6 +75,10 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             SkipExternalResources: false
         },
         html: template,
+        onload: ():void => {
+            browserAPI.domContentLoaded = true
+            browserAPI.windowLoaded = true
+        },
         resourceLoader: (
             resource:{
                 element:DomNode;
@@ -115,11 +120,16 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     })
     // endregion
 } else {
-    browserAPI = {debug: false, domContentLoaded: false, metaDOM: null, window}
+    browserAPI = {
+        debug: false, domContentLoaded: false, metaDOM: null, window,
+        windowLoaded: false}
     window.document.addEventListener('DOMContentLoaded', ():void => {
         browserAPI.domContentLoaded = true
         for (const callback:Function of onCreatedListener)
             callback(browserAPI, false)
+    })
+    window.addEventListener('load', ():void => {
+        browserAPI.windowLoaded = true
     })
 }
 // endregion

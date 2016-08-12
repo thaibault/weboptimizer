@@ -47,6 +47,7 @@ export type Location = {
     toString:() => string
 }
 export type Window = {
+    addEventListener:(type:string, callback:Function) => void;
     document:Object;
     location:Location;
     localStorage:Storage;
@@ -58,6 +59,7 @@ export type BrowserAPI = {
     domContentLoaded:boolean;
     metaDOM:?Object;
     window:Window;
+    windowLoaded:boolean;
 }
 // // endregion
 // / endregion
