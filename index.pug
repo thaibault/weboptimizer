@@ -20,8 +20,8 @@ html
         title #{configuration.name}
         if 2 < configuration.givenCommandLineArguments.length && 'testInBrowser' === configuration.givenCommandLineArguments[2]
             link(
-                href=(rootPath || '') + '/node_modules/qunitjs/qunit/qunit.css'
-                rel='stylesheet' type='text/css')
+                href='/node_modules/qunitjs/qunit/qunit.css' rel='stylesheet'
+                type='text/css')
     body
         if 2 < configuration.givenCommandLineArguments.length && ['test', 'testInBrowser'].includes(configuration.givenCommandLineArguments[2])
             div(id='qunit')
