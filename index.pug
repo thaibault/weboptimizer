@@ -17,7 +17,9 @@ html
             meta(http-equiv='cache-control' content='no-cache')
             meta(http-equiv='expires' content='0')
             meta(http-equiv='pragma' content='no-cache')
-        title #{configuration.name}
+            title #{configuration.name} - test
+        else
+            title #{configuration.name}
         if 2 < configuration.givenCommandLineArguments.length && 'testInBrowser' === configuration.givenCommandLineArguments[2]
             link(
                 href='/node_modules/qunitjs/qunit/qunit.css' rel='stylesheet'
