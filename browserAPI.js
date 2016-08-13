@@ -29,7 +29,7 @@ let browserAPI:BrowserAPI
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
-    const fileSystem:Object = require('fs')
+    const pug = require('pug')
     const path:Object = require('path')
     const metaDOM:Object = require('jsdom')
     const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
@@ -46,8 +46,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     })
     let template:string
     try {
-        template = fileSystem.readFileSync(path.join(
-            __dirname, 'test.compiled.html'))
+        template = pug.compileFile(path.join(__dirname, 'index.pug'), {
+            pretty: true
+        })({configuration: {name: 'test', givenCommandLineArguments: []}})
     } catch (error) {
         // IgnoreTypeCheck
         template = require('webOptimizerDefaultTemplateFilePath')

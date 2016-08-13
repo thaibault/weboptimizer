@@ -72,10 +72,9 @@
         "browserAPI.js",
         "configurator.js",
         "helper.js",
-        "playground.pug",
         "pugLoader.js",
         "taskRunner.js",
-        "test.pug",
+        "index.pug",
         "type.js",
         "webpackConfigurator.js"
     ],
@@ -86,7 +85,7 @@
         "lint": "flow --color always --strip-root && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
         "preinstall": "touch browserAPI.compiled.js configurator.compiled.js helper.compiled.js pugLoader.compiled.js taskRunner.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build",
-        "test": "npm run clear && pug --pretty --extension compiled.html test.pug && command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
+        "test": "npm run clear && command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
     },
     "configuration": {
         "default": {
@@ -134,7 +133,7 @@
                         "__evaluate__": "self.module.optimizer.htmlMinifier"
                     },
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${self.path.source}index.pug`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}index.pug`) ? `${self.path.source}index.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 },
                 "html": [{}],
@@ -322,10 +321,7 @@
                             "pretty": false,
                             "debug": false,
                             "cache": true
-                        },
-                        "locals": {"configuration": {
-                            "__postEvaluate__": "helper.extendObject(true, {}, self)"
-                        }}
+                        }
                     },
                     "less": {},
                     "modernJavaScript": {
@@ -534,7 +530,7 @@
                         "filename": "test.html",
                         "inject": "head",
                         "template": {
-                            "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
+                            "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? `${self.path.source}test.pug` : `${webOptimizerPath}/index.pug`}`"
                         }
                     },
                     "html": [],
@@ -555,7 +551,7 @@
                     "filename": "test.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? `${self.path.source}test.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 }},
                 "inPlace": {"externalLibrary": {"normal": true}},
@@ -643,7 +639,7 @@
                     "filename": "playground.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? self.path.source : `${webOptimizerPath}/`}playground.pug`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? `${self.path.source}playground.pug` : `${webOptimizerPath}/`}index.pug`"
                     }
                 },
                 "javaScript": {

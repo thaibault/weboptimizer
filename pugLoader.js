@@ -22,6 +22,7 @@ try {
     require('source-map-support/register')
 } catch (error) {}
 
+import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 // endregion
 // region types
@@ -52,7 +53,7 @@ module.exports = function(source:string):string {
         } else
             templateFunction = pug.compileFile(template, options)
         return templateFunction(Helper.extendObject(true, {
-            require: (request:string):string => {
+            configuration, require: (request:string):string => {
                 const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
                 const queryMatch:?Array<string> = request.match(
                     /^.+\?([^?]+)$/, '$1')
