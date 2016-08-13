@@ -19,6 +19,7 @@ import type {BrowserAPI, DomNode, Window} from './type'
 /* eslint-enable no-unused-vars */
  // endregion
 // region declaration
+declare var NAME:string
 declare var TARGET_TECHNOLOGY:string
 declare var window:Window
 // endregion
@@ -29,7 +30,6 @@ let browserAPI:BrowserAPI
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
-    const pug = require('pug')
     const path:Object = require('path')
     const metaDOM:Object = require('jsdom')
     const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
@@ -45,14 +45,15 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             console.error(error.stack, error.detail)
     })
     let template:string
-    try {
-        template = pug.compileFile(path.join(__dirname, 'index.pug'), {
-            pretty: true
-        })({configuration: {name: 'test', givenCommandLineArguments: []}})
-    } catch (error) {
+    if (typeof NAME === 'undefined' || NAME === 'webOptimizer')
+        template = require('pug').compileFile(path.join(
+            __dirname, 'index.pug'
+        ), {pretty: true})({configuration: {
+            name: 'test', givenCommandLineArguments: []
+        }})
+    else
         // IgnoreTypeCheck
         template = require('webOptimizerDefaultTemplateFilePath')
-    }
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
             browserAPI = {
