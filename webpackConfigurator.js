@@ -645,11 +645,9 @@ export default {
                         configuration.files.defaultHTML.template.lastIndexOf(
                             '!'
                         ) + 1)),
-                loader:
-                    configuration.files.defaultHTML.template.substring(
-                        0,
-                        configuration.files.defaultHTML.template.lastIndexOf(
-                            '!'))
+                loader: configuration.files.defaultHTML.template.substring(
+                    0, configuration.files.defaultHTML.template.lastIndexOf(
+                        '!'))
             },
             {
                 test: /\.pug$/,
@@ -660,7 +658,9 @@ export default {
                 include: path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.template),
-                exclude: configuration.files.html.map((
+                exclude: configuration.files.html.concat(
+                    configuration.files.defaultHTML
+                ).map((
                     htmlConfiguration:HTMLConfiguration
                 ):string => htmlConfiguration.template.substring(
                     htmlConfiguration.template.lastIndexOf('!') + 1))

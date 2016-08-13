@@ -511,7 +511,7 @@
                     "-loader.compiled.js", "-loader.js", "Loader.compiled.js",
                     "Loader.js", ".js"
                 ],
-                "modulesDirectories": [
+                "moduleDirectories": [
                     "web_loaders", "web_modules", "node_loaders",
                     "node_modules", "../"
                 ]
@@ -543,9 +543,6 @@
                     }
                 },
                 "injection": {"internal": "test/"},
-                "module": {"preprocessor": {"pug": {"locals": {
-                    "rootPath": "../../"
-                }}}},
                 "targetTechnology": "node",
 
                 "assetPattern": {"javaScript": {

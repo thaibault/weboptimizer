@@ -45,13 +45,13 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             console.error(error.stack, error.detail)
     })
     let template:string
-    //try {
-        // IgnoreTypeCheck
-        template = require('webOptimizerDefaultTemplateFilePath')
-    /*} catch (error) {
+    try {
         template = fileSystem.readFileSync(path.join(
             __dirname, 'test.compiled.html'))
-    }*/
+    } catch (error) {
+        // IgnoreTypeCheck
+        template = require('webOptimizerDefaultTemplateFilePath')
+    }
     metaDOM.env({
         created: (error:?Error, window:Object):void => {
             browserAPI = {
