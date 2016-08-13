@@ -357,8 +357,8 @@ if (!javaScriptNeeded)
 // //// region extract cascading style sheets
 pluginInstances.push(new plugins.ExtractText(
     configuration.files.cascadingStyleSheet, {
-        allChunks: true, disable: !(
-            configuration.files.cascadingStyleSheet && javaScriptNeeded)}))
+        allChunks: true, disable: (
+            !configuration.files.cascadingStyleSheet && javaScriptNeeded)}))
 // //// endregion
 // //// region performs implicit external logic
 if (injection.external === '__implicit__')
