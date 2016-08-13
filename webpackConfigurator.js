@@ -590,7 +590,8 @@ export default {
     // endregion
     // region output
     output: {
-        filename: configuration.files.javaScript,
+        filename: path.relative(
+            configuration.path.asset.target, configuration.files.javaScript),
         hashFunction: configuration.hashAlgorithm,
         library: libraryName,
         libraryTarget: (

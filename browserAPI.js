@@ -47,7 +47,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     let template:string
     try {
         // IgnoreTypeCheck
-        require('webOptimizerDefaultTemplateFilePath')
+        template = require('webOptimizerDefaultTemplateFilePath')
     } catch (error) {
         template = fileSystem.readFileSync(path.join(
             __dirname, 'test.compiled.html'))

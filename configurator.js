@@ -217,7 +217,9 @@ for (
         true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)
     if (
         typeof htmlConfiguration.template === 'string' &&
-        htmlConfiguration.template.includes('!')
+        htmlConfiguration.template.includes('!') &&
+        htmlConfiguration.template !==
+            resolvedConfiguration.files.defaultHTML.template
     ) {
         const newTemplateString:Object = new String(htmlConfiguration.template)
         newTemplateString.replace = ((string:string):Function => (
