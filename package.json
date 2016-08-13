@@ -633,7 +633,7 @@
                     "filename": "playground.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? `${self.path.source}playground.pug` : `${webOptimizerPath}/`}index.pug`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? `${self.path.source}playground.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 },
                 "javaScript": {
