@@ -135,11 +135,6 @@ const moduleLocations:{[key:string]:Array<string>} =
         configuration.injection.internal, configuration.module.aliases,
         configuration.knownExtensions, configuration.path.context,
         configuration.path.ignore)
-// //// region extract cascading style sheets
-pluginInstances.push(new plugins.ExtractText(
-    configuration.files.cascadingStyleSheet, {
-        allChunks: true, disable: !configuration.files.cascadingStyleSheet}))
-// //// endregion
 // //// region perform javaScript minification/optimisation
 if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
@@ -358,6 +353,12 @@ for (const chunkName:string in normalizedInternalInjection)
 if (!javaScriptNeeded)
     configuration.files.javaScript = path.join(
         configuration.path.asset.javaScript, '.__dummy__.compiled.js')
+// //// endregion
+// //// region extract cascading style sheets
+pluginInstances.push(new plugins.ExtractText(
+    configuration.files.cascadingStyleSheet, {
+        allChunks: true, disable: !(
+            configuration.files.cascadingStyleSheet && javaScriptNeeded)}))
 // //// endregion
 // //// region performs implicit external logic
 if (injection.external === '__implicit__')
