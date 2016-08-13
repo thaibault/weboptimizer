@@ -580,7 +580,7 @@ export default {
     resolveLoader: {
         alias: configuration.loader.aliases,
         extensions: configuration.loader.extensions,
-        moduleDirectories: configuration.loader.moduleDirectories
+        modulesDirectories: configuration.loader.moduleDirectories
     },
     resolve: {
         alias: configuration.module.aliases,
