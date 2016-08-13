@@ -144,7 +144,7 @@ export type HTMLConfiguration = {
     filename:string
 }
 export type Command = {
-    command: string;
+    command:string;
     arguments:Array<string>
 }
 export type ResolvedConfiguration = {
