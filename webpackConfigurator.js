@@ -330,7 +330,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 minSize: 0
             }))
 // //// endregion
-let javaScriptNeeded:boolean = !['serve', 'testInBrowser'].includes(
+let javaScriptNeeded:boolean = ['serve', 'testInBrowser'].includes(
     configuration.givenCommandLineArguments[2])
 if (!javaScriptNeeded)
     for (const chunkName:string in normalizedInternalInjection)
