@@ -449,7 +449,7 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
             name: libraryName
         }))
     } else
-        throw Error('No dll chunk id found.')
+        console.warn('No dll chunk id found.')
 }
 // //// endregion
 // /// endregion
