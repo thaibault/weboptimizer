@@ -420,7 +420,7 @@
                 "EXTERNAL_EXPORT_FORMAT": {
                     "__evaluate__": "`'${self.exportFormat.external}'`"
                 },
-                "NAME": {"__evaluate__": "self.name"},
+                "NAME": {"__evaluate__": "`'${self.name}'`"},
                 "OFFLINE": {"__evaluate__": "Boolean(self.offline)"},
                 "SELF_EXPORT_FORMAT": {
                     "__evaluate__": "`'${self.exportFormat.self}'`"
