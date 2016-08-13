@@ -637,7 +637,7 @@
                     }
                 },
                 "html": {
-                    "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [{}] : []"
+                    "__evaluate__": "2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? [{}] : []"
                 },
                 "javaScript": {
                     "__evaluate__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
