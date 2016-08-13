@@ -636,6 +636,9 @@
                         "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? `${self.path.source}playground.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 },
+                "html": {
+                    "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [{}] : []"
+                },
                 "javaScript": {
                     "__evaluate__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                 }
