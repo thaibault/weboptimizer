@@ -627,7 +627,7 @@
             }},
             "files": {
                 "cascadingStyleSheet": {
-                    "__evaluate__": "self.debug ? null : `${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                    "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
                 },
                 "defaultHTML": {
                     "filename": "playground.html",

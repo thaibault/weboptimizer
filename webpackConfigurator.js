@@ -291,31 +291,6 @@ const injection:Injection = Helper.resolveInjection(
     configuration.path.context, configuration.path.ignore)
 const normalizedInternalInjection:NormalizedInternalInjection =
     Helper.normalizeInternalInjection(injection.internal)
-let javaScriptNeeded:boolean = false
-for (const chunkName:string in normalizedInternalInjection)
-    if (normalizedInternalInjection.hasOwnProperty(chunkName))
-        for (const moduleID:string of normalizedInternalInjection[
-            chunkName
-        ]) {
-            const type:?string = Helper.determineAssetType(
-                Helper.determineModuleFilePath(
-                    moduleID, configuration.module.aliases,
-                    configuration.knownExtensions, configuration.path.context
-                ),
-                configuration.build, configuration.path)
-            if (type && configuration.build[type] && configuration.build[
-                type
-            ].outputExtension === 'js') {
-                javaScriptNeeded = true
-                break
-            }
-        }
-// //// region extract cascading style sheets
-pluginInstances.push(new plugins.ExtractText(
-    configuration.files.cascadingStyleSheet, {
-        allChunks: true, disable: !(
-            configuration.files.cascadingStyleSheet && javaScriptNeeded)}))
-// //// endregion
 // //// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string in normalizedInternalInjection)
@@ -355,10 +330,36 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 minSize: 0
             }))
 // //// endregion
+let javaScriptNeeded:boolean = !['serve', 'testInBrowser'].includes(
+    configuration.givenCommandLineArguments[2])
+if (!javaScriptNeeded)
+    for (const chunkName:string in normalizedInternalInjection)
+        if (normalizedInternalInjection.hasOwnProperty(chunkName))
+            for (const moduleID:string of normalizedInternalInjection[
+                chunkName
+            ]) {
+                const type:?string = Helper.determineAssetType(
+                    Helper.determineModuleFilePath(
+                        moduleID, configuration.module.aliases,
+                        configuration.knownExtensions,
+                        configuration.path.context),
+                    configuration.build, configuration.path)
+                if (type && configuration.build[type] && configuration.build[
+                    type
+                ].outputExtension === 'js') {
+                    javaScriptNeeded = true
+                    break
+                }
+            }
 // //// region mark empty javaScript modules as dummy
 if (!javaScriptNeeded)
     configuration.files.javaScript = path.join(
         configuration.path.asset.javaScript, '.__dummy__.compiled.js')
+// //// endregion
+// //// region extract cascading style sheets
+pluginInstances.push(new plugins.ExtractText(
+    configuration.files.cascadingStyleSheet, {allChunks: true, disable: (
+        !configuration.files.cascadingStyleSheet)}))
 // //// endregion
 // //// region performs implicit external logic
 if (injection.external === '__implicit__')
