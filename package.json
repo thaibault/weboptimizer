@@ -26,7 +26,7 @@
         "babel-preset-es2015-node": ">=6.1.0",
         "babel-preset-stage-0": ">=6.5.0",
         "css-loader": ">=0.23.1",
-        "eslint": ">=3.3.0",
+        "eslint": ">=3.3.2",
         "eslint-config-google": ">=0.6.0",
         "eslint-plugin-flowtype": ">=2.6.4",
         "eslint-plugin-jsdoc": ">=2.3.1",
@@ -49,7 +49,6 @@
         "loader-utils": ">=0.2.15",
         "offline-plugin": ">=4.0.0",
         "open-browser-webpack-plugin": ">=0.0.2",
-        "raw-loader": ">=0.5.1",
         "rimraf": ">=2.5.4",
         "style-loader": ">=0.13.1",
         "url-loader": ">=0.5.7",
@@ -535,9 +534,10 @@
                         "filename": "test.html",
                         "inject": "head",
                         "template": {
-                            "__evaluate__": "`raw!html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
+                            "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? self.path.source : `${webOptimizerPath}/`}test.pug`"
                         }
                     },
+                    "html": [],
                     "javaScript": {
                         "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                     }
