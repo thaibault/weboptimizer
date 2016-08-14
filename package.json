@@ -389,7 +389,7 @@
 
             "assetPattern": {"javaScript": {
                 "excludeFilePathRegularExpression": {
-                    "__evaluate__": "`^(?:.*/)?(?:developmentHelper|vendor${self.debug ? '|index': ''})(?:\\.compiled)?\\.js$`"
+                    "__evaluate__": "`^(?:.*/)?(?:development(?:Helper|Index)|vendor${self.debug ? '|index': ''})(?:\\.compiled)?\\.js$`"
                 },
                 "pattern": "'use strict';\n{1}"
             }},
