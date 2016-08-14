@@ -567,10 +567,10 @@
 
             "injection": {"internal": {
                 "developmentHelper": {
-                    "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`].concat(!['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? 'webpack/hot/dev-server' : []) : []"
+                    "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}/${self.files.defaultHTML.filename}`].concat(!['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? 'webpack/hot/dev-server' : []) : []"
                 },
                 "developmentIndex": {
-                    "__evaluate__": "self.dllManifestFilePaths.length ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`, 'webpack/hot/dev-server'] : []"
+                    "__evaluate__": "self.dllManifestFilePaths.length ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}/${self.files.defaultHTML.filename}`, 'webpack/hot/dev-server'] : []"
                 },
                 "vendor": {
                     "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['qunitjs', 'webOptimizer/browserAPI'] : []"
