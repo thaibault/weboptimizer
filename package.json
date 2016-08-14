@@ -121,8 +121,13 @@
                 }
             },
             "files": {
-                "cascadingStyleSheet": {
-                    "__evaluate__": "self.debug ? null : `${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+                "compose": {
+                    "cascadingStyleSheet": {
+                        "__evaluate__": "self.debug ? null : `${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+                    },
+                    "javaScript": {
+                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
+                    }
                 },
                 "defaultHTML": {
                     "chunksSortMode": "auto",
@@ -138,9 +143,6 @@
                     }
                 },
                 "html": [{}],
-                "javaScript": {
-                    "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
-                },
                 "additionalPaths": [
                     "robots.txt", "404.html", "crossdomain.xml", "humans.txt",
                     ".htaccess", "license.txt", "favicon.ico"

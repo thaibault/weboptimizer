@@ -172,7 +172,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                             configuration.build, configuration.path)
                         // TODO replace all placeholder like [hash] [id] ...
                         const filePath:string =
-                            configuration.files.javaScript.replace(
+                            configuration.files.compose.javaScript.replace(
                                 '[name]', path.join(path.relative(
                                     path.dirname(moduleID),
                                     configuration.path.context

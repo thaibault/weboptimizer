@@ -181,7 +181,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     0
                 ].filename].source(), (error:?Error, window:Object):void => {
                     if (configuration.inPlace.cascadingStyleSheet) {
-                        const urlPrefix:string = configuration.files
+                        const urlPrefix:string = configuration.files.compose
                             .cascadingStyleSheet.replace(
                                 '[contenthash]', '')
                         const domNode:DomNode = window.document.querySelector(
@@ -213,7 +213,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     }
                     if (configuration.inPlace.javaScript) {
                         const urlPrefix:string =
-                            configuration.files.javaScript.replace(
+                            configuration.files.compose.javaScript.replace(
                                 '[hash]', '')
                         const domNode:DomNode = window.document.querySelector(
                             `script[src^="${urlPrefix}"]`)
@@ -264,7 +264,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                 if (configuration.inPlace.javaScript) {
                     const assetFilePath = path.join(
                         configuration.path.asset.target,
-                        configuration.files.javaScript.replace(
+                        configuration.files.compose.javaScript.replace(
                             `?${configuration.hashAlgorithm}=[hash]`, ''))
                     for (const filePath:string of [
                         assetFilePath, `${assetFilePath}.map`
@@ -302,9 +302,10 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             delete normalizedInternalInjection[chunkID]
             // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and
             // everywhere else
-            const fileName:string = configuration.files.javaScript.replace(
-                /^(.+)(?:\?[^?]*)$/, '$1'
-            ).replace(/\[name\]/g, chunkID)
+            const fileName:string =
+                configuration.files.compose.javaScript.replace(
+                    /^(.+)(?:\?[^?]*)$/, '$1'
+                ).replace(/\[name\]/g, chunkID)
             pluginInstances.push(new plugins.AddAssetHTMLPlugin({
                 filepath: `${configuration.path.target}${fileName}`,
                 hash: true,
@@ -324,7 +325,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
                 async: false,
                 children: false,
-                filename: configuration.files.javaScript,
+                filename: configuration.files.compose.javaScript,
                 minChunks: Infinity,
                 name: chunkID,
                 minSize: 0
@@ -353,13 +354,14 @@ if (!javaScriptNeeded)
             }
 // //// region mark empty javaScript modules as dummy
 if (!javaScriptNeeded)
-    configuration.files.javaScript = path.join(
+    configuration.files.compose.javaScript = path.join(
         configuration.path.asset.javaScript, '.__dummy__.compiled.js')
 // //// endregion
 // //// region extract cascading style sheets
 pluginInstances.push(new plugins.ExtractText(
-    configuration.files.cascadingStyleSheet, {allChunks: true, disable: (
-        !configuration.files.cascadingStyleSheet)}))
+    configuration.files.compose.cascadingStyleSheet, {
+        allChunks: true, disable: (
+            !configuration.files.compose.cascadingStyleSheet)}))
 // //// endregion
 // //// region performs implicit external logic
 if (injection.external === '__implicit__')
@@ -593,7 +595,8 @@ export default {
     // region output
     output: {
         filename: path.relative(
-            configuration.path.asset.target, configuration.files.javaScript),
+            configuration.path.asset.target,
+            configuration.files.compose.javaScript),
         hashFunction: configuration.hashAlgorithm,
         library: libraryName,
         libraryTarget: (
