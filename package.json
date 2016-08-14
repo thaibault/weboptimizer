@@ -540,7 +540,7 @@
                         "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                     }
                 },
-                "injection": {"internal": "test/"},
+                "injection": {"internal": {"index": "test/"}},
                 "targetTechnology": "node",
 
                 "assetPattern": {"javaScript": {
@@ -568,7 +568,7 @@
 
             "injection": {"internal": {
                 "developmentHelper": {
-                    "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
+                    "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
                 },
                 "vendor": {
                     "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['qunitjs', 'webOptimizer/browserAPI'] : []"
@@ -685,7 +685,7 @@
                 "targetTechnology": "node"
             },
 
-            "test": {"injection": {"internal": "test"}},
+            "test": {"injection": {"internal": {"index": "test"}}},
 
             "testInBrowser": {"injection": {"internal": {"index": "test"}}}
         }
