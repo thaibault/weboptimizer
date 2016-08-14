@@ -587,7 +587,7 @@ export default {
     resolve: {
         alias: configuration.module.aliases,
         extensions: configuration.knownExtensions,
-        root: [(configuration.path.asset.source: string)]
+        root: [(configuration.path.asset.source:string)]
     },
     // endregion
     // region output

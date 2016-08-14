@@ -139,7 +139,7 @@
                 },
                 "html": [{}],
                 "javaScript": {
-                    "__evaluate__": "`${self.path.asset.javaScript}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
                 },
                 "additionalPaths": [
                     "robots.txt", "404.html", "crossdomain.xml", "humans.txt",
@@ -579,7 +579,7 @@
             "files": {
                 "defaultHTML": {"debug": true},
                 "javaScript": {
-                    "__evaluate__": "`${self.path.asset.javaScript}[name].js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}[name].js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "inPlace": {
@@ -637,7 +637,7 @@
                     "__evaluate__": "2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? [{}] : []"
                 },
                 "javaScript": {
-                    "__evaluate__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "inPlace": {
