@@ -56,7 +56,7 @@ module.exports = function(source:string):string {
             configuration, require: (request:string):string => {
                 const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
                 const queryMatch:?Array<string> = request.match(
-                    /^.+\?([^?]+)$/, '$1')
+                    /^[^?]+\?(.+)$/, '$1')
                 let nestedLocals:Object = {}
                 if (queryMatch) {
                     const evaluationFunction = (
