@@ -331,8 +331,9 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 minSize: 0
             }))
 // //// endregion
-let javaScriptNeeded:boolean = ['serve', 'testInBrowser'].includes(
-    configuration.givenCommandLineArguments[2])
+let javaScriptNeeded:boolean = configuration.debug && [
+    'serve', 'testInBrowser'
+].includes(configuration.givenCommandLineArguments[2])
 if (!javaScriptNeeded)
     for (const chunkName:string in normalizedInternalInjection)
         if (normalizedInternalInjection.hasOwnProperty(chunkName))
@@ -359,9 +360,8 @@ if (!javaScriptNeeded)
 // //// endregion
 // //// region extract cascading style sheets
 pluginInstances.push(new plugins.ExtractText(
-    configuration.files.compose.cascadingStyleSheet, {
-        allChunks: true, disable: (
-            !configuration.files.compose.cascadingStyleSheet)}))
+    configuration.files.compose.cascadingStyleSheet, {allChunks: true, disable:
+        !configuration.files.compose.cascadingStyleSheet}))
 // //// endregion
 // //// region performs implicit external logic
 if (injection.external === '__implicit__')
