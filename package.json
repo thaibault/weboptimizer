@@ -156,7 +156,7 @@
                     {"__evaluate__": "/\\/webpack\\/buildin\\/module\\.js$/"}
                 ],
                 "implicitExternalIncludePattern": [],
-                "internal": []
+                "internal": {"index": "__auto__"}
             },
             "inPlace": {
                 "cascadingStyleSheet": true,
@@ -389,7 +389,7 @@
 
             "assetPattern": {"javaScript": {
                 "excludeFilePathRegularExpression": {
-                    "__evaluate__": "`^(?:.*/)?(?:development(?:Helper|Index)|vendor${self.debug ? '|index': ''})(?:\\.compiled)?\\.js$`"
+                    "__evaluate__": "`^(?:.*/)?(?:developmentHelper|vendor${self.debug ? '|index': ''})(?:\\.compiled)?\\.js$`"
                 },
                 "pattern": "'use strict';\n{1}"
             }},
@@ -471,6 +471,7 @@
                         "--config",
                         {"__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"},
                         {"__evaluate__": "self.debug ? '--hot' : ''"},
+                        "--inline",
                         "--host", "0.0.0.0",
                         "--port", {
                             "__evaluate__": "self.development.server.port"
@@ -567,10 +568,7 @@
 
             "injection": {"internal": {
                 "developmentHelper": {
-                    "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}/${self.files.defaultHTML.filename}`].concat(!['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? 'webpack/hot/dev-server' : []) : []"
-                },
-                "developmentIndex": {
-                    "__evaluate__": "self.dllManifestFilePaths.length ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}/${self.files.defaultHTML.filename}`, 'webpack/hot/dev-server'] : []"
+                    "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
                 },
                 "vendor": {
                     "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['qunitjs', 'webOptimizer/browserAPI'] : []"
@@ -641,7 +639,6 @@
                     "__evaluate__": "`${self.path.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
-            "injection": {"internal": {"index": "__auto__"}},
             "inPlace": {
                 "cascadingStyleSheet": {
                     "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve'"
