@@ -471,7 +471,7 @@
                         "--config",
                         {"__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"},
                         {"__evaluate__": "self.debug ? '--hot' : ''"},
-                        "--inline",
+                        {"__evaluate__": "self.debug ? '--inline' : ''"},
                         "--host", "0.0.0.0",
                         "--port", {
                             "__evaluate__": "self.development.server.port"
