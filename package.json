@@ -531,6 +531,9 @@
             "test": {
                 "exportFormat": {"external": "commonjs2", "self": "commonjs2"},
                 "files": {
+                    "compose": {"javaScript": {
+                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
+                    }},
                     "defaultHTML": {
                         "filename": "test.html",
                         "inject": "head",
@@ -538,10 +541,7 @@
                             "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? `${self.path.source}test.pug` : `${webOptimizerPath}/index.pug`}`"
                         }
                     },
-                    "html": [],
-                    "javaScript": {
-                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
-                    }
+                    "html": []
                 },
                 "injection": {"internal": {"index": "test/"}},
                 "targetTechnology": "node",
@@ -579,10 +579,10 @@
             }},
 
             "files": {
-                "defaultHTML": {"debug": true},
-                "javaScript": {
+                "compose": {"javaScript": {
                     "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}[name].js?${self.hashAlgorithm}=[hash]`"
-                }
+                }},
+                "defaultHTML": {"debug": true}
             },
             "inPlace": {
                 "cascadingStyleSheet": false,
@@ -625,8 +625,13 @@
                 "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'var' : 'umd'"
             }},
             "files": {
-                "cascadingStyleSheet": {
-                    "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                "compose": {
+                    "cascadingStyleSheet": {
+                        "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                    },
+                    "javaScript": {
+                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
+                    }
                 },
                 "defaultHTML": {
                     "filename": "playground.html",
@@ -637,9 +642,6 @@
                 },
                 "html": {
                     "__evaluate__": "2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? [{}] : []"
-                },
-                "javaScript": {
-                    "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                 }
             },
             "inPlace": {
