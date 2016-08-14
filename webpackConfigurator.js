@@ -302,15 +302,14 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             delete normalizedInternalInjection[chunkID]
             // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and
             // everywhere else
-            const fileName:string =
+            const filePath:string =
                 configuration.files.compose.javaScript.replace(
                     /^(.+)(?:\?[^?]*)$/, '$1'
                 ).replace(/\[name\]/g, chunkID)
             pluginInstances.push(new plugins.AddAssetHTMLPlugin({
-                filepath: `${configuration.path.target}${fileName}`,
+                filepath: filePath,
                 hash: true,
-                includeSourcemap: Helper.isFileSync(
-                    `${configuration.path.target}${fileName}.map`)
+                includeSourcemap: Helper.isFileSync(`${filePath}.map`)
             }))
             pluginInstances.push(new webpack.DllReferencePlugin({
                 context: configuration.path.context, manifest: require(
