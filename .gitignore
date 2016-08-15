@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-!data/**/*.compiled
-!data/**/*.compiled.*
-!api/**/*.compiled
-!api/**/*.compiled.*
-
 ## Generic
 
 # Generated documentations
