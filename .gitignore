@@ -9,7 +9,6 @@
 
 # Generated documentations
 documentation/build
-api
 apiDocumentation/
 
 # Temporary compile files
