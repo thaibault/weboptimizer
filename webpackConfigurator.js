@@ -39,7 +39,7 @@ plugins.Offline = require('offline-plugin')
 
 import type {
     DomNode, HTMLConfiguration, Injection, NormalizedInternalInjection,
-    ProcedureFunction
+    ProcedureFunction, PromiseCallbackFunction, Window
 } from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -384,16 +384,12 @@ if (injection.external === '__implicit__')
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
             const applyExternalRequest:Function = ():void => {
-                if (configuration.exportFormat.external === 'var') {
-                    if (
-                        originalRequest in
-                        configuration.injection.externalAliases
-                    )
-                        request = configuration.injection.externalAliases[
-                            originalRequest]
+                if (originalRequest in configuration.injection.externalAliases)
+                    request = configuration.injection.externalAliases[
+                        originalRequest]
+                if (configuration.exportFormat.external === 'var')
                     request = Helper.convertToValidVariableName(
                         request, '0-9a-zA-Z_$\\.')
-                }
                 return callback(
                     null, request, configuration.exportFormat.external)
             }
@@ -454,16 +450,22 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
 }
 // //// endregion
 // /// endregion
-// /// region apply final dom modifications/fixes
-if (htmlAvailable)
-    pluginInstances.push({apply: (compiler:Object):void => {
-        compiler.plugin('emit', (
-            compilation:Object, callback:ProcedureFunction
-        ):void => {
-            if (configuration.files.html[0].filename in compilation.assets)
-                dom.env(compilation.assets[configuration.files.html[
-                    0
-                ].filename].source(), (error:?Error, window:Object):void => {
+// /// region apply final dom/javaScript modifications/fixes
+pluginInstances.push({apply: (compiler:Object):void => {
+    compiler.plugin('emit', (
+        compilation:Object, callback:ProcedureFunction
+    ):void => {
+        const promises:Array<Promise<string>> = []
+        for (const htmlConfiguration of configuration.files.html)
+            if (htmlConfiguration.filename in compilation.assets)
+                promises.push(new Promise((
+                    resolve:PromiseCallbackFunction,
+                    reject:PromiseCallbackFunction
+                ):Window => dom.env(compilation.assets[
+                    htmlConfiguration.filename
+                ].source(), (error:?Error, window:Window):?Promise<string> => {
+                    if (error)
+                        return reject(error)
                     const linkables:{[key:string]:string} = {
                         script: 'src', link: 'href'}
                     for (const tagName:string in linkables)
@@ -475,26 +477,74 @@ if (htmlAvailable)
                                     `${configuration.hashAlgorithm}="]`)
                             )
                                 domNode.setAttribute(
-                                    linkables[tagName], domNode.getAttribute(
+                                    linkables[tagName],
+                                    domNode.getAttribute(
                                         linkables[tagName]
                                     ).replace(new RegExp(
                                         `(\\?${configuration.hashAlgorithm}=` +
                                         '[^&]+).*$'
                                     ), '$1'))
-                    compilation.assets[configuration.files.html[
-                        0
-                    ].filename] = new WebpackRawSource(
-                        compilation.assets[configuration.files.html[
-                            0
-                        ].filename].source().replace(
+                    compilation.assets[htmlConfiguration.filename] =
+                        new WebpackRawSource(compilation.assets[
+                            htmlConfiguration.filename
+                        ].source().replace(
                             /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
                         ) + window.document.documentElement.outerHTML)
-                    callback()
-                })
-            else
-                callback()
-        })
-    }})
+                    return resolve(
+                        compilation.assets[htmlConfiguration.filename])
+                })))
+        for (const assetRequest:string in compilation.assets)
+            if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
+                configuration.build.javaScript.outputExtension
+            )) {
+                let source:string = compilation.assets[
+                    assetRequest
+                ].source()
+                for (
+                    const replacement:string in
+                    configuration.injection.externalAliases
+                )
+                    if (configuration.injection.externalAliases.hasOwnProperty(
+                        replacement
+                    )) {
+                        console.log()
+                        console.log(
+                            'A',
+                            Helper.convertToValidRegularExpressionString(
+                                configuration.injection.externalAliases[
+                                    replacement]),
+                            ' -> ',
+                            replacement)
+                        console.log()
+                        source = source.replace(new RegExp(
+                            '(\\(require\\()"' +
+                            Helper.convertToValidRegularExpressionString(
+                                configuration.injection.externalAliases[
+                                    replacement]
+                            ) + '"(\\))', 'g'
+                        ), `$1'${replacement}'$2`)
+                    }
+                source = source.replace(new RegExp(
+                    '(root\\[)"' +
+                    Helper.convertToValidRegularExpressionString(
+                        libraryName
+                    ) + '"(\\] = )'
+                ), `$1'${Helper.convertToValidVariableName(libraryName)}'$2`)
+                /*
+                factory(require("jQuery"));
+                    else if(typeof define === 'function' && define.amd)
+                        define("jQuery-tools", ["jQuery"], factory);
+                    else if(typeof exports === 'object')
+                        exports["jQuery-tools"] = factory(require("jQuery"));
+                    else
+                        root["jQuery-tools"] = factory(root["jQuery"]);
+                */
+                compilation.assets[assetRequest] = new WebpackRawSource(
+                    source)
+            }
+        Promise.all(promises).then(():void => callback())
+    })
+}})
 // /// endregion
 // /// region add automatic image compression
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
@@ -643,12 +693,11 @@ export default {
             // region html (templates)
             // NOTE: This ensures that will be used as a special loader alias.
             {
-                // TODO escape regex
-                test: new RegExp(
+                test: new RegExp(Helper.convertToValidRegularExpressionString(
                     configuration.files.defaultHTML.template.substring(
                         configuration.files.defaultHTML.template.lastIndexOf(
                             '!'
-                        ) + 1)),
+                        ) + 1))),
                 loader: configuration.files.defaultHTML.template.substring(
                     0, configuration.files.defaultHTML.template.lastIndexOf(
                         '!'))

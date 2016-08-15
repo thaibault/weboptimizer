@@ -41,6 +41,8 @@ declare class Proxy {
  * Provides a class of static methods with generic use cases.
  */
 export default class Helper {
+    static specialRegexSequences:Array<string> = [
+        '-', '[', ']', '(', ')', '^', '$', '*', '+', '.', '{', '}'];
     // region boolean
     /**
      * Checks weather one of the given pattern matches given string.
@@ -432,6 +434,31 @@ export default class Helper {
         return object
     }
     // endregion
+    // region string handling
+    /**
+     * Translates given string into the regular expression validated
+     * representation.
+     * @param value - String to convert.
+     * @param excludeSymbols - Symbols not to escape.
+     * @returns Converted string.
+     */
+    static convertToValidRegularExpressionString(
+        value:string, excludeSymbols:Array<string> = []
+    ):string {
+        // NOTE: This is only for performance improvements.
+        if (value.length === 1 && !Helper.specialRegexSequences.includes(
+            value
+        ))
+            return value
+        // The escape sequence must also be escaped; but at first.
+        if (!excludeSymbols.includes('\\'))
+            value.replace(/\\/g, '\\\\')
+        for (const replace:string of Helper.specialRegexSequences)
+            if (!excludeSymbols.includes(replace))
+                value = value.replace(
+                    new RegExp(`\\${replace}`, 'g'), `\\${replace}`)
+        return value
+    }
     /**
      * Translates given name into a valid javaScript one.
      * @param name - Name to convert.
@@ -447,6 +474,7 @@ export default class Helper {
                 fullMatch:string, firstLetter:string
             ):string => firstLetter.toUpperCase())
     }
+    // endregion
     // region process handler
     /**
      * Generates a one shot close handler which triggers given promise methods.
