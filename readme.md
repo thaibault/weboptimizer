@@ -27,32 +27,31 @@ Content
 Features
 --------
 
-- Complete and flexible configured Wrapper for webpack with many automatically
+- Complete and flexible configured Wrapper for **webpack** with many automatically
   determined pre configuration.
-- Completely adaptable for your needs.
-- Specially and automatically targets library and web bundle building out of
-  the box.
-- Only one configuration file (your already existing package.json) for all
+- **Completely** adaptable for your needs.
+- Targets library and web bundle building out of the box.
+- Only one configuration file (your already existing **package.json**) for all
   needed customisations.
-- Many needed uses-cases are preconfigured and mostly works out of the box for
+- Many needed uses-cases are **preconfigured** and mostly works out of the box for
   your project.
     - **API-Documentation** generation
     - Polymorphic **testing** on dom in browsers and/or in node through
       webOptimizer/browserAPI
     - **Linting** and **TypeChecking** with Flow
     - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel, Flow)
-    - Preconfigured **postprocessing* for CSS (Minification),
+    - Preconfigured **postprocessing** for CSS (Minification),
       JavaScript (Minification), Images (Compression)
     - Various pre configured and adaptable implemented concepts for building
       development-, production-, testing- and/or vendor **bundles**.
     - Support for building **libraries** with well defined (UMD) external
-      dependencies (preconfigred extensable weback configuration)
+      dependencies (preconfigred extendable weback configuration)
     - Support for building and **shimming** a whole package managed application
       structure to build for various target environments like browsers or node
       (preconfigred extensable weback configuration)
-    - Generic management for dealing with **DLL-Bundle** to speed up any workflows:
-      Each (pre-)defined chunk can be outsourced to a DLL-Bundle in a complete
-      delclarative and generic way.
+    - Generic management for dealing with **DLL-Bundle** to speed up any
+      workflows: Each (pre-)defined chunk can be outsourced to a DLL-Bundle in
+      a complete delclarative and generic way.
     - Generic support for all known **favicon** types using only one png file as
       source (watching, compressing and auto-generating is integrated)
     - Brings **offline** support though service worker and/or html5 manifest to
@@ -60,9 +59,9 @@ Features
     - Many development helper:
         - Automatic watching and (re-)building any assets thorugh cross
           platform file watching
-        - Preconfigured local webserver with preconfigured websocket
-          connections to **automatically refresh** you browser when any asset has
-          changed (webpack-dev-server).
+        - Preconfigured local webserver with websocket connections to
+          **livereload** you browser when any asset has changed
+          (webpack-dev-server).
         - Preconfigured **hot module replacement** integration to update parts
           of your library/application with no siteeffects in a generic way
           without event the need to refresh your browser
