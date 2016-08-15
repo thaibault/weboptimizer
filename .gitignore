@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+
+!data/**/*.compiled
+!data/**/*.compiled.*
+!api/**/*.compiled
+!api/**/*.compiled.*
+
+## Generic
+
+# Generated documentations
+documentation/build
+api
+apiDocumentation/
+
+# Temporary compile files
+*.compiled.*
+*.compiled
+.dynamicConfiguration-*.json
+*.dll-manifest.json
+*Bundle.*
+
+# Profiling data.
+*.profile
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+.sass-cache
+
+# Ignore docker nested bash generated files.
+/.bash_history
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Vim temporary file
+*.swp
+.ropeproject
+.viminfo
+
+# PHPStorm and other IDE Files
+*.idea
+*.project
+*.pydevproject
+*.settings
+*.externalToolBuilders
+
+# Gedit autosave backups.
+*~
+
+# Temporary fuse files
+**/.fuse_hidden*
+
+# Temporary windows files
+*Thumbs.db
+
+# Node Modules
+node_modules/
+.npm/
+.v8flags.*
+/.cache
+/.config
+.npm-debug.log
+npm-debug.log
+
+# region vim modline
+# vim: set tabstop=4 shiftwidth=4 expandtab:
+# vim: foldmethod=marker foldmarker=region,endregion:
+# endregion
