@@ -456,6 +456,10 @@ pluginInstances.push({apply: (compiler:Object):void => {
         compilation:Object, callback:ProcedureFunction
     ):void => {
         const promises:Array<Promise<string>> = []
+        /*
+            NOTE: Removing symbols after a "&" in hash string is necessary to
+            match the generated request strings in offline plugin.
+        */
         for (const htmlConfiguration of configuration.files.html)
             if (htmlConfiguration.filename in compilation.assets)
                 promises.push(new Promise((
@@ -493,6 +497,11 @@ pluginInstances.push({apply: (compiler:Object):void => {
                     return resolve(
                         compilation.assets[htmlConfiguration.filename])
                 })))
+        /*
+            NOTE: The umd module export doesn't handle casees where the package
+            name doesn't match exported library name. This post processing
+            fixes this issue.
+        */
         for (const assetRequest:string in compilation.assets)
             if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
                 configuration.build.javaScript.outputExtension
@@ -506,39 +515,29 @@ pluginInstances.push({apply: (compiler:Object):void => {
                 )
                     if (configuration.injection.externalAliases.hasOwnProperty(
                         replacement
-                    )) {
-                        console.log()
-                        console.log(
-                            'A',
-                            Helper.convertToValidRegularExpressionString(
-                                configuration.injection.externalAliases[
-                                    replacement]),
-                            ' -> ',
-                            replacement)
-                        console.log()
+                    ))
                         source = source.replace(new RegExp(
-                            '(\\(require\\()"' +
+                            '(require\\()"' +
                             Helper.convertToValidRegularExpressionString(
                                 configuration.injection.externalAliases[
                                     replacement]
                             ) + '"(\\))', 'g'
+                        ), `$1'${replacement}'$2`).replace(new RegExp(
+                            '(define\\("' +
+                            Helper.convertToValidRegularExpressionString(
+                                libraryName
+                            ) + '", \\[.*)"' +
+                            Helper.convertToValidRegularExpressionString(
+                                configuration.injection.externalAliases[
+                                    replacement]
+                            ) + '"(.*\\], factory\\);)'
                         ), `$1'${replacement}'$2`)
-                    }
                 source = source.replace(new RegExp(
                     '(root\\[)"' +
                     Helper.convertToValidRegularExpressionString(
                         libraryName
                     ) + '"(\\] = )'
                 ), `$1'${Helper.convertToValidVariableName(libraryName)}'$2`)
-                /*
-                factory(require("jQuery"));
-                    else if(typeof define === 'function' && define.amd)
-                        define("jQuery-tools", ["jQuery"], factory);
-                    else if(typeof exports === 'object')
-                        exports["jQuery-tools"] = factory(require("jQuery"));
-                    else
-                        root["jQuery-tools"] = factory(root["jQuery"]);
-                */
                 compilation.assets[assetRequest] = new WebpackRawSource(
                     source)
             }
