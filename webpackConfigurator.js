@@ -395,7 +395,7 @@ if (injection.external === '__implicit__')
                         request, '0-9a-zA-Z_$\\.')
                 }
                 return callback(
-                    null, `${configuration.exportFormat.external} ${request}`)
+                    null, request, configuration.exportFormat.external)
             }
             if (Helper.isAnyMatching(
                 request, configuration.injection.implicitExternalIncludePattern
