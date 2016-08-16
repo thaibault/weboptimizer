@@ -384,7 +384,10 @@ if (injection.external === '__implicit__')
                 request.substring(request.lastIndexOf('!') + 1),
                 configuration.module.aliases)
             const applyExternalRequest:Function = ():void => {
-                if (originalRequest in configuration.injection.externalAliases)
+                if (['var', 'umd'].includes(
+                    configuration.exportFormat.external
+                ) &&
+                originalRequest in configuration.injection.externalAliases)
                     request = configuration.injection.externalAliases[
                         originalRequest]
                 if (configuration.exportFormat.external === 'var')
@@ -497,8 +500,12 @@ pluginInstances.push({apply: (compiler:Object):void => {
                     return resolve(
                         compilation.assets[htmlConfiguration.filename])
                 })))
+        if (!configuration.exportFormat.external.startsWith('umd')) {
+            Promise.all(promises).then(():void => callback())
+            return
+        }
         /*
-            NOTE: The umd module export doesn't handle casees where the package
+            NOTE: The umd module export doesn't handle cases where the package
             name doesn't match exported library name. This post processing
             fixes this issue.
         */
@@ -506,9 +513,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
             if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
                 configuration.build.javaScript.outputExtension
             )) {
-                let source:string = compilation.assets[
-                    assetRequest
-                ].source()
+                let source:string = compilation.assets[assetRequest].source()
                 for (
                     const replacement:string in
                     configuration.injection.externalAliases
