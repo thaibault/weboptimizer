@@ -469,7 +469,7 @@ export default class Helper {
     static convertToValidVariableName(
         name:string, allowedSymbols:string = '0-9a-zA-Z_$'
     ):string {
-        return name.replace(/^[^a-zA-Z_$]+/, '').replace(
+        return name.toString().replace(/^[^a-zA-Z_$]+/, '').replace(
             new RegExp(`[^${allowedSymbols}]+([a-zA-Z0-9])`, 'g'), (
                 fullMatch:string, firstLetter:string
             ):string => firstLetter.toUpperCase())
