@@ -246,21 +246,22 @@ You can even execute script to determine a value:
     },
     ...
 
-For all availbale configuration possibilties pleas have a look at the *
-**package.json** file in this project since these values a extended on runtime.
+For all availbale configuration possibilties please have a look at the
+**package.json** file in this project since these values will be extended on
+runtime.
 
-Additionally its even possible to overwrite any value on runtime via a
-complete generic command line interface: The last argument should evaluate to
-a javaScript object witch will be used as source for exending the default
-behavoir. Any JavaScript will be supported:
+Additionally it's even possible to overwrite any value on runtime via a
+complete generic command line interface: The last argument should than evaluate
+to a javaScript object witch will be used as source for extending the default
+behavior. Any JavaScript will be supported:
 
     #!JSON
 
     npm run build '{module: {optimizer: uglifyJS: {compress: {warnings": false}}}}'
 
-If you're using webOptimizer in a toolchain were none printable or none unicode
-compatible symbols should be used (for example content which should replace
-placeholder) you can encode your javaScript expression as base64 code:
+If you're using webOptimizer in another toolchain were none printable or none
+unicode compatible symbols should be used (for example content which should
+replace placeholder) you can encode your javaScript expression as base64 code:
 
     #!bash
 
