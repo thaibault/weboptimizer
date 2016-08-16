@@ -30,7 +30,7 @@ Features
 - Complete and flexible configured Wrapper for **webpack** with many automatically
   determined pre configuration.
 - **Completely** adaptable for your needs.
-- Targets library and web bundle building out of the box.
+- Targets **library** and **web** bundle building out of the box.
 - Only one configuration file (your already existing **package.json**) for all
   needed customisations.
 - Many needed uses-cases are **preconfigured** and mostly works out of the box for
