@@ -505,8 +505,8 @@ pluginInstances.push({apply: (compiler:Object):void => {
             return
         }
         const bundleName:string = (
-            typeof libraryName === string
-        ) ? libraryMame : libraryName[0]
+            typeof libraryName === 'string'
+        ) ? libraryName : libraryName[0]
         /*
             NOTE: The umd module export doesn't handle cases where the package
             name doesn't match exported library name. This post processing
@@ -517,37 +517,40 @@ pluginInstances.push({apply: (compiler:Object):void => {
                 configuration.build.javaScript.outputExtension
             )) {
                 let source:string = compilation.assets[assetRequest].source()
-                for (
-                    const replacement:string in
-                    configuration.injection.externalAliases
-                )
-                    if (configuration.injection.externalAliases.hasOwnProperty(
-                        replacement
-                    ))
-                        source = source.replace(new RegExp(
-                            '(require\\()"' +
-                            Helper.convertToValidRegularExpressionString(
-                                configuration.injection.externalAliases[
-                                    replacement]
-                            ) + '"(\\))', 'g'
-                        ), `$1'${replacement}'$2`).replace(new RegExp(
-                            '(define\\("' +
-                            Helper.convertToValidRegularExpressionString(
-                                bundleName
-                            ) + '", \\[.*)"' +
-                            Helper.convertToValidRegularExpressionString(
-                                configuration.injection.externalAliases[
-                                    replacement]
-                            ) + '"(.*\\], factory\\);)'
-                        ), `$1'${replacement}'$2`)
-                source = source.replace(new RegExp(
-                    '(root\\[)"' +
-                    Helper.convertToValidRegularExpressionString(
-                        bundleName
-                    ) + '"(\\] = )'
-                ), `$1'${Helper.convertToValidVariableName(bundleName)}'$2`)
-                compilation.assets[assetRequest] = new WebpackRawSource(
-                    source)
+                if (typeof source === 'string') {
+                    for (
+                        const replacement:string in
+                        configuration.injection.externalAliases
+                    )
+                        if (configuration.injection.externalAliases
+                            .hasOwnProperty(replacement)
+                        )
+                            source = source.replace(new RegExp(
+                                '(require\\()"' +
+                                Helper.convertToValidRegularExpressionString(
+                                    configuration.injection.externalAliases[
+                                        replacement]
+                                ) + '"(\\))', 'g'
+                            ), `$1'${replacement}'$2`).replace(new RegExp(
+                                '(define\\("' +
+                                Helper.convertToValidRegularExpressionString(
+                                    bundleName
+                                ) + '", \\[.*)"' +
+                                Helper.convertToValidRegularExpressionString(
+                                    configuration.injection.externalAliases[
+                                        replacement]
+                                ) + '"(.*\\], factory\\);)'
+                            ), `$1'${replacement}'$2`)
+                    source = source.replace(new RegExp(
+                        '(root\\[)"' +
+                        Helper.convertToValidRegularExpressionString(
+                            bundleName
+                        ) + '"(\\] = )'
+                    ), `$1'${Helper.convertToValidVariableName(bundleName)}'$2`
+                    )
+                    compilation.assets[assetRequest] = new WebpackRawSource(
+                        source)
+                }
             }
         Promise.all(promises).then(():void => callback())
     })
