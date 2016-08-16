@@ -307,13 +307,13 @@ npm run serve
 <span class="err">...</span>
 </pre></div>
 </td></tr></tbody></table>
-<p>For all availbale configuration possibilties please have a look at the
-<strong>package.json</strong> file in this project since these values will be extended on runtime.</p>
-<p>Additionally it's even possible to overwrite any value on runtime via a complete generic command line interface: The last argument should than evaluate to a javaScript object witch will be used as source for extending the default behavior. Any JavaScript will be supported:</p>
+<p>For all availbale configuration possibilties pleas have a look at the *
+<strong>package.json</strong> file in this project since these values a extended on runtime.</p>
+<p>Additionally its even possible to overwrite any value on runtime via a complete generic command line interface: The last argument should evaluate to a javaScript object witch will be used as source for exending the default behavoir. Any JavaScript will be supported:</p>
 <table class="codehilitetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="err">npm</span> <span class="err">run</span> <span class="err">build</span> <span class="err">'</span><span class="p">{</span><span class="err">module:</span> <span class="err">{optimizer:</span> <span class="err">uglifyJS:</span> <span class="err">{compress:</span> <span class="err">{warnings":</span> <span class="err">false</span><span class="p">}</span><span class="err">}}}'</span>
 </pre></div>
 </td></tr></tbody></table>
-<p>If you're using webOptimizer in another toolchain were none printable or none unicode compatible symbols should be used (for example content which should replace placeholder) you can encode your javaScript expression as base64 code:</p>
+<p>If you're using webOptimizer in a toolchain were none printable or none unicode compatible symbols should be used (for example content which should replace placeholder) you can encode your javaScript expression as base64 code:</p>
 <table class="codehilitetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -323,6 +323,22 @@ npm run serve
 <span class="c1"># is the same as:</span>
 
 npm run build <span class="s1">'e21vZHVsZTp7cHJlcHJvY2Vzc29yOntwdWc6e2xvY2Fsczp7bmFtZTonaMOkbnMnfX19fX0='</span>
+</pre></div>
+</td></tr></tbody></table>
+<p>There is a static helper instance provided to each evaluation or execution context within the package.json (see the API-Documentation, link above, for more details):</p>
+<table class="codehilitetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="err">...</span>
+<span class="s2">"webOptimizer"</span><span class="err">:</span> <span class="p">{</span>
+    <span class="err">...</span>
+    <span class="nt">"libraryName"</span><span class="p">:</span> <span class="p">{</span><span class="nt">"_evaluate__"</span><span class="p">:</span> <span class="err">helper.isPlainObject(self.name)</span> <span class="err">?</span> <span class="err">helper.convertToValidVariableName(self.name)</span> <span class="p">:</span> <span class="err">'random'</span><span class="p">},</span>
+    <span class="err">...</span>
+<span class="p">}</span><span class="err">,</span>
+<span class="err">...</span>
 </pre></div>
 </td></tr></tbody></table>
 </section><section class="about-this-website inner"><h2 id="about-this-website">About this website<!--deDE:Impressum--><!--frFR:Mentions légales--></h2><p>Provider of<!--deDE:Anbieter von--><!--frFR:Fournisseur de--> <a href="http://torben.website/webOptimizer">http://torben.website/webOptimizer</a>:<br>Torben Sickert<br>Christoph-Mang-Str. 14<br>79100 Freiburg<br>Phone:<!--deDE:Tel.:--><!--frFR:Téléphone:--> <a href="tel:004917610248185">+49 (0) 176<span>/</span>10 248 185</a><br>Email:<!--deDE:E-Mail:--> <a href="mailto:info@torben.website">info@torben.website</a><br>Website: <!--deDE:Webseite:--><!--frFR:Site:--> <a href="http://torben.website">http://torben.website</a><br><span class="glyphicon glyphicon-arrow-left arrow-left-home tools-visible-on-javascript-enabled"></span><a class="tools-visible-on-javascript-enabled" href="#home">home<!--deDE:Startseite--><!--frFR:Maison--></a></p>
