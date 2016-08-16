@@ -19,7 +19,7 @@
 <ul>
 <li>Complete and flexible configured Wrapper for <strong>webpack</strong> with many automatically determined pre configuration.</li>
 <li><strong>Completely</strong> adaptable for your needs.</li>
-<li>Targets library and web bundle building out of the box.</li>
+<li>Targets <strong>library</strong> and <strong>web</strong> bundle building out of the box.</li>
 <li>Only one configuration file (your already existing <strong>package.json</strong>) for all needed customisations.</li>
 <li>Many needed uses-cases are <strong>preconfigured</strong> and mostly works out of the box for your project.<ul>
 <li><strong>API-Documentation</strong> generation</li>
@@ -109,7 +109,7 @@
 <span class="err">...</span>
 </pre></div>
 </td></tr></tbody></table>
-<p>You can easily run any sepcified script via:</p>
+<p>You can easily run any specified script via npm's command lint interface:</p>
 <table class="codehilitetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -187,7 +187,7 @@ npm run serve
 <span class="err">...</span>
 </pre></div>
 </td></tr></tbody></table>
-<p>It's recommended to first specify if you writing a library or an application since many preconfigurations are targeting on this two different use cases. Anyway you can customize each coonfiguration by hand in each case.</p>
+<p>It's recommended to first specify if you're writing a library (preserve external dependencies note managed within current project) or an application (everything should be bundled including external libraries) since many preconfigurations are targeting on this two different use cases. Anyway you can customize each coonfiguration by hand in each case.</p>
 <table class="codehilitetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -307,13 +307,13 @@ npm run serve
 <span class="err">...</span>
 </pre></div>
 </td></tr></tbody></table>
-<p>For all availbale configuration possibilties pleas have a look at the *
-<strong>package.json</strong> file in this project since these values a extended on runtime.</p>
-<p>Additionally its even possible to overwrite any value on runtime via a complete generic command line interface: The last argument should evaluate to a javaScript object witch will be used as source for exending the default behavoir. Any JavaScript will be supported:</p>
+<p>For all availbale configuration possibilties please have a look at the
+<strong>package.json</strong> file in this project since these values will be extended on runtime.</p>
+<p>Additionally it's even possible to overwrite any value on runtime via a complete generic command line interface: The last argument should than evaluate to a javaScript object witch will be used as source for extending the default behavior. Any JavaScript will be supported:</p>
 <table class="codehilitetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="err">npm</span> <span class="err">run</span> <span class="err">build</span> <span class="err">'</span><span class="p">{</span><span class="err">module:</span> <span class="err">{optimizer:</span> <span class="err">uglifyJS:</span> <span class="err">{compress:</span> <span class="err">{warnings":</span> <span class="err">false</span><span class="p">}</span><span class="err">}}}'</span>
 </pre></div>
 </td></tr></tbody></table>
-<p>If you're using webOptimizer in a toolchain were none printable or none unicode compatible symbols should be used (for example content which should replace placeholder) you can encode your javaScript expression as base64 code:</p>
+<p>If you're using webOptimizer in another toolchain were none printable or none unicode compatible symbols should be used (for example content which should replace placeholder) you can encode your javaScript expression as base64 code:</p>
 <table class="codehilitetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
