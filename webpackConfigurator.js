@@ -504,6 +504,9 @@ pluginInstances.push({apply: (compiler:Object):void => {
             Promise.all(promises).then(():void => callback())
             return
         }
+        const bundleName:string = (
+            typeof libraryName === string
+        ) ? libraryMame : libraryName[0]
         /*
             NOTE: The umd module export doesn't handle cases where the package
             name doesn't match exported library name. This post processing
@@ -530,7 +533,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
                         ), `$1'${replacement}'$2`).replace(new RegExp(
                             '(define\\("' +
                             Helper.convertToValidRegularExpressionString(
-                                libraryName
+                                bundleName
                             ) + '", \\[.*)"' +
                             Helper.convertToValidRegularExpressionString(
                                 configuration.injection.externalAliases[
@@ -540,9 +543,9 @@ pluginInstances.push({apply: (compiler:Object):void => {
                 source = source.replace(new RegExp(
                     '(root\\[)"' +
                     Helper.convertToValidRegularExpressionString(
-                        libraryName
+                        bundleName
                     ) + '"(\\] = )'
-                ), `$1'${Helper.convertToValidVariableName(libraryName)}'$2`)
+                ), `$1'${Helper.convertToValidVariableName(bundleName)}'$2`)
                 compilation.assets[assetRequest] = new WebpackRawSource(
                     source)
             }
