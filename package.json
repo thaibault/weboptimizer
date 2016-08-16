@@ -15,7 +15,6 @@
     },
     "dependencies": {
         "add-asset-html-webpack-plugin": ">=1.0.2",
-        "autoprefixer": ">=6.4.0",
         "babel-cli": ">=6.11.4",
         "babel-eslint": ">=6.1.2",
         "babel-loader": ">=6.2.4",
@@ -45,6 +44,7 @@
         "loader-utils": ">=0.2.15",
         "offline-plugin": ">=4.0.0",
         "open-browser-webpack-plugin": ">=0.0.2",
+        "postcss-cssnext": ">=2.7.0",
         "postcss-import": ">=8.1.2",
         "postcss-loader": ">=0.10.0",
         "pug": ">=2.0.0-beta5",
@@ -312,6 +312,7 @@
                     "uglifyJS": {"compress": {"warnings": false}}
                 },
                 "preprocessor": {
+                    "cascadingStyleSheet": "?sourceMap=inline",
                     "pug": {
                         "moduleAliases": {
                             "__evaluate__": "self.module.aliases"

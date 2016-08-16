@@ -592,7 +592,8 @@ const loader:{
     }
 } = {
     preprocessor: {
-        cascadingStyleSheet: 'postcss',
+        cascadingStyleSheet: 'postcss' +
+            configuration.module.preprocessor.cascadingStyleSheet,
         javaScript: 'babel?' + Helper.convertCircularObjectToJSON(
             configuration.module.preprocessor.modernJavaScript),
         pug: 'pug?' + Helper.convertCircularObjectToJSON(
@@ -758,8 +759,8 @@ export default {
                 test: /\.css$/,
                 loader: plugins.ExtractText.extract(
                     loader.style,
-                    `${loader.preprocessor.cascadingStyleSheet}!` +
-                    loader.cascadingStyleSheet),
+                    `${loader.cascadingStyleSheet}!` +
+                    loader.preprocessor.cascadingStyleSheet),
                 include: [path.join(
                     configuration.path.asset.source,
                     configuration.path.asset.cascadingStyleSheet
@@ -823,7 +824,7 @@ export default {
         ]
     },
     postcss: ():Array<Object> => [
-        autoprefixer, postcssImport({addDependencyTo: webpack})
+        postcssImport({addDependencyTo: webpack}, postcss-cssnext)
     ],
     html: configuration.module.optimizer.htmlMinifier,
     // Let the "html-loader" access full html minifier processing
