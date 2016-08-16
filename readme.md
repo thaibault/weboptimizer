@@ -119,7 +119,7 @@ compostitions are listed below:
     },
     ...
 
-You can easily run any sepcified script via:
+You can easily run any specified script via npm's command lint interface:
 
     #!bash
 
@@ -167,9 +167,11 @@ default source, target, asset or build paths do it in your **package.json**:
     },
     ...
 
-It's recommended to first specify if you writing a library or an application
-since many preconfigurations are targeting on this two different use cases.
-Anyway you can customize each coonfiguration by hand in each case.
+It's recommended to first specify if you're writing a library (preserve
+external dependencies note managed within current project) or an application
+(everything should be bundled including external libraries) since many
+preconfigurations are targeting on this two different use cases. Anyway you can
+customize each coonfiguration by hand in each case.
 
     #!JSON
 
