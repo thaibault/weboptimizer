@@ -45,6 +45,7 @@
         "offline-plugin": ">=4.0.0",
         "open-browser-webpack-plugin": ">=0.0.2",
         "postcss-cssnext": ">=2.7.0",
+        "postcss-fontpath": ">=0.3.0",
         "postcss-import": ">=8.1.2",
         "postcss-loader": ">=0.10.1",
         "pug": ">=2.0.0-beta5",

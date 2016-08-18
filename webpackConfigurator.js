@@ -20,6 +20,7 @@ import path from 'path'
 
 import postcssImport from 'postcss-import'
 import postcssCSSnext from 'postcss-cssnext'
+import postcssFontPath from 'postcss-fontpath'
 import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
@@ -825,7 +826,8 @@ export default {
     },
     postcss: ():Array<Object> => [
         postcssImport({addDependencyTo: webpack}),
-        postcssCSSnext()
+        postcssFontPath({checkPath: true}),
+        postcssCSSnext({browsers: '> 0%'})
     ],
     html: configuration.module.optimizer.htmlMinifier,
     // Let the "html-loader" access full html minifier processing
