@@ -205,6 +205,7 @@ export type ResolvedConfiguration = {
             uglifyJS:PlainObject
         };
         preprocessor:{
+            cascadingStyleSheet:string;
             pug:PlainObject;
             less:PlainObject;
             modernJavaScript:PlainObject;
