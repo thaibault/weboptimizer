@@ -20,6 +20,7 @@ import path from 'path'
 
 import autoprefixer from 'autoprefixer'
 import postcssImport from 'postcss-import'
+import postcssCustomProperties from 'postcss-cssnext'
 import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
@@ -824,7 +825,8 @@ export default {
         ]
     },
     postcss: ():Array<Object> => [
-        postcssImport({addDependencyTo: webpack}, postcss-cssnext)
+        postcssImport({addDependencyTo: webpack}),
+        postcssCssnext()
     ],
     html: configuration.module.optimizer.htmlMinifier,
     // Let the "html-loader" access full html minifier processing
