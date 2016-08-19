@@ -826,7 +826,12 @@ export default {
     },
     postcss: ():Array<Object> => [
         postcssImport({addDependencyTo: webpack}),
-        postcssFontPath({checkPath: true}),
+        /*
+            NOTE: Checking path doesn't work if fonts are referenced in
+            libraries provided in another location than the project itself like
+            the node_modules folder.
+        */
+        postcssFontPath({checkPath: false}),
         postcssCSSnext({browsers: '> 0%'})
     ],
     html: configuration.module.optimizer.htmlMinifier,
