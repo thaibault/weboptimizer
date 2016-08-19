@@ -347,8 +347,8 @@ if (!javaScriptNeeded)
                         configuration.knownExtensions,
                         configuration.path.context,
                         configuration.path.asset.source,
-                        configuration.path.ignore),
-                    configuration.build, configuration.path)
+                        configuration.path.ignore
+                    ), configuration.build, configuration.path)
                 if (type && configuration.build[type] && configuration.build[
                     type
                 ].outputExtension === 'js') {
@@ -618,8 +618,7 @@ const loader:{
     },
     html: 'html?' + Helper.convertCircularObjectToJSON(
         configuration.module.html),
-    cascadingStyleSheet: 'css?' + Helper.convertCircularObjectToJSON(
-        configuration.module.cascadingStyleSheet),
+    cascadingStyleSheet: `css?${configuration.module.cascadingStyleSheet}`,
     style: 'style?' + Helper.convertCircularObjectToJSON(
         configuration.module.style),
     postprocessor: {
@@ -832,7 +831,10 @@ export default {
         ]
     },
     postcss: ():Array<Object> => [
-        postcssImport({addDependencyTo: webpack}),
+        postcssImport({
+            addDependencyTo: webpack,
+            root: configuration.path.context
+        }),
         /*
             NOTE: Checking path doesn't work if fonts are referenced in
             libraries provided in another location than the project itself like

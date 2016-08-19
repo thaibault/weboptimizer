@@ -192,7 +192,7 @@
                 "aliases": {
                     "webOptimizer/browserAPI$": "webOptimizer/browserAPI.compiled"
                 },
-                "cascadingStyleSheet": {},
+                "cascadingStyleSheet": "-url",
                 "directories": ["web_modules", "node_modules"],
                 "html": {
                     "config": "html",
