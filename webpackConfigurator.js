@@ -618,7 +618,7 @@ const loader:{
     },
     html: 'html?' + Helper.convertCircularObjectToJSON(
         configuration.module.html),
-    cascadingStyleSheet: `css?${configuration.module.cascadingStyleSheet}`,
+    cascadingStyleSheet: `css${configuration.module.cascadingStyleSheet}`,
     style: 'style?' + Helper.convertCircularObjectToJSON(
         configuration.module.style),
     postprocessor: {

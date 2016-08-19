@@ -192,7 +192,7 @@
                 "aliases": {
                     "webOptimizer/browserAPI$": "webOptimizer/browserAPI.compiled"
                 },
-                "cascadingStyleSheet": "-url",
+                "cascadingStyleSheet": "",
                 "directories": ["web_modules", "node_modules"],
                 "html": {
                     "config": "html",
@@ -597,7 +597,7 @@
                     "pug": {"compiler": {"pretty": true}},
                     "less": {"sourceMap": true}
                 },
-                "cascadingStyleSheet": {"sourceMap": true},
+                "cascadingStyleSheet": "?sourceMap",
                 "optimizer": {
                     "uglifyJS": null,
                     "htmlMinifier": {
