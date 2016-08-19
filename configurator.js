@@ -16,6 +16,7 @@
 // region imports
 import * as fileSystem from 'fs'
 import path from 'path'
+
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')

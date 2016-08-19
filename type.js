@@ -185,9 +185,15 @@ export type ResolvedConfiguration = {
     };
     knownExtensions:Array<string>;
     libraryName:string;
+    loader:{
+        aliases:Array<string>;
+        directories:Array<string>;
+        extensions:Array<string>;
+    };
     module:{
         aliases:PlainObject;
         cascadingStyleSheet:PlainObject;
+        directories:Array<string>;
         html:PlainObject;
         optimizer:{
             data:PlainObject;
@@ -245,7 +251,7 @@ export type ResolvedConfiguration = {
     loader:{
         aliases:PlainObject;
         extensions:Array<string>;
-        moduleDirectories:Array<string>;
+        directories:Array<string>;
     };
 
     document:PlainObject;

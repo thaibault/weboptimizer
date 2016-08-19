@@ -140,7 +140,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
     const buildConfigurations:ResolvedBuildConfiguration =
         Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.asset.source,
-            configuration.path.context, configuration.path.ignore)
+            configuration.path.ignore)
     if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2])) {
         let tidiedUp:boolean = false
         const tidyUp:Function = ():void => {
@@ -159,8 +159,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         configuration.testInBrowser.injection.internal,
                         configuration.module.aliases,
                         configuration.knownExtensions,
-                        configuration.path.context,
-                        configuration.path.ignore
+                        configuration.path.context, path.join(
+                            configuration.path.source,
+                            configuration.path.asset.source
+                        ), configuration.path.ignore
                     ).internal)
             for (const chunkName:string in internalInjection)
                 if (internalInjection.hasOwnProperty(chunkName))
@@ -168,8 +170,14 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         chunkName
                     ]) {
                         const type:?string = Helper.determineAssetType(
-                            Helper.determineModuleFilePath(moduleID),
-                            configuration.build, configuration.path)
+                            Helper.determineModuleFilePath(
+                                moduleID, configuration.module.aliases,
+                                configuration.knownExtensions,
+                                configuration.path.context, path.join(
+                                    configuration.path.source,
+                                    configuration.path.asset.source
+                                ), configuration.path.ignore
+                            ), configuration.build, configuration.path)
                         // TODO replace all placeholder like [hash] [id] ...
                         const filePath:string =
                             configuration.files.compose.javaScript.replace(
@@ -257,7 +265,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
             Helper.determineModuleLocations(
                 configuration.testInBrowser.injection.internal,
                 configuration.module.aliases, configuration.knownExtensions,
-                configuration.path.context, configuration.path.ignore
+                configuration.path.context, path.join(
+                    configuration.path.source, configuration.path.asset.source
+                ), configuration.path.ignore
             ).filePaths
         for (const buildConfiguration of buildConfigurations)
             for (const filePath:string of buildConfiguration.filePaths)

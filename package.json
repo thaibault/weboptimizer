@@ -193,6 +193,7 @@
                     "webOptimizer/browserAPI$": "webOptimizer/browserAPI.compiled"
                 },
                 "cascadingStyleSheet": {},
+                "directories": ["web_modules", "node_modules"],
                 "html": {
                     "config": "html",
                     "attrs": ["img:src", "link:href", "a:href"]
@@ -514,7 +515,7 @@
                     "-loader.compiled.js", "-loader.js", "Loader.compiled.js",
                     "Loader.js", ".js"
                 ],
-                "moduleDirectories": [
+                "directories": [
                     "web_loaders", "web_modules", "node_loaders",
                     "node_modules", "../"
                 ]

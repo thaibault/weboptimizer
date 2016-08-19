@@ -134,8 +134,8 @@ pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
 const moduleLocations:{[key:string]:Array<string>} =
     Helper.determineModuleLocations(
         configuration.injection.internal, configuration.module.aliases,
-        configuration.knownExtensions, configuration.path.context,
-        configuration.path.ignore)
+        configuration.knownExtensions, configuration.path.context, path.join(
+            configuration.path.source, configuration.path.asset.source))
 // //// region perform javaScript minification/optimisation
 if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
@@ -286,10 +286,12 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
 const injection:Injection = Helper.resolveInjection(
     configuration.injection, Helper.resolveBuildConfigurationFilePaths(
         configuration.build, configuration.path.asset.source,
-        configuration.path.context, configuration.path.ignore
+        configuration.path.ignore
     ), configuration.testInBrowser.injection.internal,
     configuration.module.aliases, configuration.knownExtensions,
-    configuration.path.context, configuration.path.ignore)
+    configuration.path.context, path.join(
+        configuration.path.source, configuration.path.asset.source
+    ), configuration.path.ignore)
 const normalizedInternalInjection:NormalizedInternalInjection =
     Helper.normalizeInternalInjection(injection.internal)
 // //// region remove chunks if a corresponding dll package exists
@@ -344,7 +346,10 @@ if (!javaScriptNeeded)
                     Helper.determineModuleFilePath(
                         moduleID, configuration.module.aliases,
                         configuration.knownExtensions,
-                        configuration.path.context),
+                        configuration.path.context, path.join(
+                            configuration.path.source,
+                            configuration.path.asset.source
+                        ), configuration.path.ignore),
                     configuration.build, configuration.path)
                 if (type && configuration.build[type] && configuration.build[
                     type
@@ -377,7 +382,9 @@ if (injection.external === '__implicit__')
         const filePath:string = Helper.determineModuleFilePath(
             request.substring(request.lastIndexOf('!') + 1),
             configuration.module.aliases, configuration.knownExtensions,
-            context)
+            context, path.join(
+                configuration.path.source, configuration.path.asset.source
+            ), configuration.path.ignore)
         if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
             const originalRequest:string = request
             // NOTE: We apply alias on externals additionally.
@@ -413,7 +420,10 @@ if (injection.external === '__implicit__')
                     )
                         if (Helper.determineModuleFilePath(
                             moduleID, configuration.module.aliases,
-                            configuration.knownExtensions, context
+                            configuration.knownExtensions, context, path.join(
+                                configuration.path.source,
+                                configuration.path.asset.source
+                            ), configuration.path.ignore
                         ) === filePath)
                             return callback()
             /*
@@ -645,12 +655,13 @@ export default {
     resolveLoader: {
         alias: configuration.loader.aliases,
         extensions: configuration.loader.extensions,
-        modulesDirectories: configuration.loader.moduleDirectories
+        modulesDirectories: configuration.loader.directories
     },
     resolve: {
         alias: configuration.module.aliases,
         extensions: configuration.knownExtensions,
-        root: [(configuration.path.asset.source:string)]
+        root: [(configuration.path.asset.source:string)],
+        modulesDirectories: configuration.module.directories
     },
     // endregion
     // region output

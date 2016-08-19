@@ -425,7 +425,7 @@ QUnit.test('determineAssetType', (assert:Object):void => {
 QUnit.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
     assert.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
     assert.deepEqual(Helper.resolveBuildConfigurationFilePaths(
-        buildConfiguration, './', './', ['.git', 'node_modules']
+        buildConfiguration, './', ['.git', 'node_modules']
     ), [
         {
             extension: 'js',
@@ -482,8 +482,8 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                     dllChunkIDs: []
                 },
                 Helper.resolveBuildConfigurationFilePaths(
-                    buildConfiguration, './', './', ['.git', 'node_modules']
-                ), [], {}, [], './', ['.git', 'node_modules']
+                    buildConfiguration, './', ['.git', 'node_modules']
+                ), [], {}, [], './', '', ['.git', 'node_modules']
             ],
             {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []}
         ],
@@ -494,8 +494,8 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                     dllChunkIDs: []
                 },
                 Helper.resolveBuildConfigurationFilePaths(
-                    buildConfiguration, './', './', ['.git', 'node_modules']
-                ), [], {}, [], './', ['.git', 'node_modules']
+                    buildConfiguration, './', ['.git', 'node_modules']
+                ), [], {}, [], './', '', ['.git', 'node_modules']
             ],
             {
                 internal: 'a.js', external: [], commonChunkIDs: [],
@@ -509,8 +509,8 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                     dllChunkIDs: []
                 },
                 Helper.resolveBuildConfigurationFilePaths(
-                    buildConfiguration, './', './', ['.git', 'node_modules']
-                ), [], {}, [], './', ['.git', 'node_modules']
+                    buildConfiguration, './', ['.git', 'node_modules']
+                ), [], {}, [], './', '', ['.git', 'node_modules']
             ],
             {
                 internal: ['a'], external: [], commonChunkIDs: [],
@@ -524,8 +524,8 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                     dllChunkIDs: []
                 },
                 Helper.resolveBuildConfigurationFilePaths(
-                    buildConfiguration, './', './', ['.git', 'node_modules']
-                ), [], {}, [], './', ['.git', 'node_modules']
+                    buildConfiguration, './', ['.git', 'node_modules']
+                ), [], {}, [], './', '', ['.git', 'node_modules']
             ],
             {internal: {}, external: [], commonChunkIDs: [], dllChunkIDs: []}
         ],
@@ -536,8 +536,8 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                     commonChunkIDs: [], dllChunkIDs: []
                 },
                 Helper.resolveBuildConfigurationFilePaths(
-                    buildConfiguration, './', './', ['.git', 'node_modules']
-                ), [], {}, [], './', ['.git', 'node_modules']
+                    buildConfiguration, './', ['.git', 'node_modules']
+                ), [], {}, [], './', '', ['.git', 'node_modules']
             ],
             {
                 internal: {index: []}, external: [], commonChunkIDs: [],
@@ -550,19 +550,19 @@ QUnit.test('resolveInjection', (assert:Object):void => {
 QUnit.test('getAutoChunk', (assert:Object):void => {
     assert.deepEqual(Helper.getAutoChunk(
         Helper.resolveBuildConfigurationFilePaths(
-            buildConfiguration, './', './', ['.git', 'node_modules']), [
+            buildConfiguration, './', ['.git', 'node_modules']), [
                 '.git', 'node_modules'
             ], './'
     ), {})
 })
 QUnit.test('determineModuleFilePath', (assert:Object):void => {
     for (const test:Array<any> of [
-        [['a', {}, [], './', []], 'a'],
-        [['a', {a: 'b'}, {}, [], './', []], 'b'],
-        [['bba', {a: 'b'}, {}, [], './', []], 'bbb'],
+        [['a', {}, [], './', '', []], 'a'],
+        [['a', {a: 'b'}, [], './', '', []], 'b'],
+        [['bba', {a: 'b'}, [], './', '', []], 'bbb'],
         [['helper'], 'helper.js'],
-        [['helper', {}, [], './', []], 'helper'],
-        [['helper', {}, ['.js'], '../', []], 'helper'],
+        [['helper', {}, [], './', '', []], 'helper'],
+        [['helper', {}, ['.js'], '../', '', []], 'helper'],
         [['helper', {}, ['.js'], './'], 'helper.js']
     ])
         assert.strictEqual(

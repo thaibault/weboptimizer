@@ -652,15 +652,12 @@ export default class Helper {
      * precedence.
      * @param configuration - Given build configurations.
      * @param entryPath - Path to analyse nested structure.
-     * @param context - Path to set paths relative to and determine relative
-     * ignored paths to.
-     * @param pathsToIgnore - Paths which marks location to ignore (Relative
-     * paths are resolved relatively to given context.).
+     * @param pathsToIgnore - Paths which marks location to ignore.
      * @returns Converted build configuration.
      */
     static resolveBuildConfigurationFilePaths(
         configuration:BuildConfiguration, entryPath:string = './',
-        context:string = './', pathsToIgnore:Array<string> = ['.git']
+        pathsToIgnore:Array<string> = ['.git']
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
         let index:number = 0
@@ -704,29 +701,39 @@ export default class Helper {
     /**
      * Determines all file and directory paths related to given internal
      * modules as array.
-     * @param internalInjection - List of moduleIDs or module file paths.
+     * @param internalInjection - List of module ids or module file paths.
      * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - List of file extensions to take into account.
      * @param context - File path to resolve relative to.
+     * @param referencePath - Path to search for local modules.
+     * @param pathsToIgnore - Paths which marks location to ignore.
+     * @param relativeModuleFilePaths - Module file paths relatively to given
+     * context.
+     * @param packageEntryFileNames - Names of possible package entry files.
      * @returns Object with a file path and directory path key mapping to
      * corresponding list of paths.
      */
     static determineModuleLocations(
         internalInjection:InternalInjection, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = ['.js'], context:string = './'
+        knownExtensions:Array<string> = ['.js'], context:string = './',
+        referencePath:string = '', pathsToIgnore:Array<string> = ['.git'],
+        relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
+        packageEntryFileNames:Array<string> = [
+            '__package__', '', 'index', 'main']
     ):{filePaths:Array<string>;directoryPaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
         const normalizedInternalInjection:NormalizedInternalInjection =
-            Helper.normalizeInternalInjection(
-                internalInjection)
+            Helper.normalizeInternalInjection(internalInjection)
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
                     chunkName
                 ]) {
                     const filePath:string = Helper.determineModuleFilePath(
-                        moduleID, moduleAliases, knownExtensions, context)
+                        moduleID, moduleAliases, knownExtensions, context,
+                        referencePath, pathsToIgnore, relativeModuleFilePaths,
+                        packageEntryFileNames)
                     filePaths.push(filePath)
                     const directoryPath:string = path.dirname(filePath)
                     if (!directoryPaths.includes(directoryPath))
@@ -784,8 +791,9 @@ export default class Helper {
      * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - File extensions to take into account.
      * @param context - File path to use as starting point.
-     * @param pathsToIgnore - Paths which marks location to ignore (Relative
-     * paths are resolved relatively to given context.).
+     * @param referencePath - Reference path from where local files should be
+     * resolved.
+     * @param pathsToIgnore - Paths which marks location to ignore.
      * @returns Given injection with resolved marked indicators.
      */
     static resolveInjection(
@@ -794,14 +802,15 @@ export default class Helper {
         modulesToExclude:InternalInjection,
         moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
             '.js', '.css', '.svg', '.html'
-        ], context:string = './', pathsToIgnore:Array<string> = ['.git']
+        ], context:string = './', referencePath:string = '',
+        pathsToIgnore:Array<string> = ['.git']
     ):Injection {
         const injection:Injection = Helper.extendObject(
             true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
                 modulesToExclude, moduleAliases, knownExtensions, context,
-                pathsToIgnore
+                referencePath, pathsToIgnore
             ).filePaths
         for (const type:string of ['internal', 'external'])
             /* eslint-disable curly */
@@ -845,9 +854,7 @@ export default class Helper {
             buildConfigurations
         ) {
             if (!injectedBaseNames[buildConfiguration.outputExtension])
-                injectedBaseNames[
-                    buildConfiguration.outputExtension
-                ] = []
+                injectedBaseNames[buildConfiguration.outputExtension] = []
             for (const moduleFilePath:string of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
                     const baseName:string = path.basename(
@@ -887,6 +894,8 @@ export default class Helper {
      * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - List of known extensions.
      * @param context - File path to determine relative to.
+     * @param referencePath - Path to resolve local modules relative to.
+     * @param pathsToIgnore - Paths which marks location to ignore.
      * @param relativeModuleFilePaths - List of relative file path to search
      * for modules in.
      * @param packageEntryFileNames - List of package entry file names to
@@ -898,12 +907,15 @@ export default class Helper {
     static determineModuleFilePath(
         moduleID:string, moduleAliases:PlainObject = {},
         knownExtensions:Array<string> = ['.js'], context:string = './',
+        referencePath:string = '', pathsToIgnore:Array<string> = ['.git'],
         relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
         packageEntryFileNames:Array<string> = [
             '__package__', '', 'index', 'main']
     ):string {
         moduleID = Helper.applyAliases(moduleID, moduleAliases)
-        for (const moduleLocation:string of relativeModuleFilePaths)
+        for (const moduleLocation:string of [referencePath].concat(
+            relativeModuleFilePaths
+        ))
             for (let fileName:string of packageEntryFileNames)
                 for (const extension:string of knownExtensions) {
                     let moduleFilePath:string = moduleID
@@ -934,6 +946,10 @@ export default class Helper {
                     }
                     moduleFilePath = path.join(moduleFilePath, fileName)
                     moduleFilePath += extension
+                    if (Helper.isFilePathInLocation(
+                        moduleFilePath, pathsToIgnore
+                    ))
+                        continue
                     try {
                         if (fileSystem.statSync(moduleFilePath).isFile())
                             return moduleFilePath
