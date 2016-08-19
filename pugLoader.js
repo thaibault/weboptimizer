@@ -15,7 +15,6 @@
 */
 // region imports
 import * as fileSystem from 'fs'
-import path from 'path'
 
 import * as pug from 'pug'
 import * as loaderUtils from 'loader-utils'
@@ -80,10 +79,8 @@ module.exports = function(source:string):string {
                     return compile(template, options)(nestedLocals)
                 const templateFilePath:string = Helper.determineModuleFilePath(
                     template, query.moduleAliases, query.knownExtensions,
-                    query.context, path.join(
-                        configuration.path.source,
-                        configuration.path.asset.source
-                    ), configuration.path.ignore)
+                    query.context, configuration.path.asset.source,
+                    configuration.path.ignore)
                 this.addDependency(templateFilePath)
                 if (queryMatch || templateFilePath.endsWith('.pug'))
                     return compile(templateFilePath, options)(nestedLocals)

@@ -159,10 +159,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         configuration.testInBrowser.injection.internal,
                         configuration.module.aliases,
                         configuration.knownExtensions,
-                        configuration.path.context, path.join(
-                            configuration.path.source,
-                            configuration.path.asset.source
-                        ), configuration.path.ignore
+                        configuration.path.context,
+                        configuration.path.asset.source,
+                        configuration.path.ignore
                     ).internal)
             for (const chunkName:string in internalInjection)
                 if (internalInjection.hasOwnProperty(chunkName))
@@ -173,10 +172,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
                             Helper.determineModuleFilePath(
                                 moduleID, configuration.module.aliases,
                                 configuration.knownExtensions,
-                                configuration.path.context, path.join(
-                                    configuration.path.source,
-                                    configuration.path.asset.source
-                                ), configuration.path.ignore
+                                configuration.path.context,
+                                configuration.path.asset.source,
+                                configuration.path.ignore
                             ), configuration.build, configuration.path)
                         // TODO replace all placeholder like [hash] [id] ...
                         const filePath:string =
@@ -265,9 +263,8 @@ if (configuration.givenCommandLineArguments.length > 2) {
             Helper.determineModuleLocations(
                 configuration.testInBrowser.injection.internal,
                 configuration.module.aliases, configuration.knownExtensions,
-                configuration.path.context, path.join(
-                    configuration.path.source, configuration.path.asset.source
-                ), configuration.path.ignore
+                configuration.path.context, configuration.path.asset.source,
+                configuration.path.ignore
             ).filePaths
         for (const buildConfiguration of buildConfigurations)
             for (const filePath:string of buildConfiguration.filePaths)

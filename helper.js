@@ -908,11 +908,13 @@ export default class Helper {
         moduleID:string, moduleAliases:PlainObject = {},
         knownExtensions:Array<string> = ['.js'], context:string = './',
         referencePath:string = '', pathsToIgnore:Array<string> = ['.git'],
-        relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
+        relativeModuleFilePaths:Array<string> = ['node_modules', '../'],
         packageEntryFileNames:Array<string> = [
             '__package__', '', 'index', 'main']
     ):string {
         moduleID = Helper.applyAliases(moduleID, moduleAliases)
+        if (referencePath.startsWith('/'))
+            referencePath = path.relative(context, referencePath)
         for (const moduleLocation:string of [referencePath].concat(
             relativeModuleFilePaths
         ))
