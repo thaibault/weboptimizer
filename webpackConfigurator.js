@@ -18,9 +18,10 @@ import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
 import path from 'path'
 
-import postcssImport from 'postcss-import'
 import postcssCSSnext from 'postcss-cssnext'
 import postcssFontPath from 'postcss-fontpath'
+import postcssImport from 'postcss-import'
+import postcssURL from 'postcss-url'
 import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
@@ -832,8 +833,7 @@ export default {
     },
     postcss: ():Array<Object> => [
         postcssImport({
-            addDependencyTo: webpack,
-            root: configuration.path.context
+            addDependencyTo: webpack, root: configuration.path.context
         }),
         /*
             NOTE: Checking path doesn't work if fonts are referenced in
@@ -841,6 +841,7 @@ export default {
             the node_modules folder.
         */
         postcssFontPath({checkPath: false}),
+        postcssURL(),
         postcssCSSnext({browsers: '> 0%'})
     ],
     html: configuration.module.optimizer.htmlMinifier,

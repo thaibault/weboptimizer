@@ -192,7 +192,7 @@ export type ResolvedConfiguration = {
     };
     module:{
         aliases:PlainObject;
-        cascadingStyleSheet:PlainObject;
+        cascadingStyleSheet:string;
         directories:Array<string>;
         html:PlainObject;
         optimizer:{
