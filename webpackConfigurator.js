@@ -670,8 +670,7 @@ export default {
         libraryTarget: (
             configuration.givenCommandLineArguments[2] === 'buildDLL'
         ) ? 'var' : configuration.exportFormat.self,
-        path: path.relative(
-            configuration.path.context, configuration.path.asset.target),
+        path: configuration.path.target,
         publicPath: configuration.path.asset.publicTarget,
         pathinfo: configuration.debug,
         umdNamedDefine: true
