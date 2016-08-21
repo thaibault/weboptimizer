@@ -846,14 +846,15 @@ export default {
         postcssFontPath({checkPath: false}),
         postcssURL({filter: '', maxSize: 0}),
         postcssSprites({
+            filterBy: ():Promise => new Promise((resolve:Function):Promise => resolve()),
+            hooks: {onSaveSpritesheet: (image:Object):string => path.join(
+                image.spritePath, 'sprite.png')},
             stylesheetPath: path.join(
                 configuration.path.asset.source,
                 configuration.path.asset.cascadingStyleSheet),
             spritePath: path.join(
                 configuration.path.asset.source,
-                configuration.path.asset.image),
-            hooks: {onSaveSpritesheet: (image:Object):string => path.join(
-                image.spritePath, 'sprite.png')}
+                configuration.path.asset.image)
         })
     ],
     html: configuration.module.optimizer.htmlMinifier,
