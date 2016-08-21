@@ -465,8 +465,8 @@
                 },
                 "lint": [
                     {
-                        "command": "echo",
-                        "arguments": ["LINT", "CSS"]
+                        "command": "stylelint",
+                        "arguments": [{"__evaluate__": "`${self.path.asset.cascadingStyleSheet}**/*.css`"}]
                     },
                     {
                         "command": "eslint",
