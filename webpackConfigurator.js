@@ -846,7 +846,9 @@ export default {
         postcssFontPath({checkPath: false}),
         postcssURL({filter: '', maxSize: 0}),
         postcssSprites({
-            filterBy: ():Promise => new Promise((resolve:Function):Promise => resolve()),
+            filterBy: ():Promise<null> => new Promise((
+                resolve:Function
+            ):Promise<null> => resolve()),
             hooks: {onSaveSpritesheet: (image:Object):string => path.join(
                 image.spritePath, 'sprite.png')},
             stylesheetPath: path.join(

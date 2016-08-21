@@ -316,13 +316,20 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 `${configuration.commandLine[type].command} ` +
                 commandLineArguments.join(' ')
             ).trim() + '"')
-            const childProcess:ChildProcess = spawnChildProcess(
-                configuration.commandLine[type].command, commandLineArguments,
-                childProcessOptions)
-            for (const closeEventName:string of closeEventNames)
-                childProcess.on(closeEventName, Helper.getProcessCloseHandler(
-                    resolve, reject, closeEventName))
-            childProcesses.push(childProcess)
+            let tasks:Array<Object>
+            if (Array.isArray(configuration.commandLine[type]))
+                tasks = configuration.commandLine[type]
+            else
+                tasks = [configuration.commandLine[type]]
+            for (const task:Object of tasks) {
+                const childProcess:ChildProcess = spawnChildProcess(
+                    task.command, commandLineArguments, childProcessOptions)
+                for (const closeEventName:string of closeEventNames)
+                    childProcess.on(
+                        closeEventName, Helper.getProcessCloseHandler(
+                            resolve, reject, closeEventName))
+                childProcesses.push(childProcess)
+            }
         }))
     // / region synchronous
     if (['document', 'test'].includes(

@@ -462,18 +462,24 @@
                         {"__evaluate__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.js`"}
                     ]
                 },
-                "lint": {
-                    "command": "eslint",
-                    "arguments": [
-                        "--config",
-                        {"__evaluate__": "`'${webOptimizerPath}/package.json'`"},
-                        "--ignore-pattern",
-                        {"__evaluate__": "`'${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
-                        "--ignore-pattern",
-                        {"__evaluate__": "`'${self.path.apiDocumentation}'`"},
-                        "'**/*.js'"
-                    ]
-                },
+                "lint": [
+                    {
+                        "command": "echo",
+                        "arguments": ["LINT", "CSS"]
+                    },
+                    {
+                        "command": "eslint",
+                        "arguments": [
+                            "--config",
+                            {"__evaluate__": "`'${webOptimizerPath}/package.json'`"},
+                            "--ignore-pattern",
+                            {"__evaluate__": "`'${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
+                            "--ignore-pattern",
+                            {"__evaluate__": "`'${self.path.apiDocumentation}'`"},
+                            "'**/*.js'"
+                        ]
+                    }
+                ],
                 "serve": {
                     "command": "webpack-dev-server",
                     "arguments": [
