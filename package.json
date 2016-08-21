@@ -48,6 +48,7 @@
         "postcss-fontpath": ">=0.3.0",
         "postcss-import": ">=8.1.2",
         "postcss-loader": ">=0.10.1",
+        "postcss-sprites": ">=3.3.0",
         "postcss-url": ">=5.1.2",
         "pug": ">=2.0.0-beta5",
         "pug-cli": ">=1.0.0-alpha6",
