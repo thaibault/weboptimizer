@@ -36,6 +36,8 @@ Features
 - Many needed uses-cases are **preconfigured** and mostly works out of the box for
   your project.
     - **API-Documentation** generation
+    - Image **sprite** handling. Combine your images and never create sprites by
+      hand again.
     - Polymorphic **testing** on dom in browsers and/or in node through
       webOptimizer/browserAPI
     - **Linting** and **TypeChecking** with Flow
