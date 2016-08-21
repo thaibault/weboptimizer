@@ -21,6 +21,7 @@ import path from 'path'
 import postcssCSSnext from 'postcss-cssnext'
 import postcssFontPath from 'postcss-fontpath'
 import postcssImport from 'postcss-import'
+import postcssSprites from 'postcss-sprites'
 import postcssURL from 'postcss-url'
 import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
@@ -836,14 +837,24 @@ export default {
             addDependencyTo: webpack,
             root: configuration.path.context
         }),
-        postcssFontPath({checkPath: false}),
-        postcssURL({filter: '', maxSize: 0}),
         /*
             NOTE: Checking path doesn't work if fonts are referenced in
             libraries provided in another location than the project itself like
             the node_modules folder.
         */
-        postcssCSSnext({browsers: '> 0%'})
+        postcssCSSnext({browsers: '> 0%'}),
+        postcssFontPath({checkPath: false}),
+        postcssURL({filter: '', maxSize: 0}),
+        postcssSprites({
+            stylesheetPath: path.join(
+                configuration.path.asset.source,
+                configuration.path.asset.cascadingStyleSheet),
+            spritePath: path.join(
+                configuration.path.asset.source,
+                configuration.path.asset.image),
+            hooks: {onSaveSpritesheet: (image:Object):string => path.join(
+                image.spritePath, 'sprite.png')}
+        })
     ],
     html: configuration.module.optimizer.htmlMinifier,
     // Let the "html-loader" access full html minifier processing

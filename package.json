@@ -390,7 +390,8 @@
                 "source": "source/", "target": "build/",
                 "tidyUp": [
                     {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js')"},
-                    {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"}
+                    {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"},
+                    {"__evaluate__": "path.join(self.path.source, self.path.asset.image, 'sprite.png')"}
                 ]
             },
             "targetTechnology": "web",
