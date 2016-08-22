@@ -14,7 +14,7 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, Paths, TraverseFilesCallbackFunction
+    BuildConfiguration, Path, TraverseFilesCallbackFunction
 } from '../type'
 import Helper from '../helper.compiled'
 // endregion
@@ -390,28 +390,42 @@ QUnit.test('copyDirectoryRecursiveSync', (assert:Object):void => {
     ).endsWith('/test.compiled'))
 })
 QUnit.test('determineAssetType', (assert:Object):void => {
-    const paths:Paths = {
+    const paths:Path = {
         apiDocumentation: '',
-        asset: {
-            cascadingStyleSheet: '',
-            coffeeScript: '',
-            data: '',
-            font: '',
-            image: '',
-            javaScript: '',
-            less: '',
-            publicTarget: '',
-            sass: '',
-            scss: '',
-            source: '',
-            target: '',
-            template: ''
-        },
+        base: '',
         context: '',
+        source: {
+            asset: {
+                base: '',
+                cascadingStyleSheet: '',
+                data: '',
+                font: '',
+                image: '',
+                javaScript: '',
+                source: '',
+                target: '',
+                template: ''
+            },
+            base: ''
+        },
+        target: {
+            asset: {
+                base: '',
+                cascadingStyleSheet: '',
+                data: '',
+                font: '',
+                image: '',
+                javaScript: '',
+                source: '',
+                target: '',
+                template: ''
+            },
+            base: '',
+            manifest: '',
+            public: '',
+            target: ''
+        },
         ignore: [],
-        manifest: '',
-        source: '',
-        target: '',
         tidyUp: []
     }
     for (const test:Array<any> of [

@@ -96,28 +96,32 @@ export type ResolvedBuildConfigurationItem = {
 }
 export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
-export type Paths = {
-    apiDocumentation:string;
-    asset:{
-        cascadingStyleSheet:string;
-        coffeeScript:string;
-        data:string;
-        font:string;
-        image:string;
-        javaScript:string;
-        less:string;
-        publicTarget:string;
-        sass:string;
-        scss:string;
-        source:string;
-        target:string;
-        template:string;
-    };
-    context:string;
-    ignore:Array<string>;
-    manifest:string;
+export type AssetPath = {
+    base:string;
+    cascadingStyleSheet:string;
+    data:string;
+    font:string;
+    image:string;
+    javaScript:string;
     source:string;
     target:string;
+    template:string;
+}
+export type Path = {
+    apiDocumentation:string;
+    base:string;
+    context:string;
+    ignore:Array<string>;
+    source:{
+        asset:AssetPath;
+        base:string;
+    };
+    target:{
+        asset:AssetPath;
+        base:string;
+        manifest:string;
+        public:string;
+    };
     tidyUp:Array<string>
 }
 export type DefaultConfiguration = {
@@ -125,12 +129,7 @@ export type DefaultConfiguration = {
     debug:boolean;
     dllManifestFilePaths:Array<any>;
     document:Object;
-    path:{
-        asset:{[key:string]:string};
-        context:string;
-        target:string;
-        [key:string]:string
-    };
+    path:Path;
     test:Object;
     testInBrowser:Object
 }
@@ -167,6 +166,7 @@ export type ResolvedConfiguration = {
     files:{
         compose:{
             cascadingStyleSheet:string;
+            image:string;
             javaScript:string;
         };
         additionalPaths:Array<string>;
@@ -222,7 +222,7 @@ export type ResolvedConfiguration = {
         skipParseRegularExpression:RegExp|Array<RegExp>;
     };
     offline:{excludes:Array<string>};
-    path:Paths;
+    path:Path;
     /* eslint-disable max-len */
     targetTechnology:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
     /* eslint-enable max-len */

@@ -93,31 +93,32 @@ if (configuration.givenCommandLineArguments.length > 2) {
     ) && possibleArguments.includes(
         configuration.givenCommandLineArguments[2]
     )) {
-        if (path.resolve(configuration.path.target) === path.resolve(
+        if (path.resolve(configuration.path.target.base) === path.resolve(
             configuration.path.context
         )) {
             // Removes all compiled files.
-            Helper.walkDirectoryRecursivelySync(configuration.path.target, (
-                filePath:string, stat:Object
-            ):?boolean => {
-                if (Helper.isFilePathInLocation(
-                    filePath, configuration.path.ignore
-                ))
-                    return false
-                for (const type:string in configuration.build)
-                    if (new RegExp(
-                        configuration.build[type].fileNamePattern
-                    ).test(filePath)) {
-                        if (stat.isDirectory()) {
-                            removeDirectoryRecursivelySync(filePath, {
-                                glob: false})
-                            return false
+            Helper.walkDirectoryRecursivelySync(
+                configuration.path.target.base, (
+                    filePath:string, stat:Object
+                ):?boolean => {
+                    if (Helper.isFilePathInLocation(
+                        filePath, configuration.path.ignore
+                    ))
+                        return false
+                    for (const type:string in configuration.build)
+                        if (new RegExp(
+                            configuration.build[type].fileNamePattern
+                        ).test(filePath)) {
+                            if (stat.isDirectory()) {
+                                removeDirectoryRecursivelySync(filePath, {
+                                    glob: false})
+                                return false
+                            }
+                            fileSystem.unlinkSync(filePath)
+                            break
                         }
-                        fileSystem.unlinkSync(filePath)
-                        break
-                    }
-            })
-            fileSystem.readdirSync(configuration.path.target).forEach((
+                })
+            fileSystem.readdirSync(configuration.path.target.base).forEach((
                 fileName:string
             ):void => {
                 if (
@@ -125,10 +126,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     fileName.endsWith('.dll-manifest.json')
                 )
                     fileSystem.unlinkSync(path.resolve(
-                        configuration.path.target, fileName))
+                        configuration.path.target.base, fileName))
             })
         } else
-            removeDirectoryRecursivelySync(configuration.path.target, {
+            removeDirectoryRecursivelySync(configuration.path.target.base, {
                 glob: false})
         try {
             removeDirectoryRecursivelySync(
@@ -139,7 +140,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // region handle build
     const buildConfigurations:ResolvedBuildConfiguration =
         Helper.resolveBuildConfigurationFilePaths(
-            configuration.build, configuration.path.asset.source,
+            configuration.build, configuration.path.source.asset.base,
             configuration.path.ignore)
     if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2])) {
         let tidiedUp:boolean = false
@@ -160,7 +161,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         configuration.module.aliases,
                         configuration.knownExtensions,
                         configuration.path.context,
-                        configuration.path.asset.source,
+                        configuration.path.source.asset.base,
                         configuration.path.ignore
                     ).internal)
             for (const chunkName:string in internalInjection)
@@ -173,7 +174,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                                 moduleID, configuration.module.aliases,
                                 configuration.knownExtensions,
                                 configuration.path.context,
-                                configuration.path.asset.source,
+                                configuration.path.source.asset.base,
                                 configuration.path.ignore
                             ), configuration.build, configuration.path)
                         // TODO replace all placeholder like [hash] [id] ...
@@ -231,14 +232,14 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     configuration.files.additionalPaths
                 ) {
                     const sourcePath:string = path.join(
-                        configuration.path.source, filePath)
+                        configuration.path.source.base, filePath)
                     try {
                         if (fileSystem.lstatSync(sourcePath).isDirectory())
                             Helper.copyDirectoryRecursiveSync(
-                                sourcePath, configuration.path.target)
+                                sourcePath, configuration.path.target.base)
                         else
                             Helper.copyFileSync(
-                                sourcePath, configuration.path.target)
+                                sourcePath, configuration.path.target.base)
                     } catch (error) {
                         break
                     }
@@ -263,8 +264,8 @@ if (configuration.givenCommandLineArguments.length > 2) {
             Helper.determineModuleLocations(
                 configuration.testInBrowser.injection.internal,
                 configuration.module.aliases, configuration.knownExtensions,
-                configuration.path.context, configuration.path.asset.source,
-                configuration.path.ignore
+                configuration.path.context,
+                configuration.path.source.asset.base, configuration.path.ignore
             ).filePaths
         for (const buildConfiguration of buildConfigurations)
             for (const filePath:string of buildConfiguration.filePaths)

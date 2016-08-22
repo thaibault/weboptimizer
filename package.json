@@ -60,14 +60,7 @@
         "webpack": ">=1.13.2",
         "webpack-dev-server": ">=1.14.1",
         "webpack-load-plugins": ">=0.1.2",
-        "webpack-sources": ">=0.1.2",
-
-        "coffee-loader": "*",
-        "coffee-script": "*",
-        "less": "*",
-        "less-loader": "*",
-        "node-sass": ">=3.8.0",
-        "sass-loader": "*"
+        "webpack-sources": ">=0.1.2"
     },
     "devDependencies": {
         "qunit-cli": ">=0.2.0",
@@ -101,7 +94,7 @@
             "favicon": {
                 "logo": {"__evaluate__": "self.path.source.asset.favicon"},
                 "prefix": {
-                    "__evaluate__": "path.join(self.path.target.asset.image, 'favicons-[hash]/')"
+                    "__evaluate__": "path.resolve(self.path.target.asset.image, 'favicons-[hash]/')"
                 },
                 "emitStats": false,
                 "statsFilename": "iconStats.json",
@@ -126,6 +119,9 @@
                 "compose": {
                     "cascadingStyleSheet": {
                         "__evaluate__": "self.debug ? null : `${self.path.target.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+                    },
+                    "image": {
+                        "__evaluate__": "self.debug ? null : `${self.path.target.asset.image}sprite.png`"
                     },
                     "javaScript": {
                         "__evaluate__": "`${self.path.target.asset.javaScript}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
@@ -172,11 +168,11 @@
             "knownExtensions": [
                 ".compiled", "",
 
-                ".compiled.js", ".js", ".coffee", ".coffee.md", ".litcoffee",
+                ".compiled.js", ".js",
 
                 ".compiled.html", ".html", ".pug",
 
-                ".compiled.css", ".css", ".scss", ".sass", ".less",
+                ".compiled.css", ".css",
 
                 ".compiled.eot", ".eot",
                 ".compiled.woff", ".woff", ".compiled.woff2", ".woff2",
@@ -330,15 +326,12 @@
                             "cache": true
                         }
                     },
-                    "less": {},
                     "modernJavaScript": {
                         "cacheDirectory": true,
                         "compact": true,
                         "presets": ["es2015-loose", "stage-0"],
                         "plugins": ["transform-flow-strip-types"]
-                    },
-                    "sass": {"indentedSyntax": true},
-                    "scss": {}
+                    }
                 },
                 "style": {"insertAt": "top", "singleton": true}
             },
@@ -358,20 +351,20 @@
                     "events": true,
                     "navigateFallbackURL": null,
                     "output": {
-                        "__evaluate__": "path.join(self.path.target.asset.javaScript, 'serviceWorker.js')"
+                        "__evaluate__": "path.resolve(self.path.target.asset.javaScript, 'serviceWorker.js')"
                     }
                 }
             },
             "path": {
                 "apiDocumentation": "apiDocumentation/",
+                "base": "./",
                 "ignore": ["node_modules", ".git", {
                     "__evaluate__": "self.path.apiDocumentation"
                 }],
                 "source": {
                     "asset": {
-                        "base": "",
+                        "base": "./",
                         "cascadingStyleSheet": "cascadingStyleSheet/",
-                        "coffeeScript": "coffeeScript/",
                         "data": "data/",
                         "favicon": {
                             "__evaluate__": "`${self.path.source.asset.image}favicon.png`"
@@ -379,10 +372,6 @@
                         "font": "font/",
                         "image": "image/",
                         "javaScript": "javaScript/",
-                        "less": "less/",
-                        "publicTarget": "",
-                        "sass": "sass/",
-                        "scss": "scss/",
                         "template": "template/"
                     },
                     "base": "source/"
@@ -390,12 +379,13 @@
                 "target": {
                     "asset": {"__evaluate__": "self.path.source.asset"},
                     "base": "build/",
-                    "manifest": "manifest.appcache"
+                    "manifest": "manifest.appcache",
+                    "public": ""
                 },
                 "tidyUp": [
-                    {"__evaluate__": "path.join(self.path.target.asset.javaScript, '.__dummy__.compiled.js')"},
-                    {"__evaluate__": "path.join(self.path.target.asset.javaScript, '.__dummy__.compiled.js.map')"},
-                    {"__evaluate__": "path.join(self.path.source.asset.image, 'sprite.png')"}
+                    {"__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js')"},
+                    {"__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js.map')"},
+                    {"__evaluate__": "path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image))"}
                 ]
             },
             "targetTechnology": "web",
@@ -415,13 +405,9 @@
                     "fileNamePattern": "^.+\\.compiled(?:\\.[^.]+(?:\\.map)?)?$"
                 },
                 "javaScript": {"extension": "js"},
-                "coffeeScript": {"extension": "coffee"},
                 "cascadingStyleSheet": {
                     "extension": "css", "outputExtension": "css"
                 },
-                "less": {"outputExtension": "css"},
-                "sass": {"outputExtension": "css"},
-                "scss": {"outputExtension": "css"},
                 "additional": {
                     "outputExtension": "",
                     "fileNamePattern": "^.+\\.compiled(?:\\.map)?$"
@@ -606,10 +592,7 @@
                 "otherMaximumFileSizeLimitInByte": 1
             },
             "module": {
-                "preprocessor": {
-                    "pug": {"compiler": {"pretty": true}},
-                    "less": {"sourceMap": true}
-                },
+                "preprocessor": {"pug": {"compiler": {"pretty": true}}},
                 "cascadingStyleSheet": "?sourceMap",
                 "optimizer": {
                     "uglifyJS": null,
@@ -676,19 +659,18 @@
                 "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [helper.convertToValidVariableName(self.name), '[name]']: null"
             },
             "path": {
-                "source": "./", "target": "./",
-                "asset": {
-                    "cascadingStyleSheet": "./",
-                    "javaScript": "./",
-                    "coffeeScript": "./",
-                    "less": "./",
-                    "scss": "./",
-                    "sass": "./",
-                    "font": "./",
-                    "image": "./",
-                    "template": "./",
-                    "data": "./"
-                }
+                "source": {
+                    "asset": {
+                        "cascadingStyleSheet": "./",
+                        "javaScript": "./",
+                        "font": "./",
+                        "image": "./",
+                        "template": "./",
+                        "data": "./"
+                    },
+                    "base": "./"
+                },
+                "target": {"base": "./"}
             },
             "offline": null,
 

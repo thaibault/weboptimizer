@@ -24,7 +24,7 @@ try {
 
 import type {
     BuildConfiguration, EvaluationFunction, GetterFunction, Injection,
-    InternalInjection, NormalizedInternalInjection, Paths, PlainObject,
+    InternalInjection, NormalizedInternalInjection, Path, PlainObject,
     ResolvedBuildConfiguration, ResolvedBuildConfigurationItem, SetterFunction,
     TraverseFilesCallbackFunction
 } from './type'
@@ -579,7 +579,8 @@ export default class Helper {
         */
         try {
             if (fileSystem.lstatSync(targetPath).isDirectory())
-                targetPath = path.join(targetPath, path.basename(sourcePath))
+                targetPath = path.resolve(targetPath, path.basename(
+                    sourcePath))
         } catch (error) {}
         fileSystem.writeFileSync(targetPath, fileSystem.readFileSync(
             sourcePath))
@@ -600,13 +601,14 @@ export default class Helper {
         try {
             // Check if folder needs to be created or integrated.
             if (fileSystem.lstatSync(targetPath).isDirectory())
-                targetPath = path.join(targetPath, path.basename(sourcePath))
+                targetPath = path.resolve(targetPath, path.basename(
+                    sourcePath))
         } catch (error) {}
         fileSystem.mkdirSync(targetPath)
         Helper.walkDirectoryRecursivelySync(sourcePath, (
             currentSourcePath:string, stat:Object
         ):void => {
-            const currentTargetPath:string = path.join(
+            const currentTargetPath:string = path.resolve(
                 targetPath, currentSourcePath.substring(sourcePath.length))
             if (stat.isDirectory())
                 fileSystem.mkdirSync(currentTargetPath)
@@ -626,7 +628,7 @@ export default class Helper {
      * determined.
      */
     static determineAssetType(
-        filePath:string, buildConfiguration:BuildConfiguration, paths:Paths
+        filePath:string, buildConfiguration:BuildConfiguration, paths:Path
     ):?string {
         let result:?string = null
         for (const type:string in buildConfiguration)
@@ -638,10 +640,10 @@ export default class Helper {
             }
         if (!result)
             for (const type:string of ['source', 'target'])
-                for (const assetType:string in paths.asset)
-                    if (paths.asset[assetType].startsWith(path.join(
-                        paths[type], paths.asset[assetType]
-                    )))
+                for (const assetType:string in paths[type].asset)
+                    if (paths[type].asset.hasOwnProperty(
+                        assetType
+                    ) && filePath.startsWith(paths[type].asset[assetType]))
                         return assetType
         return result
     }
@@ -922,14 +924,14 @@ export default class Helper {
                 for (const extension:string of knownExtensions) {
                     let moduleFilePath:string = moduleID
                     if (!moduleFilePath.startsWith('/'))
-                        moduleFilePath = path.join(
+                        moduleFilePath = path.resolve(
                             context, moduleLocation, moduleFilePath)
                     if (fileName === '__package__') {
                         try {
                             if (fileSystem.statSync(
                                 moduleFilePath
                             ).isDirectory()) {
-                                const pathToPackageJSON:string = path.join(
+                                const pathToPackageJSON:string = path.resolve(
                                     moduleFilePath, 'package.json')
                                 if (fileSystem.statSync(
                                     pathToPackageJSON
@@ -946,7 +948,7 @@ export default class Helper {
                         if (fileName === '__package__')
                             continue
                     }
-                    moduleFilePath = path.join(moduleFilePath, fileName)
+                    moduleFilePath = path.resolve(moduleFilePath, fileName)
                     moduleFilePath += extension
                     if (Helper.isFilePathInLocation(
                         moduleFilePath, pathsToIgnore

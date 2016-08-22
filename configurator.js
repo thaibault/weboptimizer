@@ -155,27 +155,60 @@ if (Helper.isPlainObject(result))
 configuration.dllManifestFilePaths = []
 let targetDirectory:?Object = null
 try {
-    targetDirectory = fileSystem.statSync(configuration.path.target)
+    targetDirectory = fileSystem.statSync(configuration.path.target.base)
 } catch (error) {}
 if (targetDirectory && targetDirectory.isDirectory())
-    fileSystem.readdirSync(configuration.path.target).forEach((
+    fileSystem.readdirSync(configuration.path.target.base).forEach((
         fileName:string
     ):void => {
         if (fileName.match(/^.*\.dll-manifest\.json$/))
             configuration.dllManifestFilePaths.push(path.resolve(
-                configuration.path.target, fileName))
+                configuration.path.target.base, fileName))
     })
 // / endregion
 // / region build absolute paths
-for (const pathConfiguration:{[key:string]:any} of [
-    configuration.path, configuration.path.asset
-])
-    for (const key:string of ['source', 'target'])
-        if (pathConfiguration[key])
-            pathConfiguration[key] = path.resolve(
-                configuration.path.context, Helper.resolveDynamicDataStructure(
-                    pathConfiguration[key], configuration)
+configuration.path.base = path.resolve(
+    configuration.path.context, configuration.path.base)
+for (const key:string in configuration.path)
+    if (
+        configuration.path.hasOwnProperty(key) && key !== 'base' &&
+        typeof configuration.path[key] === 'string'
+    )
+        configuration.path[key] = path.resolve(
+            configuration.path.base, Helper.resolveDynamicDataStructure(
+                configuration.path[key], configuration)
+        ) + '/'
+for (const key:string of ['source', 'target']) {
+    configuration.path[key].base = path.resolve(
+        configuration.path.base, configuration.path[key].base)
+    for (const subKey:string in configuration.path[key])
+        if (
+            configuration.path[key].hasOwnProperty(subKey) &&
+            subKey !== 'base' &&
+            typeof configuration.path[key][subKey] === 'string'
+        )
+            configuration.path[key][subKey] = path.resolve(
+                configuration.path[key].base,
+                Helper.resolveDynamicDataStructure(
+                    configuration.path[key][subKey], configuration)
             ) + '/'
+        else {
+            configuration.path[key][subKey].base = path.resolve(
+                configuration.path[key].base,
+                configuration.path[key][subKey].base)
+            for (const subSubKey:string in configuration.path[key][subKey])
+                if (configuration.path[key][subKey].hasOwnProperty(
+                    subSubKey
+                ) && subSubKey !== 'base' && typeof configuration.path[key][
+                    subKey
+                ][subSubKey] === 'string')
+                    configuration.path[key][subKey] = path.resolve(
+                        configuration.path[key][subKey].base,
+                        Helper.resolveDynamicDataStructure(
+                            configuration.path[key][subKey], configuration)
+                    ) + '/'
+        }
+}
 // / endregion
 const resolvedConfiguration:ResolvedConfiguration = Helper.unwrapProxy(
     Helper.resolveDynamicDataStructure(Helper.resolveDynamicDataStructure(

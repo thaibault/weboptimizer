@@ -79,7 +79,7 @@ module.exports = function(source:string):string {
                     return compile(template, options)(nestedLocals)
                 const templateFilePath:string = Helper.determineModuleFilePath(
                     template, query.moduleAliases, query.knownExtensions,
-                    query.context, configuration.path.asset.source,
+                    query.context, configuration.path.source.asset.base,
                     configuration.path.ignore)
                 this.addDependency(templateFilePath)
                 if (queryMatch || templateFilePath.endsWith('.pug'))
