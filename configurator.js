@@ -234,7 +234,6 @@ const resolvedConfiguration:ResolvedConfiguration = Helper.unwrapProxy(
     Helper.resolveDynamicDataStructure(Helper.resolveDynamicDataStructure(
         configuration
     ), null, true, '__postEvaluate__', '__postExecute__'))
-console.log(configuration.path)
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific

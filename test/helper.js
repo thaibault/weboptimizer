@@ -384,11 +384,10 @@ QUnit.test('copyFileSync', (assert:Object):void => {
     ).endsWith('/test.compiled.js'))
     fileSystem.unlinkSync(path.join(__dirname, 'test.compiled.js'))
 })
-QUnit.test('copyDirectoryRecursiveSync', (assert:Object):void => {
+QUnit.test('copyDirectoryRecursiveSync', (assert:Object):void =>
     assert.ok(Helper.copyDirectoryRecursiveSync(
         __dirname, path.resolve(__dirname, '../test.compiled')
-    ).endsWith('/test.compiled'))
-})
+    ).endsWith('/test.compiled')))
 QUnit.test('determineAssetType', (assert:Object):void => {
     const paths:Path = {
         apiDocumentation: '',
@@ -467,9 +466,13 @@ QUnit.test('determineModuleLocations', (assert:Object):void => {
         [{example: 'example'}, {
             filePaths: ['example'], directoryPaths: ['.']
         }],
-        ['helper', {filePaths: ['helper.js'], directoryPaths: ['.']}],
+        ['helper', {
+            filePaths: [path.resolve(__dirname, '../', 'helper.js')],
+            directoryPaths: [path.resolve(__dirname, '../')]
+        }],
         [{helper: ['helper']}, {
-            filePaths: ['helper.js'], directoryPaths: ['.']
+            filePaths: [path.resolve(__dirname, '../', 'helper.js')],
+            directoryPaths: [path.resolve(__dirname, '../')]
         }]
     ])
         assert.deepEqual(Helper.determineModuleLocations(test[0]), test[1])
@@ -580,7 +583,8 @@ QUnit.test('determineModuleFilePath', (assert:Object):void => {
         [['helper', {}, ['.js'], './'], 'helper.js']
     ])
         assert.strictEqual(
-            Helper.determineModuleFilePath.apply(this, test[0]), test[1])
+            path.basename(Helper.determineModuleFilePath.apply(this, test[0])),
+            test[1])
 })
 // endregion
 QUnit.test('applyAliases', (assert:Object):void => {

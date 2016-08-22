@@ -608,7 +608,7 @@ export default class Helper {
         Helper.walkDirectoryRecursivelySync(sourcePath, (
             currentSourcePath:string, stat:Object
         ):void => {
-            const currentTargetPath:string = path.resolve(
+            const currentTargetPath:string = path.join(
                 targetPath, currentSourcePath.substring(sourcePath.length))
             if (stat.isDirectory())
                 fileSystem.mkdirSync(currentTargetPath)
@@ -643,7 +643,10 @@ export default class Helper {
                 for (const assetType:string in paths[type].asset)
                     if (paths[type].asset.hasOwnProperty(
                         assetType
-                    ) && filePath.startsWith(paths[type].asset[assetType]))
+                    ) && assetType !== 'base' &&
+                    paths[type].asset[assetType] && filePath.startsWith(
+                        paths[type].asset[assetType]
+                    ))
                         return assetType
         return result
     }
