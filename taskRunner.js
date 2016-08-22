@@ -201,12 +201,11 @@ if (configuration.givenCommandLineArguments.length > 2) {
                                             filePath + suffix)
                                     } catch (error) {}
                     }
-            for (
-                const filePath:string of configuration.path.tidyUp
-            )
-                try {
-                    fileSystem.unlinkSync(filePath)
-                } catch (error) {}
+            for (const filePath:?string of configuration.path.tidyUp)
+                if (filePath)
+                    try {
+                        fileSystem.unlinkSync(filePath)
+                    } catch (error) {}
         }
         closeEventHandlers.push(tidyUp)
         /*

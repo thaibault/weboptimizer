@@ -168,7 +168,8 @@ if (targetDirectory && targetDirectory.isDirectory())
 // / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
-    configuration.path.context, configuration.path.base)
+    configuration.path.context, Helper.resolveDynamicDataStructure(
+        configuration.path.base, configuration, false))
 for (const key:string in configuration.path)
     if (
         configuration.path.hasOwnProperty(key) && key !== 'base' &&
@@ -176,44 +177,57 @@ for (const key:string in configuration.path)
     )
         configuration.path[key] = path.resolve(
             configuration.path.base, Helper.resolveDynamicDataStructure(
-                configuration.path[key], configuration)
+                configuration.path[key], configuration, false)
         ) + '/'
-for (const key:string of ['source', 'target']) {
-    configuration.path[key].base = path.resolve(
-        configuration.path.base, configuration.path[key].base)
-    for (const subKey:string in configuration.path[key])
-        if (
-            configuration.path[key].hasOwnProperty(subKey) &&
-            subKey !== 'base' &&
-            typeof configuration.path[key][subKey] === 'string'
-        )
-            configuration.path[key][subKey] = path.resolve(
-                configuration.path[key].base,
-                Helper.resolveDynamicDataStructure(
-                    configuration.path[key][subKey], configuration)
-            ) + '/'
-        else {
-            configuration.path[key][subKey].base = path.resolve(
-                configuration.path[key].base,
-                configuration.path[key][subKey].base)
-            for (const subSubKey:string in configuration.path[key][subKey])
-                if (configuration.path[key][subKey].hasOwnProperty(
-                    subSubKey
-                ) && subSubKey !== 'base' && typeof configuration.path[key][
-                    subKey
-                ][subSubKey] === 'string')
+    else {
+        configuration.path[key] = Helper.resolveDynamicDataStructure(
+            configuration.path[key], configuration, false)
+        if (Helper.isPlainObject(configuration.path[key])) {
+            configuration.path[key].base = path.resolve(
+                configuration.path.base, configuration.path[key].base)
+            for (const subKey:string in configuration.path[key])
+                if (
+                    configuration.path[key].hasOwnProperty(subKey) &&
+                    subKey !== 'base' &&
+                    typeof configuration.path[key][subKey] === 'string'
+                )
                     configuration.path[key][subKey] = path.resolve(
-                        configuration.path[key][subKey].base,
+                        configuration.path[key].base,
                         Helper.resolveDynamicDataStructure(
-                            configuration.path[key][subKey], configuration)
+                            configuration.path[key][subKey], configuration,
+                            false)
                     ) + '/'
+                else {
+                    configuration.path[key][subKey] =
+                        Helper.resolveDynamicDataStructure(
+                            configuration.path[key][subKey], configuration,
+                            false)
+                    if (Helper.isPlainObject(configuration.path[key][subKey])) {
+                        configuration.path[key][subKey].base = path.resolve(
+                            configuration.path[key].base,
+                            configuration.path[key][subKey].base)
+                        for (const subSubKey:string in configuration.path[key][subKey])
+                            if (configuration.path[key][subKey].hasOwnProperty(
+                                subSubKey
+                            ) && subSubKey !== 'base' && typeof configuration.path[key][
+                                subKey
+                            ][subSubKey] === 'string')
+                                configuration.path[key][subKey][subSubKey] = path.resolve(
+                                    configuration.path[key][subKey].base,
+                                    Helper.resolveDynamicDataStructure(
+                                        configuration.path[key][subKey][subSubKey],
+                                        configuration, false)
+                                ) + '/'
+                    }
+                }
         }
-}
+    }
 // / endregion
 const resolvedConfiguration:ResolvedConfiguration = Helper.unwrapProxy(
     Helper.resolveDynamicDataStructure(Helper.resolveDynamicDataStructure(
         configuration
     ), null, true, '__postEvaluate__', '__postExecute__'))
+console.log(configuration.path)
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific

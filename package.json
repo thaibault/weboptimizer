@@ -385,7 +385,7 @@
                 "tidyUp": [
                     {"__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js')"},
                     {"__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js.map')"},
-                    {"__evaluate__": "path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image))"}
+                    {"__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"}
                 ]
             },
             "targetTechnology": "web",

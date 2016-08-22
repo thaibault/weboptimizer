@@ -793,8 +793,10 @@ export default {
         postcssURL({filter: '', maxSize: 0}),
         postcssSprites({
             filterBy: ():Promise<null> => new Promise((
-                resolve:Function
-            ):Promise<null> => resolve()),
+                resolve:Function, reject:Function
+            ):Promise<null> => (
+                configuration.files.compose.image ? resolve : reject
+            )()),
             hooks: {onSaveSpritesheet: (image:Object):string => path.join(
                 image.spritePath, path.relative(
                     configuration.path.target.asset.image,
