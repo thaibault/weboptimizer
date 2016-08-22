@@ -206,16 +206,23 @@ for (const key:string in configuration.path)
                         configuration.path[key][subKey].base = path.resolve(
                             configuration.path[key].base,
                             configuration.path[key][subKey].base)
-                        for (const subSubKey:string in configuration.path[key][subKey])
+                        for (
+                            const subSubKey:string in configuration.path[key][
+                                subKey]
+                        )
                             if (configuration.path[key][subKey].hasOwnProperty(
                                 subSubKey
-                            ) && subSubKey !== 'base' && typeof configuration.path[key][
-                                subKey
-                            ][subSubKey] === 'string')
-                                configuration.path[key][subKey][subSubKey] = path.resolve(
+                            ) && subSubKey !== 'base' &&
+                            typeof configuration.path[key][subKey][
+                                subSubKey
+                            ] === 'string')
+                                configuration.path[key][subKey][
+                                    subSubKey
+                                ] = path.resolve(
                                     configuration.path[key][subKey].base,
                                     Helper.resolveDynamicDataStructure(
-                                        configuration.path[key][subKey][subSubKey],
+                                        configuration.path[key][subKey][
+                                            subSubKey],
                                         configuration, false)
                                 ) + '/'
                     }
