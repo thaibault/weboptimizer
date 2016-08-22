@@ -99,11 +99,9 @@
 
             "exportFormat": {"self": "umd", "external": "umd"},
             "favicon": {
-                "logo": {
-                    "__evaluate__": "path.join(self.path.asset.source, self.path.asset.favicon)"
-                },
+                "logo": {"__evaluate__": "self.path.source.asset.favicon"},
                 "prefix": {
-                    "__evaluate__": "path.join(self.path.asset.image, 'favicons-[hash]/')"
+                    "__evaluate__": "path.join(self.path.target.asset.image, 'favicons-[hash]/')"
                 },
                 "emitStats": false,
                 "statsFilename": "iconStats.json",
@@ -127,10 +125,10 @@
             "files": {
                 "compose": {
                     "cascadingStyleSheet": {
-                        "__evaluate__": "self.debug ? null : `${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+                        "__evaluate__": "self.debug ? null : `${self.path.target.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
                     },
                     "javaScript": {
-                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
+                        "__evaluate__": "`${self.path.target.asset.javaScript}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
                     }
                 },
                 "defaultHTML": {
@@ -143,7 +141,7 @@
                         "__evaluate__": "self.module.optimizer.htmlMinifier"
                     },
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}index.pug`) ? `${self.path.source}index.pug` : `${webOptimizerPath}/index.pug`}`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}index.pug`) ? `${self.path.source.base}index.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 },
                 "html": [{}],
@@ -208,7 +206,7 @@
                             "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                         },
                         "name": {
-                            "__evaluate__": "`/${self.path.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__evaluate__": "`/${self.path.target.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "font": {
@@ -217,7 +215,7 @@
                                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.target.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "svg": {
@@ -226,7 +224,7 @@
                             },
                             "mimetype": "image/svg+xml",
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.target.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "ttf": {
@@ -235,7 +233,7 @@
                             },
                             "mimetype": "application/octet-stream",
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.target.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "woff": {
@@ -243,7 +241,7 @@
                                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.target.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         }
                     },
@@ -310,7 +308,7 @@
                                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${self.path.target.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         }
                     },
@@ -360,39 +358,44 @@
                     "events": true,
                     "navigateFallbackURL": null,
                     "output": {
-                        "__evaluate__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
+                        "__evaluate__": "path.join(self.path.target.asset.javaScript, 'serviceWorker.js')"
                     }
                 }
             },
             "path": {
                 "apiDocumentation": "apiDocumentation/",
-                "asset": {
-                    "cascadingStyleSheet": "cascadingStyleSheet/",
-                    "coffeeScript": "coffeeScript/",
-                    "data": "data/",
-                    "favicon": {
-                        "__evaluate__": "`${self.path.asset.image}favicon.png`"
-                    },
-                    "font": "font/",
-                    "image": "image/",
-                    "javaScript": "javaScript/",
-                    "less": "less/",
-                    "publicTarget": "",
-                    "sass": "sass/",
-                    "scss": "scss/",
-                    "source": {"__evaluate__": "self.path.source"},
-                    "target": {"__evaluate__": "self.path.target"},
-                    "template": "template/"
-                },
                 "ignore": ["node_modules", ".git", {
                     "__evaluate__": "self.path.apiDocumentation"
                 }],
-                "manifest": "manifest.appcache",
-                "source": "source/", "target": "build/",
+                "source": {
+                    "asset": {
+                        "base": "",
+                        "cascadingStyleSheet": "cascadingStyleSheet/",
+                        "coffeeScript": "coffeeScript/",
+                        "data": "data/",
+                        "favicon": {
+                            "__evaluate__": "`${self.path.source.asset.image}favicon.png`"
+                        },
+                        "font": "font/",
+                        "image": "image/",
+                        "javaScript": "javaScript/",
+                        "less": "less/",
+                        "publicTarget": "",
+                        "sass": "sass/",
+                        "scss": "scss/",
+                        "template": "template/"
+                    },
+                    "base": "source/"
+                },
+                "target": {
+                    "asset": {"__evaluate__": "self.path.source.asset"},
+                    "base": "build/",
+                    "manifest": "manifest.appcache"
+                },
                 "tidyUp": [
-                    {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js')"},
-                    {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"},
-                    {"__evaluate__": "path.join(self.path.source, self.path.asset.image, 'sprite.png')"}
+                    {"__evaluate__": "path.join(self.path.target.asset.javaScript, '.__dummy__.compiled.js')"},
+                    {"__evaluate__": "path.join(self.path.target.asset.javaScript, '.__dummy__.compiled.js.map')"},
+                    {"__evaluate__": "path.join(self.path.source.asset.image, 'sprite.png')"}
                 ]
             },
             "targetTechnology": "web",
@@ -407,7 +410,7 @@
                 "default": {
                     "outputExtension": "js",
                     "preinstall": {
-                        "__evaluate__": "`touch '${self.path.target}\\${self.path.asset[buildConfiguration.type]}\\${path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`)}.compiled.\\${buildConfiguration.outputExtension}'`"
+                        "__evaluate__": "`touch '\\${self.path.target.asset[buildConfiguration.type]}\\${path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`)}.compiled.\\${buildConfiguration.outputExtension}'`"
                     },
                     "fileNamePattern": "^.+\\.compiled(?:\\.[^.]+(?:\\.map)?)?$"
                 },
@@ -460,13 +463,13 @@
                         "./readme.md",
                         "--destination",
                         {"__evaluate__": "self.path.apiDocumentation"},
-                        {"__evaluate__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.js`"}
+                        {"__evaluate__": "`'${self.path.target.asset.javaScript}'*.js`"}
                     ]
                 },
                 "lint": [
                     {
                         "command": "stylelint",
-                        "arguments": [{"__evaluate__": "`${self.path.asset.cascadingStyleSheet}**/*.css`"}]
+                        "arguments": [{"__evaluate__": "`${self.path.source.asset.cascadingStyleSheet}**/*.css`"}]
                     },
                     {
                         "command": "eslint",
@@ -474,7 +477,7 @@
                             "--config",
                             {"__evaluate__": "`'${webOptimizerPath}/package.json'`"},
                             "--ignore-pattern",
-                            {"__evaluate__": "`'${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
+                            {"__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? `${self.path.target.base.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
                             "--ignore-pattern",
                             {"__evaluate__": "`'${self.path.apiDocumentation}'`"},
                             "'**/*.js'"
@@ -507,7 +510,7 @@
             "development": {
                 "openBrowser": null,
                 "server": {
-                    "contentBase": {"__evaluate__": "self.path.source"},
+                    "contentBase": {"__evaluate__": "self.path.source.base"},
                     "historyApiFallback": true,
                     "hot": true,
                     "stats": {"colors": true},
@@ -545,13 +548,13 @@
                 "exportFormat": {"external": "commonjs2", "self": "commonjs2"},
                 "files": {
                     "compose": {"javaScript": {
-                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
+                        "__evaluate__": "`${self.path.target.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                     }},
                     "defaultHTML": {
                         "filename": "test.html",
                         "inject": "head",
                         "template": {
-                            "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? `${self.path.source}test.pug` : `${webOptimizerPath}/index.pug`}`"
+                            "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
                         }
                     },
                     "html": []
@@ -569,7 +572,7 @@
                     "filename": "test.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? `${self.path.source}test.pug` : `${webOptimizerPath}/index.pug`}`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 }},
                 "inPlace": {"externalLibrary": {"normal": true}},
@@ -593,7 +596,7 @@
 
             "files": {
                 "compose": {"javaScript": {
-                    "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}[name].js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${self.path.target.asset.javaScript}[name].js?${self.hashAlgorithm}=[hash]`"
                 }},
                 "defaultHTML": {"debug": true}
             },
@@ -640,17 +643,17 @@
             "files": {
                 "compose": {
                     "cascadingStyleSheet": {
-                        "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                        "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${self.path.target.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
                     },
                     "javaScript": {
-                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
+                        "__evaluate__": "`${self.path.target.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                     }
                 },
                 "defaultHTML": {
                     "filename": "playground.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? `${self.path.source}playground.pug` : `${webOptimizerPath}/index.pug`}`"
+                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}playground.pug`) ? `${self.path.source.base}playground.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 },
                 "html": {
@@ -697,7 +700,7 @@
                     "./readme.md",
                     "--destination",
                     {"__evaluate__": "self.path.apiDocumentation"},
-                    {"__evaluate__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.compiled.js`"}
+                    {"__evaluate__": "`'${self.path.target.asset.javaScript}'*.compiled.js`"}
                 ]}},
                 "exportFormat": {"self": "var"},
                 "targetTechnology": "node"
