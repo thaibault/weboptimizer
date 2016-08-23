@@ -459,7 +459,7 @@
                         "arguments": [
                             {"__evaluate__": "`${self.path.source.asset.cascadingStyleSheet}**/*.css`"},
                             "--config",
-                            {"__evaluate__": "`${webOptimizerPath}/styleLintConfigurator.js`"}
+                            {"__evaluate__": "`${path.relative(self.path.context, webOptimizerPath)}/styleLintConfigurator.js`"}
                         ]
                     },
                     {
