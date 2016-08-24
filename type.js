@@ -253,6 +253,7 @@ export type ResolvedConfiguration = {
         extensions:Array<string>;
         directories:Array<string>;
     };
+    stylelint:PlainObject;
 
     document:PlainObject;
 
