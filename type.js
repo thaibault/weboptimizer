@@ -214,7 +214,7 @@ export type ResolvedConfiguration = {
             cascadingStyleSheet:string;
             pug:PlainObject;
             less:PlainObject;
-            modernJavaScript:PlainObject;
+            babel:PlainObject;
             sass:PlainObject;
             scss:PlainObject
         };

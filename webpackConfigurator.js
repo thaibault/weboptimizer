@@ -601,7 +601,7 @@ const loader:{
         cascadingStyleSheet: 'postcss' +
             configuration.module.preprocessor.cascadingStyleSheet,
         javaScript: 'babel?' + Helper.convertCircularObjectToJSON(
-            configuration.module.preprocessor.modernJavaScript),
+            configuration.module.preprocessor.babel),
         pug: 'pug?' + Helper.convertCircularObjectToJSON(
             configuration.module.preprocessor.pug)
     },

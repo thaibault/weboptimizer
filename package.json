@@ -24,7 +24,7 @@
         "babel-preset-es2015-loose": ">=7.0.0",
         "babel-preset-es2015-node": ">=6.1.0",
         "babel-preset-stage-0": ">=6.5.0",
-        "css-loader": ">=0.23.1",
+        "css-loader": ">=0.24.0",
         "eslint": ">=3.3.1",
         "eslint-config-google": ">=0.6.0",
         "eslint-plugin-flowtype": ">=2.11.1",
@@ -55,6 +55,7 @@
         "rimraf": ">=2.5.4",
         "script-loader": ">=0.7.0",
         "stylelint": ">=7.1.0",
+        "stylelint-config-standard": ">=12.0.0",
         "style-loader": ">=0.13.1",
         "url-loader": ">=0.5.7",
         "webpack": ">=1.13.2",
@@ -327,7 +328,7 @@
                             "cache": true
                         }
                     },
-                    "modernJavaScript": {
+                    "babel": {
                         "cacheDirectory": true,
                         "compact": true,
                         "presets": ["es2015-loose", "stage-0"],
@@ -459,7 +460,7 @@
                         "arguments": [
                             {"__evaluate__": "`${self.path.source.asset.cascadingStyleSheet}**/*.css`"},
                             "--config",
-                            {"__evaluate__": "`${path.relative(self.path.context, webOptimizerPath)}/stylelintConfigurator.js`"}
+                            {"__evaluate__": "`${path.relative(self.path.context, webOptimizerPath)}/stylelintConfigurator.compiled.js`"}
                         ]
                     },
                     {
@@ -524,12 +525,16 @@
                     "node_modules", "../"
                 ]
             },
+            "stylelint": {
+                "extends": "stylelint-config-standard",
+                "rules": {"indentation": 4}
+            },
 
             "document": {
                 "inPlace": {"externalLibrary": {"normal": false}},
                 "module": {
                     "optimizer": {"uglifyJS": null},
-                    "preprocessor": {"modernJavaScript": {"presets": [
+                    "preprocessor": {"babel": {"presets": [
                         "es2015-node", "stage-0"
                     ]}}
                 }
