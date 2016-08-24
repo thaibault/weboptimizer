@@ -27,8 +27,7 @@ try {
 
 import configuration from './configurator.compiled'
 import type {
-    NormalizedInternalInjection, PlainObject, PromiseCallbackFunction,
-    ResolvedBuildConfiguration
+    PlainObject, PromiseCallbackFunction, ResolvedBuildConfiguration
 } from './type'
 import Helper from './helper.compiled'
 // endregion
@@ -152,23 +151,17 @@ if (configuration.givenCommandLineArguments.length > 2) {
             if (tidiedUp)
                 return
             tidiedUp = true
-            const internalInjection:NormalizedInternalInjection =
-                Helper.normalizeInternalInjection(
-                    Helper.resolveInjection(
-                        configuration.injection,
-                        buildConfigurations,
-                        configuration.testInBrowser.injection.internal,
-                        configuration.module.aliases,
-                        configuration.knownExtensions,
-                        configuration.path.context,
-                        configuration.path.source.asset.base,
-                        configuration.path.ignore
-                    ).internal)
-            for (const chunkName:string in internalInjection)
-                if (internalInjection.hasOwnProperty(chunkName))
-                    for (const moduleID:string of internalInjection[
-                        chunkName
-                    ]) {
+            for (
+                const chunkName:string in
+                configuration.injection.internal.normalized
+            )
+                if (configuration.injection.internal.normalized.hasOwnProperty(
+                    chunkName
+                ))
+                    for (
+                        const moduleID:string of
+                        configuration.injection.internal.normalized[chunkName]
+                    ) {
                         const type:?string = Helper.determineAssetType(
                             Helper.determineModuleFilePath(
                                 moduleID, configuration.module.aliases,
@@ -305,35 +298,50 @@ if (configuration.givenCommandLineArguments.length > 2) {
     }
     // endregion
     // region handle remaining tasks
-    const handleTask = (type:string):number => processPromises.push(
-        new Promise((
-            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ):void => {
-            let tasks:Array<Object>
-            if (Array.isArray(configuration.commandLine[type]))
-                tasks = configuration.commandLine[type]
-            else
-                tasks = [configuration.commandLine[type]]
-            for (const task:Object of tasks) {
-                const commandLineArguments:Array<string> = (task.arguments || [
-                ]).concat(additionalArguments)
-                console.log('Running "' + (
-                    `${task.command} ${commandLineArguments.join(' ')}`
-                ).trim() + '"')
-                const childProcess:ChildProcess = spawnChildProcess(
-                    task.command, commandLineArguments, childProcessOptions)
-                for (const closeEventName:string of closeEventNames)
-                    childProcess.on(
-                        closeEventName, Helper.getProcessCloseHandler(
-                            resolve, reject, closeEventName))
-                childProcesses.push(childProcess)
-            }
-        }))
+    const handleTask = (type:string):void => {
+        let tasks:Array<Object>
+        if (Array.isArray(configuration.commandLine[type]))
+            tasks = configuration.commandLine[type]
+        else
+            tasks = [configuration.commandLine[type]]
+        for (const task:Object of tasks) {
+            const evaluationFunction = (
+                global:Object, self:PlainObject, path:typeof path
+            ):boolean =>
+                // IgnoreTypeCheck
+                new Function(
+                    'global', 'self', 'path',
+                    'return ' + (task.hasOwnProperty(
+                        'indicator'
+                    ) ? task.indicator : 'true')
+                )(global, self, path)
+            if (evaluationFunction(global, configuration, path))
+                processPromises.push(new Promise((
+                    resolve:PromiseCallbackFunction,
+                    reject:PromiseCallbackFunction
+                ):void => {
+                    const commandLineArguments:Array<string> = (
+                        task.arguments || []
+                    ).concat(additionalArguments)
+                    console.log('Running "' + (
+                        `${task.command} ${commandLineArguments.join(' ')}`
+                    ).trim() + '"')
+                    const childProcess:ChildProcess = spawnChildProcess(
+                        task.command, commandLineArguments, childProcessOptions
+                    )
+                    for (const closeEventName:string of closeEventNames)
+                        childProcess.on(
+                            closeEventName, Helper.getProcessCloseHandler(
+                                resolve, reject, closeEventName))
+                    childProcesses.push(childProcess)
+                }))
+        }
+    }
     // / region synchronous
     if (['document', 'test'].includes(
         configuration.givenCommandLineArguments[2]
     ))
-        Promise.all(processPromises).then(():number => handleTask(
+        Promise.all(processPromises).then(():void => handleTask(
             configuration.givenCommandLineArguments[2]))
     // / endregion
     // / region asynchronous

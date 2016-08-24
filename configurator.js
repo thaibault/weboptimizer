@@ -247,6 +247,54 @@ for (const type:string in resolvedConfiguration.build)
             true, {extension: type}, resolvedConfiguration.build[type], {type})
         )
 // endregion
+// region resolve module location and which asset types are needed
+resolvedConfiguration.module.locations = Helper.determineModuleLocations(
+    resolvedConfiguration.injection.internal,
+    resolvedConfiguration.module.aliases,
+    resolvedConfiguration.knownExtensions, resolvedConfiguration.path.context,
+    resolvedConfiguration.path.source.asset.base)
+resolvedConfiguration.injection = Helper.resolveInjection(
+    resolvedConfiguration.injection, Helper.resolveBuildConfigurationFilePaths(
+        resolvedConfiguration.build,
+        resolvedConfiguration.path.source.asset.base,
+        resolvedConfiguration.path.ignore
+    ), resolvedConfiguration.testInBrowser.injection.internal,
+    resolvedConfiguration.module.aliases,
+    resolvedConfiguration.knownExtensions,
+    resolvedConfiguration.path.context,
+    resolvedConfiguration.path.source.asset.base,
+    resolvedConfiguration.path.ignore)
+resolvedConfiguration.injection.internal = {
+    given: resolvedConfiguration.injection.internal,
+    // IgnoreTypeCheck
+    normalized: Helper.normalizeInternalInjection(
+        resolvedConfiguration.injection.internal)}
+resolvedConfiguration.needed = {javaScript: configuration.debug && [
+    'serve', 'testInBrowser'
+].includes(resolvedConfiguration.givenCommandLineArguments[2])}
+for (
+    const chunkName:string in
+    resolvedConfiguration.injection.internal.normalized
+)
+    if (resolvedConfiguration.injection.internal.normalized.hasOwnProperty(
+        chunkName
+    ))
+        for (
+            const moduleID:string of
+            resolvedConfiguration.injection.internal.normalized[chunkName]
+        ) {
+            const type:?string = Helper.determineAssetType(
+                Helper.determineModuleFilePath(
+                    moduleID, resolvedConfiguration.module.aliases,
+                    resolvedConfiguration.knownExtensions,
+                    resolvedConfiguration.path.context,
+                    resolvedConfiguration.path.source.asset.base,
+                    resolvedConfiguration.path.ignore
+                ), resolvedConfiguration.build, resolvedConfiguration.path)
+            if (type)
+                resolvedConfiguration.needed[type] = true
+        }
+// endregion
 // region adding special aliases
 // NOTE: This alias couldn't be set in the "package.json" file since this would
 // result in an endless loop.

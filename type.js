@@ -78,7 +78,10 @@ export type Injection = {
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
     implicitExternalIncludePattern:Array<RegExp|string>;
-    internal:InternalInjection;
+    internal:{
+        given:InternalInjection;
+        normalized:NormalizedInternalInjection
+    };
 }
 // / endregion
 // / region configuration
@@ -143,14 +146,16 @@ export type HTMLConfiguration = {
     filename:string
 }
 export type Command = {
+    arguments:Array<string>;
     command:string;
-    arguments:Array<string>
+    indicator:?string;
 }
 export type ResolvedConfiguration = {
     contextType:string;
-    name:string;
-    givenCommandLineArguments:Array<string>;
     dllManifestFilePaths:Array<string>;
+    givenCommandLineArguments:Array<string>;
+    name:string;
+    needed:{[key:string]:boolean};
 
     debug:boolean;
     library:boolean;
@@ -173,7 +178,7 @@ export type ResolvedConfiguration = {
         defaultHTML:HTMLConfiguration;
         html:Array<HTMLConfiguration>;
     };
-    injection:Injection;
+    injection:PlainObject;
     inPlace:{
         cascadingStyleSheet:boolean;
         externalLibrary:{
@@ -195,6 +200,7 @@ export type ResolvedConfiguration = {
         cascadingStyleSheet:string;
         directories:Array<string>;
         html:PlainObject;
+        locations:{[key:string]:Array<string>};
         optimizer:{
             data:PlainObject;
             font:{
@@ -259,7 +265,7 @@ export type ResolvedConfiguration = {
 
     test:PlainObject;
 
-    testInBrowser:{injection:Injection}
+    testInBrowser:PlainObject
 }
 // / endregion
 // / region specific callbacks

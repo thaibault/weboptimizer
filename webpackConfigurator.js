@@ -41,8 +41,8 @@ plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
 import type {
-    DomNode, HTMLConfiguration, Injection, NormalizedInternalInjection,
-    ProcedureFunction, PromiseCallbackFunction, Window
+    DomNode, HTMLConfiguration, ProcedureFunction, PromiseCallbackFunction,
+    Window
 } from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -135,11 +135,6 @@ if (configuration.development.openBrowser && (htmlAvailable && [
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
 // /// endregion
 // /// region modules/assets
-const moduleLocations:{[key:string]:Array<string>} =
-    Helper.determineModuleLocations(
-        configuration.injection.internal, configuration.module.aliases,
-        configuration.knownExtensions, configuration.path.context,
-        configuration.path.source.asset.base)
 // //// region perform javaScript minification/optimisation
 if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
@@ -285,26 +280,15 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
         })
     }})
 // //// endregion
-const injection:Injection = Helper.resolveInjection(
-    configuration.injection, Helper.resolveBuildConfigurationFilePaths(
-        configuration.build, configuration.path.source.asset.base,
-        configuration.path.ignore
-    ), configuration.testInBrowser.injection.internal,
-    configuration.module.aliases, configuration.knownExtensions,
-    configuration.path.context, configuration.path.source.asset.base,
-    configuration.path.ignore)
-const normalizedInternalInjection:NormalizedInternalInjection =
-    Helper.normalizeInternalInjection(injection.internal)
 // //// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
-    for (const chunkID:string in normalizedInternalInjection)
-        if (
-            normalizedInternalInjection.hasOwnProperty(chunkID) &&
-            configuration.dllManifestFilePaths.includes(
-                `${configuration.path.target.base}${chunkID}.dll-manifest.json`
-            )
-        ) {
-            delete normalizedInternalInjection[chunkID]
+    for (const chunkID:string in configuration.injection.internal.normalized)
+        if (configuration.injection.internal.normalized.hasOwnProperty(
+            chunkID
+        ) && configuration.dllManifestFilePaths.includes(
+            `${configuration.path.target.base}${chunkID}.dll-manifest.json`
+        )) {
+            delete configuration.injection.internal.normalized[chunkID]
             // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and
             // everywhere else
             const filePath:string =
@@ -326,7 +310,9 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
 // //// region generate common chunks
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string of configuration.injection.commonChunkIDs)
-        if (normalizedInternalInjection.hasOwnProperty(chunkID))
+        if (configuration.injection.internal.normalized.hasOwnProperty(
+            chunkID
+        ))
             pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
                 async: false,
                 children: false,
@@ -336,32 +322,8 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 minSize: 0
             }))
 // //// endregion
-let javaScriptNeeded:boolean = configuration.debug && [
-    'serve', 'testInBrowser'
-].includes(configuration.givenCommandLineArguments[2])
-if (!javaScriptNeeded)
-    for (const chunkName:string in normalizedInternalInjection)
-        if (normalizedInternalInjection.hasOwnProperty(chunkName))
-            for (const moduleID:string of normalizedInternalInjection[
-                chunkName
-            ]) {
-                const type:?string = Helper.determineAssetType(
-                    Helper.determineModuleFilePath(
-                        moduleID, configuration.module.aliases,
-                        configuration.knownExtensions,
-                        configuration.path.context,
-                        configuration.path.source.asset.base,
-                        configuration.path.ignore
-                    ), configuration.build, configuration.path)
-                if (type && configuration.build[type] && configuration.build[
-                    type
-                ].outputExtension === 'js') {
-                    javaScriptNeeded = true
-                    break
-                }
-            }
 // //// region mark empty javaScript modules as dummy
-if (!javaScriptNeeded)
+if (!configuration.needed.javaScript)
     configuration.files.compose.javaScript = path.resolve(
         configuration.path.target.asset.javaScript, '.__dummy__.compiled.js')
 // //// endregion
@@ -371,14 +333,14 @@ pluginInstances.push(new plugins.ExtractText(
         !configuration.files.compose.cascadingStyleSheet}))
 // //// endregion
 // //// region performs implicit external logic
-if (injection.external === '__implicit__')
+if (configuration.injection.external === '__implicit__')
     /*
         We only want to process modules from local context in library mode,
         since a concrete project using this library should combine all assets
         (and deduplicate them) for optimal bundling results. NOTE: Only native
         javaScript and json modules will be marked as external dependency.
     */
-    injection.external = (
+    configuration.injection.external = (
         context:string, request:string, callback:ProcedureFunction
     ):void => {
         const filePath:string = Helper.determineModuleFilePath(
@@ -413,11 +375,16 @@ if (injection.external === '__implicit__')
                 request, configuration.injection.implicitExternalExcludePattern
             ))
                 return callback()
-            for (const chunkName:string in normalizedInternalInjection)
-                if (normalizedInternalInjection.hasOwnProperty(chunkName))
+            for (
+                const chunkName:string in
+                configuration.injection.internal.normalized
+            )
+                if (configuration.injection.internal.normalized.hasOwnProperty(
+                    chunkName
+                ))
                     for (
                         const moduleID:string of
-                        normalizedInternalInjection[chunkName]
+                        configuration.injection.internal.normalized[chunkName]
                     )
                         if (Helper.determineModuleFilePath(
                             moduleID, configuration.module.aliases,
@@ -447,12 +414,14 @@ if (injection.external === '__implicit__')
 // //// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
     let dllChunkIDExists:boolean = false
-    for (const chunkID:string in normalizedInternalInjection)
-        if (normalizedInternalInjection.hasOwnProperty(chunkID))
+    for (const chunkID:string in configuration.injection.internal.normalized)
+        if (configuration.injection.internal.normalized.hasOwnProperty(
+            chunkID
+        ))
             if (configuration.injection.dllChunkIDs.includes(chunkID))
                 dllChunkIDExists = true
             else
-                delete normalizedInternalInjection[chunkID]
+                delete configuration.injection.internal.normalized[chunkID]
     if (dllChunkIDExists) {
         libraryName = '[name]DLLPackage'
         pluginInstances.push(new webpack.DllPlugin({
@@ -635,7 +604,8 @@ export default {
     devtool: configuration.development.tool,
     devServer: configuration.development.server,
     // region input
-    entry: normalizedInternalInjection, externals: injection.external,
+    entry: configuration.injection.internal.normalized,
+    externals: configuration.injection.external,
     resolveLoader: {
         alias: configuration.loader.aliases,
         extensions: configuration.loader.extensions,
@@ -674,7 +644,7 @@ export default {
                 test: /\.js$/,
                 loader: loader.preprocessor.javaScript,
                 include: [configuration.path.source.asset.javaScript].concat(
-                    moduleLocations.directoryPaths),
+                    configuration.module.locations.directoryPaths),
                 exclude: (filePath:string):boolean =>
                     Helper.isFilePathInLocation(filePath.replace(
                         /^(.+)(?:\?[^?]*)$/, '$1'
@@ -721,7 +691,7 @@ export default {
                     loader.preprocessor.cascadingStyleSheet),
                 include: [
                     configuration.path.source.asset.cascadingStyleSheet
-                ].concat(moduleLocations.directoryPaths),
+                ].concat(configuration.module.locations.directoryPaths),
                 exclude: (filePath:string):boolean =>
                     Helper.isFilePathInLocation(filePath.replace(
                         /^(.+)(?:\?[^?]*)$/, '$1'

@@ -432,7 +432,6 @@
             },
             "commandLine": {
                 "build": {
-                    "command": "webpack",
                     "arguments": [
                         "--config",
                         {"__evaluate__": "`${webOptimizerPath}/webpackConfigurator.compiled.js`"},
@@ -440,10 +439,10 @@
                         "--display-chunks",
                         "--display-reasons",
                         "--display-error-details"
-                    ]
+                    ],
+                    "command": "webpack"
                 },
                 "document": {
-                    "command": "jsdoc",
                     "arguments": [
                         "--package",
                         "./package.json",
@@ -452,19 +451,21 @@
                         "--destination",
                         {"__evaluate__": "self.path.apiDocumentation"},
                         {"__evaluate__": "`'${self.path.target.asset.javaScript}'*.js`"}
-                    ]
+                    ],
+                    "command": "jsdoc",
+                    "indicator": "self.needed.javaScript"
                 },
                 "lint": [
                     {
-                        "command": "stylelint",
                         "arguments": [
                             {"__evaluate__": "`${self.path.source.asset.cascadingStyleSheet}**/*.css`"},
                             "--config",
                             {"__evaluate__": "`${path.relative(self.path.context, webOptimizerPath)}/stylelintConfigurator.compiled.js`"}
-                        ]
+                        ],
+                        "command": "stylelint",
+                        "indicator": "self.needed.cascadingStyleSheet"
                     },
                     {
-                        "command": "eslint",
                         "arguments": [
                             "--config",
                             {"__evaluate__": "`'${webOptimizerPath}/package.json'`"},
@@ -473,11 +474,12 @@
                             "--ignore-pattern",
                             {"__evaluate__": "`'${self.path.apiDocumentation}'`"},
                             "'**/*.js'"
-                        ]
+                        ],
+                        "command": "eslint",
+                        "indicator": "self.needed.javaScript"
                     }
                 ],
                 "serve": {
-                    "command": "webpack-dev-server",
                     "arguments": [
                         "--config",
                         {"__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"},
@@ -490,7 +492,8 @@
                         "--colors",
                         "--compress",
                         "--history-api-fallback"
-                    ]
+                    ],
+                    "command": "webpack-dev-server"
                 },
                 "test": {"command": "./testBundle.compiled.js"},
                 "testInBrowser": {"__evaluate__": "self.commandLine.serve"},
