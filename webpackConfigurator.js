@@ -348,66 +348,60 @@ if (configuration.injection.external === '__implicit__')
             configuration.module.aliases, configuration.knownExtensions,
             context, configuration.path.source.asset.base,
             configuration.path.ignore)
-        if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
-            const originalRequest:string = request
-            // NOTE: We apply alias on externals additionally.
-            request = Helper.applyAliases(
-                request.substring(request.lastIndexOf('!') + 1),
-                configuration.module.aliases)
-            const applyExternalRequest:Function = ():void => {
-                if (['var', 'umd'].includes(
-                    configuration.exportFormat.external
-                ) &&
-                originalRequest in configuration.injection.externalAliases)
-                    request = configuration.injection.externalAliases[
-                        originalRequest]
-                if (configuration.exportFormat.external === 'var')
-                    request = Helper.convertToValidVariableName(
-                        request, '0-9a-zA-Z_$\\.')
-                return callback(
-                    null, request, configuration.exportFormat.external)
-            }
-            if (Helper.isAnyMatching(
-                request, configuration.injection.implicitExternalIncludePattern
-            ))
-                return applyExternalRequest()
-            if (Helper.isAnyMatching(
-                request, configuration.injection.implicitExternalExcludePattern
-            ))
-                return callback()
-            for (
-                const chunkName:string in
-                configuration.injection.internal.normalized
-            )
-                if (configuration.injection.internal.normalized.hasOwnProperty(
-                    chunkName
-                ))
-                    for (
-                        const moduleID:string of
-                        configuration.injection.internal.normalized[chunkName]
-                    )
-                        if (Helper.determineModuleFilePath(
-                            moduleID, configuration.module.aliases,
-                            configuration.knownExtensions, context,
-                            configuration.path.source.asset.base,
-                            configuration.path.ignore
-                        ) === filePath)
-                            return callback()
-            /*
-                NOTE: We mark dependencies as external if they does not contain
-                a loader in their request and aren't part of the current node
-                package.
-            */
-            if (!configuration.inPlace.externalLibrary.normal && !(
-                configuration.inPlace.externalLibrary.shimmed &&
-                originalRequest.includes('!')
-            ) && (!path.resolve(filePath).startsWith(
-                configuration.path.context
-            ) || Helper.isFilePathInLocation(
-                filePath, configuration.path.ignore
-            )))
-                return applyExternalRequest()
+        const originalRequest:string = request
+        // NOTE: We apply alias on externals additionally.
+        request = Helper.applyAliases(
+            request.substring(request.lastIndexOf('!') + 1),
+            configuration.module.aliases)
+        const applyExternalRequest:Function = ():void => {
+            if (['var', 'umd'].includes(
+                configuration.exportFormat.external
+            ) && originalRequest in configuration.injection.externalAliases)
+                request = configuration.injection.externalAliases[
+                    originalRequest]
+            if (configuration.exportFormat.external === 'var')
+                request = Helper.convertToValidVariableName(
+                    request, '0-9a-zA-Z_$\\.')
+            return callback(null, request, configuration.exportFormat.external)
         }
+        if (Helper.isAnyMatching(
+            request, configuration.injection.implicitExternalIncludePattern
+        ))
+            return applyExternalRequest()
+        if (Helper.isAnyMatching(
+            request, configuration.injection.implicitExternalExcludePattern
+        ))
+            return callback()
+        for (
+            const chunkName:string in
+            configuration.injection.internal.normalized
+        )
+            if (configuration.injection.internal.normalized.hasOwnProperty(
+                chunkName
+            ))
+                for (
+                    const moduleID:string of
+                    configuration.injection.internal.normalized[chunkName]
+                )
+                    if (Helper.determineModuleFilePath(
+                        moduleID, configuration.module.aliases,
+                        configuration.knownExtensions, context,
+                        configuration.path.source.asset.base,
+                        configuration.path.ignore
+                    ) === filePath)
+                        return callback()
+        /*
+            NOTE: We mark dependencies as external if they does not contain
+            a loader in their request and aren't part of the current node
+            package.
+        */
+        if (!configuration.inPlace.externalLibrary.normal && !(
+            configuration.inPlace.externalLibrary.shimmed &&
+            originalRequest.includes('!')
+        ) && (!path.resolve(context, filePath).startsWith(
+            configuration.path.context
+        ) || Helper.isFilePathInLocation(filePath, configuration.path.ignore)))
+            return applyExternalRequest()
         return callback()
     }
 // //// endregion
@@ -597,93 +591,6 @@ const loader:{
 }
 // / endregion
 // endregion
-console.log([
-    {
-        loader: loader.preprocessor.javaScript,
-        include: [configuration.path.source.asset.javaScript].concat(
-            configuration.module.locations.directoryPaths),
-        exclude: (filePath:string):boolean =>
-            Helper.isFilePathInLocation(filePath.replace(
-                /^(.+)(?:\?[^?]*)$/, '$1'
-            ), configuration.path.ignore)
-    },
-    {
-        test: new RegExp(Helper.convertToValidRegularExpressionString(
-            configuration.files.defaultHTML.template.substring(
-                configuration.files.defaultHTML.template.lastIndexOf(
-                    '!'
-                ) + 1))),
-        loader: configuration.files.defaultHTML.template.substring(
-            0, configuration.files.defaultHTML.template.lastIndexOf(
-                '!'))
-    },
-    {
-        test: /\.pug$/,
-        loader:
-            'file?name=' + path.relative(
-                configuration.path.target.asset.base,
-                configuration.path.target.asset.template
-            ) + `[name].html?${configuration.hashAlgorithm}=[hash]!` +
-            `extract!${loader.html}!${loader.preprocessor.pug}`,
-        include: configuration.path.source.asset.template,
-        exclude: configuration.files.html.concat(
-            configuration.files.defaultHTML
-        ).map((htmlConfiguration:HTMLConfiguration):string =>
-            htmlConfiguration.template.substring(
-                htmlConfiguration.template.lastIndexOf('!') + 1))
-    },
-    {
-        test: /\.css$/,
-        loader: plugins.ExtractText.extract(
-            loader.style,
-            `${loader.cascadingStyleSheet}!` +
-            loader.preprocessor.cascadingStyleSheet),
-        include: [
-            configuration.path.source.asset.cascadingStyleSheet
-        ].concat(configuration.module.locations.directoryPaths),
-        exclude: (filePath:string):boolean =>
-            Helper.isFilePathInLocation(filePath.replace(
-                /^(.+)(?:\?[^?]*)$/, '$1'
-            ), configuration.path.ignore)
-    },
-    {
-        test: /\.html$/,
-        loader:
-            'file?name=' + path.relative(
-                configuration.path.target.base,
-                configuration.path.target.asset.template
-            ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
-            `extract!${loader.html}`,
-        include: configuration.path.source.asset.template,
-        exclude: configuration.files.html.map((
-            htmlConfiguration:HTMLConfiguration
-        ):string => htmlConfiguration.template.substring(
-            htmlConfiguration.template.lastIndexOf('!') + 1))
-    },
-    {
-        test: /\.eot(?:\?v=\d+\.\d+\.\d+)?$/,
-        loader: loader.postprocessor.font.eot
-    }, {test: /\.woff2?$/, loader: loader.postprocessor.font.woff}, {
-        test: /\.ttf(?:\?v=\d+\.\d+\.\d+)?$/,
-        loader: loader.postprocessor.font.ttf
-    }, {
-        test: /\.svg(?:\?v=\d+\.\d+\.\d+)?$/,
-        loader: loader.postprocessor.font.svg
-    },
-    {
-        test: /\.(?:png|jpg|ico|gif)$/,
-        loader: loader.postprocessor.image
-    },
-    {
-        test: /.+/,
-        loader: loader.postprocessor.data,
-        include: configuration.path.source.asset.data,
-        exclude: (filePath:string):boolean =>
-            configuration.knownExtensions.includes(
-                path.extname(filePath.replace(
-                    /^(.+)(?:\?[^?]*)$/, '$1')))
-    }
-])
 // region configuration
 export default {
     context: configuration.path.context,

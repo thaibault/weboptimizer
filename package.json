@@ -359,7 +359,7 @@
             "path": {
                 "apiDocumentation": "apiDocumentation/",
                 "base": "./",
-                "ignore": ["node_modules", ".git", {
+                "ignore": [".git", {
                     "__evaluate__": "self.path.apiDocumentation"
                 }],
                 "source": {

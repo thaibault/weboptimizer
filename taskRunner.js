@@ -101,7 +101,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     filePath:string, stat:Object
                 ):?boolean => {
                     if (Helper.isFilePathInLocation(
-                        filePath, configuration.path.ignore
+                        filePath, configuration.path.ignore.concat(
+                            configuration.module.directories,
+                            configuration.loader.directories)
                     ))
                         return false
                     for (const type:string in configuration.build)
