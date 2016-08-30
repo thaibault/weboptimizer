@@ -203,7 +203,7 @@
                             "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                         },
                         "name": {
-                            "__evaluate__": "`/${self.path.target.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.data)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "font": {
@@ -212,7 +212,7 @@
                                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__evaluate__": "`/${self.path.target.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.font)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "svg": {
@@ -221,7 +221,7 @@
                             },
                             "mimetype": "image/svg+xml",
                             "name": {
-                                "__evaluate__": "`/${self.path.target.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.font)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "ttf": {
@@ -230,7 +230,7 @@
                             },
                             "mimetype": "application/octet-stream",
                             "name": {
-                                "__evaluate__": "`/${self.path.target.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.font)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "woff": {
@@ -238,7 +238,7 @@
                                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__evaluate__": "`/${self.path.target.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.font)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         }
                     },
@@ -305,7 +305,7 @@
                                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__evaluate__": "`/${self.path.target.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.image)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         }
                     },
