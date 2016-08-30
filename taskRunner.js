@@ -122,7 +122,8 @@ if (configuration.givenCommandLineArguments.length > 2) {
             ):void => {
                 if (
                     fileName.length > '.dll-manifest.json'.length &&
-                    fileName.endsWith('.dll-manifest.json')
+                    fileName.endsWith('.dll-manifest.json') ||
+                    fileName.startsWith('npm-debug')
                 )
                     fileSystem.unlinkSync(path.resolve(
                         configuration.path.target.base, fileName))
