@@ -18,13 +18,11 @@
         "babel-cli": ">=6.14.0",
         "babel-eslint": ">=6.1.2",
         "babel-loader": ">=6.2.5",
-        "babel-polyfill": ">=6.13.0",
         "babel-plugin-transform-flow-strip-types": ">=6.14.0",
-        "babel-preset-babili": ">=1.0.0",
-        "babel-preset-es2015": ">=6.14.0",
-        "babel-preset-es2015-loose": ">=7.0.0",
-        "babel-preset-es2015-node": ">=6.1.1",
+        "babel-polyfill": ">=6.13.0",
+        "babel-preset-latest": ">=6.14.0",
         "babel-preset-stage-0": ">=6.5.0",
+        "babili": ">=0.0.3",
         "css-loader": ">=0.24.0",
         "eslint": ">=3.4.0",
         "eslint-config-google": ">=0.6.0",
@@ -80,13 +78,13 @@
         "webpackConfigurator.js"
     ],
     "scripts": {
-        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command taskRunner.compiled.js taskRunner.js && $command webpackConfigurator.compiled.js webpackConfigurator.js",
+        "build": "command='babili --plugins transform-flow-strip-types --presets latest,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command taskRunner.compiled.js taskRunner.js && $command webpackConfigurator.compiled.js webpackConfigurator.js",
         "clear": "rm *.compiled.* &>/dev/null;rm --recursive *.compiled &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null; rm *.html &>/dev/null || true",
         "document": "npm run build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
         "lint": "flow --color always --strip-root && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
         "preinstall": "touch browserAPI.compiled.js configurator.compiled.js helper.compiled.js pugLoader.compiled.js stylelintConfigurator.compiled.js taskRunner.compiled.js webpackConfigurator.compiled.js",
         "postinstall": "npm run build",
-        "test": "npm run clear && command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
+        "test": "npm run clear && command='babel --plugins transform-flow-strip-types --presets latest,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
     },
     "configuration": {
         "default": {
@@ -332,9 +330,7 @@
                     "babel": {
                         "cacheDirectory": true,
                         "compact": true,
-                        "presets": [
-                            "es2015-loose", "stage-0", "babel-preset-babili"
-                        ],
+                        "presets": ["latest", "stage-0", "babili"],
                         "plugins": ["transform-flow-strip-types"]
                     }
                 },
@@ -544,7 +540,7 @@
                 "module": {
                     "optimizer": {"uglifyJS": null},
                     "preprocessor": {"babel": {"presets": [
-                        "es2015-node", "stage-0"
+                        "latest", "stage-0"
                     ]}}
                 }
             },
@@ -612,7 +608,7 @@
             },
             "module": {
                 "preprocessor": {
-                    "babel": {"presets": ["es2015-loose", "stage-0"]},
+                    "babel": {"presets": ["latest", "stage-0"]},
                     "pug": {"compiler": {"pretty": true}}
                 },
                 "cascadingStyleSheet": "?sourceMap",
