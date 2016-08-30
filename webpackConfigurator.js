@@ -597,6 +597,190 @@ const loader:{
 }
 // / endregion
 // endregion
+console.log({
+    context: configuration.path.context,
+    debug: configuration.debug,
+    devtool: configuration.development.tool,
+    devServer: configuration.development.server,
+    // region input
+    entry: configuration.injection.internal.normalized,
+    externals: configuration.injection.external,
+    resolveLoader: {
+        alias: configuration.loader.aliases,
+        extensions: configuration.loader.extensions,
+        modulesDirectories: configuration.loader.directories
+    },
+    resolve: {
+        alias: configuration.module.aliases,
+        extensions: configuration.knownExtensions,
+        root: [(configuration.path.source.asset.base:string)],
+        modulesDirectories: configuration.module.directories
+    },
+    // endregion
+    // region output
+    output: {
+        filename: path.relative(
+            configuration.path.target.base,
+            configuration.files.compose.javaScript),
+        hashFunction: configuration.hashAlgorithm,
+        library: libraryName,
+        libraryTarget: (
+            configuration.givenCommandLineArguments[2] === 'buildDLL'
+        ) ? 'var' : configuration.exportFormat.self,
+        path: configuration.path.target.base,
+        publicPath: configuration.path.target.public,
+        pathinfo: configuration.debug,
+        umdNamedDefine: true
+    },
+    target: configuration.targetTechnology,
+    // endregion
+    module: {
+        noParse: configuration.module.skipParseRegularExpression,
+        preLoaders: [
+            // Convert to native web types.
+            // region script
+            {
+                test: /\.js$/,
+                loader: loader.preprocessor.javaScript,
+                include: [configuration.path.source.asset.javaScript].concat(
+                    configuration.module.locations.directoryPaths),
+                exclude: (filePath:string):boolean =>
+                    Helper.isFilePathInLocation(filePath.replace(
+                        /^(.+)(?:\?[^?]*)$/, '$1'
+                    ), configuration.path.ignore)
+            },
+            // endregion
+            // region html (templates)
+            // NOTE: This ensures that will be used as a special loader alias.
+            {
+                test: new RegExp(Helper.convertToValidRegularExpressionString(
+                    configuration.files.defaultHTML.template.substring(
+                        configuration.files.defaultHTML.template.lastIndexOf(
+                            '!'
+                        ) + 1))),
+                loader: configuration.files.defaultHTML.template.substring(
+                    0, configuration.files.defaultHTML.template.lastIndexOf(
+                        '!'))
+            },
+            {
+                test: /\.pug$/,
+                loader:
+                    'file?name=' + path.relative(
+                        configuration.path.target.asset.base,
+                        configuration.path.target.asset.template
+                    ) + `[name].html?${configuration.hashAlgorithm}=[hash]!` +
+                    `extract!${loader.html}!${loader.preprocessor.pug}`,
+                include: configuration.path.source.asset.template,
+                exclude: configuration.files.html.concat(
+                    configuration.files.defaultHTML
+                ).map((htmlConfiguration:HTMLConfiguration):string =>
+                    htmlConfiguration.template.substring(
+                        htmlConfiguration.template.lastIndexOf('!') + 1))
+            }
+            // endregion
+        ],
+        loaders: [
+            // Loads dependencies.
+            // region style
+            {
+                test: /\.css$/,
+                loader: plugins.ExtractText.extract(
+                    loader.style,
+                    `${loader.cascadingStyleSheet}!` +
+                    loader.preprocessor.cascadingStyleSheet),
+                include: [
+                    configuration.path.source.asset.cascadingStyleSheet
+                ].concat(configuration.module.locations.directoryPaths),
+                exclude: (filePath:string):boolean =>
+                    Helper.isFilePathInLocation(filePath.replace(
+                        /^(.+)(?:\?[^?]*)$/, '$1'
+                    ), configuration.path.ignore)
+            },
+            // endregion
+            // region html (templates)
+            {
+                test: /\.html$/,
+                loader:
+                    'file?name=' + path.relative(
+                        configuration.path.target.base,
+                        configuration.path.target.asset.template
+                    ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
+                    `extract!${loader.html}`,
+                include: configuration.path.source.asset.template,
+                exclude: configuration.files.html.map((
+                    htmlConfiguration:HTMLConfiguration
+                ):string => htmlConfiguration.template.substring(
+                    htmlConfiguration.template.lastIndexOf('!') + 1))
+            }
+            // endregion
+        ],
+        postLoaders: [
+            // Optimize loaded assets.
+            // region font
+            {
+                test: /\.eot(?:\?v=\d+\.\d+\.\d+)?$/,
+                loader: loader.postprocessor.font.eot
+            }, {test: /\.woff2?$/, loader: loader.postprocessor.font.woff}, {
+                test: /\.ttf(?:\?v=\d+\.\d+\.\d+)?$/,
+                loader: loader.postprocessor.font.ttf
+            }, {
+                test: /\.svg(?:\?v=\d+\.\d+\.\d+)?$/,
+                loader: loader.postprocessor.font.svg
+            },
+            // endregion
+            // region image
+            {
+                test: /\.(?:png|jpg|ico|gif)$/,
+                loader: loader.postprocessor.image
+            },
+            // endregion
+            // region data
+            {
+                test: /.+/,
+                loader: loader.postprocessor.data,
+                include: configuration.path.source.asset.data,
+                exclude: (filePath:string):boolean =>
+                    configuration.knownExtensions.includes(
+                        path.extname(filePath.replace(
+                            /^(.+)(?:\?[^?]*)$/, '$1')))
+            }
+            // endregion
+        ]
+    },
+    postcss: ():Array<Object> => [
+        postcssImport({
+            addDependencyTo: webpack,
+            root: configuration.path.context
+        }),
+        /*
+            NOTE: Checking path doesn't work if fonts are referenced in
+            libraries provided in another location than the project itself like
+            the node_modules folder.
+        */
+        postcssCSSnext({browsers: '> 0%'}),
+        postcssFontPath({checkPath: false}),
+        postcssURL({filter: '', maxSize: 0}),
+        postcssSprites({
+            filterBy: ():Promise<null> => new Promise((
+                resolve:Function, reject:Function
+            ):Promise<null> => (
+                configuration.files.compose.image ? resolve : reject
+            )()),
+            hooks: {onSaveSpritesheet: (image:Object):string => path.join(
+                image.spritePath, path.relative(
+                    configuration.path.target.asset.image,
+                    configuration.files.compose.image))},
+            stylesheetPath:
+                configuration.path.source.asset.cascadingStyleSheet,
+            spritePath: configuration.path.source.asset.image
+        })
+    ],
+    html: configuration.module.optimizer.htmlMinifier,
+    // Let the "html-loader" access full html minifier processing
+    // configuration.
+    pug: configuration.module.preprocessor.pug,
+    plugins: pluginInstances
+})
 // region configuration
 export default {
     context: configuration.path.context,

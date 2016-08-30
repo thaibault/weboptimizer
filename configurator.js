@@ -188,7 +188,7 @@ for (const key:string in configuration.path)
             for (const subKey:string in configuration.path[key])
                 if (
                     configuration.path[key].hasOwnProperty(subKey) &&
-                    subKey !== 'base' &&
+                    !['base', 'public'].includes(subKey) &&
                     typeof configuration.path[key][subKey] === 'string'
                 )
                     configuration.path[key][subKey] = path.resolve(
