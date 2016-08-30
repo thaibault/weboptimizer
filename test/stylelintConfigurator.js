@@ -13,7 +13,7 @@ QUnit.module('stylelintkConfigurator')
 QUnit.load()
 // region tests
 QUnit.test('stylelintConfigurator', (assert:Object):void => {
-    assert.ok(require('../stylelintConfigurator.compiled').default)
+    assert.ok(require('../stylelintConfigurator.compiled'))
 })
 // endregion
 // region vim modline

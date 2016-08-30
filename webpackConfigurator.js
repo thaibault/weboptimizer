@@ -135,11 +135,6 @@ if (configuration.development.openBrowser && (htmlAvailable && [
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
 // /// endregion
 // /// region modules/assets
-// //// region perform javaScript minification/optimisation
-if (configuration.module.optimizer.uglifyJS)
-    pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
-        configuration.module.optimizer.uglifyJS))
-// //// endregion
 // //// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
     compiler.plugin('emit', (

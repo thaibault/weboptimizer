@@ -20,6 +20,7 @@
         "babel-loader": ">=6.2.5",
         "babel-polyfill": ">=6.13.0",
         "babel-plugin-transform-flow-strip-types": ">=6.14.0",
+        "babel-preset-babili": ">=0.0.1",
         "babel-preset-es2015": ">=6.14.0",
         "babel-preset-es2015-loose": ">=7.0.0",
         "babel-preset-es2015-node": ">=6.1.1",
@@ -331,7 +332,9 @@
                     "babel": {
                         "cacheDirectory": true,
                         "compact": true,
-                        "presets": ["es2015-loose", "stage-0"],
+                        "presets": [
+                            "es2015-loose", "stage-0", "babel-preset-babili"
+                        ],
                         "plugins": ["transform-flow-strip-types"]
                     }
                 },
@@ -608,7 +611,10 @@
                 "otherMaximumFileSizeLimitInByte": 1
             },
             "module": {
-                "preprocessor": {"pug": {"compiler": {"pretty": true}}},
+                "preprocessor": {
+                    "babel": {"presets": ["es2015-loose", "stage-0"]},
+                    "pug": {"compiler": {"pretty": true}}
+                },
                 "cascadingStyleSheet": "?sourceMap",
                 "optimizer": {
                     "uglifyJS": null,
