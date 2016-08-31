@@ -527,6 +527,78 @@ export default class Helper {
     // endregion
     // region file handler
     /**
+     * Check if given request points to an external dependency not maintained
+     * by current package context.
+     * @param request - Request to determine.
+     * @param context - Context of current project.
+     * @param requestContext - Context of given request to resolve relative to.
+     * @param normalizedInternalInjection - Mapping of chunk names to modules
+     * which should be injected.
+     * @param externalModuleLocations - Array if paths where external modules
+     * take place.
+     * @param moduleAliases - Mapping of aliases to take into account.
+     * @param knownExtensions - List of file extensions to take into account.
+     * @param referencePath - Path to resolve local modules relative to.
+     * @param pathsToIgnore - Paths which marks location to ignore.
+     * @param includePattern - Array of regular expressions to explicitly mark
+     * as external dependency.
+     * @param excludePattern - Array of regular expressions to explicitly mark
+     * as internal dependency.
+     * @param inPlaceNormalLibrary - Indicates weather normal libraries should
+     * be external or not.
+     * @param inPlaceShimmedLibrary - Indicates weather requests with
+     * integrated loader configurations should be marked as external or not.
+     * @returns A new resolved request indicating weather given request is an
+     * external one.
+     */
+    static determineExternalRequest(
+        request:string, context:string = './', requestContext:string = './',
+        normalizedInternalInjection:NormalizedInternalInjection,
+        externalModuleLocations:Array<string>,
+        moduleAliases:PlainObject = {},
+        knownExtensions:Array<string> = ['.js'], referencePath:string = '',
+        pathsToIgnore:Array<string> = ['.git'],
+        includePattern:Array<string|RegExp> = [],
+        excludePattern:Array<string|RegExp> = [],
+        inPlaceNormalLibrary:boolean = false,
+        inPlaceShimmedLibrary:boolean = true
+    ):?string {
+        const filePath:string = Helper.determineModuleFilePath(
+            request.substring(request.lastIndexOf('!') + 1), moduleAliases,
+            knownExtensions, requestContext, referencePath, pathsToIgnore)
+        const originalRequest:string = request
+        // NOTE: We apply alias on externals additionally.
+        request = Helper.applyAliases(
+            request.substring(request.lastIndexOf('!') + 1), moduleAliases)
+        if (Helper.isAnyMatching(request, includePattern))
+            return request
+        if (Helper.isAnyMatching(request, excludePattern))
+            return null
+        for (const chunkName:string in normalizedInternalInjection)
+            if (normalizedInternalInjection.hasOwnProperty(chunkName))
+                for (const moduleID:string of normalizedInternalInjection[
+                    chunkName
+                ])
+                    if (Helper.determineModuleFilePath(
+                        moduleID, moduleAliases, knownExtensions,
+                        requestContext, referencePath, pathsToIgnore
+                    ) === filePath)
+                        return null
+        /*
+            NOTE: We mark dependencies as external if they does not contain
+            a loader in their request and aren't part of the current main
+            package or have a file extension other than javaScript aware.
+        */
+        if (['.js', '.node', '.json'].includes(path.extname(filePath)) && (
+            !inPlaceNormalLibrary && !(
+                inPlaceShimmedLibrary && originalRequest.includes('!')
+            ) && (!filePath.startsWith(context) || Helper.isFilePathInLocation(
+                filePath, externalModuleLocations))
+        ))
+            return request
+        return null
+    }
+    /**
      * Checks if given path points to a valid file.
      * @param filePath - Path to file.
      * @returns A boolean which indicates file existents.

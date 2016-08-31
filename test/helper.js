@@ -361,6 +361,12 @@ QUnit.test('handleChildProcess', (assert:Object):void => {
 })
 // endregion
 // region file handler
+QUnit.test('determineExternalRequest', (assert:Object):void => {
+    for (const test:Array<any> of [
+        ['']
+    ])
+        assert.notOk(Helper.determineExternalRequest.apply(Helper, test))
+})
 QUnit.test('isFileSync', (assert:Object):void => {
     for (const filePath:string of [
         __filename,

@@ -343,72 +343,32 @@ if (configuration.injection.external === '__implicit__')
     configuration.injection.external = (
         context:string, request:string, callback:ProcedureFunction
     ):void => {
-        const filePath:string = Helper.determineModuleFilePath(
-            request.substring(request.lastIndexOf('!') + 1),
-            configuration.module.aliases, configuration.knownExtensions,
-            context, configuration.path.source.asset.base,
-            configuration.path.ignore)
-        const originalRequest:string = request
-        // NOTE: We apply alias on externals additionally.
-        request = Helper.applyAliases(
-            request.substring(request.lastIndexOf('!') + 1),
-            configuration.module.aliases)
-        const applyExternalRequest:Function = ():void => {
+        let resolvedRequest:?string = Helper.determineExternalRequest(
+            request, configuration.path.context, context,
+            configuration.injection.internal.normalized,
+            configuration.path.ignore.concat(
+                configuration.module.directories,
+                configuration.loader.directories
+            ).map((filePath:string):string => path.resolve(
+                configuration.path.context, filePath
+            )), configuration.module.aliases, configuration.knownExtensions,
+            configuration.path.source.asset.base, configuration.path.ignore,
+            configuration.injection.implicitExternalIncludePattern,
+            configuration.injection.implicitExternalExcludePattern,
+            configuration.inPlace.externalLibrary.normal,
+            configuration.inPlace.externalLibrary.shimmed)
+        if (resolvedRequest) {
             if (['var', 'umd'].includes(
                 configuration.exportFormat.external
-            ) && originalRequest in configuration.injection.externalAliases)
-                request = configuration.injection.externalAliases[
-                    originalRequest]
+            ) && request in configuration.injection.externalAliases)
+                resolvedRequest = configuration.injection.externalAliases[
+                    request]
             if (configuration.exportFormat.external === 'var')
-                request = Helper.convertToValidVariableName(
-                    request, '0-9a-zA-Z_$\\.')
-            return callback(null, request, configuration.exportFormat.external)
+                resolvedRequest = Helper.convertToValidVariableName(
+                    resolvedRequest, '0-9a-zA-Z_$\\.')
+            return callback(
+                null, resolvedRequest, configuration.exportFormat.external)
         }
-        if (Helper.isAnyMatching(
-            request, configuration.injection.implicitExternalIncludePattern
-        ))
-            return applyExternalRequest()
-        if (Helper.isAnyMatching(
-            request, configuration.injection.implicitExternalExcludePattern
-        ))
-            return callback()
-        for (
-            const chunkName:string in
-            configuration.injection.internal.normalized
-        )
-            if (configuration.injection.internal.normalized.hasOwnProperty(
-                chunkName
-            ))
-                for (
-                    const moduleID:string of
-                    configuration.injection.internal.normalized[chunkName]
-                )
-                    if (Helper.determineModuleFilePath(
-                        moduleID, configuration.module.aliases,
-                        configuration.knownExtensions, context,
-                        configuration.path.source.asset.base,
-                        configuration.path.ignore
-                    ) === filePath)
-                        return callback()
-        /*
-            NOTE: We mark dependencies as external if they does not contain
-            a loader in their request and aren't part of the current main
-            package or have a file extension other than javaScript aware.
-        */
-        if (['.js', '.node', '.json'].includes(path.extname(filePath)) && (
-            !configuration.inPlace.externalLibrary.normal && !(
-                configuration.inPlace.externalLibrary.shimmed &&
-                originalRequest.includes('!')
-            ) && (
-                !filePath.startsWith(configuration.path.context) ||
-                Helper.isFilePathInLocation(
-                    filePath, configuration.path.ignore.concat(
-                        configuration.module.directories,
-                        configuration.loader.directories
-                    ).map((filePath:string):string => path.resolve(
-                        configuration.path.context, filePath))))
-        ))
-            return applyExternalRequest()
         return callback()
     }
 // //// endregion
