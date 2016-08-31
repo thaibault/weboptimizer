@@ -377,13 +377,31 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         [['path', './', './', {}, [], {path: './index.js'}], './index.js'],
         [['path', './', './', {}, [], {path: 'index.js'}], 'index.js'],
         [['path', './', './', {}, [], {path: './helper.js'}], null],
+        [['webpack'], 'webpack'],
+        [['a', './', './', {}, [path.resolve(
+            __dirname, '../node_modules'
+        )], {a$: 'webpack'}], 'webpack'],
+        [['a', './', './', {a: ['webpack']}, [path.resolve(
+            __dirname, '../node_modules'
+        )], {a$: 'webpack'}], null],
+        [['a', './', './', {a: ['webpack']}, [path.resolve(
+            __dirname, '../node_modules'
+        )], {a$: 'webpack'}, []], 'webpack'],
+        [['a', './', './', {a: ['webpack']}, [path.resolve(
+            __dirname, '../node_modules'
+        )], {a$: 'webpack'}, ['', '.js'], './', ['./']], 'webpack'],
+        [['a', './', './', {a: ['webpack']}, [path.resolve(
+            __dirname, '../node_modules'
+        )], {a$: 'webpack'}, ['', '.js'], './', ['.git']], null],
         [
-            [
-                'path', './', './', {index: ['index.js']}, [],
-                {path: 'index.js'}
-            ],
-            null
+            ['a', './', './', {a: ['webpack']}, [path.resolve(
+                __dirname, '../node_modules'
+            )], {a$: 'webpack'}, ['', '.js'], './', ['.git'], ['webpack']],
+            'webpack'
         ],
+        [['webpack', './', './', {}, [path.resolve(
+            __dirname, '../node_modules'
+        )], {}, ['', '.js'], './', ['.git'], [], ['webpack']], null],
         [['a', './', './', {}, [], {}, [], './', [], [], []], 'a'],
         [['a', './', './', {}, [], {}, [], './', [], [], [], false], 'a'],
         [['a', './', './', {}, [], {}, [], './', [], [], [], true], null],
