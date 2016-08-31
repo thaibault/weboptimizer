@@ -166,10 +166,16 @@ if (targetDirectory && targetDirectory.isDirectory())
                 configuration.path.target.base, fileName))
     })
 // / endregion
+// / region define dynamic resolve parameter
+const parameterDescription:Array<string> = [
+    'self', 'webOptimizerPath', 'currentPath', 'path', 'helper', 'tools']
+const parameter:Array<any> = [
+    configuration, __dirname, process.cwd(), path, Helper, Tools]
+// / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
     configuration.path.context, Helper.resolveDynamicDataStructure(
-        configuration.path.base, configuration, false))
+        configuration.path.base, parameterDescription, parameter, false))
 for (const key:string in configuration.path)
     if (
         configuration.path.hasOwnProperty(key) && key !== 'base' &&
@@ -177,11 +183,12 @@ for (const key:string in configuration.path)
     )
         configuration.path[key] = path.resolve(
             configuration.path.base, Helper.resolveDynamicDataStructure(
-                configuration.path[key], configuration, false)
+                configuration.path[key], parameterDescription, parameter,
+                false)
         ) + '/'
     else {
         configuration.path[key] = Helper.resolveDynamicDataStructure(
-            configuration.path[key], configuration, false)
+            configuration.path[key], parameterDescription, parameter, false)
         if (Helper.isPlainObject(configuration.path[key])) {
             configuration.path[key].base = path.resolve(
                 configuration.path.base, configuration.path[key].base)
@@ -194,14 +201,14 @@ for (const key:string in configuration.path)
                     configuration.path[key][subKey] = path.resolve(
                         configuration.path[key].base,
                         Helper.resolveDynamicDataStructure(
-                            configuration.path[key][subKey], configuration,
-                            false)
+                            configuration.path[key][subKey],
+                            parameterDescription, parameter, false)
                     ) + '/'
                 else {
                     configuration.path[key][subKey] =
                         Helper.resolveDynamicDataStructure(
-                            configuration.path[key][subKey], configuration,
-                            false)
+                            configuration.path[key][subKey],
+                            parameterDescription, parameter, false)
                     if (Helper.isPlainObject(configuration.path[key][subKey])) {
                         configuration.path[key][subKey].base = path.resolve(
                             configuration.path[key].base,
@@ -223,7 +230,7 @@ for (const key:string in configuration.path)
                                     Helper.resolveDynamicDataStructure(
                                         configuration.path[key][subKey][
                                             subSubKey],
-                                        configuration, false)
+                                        parameterDescription, parameter, false)
                                 ) + '/'
                     }
                 }
@@ -232,8 +239,8 @@ for (const key:string in configuration.path)
 // / endregion
 const resolvedConfiguration:ResolvedConfiguration = Helper.unwrapProxy(
     Helper.resolveDynamicDataStructure(Helper.resolveDynamicDataStructure(
-        configuration
-    ), null, true, '__postEvaluate__', '__postExecute__'))
+        configuration, parameterDescription, parameter
+    ), parameterDescription, parameter, true))
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific

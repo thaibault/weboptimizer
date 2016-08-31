@@ -18,10 +18,8 @@ import path from 'path'
 // endregion
 // region exports
 // / region generic
-export type GetterFunction = (keyOrValue:any) => any
 export type ProcedureFunction = () => void
 export type PlainObject = {[key:string]:any}
-export type SetterFunction = (key:any, value:any) => any
 // // region browser
 export type DomNode = any
 export type Storage = {
@@ -269,10 +267,6 @@ export type ResolvedConfiguration = {
 }
 // / endregion
 // / region specific callbacks
-export type EvaluationFunction = (
-    self:?PlainObject, webOptimizerPath:string, currentPath:string,
-    path:typeof path
-) => any
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean
