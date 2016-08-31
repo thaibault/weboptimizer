@@ -147,7 +147,13 @@ if (configuration.givenCommandLineArguments.length > 2) {
     const buildConfigurations:ResolvedBuildConfiguration =
         Helper.resolveBuildConfigurationFilePaths(
             configuration.build, configuration.path.source.asset.base,
-            configuration.path.ignore)
+            configuration.path.ignore.concat(
+                configuration.module.directories,
+                configuration.loader.directories
+            ).map((filePath:string):string => path.resolve(
+                configuration.path.context, filePath)
+            ).filter((filePath:string):boolean =>
+                !configuration.path.context.startsWith(filePath)))
     if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2])) {
         let tidiedUp:boolean = false
         const tidyUp:Function = ():void => {

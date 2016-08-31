@@ -954,7 +954,7 @@ export default class Helper {
                         buildConfiguration.outputExtension
                     ].includes(baseName)) {
                         /*
-                            Ensure that if same basenames and different output
+                            Ensure that same basenames and different output
                             types can be distinguished by their extension
                             (JavaScript-Modules remains without extension since
                             they will be handled first because the build

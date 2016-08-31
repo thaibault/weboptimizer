@@ -257,8 +257,14 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.injection, Helper.resolveBuildConfigurationFilePaths(
         resolvedConfiguration.build,
         resolvedConfiguration.path.source.asset.base,
-        resolvedConfiguration.path.ignore
-    ), resolvedConfiguration.testInBrowser.injection.internal,
+        resolvedConfiguration.path.ignore.concat(
+            resolvedConfiguration.module.directories,
+            resolvedConfiguration.loader.directories
+        ).map((filePath:string):string => path.resolve(
+            resolvedConfiguration.path.context, filePath)
+        ).filter((filePath:string):boolean =>
+            !resolvedConfiguration.path.context.startsWith(filePath))
+    ), resolvedConfiguration.test.injection.internal,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.knownExtensions,
     resolvedConfiguration.path.context,
