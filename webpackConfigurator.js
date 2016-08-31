@@ -351,7 +351,7 @@ if (configuration.injection.external === '__implicit__')
                 configuration.loader.directories
             ).map((filePath:string):string => path.resolve(
                 configuration.path.context, filePath
-            )).filter((filePath:string):string =>
+            )).filter((filePath:string):boolean =>
                 !configuration.path.context.startsWith(filePath)
             ), configuration.module.aliases, configuration.knownExtensions,
             configuration.path.source.asset.base, configuration.path.ignore,
