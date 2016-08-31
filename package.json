@@ -46,7 +46,7 @@
         "postcss-cssnext": ">=2.7.0",
         "postcss-fontpath": ">=0.3.0",
         "postcss-import": ">=8.1.2",
-        "postcss-loader": ">=0.11.0",
+        "postcss-loader": ">=0.11.1",
         "postcss-sprites": ">=4.0.0",
         "postcss-url": ">=5.1.2",
         "pug": ">=2.0.0-beta6",
