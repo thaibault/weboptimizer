@@ -103,7 +103,11 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     if (Helper.isFilePathInLocation(
                         filePath, configuration.path.ignore.concat(
                             configuration.module.directories,
-                            configuration.loader.directories)
+                            configuration.loader.directories
+                        ).map((filePath:string):string => path.resolve(
+                            configuration.path.context, filePath)
+                        ).filter((filePath:string):boolean =>
+                            !configuration.path.context.startsWith(filePath))
                     ))
                         return false
                     for (const type:string in configuration.build)

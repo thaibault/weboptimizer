@@ -404,7 +404,9 @@ if (configuration.injection.external === '__implicit__')
                 Helper.isFilePathInLocation(
                     filePath, configuration.path.ignore.concat(
                         configuration.module.directories,
-                        configuration.loader.directories)))
+                        configuration.loader.directories
+                    ).map((filePath:string):string => path.resolve(
+                        configuration.path.context, filePath))))
         ))
             return applyExternalRequest()
         return callback()
