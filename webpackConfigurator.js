@@ -351,13 +351,14 @@ if (configuration.injection.external === '__implicit__')
                 configuration.loader.directories
             ).map((filePath:string):string => path.resolve(
                 configuration.path.context, filePath
-            )), configuration.module.aliases, configuration.knownExtensions,
+            )).filter((filePath:string):string =>
+                !configuration.path.context.startsWith(filePath)
+            ), configuration.module.aliases, configuration.knownExtensions,
             configuration.path.source.asset.base, configuration.path.ignore,
             configuration.injection.implicitExternalIncludePattern,
             configuration.injection.implicitExternalExcludePattern,
             configuration.inPlace.externalLibrary.normal,
             configuration.inPlace.externalLibrary.shimmed)
-        console.log(request, resolvedRequest)
         if (resolvedRequest) {
             if (['var', 'umd'].includes(
                 configuration.exportFormat.external
