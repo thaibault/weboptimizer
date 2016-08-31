@@ -392,15 +392,20 @@ if (configuration.injection.external === '__implicit__')
                         return callback()
         /*
             NOTE: We mark dependencies as external if they does not contain
-            a loader in their request and aren't part of the current node
-            package.
+            a loader in their request and aren't part of the current main
+            package or have a file extension other than javaScript aware.
         */
-        if (!configuration.inPlace.externalLibrary.normal && !(
-            configuration.inPlace.externalLibrary.shimmed &&
-            originalRequest.includes('!')
-        ) && (!path.resolve(context, filePath).startsWith(
-            configuration.path.context
-        ) || Helper.isFilePathInLocation(filePath, configuration.path.ignore)))
+        if (['.js', '.node', '.json'].includes(path.extname(filePath)) && (
+            !configuration.inPlace.externalLibrary.normal && !(
+                configuration.inPlace.externalLibrary.shimmed &&
+                originalRequest.includes('!')
+            ) && (
+                !filePath.startsWith(configuration.path.context) ||
+                Helper.isFilePathInLocation(
+                    filePath, configuration.path.ignore.concat(
+                        configuration.module.directories,
+                        configuration.loader.directories)))
+        ))
             return applyExternalRequest()
         return callback()
     }
