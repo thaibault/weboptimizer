@@ -48,7 +48,7 @@ QUnit.test('isAnyMatching', (assert:Object):void => {
         ['test', [/a/, /b/, /es/]],
         ['test', ['', 'test']]
     ])
-        assert.ok(Helper.isAnyMatching.apply(this, test))
+        assert.ok(Helper.isAnyMatching.apply(Helper, test))
     for (const test:Array<any> of [
         ['', []],
         ['test', [/tes$/]],
@@ -56,7 +56,7 @@ QUnit.test('isAnyMatching', (assert:Object):void => {
         ['test', [/^est$/]],
         ['test', ['a']]
     ])
-        assert.notOk(Helper.isAnyMatching.apply(this, test))
+        assert.notOk(Helper.isAnyMatching.apply(Helper, test))
 })
 QUnit.test('isPlainObject', (assert:Object):void => {
     for (const okValue:any of [
@@ -86,9 +86,9 @@ QUnit.test('isFilePathInLocation', (assert:Object):void => {
     for (const okArguments:Array<any> of [
         ['./', ['./']], ['./', ['../']]
     ])
-        assert.ok(Helper.isFilePathInLocation.apply(this, okArguments))
+        assert.ok(Helper.isFilePathInLocation.apply(Helper, okArguments))
     for (const notOkArguments:Array<any> of [['../', ['./']]])
-        assert.notOk(Helper.isFilePathInLocation.apply(this, notOkArguments))
+        assert.notOk(Helper.isFilePathInLocation.apply(Helper, notOkArguments))
 })
 // / endregion
 // / region data handling
@@ -188,7 +188,7 @@ QUnit.test('extendObject', (assert:Object):void => {
         ]
     ])
         assert.deepEqual(
-            Helper.extendObject.apply(this, test[0]), test[1])
+            Helper.extendObject.apply(Helper, test[0]), test[1])
     assert.strictEqual(Helper.extendObject([1, 2], undefined), undefined)
     assert.strictEqual(Helper.extendObject([1, 2], null), null)
     const target:Object = {a: [1, 2]}
@@ -363,9 +363,44 @@ QUnit.test('handleChildProcess', (assert:Object):void => {
 // region file handler
 QUnit.test('determineExternalRequest', (assert:Object):void => {
     for (const test:Array<any> of [
-        ['']
+        [[''], ''],
+        [['a'], 'a'],
+        [['path'], 'path'],
+        [['./helper'], null],
+        [['./helper', './'], null],
+        [['./helper', '../'], null],
+        [['./helper', './a'], './helper'],
+        [['./helper', './', './a'], null],
+        [['./a', './', './node_modules/a'], './a'],
+        [['a', './', './'], 'a'],
+        [['path', './', './', {}, []], 'path'],
+        [['path', './', './', {}, [], {path: './index.js'}], './index.js'],
+        [['path', './', './', {}, [], {path: 'index.js'}], 'index.js'],
+        [['path', './', './', {}, [], {path: './helper.js'}], null],
+        [
+            [
+                'path', './', './', {index: ['index.js']}, [],
+                {path: 'index.js'}
+            ],
+            null
+        ],
+        [['a', './', './', {}, [], {}, [], './', [], [], []], 'a'],
+        [['a', './', './', {}, [], {}, [], './', [], [], [], false], 'a'],
+        [['a', './', './', {}, [], {}, [], './', [], [], [], true], null],
+        [
+            ['b!a', './', './', {}, [], {}, [], './', [], [], [], false, true],
+            'a'
+        ],
+        [
+            [
+                'b!a', './', './', {}, [], {}, [], './', [], [], [], false,
+                false
+            ],
+            null
+        ]
     ])
-        assert.notOk(Helper.determineExternalRequest.apply(Helper, test))
+        assert.strictEqual(
+            Helper.determineExternalRequest.apply(Helper, test[0]), test[1])
 })
 QUnit.test('isFileSync', (assert:Object):void => {
     for (const filePath:string of [
@@ -439,7 +474,7 @@ QUnit.test('determineAssetType', (assert:Object):void => {
         [['a.css', buildConfiguration, paths], null]
     ])
         assert.strictEqual(
-            Helper.determineAssetType.apply(this, test[0]), test[1])
+            Helper.determineAssetType.apply(Helper, test[0]), test[1])
 })
 QUnit.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
     assert.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
@@ -467,16 +502,18 @@ QUnit.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
 QUnit.test('determineModuleLocations', (assert:Object):void => {
     for (const test:Array<any> of [
         [{}, {filePaths: [], directoryPaths: []}],
-        ['example', {filePaths: ['example'], directoryPaths: ['.']}],
-        ['example', {filePaths: ['example'], directoryPaths: ['.']}],
-        [{example: 'example'}, {
-            filePaths: ['example'], directoryPaths: ['.']
-        }],
-        ['helper', {
-            filePaths: [path.resolve(__dirname, '../', 'helper.js')],
-            directoryPaths: [path.resolve(__dirname, '../')]
-        }],
-        [{helper: ['helper']}, {
+        ['example', {filePaths: [], directoryPaths: []}],
+        [
+            'helper', {
+                filePaths: [path.resolve(__dirname, '../helper.js')],
+                directoryPaths: [path.resolve(__dirname, '../')]}
+        ],
+        [{example: 'example'}, {filePaths: [], directoryPaths: []}],
+        [{example: 'helper'}, {
+            filePaths: [path.resolve(__dirname, '../helper.js')],
+            directoryPaths: [path.resolve(__dirname, '../')]}
+        ],
+        [{helper: ['helper.js']}, {
             filePaths: [path.resolve(__dirname, '../', 'helper.js')],
             directoryPaths: [path.resolve(__dirname, '../')]
         }]
@@ -568,7 +605,8 @@ QUnit.test('resolveInjection', (assert:Object):void => {
             }
         ]
     ])
-        assert.deepEqual(Helper.resolveInjection.apply(this, test[0]), test[1])
+        assert.deepEqual(
+            Helper.resolveInjection.apply(Helper, test[0]), test[1])
 })
 QUnit.test('getAutoChunk', (assert:Object):void => {
     assert.deepEqual(Helper.getAutoChunk(
@@ -580,17 +618,21 @@ QUnit.test('getAutoChunk', (assert:Object):void => {
 })
 QUnit.test('determineModuleFilePath', (assert:Object):void => {
     for (const test:Array<any> of [
-        [['a', {}, [], './', '', []], 'a'],
-        [['a', {a: 'b'}, [], './', '', []], 'b'],
-        [['bba', {a: 'b'}, [], './', '', []], 'bbb'],
+        [[''], null],
+        [['a', {}, [], './', '', []], null],
+        [['a', {a: 'b'}, [], './', '', []], null],
+        [['bba', {a: 'b'}, [], './', '', []], null],
         [['helper'], 'helper.js'],
-        [['helper', {}, [], './', '', []], 'helper'],
-        [['helper', {}, ['.js'], '../', '', []], 'helper'],
+        [['helper', {}, [], './', '', []], null],
+        [['helper', {}, ['.js'], '../', '', []], null],
         [['helper', {}, ['.js'], './'], 'helper.js']
-    ])
-        assert.strictEqual(
-            path.basename(Helper.determineModuleFilePath.apply(this, test[0])),
-            test[1])
+    ]) {
+        let result:?string = Helper.determineModuleFilePath.apply(
+            Helper, test[0])
+        if (result)
+            result = path.basename(result)
+        assert.strictEqual(result, test[1])
+    }
 })
 // endregion
 QUnit.test('applyAliases', (assert:Object):void => {

@@ -284,6 +284,7 @@ for (
             resolvedConfiguration.injection.internal.normalized[chunkName]
         ) {
             const type:?string = Helper.determineAssetType(
+                // IgnoreTypeCheck
                 Helper.determineModuleFilePath(
                     moduleID, resolvedConfiguration.module.aliases,
                     resolvedConfiguration.knownExtensions,

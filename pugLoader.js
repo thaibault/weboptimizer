@@ -77,14 +77,19 @@ module.exports = function(source:string):string {
                 }, nestedLocals.options || {})
                 if (options.isString)
                     return compile(template, options)(nestedLocals)
-                const templateFilePath:string = Helper.determineModuleFilePath(
-                    template, query.moduleAliases, query.knownExtensions,
-                    query.context, configuration.path.source.asset.base,
-                    configuration.path.ignore)
-                this.addDependency(templateFilePath)
-                if (queryMatch || templateFilePath.endsWith('.pug'))
-                    return compile(templateFilePath, options)(nestedLocals)
-                return fileSystem.readFileSync(templateFilePath, options)
+                const templateFilePath:?string =
+                    Helper.determineModuleFilePath(
+                        template, query.moduleAliases, query.knownExtensions,
+                        query.context, configuration.path.source.asset.base,
+                        configuration.path.ignore)
+                if (templateFilePath) {
+                    this.addDependency(templateFilePath)
+                    if (queryMatch || templateFilePath.endsWith('.pug'))
+                        return compile(templateFilePath, options)(nestedLocals)
+                    return fileSystem.readFileSync(templateFilePath, options)
+                }
+                throw Error(
+                    `Given template file "${template}" couldn't be resolved.`)
             }}, locals))
     }
     return compile(source, Helper.extendObject(true, {

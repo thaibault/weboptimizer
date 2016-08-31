@@ -170,6 +170,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         configuration.injection.internal.normalized[chunkName]
                     ) {
                         const type:?string = Helper.determineAssetType(
+                            // IgnoreTypeCheck
                             Helper.determineModuleFilePath(
                                 moduleID, configuration.module.aliases,
                                 configuration.knownExtensions,

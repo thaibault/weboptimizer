@@ -553,26 +553,33 @@ export default class Helper {
      */
     static determineExternalRequest(
         request:string, context:string = './', requestContext:string = './',
-        normalizedInternalInjection:NormalizedInternalInjection,
-        externalModuleLocations:Array<string>,
-        moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = ['.js'], referencePath:string = '',
-        pathsToIgnore:Array<string> = ['.git'],
+        normalizedInternalInjection:NormalizedInternalInjection = {},
+        externalModuleLocations:Array<string> = [path.resolve(
+            __dirname, 'node_modules'
+        )], moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
+            '', '.js', '.css', '.svg', '.html', 'json'
+        ], referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
         includePattern:Array<string|RegExp> = [],
         excludePattern:Array<string|RegExp> = [],
         inPlaceNormalLibrary:boolean = false,
         inPlaceShimmedLibrary:boolean = true
     ):?string {
-        const filePath:string = Helper.determineModuleFilePath(
-            request.substring(request.lastIndexOf('!') + 1), moduleAliases,
-            knownExtensions, requestContext, referencePath, pathsToIgnore)
-        const originalRequest:string = request
+        context = path.resolve(context)
+        requestContext = path.resolve(requestContext)
+        referencePath = path.resolve(referencePath)
         // NOTE: We apply alias on externals additionally.
-        request = Helper.applyAliases(
+        let resolvedRequest:string = Helper.applyAliases(
             request.substring(request.lastIndexOf('!') + 1), moduleAliases)
-        if (Helper.isAnyMatching(request, includePattern))
-            return request
-        if (Helper.isAnyMatching(request, excludePattern))
+        /*
+            NOTE: Aliases doesn't have to be forwarded since we pass an already
+            resolved request.
+        */
+        let filePath:?string = Helper.determineModuleFilePath(
+            resolvedRequest, {}, knownExtensions, requestContext,
+            referencePath, pathsToIgnore)
+        if (!filePath || Helper.isAnyMatching(resolvedRequest, includePattern))
+            return resolvedRequest
+        if (Helper.isAnyMatching(resolvedRequest, excludePattern))
             return null
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
@@ -580,22 +587,21 @@ export default class Helper {
                     chunkName
                 ])
                     if (Helper.determineModuleFilePath(
-                        moduleID, moduleAliases, knownExtensions,
-                        requestContext, referencePath, pathsToIgnore
+                        moduleID, moduleAliases, knownExtensions, context,
+                        referencePath, pathsToIgnore
                     ) === filePath)
                         return null
         /*
-            NOTE: We mark dependencies as external if they does not contain
-            a loader in their request and aren't part of the current main
-            package or have a file extension other than javaScript aware.
+            NOTE: We mark dependencies as external if they does not contain a
+            loader in their request and aren't part of the current main package
+            or have a file extension other than javaScript aware.
         */
-        if (['.js', '.node', '.json'].includes(path.extname(filePath)) && (
-            !inPlaceNormalLibrary && !(
-                inPlaceShimmedLibrary && originalRequest.includes('!')
-            ) && (!filePath.startsWith(context) || Helper.isFilePathInLocation(
-                filePath, externalModuleLocations))
-        ))
-            return request
+        if (!inPlaceNormalLibrary && !(
+            inPlaceShimmedLibrary && request.includes('!')
+        ) && (!filePath.startsWith(context) || Helper.isFilePathInLocation(
+            filePath, externalModuleLocations
+        )))
+            return resolvedRequest
         return null
     }
     /**
@@ -792,8 +798,10 @@ export default class Helper {
      */
     static determineModuleLocations(
         internalInjection:InternalInjection, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = ['.js'], context:string = './',
-        referencePath:string = '', pathsToIgnore:Array<string> = ['.git'],
+        knownExtensions:Array<string> = [
+            '', '.js', '.css', '.svg', '.html', 'json'
+        ], context:string = './', referencePath:string = '',
+        pathsToIgnore:Array<string> = ['.git'],
         relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
         packageEntryFileNames:Array<string> = [
             '__package__', '', 'index', 'main']
@@ -807,14 +815,16 @@ export default class Helper {
                 for (const moduleID:string of normalizedInternalInjection[
                     chunkName
                 ]) {
-                    const filePath:string = Helper.determineModuleFilePath(
+                    const filePath:?string = Helper.determineModuleFilePath(
                         moduleID, moduleAliases, knownExtensions, context,
                         referencePath, pathsToIgnore, relativeModuleFilePaths,
                         packageEntryFileNames)
-                    filePaths.push(filePath)
-                    const directoryPath:string = path.dirname(filePath)
-                    if (!directoryPaths.includes(directoryPath))
-                        directoryPaths.push(directoryPath)
+                    if (filePath) {
+                        filePaths.push(filePath)
+                        const directoryPath:string = path.dirname(filePath)
+                        if (!directoryPaths.includes(directoryPath))
+                            directoryPaths.push(directoryPath)
+                    }
                 }
         return {filePaths, directoryPaths}
     }
@@ -878,7 +888,7 @@ export default class Helper {
         buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:InternalInjection,
         moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
-            '.js', '.css', '.svg', '.html'
+            '', '.js', '.css', '.svg', '.html', 'json'
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):Injection {
@@ -983,13 +993,17 @@ export default class Helper {
      */
     static determineModuleFilePath(
         moduleID:string, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = ['.js'], context:string = './',
-        referencePath:string = '', pathsToIgnore:Array<string> = ['.git'],
+        knownExtensions:Array<string> = [
+            '', '.js', '.css', '.svg', '.html', 'json'
+        ], context:string = './', referencePath:string = '',
+        pathsToIgnore:Array<string> = ['.git'],
         relativeModuleFilePaths:Array<string> = ['node_modules', '../'],
         packageEntryFileNames:Array<string> = [
             '__package__', '', 'index', 'main']
-    ):string {
+    ):?string {
         moduleID = Helper.applyAliases(moduleID, moduleAliases)
+        if (!moduleID)
+            return null
         if (referencePath.startsWith('/'))
             referencePath = path.relative(context, referencePath)
         for (const moduleLocation:string of [referencePath].concat(
@@ -1029,12 +1043,10 @@ export default class Helper {
                         moduleFilePath, pathsToIgnore
                     ))
                         continue
-                    try {
-                        if (fileSystem.statSync(moduleFilePath).isFile())
-                            return moduleFilePath
-                    } catch (error) {}
+                    if (Helper.isFileSync(moduleFilePath))
+                        return moduleFilePath
                 }
-        return moduleID
+        return null
     }
     // endregion
     /**
