@@ -548,6 +548,9 @@ export default class Helper {
      * be external or not.
      * @param inPlaceShimmedLibrary - Indicates weather requests with
      * integrated loader configurations should be marked as external or not.
+     * @param externalHandableFileExtensions - File extensions which should be
+     * able to be handled by the external module bundler. If array is empty
+     * every extension will be assumed to be supported.
      * @returns A new resolved request indicating weather given request is an
      * external one.
      */
@@ -562,7 +565,9 @@ export default class Helper {
         includePattern:Array<string|RegExp> = [],
         excludePattern:Array<string|RegExp> = [],
         inPlaceNormalLibrary:boolean = false,
-        inPlaceShimmedLibrary:boolean = true
+        inPlaceShimmedLibrary:boolean = true,
+        externalHandableFileExtensions:Array<string> = [
+            '', '.js', '.node', '.json']
     ):?string {
         context = path.resolve(context)
         requestContext = path.resolve(requestContext)
@@ -596,11 +601,13 @@ export default class Helper {
             loader in their request and aren't part of the current main package
             or have a file extension other than javaScript aware.
         */
-        if (!inPlaceNormalLibrary && !(
-            inPlaceShimmedLibrary && request.includes('!')
-        ) && (!filePath.startsWith(context) || Helper.isFilePathInLocation(
-            filePath, externalModuleLocations
-        )))
+        if (!inPlaceNormalLibrary && (
+            externalHandableFileExtensions.length === 0 ||
+            externalHandableFileExtensions.includes(path.extname(filePath))
+        ) && !(inPlaceShimmedLibrary && request.includes('!')) && (
+            !filePath.startsWith(context) || Helper.isFilePathInLocation(
+                filePath, externalModuleLocations)
+        ))
             return resolvedRequest
         return null
     }

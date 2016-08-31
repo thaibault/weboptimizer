@@ -419,7 +419,15 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         )], {}, ['', '.js'], './', ['.git'], [], [], false, true], null],
         [['a!webpack', './', './', {}, [path.resolve(
             __dirname, '../node_modules'
-        )], {}, ['', '.js'], './', ['.git'], [], [], false, false], 'webpack']
+        )], {}, ['', '.js'], './', ['.git'], [], [], false, false], 'webpack'],
+        [
+            ['a!webpack', './', './', {}, [path.resolve(
+                __dirname, '../node_modules'
+            )], {}, ['', '.js'], './', ['.git'], [], [], false, false, [
+                '.ext'
+            ]],
+            null
+        ]
     ])
         assert.strictEqual(
             Helper.determineExternalRequest.apply(Helper, test[0]), test[1])

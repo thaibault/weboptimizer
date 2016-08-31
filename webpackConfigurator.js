@@ -357,6 +357,7 @@ if (configuration.injection.external === '__implicit__')
             configuration.injection.implicitExternalExcludePattern,
             configuration.inPlace.externalLibrary.normal,
             configuration.inPlace.externalLibrary.shimmed)
+        console.log(request, resolvedRequest)
         if (resolvedRequest) {
             if (['var', 'umd'].includes(
                 configuration.exportFormat.external
