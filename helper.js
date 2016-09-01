@@ -192,14 +192,14 @@ export default class Helper {
      * as external dependency.
      * @param excludePattern - Array of regular expressions to explicitly mark
      * as internal dependency.
-     * @param inPlaceNormalLibrary - Indicates weather normal libraries should
+     * @param inPlaceNormalLibrary - Indicates whether normal libraries should
      * be external or not.
-     * @param inPlaceShimmedLibrary - Indicates weather requests with
+     * @param inPlaceShimmedLibrary - Indicates whether requests with
      * integrated loader configurations should be marked as external or not.
      * @param externalHandableFileExtensions - File extensions which should be
      * able to be handled by the external module bundler. If array is empty
      * every extension will be assumed to be supported.
-     * @returns A new resolved request indicating weather given request is an
+     * @returns A new resolved request indicating whether given request is an
      * external one.
      */
     static determineExternalRequest(
