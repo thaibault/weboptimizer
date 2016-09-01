@@ -316,7 +316,9 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
                 async: false,
                 children: false,
-                filename: configuration.files.compose.javaScript,
+                filename: path.relative(
+                    configuration.path.context,
+                    configuration.files.compose.javaScript),
                 minChunks: Infinity,
                 name: chunkID,
                 minSize: 0
