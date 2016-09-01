@@ -16,7 +16,7 @@
 // region imports
 import * as fileSystem from 'fs'
 import path from 'path'
-
+import {Tools} from 'tools'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -90,18 +90,18 @@ metaConfiguration.default.path.context += '/'
 const libraryConfiguration:PlainObject = metaConfiguration.library
 let configuration:DefaultConfiguration
 if (debug)
-    configuration = Helper.extendObject(
+    configuration = Tools.extendObject(
         true, metaConfiguration.default, metaConfiguration.debug)
 else
     configuration = metaConfiguration.default
 configuration.debug = debug
 if (typeof configuration.library === 'object')
-    Helper.extendObject(true, libraryConfiguration, configuration.library)
+    Tools.extendObject(true, libraryConfiguration, configuration.library)
 if (
     specificConfiguration.library === true ||
     specificConfiguration.library === undefined && configuration.library
 )
-    configuration = Helper.extendObject(
+    configuration = Tools.extendObject(
         true, configuration, libraryConfiguration)
 // endregion
 // region merging and evaluating default, test, specific and dynamic settings
@@ -130,18 +130,18 @@ if (filePath) {
 if (runtimeInformation.givenCommandLineArguments.length > 2)
     // region apply documentation configuration
     if (runtimeInformation.givenCommandLineArguments[2] === 'document')
-        Helper.extendObject(true, configuration, configuration.document)
+        Tools.extendObject(true, configuration, configuration.document)
     // endregion
     // region apply test configuration
     else if (
         runtimeInformation.givenCommandLineArguments[2] === 'testInBrowser'
     )
-        Helper.extendObject(true, configuration, configuration.testInBrowser)
+        Tools.extendObject(true, configuration, configuration.testInBrowser)
     else if (runtimeInformation.givenCommandLineArguments[2] === 'test')
-        Helper.extendObject(true, configuration, configuration.test)
+        Tools.extendObject(true, configuration, configuration.test)
     // endregion
 // / endregion
-Helper.extendObject(
+Tools.extendObject(
     true, configuration, specificConfiguration, runtimeInformation)
 let result:?PlainObject = null
 if (runtimeInformation.givenCommandLineArguments.length > 3)
@@ -149,8 +149,8 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         runtimeInformation.givenCommandLineArguments[runtimeInformation
             .givenCommandLineArguments.length - 1],
         configuration, 'configuration')
-if (Helper.isPlainObject(result))
-    Helper.extendObject(true, configuration, result)
+if (Tools.isPlainObject(result))
+    Tools.extendObject(true, configuration, result)
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
 let targetDirectory:?Object = null
@@ -174,7 +174,7 @@ const parameter:Array<any> = [
 // / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
-    configuration.path.context, Helper.resolveDynamicDataStructure(
+    configuration.path.context, Tools.resolveDynamicDataStructure(
         configuration.path.base, parameterDescription, parameter, false))
 for (const key:string in configuration.path)
     if (
@@ -182,14 +182,14 @@ for (const key:string in configuration.path)
         typeof configuration.path[key] === 'string'
     )
         configuration.path[key] = path.resolve(
-            configuration.path.base, Helper.resolveDynamicDataStructure(
+            configuration.path.base, Tools.resolveDynamicDataStructure(
                 configuration.path[key], parameterDescription, parameter,
                 false)
         ) + '/'
     else {
-        configuration.path[key] = Helper.resolveDynamicDataStructure(
+        configuration.path[key] = Tools.resolveDynamicDataStructure(
             configuration.path[key], parameterDescription, parameter, false)
-        if (Helper.isPlainObject(configuration.path[key])) {
+        if (Tools.isPlainObject(configuration.path[key])) {
             configuration.path[key].base = path.resolve(
                 configuration.path.base, configuration.path[key].base)
             for (const subKey:string in configuration.path[key])
@@ -200,16 +200,16 @@ for (const key:string in configuration.path)
                 )
                     configuration.path[key][subKey] = path.resolve(
                         configuration.path[key].base,
-                        Helper.resolveDynamicDataStructure(
+                        Tools.resolveDynamicDataStructure(
                             configuration.path[key][subKey],
                             parameterDescription, parameter, false)
                     ) + '/'
                 else {
                     configuration.path[key][subKey] =
-                        Helper.resolveDynamicDataStructure(
+                        Tools.resolveDynamicDataStructure(
                             configuration.path[key][subKey],
                             parameterDescription, parameter, false)
-                    if (Helper.isPlainObject(configuration.path[key][subKey])) {
+                    if (Tools.isPlainObject(configuration.path[key][subKey])) {
                         configuration.path[key][subKey].base = path.resolve(
                             configuration.path[key].base,
                             configuration.path[key][subKey].base)
@@ -227,7 +227,7 @@ for (const key:string in configuration.path)
                                     subSubKey
                                 ] = path.resolve(
                                     configuration.path[key][subKey].base,
-                                    Helper.resolveDynamicDataStructure(
+                                    Tools.resolveDynamicDataStructure(
                                         configuration.path[key][subKey][
                                             subSubKey],
                                         parameterDescription, parameter, false)
@@ -237,8 +237,8 @@ for (const key:string in configuration.path)
         }
     }
 // / endregion
-const resolvedConfiguration:ResolvedConfiguration = Helper.unwrapProxy(
-    Helper.resolveDynamicDataStructure(Helper.resolveDynamicDataStructure(
+const resolvedConfiguration:ResolvedConfiguration = Tools.unwrapProxy(
+    Tools.resolveDynamicDataStructure(Tools.resolveDynamicDataStructure(
         configuration, parameterDescription, parameter
     ), parameterDescription, parameter, true))
 // endregion
@@ -249,8 +249,8 @@ const defaultConfiguration:PlainObject = resolvedConfiguration.build.default
 delete resolvedConfiguration.build.default
 for (const type:string in resolvedConfiguration.build)
     if (resolvedConfiguration.build.hasOwnProperty(type))
-        resolvedConfiguration.build[type] = Helper.extendObject(true, {
-        }, defaultConfiguration, Helper.extendObject(
+        resolvedConfiguration.build[type] = Tools.extendObject(true, {
+        }, defaultConfiguration, Tools.extendObject(
             true, {extension: type}, resolvedConfiguration.build[type], {type})
         )
 // endregion
@@ -329,7 +329,7 @@ resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath$ =
 for (
     let htmlConfiguration:HTMLConfiguration of resolvedConfiguration.files.html
 ) {
-    Helper.extendObject(
+    Tools.extendObject(
         true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)
     if (
         typeof htmlConfiguration.template === 'string' &&

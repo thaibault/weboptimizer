@@ -50,36 +50,6 @@ QUnit.test('isFilePathInLocation', (assert:Object):void => {
         assert.notOk(Helper.isFilePathInLocation.apply(Helper, notOkArguments))
 })
 // / endregion
-// region string handling
-QUnit.test('convertToValidRegularExpressionString', (assert:Object):void => {
-    for (const test:Array<any> of [
-        [[''], ''],
-        [["that's no regex: .*$"], "that's no regex: \\.\\*\\$"],
-        [['-\\[]()^$*+.}-', '}'], '\\-\\\\[\\]\\(\\)\\^\\$\\*\\+\\.}\\-'],
-        [[
-            '-\\[]()^$*+.{}-',
-            ['[', ']', '(', ')', '^', '$', '*', '+', '.', '{']
-        ], '\\-\\[]()^$*+.{\\}\\-'],
-        [['-', '\\'], '\\-']
-    ])
-        assert.strictEqual(Helper.convertToValidRegularExpressionString.apply(
-            Helper, test[0]
-        ), test[1])
-})
-QUnit.test('convertToValidVariableName', (assert:Object):void => {
-    for (const test:Array<string> of [
-        ['', ''],
-        ['a', 'a'],
-        ['_a', '_a'],
-        ['_a_a', '_a_a'],
-        ['_a-a', '_aA'],
-        ['-a-a', 'aA'],
-        ['-a--a', 'aA'],
-        ['--a--a', 'aA']
-    ])
-        assert.strictEqual(Helper.convertToValidVariableName(test[0]), test[1])
-})
-// endregion
 // region process handler
 QUnit.test('getProcessCloseHandler', (assert:Object):void =>
     assert.strictEqual(typeof Helper.getProcessCloseHandler(

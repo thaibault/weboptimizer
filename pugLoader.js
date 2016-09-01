@@ -15,9 +15,9 @@
 */
 // region imports
 import * as fileSystem from 'fs'
-
 import * as pug from 'pug'
 import * as loaderUtils from 'loader-utils'
+import {Tools} from 'tools'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -33,8 +33,8 @@ type CompileFunction = (template:string, options:Object) => TemplateFunction
 module.exports = function(source:string):string {
     if (this.cacheable)
         this.cacheable()
-    const query:Object = Helper.convertSubstringInPlainObject(
-        Helper.extendObject(true, {
+    const query:Object = Tools.convertSubstringInPlainObject(
+        Tools.extendObject(true, {
             moduleAliases: [],
             knownExtensions: ['.pug', '.html', '.js', '.css'],
             context: './'
@@ -43,7 +43,7 @@ module.exports = function(source:string):string {
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler
     ):TemplateFunction => (locals:Object = {}):string => {
-        options = Helper.extendObject(true, {
+        options = Tools.extendObject(true, {
             filename: template, doctype: 'html',
             compileDebug: this.debug || false
         }, options)
@@ -53,7 +53,7 @@ module.exports = function(source:string):string {
             templateFunction = pug.compile(template, options)
         } else
             templateFunction = pug.compileFile(template, options)
-        return templateFunction(Helper.extendObject(true, {
+        return templateFunction(Tools.extendObject(true, {
             configuration, require: (request:string):string => {
                 const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
                 const queryMatch:?Array<string> = request.match(
@@ -72,7 +72,7 @@ module.exports = function(source:string):string {
                     nestedLocals = evaluationFunction(
                         request, template, source, compile, locals)
                 }
-                const options:Object = Helper.extendObject(true, {
+                const options:Object = Tools.extendObject(true, {
                     encoding: 'utf-8'
                 }, nestedLocals.options || {})
                 if (options.isString)
@@ -92,7 +92,7 @@ module.exports = function(source:string):string {
                     `Given template file "${template}" couldn't be resolved.`)
             }}, locals))
     }
-    return compile(source, Helper.extendObject(true, {
+    return compile(source, Tools.extendObject(true, {
         isString: true,
         filename: loaderUtils.getRemainingRequest(this).replace(/^!/, '')
     }, query.compiler || {}))(query.locals || {})

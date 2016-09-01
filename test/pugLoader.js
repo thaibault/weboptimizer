@@ -4,12 +4,12 @@
 'use strict'
 // region imports
 import * as QUnit from 'qunit-cli'
+import {Tools} from 'tools'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
 } catch (error) {}
 
-import Helper from '../helper.compiled'
 import pugLoader from '../pugLoader.compiled'
 // endregion
 QUnit.module('pugLoader')
@@ -37,7 +37,7 @@ const context:{
 // region tests
 QUnit.test('loader', (assert:Object):void => {
     assert.strictEqual(pugLoader.call(context, 'a'), '<a></a>')
-    const complexContext = Helper.extendObject(true, {}, context, {
+    const complexContext = Tools.extendObject(true, {}, context, {
         cacheable: ():void => {},
         options: {pug: {
             locals: {test: 'hans'},

@@ -17,6 +17,7 @@
 import {ChildProcess} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
+import {Tools} from 'tools'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -80,47 +81,6 @@ export default class Helper {
             return new Function(name, `return ${serializedObject}`)(scope)
         } catch (error) {}
         return null
-    }
-    // endregion
-    // region string handling
-    /**
-     * Translates given string into the regular expression validated
-     * representation.
-     * @param value - String to convert.
-     * @param excludeSymbols - Symbols not to escape.
-     * @returns Converted string.
-     */
-    static convertToValidRegularExpressionString(
-        value:string, excludeSymbols:Array<string> = []
-    ):string {
-        // NOTE: This is only for performance improvements.
-        if (value.length === 1 && !Helper.specialRegexSequences.includes(
-            value
-        ))
-            return value
-        // The escape sequence must also be escaped; but at first.
-        if (!excludeSymbols.includes('\\'))
-            value.replace(/\\/g, '\\\\')
-        for (const replace:string of Helper.specialRegexSequences)
-            if (!excludeSymbols.includes(replace))
-                value = value.replace(
-                    new RegExp(`\\${replace}`, 'g'), `\\${replace}`)
-        return value
-    }
-    /**
-     * Translates given name into a valid javaScript one.
-     * @param name - Name to convert.
-     * @param allowedSymbols - String of symbols which should be allowed within
-     * a variable name (not the first character).
-     * @returns Converted name is returned.
-     */
-    static convertToValidVariableName(
-        name:string, allowedSymbols:string = '0-9a-zA-Z_$'
-    ):string {
-        return name.toString().replace(/^[^a-zA-Z_$]+/, '').replace(
-            new RegExp(`[^${allowedSymbols}]+([a-zA-Z0-9])`, 'g'), (
-                fullMatch:string, firstLetter:string
-            ):string => firstLetter.toUpperCase())
     }
     // endregion
     // region process handler
@@ -230,9 +190,9 @@ export default class Helper {
         let filePath:?string = Helper.determineModuleFilePath(
             resolvedRequest, {}, knownExtensions, requestContext,
             referencePath, pathsToIgnore)
-        if (!filePath || Helper.isAnyMatching(resolvedRequest, includePattern))
+        if (!filePath || Tools.isAnyMatching(resolvedRequest, includePattern))
             return resolvedRequest
-        if (Helper.isAnyMatching(resolvedRequest, excludePattern))
+        if (Tools.isAnyMatching(resolvedRequest, excludePattern))
             return null
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
@@ -402,7 +362,7 @@ export default class Helper {
         for (const type:string in configuration)
             if (configuration.hasOwnProperty(type)) {
                 const newItem:ResolvedBuildConfigurationItem =
-                    Helper.extendObject(true, {filePaths: []}, configuration[
+                    Tools.extendObject(true, {filePaths: []}, configuration[
                         type])
                 Helper.walkDirectoryRecursivelySync(entryPath, ((
                     index:number,
@@ -494,7 +454,7 @@ export default class Helper {
         internalInjection:InternalInjection
     ):NormalizedInternalInjection {
         let result:NormalizedInternalInjection = {}
-        if (internalInjection instanceof Object && Helper.isPlainObject(
+        if (internalInjection instanceof Object && Tools.isPlainObject(
             internalInjection
         )) {
             let hasContent:boolean = false
@@ -547,7 +507,7 @@ export default class Helper {
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):Injection {
-        const injection:Injection = Helper.extendObject(
+        const injection:Injection = Tools.extendObject(
             true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(

@@ -16,6 +16,7 @@
 // region imports
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
+import {Tools} from 'tools'
 import path from 'path'
 
 import postcssCSSnext from 'postcss-cssnext'
@@ -52,7 +53,7 @@ import Helper from './helper.compiled'
 // "webpack-html-plugin" doesn't preserve the original loader interface.
 import htmlLoaderModuleBackup from 'html-loader'
 require.cache[require.resolve('html-loader')].exports = function():any {
-    Helper.extendObject(true, this.options, module, this.options)
+    Tools.extendObject(true, this.options, module, this.options)
     return htmlLoaderModuleBackup.apply(this, arguments)
 }
 // Monkey-Patch loader-utils to define which url is a local request.
@@ -71,7 +72,9 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // endregion
 // region initialisation
 let libraryName:string = configuration.exportFormat.self === 'var' ?
-    Helper.convertToValidVariableName(configuration.name) : configuration.name
+    Tools.stringConvertToValidVariableName(
+        configuration.name
+    ) : configuration.name
 if ('libraryName' in configuration && configuration.libraryName)
     libraryName = configuration.libraryName
 // // region plugins
@@ -368,7 +371,7 @@ if (configuration.injection.external === '__implicit__')
                 resolvedRequest = configuration.injection.externalAliases[
                     request]
             if (configuration.exportFormat.external === 'var')
-                resolvedRequest = Helper.convertToValidVariableName(
+                resolvedRequest = Tools.stringConvertToValidVariableName(
                     resolvedRequest, '0-9a-zA-Z_$\\.')
             return callback(
                 null, resolvedRequest, configuration.exportFormat.external)
@@ -472,26 +475,28 @@ pluginInstances.push({apply: (compiler:Object):void => {
                         )
                             source = source.replace(new RegExp(
                                 '(require\\()"' +
-                                Helper.convertToValidRegularExpressionString(
+                                Tools.stringConvertToValidRegularExpression(
                                     configuration.injection.externalAliases[
                                         replacement]
                                 ) + '"(\\))', 'g'
                             ), `$1'${replacement}'$2`).replace(new RegExp(
                                 '(define\\("' +
-                                Helper.convertToValidRegularExpressionString(
+                                Tools.stringConvertToValidRegularExpression(
                                     bundleName
                                 ) + '", \\[.*)"' +
-                                Helper.convertToValidRegularExpressionString(
+                                Tools.stringConvertToValidRegularExpression(
                                     configuration.injection.externalAliases[
                                         replacement]
                                 ) + '"(.*\\], factory\\);)'
                             ), `$1'${replacement}'$2`)
                     source = source.replace(new RegExp(
                         '(root\\[)"' +
-                        Helper.convertToValidRegularExpressionString(
+                        Tools.stringConvertToValidRegularExpression(
                             bundleName
                         ) + '"(\\] = )'
-                    ), `$1'${Helper.convertToValidVariableName(bundleName)}'$2`
+                    ), "$1'" +
+                        Tools.stringConvertToValidVariableName(bundleName) +
+                        "'$2"
                     )
                     compilation.assets[assetRequest] = new WebpackRawSource(
                         source)
@@ -509,7 +514,7 @@ pluginInstances.push(new plugins.Imagemin(
 // /// endregion
 // // endregion
 // / region loader
-let imageLoader:string = 'url?' + Helper.convertCircularObjectToJSON(
+let imageLoader:string = 'url?' + Tools.convertCircularObjectToJSON(
     configuration.module.optimizer.image.file)
 const loader:{
     preprocessor:{
@@ -534,29 +539,29 @@ const loader:{
     preprocessor: {
         cascadingStyleSheet: 'postcss' +
             configuration.module.preprocessor.cascadingStyleSheet,
-        javaScript: 'babel?' + Helper.convertCircularObjectToJSON(
+        javaScript: 'babel?' + Tools.convertCircularObjectToJSON(
             configuration.module.preprocessor.babel),
-        pug: 'pug?' + Helper.convertCircularObjectToJSON(
+        pug: 'pug?' + Tools.convertCircularObjectToJSON(
             configuration.module.preprocessor.pug)
     },
-    html: 'html?' + Helper.convertCircularObjectToJSON(
+    html: 'html?' + Tools.convertCircularObjectToJSON(
         configuration.module.html),
     cascadingStyleSheet: `css${configuration.module.cascadingStyleSheet}`,
-    style: 'style?' + Helper.convertCircularObjectToJSON(
+    style: 'style?' + Tools.convertCircularObjectToJSON(
         configuration.module.style),
     postprocessor: {
         image: imageLoader,
         font: {
-            eot: 'url?' + Helper.convertCircularObjectToJSON(
+            eot: 'url?' + Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.eot),
-            woff: 'url?' + Helper.convertCircularObjectToJSON(
+            woff: 'url?' + Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.woff),
-            ttf: 'url?' + Helper.convertCircularObjectToJSON(
+            ttf: 'url?' + Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.ttf),
-            svg: 'url?' + Helper.convertCircularObjectToJSON(
+            svg: 'url?' + Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.svg)
         },
-        data: 'url?' + Helper.convertCircularObjectToJSON(
+        data: 'url?' + Tools.convertCircularObjectToJSON(
             configuration.module.optimizer.data)
     }
 }
@@ -619,7 +624,7 @@ export default {
             // region html (templates)
             // NOTE: This ensures that will be used as a special loader alias.
             {
-                test: new RegExp(Helper.convertToValidRegularExpressionString(
+                test: new RegExp(Tools.stringConvertToValidRegularExpression(
                     configuration.files.defaultHTML.template.substring(
                         configuration.files.defaultHTML.template.lastIndexOf(
                             '!'
