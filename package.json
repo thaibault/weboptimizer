@@ -41,7 +41,7 @@
         "jsdoc": ">=3.4.0",
         "jsdom": ">=9.4.5",
         "loader-utils": ">=0.2.15",
-        "offline-plugin": ">=4.0.0",
+        "offline-plugin": ">=4.1.0",
         "open-browser-webpack-plugin": ">=0.0.2",
         "postcss-cssnext": ">=2.7.0",
         "postcss-fontpath": ">=0.3.0",
@@ -59,7 +59,7 @@
         "tools": "git+ssh://git@github.com/thaibault/tools.git",
         "url-loader": ">=0.5.7",
         "webpack": ">=1.13.2",
-        "webpack-dev-server": ">=1.15.0",
+        "webpack-dev-server": ">=1.15.1",
         "webpack-load-plugins": ">=0.1.2",
         "webpack-sources": ">=0.1.2"
     },
