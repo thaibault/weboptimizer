@@ -139,7 +139,7 @@
                         "__evaluate__": "self.module.optimizer.htmlMinifier"
                     },
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}index.pug`) ? `${self.path.source.base}index.pug` : `${webOptimizerPath}/index.pug`}`"
+                        "__evaluate__": "`html?${tools.convertCircularObjectToJSON(tools.extendObject({}, self.module.html, {minimize: false}))}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}index.pug`) ? `${self.path.source.base}index.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 },
                 "html": [{}],
@@ -556,7 +556,7 @@
                         "filename": "test.html",
                         "inject": "head",
                         "template": {
-                            "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
+                            "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
                         }
                     },
                     "html": []
@@ -574,7 +574,7 @@
                     "filename": "test.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
+                        "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 }},
                 "inPlace": {"externalLibrary": {"normal": true}},
@@ -655,7 +655,7 @@
                     "filename": "playground.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}playground.pug`) ? `${self.path.source.base}playground.pug` : `${webOptimizerPath}/index.pug`}`"
+                        "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}playground.pug`) ? `${self.path.source.base}playground.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 },
                 "html": {
@@ -675,7 +675,7 @@
                 }}
             },
             "libraryName": {
-                "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [helper.convertToValidVariableName(self.name), '[name]']: null"
+                "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [tools.stringConvertToValidVariableName(self.name), '[name]']: null"
             },
             "path": {
                 "source": {
