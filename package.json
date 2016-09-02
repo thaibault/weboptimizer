@@ -79,14 +79,20 @@
   },
   "files": [
     "browserAPI.js",
+    "browserAPI.compiled.js",
     "configurator.js",
+    "configurator.compiled.js",
     "helper.js",
+    "helper.compiled.js",
     "pugLoader.js",
+    "pugLoader.compiled.js",
     "taskRunner.js",
     "index.pug",
     "stylelintConfigurator.js",
+    "stylelintConfigurator.compiled.js",
     "type.js",
-    "webpackConfigurator.js"
+    "webpackConfigurator.js",
+    "webpackConfigurator.compiled.js"
   ],
   "scripts": {
     "build": "command='babel --plugins transform-flow-strip-types --presets latest,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command taskRunner.compiled.js taskRunner.js && $command webpackConfigurator.compiled.js webpackConfigurator.js",
