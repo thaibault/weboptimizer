@@ -17,7 +17,7 @@
 import * as fileSystem from 'fs'
 import * as pug from 'pug'
 import * as loaderUtils from 'loader-utils'
-import {Tools} from 'tools/index.compiled'
+import {Tools} from 'tools'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')

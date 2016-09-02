@@ -16,7 +16,7 @@
 // region imports
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
-import {Tools} from 'tools/index.compiled'
+import {Tools} from 'tools'
 import path from 'path'
 
 import postcssCSSnext from 'postcss-cssnext'
