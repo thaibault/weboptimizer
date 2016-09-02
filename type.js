@@ -15,15 +15,8 @@
 */
 // region exports
 // / region generic
-export type ProcedureFunction = () => void
-export type PlainObject = {[key:string]:any}
 // // region browser
 export type DomNode = any
-export type Storage = {
-    getItem(key:string):any;
-    setItem(key:string, value:any):void;
-    removeItem(key:string, value:any):void;
-}
 export type Location = {
     hash:string;
     search:string;
@@ -41,6 +34,11 @@ export type Location = {
     replace:Function;
     toString:() => string
 }
+export type Storage = {
+    getItem(key:string):any;
+    setItem(key:string, value:any):void;
+    removeItem(key:string, value:any):void;
+}
 export type Window = {
     addEventListener:(type:string, callback:Function) => void;
     document:Object;
@@ -49,6 +47,7 @@ export type Window = {
     sessionStorage:Storage;
     close:() => void;
 }
+// // endregion
 export type BrowserAPI = {
     debug:boolean;
     domContentLoaded:boolean;
@@ -56,15 +55,16 @@ export type BrowserAPI = {
     window:Window;
     windowLoaded:boolean;
 }
-// // endregion
+export type PlainObject = {[key:string]:any}
+export type ProcedureFunction = () => void
 // / endregion
 // / region injection
-export type NormalizedInternalInjection = {[key:string]:Array<string>}
-export type InternalInjection =
-    string|Array<string>|{[key:string]:string|Array<string>}
 export type ExternalInjection = string|((
     context:string, request:string, callback:ProcedureFunction
 ) => void)|RegExp|Array<ExternalInjection>
+export type InternalInjection =
+    string|Array<string>|{[key:string]:string|Array<string>}
+export type NormalizedInternalInjection = {[key:string]:Array<string>}
 export type Injection = {
     commonChunkIDs:Array<string>;
     dllChunkIDs:Array<string>;
@@ -80,20 +80,6 @@ export type Injection = {
 }
 // / endregion
 // / region configuration
-export type BuildConfigurationItem = {
-    extension:string;
-    outputExtension:string;
-    fileNamePattern:string
-}
-export type ExportFormat = 'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
-export type ResolvedBuildConfigurationItem = {
-    filePaths:Array<string>;
-    extension:string;
-    outputExtension:string;
-    fileNamePattern:string
-}
-export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
-export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
 export type AssetPath = {
     base:string;
     cascadingStyleSheet:string;
@@ -104,6 +90,17 @@ export type AssetPath = {
     source:string;
     target:string;
     template:string;
+}
+export type BuildConfigurationItem = {
+    extension:string;
+    outputExtension:string;
+    fileNamePattern:string
+}
+export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
+export type Command = {
+    arguments:Array<string>;
+    command:string;
+    indicator:?string;
 }
 export type Path = {
     apiDocumentation:string;
@@ -131,19 +128,21 @@ export type DefaultConfiguration = {
     test:Object;
     testInBrowser:Object
 }
+export type ExportFormat = 'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
+export type HTMLConfiguration = {
+    template:string|String;
+    filename:string
+}
 export type MetaConfiguration = {
     default:DefaultConfiguration;
     debug:PlainObject;
     library:PlainObject
 }
-export type HTMLConfiguration = {
-    template:string|String;
-    filename:string
-}
-export type Command = {
-    arguments:Array<string>;
-    command:string;
-    indicator:?string;
+export type ResolvedBuildConfigurationItem = {
+    filePaths:Array<string>;
+    extension:string;
+    outputExtension:string;
+    fileNamePattern:string
 }
 export type ResolvedConfiguration = {
     contextType:string;
@@ -262,12 +261,15 @@ export type ResolvedConfiguration = {
 
     testInBrowser:PlainObject
 }
+export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
+// TODO
+export type WebpackConfiguration = Object
 // / endregion
 // / region specific callbacks
+export type PromiseCallbackFunction = (reason:any) => ?Promise<any>
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean
-export type PromiseCallbackFunction = (reason:any) => ?Promise<any>
 // / endregion
 // endregion
 // region vim modline

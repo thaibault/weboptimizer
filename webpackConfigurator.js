@@ -42,7 +42,7 @@ plugins.Offline = require('offline-plugin')
 
 import type {
     DomNode, HTMLConfiguration, ProcedureFunction, PromiseCallbackFunction,
-    Window
+    WebpackConfiguration, Window
 } from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -567,7 +567,7 @@ const loader:{
 // / endregion
 // endregion
 // region configuration
-export default {
+const webpackConfiguration:WebpackConfiguration = {
     context: configuration.path.context,
     debug: configuration.debug,
     devtool: configuration.development.tool,
@@ -751,7 +751,11 @@ export default {
     pug: configuration.module.preprocessor.pug,
     plugins: pluginInstances
 }
+if (configuration.debug)
+    console.log(
+        `Using webpack configuration: ${JSON.stringify(webpackConfiguration)}`)
 // endregion
+export default webpackConfiguration
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
