@@ -46,6 +46,9 @@ const possibleArguments:Array<string> = [
     'build', 'buildDLL', 'clear', 'document', 'lint', 'preinstall', 'serve',
     'test', 'testInBrowser', 'typeCheck']
 const closeEventHandlers:Array<Function> = []
+console.log()
+console.log('CCCC', process.argv)
+console.log()
 if (configuration.givenCommandLineArguments.length > 2) {
     // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
@@ -156,9 +159,6 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 configuration.path.context, filePath)
             ).filter((filePath:string):boolean =>
                 !configuration.path.context.startsWith(filePath)))
-    console.log()
-    console.log('CCCC', process.argv[2])
-    console.log()
     if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2])) {
         let tidiedUp:boolean = false
         const tidyUp:Function = ():void => {
