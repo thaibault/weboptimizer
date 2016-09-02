@@ -205,7 +205,7 @@
         "cascadingStyleSheet": true,
         "externalLibrary": {
           "normal": true,
-          "shimmed": true
+          "dynamic": true
         },
         "javaScript": false,
         "otherMaximumFileSizeLimitInByte": 40960
