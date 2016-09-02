@@ -29,7 +29,12 @@ import configuration from './configurator.compiled'
 import type {
     PlainObject, PromiseCallbackFunction, ResolvedBuildConfiguration
 } from './type'
-import Helper from './helper.compiled'
+// TODO and make Tools the default export!
+console.log()
+console.log('CCCC', process.argv)
+console.log()
+
+const Helper:any = require('./helper.compiled').default
 // endregion
 // region controller
 const childProcessOptions:Object = {
@@ -46,9 +51,6 @@ const possibleArguments:Array<string> = [
     'build', 'buildDLL', 'clear', 'document', 'lint', 'preinstall', 'serve',
     'test', 'testInBrowser', 'typeCheck']
 const closeEventHandlers:Array<Function> = []
-console.log()
-console.log('CCCC', process.argv)
-console.log()
 if (configuration.givenCommandLineArguments.length > 2) {
     // region temporary save dynamically given configurations
     // NOTE: We need a copy of given arguments array.
