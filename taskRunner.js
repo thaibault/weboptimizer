@@ -87,7 +87,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         NOTE: A build could depend on previously created dll packages so a
         clean should not be performed in that case.
     */
-    if (!['build', 'serve', 'testInBrowser'].includes(
+    if (!['build', 'preinstall', 'serve', 'testInBrowser'].includes(
         configuration.givenCommandLineArguments[2]
     ) && possibleArguments.includes(
         configuration.givenCommandLineArguments[2]
