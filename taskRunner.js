@@ -84,10 +84,12 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // endregion
     // region handle clear
     /*
-        NOTE: A build could depend on previously created dll packages so a
-        clean should not be performed in that case.
+        NOTE: A build,serve or test in browser could depend on previously
+        created dll packages so a clean should not be performed in that case.
+        NOTE: If we have dependency cycle it needed to preserve files during
+        preinstall phase.
     */
-    if (!['build', 'preinstall', 'serve', 'testInBrowser'].includes(
+    if (!['build', 'preinstall', 'serve', 'test', 'testInBrowser'].includes(
         configuration.givenCommandLineArguments[2]
     ) && possibleArguments.includes(
         configuration.givenCommandLineArguments[2]
