@@ -13,6 +13,13 @@
     3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
+
+// TODO and make Tools the default export!
+console.log()
+console.log('CCCC', process.argv)
+console.log()
+process.exit(1)
+/*
 // region imports
 import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
@@ -30,14 +37,9 @@ import type {
     PlainObject, PromiseCallbackFunction, ResolvedBuildConfiguration
 } from './type'
 
-// TODO and make Tools the default export!
-console.log()
-console.log('CCCC', process.argv)
-console.log()
-process.exit(1)
-
-const Helper:any = require('./helper.compiled').default
+import Helper from './helper.compiled'
 // endregion
+*/
 // region controller
 const childProcessOptions:Object = {
     cwd: configuration.path.context,
