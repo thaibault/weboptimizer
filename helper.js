@@ -17,7 +17,7 @@
 import {ChildProcess} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
-import {Tools} from 'tools.compiled'
+import {Tools} from 'tools/index.compiled'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
