@@ -29,10 +29,12 @@ import configuration from './configurator.compiled'
 import type {
     PlainObject, PromiseCallbackFunction, ResolvedBuildConfiguration
 } from './type'
+
 // TODO and make Tools the default export!
 console.log()
 console.log('CCCC', process.argv)
 console.log()
+process.exit(1)
 
 const Helper:any = require('./helper.compiled').default
 // endregion
