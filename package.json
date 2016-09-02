@@ -56,7 +56,7 @@
         "stylelint": ">=7.2.0",
         "stylelint-config-standard": ">=13.0.0",
         "style-loader": ">=0.13.1",
-        "tools": "git+ssh://git@github.com/thaibault/tools.git",
+        "clientNode": ">=1.0.0",
         "url-loader": ">=0.5.7",
         "webpack": ">=1.13.2",
         "webpack-dev-server": ">=1.15.1",

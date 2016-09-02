@@ -29,7 +29,6 @@ import configuration from './configurator.compiled'
 import type {
     PlainObject, PromiseCallbackFunction, ResolvedBuildConfiguration
 } from './type'
-// TODO and make Tools the default export!
 
 import Helper from './helper.compiled'
 // endregion

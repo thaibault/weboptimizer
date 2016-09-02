@@ -16,7 +16,7 @@
 // region imports
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
-import {Tools} from 'tools'
+import Tools from 'clientNode'
 import path from 'path'
 
 import postcssCSSnext from 'postcss-cssnext'

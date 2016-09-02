@@ -4,7 +4,7 @@
 'use strict'
 // region imports
 import * as QUnit from 'qunit-cli'
-import {Tools} from 'tools'
+import Tools from 'clientNode'
 // NOTE: Only needed for debugging this file.
 try {
     module.require('source-map-support/register')
