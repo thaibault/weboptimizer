@@ -183,7 +183,9 @@ export default class Helper {
         let filePath:?string = Helper.determineModuleFilePath(
             resolvedRequest, {}, knownExtensions, requestContext,
             referencePath, pathsToIgnore)
-        if (!filePath || Tools.isAnyMatching(resolvedRequest, includePattern))
+        if (!(filePath || inPlaceNormalLibrary) || Tools.isAnyMatching(
+            resolvedRequest, includePattern
+        ))
             return resolvedRequest
         if (Tools.isAnyMatching(resolvedRequest, excludePattern))
             return null

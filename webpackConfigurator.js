@@ -752,9 +752,7 @@ const webpackConfiguration:WebpackConfiguration = {
     plugins: pluginInstances
 }
 if (configuration.debug)
-    console.log(
-        'Using webpack configuration: ' +
-        JSON.stringify(webpackConfiguration, null, '    '))
+    console.log('Using webpack configuration:', webpackConfiguration)
 // endregion
 export default webpackConfiguration
 // region vim modline
