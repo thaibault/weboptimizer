@@ -156,6 +156,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 configuration.path.context, filePath)
             ).filter((filePath:string):boolean =>
                 !configuration.path.context.startsWith(filePath)))
+    console.log()
+    console.log('CCCC', process.argv[2])
+    console.log()
     if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2])) {
         let tidiedUp:boolean = false
         const tidyUp:Function = ():void => {
