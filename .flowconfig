@@ -23,6 +23,8 @@ module.name_mapper='^\./taskRunner\.compiled$' -> './taskRunner'
 module.name_mapper='^\../taskRunner\.compiled$' -> '../taskRunner'
 module.name_mapper='^\./webpackConfigurator\.compiled$' -> './webpackConfigurator'
 module.name_mapper='^\../webpackConfigurator\.compiled$' -> '../webpackConfigurator'
+module.name_mapper='^\./stylelintConfigurator\.compiled$' -> './stylelintConfigurator'
+module.name_mapper='^\../stylelintConfigurator\.compiled$' -> '../stylelintConfigurator'
 
 module.file_ext=.js
 module.file_ext=.compiled.js

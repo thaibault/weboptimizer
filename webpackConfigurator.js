@@ -16,10 +16,14 @@
 // region imports
 import * as fileSystem from 'fs'
 import * as dom from 'jsdom'
+import Tools from 'clientNode'
 import path from 'path'
 
-import autoprefixer from 'autoprefixer'
+import postcssCSSnext from 'postcss-cssnext'
+import postcssFontPath from 'postcss-fontpath'
 import postcssImport from 'postcss-import'
+import postcssSprites from 'postcss-sprites'
+import postcssURL from 'postcss-url'
 import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
@@ -38,8 +42,8 @@ plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
 import type {
-    DomNode, HTMLConfiguration, Injection, NormalizedInternalInjection,
-    ProcedureFunction, PromiseCallbackFunction, Window
+    DomNode, HTMLConfiguration, ProcedureFunction, PromiseCallbackFunction,
+    Window
 } from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -49,7 +53,7 @@ import Helper from './helper.compiled'
 // "webpack-html-plugin" doesn't preserve the original loader interface.
 import htmlLoaderModuleBackup from 'html-loader'
 require.cache[require.resolve('html-loader')].exports = function():any {
-    Helper.extendObject(true, this.options, module, this.options)
+    Tools.extendObject(true, this.options, module, this.options)
     return htmlLoaderModuleBackup.apply(this, arguments)
 }
 // Monkey-Patch loader-utils to define which url is a local request.
@@ -68,7 +72,9 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // endregion
 // region initialisation
 let libraryName:string = configuration.exportFormat.self === 'var' ?
-    Helper.convertToValidVariableName(configuration.name) : configuration.name
+    Tools.stringConvertToValidVariableName(
+        configuration.name
+    ) : configuration.name
 if ('libraryName' in configuration && configuration.libraryName)
     libraryName = configuration.libraryName
 // // region plugins
@@ -108,13 +114,15 @@ if (htmlAvailable && configuration.offline) {
         configuration.givenCommandLineArguments[2]
     )) {
         if (configuration.inPlace.cascadingStyleSheet)
-            configuration.offline.excludes.push(
-                `${configuration.path.asset.cascadingStyleSheet}*.css?` +
-                `${configuration.hashAlgorithm}=*`)
+            configuration.offline.excludes.push(path.relative(
+                configuration.path.target.base,
+                configuration.path.target.asset.cascadingStyleSheet
+            ) + `*.css?${configuration.hashAlgorithm}=*`)
         if (configuration.inPlace.javaScript)
-            configuration.offline.excludes.push(
-                `${configuration.path.asset.javaScript}*.js?` +
-                `${configuration.hashAlgorithm}=*`)
+            configuration.offline.excludes.push(path.relative(
+                configuration.path.target.base,
+                configuration.path.target.asset.javaScript
+            ) + `*.js?${configuration.hashAlgorithm}=*`)
     }
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
@@ -130,11 +138,6 @@ if (configuration.development.openBrowser && (htmlAvailable && [
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
 // /// endregion
 // /// region modules/assets
-const moduleLocations:{[key:string]:Array<string>} =
-    Helper.determineModuleLocations(
-        configuration.injection.internal, configuration.module.aliases,
-        configuration.knownExtensions, configuration.path.context,
-        configuration.path.ignore)
 // //// region perform javaScript minification/optimisation
 if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
@@ -257,49 +260,38 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
         ):void => {
             if (configuration.files.html[0].filename in compilation.assets) {
                 if (configuration.inPlace.cascadingStyleSheet)
-                    removeDirectoryRecursivelySync(path.join(
-                        configuration.path.asset.target,
-                        configuration.path.asset.cascadingStyleSheet
-                    ), {glob: false})
+                    removeDirectoryRecursivelySync(
+                        configuration.path.target.asset.cascadingStyleSheet,
+                        {glob: false})
                 if (configuration.inPlace.javaScript) {
-                    const assetFilePath = path.join(
-                        configuration.path.asset.target,
+                    const assetFilePath =
                         configuration.files.compose.javaScript.replace(
-                            `?${configuration.hashAlgorithm}=[hash]`, ''))
+                            `?${configuration.hashAlgorithm}=[hash]`, '')
                     for (const filePath:string of [
                         assetFilePath, `${assetFilePath}.map`
                     ])
                         if (Helper.isFileSync(filePath))
                             fileSystem.unlinkSync(filePath)
-                    const javaScriptPath:string = path.join(
-                        configuration.path.asset.target,
-                        configuration.path.asset.javaScript)
-                    if (fileSystem.readdirSync(javaScriptPath).length === 0)
-                        fileSystem.rmdirSync(javaScriptPath)
+                    if (fileSystem.readdirSync(
+                        configuration.path.target.asset.javaScript
+                    ).length === 0)
+                        fileSystem.rmdirSync(
+                            configuration.path.target.asset.javaScript)
                 }
             }
             callback()
         })
     }})
 // //// endregion
-const injection:Injection = Helper.resolveInjection(
-    configuration.injection, Helper.resolveBuildConfigurationFilePaths(
-        configuration.build, configuration.path.asset.source,
-        configuration.path.context, configuration.path.ignore
-    ), configuration.testInBrowser.injection.internal,
-    configuration.module.aliases, configuration.knownExtensions,
-    configuration.path.context, configuration.path.ignore)
-const normalizedInternalInjection:NormalizedInternalInjection =
-    Helper.normalizeInternalInjection(injection.internal)
 // //// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
-    for (const chunkID:string in normalizedInternalInjection)
-        if (
-            normalizedInternalInjection.hasOwnProperty(chunkID) &&
-            configuration.dllManifestFilePaths.includes(
-                `${configuration.path.target}${chunkID}.dll-manifest.json`)
-        ) {
-            delete normalizedInternalInjection[chunkID]
+    for (const chunkID:string in configuration.injection.internal.normalized)
+        if (configuration.injection.internal.normalized.hasOwnProperty(
+            chunkID
+        ) && configuration.dllManifestFilePaths.includes(
+            `${configuration.path.target.base}${chunkID}.dll-manifest.json`
+        )) {
+            delete configuration.injection.internal.normalized[chunkID]
             // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and
             // everywhere else
             const filePath:string =
@@ -313,49 +305,32 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             }))
             pluginInstances.push(new webpack.DllReferencePlugin({
                 context: configuration.path.context, manifest: require(
-                    `${configuration.path.target}${chunkID}.dll-manifest.json`)
+                    `${configuration.path.target.base}${chunkID}.` +
+                    'dll-manifest.json')
             }))
         }
 // //// endregion
 // //// region generate common chunks
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string of configuration.injection.commonChunkIDs)
-        if (normalizedInternalInjection.hasOwnProperty(chunkID))
+        if (configuration.injection.internal.normalized.hasOwnProperty(
+            chunkID
+        ))
             pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
                 async: false,
                 children: false,
-                filename: configuration.files.compose.javaScript,
+                filename: path.relative(
+                    configuration.path.context,
+                    configuration.files.compose.javaScript),
                 minChunks: Infinity,
                 name: chunkID,
                 minSize: 0
             }))
 // //// endregion
-let javaScriptNeeded:boolean = configuration.debug && [
-    'serve', 'testInBrowser'
-].includes(configuration.givenCommandLineArguments[2])
-if (!javaScriptNeeded)
-    for (const chunkName:string in normalizedInternalInjection)
-        if (normalizedInternalInjection.hasOwnProperty(chunkName))
-            for (const moduleID:string of normalizedInternalInjection[
-                chunkName
-            ]) {
-                const type:?string = Helper.determineAssetType(
-                    Helper.determineModuleFilePath(
-                        moduleID, configuration.module.aliases,
-                        configuration.knownExtensions,
-                        configuration.path.context),
-                    configuration.build, configuration.path)
-                if (type && configuration.build[type] && configuration.build[
-                    type
-                ].outputExtension === 'js') {
-                    javaScriptNeeded = true
-                    break
-                }
-            }
 // //// region mark empty javaScript modules as dummy
-if (!javaScriptNeeded)
-    configuration.files.compose.javaScript = path.join(
-        configuration.path.asset.javaScript, '.__dummy__.compiled.js')
+if (!configuration.needed.javaScript)
+    configuration.files.compose.javaScript = path.resolve(
+        configuration.path.target.asset.javaScript, '.__dummy__.compiled.js')
 // //// endregion
 // //// region extract cascading style sheets
 pluginInstances.push(new plugins.ExtractText(
@@ -363,69 +338,43 @@ pluginInstances.push(new plugins.ExtractText(
         !configuration.files.compose.cascadingStyleSheet}))
 // //// endregion
 // //// region performs implicit external logic
-if (injection.external === '__implicit__')
+if (configuration.injection.external === '__implicit__')
     /*
         We only want to process modules from local context in library mode,
         since a concrete project using this library should combine all assets
         (and deduplicate them) for optimal bundling results. NOTE: Only native
         javaScript and json modules will be marked as external dependency.
     */
-    injection.external = (
+    configuration.injection.external = (
         context:string, request:string, callback:ProcedureFunction
     ):void => {
-        const filePath:string = Helper.determineModuleFilePath(
-            request.substring(request.lastIndexOf('!') + 1),
-            configuration.module.aliases, configuration.knownExtensions,
-            context)
-        if (filePath.endsWith('.js') || filePath.endsWith('.json')) {
-            const originalRequest:string = request
-            // NOTE: We apply alias on externals additionally.
-            request = Helper.applyAliases(
-                request.substring(request.lastIndexOf('!') + 1),
-                configuration.module.aliases)
-            const applyExternalRequest:Function = ():void => {
-                if (originalRequest in configuration.injection.externalAliases)
-                    request = configuration.injection.externalAliases[
-                        originalRequest]
-                if (configuration.exportFormat.external === 'var')
-                    request = Helper.convertToValidVariableName(
-                        request, '0-9a-zA-Z_$\\.')
-                return callback(
-                    null, request, configuration.exportFormat.external)
-            }
-            if (Helper.isAnyMatching(
-                request, configuration.injection.implicitExternalIncludePattern
-            ))
-                return applyExternalRequest()
-            if (Helper.isAnyMatching(
-                request, configuration.injection.implicitExternalExcludePattern
-            ))
-                return callback()
-            for (const chunkName:string in normalizedInternalInjection)
-                if (normalizedInternalInjection.hasOwnProperty(chunkName))
-                    for (
-                        const moduleID:string of
-                        normalizedInternalInjection[chunkName]
-                    )
-                        if (Helper.determineModuleFilePath(
-                            moduleID, configuration.module.aliases,
-                            configuration.knownExtensions, context
-                        ) === filePath)
-                            return callback()
-            /*
-                NOTE: We mark dependencies as external if they does not contain
-                a loader in their request and aren't part of the current node
-                package.
-            */
-            if (!configuration.inPlace.externalLibrary.normal && !(
-                configuration.inPlace.externalLibrary.shimmed &&
-                originalRequest.includes('!')
-            ) && (!path.resolve(filePath).startsWith(
-                configuration.path.context
-            ) || Helper.isFilePathInLocation(
-                filePath, configuration.path.ignore
-            )))
-                return applyExternalRequest()
+        let resolvedRequest:?string = Helper.determineExternalRequest(
+            request, configuration.path.context, context,
+            configuration.injection.internal.normalized,
+            configuration.path.ignore.concat(
+                configuration.module.directories,
+                configuration.loader.directories
+            ).map((filePath:string):string => path.resolve(
+                configuration.path.context, filePath
+            )).filter((filePath:string):boolean =>
+                !configuration.path.context.startsWith(filePath)
+            ), configuration.module.aliases, configuration.knownExtensions,
+            configuration.path.source.asset.base, configuration.path.ignore,
+            configuration.injection.implicitExternalIncludePattern,
+            configuration.injection.implicitExternalExcludePattern,
+            configuration.inPlace.externalLibrary.normal,
+            configuration.inPlace.externalLibrary.shimmed)
+        if (resolvedRequest) {
+            if (['var', 'umd'].includes(
+                configuration.exportFormat.external
+            ) && request in configuration.injection.externalAliases)
+                resolvedRequest = configuration.injection.externalAliases[
+                    request]
+            if (configuration.exportFormat.external === 'var')
+                resolvedRequest = Tools.stringConvertToValidVariableName(
+                    resolvedRequest, '0-9a-zA-Z_$\\.')
+            return callback(
+                null, resolvedRequest, configuration.exportFormat.external)
         }
         return callback()
     }
@@ -433,16 +382,18 @@ if (injection.external === '__implicit__')
 // //// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
     let dllChunkIDExists:boolean = false
-    for (const chunkID:string in normalizedInternalInjection)
-        if (normalizedInternalInjection.hasOwnProperty(chunkID))
+    for (const chunkID:string in configuration.injection.internal.normalized)
+        if (configuration.injection.internal.normalized.hasOwnProperty(
+            chunkID
+        ))
             if (configuration.injection.dllChunkIDs.includes(chunkID))
                 dllChunkIDExists = true
             else
-                delete normalizedInternalInjection[chunkID]
+                delete configuration.injection.internal.normalized[chunkID]
     if (dllChunkIDExists) {
         libraryName = '[name]DLLPackage'
         pluginInstances.push(new webpack.DllPlugin({
-            path: `${configuration.path.target}[name].dll-manifest.json`,
+            path: `${configuration.path.target.base}[name].dll-manifest.json`,
             name: libraryName
         }))
     } else
@@ -497,8 +448,15 @@ pluginInstances.push({apply: (compiler:Object):void => {
                     return resolve(
                         compilation.assets[htmlConfiguration.filename])
                 })))
+        if (!configuration.exportFormat.external.startsWith('umd')) {
+            Promise.all(promises).then(():void => callback())
+            return
+        }
+        const bundleName:string = (
+            typeof libraryName === 'string'
+        ) ? libraryName : libraryName[0]
         /*
-            NOTE: The umd module export doesn't handle casees where the package
+            NOTE: The umd module export doesn't handle cases where the package
             name doesn't match exported library name. This post processing
             fixes this issue.
         */
@@ -506,40 +464,43 @@ pluginInstances.push({apply: (compiler:Object):void => {
             if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
                 configuration.build.javaScript.outputExtension
             )) {
-                let source:string = compilation.assets[
-                    assetRequest
-                ].source()
-                for (
-                    const replacement:string in
-                    configuration.injection.externalAliases
-                )
-                    if (configuration.injection.externalAliases.hasOwnProperty(
-                        replacement
-                    ))
-                        source = source.replace(new RegExp(
-                            '(require\\()"' +
-                            Helper.convertToValidRegularExpressionString(
-                                configuration.injection.externalAliases[
-                                    replacement]
-                            ) + '"(\\))', 'g'
-                        ), `$1'${replacement}'$2`).replace(new RegExp(
-                            '(define\\("' +
-                            Helper.convertToValidRegularExpressionString(
-                                libraryName
-                            ) + '", \\[.*)"' +
-                            Helper.convertToValidRegularExpressionString(
-                                configuration.injection.externalAliases[
-                                    replacement]
-                            ) + '"(.*\\], factory\\);)'
-                        ), `$1'${replacement}'$2`)
-                source = source.replace(new RegExp(
-                    '(root\\[)"' +
-                    Helper.convertToValidRegularExpressionString(
-                        libraryName
-                    ) + '"(\\] = )'
-                ), `$1'${Helper.convertToValidVariableName(libraryName)}'$2`)
-                compilation.assets[assetRequest] = new WebpackRawSource(
-                    source)
+                let source:string = compilation.assets[assetRequest].source()
+                if (typeof source === 'string') {
+                    for (
+                        const replacement:string in
+                        configuration.injection.externalAliases
+                    )
+                        if (configuration.injection.externalAliases
+                            .hasOwnProperty(replacement)
+                        )
+                            source = source.replace(new RegExp(
+                                '(require\\()"' +
+                                Tools.stringConvertToValidRegularExpression(
+                                    configuration.injection.externalAliases[
+                                        replacement]
+                                ) + '"(\\))', 'g'
+                            ), `$1'${replacement}'$2`).replace(new RegExp(
+                                '(define\\("' +
+                                Tools.stringConvertToValidRegularExpression(
+                                    bundleName
+                                ) + '", \\[.*)"' +
+                                Tools.stringConvertToValidRegularExpression(
+                                    configuration.injection.externalAliases[
+                                        replacement]
+                                ) + '"(.*\\], factory\\);)'
+                            ), `$1'${replacement}'$2`)
+                    source = source.replace(new RegExp(
+                        '(root\\[)"' +
+                        Tools.stringConvertToValidRegularExpression(
+                            bundleName
+                        ) + '"(\\] = )'
+                    ), "$1'" +
+                        Tools.stringConvertToValidVariableName(bundleName) +
+                        "'$2"
+                    )
+                    compilation.assets[assetRequest] = new WebpackRawSource(
+                        source)
+                }
             }
         Promise.all(promises).then(():void => callback())
     })
@@ -553,18 +514,13 @@ pluginInstances.push(new plugins.Imagemin(
 // /// endregion
 // // endregion
 // / region loader
-let imageLoader:string = 'url?' + Helper.convertCircularObjectToJSON(
+let imageLoader:string = 'url?' + Tools.convertCircularObjectToJSON(
     configuration.module.optimizer.image.file)
 const loader:{
     preprocessor:{
         cascadingStyleSheet:string;
-        less:string;
-        sass:string;
-        scss:string;
         javaScript:string;
-        coffee:string;
         pug:string;
-        literateCoffee:string
     };
     html:string;
     cascadingStyleSheet:string;
@@ -581,41 +537,31 @@ const loader:{
     }
 } = {
     preprocessor: {
-        cascadingStyleSheet: 'postcss',
-        javaScript: 'babel?' + Helper.convertCircularObjectToJSON(
-            configuration.module.preprocessor.modernJavaScript),
-        pug: 'pug?' + Helper.convertCircularObjectToJSON(
-            configuration.module.preprocessor.pug),
-        // TODO deprecated
-        coffee: 'coffee',
-        literateCoffee: 'coffee?literate',
-        less: 'less?' + Helper.convertCircularObjectToJSON(
-            configuration.module.preprocessor.less),
-        sass: 'sass?' + Helper.convertCircularObjectToJSON(
-            configuration.module.preprocessor.sass),
-        scss: 'sass?' + Helper.convertCircularObjectToJSON(
-            configuration.module.preprocessor.scss)
-        //
+        cascadingStyleSheet: 'postcss' +
+            configuration.module.preprocessor.cascadingStyleSheet,
+        javaScript: 'babel?' + Tools.convertCircularObjectToJSON(
+            configuration.module.preprocessor.babel),
+        pug: 'pug?' + Tools.convertCircularObjectToJSON(
+            configuration.module.preprocessor.pug)
     },
-    html: 'html?' + Helper.convertCircularObjectToJSON(
+    html: 'html?' + Tools.convertCircularObjectToJSON(
         configuration.module.html),
-    cascadingStyleSheet: 'css?' + Helper.convertCircularObjectToJSON(
-        configuration.module.cascadingStyleSheet),
-    style: 'style?' + Helper.convertCircularObjectToJSON(
+    cascadingStyleSheet: `css${configuration.module.cascadingStyleSheet}`,
+    style: 'style?' + Tools.convertCircularObjectToJSON(
         configuration.module.style),
     postprocessor: {
         image: imageLoader,
         font: {
-            eot: 'url?' + Helper.convertCircularObjectToJSON(
+            eot: 'url?' + Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.eot),
-            woff: 'url?' + Helper.convertCircularObjectToJSON(
+            woff: 'url?' + Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.woff),
-            ttf: 'url?' + Helper.convertCircularObjectToJSON(
+            ttf: 'url?' + Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.ttf),
-            svg: 'url?' + Helper.convertCircularObjectToJSON(
+            svg: 'url?' + Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.font.svg)
         },
-        data: 'url?' + Helper.convertCircularObjectToJSON(
+        data: 'url?' + Tools.convertCircularObjectToJSON(
             configuration.module.optimizer.data)
     }
 }
@@ -628,30 +574,32 @@ export default {
     devtool: configuration.development.tool,
     devServer: configuration.development.server,
     // region input
-    entry: normalizedInternalInjection, externals: injection.external,
+    entry: configuration.injection.internal.normalized,
+    externals: configuration.injection.external,
     resolveLoader: {
         alias: configuration.loader.aliases,
         extensions: configuration.loader.extensions,
-        modulesDirectories: configuration.loader.moduleDirectories
+        modulesDirectories: configuration.loader.directories
     },
     resolve: {
         alias: configuration.module.aliases,
         extensions: configuration.knownExtensions,
-        root: [(configuration.path.asset.source:string)]
+        root: [(configuration.path.source.asset.base:string)],
+        modulesDirectories: configuration.module.directories
     },
     // endregion
     // region output
     output: {
         filename: path.relative(
-            configuration.path.asset.target,
+            configuration.path.target.base,
             configuration.files.compose.javaScript),
         hashFunction: configuration.hashAlgorithm,
         library: libraryName,
         libraryTarget: (
             configuration.givenCommandLineArguments[2] === 'buildDLL'
         ) ? 'var' : configuration.exportFormat.self,
-        path: configuration.path.asset.target,
-        publicPath: configuration.path.asset.publicTarget,
+        path: configuration.path.target.base,
+        publicPath: configuration.path.target.public,
         pathinfo: configuration.debug,
         umdNamedDefine: true
     },
@@ -665,34 +613,18 @@ export default {
             {
                 test: /\.js$/,
                 loader: loader.preprocessor.javaScript,
-                include: [path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.javaScript
-                )].concat(moduleLocations.directoryPaths),
+                include: [configuration.path.source.asset.javaScript].concat(
+                    configuration.module.locations.directoryPaths),
                 exclude: (filePath:string):boolean =>
                     Helper.isFilePathInLocation(filePath.replace(
                         /^(.+)(?:\?[^?]*)$/, '$1'
                     ), configuration.path.ignore)
-            }, {
-                test: /\.coffee$/,
-                loader: loader.preprocessor.coffee,
-                include: [path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.coffeeScript
-                )].concat(moduleLocations.directoryPaths)
-            }, {
-                test: /\.(?:coffee\.md|litcoffee)$/,
-                loader: loader.preprocessor.literateCoffee,
-                include: [path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.coffeeScript
-                )].concat(moduleLocations.directoryPaths)
             },
             // endregion
             // region html (templates)
             // NOTE: This ensures that will be used as a special loader alias.
             {
-                test: new RegExp(Helper.convertToValidRegularExpressionString(
+                test: new RegExp(Tools.stringConvertToValidRegularExpression(
                     configuration.files.defaultHTML.template.substring(
                         configuration.files.defaultHTML.template.lastIndexOf(
                             '!'
@@ -704,55 +636,32 @@ export default {
             {
                 test: /\.pug$/,
                 loader:
-                    `file?name=${configuration.path.asset.template}` +
-                    `[name].html?${configuration.hashAlgorithm}=[hash]!` +
+                    'file?name=' + path.relative(
+                        configuration.path.target.asset.base,
+                        configuration.path.target.asset.template
+                    ) + `[name].html?${configuration.hashAlgorithm}=[hash]!` +
                     `extract!${loader.html}!${loader.preprocessor.pug}`,
-                include: path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.template),
+                include: configuration.path.source.asset.template,
                 exclude: configuration.files.html.concat(
                     configuration.files.defaultHTML
-                ).map((
-                    htmlConfiguration:HTMLConfiguration
-                ):string => htmlConfiguration.template.substring(
-                    htmlConfiguration.template.lastIndexOf('!') + 1))
+                ).map((htmlConfiguration:HTMLConfiguration):string =>
+                    htmlConfiguration.template.substring(
+                        htmlConfiguration.template.lastIndexOf('!') + 1))
             }
             // endregion
         ],
         loaders: [
             // Loads dependencies.
             // region style
-            // TODO deprecated
-            {
-                test: /\.less$/,
-                loader: plugins.ExtractText.extract(
-                    loader.style,
-                    `${loader.cascadingStyleSheet}!${loader.preprocessor.less}`
-                )
-            }, {
-                test: /\.sass$/,
-                loader: plugins.ExtractText.extract(
-                    loader.style,
-                    `${loader.cascadingStyleSheet}!${loader.preprocessor.sass}`
-                )
-            }, {
-                test: /\.scss$/,
-                loader: plugins.ExtractText.extract(
-                    loader.style,
-                    `${loader.cascadingStyleSheet}!${loader.preprocessor.scss}`
-                )
-            },
-            //
             {
                 test: /\.css$/,
                 loader: plugins.ExtractText.extract(
                     loader.style,
-                    `${loader.preprocessor.cascadingStyleSheet}!` +
-                    loader.cascadingStyleSheet),
-                include: [path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.cascadingStyleSheet
-                )].concat(moduleLocations.directoryPaths),
+                    `${loader.cascadingStyleSheet}!` +
+                    loader.preprocessor.cascadingStyleSheet),
+                include: [
+                    configuration.path.source.asset.cascadingStyleSheet
+                ].concat(configuration.module.locations.directoryPaths),
                 exclude: (filePath:string):boolean =>
                     Helper.isFilePathInLocation(filePath.replace(
                         /^(.+)(?:\?[^?]*)$/, '$1'
@@ -763,12 +672,12 @@ export default {
             {
                 test: /\.html$/,
                 loader:
-                    `file?name=${configuration.path.asset.template}` +
-                    `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
+                    'file?name=' + path.relative(
+                        configuration.path.target.base,
+                        configuration.path.target.asset.template
+                    ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
                     `extract!${loader.html}`,
-                include: path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.template),
+                include: configuration.path.source.asset.template,
                 exclude: configuration.files.html.map((
                     htmlConfiguration:HTMLConfiguration
                 ):string => htmlConfiguration.template.substring(
@@ -800,9 +709,7 @@ export default {
             {
                 test: /.+/,
                 loader: loader.postprocessor.data,
-                include: path.join(
-                    configuration.path.asset.source,
-                    configuration.path.asset.data),
+                include: configuration.path.source.asset.data,
                 exclude: (filePath:string):boolean =>
                     configuration.knownExtensions.includes(
                         path.extname(filePath.replace(
@@ -812,7 +719,32 @@ export default {
         ]
     },
     postcss: ():Array<Object> => [
-        autoprefixer, postcssImport({addDependencyTo: webpack})
+        postcssImport({
+            addDependencyTo: webpack,
+            root: configuration.path.context
+        }),
+        /*
+            NOTE: Checking path doesn't work if fonts are referenced in
+            libraries provided in another location than the project itself like
+            the node_modules folder.
+        */
+        postcssCSSnext({browsers: '> 0%'}),
+        postcssFontPath({checkPath: false}),
+        postcssURL({filter: '', maxSize: 0}),
+        postcssSprites({
+            filterBy: ():Promise<null> => new Promise((
+                resolve:Function, reject:Function
+            ):Promise<null> => (
+                configuration.files.compose.image ? resolve : reject
+            )()),
+            hooks: {onSaveSpritesheet: (image:Object):string => path.join(
+                image.spritePath, path.relative(
+                    configuration.path.target.asset.image,
+                    configuration.files.compose.image))},
+            stylesheetPath:
+                configuration.path.source.asset.cascadingStyleSheet,
+            spritePath: configuration.path.source.asset.image
+        })
     ],
     html: configuration.module.optimizer.htmlMinifier,
     // Let the "html-loader" access full html minifier processing

@@ -36,6 +36,8 @@ Features
 - Many needed uses-cases are **preconfigured** and mostly works out of the box for
   your project.
     - **API-Documentation** generation
+    - Image **sprite** handling. Combine your images and never create sprites by
+      hand again.
     - Polymorphic **testing** on dom in browsers and/or in node through
       webOptimizer/browserAPI
     - **Linting** and **TypeChecking** with Flow
@@ -79,7 +81,7 @@ Edit your **package.json** to add **one** dependency:
     ...
     "dependencies": {
         ...
-        "webOptimizer": "git+ssh://git@github.com/thaibault/webOptimizer.git",
+        "webOptimizer": "latest",
         ...
     },
     ...
@@ -140,27 +142,30 @@ default source, target, asset or build paths do it in your **package.json**:
         "path": {
             ...
             "apiDocumentation": "apiDocumentation/",
-            "asset": {
+            "source": {
                 ...
-                "cascadingStyleSheet": "cascadingStyleSheet/",
-                "coffeeScript": "coffeeScript/",
-                "data": "data/",
-                "favicon": "favicon.png",
-                "font": "font/",
-                "image": "image/",
-                "javaScript": "javaScript/",
-                "less": "less/",
-                "publicTarget": "",
-                "sass": "sass/",
-                "scss": "scss/",
-                "template": "template/"
-                ..
+                "asset": {
+                    ...
+                    "cascadingStyleSheet": "cascadingStyleSheet/",
+                    "data": "data/",
+                    "favicon": "favicon.png",
+                    "font": "font/",
+                    "image": "image/",
+                    "javaScript": "javaScript/",
+                    "publicTarget": "",
+                    "template": "template/"
+                    ..
+                },
+                ...
             },
             "ignore": ["node_modules", ".git"],
             "manifest": "manifest.appcache",
-            "source": "source/",
-            "target": "build/",
-            "tidyUp": ["crap"]
+            "target": {
+                ...
+                "base": "build/",
+                ...
+            },
+            "tidyUp": ["crap"],
             ...
         },
         ...
@@ -194,13 +199,16 @@ dynamically though a small evaluation mechanism:
         ...
         "path": {
             ...
-            "source": "/",
-            ...
-            "asset": {
+            "source": {
                 ...
-                "cascadingStyleSheet": "cascadingStyleSheet/",
-                "template": {
-                    "__evaluate__": "self.debug ? '' : self.path.source"
+                "base": "/",
+                "asset": {
+                    ...
+                    "cascadingStyleSheet": "cascadingStyleSheet/",
+                    "template": {
+                        "__evaluate__": "self.debug ? '' : self.path.source.base"
+                    },
+                    ...
                 },
                 ...
             },
@@ -211,7 +219,7 @@ dynamically though a small evaluation mechanism:
             ...
             "externals": [
                 ...
-                {"__evaluate__": "self.path.asset.cascadingStyleSheet"},
+                {"__evaluate__": "self.path.source.asset.cascadingStyleSheet"},
                 "onlineAvailable.txt",
                 ...
             ],
@@ -230,12 +238,15 @@ You can even execute script to determine a value:
         ...
         "path": {
             ...
-            "source": "/",
-            ...
-            "asset": {
+            "source": {
                 ...
-                "template": {
-                    "__execute__": "test = self.path.source; if (test.endsWith('js')) return 'bar/';return 'foo/'"
+                "base": "/",
+                "asset": {
+                    ...
+                    "template": {
+                        "__execute__": "test = self.path.source.base; if (test.endsWith('js')) return 'bar/';return 'foo/'"
+                    },
+                    ...
                 },
                 ...
             },
@@ -278,7 +289,7 @@ more details):
     ...
     "webOptimizer": {
         ...
-        "libraryName": {"_evaluate__": helper.isPlainObject(self.name) ? helper.convertToValidVariableName(self.name) : 'random'},
+        "libraryName": {"__evaluate__": helper.isPlainObject(self.name) ? helper.convertToValidVariableName(self.name) : 'random'},
         ...
     },
     ...

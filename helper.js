@@ -17,71 +17,24 @@
 import {ChildProcess} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
+import Tools from 'clientNode'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
 } catch (error) {}
 
 import type {
-    BuildConfiguration, EvaluationFunction, GetterFunction, Injection,
-    InternalInjection, NormalizedInternalInjection, Paths, PlainObject,
-    ResolvedBuildConfiguration, ResolvedBuildConfigurationItem, SetterFunction,
-    TraverseFilesCallbackFunction
+    BuildConfiguration, Injection, InternalInjection,
+    NormalizedInternalInjection, Path, PlainObject, ResolvedBuildConfiguration,
+    ResolvedBuildConfigurationItem, TraverseFilesCallbackFunction
 } from './type'
-// endregion
-// region declarations
-// NOTE: This declaration isn't needed if flow knows javaScript's native
-// "Proxy" in future.
-declare class Proxy {
-    constructor(object:any, handler:Object):any
-}
 // endregion
 // region methods
 /**
  * Provides a class of static methods with generic use cases.
  */
 export default class Helper {
-    static specialRegexSequences:Array<string> = [
-        '-', '[', ']', '(', ')', '^', '$', '*', '+', '.', '{', '}'];
     // region boolean
-    /**
-     * Checks weather one of the given pattern matches given string.
-     * @param target - Target to check in pattern for.
-     * @param pattern - List of pattern to check for.
-     * @returns Value "true" if given object is matches by at leas one of the
-     * given pattern and "false" otherwise.
-     */
-    static isAnyMatching(target:string, pattern:Array<string|RegExp>):boolean {
-        for (const currentPattern:RegExp|string of pattern)
-            if (typeof currentPattern === 'string') {
-                if (currentPattern === target)
-                    return true
-            } else if (currentPattern.test(target))
-                return true
-        return false
-    }
-    /**
-     * Checks weather given object is a plain native object.
-     * @param object - Object to check.
-     * @returns Value "true" if given object is a plain javaScript object and
-     * "false" otherwise.
-     */
-    static isPlainObject(object:mixed):boolean {
-        return (
-            typeof object === 'object' && object !== null &&
-            Object.getPrototypeOf(object) === Object.prototype)
-    }
-    /**
-     * Checks weather given object is a function.
-     * @param object - Object to check.
-     * @returns Value "true" if given object is a function and "false"
-     * otherwise.
-     */
-    static isFunction(object:mixed):boolean {
-        return Boolean(object) && {}.toString.call(
-            object
-        ) === '[object Function]'
-    }
     /**
      * Determines whether given file path is within given list of file
      * locations.
@@ -100,32 +53,6 @@ export default class Helper {
     }
     // endregion
     // region data handling
-    /**
-     * Converts given object into its serialized json representation by
-     * replacing circular references with a given provided value.
-     * @param object - Object to serialize.
-     * @param determineCicularReferenceValue - Callback to create a fallback
-     * value depending on given redundant value.
-     * @param numberOfSpaces - Number of spaces to use for string formatting.
-     */
-    static convertCircularObjectToJSON(
-        object:Object, determineCicularReferenceValue:((
-            key:string, value:any, seendObjects:Array<any>
-        ) => any) = ():string => '__circularReference__',
-        numberOfSpaces:number = 0
-    ):string {
-        const seenObjects:Array<any> = []
-        return JSON.stringify(object, (key:string, value:any):any => {
-            if (typeof value === 'object' && value !== null) {
-                if (seenObjects.includes(value))
-                    return determineCicularReferenceValue(
-                        key, value, seenObjects)
-                seenObjects.push(value)
-                return value
-            }
-            return value
-        }, numberOfSpaces)
-    }
     /**
      * Converts given serialized or base64 encoded string into a javaScript
      * one if possible.
@@ -147,332 +74,6 @@ export default class Helper {
             return new Function(name, `return ${serializedObject}`)(scope)
         } catch (error) {}
         return null
-    }
-    /**
-     * Replaces given pattern in each value in given object recursively with
-     * given string replacement.
-     * @param object - Object to convert substrings in.
-     * @param pattern - Regular expression to replace.
-     * @param replacement - String to use as replacement for found patterns.
-     * @returns Converted object with replaced patterns.
-     */
-    static convertSubstringInPlainObject(
-        object:PlainObject, pattern:RegExp, replacement:string
-    ):PlainObject {
-        for (const key:string in object)
-            if (object.hasOwnProperty(key))
-                if (Helper.isPlainObject(object[key]))
-                    object[key] = Helper.convertSubstringInPlainObject(
-                        object[key], pattern, replacement)
-                else if (typeof object[key] === 'string')
-                    object[key] = object[key].replace(pattern, replacement)
-        return object
-    }
-    /**
-     * Extends given target object with given sources object. As target and
-     * sources many expandable types are allowed but target and sources have to
-     * to come from the same type.
-     * @param targetOrDeepIndicator - Maybe the target or deep indicator.
-     * @param _targetAndOrSources - Target and at least one source object.
-     * @returns Returns given target extended with all given sources.
-     */
-    static extendObject(
-        targetOrDeepIndicator:boolean|any, ..._targetAndOrSources:Array<any>
-    ):any {
-        let index:number = 1
-        let deep:boolean = false
-        let target:mixed
-        if (typeof targetOrDeepIndicator === 'boolean') {
-            // Handle a deep copy situation and skip deep indicator and target.
-            deep = targetOrDeepIndicator
-            target = arguments[index]
-            index = 2
-        } else
-            target = targetOrDeepIndicator
-        const mergeValue = (key:string, value:any, targetValue:any):any => {
-            if (value === targetValue)
-                return targetValue
-            // Recurse if we're merging plain objects or maps.
-            if (deep && value && (
-                Helper.isPlainObject(value) || value instanceof Map
-            )) {
-                let clone:any
-                if (value instanceof Map)
-                    clone = targetValue && (
-                        targetValue instanceof Map
-                    ) ? targetValue : new Map()
-                else
-                    clone = targetValue && Helper.isPlainObject(
-                        targetValue
-                    ) ? targetValue : {}
-                return Helper.extendObject(deep, clone, value)
-            }
-            return value
-        }
-        while (index < arguments.length) {
-            const source:any = arguments[index]
-            let targetType:string = typeof target
-            let sourceType:string = typeof source
-            if (target instanceof Map)
-                targetType += ' Map'
-            if (source instanceof Map)
-                sourceType += ' Map'
-            if (targetType === sourceType && target !== source)
-                if (target instanceof Map && source instanceof Map)
-                    for (const [key:string, value:any] of source)
-                        target.set(key, mergeValue(key, value, target.get(
-                            key)))
-                else if (Helper.isPlainObject(target) && Helper.isPlainObject(
-                    source
-                )) {
-                    for (const key:string in source)
-                        if (source.hasOwnProperty(key))
-                            target[key] = mergeValue(
-                                key, source[key], target[key])
-                } else
-                    target = source
-            else
-                target = source
-            index += 1
-        }
-        return target
-    }
-    /**
-     * Removes a proxies from given data structure recursivley.
-     * @param object - Object to proxy.
-     * @param seenObjects - Tracks all already processed obejcts to avoid
-     * endless loops (usually only needed for internal prupose).
-     * @returns Returns given object unwrapped from a dynamic proxy.
-     */
-    static unwrapProxy(object:any, seenObjects:Array<any> = []):any {
-        if (object !== null && typeof object === 'object') {
-            while (object.__target__)
-                object = object.__target__
-            const index:number = seenObjects.indexOf(object)
-            if (index !== -1)
-                return seenObjects[index]
-            seenObjects.push(object)
-            if (Array.isArray(object)) {
-                let index:number = 0
-                for (const value:mixed of object) {
-                    object[index] = Helper.unwrapProxy(value, seenObjects)
-                    index += 1
-                }
-            } else if (object instanceof Map)
-                for (const [key:mixed, value:mixed] of object)
-                    object.set(key, Helper.unwrapProxy(value, seenObjects))
-            else
-                for (const key:string in object)
-                    if (object.hasOwnProperty(key))
-                        object[key] = Helper.unwrapProxy(
-                            object[key], seenObjects)
-        }
-        return object
-    }
-    /**
-     * Adds dynamic getter and setter to any given data structure such as maps.
-     * @param object - Object to proxy.
-     * @param getterWrapper - Function to wrap each property get.
-     * @param setterWrapper - Function to wrap each property set.
-     * @param getterMethodName - Method name to get a stored value by key.
-     * @param setterMethodName - Method name to set a stored value by key.
-     * @param containesMethodName - Method name to indicate if a key is stored
-     * in given data structure.
-     * @param deep - Indicates to perform a deep wrapping of specified types.
-     * performed via "value instanceof type".).
-     * @param typesToExtend - Types which should be extended (Checks are
-     * performed via "value instanceof type".).
-     * @returns Returns given object wrapped with a dynamic getter proxy.
-     */
-    static addDynamicGetterAndSetter<Value>(
-        object:Value, getterWrapper:GetterFunction = (value:any):any => value,
-        setterWrapper:SetterFunction = (key:any, value:any):any => value,
-        getterMethodName:string = '[]', setterMethodName:string = '[]',
-        containesMethodName:string = 'hasOwnProperty', deep:boolean = true,
-        typesToExtend:Array<mixed> = [Object]
-    ):Value {
-        if (deep)
-            if (object instanceof Map)
-                for (const [key:mixed, value:mixed] of object)
-                    object.set(key, Helper.addDynamicGetterAndSetter(
-                        value, getterWrapper, setterWrapper, getterMethodName,
-                        setterMethodName, containesMethodName, deep,
-                        typesToExtend))
-            else if (typeof object === 'object' && object !== null) {
-                for (const key:string in object)
-                    if (object.hasOwnProperty(key))
-                        object[key] = Helper.addDynamicGetterAndSetter(
-                            object[key], getterWrapper, setterWrapper,
-                            getterMethodName, setterMethodName,
-                            containesMethodName, deep, typesToExtend)
-            } else if (Array.isArray(object)) {
-                let index:number = 0
-                for (const value:mixed of object) {
-                    object[index] = Helper.addDynamicGetterAndSetter(
-                        value, getterWrapper, setterWrapper, getterMethodName,
-                        setterMethodName, containesMethodName, deep,
-                        typesToExtend)
-                    index += 1
-                }
-            }
-        for (const type:mixed of typesToExtend)
-            if (object instanceof type) {
-                if (object.__target__)
-                    return object
-                const handler:{
-                    has?:(target:Object, name:string) => boolean;
-                    get?:(target:Object, name:string) => any;
-                    set?:(target:Object, name:string) => any
-                } = {}
-                if (containesMethodName)
-                    handler.has = (target:Object, name:string):boolean => {
-                        if (containesMethodName === '[]')
-                            return name in target
-                        return target[containesMethodName](name)
-                    }
-                if (containesMethodName && getterMethodName)
-                    handler.get = (target:Object, name:string):any => {
-                        if (name === '__target__')
-                            return target
-                        if (typeof target[name] === 'function')
-                            return target[name].bind(target)
-                        if (target[containesMethodName](name)) {
-                            if (getterMethodName === '[]')
-                                return getterWrapper(target[name])
-                            return getterWrapper(target[getterMethodName](
-                                name))
-                        }
-                        return target[name]
-                    }
-                if (setterMethodName)
-                    handler.set = (
-                        target:Object, name:string, value:any
-                    ):void => {
-                        if (setterMethodName === '[]')
-                            target[name] = setterWrapper(name, value)
-                        else
-                            target[setterMethodName](name, setterWrapper(
-                                name, value))
-                    }
-                return new Proxy(object, handler)
-            }
-        return object
-    }
-    /**
-     * Searches for nested mappings with given indicator key and resolves
-     * marked values. Additionally all objects are wrapped with a proxy to
-     * dynamically resolve nested properties.
-     * @param object - Given mapping to resolve.
-     * @param configuration - Configuration context to resolve marked values.
-     * @param deep - Indicates weather to perform a recursive resolving.
-     * @param evaluationIndicatorKey - Indicator property name to mark a value
-     * to evaluate.
-     * @param executionIndicatorKey - Indicator property name to mark a value
-     * to evaluate.
-     * @param configurationKeyName - Name under the given configuration name
-     * should be provided to evaluation or execution contexts.
-     * @returns Evaluated given mapping.
-     */
-    static resolveDynamicDataStructure(
-        object:any, configuration:?PlainObject = null, deep:boolean = true,
-        evaluationIndicatorKey:string = '__evaluate__',
-        executionIndicatorKey:string = '__execute__',
-        configurationKeyName:string = 'self'
-    ):any {
-        if (object === null || typeof object !== 'object')
-            return object
-        if (configuration === null)
-            configuration = object
-        if (deep && configuration && !configuration.__target__)
-            configuration = Helper.addDynamicGetterAndSetter(
-                configuration, ((value:any):any =>
-                    Helper.resolveDynamicDataStructure(
-                        value, configuration, false, evaluationIndicatorKey,
-                        executionIndicatorKey, configurationKeyName)
-                ), (key:any, value:any):any => value, '[]', '')
-        if (Array.isArray(object) && deep) {
-            let index:number = 0
-            for (const value:mixed of object) {
-                object[index] = Helper.resolveDynamicDataStructure(
-                    value, configuration, deep, evaluationIndicatorKey,
-                    executionIndicatorKey, configurationKeyName)
-                index += 1
-            }
-        } else
-            for (const key:string in object)
-                if (object.hasOwnProperty(key))
-                    if ([
-                        evaluationIndicatorKey, executionIndicatorKey
-                    ].includes(key))
-                        try {
-                            const evaluationFunction:EvaluationFunction =
-                                new Function(
-                                    configurationKeyName, 'webOptimizerPath',
-                                    'currentPath', 'path', 'helper', ((
-                                        key === evaluationIndicatorKey
-                                    ) ? 'return ' : '') + object[key])
-                            return Helper.resolveDynamicDataStructure(
-                                evaluationFunction(
-                                    configuration, __dirname, process.cwd(),
-                                    path, Helper
-                                ), configuration, false,
-                                evaluationIndicatorKey,
-                                executionIndicatorKey,
-                                configurationKeyName)
-                        } catch (error) {
-                            throw Error(
-                                'Error during ' + (
-                                    key === evaluationIndicatorKey ?
-                                        'executing' : 'evaluating'
-                                ) + ` "${object[key]}": ${error}`)
-                        }
-                    else if (deep)
-                        object[key] = Helper.resolveDynamicDataStructure(
-                            object[key], configuration, deep,
-                            evaluationIndicatorKey, executionIndicatorKey,
-                            configurationKeyName)
-        return object
-    }
-    // endregion
-    // region string handling
-    /**
-     * Translates given string into the regular expression validated
-     * representation.
-     * @param value - String to convert.
-     * @param excludeSymbols - Symbols not to escape.
-     * @returns Converted string.
-     */
-    static convertToValidRegularExpressionString(
-        value:string, excludeSymbols:Array<string> = []
-    ):string {
-        // NOTE: This is only for performance improvements.
-        if (value.length === 1 && !Helper.specialRegexSequences.includes(
-            value
-        ))
-            return value
-        // The escape sequence must also be escaped; but at first.
-        if (!excludeSymbols.includes('\\'))
-            value.replace(/\\/g, '\\\\')
-        for (const replace:string of Helper.specialRegexSequences)
-            if (!excludeSymbols.includes(replace))
-                value = value.replace(
-                    new RegExp(`\\${replace}`, 'g'), `\\${replace}`)
-        return value
-    }
-    /**
-     * Translates given name into a valid javaScript one.
-     * @param name - Name to convert.
-     * @param allowedSymbols - String of symbols which should be allowed within
-     * a variable name (not the first character).
-     * @returns Converted name is returned.
-     */
-    static convertToValidVariableName(
-        name:string, allowedSymbols:string = '0-9a-zA-Z_$'
-    ):string {
-        return name.replace(/^[^a-zA-Z_$]+/, '').replace(
-            new RegExp(`[^${allowedSymbols}]+([a-zA-Z0-9])`, 'g'), (
-                fullMatch:string, firstLetter:string
-            ):string => firstLetter.toUpperCase())
     }
     // endregion
     // region process handler
@@ -527,6 +128,91 @@ export default class Helper {
     // endregion
     // region file handler
     /**
+     * Check if given request points to an external dependency not maintained
+     * by current package context.
+     * @param request - Request to determine.
+     * @param context - Context of current project.
+     * @param requestContext - Context of given request to resolve relative to.
+     * @param normalizedInternalInjection - Mapping of chunk names to modules
+     * which should be injected.
+     * @param externalModuleLocations - Array if paths where external modules
+     * take place.
+     * @param moduleAliases - Mapping of aliases to take into account.
+     * @param knownExtensions - List of file extensions to take into account.
+     * @param referencePath - Path to resolve local modules relative to.
+     * @param pathsToIgnore - Paths which marks location to ignore.
+     * @param includePattern - Array of regular expressions to explicitly mark
+     * as external dependency.
+     * @param excludePattern - Array of regular expressions to explicitly mark
+     * as internal dependency.
+     * @param inPlaceNormalLibrary - Indicates whether normal libraries should
+     * be external or not.
+     * @param inPlaceShimmedLibrary - Indicates whether requests with
+     * integrated loader configurations should be marked as external or not.
+     * @param externalHandableFileExtensions - File extensions which should be
+     * able to be handled by the external module bundler. If array is empty
+     * every extension will be assumed to be supported.
+     * @returns A new resolved request indicating whether given request is an
+     * external one.
+     */
+    static determineExternalRequest(
+        request:string, context:string = './', requestContext:string = './',
+        normalizedInternalInjection:NormalizedInternalInjection = {},
+        externalModuleLocations:Array<string> = [path.resolve(
+            __dirname, 'node_modules'
+        )], moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
+            '', '.js', '.css', '.svg', '.html', 'json'
+        ], referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
+        includePattern:Array<string|RegExp> = [],
+        excludePattern:Array<string|RegExp> = [],
+        inPlaceNormalLibrary:boolean = false,
+        inPlaceShimmedLibrary:boolean = true,
+        externalHandableFileExtensions:Array<string> = [
+            '', '.js', '.node', '.json']
+    ):?string {
+        context = path.resolve(context)
+        requestContext = path.resolve(requestContext)
+        referencePath = path.resolve(referencePath)
+        // NOTE: We apply alias on externals additionally.
+        let resolvedRequest:string = Helper.applyAliases(
+            request.substring(request.lastIndexOf('!') + 1), moduleAliases)
+        /*
+            NOTE: Aliases doesn't have to be forwarded since we pass an already
+            resolved request.
+        */
+        let filePath:?string = Helper.determineModuleFilePath(
+            resolvedRequest, {}, knownExtensions, requestContext,
+            referencePath, pathsToIgnore)
+        if (!filePath || Tools.isAnyMatching(resolvedRequest, includePattern))
+            return resolvedRequest
+        if (Tools.isAnyMatching(resolvedRequest, excludePattern))
+            return null
+        for (const chunkName:string in normalizedInternalInjection)
+            if (normalizedInternalInjection.hasOwnProperty(chunkName))
+                for (const moduleID:string of normalizedInternalInjection[
+                    chunkName
+                ])
+                    if (Helper.determineModuleFilePath(
+                        moduleID, moduleAliases, knownExtensions, context,
+                        referencePath, pathsToIgnore
+                    ) === filePath)
+                        return null
+        /*
+            NOTE: We mark dependencies as external if they does not contain a
+            loader in their request and aren't part of the current main package
+            or have a file extension other than javaScript aware.
+        */
+        if (!inPlaceNormalLibrary && (
+            externalHandableFileExtensions.length === 0 ||
+            externalHandableFileExtensions.includes(path.extname(filePath))
+        ) && !(inPlaceShimmedLibrary && request.includes('!')) && (
+            !filePath.startsWith(context) || Helper.isFilePathInLocation(
+                filePath, externalModuleLocations)
+        ))
+            return resolvedRequest
+        return null
+    }
+    /**
      * Checks if given path points to a valid file.
      * @param filePath - Path to file.
      * @returns A boolean which indicates file existents.
@@ -579,7 +265,8 @@ export default class Helper {
         */
         try {
             if (fileSystem.lstatSync(targetPath).isDirectory())
-                targetPath = path.join(targetPath, path.basename(sourcePath))
+                targetPath = path.resolve(targetPath, path.basename(
+                    sourcePath))
         } catch (error) {}
         fileSystem.writeFileSync(targetPath, fileSystem.readFileSync(
             sourcePath))
@@ -600,7 +287,8 @@ export default class Helper {
         try {
             // Check if folder needs to be created or integrated.
             if (fileSystem.lstatSync(targetPath).isDirectory())
-                targetPath = path.join(targetPath, path.basename(sourcePath))
+                targetPath = path.resolve(targetPath, path.basename(
+                    sourcePath))
         } catch (error) {}
         fileSystem.mkdirSync(targetPath)
         Helper.walkDirectoryRecursivelySync(sourcePath, (
@@ -626,7 +314,7 @@ export default class Helper {
      * determined.
      */
     static determineAssetType(
-        filePath:string, buildConfiguration:BuildConfiguration, paths:Paths
+        filePath:string, buildConfiguration:BuildConfiguration, paths:Path
     ):?string {
         let result:?string = null
         for (const type:string in buildConfiguration)
@@ -638,10 +326,13 @@ export default class Helper {
             }
         if (!result)
             for (const type:string of ['source', 'target'])
-                for (const assetType:string in paths.asset)
-                    if (paths.asset[assetType].startsWith(path.join(
-                        paths[type], paths.asset[assetType]
-                    )))
+                for (const assetType:string in paths[type].asset)
+                    if (paths[type].asset.hasOwnProperty(
+                        assetType
+                    ) && assetType !== 'base' &&
+                    paths[type].asset[assetType] && filePath.startsWith(
+                        paths[type].asset[assetType]
+                    ))
                         return assetType
         return result
     }
@@ -652,22 +343,19 @@ export default class Helper {
      * precedence.
      * @param configuration - Given build configurations.
      * @param entryPath - Path to analyse nested structure.
-     * @param context - Path to set paths relative to and determine relative
-     * ignored paths to.
-     * @param pathsToIgnore - Paths which marks location to ignore (Relative
-     * paths are resolved relatively to given context.).
+     * @param pathsToIgnore - Paths which marks location to ignore.
      * @returns Converted build configuration.
      */
     static resolveBuildConfigurationFilePaths(
         configuration:BuildConfiguration, entryPath:string = './',
-        context:string = './', pathsToIgnore:Array<string> = ['.git']
+        pathsToIgnore:Array<string> = ['.git']
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
         let index:number = 0
         for (const type:string in configuration)
             if (configuration.hasOwnProperty(type)) {
                 const newItem:ResolvedBuildConfigurationItem =
-                    Helper.extendObject(true, {filePaths: []}, configuration[
+                    Tools.extendObject(true, {filePaths: []}, configuration[
                         type])
                 Helper.walkDirectoryRecursivelySync(entryPath, ((
                     index:number,
@@ -704,33 +392,47 @@ export default class Helper {
     /**
      * Determines all file and directory paths related to given internal
      * modules as array.
-     * @param internalInjection - List of moduleIDs or module file paths.
+     * @param internalInjection - List of module ids or module file paths.
      * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - List of file extensions to take into account.
      * @param context - File path to resolve relative to.
+     * @param referencePath - Path to search for local modules.
+     * @param pathsToIgnore - Paths which marks location to ignore.
+     * @param relativeModuleFilePaths - Module file paths relatively to given
+     * context.
+     * @param packageEntryFileNames - Names of possible package entry files.
      * @returns Object with a file path and directory path key mapping to
      * corresponding list of paths.
      */
     static determineModuleLocations(
         internalInjection:InternalInjection, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = ['.js'], context:string = './'
+        knownExtensions:Array<string> = [
+            '', '.js', '.css', '.svg', '.html', 'json'
+        ], context:string = './', referencePath:string = '',
+        pathsToIgnore:Array<string> = ['.git'],
+        relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
+        packageEntryFileNames:Array<string> = [
+            '__package__', '', 'index', 'main']
     ):{filePaths:Array<string>;directoryPaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
         const normalizedInternalInjection:NormalizedInternalInjection =
-            Helper.normalizeInternalInjection(
-                internalInjection)
+            Helper.normalizeInternalInjection(internalInjection)
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
                     chunkName
                 ]) {
-                    const filePath:string = Helper.determineModuleFilePath(
-                        moduleID, moduleAliases, knownExtensions, context)
-                    filePaths.push(filePath)
-                    const directoryPath:string = path.dirname(filePath)
-                    if (!directoryPaths.includes(directoryPath))
-                        directoryPaths.push(directoryPath)
+                    const filePath:?string = Helper.determineModuleFilePath(
+                        moduleID, moduleAliases, knownExtensions, context,
+                        referencePath, pathsToIgnore, relativeModuleFilePaths,
+                        packageEntryFileNames)
+                    if (filePath) {
+                        filePaths.push(filePath)
+                        const directoryPath:string = path.dirname(filePath)
+                        if (!directoryPaths.includes(directoryPath))
+                            directoryPaths.push(directoryPath)
+                    }
                 }
         return {filePaths, directoryPaths}
     }
@@ -745,7 +447,7 @@ export default class Helper {
         internalInjection:InternalInjection
     ):NormalizedInternalInjection {
         let result:NormalizedInternalInjection = {}
-        if (internalInjection instanceof Object && Helper.isPlainObject(
+        if (internalInjection instanceof Object && Tools.isPlainObject(
             internalInjection
         )) {
             let hasContent:boolean = false
@@ -784,8 +486,9 @@ export default class Helper {
      * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - File extensions to take into account.
      * @param context - File path to use as starting point.
-     * @param pathsToIgnore - Paths which marks location to ignore (Relative
-     * paths are resolved relatively to given context.).
+     * @param referencePath - Reference path from where local files should be
+     * resolved.
+     * @param pathsToIgnore - Paths which marks location to ignore.
      * @returns Given injection with resolved marked indicators.
      */
     static resolveInjection(
@@ -793,15 +496,16 @@ export default class Helper {
         buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:InternalInjection,
         moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
-            '.js', '.css', '.svg', '.html'
-        ], context:string = './', pathsToIgnore:Array<string> = ['.git']
+            '', '.js', '.css', '.svg', '.html', 'json'
+        ], context:string = './', referencePath:string = '',
+        pathsToIgnore:Array<string> = ['.git']
     ):Injection {
-        const injection:Injection = Helper.extendObject(
+        const injection:Injection = Tools.extendObject(
             true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
                 modulesToExclude, moduleAliases, knownExtensions, context,
-                pathsToIgnore
+                referencePath, pathsToIgnore
             ).filePaths
         for (const type:string of ['internal', 'external'])
             /* eslint-disable curly */
@@ -845,9 +549,7 @@ export default class Helper {
             buildConfigurations
         ) {
             if (!injectedBaseNames[buildConfiguration.outputExtension])
-                injectedBaseNames[
-                    buildConfiguration.outputExtension
-                ] = []
+                injectedBaseNames[buildConfiguration.outputExtension] = []
             for (const moduleFilePath:string of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
                     const baseName:string = path.basename(
@@ -860,7 +562,7 @@ export default class Helper {
                         buildConfiguration.outputExtension
                     ].includes(baseName)) {
                         /*
-                            Ensure that if same basenames and different output
+                            Ensure that same basenames and different output
                             types can be distinguished by their extension
                             (JavaScript-Modules remains without extension since
                             they will be handled first because the build
@@ -887,6 +589,8 @@ export default class Helper {
      * @param moduleAliases - Mapping of aliases to take into account.
      * @param knownExtensions - List of known extensions.
      * @param context - File path to determine relative to.
+     * @param referencePath - Path to resolve local modules relative to.
+     * @param pathsToIgnore - Paths which marks location to ignore.
      * @param relativeModuleFilePaths - List of relative file path to search
      * for modules in.
      * @param packageEntryFileNames - List of package entry file names to
@@ -897,25 +601,34 @@ export default class Helper {
      */
     static determineModuleFilePath(
         moduleID:string, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = ['.js'], context:string = './',
-        relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
+        knownExtensions:Array<string> = [
+            '', '.js', '.css', '.svg', '.html', 'json'
+        ], context:string = './', referencePath:string = '',
+        pathsToIgnore:Array<string> = ['.git'],
+        relativeModuleFilePaths:Array<string> = ['node_modules', '../'],
         packageEntryFileNames:Array<string> = [
             '__package__', '', 'index', 'main']
-    ):string {
+    ):?string {
         moduleID = Helper.applyAliases(moduleID, moduleAliases)
-        for (const moduleLocation:string of relativeModuleFilePaths)
+        if (!moduleID)
+            return null
+        if (referencePath.startsWith('/'))
+            referencePath = path.relative(context, referencePath)
+        for (const moduleLocation:string of [referencePath].concat(
+            relativeModuleFilePaths
+        ))
             for (let fileName:string of packageEntryFileNames)
                 for (const extension:string of knownExtensions) {
                     let moduleFilePath:string = moduleID
                     if (!moduleFilePath.startsWith('/'))
-                        moduleFilePath = path.join(
+                        moduleFilePath = path.resolve(
                             context, moduleLocation, moduleFilePath)
                     if (fileName === '__package__') {
                         try {
                             if (fileSystem.statSync(
                                 moduleFilePath
                             ).isDirectory()) {
-                                const pathToPackageJSON:string = path.join(
+                                const pathToPackageJSON:string = path.resolve(
                                     moduleFilePath, 'package.json')
                                 if (fileSystem.statSync(
                                     pathToPackageJSON
@@ -932,14 +645,16 @@ export default class Helper {
                         if (fileName === '__package__')
                             continue
                     }
-                    moduleFilePath = path.join(moduleFilePath, fileName)
+                    moduleFilePath = path.resolve(moduleFilePath, fileName)
                     moduleFilePath += extension
-                    try {
-                        if (fileSystem.statSync(moduleFilePath).isFile())
-                            return moduleFilePath
-                    } catch (error) {}
+                    if (Helper.isFilePathInLocation(
+                        moduleFilePath, pathsToIgnore
+                    ))
+                        continue
+                    if (Helper.isFileSync(moduleFilePath))
+                        return moduleFilePath
                 }
-        return moduleID
+        return null
     }
     // endregion
     /**

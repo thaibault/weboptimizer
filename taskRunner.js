@@ -27,9 +27,9 @@ try {
 
 import configuration from './configurator.compiled'
 import type {
-    NormalizedInternalInjection, PlainObject, PromiseCallbackFunction,
-    ResolvedBuildConfiguration
+    PlainObject, PromiseCallbackFunction, ResolvedBuildConfiguration
 } from './type'
+
 import Helper from './helper.compiled'
 // endregion
 // region controller
@@ -85,50 +85,60 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // endregion
     // region handle clear
     /*
-        NOTE: A build could depend on previously created dll packages so a
-        clean should not be performed in that case.
+        NOTE: A build,serve or test in browser could depend on previously
+        created dll packages so a clean should not be performed in that case.
+        NOTE: If we have dependency cycle it needed to preserve files during
+        preinstall phase.
     */
-    if (!['build', 'serve', 'testInBrowser'].includes(
+    if (!['build', 'preinstall', 'serve', 'test', 'testInBrowser'].includes(
         configuration.givenCommandLineArguments[2]
     ) && possibleArguments.includes(
         configuration.givenCommandLineArguments[2]
     )) {
-        if (path.resolve(configuration.path.target) === path.resolve(
+        if (path.resolve(configuration.path.target.base) === path.resolve(
             configuration.path.context
         )) {
             // Removes all compiled files.
-            Helper.walkDirectoryRecursivelySync(configuration.path.target, (
-                filePath:string, stat:Object
-            ):?boolean => {
-                if (Helper.isFilePathInLocation(
-                    filePath, configuration.path.ignore
-                ))
-                    return false
-                for (const type:string in configuration.build)
-                    if (new RegExp(
-                        configuration.build[type].fileNamePattern
-                    ).test(filePath)) {
-                        if (stat.isDirectory()) {
-                            removeDirectoryRecursivelySync(filePath, {
-                                glob: false})
-                            return false
+            Helper.walkDirectoryRecursivelySync(
+                configuration.path.target.base, (
+                    filePath:string, stat:Object
+                ):?boolean => {
+                    if (Helper.isFilePathInLocation(
+                        filePath, configuration.path.ignore.concat(
+                            configuration.module.directories,
+                            configuration.loader.directories
+                        ).map((filePath:string):string => path.resolve(
+                            configuration.path.context, filePath)
+                        ).filter((filePath:string):boolean =>
+                            !configuration.path.context.startsWith(filePath))
+                    ))
+                        return false
+                    for (const type:string in configuration.build)
+                        if (new RegExp(
+                            configuration.build[type].fileNamePattern
+                        ).test(filePath)) {
+                            if (stat.isDirectory()) {
+                                removeDirectoryRecursivelySync(filePath, {
+                                    glob: false})
+                                return false
+                            }
+                            fileSystem.unlinkSync(filePath)
+                            break
                         }
-                        fileSystem.unlinkSync(filePath)
-                        break
-                    }
-            })
-            fileSystem.readdirSync(configuration.path.target).forEach((
+                })
+            fileSystem.readdirSync(configuration.path.target.base).forEach((
                 fileName:string
             ):void => {
                 if (
                     fileName.length > '.dll-manifest.json'.length &&
-                    fileName.endsWith('.dll-manifest.json')
+                    fileName.endsWith('.dll-manifest.json') ||
+                    fileName.startsWith('npm-debug')
                 )
                     fileSystem.unlinkSync(path.resolve(
-                        configuration.path.target, fileName))
+                        configuration.path.target.base, fileName))
             })
         } else
-            removeDirectoryRecursivelySync(configuration.path.target, {
+            removeDirectoryRecursivelySync(configuration.path.target.base, {
                 glob: false})
         try {
             removeDirectoryRecursivelySync(
@@ -139,8 +149,14 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // region handle build
     const buildConfigurations:ResolvedBuildConfiguration =
         Helper.resolveBuildConfigurationFilePaths(
-            configuration.build, configuration.path.asset.source,
-            configuration.path.context, configuration.path.ignore)
+            configuration.build, configuration.path.source.asset.base,
+            configuration.path.ignore.concat(
+                configuration.module.directories,
+                configuration.loader.directories
+            ).map((filePath:string):string => path.resolve(
+                configuration.path.context, filePath)
+            ).filter((filePath:string):boolean =>
+                !configuration.path.context.startsWith(filePath)))
     if (['build', 'buildDLL', 'document', 'test'].includes(process.argv[2])) {
         let tidiedUp:boolean = false
         const tidyUp:Function = ():void => {
@@ -151,25 +167,26 @@ if (configuration.givenCommandLineArguments.length > 2) {
             if (tidiedUp)
                 return
             tidiedUp = true
-            const internalInjection:NormalizedInternalInjection =
-                Helper.normalizeInternalInjection(
-                    Helper.resolveInjection(
-                        configuration.injection,
-                        buildConfigurations,
-                        configuration.testInBrowser.injection.internal,
-                        configuration.module.aliases,
-                        configuration.knownExtensions,
-                        configuration.path.context,
-                        configuration.path.ignore
-                    ).internal)
-            for (const chunkName:string in internalInjection)
-                if (internalInjection.hasOwnProperty(chunkName))
-                    for (const moduleID:string of internalInjection[
-                        chunkName
-                    ]) {
+            for (
+                const chunkName:string in
+                configuration.injection.internal.normalized
+            )
+                if (configuration.injection.internal.normalized.hasOwnProperty(
+                    chunkName
+                ))
+                    for (
+                        const moduleID:string of
+                        configuration.injection.internal.normalized[chunkName]
+                    ) {
                         const type:?string = Helper.determineAssetType(
-                            Helper.determineModuleFilePath(moduleID),
-                            configuration.build, configuration.path)
+                            // IgnoreTypeCheck
+                            Helper.determineModuleFilePath(
+                                moduleID, configuration.module.aliases,
+                                configuration.knownExtensions,
+                                configuration.path.context,
+                                configuration.path.source.asset.base,
+                                configuration.path.ignore
+                            ), configuration.build, configuration.path)
                         // TODO replace all placeholder like [hash] [id] ...
                         const filePath:string =
                             configuration.files.compose.javaScript.replace(
@@ -194,12 +211,11 @@ if (configuration.givenCommandLineArguments.length > 2) {
                                             filePath + suffix)
                                     } catch (error) {}
                     }
-            for (
-                const filePath:string of configuration.path.tidyUp
-            )
-                try {
-                    fileSystem.unlinkSync(filePath)
-                } catch (error) {}
+            for (const filePath:?string of configuration.path.tidyUp)
+                if (filePath)
+                    try {
+                        fileSystem.unlinkSync(filePath)
+                    } catch (error) {}
         }
         closeEventHandlers.push(tidyUp)
         /*
@@ -225,14 +241,14 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     configuration.files.additionalPaths
                 ) {
                     const sourcePath:string = path.join(
-                        configuration.path.source, filePath)
+                        configuration.path.source.base, filePath)
                     try {
                         if (fileSystem.lstatSync(sourcePath).isDirectory())
                             Helper.copyDirectoryRecursiveSync(
-                                sourcePath, configuration.path.target)
+                                sourcePath, configuration.path.target.base)
                         else
                             Helper.copyFileSync(
-                                sourcePath, configuration.path.target)
+                                sourcePath, configuration.path.target.base)
                     } catch (error) {
                         break
                     }
@@ -257,7 +273,8 @@ if (configuration.givenCommandLineArguments.length > 2) {
             Helper.determineModuleLocations(
                 configuration.testInBrowser.injection.internal,
                 configuration.module.aliases, configuration.knownExtensions,
-                configuration.path.context, configuration.path.ignore
+                configuration.path.context,
+                configuration.path.source.asset.base, configuration.path.ignore
             ).filePaths
         for (const buildConfiguration of buildConfigurations)
             for (const filePath:string of buildConfiguration.filePaths)
@@ -298,30 +315,50 @@ if (configuration.givenCommandLineArguments.length > 2) {
     }
     // endregion
     // region handle remaining tasks
-    const handleTask = (type:string):number => processPromises.push(
-        new Promise((
-            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
-        ):void => {
-            const commandLineArguments:Array<string> = (
-                configuration.commandLine[type].arguments || []
-            ).concat(additionalArguments)
-            console.log('Running "' + (
-                `${configuration.commandLine[type].command} ` +
-                commandLineArguments.join(' ')
-            ).trim() + '"')
-            const childProcess:ChildProcess = spawnChildProcess(
-                configuration.commandLine[type].command, commandLineArguments,
-                childProcessOptions)
-            for (const closeEventName:string of closeEventNames)
-                childProcess.on(closeEventName, Helper.getProcessCloseHandler(
-                    resolve, reject, closeEventName))
-            childProcesses.push(childProcess)
-        }))
+    const handleTask = (type:string):void => {
+        let tasks:Array<Object>
+        if (Array.isArray(configuration.commandLine[type]))
+            tasks = configuration.commandLine[type]
+        else
+            tasks = [configuration.commandLine[type]]
+        for (const task:Object of tasks) {
+            const evaluationFunction = (
+                global:Object, self:PlainObject, path:typeof path
+            ):boolean =>
+                // IgnoreTypeCheck
+                new Function(
+                    'global', 'self', 'path',
+                    'return ' + (task.hasOwnProperty(
+                        'indicator'
+                    ) ? task.indicator : 'true')
+                )(global, self, path)
+            if (evaluationFunction(global, configuration, path))
+                processPromises.push(new Promise((
+                    resolve:PromiseCallbackFunction,
+                    reject:PromiseCallbackFunction
+                ):void => {
+                    const commandLineArguments:Array<string> = (
+                        task.arguments || []
+                    ).concat(additionalArguments)
+                    console.log('Running "' + (
+                        `${task.command} ${commandLineArguments.join(' ')}`
+                    ).trim() + '"')
+                    const childProcess:ChildProcess = spawnChildProcess(
+                        task.command, commandLineArguments, childProcessOptions
+                    )
+                    for (const closeEventName:string of closeEventNames)
+                        childProcess.on(
+                            closeEventName, Helper.getProcessCloseHandler(
+                                resolve, reject, closeEventName))
+                    childProcesses.push(childProcess)
+                }))
+        }
+    }
     // / region synchronous
     if (['document', 'test'].includes(
         configuration.givenCommandLineArguments[2]
     ))
-        Promise.all(processPromises).then(():number => handleTask(
+        Promise.all(processPromises).then(():void => handleTask(
             configuration.givenCommandLineArguments[2]))
     // / endregion
     // / region asynchronous

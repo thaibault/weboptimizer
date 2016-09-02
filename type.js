@@ -13,15 +13,10 @@
     3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports
-import path from 'path'
-// endregion
 // region exports
 // / region generic
-export type GetterFunction = (keyOrValue:any) => any
 export type ProcedureFunction = () => void
 export type PlainObject = {[key:string]:any}
-export type SetterFunction = (key:any, value:any) => any
 // // region browser
 export type DomNode = any
 export type Storage = {
@@ -78,7 +73,10 @@ export type Injection = {
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
     implicitExternalIncludePattern:Array<RegExp|string>;
-    internal:InternalInjection;
+    internal:{
+        given:InternalInjection;
+        normalized:NormalizedInternalInjection
+    };
 }
 // / endregion
 // / region configuration
@@ -96,28 +94,32 @@ export type ResolvedBuildConfigurationItem = {
 }
 export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
-export type Paths = {
-    apiDocumentation:string;
-    asset:{
-        cascadingStyleSheet:string;
-        coffeeScript:string;
-        data:string;
-        font:string;
-        image:string;
-        javaScript:string;
-        less:string;
-        publicTarget:string;
-        sass:string;
-        scss:string;
-        source:string;
-        target:string;
-        template:string;
-    };
-    context:string;
-    ignore:Array<string>;
-    manifest:string;
+export type AssetPath = {
+    base:string;
+    cascadingStyleSheet:string;
+    data:string;
+    font:string;
+    image:string;
+    javaScript:string;
     source:string;
     target:string;
+    template:string;
+}
+export type Path = {
+    apiDocumentation:string;
+    base:string;
+    context:string;
+    ignore:Array<string>;
+    source:{
+        asset:AssetPath;
+        base:string;
+    };
+    target:{
+        asset:AssetPath;
+        base:string;
+        manifest:string;
+        public:string;
+    };
     tidyUp:Array<string>
 }
 export type DefaultConfiguration = {
@@ -125,12 +127,7 @@ export type DefaultConfiguration = {
     debug:boolean;
     dllManifestFilePaths:Array<any>;
     document:Object;
-    path:{
-        asset:{[key:string]:string};
-        context:string;
-        target:string;
-        [key:string]:string
-    };
+    path:Path;
     test:Object;
     testInBrowser:Object
 }
@@ -144,14 +141,16 @@ export type HTMLConfiguration = {
     filename:string
 }
 export type Command = {
+    arguments:Array<string>;
     command:string;
-    arguments:Array<string>
+    indicator:?string;
 }
 export type ResolvedConfiguration = {
     contextType:string;
-    name:string;
-    givenCommandLineArguments:Array<string>;
     dllManifestFilePaths:Array<string>;
+    givenCommandLineArguments:Array<string>;
+    name:string;
+    needed:{[key:string]:boolean};
 
     debug:boolean;
     library:boolean;
@@ -167,13 +166,14 @@ export type ResolvedConfiguration = {
     files:{
         compose:{
             cascadingStyleSheet:string;
+            image:string;
             javaScript:string;
         };
         additionalPaths:Array<string>;
         defaultHTML:HTMLConfiguration;
         html:Array<HTMLConfiguration>;
     };
-    injection:Injection;
+    injection:PlainObject;
     inPlace:{
         cascadingStyleSheet:boolean;
         externalLibrary:{
@@ -185,10 +185,17 @@ export type ResolvedConfiguration = {
     };
     knownExtensions:Array<string>;
     libraryName:string;
+    loader:{
+        aliases:Array<string>;
+        directories:Array<string>;
+        extensions:Array<string>;
+    };
     module:{
         aliases:PlainObject;
-        cascadingStyleSheet:PlainObject;
+        cascadingStyleSheet:string;
+        directories:Array<string>;
         html:PlainObject;
+        locations:{[key:string]:Array<string>};
         optimizer:{
             data:PlainObject;
             font:{
@@ -205,9 +212,10 @@ export type ResolvedConfiguration = {
             uglifyJS:PlainObject
         };
         preprocessor:{
+            cascadingStyleSheet:string;
             pug:PlainObject;
             less:PlainObject;
-            modernJavaScript:PlainObject;
+            babel:PlainObject;
             sass:PlainObject;
             scss:PlainObject
         };
@@ -215,7 +223,7 @@ export type ResolvedConfiguration = {
         skipParseRegularExpression:RegExp|Array<RegExp>;
     };
     offline:{excludes:Array<string>};
-    path:Paths;
+    path:Path;
     /* eslint-disable max-len */
     targetTechnology:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
     /* eslint-enable max-len */
@@ -244,21 +252,18 @@ export type ResolvedConfiguration = {
     loader:{
         aliases:PlainObject;
         extensions:Array<string>;
-        moduleDirectories:Array<string>;
+        directories:Array<string>;
     };
+    stylelint:PlainObject;
 
     document:PlainObject;
 
     test:PlainObject;
 
-    testInBrowser:{injection:Injection}
+    testInBrowser:PlainObject
 }
 // / endregion
 // / region specific callbacks
-export type EvaluationFunction = (
-    self:?PlainObject, webOptimizerPath:string, currentPath:string,
-    path:typeof path
-) => any
 export type TraverseFilesCallbackFunction = (
     filePath:string, stat:Object
 ) => ?boolean

@@ -5,7 +5,7 @@
     "homepage": "http://torben.website/webOptimizer",
     "license": "CC-BY-3.0",
     "bin": {"webOptimizer": "taskRunner.compiled.js"},
-    "main": "webpackConfigurator.compiled.js",
+    "main": "taskRunner.compiled.js",
     "keywords": [
         "webpack", "optimizer", "configuration", "generic", "lint", "bundle",
         "test", "document", "mock"
@@ -14,60 +14,58 @@
         "type": "git", "url": "https://github.com/thaibault/webOptimizer.git"
     },
     "dependencies": {
-        "add-asset-html-webpack-plugin": ">=1.0.2",
-        "autoprefixer": ">=6.4.0",
-        "babel-cli": ">=6.11.4",
-        "babel-eslint": ">=6.1.2",
-        "babel-loader": ">=6.2.4",
-        "babel-polyfill": ">=6.13.0",
-        "babel-plugin-transform-flow-strip-types": ">=6.8.0",
-        "babel-preset-es2015": ">=6.13.2",
-        "babel-preset-es2015-loose": ">=7.0.0",
-        "babel-preset-es2015-node": ">=6.1.0",
-        "babel-preset-stage-0": ">=6.5.0",
-        "css-loader": ">=0.23.1",
-        "eslint": ">=3.3.0",
-        "eslint-config-google": ">=0.6.0",
-        "eslint-plugin-flowtype": ">=2.7.0",
-        "eslint-plugin-jsdoc": ">=2.3.1",
-        "exports-loader": ">=0.6.3",
-        "extract-loader": ">=0.0.2",
-        "extract-text-webpack-plugin": ">=1.0.1",
-        "favicons-webpack-plugin": ">=0.0.6",
-        "file-loader": ">=0.9.0",
-        "flow-bin": ">=0.30.0",
-        "html-loader": ">=0.4.3",
-        "html-webpack-plugin": ">=2.22.0",
-        "imagemin-webpack-plugin": ">=1.0.8",
-        "imports-loader": ">=0.6.5",
-        "jsdoc": ">=3.4.0",
-        "jsdom": ">=9.4.2",
-        "loader-utils": ">=0.2.15",
-        "offline-plugin": ">=4.0.0",
-        "open-browser-webpack-plugin": ">=0.0.2",
-        "postcss-import": ">=8.1.2",
-        "postcss-loader": ">=0.10.0",
-        "pug": ">=2.0.0-beta5",
-        "pug-cli": ">=1.0.0-alpha6",
-        "rimraf": ">=2.5.4",
-        "script-loader": ">=0.7.0",
-        "style-loader": ">=0.13.1",
-        "url-loader": ">=0.5.7",
-        "webpack": ">=1.13.1",
-        "webpack-dev-server": ">=1.14.1",
-        "webpack-load-plugins": ">=0.1.2",
-        "webpack-sources": ">=0.1.2",
-
-        "coffee-loader": "*",
-        "coffee-script": "*",
-        "less": "*",
-        "less-loader": "*",
-        "node-sass": ">=3.8.0",
-        "sass-loader": "*"
+        "add-asset-html-webpack-plugin": "latest",
+        "babel-cli": "latest",
+        "babel-eslint": "latest",
+        "babel-loader": "latest",
+        "babel-plugin-transform-flow-strip-types": "latest",
+        "babel-polyfill": "latest",
+        "babel-preset-latest": "latest",
+        "babel-preset-stage-0": "latest",
+        "babili": "latest",
+        "css-loader": "latest",
+        "eslint": "latest",
+        "eslint-config-google": "latest",
+        "eslint-plugin-flowtype": "latest",
+        "eslint-plugin-jsdoc": "latest",
+        "exports-loader": "latest",
+        "extract-loader": "latest",
+        "extract-text-webpack-plugin": "latest",
+        "favicons-webpack-plugin": "latest",
+        "file-loader": "latest",
+        "flow-bin": "latest",
+        "html-loader": "latest",
+        "html-webpack-plugin": "latest",
+        "imagemin-webpack-plugin": "latest",
+        "imports-loader": "latest",
+        "jsdoc": "latest",
+        "jsdom": "latest",
+        "loader-utils": "latest",
+        "offline-plugin": "latest",
+        "open-browser-webpack-plugin": "latest",
+        "postcss-cssnext": "latest",
+        "postcss-fontpath": "latest",
+        "postcss-import": "latest",
+        "postcss-loader": "latest",
+        "postcss-sprites": "latest",
+        "postcss-url": "latest",
+        "pug": "latest",
+        "pug-cli": "latest",
+        "rimraf": "latest",
+        "script-loader": "latest",
+        "stylelint": "latest",
+        "stylelint-config-standard": "latest",
+        "style-loader": "latest",
+        "clientNode": "latest",
+        "url-loader": "latest",
+        "webpack": "latest",
+        "webpack-dev-server": "latest",
+        "webpack-load-plugins": "latest",
+        "webpack-sources": "latest"
     },
     "devDependencies": {
-        "qunit-cli": ">=0.2.0",
-        "source-map-support": ">=0.4.2"
+        "qunit-cli": "latest",
+        "source-map-support": "latest"
     },
     "files": [
         "browserAPI.js",
@@ -76,17 +74,17 @@
         "pugLoader.js",
         "taskRunner.js",
         "index.pug",
+        "stylelintConfigurator.js",
         "type.js",
         "webpackConfigurator.js"
     ],
     "scripts": {
-        "build": "command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command taskRunner.compiled.js taskRunner.js && $command webpackConfigurator.compiled.js webpackConfigurator.js",
+        "build": "command='babel --plugins transform-flow-strip-types --presets latest,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command taskRunner.compiled.js taskRunner.js && $command webpackConfigurator.compiled.js webpackConfigurator.js",
         "clear": "rm *.compiled.* &>/dev/null;rm --recursive *.compiled &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null; rm *.html &>/dev/null || true",
         "document": "npm run build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
         "lint": "flow --color always --strip-root && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
-        "preinstall": "touch browserAPI.compiled.js configurator.compiled.js helper.compiled.js pugLoader.compiled.js taskRunner.compiled.js webpackConfigurator.compiled.js",
-        "postinstall": "npm run build",
-        "test": "npm run clear && command='babel --plugins transform-flow-strip-types --presets es2015-node,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
+        "prepublish": "npm run build",
+        "test": "npm run clear && command='babel --plugins transform-flow-strip-types --presets latest,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command taskRunner.compiled.js taskRunner.js && $command test/taskRunner.compiled.js test/taskRunner.js && chmod +x test/* && test/taskRunner.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true"
     },
     "configuration": {
         "default": {
@@ -95,11 +93,9 @@
 
             "exportFormat": {"self": "umd", "external": "umd"},
             "favicon": {
-                "logo": {
-                    "__evaluate__": "path.join(self.path.asset.source, self.path.asset.favicon)"
-                },
+                "logo": {"__evaluate__": "self.path.source.asset.favicon"},
                 "prefix": {
-                    "__evaluate__": "path.join(self.path.asset.image, 'favicons-[hash]/')"
+                    "__evaluate__": "path.resolve(self.path.target.asset.image, 'favicons-[hash]/')"
                 },
                 "emitStats": false,
                 "statsFilename": "iconStats.json",
@@ -123,10 +119,13 @@
             "files": {
                 "compose": {
                     "cascadingStyleSheet": {
-                        "__evaluate__": "self.debug ? null : `${self.path.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+                        "__evaluate__": "self.debug ? null : `${self.path.target.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+                    },
+                    "image": {
+                        "__evaluate__": "self.debug ? null : `${self.path.target.asset.image}sprite.png`"
                     },
                     "javaScript": {
-                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
+                        "__evaluate__": "`${self.path.target.asset.javaScript}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
                     }
                 },
                 "defaultHTML": {
@@ -139,7 +138,7 @@
                         "__evaluate__": "self.module.optimizer.htmlMinifier"
                     },
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(helper.extendObject({}, self.module.html, {minimize: false}))}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}index.pug`) ? `${self.path.source}index.pug` : `${webOptimizerPath}/index.pug`}`"
+                        "__evaluate__": "`html?${tools.convertCircularObjectToJSON(tools.extendObject({}, self.module.html, {minimize: false}))}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}index.pug`) ? `${self.path.source.base}index.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 },
                 "html": [{}],
@@ -170,11 +169,11 @@
             "knownExtensions": [
                 ".compiled", "",
 
-                ".compiled.js", ".js", ".coffee", ".coffee.md", ".litcoffee",
+                ".compiled.js", ".js",
 
                 ".compiled.html", ".html", ".pug",
 
-                ".compiled.css", ".css", ".scss", ".sass", ".less",
+                ".compiled.css", ".css",
 
                 ".compiled.eot", ".eot",
                 ".compiled.woff", ".woff", ".compiled.woff2", ".woff2",
@@ -191,7 +190,8 @@
                 "aliases": {
                     "webOptimizer/browserAPI$": "webOptimizer/browserAPI.compiled"
                 },
-                "cascadingStyleSheet": {},
+                "cascadingStyleSheet": "",
+                "directories": ["web_modules", "node_modules"],
                 "html": {
                     "config": "html",
                     "attrs": ["img:src", "link:href", "a:href"]
@@ -203,7 +203,7 @@
                             "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                         },
                         "name": {
-                            "__evaluate__": "`/${self.path.asset.data}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                            "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.data)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                         }
                     },
                     "font": {
@@ -212,7 +212,7 @@
                                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.font)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "svg": {
@@ -221,7 +221,7 @@
                             },
                             "mimetype": "image/svg+xml",
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.font)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "ttf": {
@@ -230,7 +230,7 @@
                             },
                             "mimetype": "application/octet-stream",
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.font)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         },
                         "woff": {
@@ -238,7 +238,7 @@
                                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.font}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.font)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         }
                     },
@@ -305,13 +305,14 @@
                                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                             },
                             "name": {
-                                "__evaluate__": "`/${self.path.asset.image}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.image)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
                             }
                         }
                     },
                     "uglifyJS": {"compress": {"warnings": false}}
                 },
                 "preprocessor": {
+                    "cascadingStyleSheet": "?sourceMap=inline",
                     "pug": {
                         "moduleAliases": {
                             "__evaluate__": "self.module.aliases"
@@ -326,15 +327,12 @@
                             "cache": true
                         }
                     },
-                    "less": {},
-                    "modernJavaScript": {
+                    "babel": {
                         "cacheDirectory": true,
                         "compact": true,
-                        "presets": ["es2015-loose", "stage-0"],
+                        "presets": ["latest", "stage-0", "babili"],
                         "plugins": ["transform-flow-strip-types"]
-                    },
-                    "sass": {"indentedSyntax": true},
-                    "scss": {}
+                    }
                 },
                 "style": {"insertAt": "top", "singleton": true}
             },
@@ -354,38 +352,41 @@
                     "events": true,
                     "navigateFallbackURL": null,
                     "output": {
-                        "__evaluate__": "path.join(self.path.asset.javaScript, 'serviceWorker.js')"
+                        "__evaluate__": "path.resolve(self.path.target.asset.javaScript, 'serviceWorker.js')"
                     }
                 }
             },
             "path": {
                 "apiDocumentation": "apiDocumentation/",
-                "asset": {
-                    "cascadingStyleSheet": "cascadingStyleSheet/",
-                    "coffeeScript": "coffeeScript/",
-                    "data": "data/",
-                    "favicon": {
-                        "__evaluate__": "`${self.path.asset.image}favicon.png`"
-                    },
-                    "font": "font/",
-                    "image": "image/",
-                    "javaScript": "javaScript/",
-                    "less": "less/",
-                    "publicTarget": "",
-                    "sass": "sass/",
-                    "scss": "scss/",
-                    "source": {"__evaluate__": "self.path.source"},
-                    "target": {"__evaluate__": "self.path.target"},
-                    "template": "template/"
-                },
-                "ignore": ["node_modules", ".git", {
+                "base": "./",
+                "ignore": [".git", {
                     "__evaluate__": "self.path.apiDocumentation"
                 }],
-                "manifest": "manifest.appcache",
-                "source": "source/", "target": "build/",
+                "source": {
+                    "asset": {
+                        "base": "./",
+                        "cascadingStyleSheet": "cascadingStyleSheet/",
+                        "data": "data/",
+                        "favicon": {
+                            "__evaluate__": "`${self.path.source.asset.image}favicon.png`"
+                        },
+                        "font": "font/",
+                        "image": "image/",
+                        "javaScript": "javaScript/",
+                        "template": "template/"
+                    },
+                    "base": "source/"
+                },
+                "target": {
+                    "asset": {"__evaluate__": "self.path.source.asset"},
+                    "base": "build/",
+                    "manifest": "manifest.appcache",
+                    "public": ""
+                },
                 "tidyUp": [
-                    {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js')"},
-                    {"__evaluate__": "path.join(self.path.target, self.path.asset.javaScript, '.__dummy__.compiled.js.map')"}
+                    {"__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js')"},
+                    {"__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js.map')"},
+                    {"__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"}
                 ]
             },
             "targetTechnology": "web",
@@ -400,18 +401,14 @@
                 "default": {
                     "outputExtension": "js",
                     "preinstall": {
-                        "__evaluate__": "`touch '${self.path.target}\\${self.path.asset[buildConfiguration.type]}\\${path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`)}.compiled.\\${buildConfiguration.outputExtension}'`"
+                        "__evaluate__": "`touch '\\${self.path.target.asset[buildConfiguration.type]}\\${path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`)}.compiled.\\${buildConfiguration.outputExtension}'`"
                     },
                     "fileNamePattern": "^.+\\.compiled(?:\\.[^.]+(?:\\.map)?)?$"
                 },
                 "javaScript": {"extension": "js"},
-                "coffeeScript": {"extension": "coffee"},
                 "cascadingStyleSheet": {
                     "extension": "css", "outputExtension": "css"
                 },
-                "less": {"outputExtension": "css"},
-                "sass": {"outputExtension": "css"},
-                "scss": {"outputExtension": "css"},
                 "additional": {
                     "outputExtension": "",
                     "fileNamePattern": "^.+\\.compiled(?:\\.map)?$"
@@ -434,18 +431,18 @@
             },
             "commandLine": {
                 "build": {
-                    "command": "webpack",
                     "arguments": [
+                        "--bail",
                         "--config",
                         {"__evaluate__": "`${webOptimizerPath}/webpackConfigurator.compiled.js`"},
                         "--progress",
                         "--display-chunks",
                         "--display-reasons",
                         "--display-error-details"
-                    ]
+                    ],
+                    "command": "webpack"
                 },
                 "document": {
-                    "command": "jsdoc",
                     "arguments": [
                         "--package",
                         "./package.json",
@@ -453,23 +450,36 @@
                         "./readme.md",
                         "--destination",
                         {"__evaluate__": "self.path.apiDocumentation"},
-                        {"__evaluate__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.js`"}
-                    ]
+                        {"__evaluate__": "`'${self.path.target.asset.javaScript}'*.js`"}
+                    ],
+                    "command": "jsdoc",
+                    "indicator": "self.needed.javaScript"
                 },
-                "lint": {
-                    "command": "eslint",
-                    "arguments": [
-                        "--config",
-                        {"__evaluate__": "`'${webOptimizerPath}/package.json'`"},
-                        "--ignore-pattern",
-                        {"__evaluate__": "`'${self.path.target.substring(currentPath.length + 1) ? `${self.path.target.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
-                        "--ignore-pattern",
-                        {"__evaluate__": "`'${self.path.apiDocumentation}'`"},
-                        "'**/*.js'"
-                    ]
-                },
+                "lint": [
+                    {
+                        "arguments": [
+                            {"__evaluate__": "`${self.path.source.asset.cascadingStyleSheet}**/*.css`"},
+                            "--config",
+                            {"__evaluate__": "`${path.relative(self.path.context, webOptimizerPath)}/stylelintConfigurator.compiled.js`"}
+                        ],
+                        "command": "stylelint",
+                        "indicator": "self.needed.cascadingStyleSheet"
+                    },
+                    {
+                        "arguments": [
+                            "--config",
+                            {"__evaluate__": "`'${webOptimizerPath}/package.json'`"},
+                            "--ignore-pattern",
+                            {"__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? `${self.path.target.base.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"},
+                            "--ignore-pattern",
+                            {"__evaluate__": "`'${self.path.apiDocumentation}'`"},
+                            "'**/*.js'"
+                        ],
+                        "command": "eslint",
+                        "indicator": "self.needed.javaScript"
+                    }
+                ],
                 "serve": {
-                    "command": "webpack-dev-server",
                     "arguments": [
                         "--config",
                         {"__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"},
@@ -482,7 +492,8 @@
                         "--colors",
                         "--compress",
                         "--history-api-fallback"
-                    ]
+                    ],
+                    "command": "webpack-dev-server"
                 },
                 "test": {"command": "./testBundle.compiled.js"},
                 "testInBrowser": {"__evaluate__": "self.commandLine.serve"},
@@ -494,7 +505,7 @@
             "development": {
                 "openBrowser": null,
                 "server": {
-                    "contentBase": {"__evaluate__": "self.path.source"},
+                    "contentBase": {"__evaluate__": "self.path.source.base"},
                     "historyApiFallback": true,
                     "hot": true,
                     "stats": {"colors": true},
@@ -512,18 +523,25 @@
                     "-loader.compiled.js", "-loader.js", "Loader.compiled.js",
                     "Loader.js", ".js"
                 ],
-                "moduleDirectories": [
+                "directories": [
                     "web_loaders", "web_modules", "node_loaders",
                     "node_modules", "../"
                 ]
+            },
+            "stylelint": {
+                "extends": "stylelint-config-standard",
+                "rules": {
+                    "comment-empty-line-before": "never",
+                    "indentation": 4
+                }
             },
 
             "document": {
                 "inPlace": {"externalLibrary": {"normal": false}},
                 "module": {
                     "optimizer": {"uglifyJS": null},
-                    "preprocessor": {"modernJavaScript": {"presets": [
-                        "es2015-node", "stage-0"
+                    "preprocessor": {"babel": {"presets": [
+                        "latest", "stage-0"
                     ]}}
                 }
             },
@@ -532,13 +550,13 @@
                 "exportFormat": {"external": "commonjs2", "self": "commonjs2"},
                 "files": {
                     "compose": {"javaScript": {
-                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
+                        "__evaluate__": "`${self.path.target.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
                     }},
                     "defaultHTML": {
                         "filename": "test.html",
                         "inject": "head",
                         "template": {
-                            "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? `${self.path.source}test.pug` : `${webOptimizerPath}/index.pug`}`"
+                            "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
                         }
                     },
                     "html": []
@@ -556,7 +574,7 @@
                     "filename": "test.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}test.pug`) ? `${self.path.source}test.pug` : `${webOptimizerPath}/index.pug`}`"
+                        "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 }},
                 "inPlace": {"externalLibrary": {"normal": true}},
@@ -580,7 +598,7 @@
 
             "files": {
                 "compose": {"javaScript": {
-                    "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}[name].js?${self.hashAlgorithm}=[hash]`"
+                    "__evaluate__": "`${self.path.target.asset.javaScript}[name].js?${self.hashAlgorithm}=[hash]`"
                 }},
                 "defaultHTML": {"debug": true}
             },
@@ -591,10 +609,10 @@
             },
             "module": {
                 "preprocessor": {
-                    "pug": {"compiler": {"pretty": true}},
-                    "less": {"sourceMap": true}
+                    "babel": {"presets": ["latest", "stage-0"]},
+                    "pug": {"compiler": {"pretty": true}}
                 },
-                "cascadingStyleSheet": {"sourceMap": true},
+                "cascadingStyleSheet": "?sourceMap",
                 "optimizer": {
                     "uglifyJS": null,
                     "htmlMinifier": {
@@ -627,17 +645,17 @@
             "files": {
                 "compose": {
                     "cascadingStyleSheet": {
-                        "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${self.path.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+                        "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${self.path.target.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
                     },
                     "javaScript": {
-                        "__evaluate__": "`${path.join(self.path.asset.target, self.path.asset.javaScript)}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
+                        "__evaluate__": "`${self.path.target.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
                     }
                 },
                 "defaultHTML": {
                     "filename": "playground.html",
                     "inject": "head",
                     "template": {
-                        "__evaluate__": "`html?${helper.convertCircularObjectToJSON(self.module.html)}!pug?${helper.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source}playground.pug`) ? `${self.path.source}playground.pug` : `${webOptimizerPath}/index.pug`}`"
+                        "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}playground.pug`) ? `${self.path.source.base}playground.pug` : `${webOptimizerPath}/index.pug`}`"
                     }
                 },
                 "html": {
@@ -657,22 +675,21 @@
                 }}
             },
             "libraryName": {
-                "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [helper.convertToValidVariableName(self.name), '[name]']: null"
+                "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [tools.stringConvertToValidVariableName(self.name), '[name]']: null"
             },
             "path": {
-                "source": "./", "target": "./",
-                "asset": {
-                    "cascadingStyleSheet": "./",
-                    "javaScript": "./",
-                    "coffeeScript": "./",
-                    "less": "./",
-                    "scss": "./",
-                    "sass": "./",
-                    "font": "./",
-                    "image": "./",
-                    "template": "./",
-                    "data": "./"
-                }
+                "source": {
+                    "asset": {
+                        "cascadingStyleSheet": "./",
+                        "javaScript": "./",
+                        "font": "./",
+                        "image": "./",
+                        "template": "./",
+                        "data": "./"
+                    },
+                    "base": "./"
+                },
+                "target": {"base": "./"}
             },
             "offline": null,
 
@@ -684,7 +701,7 @@
                     "./readme.md",
                     "--destination",
                     {"__evaluate__": "self.path.apiDocumentation"},
-                    {"__evaluate__": "`'${path.join(self.path.target, self.path.asset.javaScript)}'*.compiled.js`"}
+                    {"__evaluate__": "`'${self.path.target.asset.javaScript}'*.compiled.js`"}
                 ]}},
                 "exportFormat": {"self": "var"},
                 "targetTechnology": "node"
