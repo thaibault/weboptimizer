@@ -17,7 +17,7 @@
 import {ChildProcess} from 'child_process'
 import * as fileSystem from 'fs'
 import path from 'path'
-import {Tools} from 'tools'
+import {Tools} from 'tools.compiled'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -28,13 +28,6 @@ import type {
     NormalizedInternalInjection, Path, PlainObject, ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem, TraverseFilesCallbackFunction
 } from './type'
-// endregion
-// region declarations
-// NOTE: This declaration isn't needed if flow knows javaScript's native
-// "Proxy" in future.
-declare class Proxy {
-    constructor(object:any, handler:Object):any
-}
 // endregion
 // region methods
 /**

@@ -13,9 +13,6 @@
     3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports
-import path from 'path'
-// endregion
 // region exports
 // / region generic
 export type ProcedureFunction = () => void
