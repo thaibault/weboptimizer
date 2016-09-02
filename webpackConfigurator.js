@@ -28,6 +28,7 @@ import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 try {
     require('source-map-support/register')
 } catch (error) {}
+import util from 'util'
 import webpack from 'webpack'
 const plugins = require('webpack-load-plugins')()
 import {RawSource as WebpackRawSource} from 'webpack-sources'
@@ -362,7 +363,7 @@ if (configuration.injection.external === '__implicit__')
             configuration.injection.implicitExternalIncludePattern,
             configuration.injection.implicitExternalExcludePattern,
             configuration.inPlace.externalLibrary.normal,
-            configuration.inPlace.externalLibrary.shimmed)
+            configuration.inPlace.externalLibrary.dynamic)
         if (resolvedRequest) {
             if (['var', 'umd'].includes(
                 configuration.exportFormat.external
@@ -752,7 +753,8 @@ const webpackConfiguration:WebpackConfiguration = {
     plugins: pluginInstances
 }
 if (configuration.debug)
-    console.log('Using webpack configuration:', webpackConfiguration)
+    console.log('Using webpack configuration:', util.inspect(
+        webpackConfiguration, {depth: null}))
 // endregion
 export default webpackConfiguration
 // region vim modline

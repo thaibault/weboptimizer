@@ -147,7 +147,7 @@ export default class Helper {
      * as internal dependency.
      * @param inPlaceNormalLibrary - Indicates whether normal libraries should
      * be external or not.
-     * @param inPlaceShimmedLibrary - Indicates whether requests with
+     * @param inPlaceDynamicLibrary - Indicates whether requests with
      * integrated loader configurations should be marked as external or not.
      * @param externalHandableFileExtensions - File extensions which should be
      * able to be handled by the external module bundler. If array is empty
@@ -166,7 +166,7 @@ export default class Helper {
         includePattern:Array<string|RegExp> = [],
         excludePattern:Array<string|RegExp> = [],
         inPlaceNormalLibrary:boolean = false,
-        inPlaceShimmedLibrary:boolean = true,
+        inPlaceDynamicLibrary:boolean = true,
         externalHandableFileExtensions:Array<string> = [
             '', '.js', '.node', '.json']
     ):?string {
@@ -205,11 +205,13 @@ export default class Helper {
             or have a file extension other than javaScript aware.
         */
         if (!inPlaceNormalLibrary && (
-            externalHandableFileExtensions.length === 0 ||
-            externalHandableFileExtensions.includes(path.extname(filePath))
-        ) && !(inPlaceShimmedLibrary && request.includes('!')) && (
+            externalHandableFileExtensions.length === 0 || filePath &&
+            externalHandableFileExtensions.includes(path.extname(filePath)) ||
+            !filePath && externalHandableFileExtensions.includes('')
+        ) && !(inPlaceDynamicLibrary && request.includes('!')) && (
+            !filePath && inPlaceDynamicLibrary || filePath && (
             !filePath.startsWith(context) || Helper.isFilePathInLocation(
-                filePath, externalModuleLocations)
+                filePath, externalModuleLocations))
         ))
             return resolvedRequest
         return null

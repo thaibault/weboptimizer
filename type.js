@@ -177,7 +177,7 @@ export type ResolvedConfiguration = {
         cascadingStyleSheet:boolean;
         externalLibrary:{
             normal:boolean;
-            shimmed:boolean;
+            dynamic:boolean;
         };
         javaScript:boolean;
         otherMaximumFileSizeLimitInByte:number
