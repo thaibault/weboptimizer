@@ -26,11 +26,10 @@ try {
 } catch (error) {}
 
 import configuration from './configurator.compiled'
+import Helper from './helper.compiled'
 import type {
     PlainObject, PromiseCallbackFunction, ResolvedBuildConfiguration
 } from './type'
-
-import Helper from './helper.compiled'
 // endregion
 // region controller
 const childProcessOptions:Object = {

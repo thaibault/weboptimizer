@@ -14,11 +14,10 @@
     endregion
 */
 // region imports
-import * as fileSystem from 'fs'
-import * as dom from 'jsdom'
 import Tools from 'clientNode'
+import * as dom from 'jsdom'
+import * as fileSystem from 'fs'
 import path from 'path'
-
 import postcssCSSnext from 'postcss-cssnext'
 import postcssFontPath from 'postcss-fontpath'
 import postcssImport from 'postcss-import'

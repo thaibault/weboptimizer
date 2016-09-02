@@ -14,10 +14,10 @@
     endregion
 */
 // region imports
-import * as fileSystem from 'fs'
-import * as pug from 'pug'
-import * as loaderUtils from 'loader-utils'
 import Tools from 'clientNode'
+import * as fileSystem from 'fs'
+import * as loaderUtils from 'loader-utils'
+import * as pug from 'pug'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
