@@ -556,8 +556,11 @@ export default class Helper {
                 injectedBaseNames[buildConfiguration.outputExtension] = []
             for (const moduleFilePath:string of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
+                    const relativeModuleFilePath:string = path.relative(
+                        context, moduleFilePath)
                     const baseName:string = path.basename(
-                        moduleFilePath, `.${buildConfiguration.extension}`)
+                        relativeModuleFilePath,
+                        `.${buildConfiguration.extension}`)
                     /*
                         Ensure that each output type has only one source
                         representation.
@@ -574,11 +577,10 @@ export default class Helper {
                             context).
                         */
                         if (result[baseName])
-                            result[path.relative(
-                                context, moduleFilePath
-                            )] = moduleFilePath
+                            result[relativeModuleFilePath] =
+                                relativeModuleFilePath
                         else
-                            result[baseName] = moduleFilePath
+                            result[baseName] = relativeModuleFilePath
                         injectedBaseNames[
                             buildConfiguration.outputExtension
                         ].push(baseName)
