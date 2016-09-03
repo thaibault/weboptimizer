@@ -637,8 +637,9 @@ const webpackConfiguration:WebpackConfiguration = {
                 test: new RegExp(Tools.stringConvertToValidRegularExpression(
                     Helper.stripLoader(
                         configuration.files.defaultHTML.template))),
-                loader: Helper.stripLoader(
-                    configuration.files.defaultHTML.template)
+                loader: configuration.files.defaultHTML.template.substring(
+                    0, configuration.files.defaultHTML.template.lastIndexOf(
+                        '!'))
             },
             {
                 test: /\.pug$/,
