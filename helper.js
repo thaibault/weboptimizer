@@ -613,7 +613,9 @@ export default class Helper {
         packageEntryFileNames:Array<string> = [
             '__package__', '', 'index', 'main']
     ):?string {
-        moduleID = Helper.applyAliases(moduleID, moduleAliases)
+        moduleID = Helper.applyAliases(moduleID.substring(moduleID.lastIndexOf(
+            '!'
+        ) + 1), moduleAliases)
         if (!moduleID)
             return null
         if (referencePath.startsWith('/'))

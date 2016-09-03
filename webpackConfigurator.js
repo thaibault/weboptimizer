@@ -618,7 +618,13 @@ const webpackConfiguration:WebpackConfiguration = {
                 exclude: (filePath:string):boolean =>
                     Helper.isFilePathInLocation(filePath.replace(
                         /^(.+)(?:\?[^?]*)$/, '$1'
-                    ), configuration.path.ignore)
+                    ), configuration.path.ignore.concat(
+                        configuration.module.directories,
+                        configuration.loader.directories
+                    ).map((filePath:string):string => path.resolve(
+                        configuration.path.context, filePath)
+                    ).filter((filePath:string):boolean =>
+                        !configuration.path.context.startsWith(filePath)))
             },
             // endregion
             // region html (templates)
@@ -665,7 +671,13 @@ const webpackConfiguration:WebpackConfiguration = {
                 exclude: (filePath:string):boolean =>
                     Helper.isFilePathInLocation(filePath.replace(
                         /^(.+)(?:\?[^?]*)$/, '$1'
-                    ), configuration.path.ignore)
+                    ), configuration.path.ignore.concat(
+                        configuration.module.directories,
+                        configuration.loader.directories
+                    ).map((filePath:string):string => path.resolve(
+                        configuration.path.context, filePath
+                    )).filter((filePath:string):boolean =>
+                        !configuration.path.context.startsWith(filePath)))
             },
             // endregion
             // region html (templates)
