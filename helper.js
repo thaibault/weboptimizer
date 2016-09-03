@@ -52,6 +52,24 @@ export default class Helper {
         return false
     }
     // endregion
+    // region string
+    /**
+     * Strips loader informations form given module request including loader
+     * prefix and query parameter.
+     * @param moduleID - Module request to strip.
+     * @returns Given module id stripped.
+     */
+    static stripLoader(moduleID:string|String):string {
+        moduleID = moduleID.toString()
+        const moduleIDWithoutLoader:string = moduleID.substring(
+            moduleID.lastIndexOf('!') + 1)
+        return moduleIDWithoutLoader.includes(
+            '?'
+        ) ? moduleIDWithoutLoader.substring(0, moduleIDWithoutLoader.indexOf(
+            '?'
+        )) : moduleIDWithoutLoader
+    }
+    // endregion
     // region data handling
     /**
      * Converts given serialized or base64 encoded string into a javaScript
@@ -615,13 +633,8 @@ export default class Helper {
         packageEntryFileNames:Array<string> = [
             '__package__', '', 'index', 'main']
     ):?string {
-        const moduleIDWithoutLoader:string = moduleID.substring(
-            moduleID.lastIndexOf('!') + 1)
-        moduleID = Helper.applyAliases(moduleIDWithoutLoader.includes(
-            '?'
-        ) ? moduleIDWithoutLoader.substring(0, moduleIDWithoutLoader.indexOf(
-            '?'
-        )) : moduleIDWithoutLoader, moduleAliases)
+        moduleID = Helper.applyAliases(
+            Helper.stripLoader(moduleID), moduleAliases)
         if (!moduleID)
             return null
         if (referencePath.startsWith('/'))

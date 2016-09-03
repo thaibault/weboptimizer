@@ -618,29 +618,27 @@ const webpackConfiguration:WebpackConfiguration = {
                 loader: loader.preprocessor.javaScript,
                 include: [configuration.path.source.asset.javaScript].concat(
                     configuration.module.locations.directoryPaths),
-                exclude: (filePath:string):boolean =>
-                    Helper.isFilePathInLocation(filePath.replace(
-                        /^(.+)(?:\?[^?]*)$/, '$1'
-                    ), configuration.path.ignore.concat(
-                        configuration.module.directories,
-                        configuration.loader.directories
-                    ).map((filePath:string):string => path.resolve(
-                        configuration.path.context, filePath)
-                    ).filter((filePath:string):boolean =>
-                        !configuration.path.context.startsWith(filePath)))
+                exclude: (filePath:string):boolean => {
+                    filePath = Helper.stripLoader(filePath)
+                    return Helper.isFilePathInLocation(
+                        filePath, configuration.path.ignore.concat(
+                            configuration.module.directories,
+                            configuration.loader.directories
+                        ).map((filePath:string):string => path.resolve(
+                            configuration.path.context, filePath)
+                        ).filter((filePath:string):boolean =>
+                            !configuration.path.context.startsWith(filePath)))
+                }
             },
             // endregion
             // region html (templates)
-            // NOTE: This ensures that will be used as a special loader alias.
+            // NOTE: This is only for the main entry template.
             {
                 test: new RegExp(Tools.stringConvertToValidRegularExpression(
-                    configuration.files.defaultHTML.template.substring(
-                        configuration.files.defaultHTML.template.lastIndexOf(
-                            '!'
-                        ) + 1))),
-                loader: configuration.files.defaultHTML.template.substring(
-                    0, configuration.files.defaultHTML.template.lastIndexOf(
-                        '!'))
+                    Helper.stripLoader(
+                        configuration.files.defaultHTML.template))),
+                loader: Helper.stripLoader(
+                    configuration.files.defaultHTML.template)
             },
             {
                 test: /\.pug$/,
@@ -654,8 +652,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 exclude: configuration.files.html.concat(
                     configuration.files.defaultHTML
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
-                    htmlConfiguration.template.substring(
-                        htmlConfiguration.template.lastIndexOf('!') + 1))
+                    Helper.stripLoader(htmlConfiguration.template))
             }
             // endregion
         ],
@@ -671,16 +668,17 @@ const webpackConfiguration:WebpackConfiguration = {
                 include: [
                     configuration.path.source.asset.cascadingStyleSheet
                 ].concat(configuration.module.locations.directoryPaths),
-                exclude: (filePath:string):boolean =>
-                    Helper.isFilePathInLocation(filePath.replace(
-                        /^(.+)(?:\?[^?]*)$/, '$1'
-                    ), configuration.path.ignore.concat(
-                        configuration.module.directories,
-                        configuration.loader.directories
-                    ).map((filePath:string):string => path.resolve(
-                        configuration.path.context, filePath
-                    )).filter((filePath:string):boolean =>
-                        !configuration.path.context.startsWith(filePath)))
+                exclude: (filePath:string):boolean => {
+                    filePath = Helper.stripLoader(filePath)
+                    return Helper.isFilePathInLocation(
+                        filePath, configuration.path.ignore.concat(
+                            configuration.module.directories,
+                            configuration.loader.directories
+                        ).map((filePath:string):string => path.resolve(
+                            configuration.path.context, filePath
+                        )).filter((filePath:string):boolean =>
+                            !configuration.path.context.startsWith(filePath)))
+                }
             },
             // endregion
             // region html (templates)
@@ -695,8 +693,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 include: configuration.path.source.asset.template,
                 exclude: configuration.files.html.map((
                     htmlConfiguration:HTMLConfiguration
-                ):string => htmlConfiguration.template.substring(
-                    htmlConfiguration.template.lastIndexOf('!') + 1))
+                ):string => Helper.stripLoader(htmlConfiguration.template))
             }
             // endregion
         ],
@@ -726,9 +723,8 @@ const webpackConfiguration:WebpackConfiguration = {
                 loader: loader.postprocessor.data,
                 include: configuration.path.source.asset.data,
                 exclude: (filePath:string):boolean =>
-                    configuration.knownExtensions.includes(
-                        path.extname(filePath.replace(
-                            /^(.+)(?:\?[^?]*)$/, '$1')))
+                    configuration.knownExtensions.includes(path.extname(
+                        Helper.stripLoader(filePath)))
             }
             // endregion
         ]
