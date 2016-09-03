@@ -288,26 +288,29 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string in configuration.injection.internal.normalized)
         if (configuration.injection.internal.normalized.hasOwnProperty(
             chunkID
-        ) && configuration.dllManifestFilePaths.includes(
-            `${configuration.path.target.base}${chunkID}.dll-manifest.json`
         )) {
-            delete configuration.injection.internal.normalized[chunkID]
-            // TODO replace all placeholder like "[id]", "[ext]", "[hash]" and
-            // everywhere else
-            const filePath:string =
-                configuration.files.compose.javaScript.replace(
-                    /^(.+)(?:\?[^?]*)$/, '$1'
-                ).replace(/\[name\]/g, chunkID)
-            pluginInstances.push(new plugins.AddAssetHTMLPlugin({
-                filepath: filePath,
-                hash: true,
-                includeSourcemap: Helper.isFileSync(`${filePath}.map`)
-            }))
-            pluginInstances.push(new webpack.DllReferencePlugin({
-                context: configuration.path.context, manifest: require(
-                    `${configuration.path.target.base}${chunkID}.` +
-                    'dll-manifest.json')
-            }))
+            const manifestFilePath:string =
+                `${configuration.path.target.base}/${chunkID}.` +
+                `dll-manifest.json`
+            if (configuration.dllManifestFilePaths.includes(
+                manifestFilePath
+            )) {
+                delete configuration.injection.internal.normalized[chunkID]
+                // TODO replace all placeholder like "[id]", "[ext]", "[hash]"
+                // and everywhere else
+                const filePath:string =
+                    configuration.files.compose.javaScript.replace(
+                        /^(.+)(?:\?[^?]*)$/, '$1'
+                    ).replace(/\[name\]/g, chunkID)
+                pluginInstances.push(new plugins.AddAssetHTMLPlugin({
+                    filepath: filePath,
+                    hash: true,
+                    includeSourcemap: Helper.isFileSync(`${filePath}.map`)
+                }))
+                pluginInstances.push(new webpack.DllReferencePlugin({
+                    context: configuration.path.context, manifest: require(
+                        manifestFilePath)}))
+            }
         }
 // //// endregion
 // //// region generate common chunks
@@ -393,7 +396,7 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
     if (dllChunkIDExists) {
         libraryName = '[name]DLLPackage'
         pluginInstances.push(new webpack.DllPlugin({
-            path: `${configuration.path.target.base}[name].dll-manifest.json`,
+            path: `${configuration.path.target.base}/[name].dll-manifest.json`,
             name: libraryName
         }))
     } else
@@ -618,7 +621,13 @@ const webpackConfiguration:WebpackConfiguration = {
                 exclude: (filePath:string):boolean =>
                     Helper.isFilePathInLocation(filePath.replace(
                         /^(.+)(?:\?[^?]*)$/, '$1'
-                    ), configuration.path.ignore)
+                    ), configuration.path.ignore.concat(
+                        configuration.module.directories,
+                        configuration.loader.directories
+                    ).map((filePath:string):string => path.resolve(
+                        configuration.path.context, filePath)
+                    ).filter((filePath:string):boolean =>
+                        !configuration.path.context.startsWith(filePath)))
             },
             // endregion
             // region html (templates)
@@ -665,7 +674,13 @@ const webpackConfiguration:WebpackConfiguration = {
                 exclude: (filePath:string):boolean =>
                     Helper.isFilePathInLocation(filePath.replace(
                         /^(.+)(?:\?[^?]*)$/, '$1'
-                    ), configuration.path.ignore)
+                    ), configuration.path.ignore.concat(
+                        configuration.module.directories,
+                        configuration.loader.directories
+                    ).map((filePath:string):string => path.resolve(
+                        configuration.path.context, filePath
+                    )).filter((filePath:string):boolean =>
+                        !configuration.path.context.startsWith(filePath)))
             },
             // endregion
             // region html (templates)

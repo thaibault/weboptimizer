@@ -884,7 +884,7 @@
         "otherMaximumFileSizeLimitInByte": 1,
         "externalLibrary": {
           "normal": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve'].includes(self.givenCommandLineArguments[2])"
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'watchDLL'].includes(self.givenCommandLineArguments[2])"
           }
         }
       },
