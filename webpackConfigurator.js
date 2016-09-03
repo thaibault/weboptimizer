@@ -393,7 +393,7 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
     if (dllChunkIDExists) {
         libraryName = '[name]DLLPackage'
         pluginInstances.push(new webpack.DllPlugin({
-            path: `${configuration.path.target.base}[name].dll-manifest.json`,
+            path: `${configuration.path.target.base}/[name].dll-manifest.json`,
             name: libraryName
         }))
     } else
