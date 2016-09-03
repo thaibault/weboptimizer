@@ -13,14 +13,11 @@ try {
 QUnit.module('webpackConfigurator')
 QUnit.load()
 // region tests
-console.log(path.relative(path.resolve(
-    __filename, '../'
-), __filename).replace(/\.compiled\.js$/, '.js'))
 QUnit.test('webpackConfigurator', (assert:Object):void =>
     assert.ok(require(
         '../webpackConfigurator.compiled'
     ).default.entry.index.includes(path.relative(path.resolve(
-        __filename, '../'
+        __dirname, '../'
     ), __filename).replace(/\.compiled\.js$/, '.js'))))
 // endregion
 // region vim modline
