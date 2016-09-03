@@ -98,8 +98,13 @@ configuration.debug = debug
 if (typeof configuration.library === 'object')
     Tools.extendObject(true, libraryConfiguration, configuration.library)
 if (
-    specificConfiguration.library === true ||
-    specificConfiguration.library === undefined && configuration.library
+    'library' in specificConfiguration &&
+    // IgnoreTypeCheck
+    specificConfiguration.library === true || (
+        'library' in specificConfiguration &&
+        specificConfiguration.library === undefined ||
+        !('library' in specificConfiguration)
+    ) && configuration.library
 )
     configuration = Tools.extendObject(
         true, configuration, libraryConfiguration)

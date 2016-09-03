@@ -50,6 +50,22 @@ QUnit.test('isFilePathInLocation', (assert:Object):void => {
         assert.notOk(Helper.isFilePathInLocation.apply(Helper, notOkArguments))
 })
 // / endregion
+// / region string
+QUnit.test('stripLoader', (assert:Object):void => {
+     for (const test:Array<string> of [
+        ['', ''],
+        ['a', 'a'],
+        ['a!b', 'b'],
+        ['aa!b!c', 'c'],
+        ['aa!b!c', 'c'],
+        ['c?a', 'c'],
+        ['aa!b!c?a', 'c'],
+        ['aa!b!c?abb?', 'c'],
+        ['aa!b!c?abb?a', 'c']
+    ])
+        assert.strictEqual(Helper.stripLoader(test[0]), test[1])
+})
+// / endregion
 // region process handler
 QUnit.test('getProcessCloseHandler', (assert:Object):void =>
     assert.strictEqual(typeof Helper.getProcessCloseHandler(
