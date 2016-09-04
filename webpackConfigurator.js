@@ -71,20 +71,26 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
 // / endregion
 // endregion
 // region initialisation
-let libraryName:string = configuration.exportFormat.self === 'var' ?
-    Tools.stringConvertToValidVariableName(
-        configuration.name
-    ) : configuration.name
+// / region determine library name
+let libraryName:string
 if ('libraryName' in configuration && configuration.libraryName)
     libraryName = configuration.libraryName
-// // region plugins
+else if (Object.keys(configuration.injection.internal.normalized).length > 1)
+    libraryName = '[name]'
+else {
+    libraryName = configuration.name
+    if (configuration.exportFormat.self === 'var')
+        libraryName = Tools.stringConvertToValidVariableName(libraryName)
+}
+// / endregion
+// / region plugins
 const pluginInstances:Array<Object> = [
     new webpack.optimize.OccurrenceOrderPlugin(true)]
-// /// region define modules to ignore
+// // region define modules to ignore
 for (const ignorePattern:string of configuration.injection.ignorePattern)
     pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
-// /// endregion
-// /// region generate html file
+// // endregion
+// // region generate html file
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
@@ -101,14 +107,14 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
             pluginInstances.push(new plugins.HTML(htmlConfiguration))
             htmlAvailable = true
         }
-// /// endregion
-// /// region generate favicons
+// // endregion
+// // region generate favicons
 if (htmlAvailable && configuration.favicon && Helper.isFileSync(
     configuration.favicon.logo
 ))
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
-// /// endregion
-// /// region provide offline functionality
+// // endregion
+// // region provide offline functionality
 if (htmlAvailable && configuration.offline) {
     if (!['serve', 'testInBrowser'].includes(
         configuration.givenCommandLineArguments[2]
@@ -126,24 +132,24 @@ if (htmlAvailable && configuration.offline) {
     }
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
-// /// endregion
-// /// region opens browser automatically
+// // endregion
+// // region opens browser automatically
 if (configuration.development.openBrowser && (htmlAvailable && [
     'serve', 'testInBrowser'
 ].includes(configuration.givenCommandLineArguments[2])))
     pluginInstances.push(new plugins.OpenBrowser(
         configuration.development.openBrowser))
-// /// endregion
-// /// region provide build environment
+// // endregion
+// // region provide build environment
 pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
-// /// endregion
-// /// region modules/assets
-// //// region perform javaScript minification/optimisation
+// // endregion
+// // region modules/assets
+// /// region perform javaScript minification/optimisation
 if (configuration.module.optimizer.uglifyJS)
     pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
         configuration.module.optimizer.uglifyJS))
-// //// endregion
-// //// region apply module pattern
+// /// endregion
+// /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
     compiler.plugin('emit', (
         compilation:Object, callback:ProcedureFunction
@@ -167,8 +173,8 @@ pluginInstances.push({apply: (compiler:Object):void => {
         callback()
     })
 }})
-// //// endregion
-// //// region in-place configured assets in the main html file
+// /// endregion
+// /// region in-place configured assets in the main html file
 if (htmlAvailable && !['serve', 'testInBrowser'].includes(
     configuration.givenCommandLineArguments[2]
 ))
@@ -282,8 +288,8 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
             callback()
         })
     }})
-// //// endregion
-// //// region remove chunks if a corresponding dll package exists
+// /// endregion
+// /// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string in configuration.injection.internal.normalized)
         if (configuration.injection.internal.normalized.hasOwnProperty(
@@ -312,8 +318,8 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                         manifestFilePath)}))
             }
         }
-// //// endregion
-// //// region generate common chunks
+// /// endregion
+// /// region generate common chunks
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (const chunkID:string of configuration.injection.commonChunkIDs)
         if (configuration.injection.internal.normalized.hasOwnProperty(
@@ -329,18 +335,18 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 name: chunkID,
                 minSize: 0
             }))
-// //// endregion
-// //// region mark empty javaScript modules as dummy
+// /// endregion
+// /// region mark empty javaScript modules as dummy
 if (!configuration.needed.javaScript)
     configuration.files.compose.javaScript = path.resolve(
         configuration.path.target.asset.javaScript, '.__dummy__.compiled.js')
-// //// endregion
-// //// region extract cascading style sheets
+// /// endregion
+// /// region extract cascading style sheets
 pluginInstances.push(new plugins.ExtractText(
     configuration.files.compose.cascadingStyleSheet, {allChunks: true, disable:
         !configuration.files.compose.cascadingStyleSheet}))
-// //// endregion
-// //// region performs implicit external logic
+// /// endregion
+// /// region performs implicit external logic
 if (configuration.injection.external === '__implicit__')
     /*
         We only want to process modules from local context in library mode,
@@ -381,8 +387,8 @@ if (configuration.injection.external === '__implicit__')
         }
         return callback()
     }
-// //// endregion
-// //// region build dll packages
+// /// endregion
+// /// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
     let dllChunkIDExists:boolean = false
     for (const chunkID:string in configuration.injection.internal.normalized)
@@ -402,9 +408,9 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
     } else
         console.warn('No dll chunk id found.')
 }
-// //// endregion
 // /// endregion
-// /// region apply final dom/javaScript modifications/fixes
+// // endregion
+// // region apply final dom/javaScript modifications/fixes
 pluginInstances.push({apply: (compiler:Object):void => {
     compiler.plugin('emit', (
         compilation:Object, callback:ProcedureFunction
@@ -508,14 +514,14 @@ pluginInstances.push({apply: (compiler:Object):void => {
         Promise.all(promises).then(():void => callback())
     })
 }})
-// /// endregion
-// /// region add automatic image compression
+// // endregion
+// // region add automatic image compression
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
 // ran through.
 pluginInstances.push(new plugins.Imagemin(
     configuration.module.optimizer.image.content))
-// /// endregion
 // // endregion
+// / endregion
 // / region loader
 let imageLoader:string = 'url?' + Tools.convertCircularObjectToJSON(
     configuration.module.optimizer.image.file)
