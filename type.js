@@ -66,6 +66,7 @@ export type InternalInjection =
     string|Array<string>|{[key:string]:string|Array<string>}
 export type NormalizedInternalInjection = {[key:string]:Array<string>}
 export type Injection = {
+    autoExclude:Array<string>;
     commonChunkIDs:Array<string>;
     dllChunkIDs:Array<string>;
     external:ExternalInjection;

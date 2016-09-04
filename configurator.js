@@ -276,7 +276,7 @@ resolvedConfiguration.injection = Helper.resolveInjection(
             resolvedConfiguration.path.context, filePath)
         ).filter((filePath:string):boolean =>
             !resolvedConfiguration.path.context.startsWith(filePath))
-    ), resolvedConfiguration.test.injection.internal,
+    ), resolvedConfiguration.injection.autoExclude,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.knownExtensions,
     resolvedConfiguration.path.context,

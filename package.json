@@ -178,6 +178,7 @@
         ]
       },
       "injection": {
+        "autoExclude": ["test/"],
         "commonChunkIDs": [
           "vendor"
         ],
@@ -874,6 +875,7 @@
           "__evaluate__": "2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? [{}] : []"
         }
       },
+      "injection": {"autoExclude": ["test"]},
       "inPlace": {
         "cascadingStyleSheet": {
           "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve'"
