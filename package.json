@@ -1,6 +1,6 @@
 {
   "name": "webOptimizer",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "http://torben.website/webOptimizer",
   "license": "CC-BY-3.0",
@@ -178,7 +178,9 @@
         ]
       },
       "injection": {
-        "autoExclude": ["test/"],
+        "autoExclude": [
+          "test/"
+        ],
         "commonChunkIDs": [
           "vendor"
         ],
@@ -875,7 +877,11 @@
           "__evaluate__": "2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? [{}] : []"
         }
       },
-      "injection": {"autoExclude": ["test"]},
+      "injection": {
+        "autoExclude": [
+          "test"
+        ]
+      },
       "inPlace": {
         "cascadingStyleSheet": {
           "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve'"
