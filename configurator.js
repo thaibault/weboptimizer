@@ -34,11 +34,21 @@ import type {
 /* eslint-enable no-unused-vars */
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 /*
-    To assume two folder up from this file is usually resilient again dealing
-    with projects where current working directory isn't the projects directory.
+    To assume to go two folder up from this file until there is no
+    "node_modules" parent folder  is usually resilient again dealing with
+    projects where current working directory isn't the projects directory and
+    this library is located as a nested dependency.
 */
-metaConfiguration.default.path.context = path.resolve(__dirname, '../../')
+metaConfiguration.default.path.context = __dirname
 metaConfiguration.default.contextType = 'main'
+while (true) {
+    metaConfiguration.default.path.context = path.resolve(
+        metaConfiguration.default.path.context, '../../')
+    if (path.basename(path.dirname(
+        metaConfiguration.default.path.context
+    )) !== 'node_modules')
+        break
+}
 if (
     path.basename(path.dirname(process.cwd())) === 'node_modules' ||
     path.basename(path.dirname(process.cwd())) === '.staging' &&
