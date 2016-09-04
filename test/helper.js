@@ -52,7 +52,7 @@ QUnit.test('isFilePathInLocation', (assert:Object):void => {
 // / endregion
 // / region string
 QUnit.test('stripLoader', (assert:Object):void => {
-     for (const test:Array<string> of [
+    for (const test:Array<string> of [
         ['', ''],
         ['a', 'a'],
         ['a!b', 'b'],
