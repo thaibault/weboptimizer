@@ -343,10 +343,10 @@ if (!configuration.needed.javaScript)
 // /// endregion
 // /// region extract cascading style sheets
 pluginInstances.push(new plugins.ExtractText(
-    path.relative(
+    configuration.files.compose.cascadingStyleSheet ? path.relative(
         configuration.path.target.base,
         configuration.files.compose.cascadingStyleSheet
-    ), {allChunks: true, disable:
+    ) : configuration.path.target.base, {allChunks: true, disable:
         !configuration.files.compose.cascadingStyleSheet}))
 // /// endregion
 // /// region performs implicit external logic
