@@ -12,6 +12,7 @@ test.compiled
 [options]
 esproposal.class_static_fields=enable
 
+module.name_mapper='^webOptimizer/type$' -> '../../type'
 module.name_mapper='^\./browserAPI\.compiled$' -> './browserAPI'
 module.name_mapper='^\../browserAPI\.compiled$' -> '../browserAPI'
 module.name_mapper='^\./configurator\.compiled$' -> './configurator'

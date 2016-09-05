@@ -311,15 +311,20 @@ for (
             const moduleID:string of
             resolvedConfiguration.injection.internal.normalized[chunkName]
         ) {
-            const type:?string = Helper.determineAssetType(
-                // IgnoreTypeCheck
-                Helper.determineModuleFilePath(
-                    moduleID, resolvedConfiguration.module.aliases,
-                    resolvedConfiguration.knownExtensions,
-                    resolvedConfiguration.path.context,
-                    resolvedConfiguration.path.source.asset.base,
-                    resolvedConfiguration.path.ignore
-                ), resolvedConfiguration.build, resolvedConfiguration.path)
+            const filePath:?string = Helper.determineModuleFilePath(
+                moduleID, resolvedConfiguration.module.aliases,
+                resolvedConfiguration.knownExtensions,
+                resolvedConfiguration.path.context,
+                resolvedConfiguration.path.source.asset.base,
+                resolvedConfiguration.path.ignore)
+            let type:?string
+            if (filePath)
+                type = Helper.determineAssetType(
+                    filePath, resolvedConfiguration.build,
+                    resolvedConfiguration.path)
+            else
+                throw Error(
+                    `Given request "${moduleID}" couldn't be resolved.`)
             if (type)
                 resolvedConfiguration.needed[type] = true
         }
