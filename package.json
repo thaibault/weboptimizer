@@ -921,6 +921,14 @@
           "base": "./"
         },
         "target": {
+          "asset": {
+            "cascadingStyleSheet": "./",
+            "javaScript": "./",
+            "font": "./",
+            "image": "./",
+            "template": "./",
+            "data": "./"
+          },
           "base": "./"
         }
       },
