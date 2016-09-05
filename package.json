@@ -482,7 +482,16 @@
         },
         "target": {
           "asset": {
-            "__evaluate__": "self.path.source.asset"
+            "base": "./",
+            "cascadingStyleSheet": "cascadingStyleSheet/",
+            "data": "data/",
+            "favicon": {
+              "__evaluate__": "`${self.path.target.asset.image}favicon.png`"
+            },
+            "font": "font/",
+            "image": "image/",
+            "javaScript": "javaScript/",
+            "template": "template/"
           },
           "base": "build/",
           "manifest": "manifest.appcache",
