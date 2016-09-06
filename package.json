@@ -408,8 +408,9 @@
             }
           },
           "babel": {
-            "cacheDirectory": true,
-            "compact": true,
+            "cacheDirectory": "",
+            "compact": {"__evaluate__": "!self.debug"},
+            "minified": {"__evaluate__": "!self.debug"},
             "presets": [
               "latest",
               "stage-0",

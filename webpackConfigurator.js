@@ -530,6 +530,7 @@ pluginInstances.push(new plugins.Imagemin(
 // / region loader
 let imageLoader:string = 'url?' + Tools.convertCircularObjectToJSON(
     configuration.module.optimizer.image.file)
+console.log(configuration.module.preprocessor.babel)
 const loader:{
     preprocessor:{
         cascadingStyleSheet:string;
