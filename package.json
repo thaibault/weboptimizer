@@ -28,10 +28,12 @@
     "babel-cli": "latest",
     "babel-eslint": "latest",
     "babel-loader": "latest",
+    "babel-plugin-transform-runtime": "latest",
     "babel-plugin-transform-flow-strip-types": "latest",
     "babel-polyfill": "latest",
     "babel-preset-latest": "latest",
     "babel-preset-stage-0": "latest",
+    "babel-runtime": "latest",
     "babili": "latest",
     "css-loader": "latest",
     "eslint": "latest",
@@ -421,6 +423,7 @@
               "babili"
             ],
             "plugins": [
+              "transform-runtime",
               "transform-flow-strip-types"
             ]
           }
