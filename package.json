@@ -181,8 +181,7 @@
       },
       "injection": {
         "autoExclude": [
-          "test/",
-          "test.compiled/"
+          "test/"
         ],
         "commonChunkIDs": [
           "vendor"
@@ -897,8 +896,7 @@
       },
       "injection": {
         "autoExclude": [
-          "test",
-          "test.compiled"
+          "test"
         ]
       },
       "inPlace": {
