@@ -61,7 +61,8 @@ QUnit.test('stripLoader', (assert:Object):void => {
         ['c?a', 'c'],
         ['aa!b!c?a', 'c'],
         ['aa!b!c?abb?', 'c'],
-        ['aa!b!c?abb?a', 'c']
+        ['aa!b!c?abb?a', 'c'],
+        ['imports?$=library!moduleName', 'moduleName']
     ])
         assert.strictEqual(Helper.stripLoader(test[0]), test[1])
 })
