@@ -408,7 +408,7 @@
             }
           },
           "babel": {
-            "cacheDirectory": "",
+            "cacheDirectory": true,
             "compact": {
               "__evaluate__": "!self.debug"
             },
