@@ -4,7 +4,7 @@
 .*/_.*\.js
 .*/.+\.compiled\.js
 test.compiled
-.+/clientNode/test.js
+.+/clientnode/test.js
 
 # temporary excludes
 .+/systemjs-builder/test/fixtures/sourcemaps-expectations/.+\.json
@@ -12,7 +12,7 @@ test.compiled
 [options]
 esproposal.class_static_fields=enable
 
-module.name_mapper='^webOptimizer/type$' -> '../../type'
+module.name_mapper='^weboptimizer/type$' -> '../../type'
 module.name_mapper='^\./browserAPI\.compiled$' -> './browserAPI'
 module.name_mapper='^\../browserAPI\.compiled$' -> '../browserAPI'
 module.name_mapper='^\./configurator\.compiled$' -> './configurator'
