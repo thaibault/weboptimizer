@@ -68,7 +68,7 @@
     "stylelint": "latest",
     "stylelint-config-standard": "latest",
     "style-loader": "latest",
-    "clientNode": "latest",
+    "clientnode": "latest",
     "url-loader": "latest",
     "webpack": "latest",
     "webpack-dev-server": "latest",
@@ -196,7 +196,7 @@
         "ignorePattern": [],
         "implicitExternalExcludePattern": [
           {
-            "__evaluate__": "/^webOptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"
+            "__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"
           },
           {
             "__evaluate__": "/\\/webpack\\/buildin\\/module\\.js$/"
@@ -247,7 +247,7 @@
       ],
       "module": {
         "aliases": {
-          "webOptimizer/browserAPI$": "webOptimizer/browserAPI.compiled"
+          "weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled"
         },
         "cascadingStyleSheet": "",
         "directories": [
@@ -696,7 +696,7 @@
       "hashAlgorithm": "md5",
       "loader": {
         "aliases": {
-          "pug": "webOptimizer/pug"
+          "pug": "weboptimizer/pug"
         },
         "extensions": [
           "",
@@ -812,7 +812,7 @@
             "__evaluate__": "2 < self.givenCommandLineArguments.length && (['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
           },
           "vendor": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['qunitjs', 'webOptimizer/browserAPI'] : []"
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['qunitjs', 'weboptimizer/browserAPI'] : []"
           }
         }
       },

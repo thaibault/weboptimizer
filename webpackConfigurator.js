@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import Tools from 'clientNode'
+import Tools from 'clientnode'
 import * as dom from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
