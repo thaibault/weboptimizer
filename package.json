@@ -1,6 +1,6 @@
 {
   "name": "webOptimizer",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "http://torben.website/webOptimizer",
   "license": "CC-BY-3.0",
@@ -897,7 +897,8 @@
       },
       "injection": {
         "autoExclude": [
-          "test.js", "test"
+          "test.js",
+          "test"
         ]
       },
       "inPlace": {
