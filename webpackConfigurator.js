@@ -360,6 +360,8 @@ if (configuration.injection.external === '__implicit__')
     configuration.injection.external = (
         context:string, request:string, callback:ProcedureFunction
     ):void => {
+        if (request.startsWith('/'))
+            request = path.relative(configuration.path.context, request)
         let resolvedRequest:?string = Helper.determineExternalRequest(
             request, configuration.path.context, context,
             configuration.injection.internal.normalized,
