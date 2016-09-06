@@ -1,6 +1,6 @@
 {
   "name": "webOptimizer",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "http://torben.website/webOptimizer",
   "license": "CC-BY-3.0",
@@ -409,8 +409,12 @@
           },
           "babel": {
             "cacheDirectory": "",
-            "compact": {"__evaluate__": "!self.debug"},
-            "minified": {"__evaluate__": "!self.debug"},
+            "compact": {
+              "__evaluate__": "!self.debug"
+            },
+            "minified": {
+              "__evaluate__": "!self.debug"
+            },
             "presets": [
               "latest",
               "stage-0",
