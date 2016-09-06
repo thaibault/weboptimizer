@@ -360,8 +360,18 @@ if (configuration.injection.external === '__implicit__')
     configuration.injection.external = (
         context:string, request:string, callback:ProcedureFunction
     ):void => {
+        request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
+        for (const filePath:string of configuration.module.directories.concat(
+            configuration.loader.directories
+        ))
+            if (request.startsWith(filePath)) {
+                request = request.substring(filePath.length)
+                if (request.startsWith('/'))
+                    request = request.substring(1)
+                break
+            }
         let resolvedRequest:?string = Helper.determineExternalRequest(
             request, configuration.path.context, context,
             configuration.injection.internal.normalized,
