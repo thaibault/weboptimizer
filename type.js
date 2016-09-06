@@ -219,6 +219,7 @@ export type ResolvedConfiguration = {
             sass:PlainObject;
             scss:PlainObject
         };
+        provide:{[key:string]:string};
         style:PlainObject;
         skipParseRegularExpression:RegExp|Array<RegExp>;
     };
