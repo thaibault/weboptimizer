@@ -529,7 +529,6 @@ export default class Helper {
                 modulesToExclude, moduleAliases, knownExtensions, context,
                 referencePath, pathsToIgnore
             ).filePaths
-        console.log('B', injection, moduleFilePathsToExclude)
         for (const type:string of ['internal', 'external'])
             /* eslint-disable curly */
             if (typeof injection[type] === 'object') {

@@ -292,9 +292,6 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore)
-console.log(
-    resolvedConfiguration.injection.internal,
-    resolvedConfiguration.injection.autoExclude)
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
     // IgnoreTypeCheck
