@@ -141,7 +141,12 @@ if (configuration.development.openBrowser && (htmlAvailable && [
         configuration.development.openBrowser))
 // // endregion
 // // region provide build environment
-pluginInstances.push(new webpack.DefinePlugin(configuration.buildDefinition))
+if (configuration.buildDefinition)
+    pluginInstances.push(new webpack.DefinePlugin(
+        configuration.buildDefinition))
+if (configuration.module.provide)
+    pluginInstances.push(new webpack.ProvidePlugin(
+        configuration.module.provide))
 // // endregion
 // // region modules/assets
 // /// region perform javaScript minification/optimisation
