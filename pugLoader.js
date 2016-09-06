@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import Tools from 'clientNode'
+import Tools from 'clientnode'
 import * as fileSystem from 'fs'
 import * as loaderUtils from 'loader-utils'
 import * as pug from 'pug'

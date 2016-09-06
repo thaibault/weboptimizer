@@ -39,7 +39,7 @@ Features
     - Image **sprite** handling. Combine your images and never create sprites by
       hand again.
     - Polymorphic **testing** on dom in browsers and/or in node through
-      webOptimizer/browserAPI
+      weboptimizer/browserAPI
     - **Linting** and **TypeChecking** with Flow
     - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel, Flow)
     - Preconfigured **postprocessing** for CSS (Minification),
@@ -81,7 +81,7 @@ Edit your **package.json** to add **one** dependency:
     ...
     "dependencies": {
         ...
-        "webOptimizer": "latest",
+        "weboptimizer": "latest",
         ...
     },
     ...
