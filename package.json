@@ -251,6 +251,7 @@
         },
         "cascadingStyleSheet": "",
         "directories": [
+          "../",
           "web_modules",
           "node_modules"
         ],
@@ -710,11 +711,11 @@
           ".js"
         ],
         "directories": [
+          "../",
           "web_loaders",
           "web_modules",
           "node_loaders",
-          "node_modules",
-          "../"
+          "node_modules"
         ]
       },
       "stylelint": {
