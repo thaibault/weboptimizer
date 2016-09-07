@@ -544,6 +544,11 @@ export default class Helper {
                             if (modules.hasOwnProperty(subChunkName))
                                 injection[type][chunkName].push(
                                     modules[subChunkName])
+                        /*
+                            Reverse array to let javaScript files be the last
+                            ones to export them rather.
+                        */
+                        injection[type][chunkName].reverse()
                     }
             } else if (injection[type] === '__auto__')
             /* eslint-enable curly */
