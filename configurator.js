@@ -332,14 +332,11 @@ for (
 // region adding special aliases
 // NOTE: This alias couldn't be set in the "package.json" file since this would
 // result in an endless loop.
-const delimiterPosition:number =
-    resolvedConfiguration.files.defaultHTML.template.lastIndexOf('!')
 resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader =
     resolvedConfiguration.files.defaultHTML.template.substring(
-        0, delimiterPosition)
+        0, resolvedConfiguration.files.defaultHTML.template.lastIndexOf('!'))
 resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath$ =
-    resolvedConfiguration.files.defaultHTML.template.substring(
-        delimiterPosition + 1)
+    Helper.stripLoader(resolvedConfiguration.files.defaultHTML.template)
 // endregion
 // region apply webpack html plugin workaround
 /*
