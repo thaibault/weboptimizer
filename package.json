@@ -144,13 +144,13 @@
       "files": {
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug ? null : `${self.path.target.asset.cascadingStyleSheet}index.css?${self.hashAlgorithm}=[contenthash]`"
+            "__evaluate__": "self.debug ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[contenthash]`"
           },
           "image": {
-            "__evaluate__": "self.debug ? null : `${self.path.target.asset.image}sprite.png`"
+            "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
           },
           "javaScript": {
-            "__evaluate__": "`${self.path.target.asset.javaScript}${2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index'}.js?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index')}.js?${self.hashAlgorithm}=[hash]`"
           }
         },
         "defaultHTML": {
@@ -163,7 +163,7 @@
             "__evaluate__": "self.module.optimizer.htmlMinifier"
           },
           "template": {
-            "__evaluate__": "`html?${tools.convertCircularObjectToJSON(tools.extendObject({}, self.module.html, {minimize: false}))}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}index.pug`) ? `${self.path.source.base}index.pug` : `${webOptimizerPath}/index.pug`}`"
+            "__evaluate__": "`html?${tools.convertCircularObjectToJSON(tools.extendObject({}, self.module.html, {minimize: false}))}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(path.resolve(self.path.source.base, 'index.pug')) ? path.resolve(self.path.source.base, 'index.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
           }
         },
         "html": [
@@ -270,7 +270,7 @@
               "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
             },
             "name": {
-              "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.data)}/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+              "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.data, '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
             }
           },
           "font": {
@@ -279,7 +279,7 @@
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
               },
               "name": {
-                "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.font)}/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.font, '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
               }
             },
             "svg": {
@@ -288,7 +288,7 @@
               },
               "mimetype": "image/svg+xml",
               "name": {
-                "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.font)}/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.font, '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
               }
             },
             "ttf": {
@@ -297,7 +297,7 @@
               },
               "mimetype": "application/octet-stream",
               "name": {
-                "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.font)}/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.font, '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
               }
             },
             "woff": {
@@ -305,7 +305,7 @@
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
               },
               "name": {
-                "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.font)}/[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                "__evaluate__": "`${path.relative(self.path.target.base, self.path.target.asset.font, '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
               }
             }
           },
@@ -383,7 +383,7 @@
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
               },
               "name": {
-                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.image)}[name].[ext]?${self.hashAlgorithm}=[hash]`"
+                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.image, '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
               }
             }
           },
@@ -481,7 +481,7 @@
             "cascadingStyleSheet": "cascadingStyleSheet/",
             "data": "data/",
             "favicon": {
-              "__evaluate__": "`${self.path.source.asset.image}favicon.png`"
+              "__evaluate__": "path.resolve(self.path.source.asset.image, 'favicon.png')"
             },
             "font": "font/",
             "image": "image/",
@@ -496,7 +496,7 @@
             "cascadingStyleSheet": "cascadingStyleSheet/",
             "data": "data/",
             "favicon": {
-              "__evaluate__": "`${self.path.target.asset.image}favicon.png`"
+              "__evaluate__": "path.resolve(self.path.target.asset.image, 'favicon.png')"
             },
             "font": "font/",
             "image": "image/",
@@ -532,7 +532,7 @@
         "default": {
           "outputExtension": "js",
           "preinstall": {
-            "__evaluate__": "`touch '\\${self.path.target.asset[buildConfiguration.type]}\\${path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`)}.compiled.\\${buildConfiguration.outputExtension}'`"
+            "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], \\path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.compiled.\\${buildConfiguration.outputExtension}'`"
           },
           "fileNamePattern": "^.+\\.compiled(?:\\.[^.]+(?:\\.map)?)?$"
         },
@@ -607,11 +607,11 @@
           {
             "arguments": [
               {
-                "__evaluate__": "`${self.path.source.asset.cascadingStyleSheet}**/*.css`"
+                "__evaluate__": "path.resolve(self.path.source.asset.cascadingStyleSheet, '**/*.css')"
               },
               "--config",
               {
-                "__evaluate__": "`${path.relative(self.path.context, webOptimizerPath)}/stylelintConfigurator.compiled.js`"
+                "__evaluate__": "path.relative(self.path.context, webOptimizerPath, 'stylelintConfigurator.compiled.js')"
               }
             ],
             "command": "stylelint",
@@ -625,7 +625,7 @@
               },
               "--ignore-pattern",
               {
-                "__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? `${self.path.target.base.substring(currentPath.length + 1)}**` : \"*.compiled.js\"}'`"
+                "__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? path.relative(currentPath, self.path.target.base, '**') : \"*.compiled.js\"}'`"
               },
               "--ignore-pattern",
               {
@@ -752,14 +752,14 @@
         "files": {
           "compose": {
             "javaScript": {
-              "__evaluate__": "`${self.path.target.asset.javaScript}testBundle.compiled.js?${self.hashAlgorithm}=[hash]`"
+              "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 'testBundle.compiled.js')}?${self.hashAlgorithm}=[hash]`"
             }
           },
           "defaultHTML": {
             "filename": "test.html",
             "inject": "head",
             "template": {
-              "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
+              "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
             }
           },
           "html": []
@@ -782,7 +782,7 @@
             "filename": "test.html",
             "inject": "head",
             "template": {
-              "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}test.pug`) ? `${self.path.source.base}test.pug` : `${webOptimizerPath}/index.pug`}`"
+              "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
             }
           }
         },
@@ -819,7 +819,7 @@
       "files": {
         "compose": {
           "javaScript": {
-            "__evaluate__": "`${self.path.target.asset.javaScript}[name].js?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name].js')}?${self.hashAlgorithm}=[hash]`"
           }
         },
         "defaultHTML": {
@@ -879,17 +879,17 @@
       "files": {
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${self.path.target.asset.cascadingStyleSheet}index.compiled.css?${self.hashAlgorithm}=[contenthash]`"
+            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.compiled.css')}?${self.hashAlgorithm}=[contenthash]`"
           },
           "javaScript": {
-            "__evaluate__": "`${self.path.target.asset.javaScript}[name].compiled.js?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name].compiled.js')}?${self.hashAlgorithm}=[hash]`"
           }
         },
         "defaultHTML": {
           "filename": "playground.html",
           "inject": "head",
           "template": {
-            "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(`${self.path.source.base}playground.pug`) ? `${self.path.source.base}playground.pug` : `${webOptimizerPath}/index.pug`}`"
+            "__evaluate__": "`html?${tools.convertCircularObjectToJSON(self.module.html)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${helper.isFileSync(path.resolve(self.path.source.base, 'playground.pug')) ? path.resolve(self.path.source.base, 'playground.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
           }
         },
         "html": {

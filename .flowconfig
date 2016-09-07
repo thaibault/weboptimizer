@@ -27,6 +27,8 @@ module.name_mapper='^\./webpackConfigurator\.compiled$' -> './webpackConfigurato
 module.name_mapper='^\../webpackConfigurator\.compiled$' -> '../webpackConfigurator'
 module.name_mapper='^\./stylelintConfigurator\.compiled$' -> './stylelintConfigurator'
 module.name_mapper='^\../stylelintConfigurator\.compiled$' -> '../stylelintConfigurator'
+# NOTE: Point to dummy module for optional dependency.
+module.name_mapper='^jquery$' -> '../../type'
 
 module.file_ext=.js
 module.file_ext=.compiled.js
