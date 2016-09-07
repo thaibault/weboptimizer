@@ -141,16 +141,8 @@ export default (callback:Function, clear:boolean = true):any => {
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.
     */
-    if (
-        clear && typeof global !== 'undefined' && global !== browserAPI.window
-    ) {
+    if (clear && typeof global !== 'undefined' && global !== browserAPI.window)
         global.window = browserAPI.window
-        for (const key in browserAPI.window)
-            if (browserAPI.window.hasOwnProperty(
-                key
-            ) && !global.hasOwnProperty(key))
-                global[key] = browserAPI.window[key]
-    }
     // endregion
     if (
         typeof TARGET_TECHNOLOGY === 'undefined' ||
