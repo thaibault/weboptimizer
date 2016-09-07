@@ -391,14 +391,12 @@ QUnit.test('resolveInjection', (assert:Object):void => {
         assert.deepEqual(
             Helper.resolveInjection.apply(Helper, test[0]), test[1])
 })
-QUnit.test('getAutoChunk', (assert:Object):void => {
-    assert.deepEqual(Helper.getAutoChunk(
-        Helper.resolveBuildConfigurationFilePaths(
-            buildConfiguration, './', ['.git', 'node_modules']), [
-                '.git', 'node_modules'
-            ], './'
-    ), {})
-})
+QUnit.test('getAutoChunk', (assert:Object):void => assert.deepEqual(
+    Helper.getAutoChunk(Helper.resolveBuildConfigurationFilePaths(
+        buildConfiguration, './', ['.git', 'node_modules']), [
+            '.git', 'node_modules'
+        ], './'
+    ), {}))
 QUnit.test('determineModuleFilePath', (assert:Object):void => {
     for (const test:Array<any> of [
         [[''], null],
