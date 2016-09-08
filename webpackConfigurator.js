@@ -195,9 +195,10 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     0
                 ].filename].source(), (error:?Error, window:Object):void => {
                     if (configuration.inPlace.cascadingStyleSheet) {
-                        const urlPrefix:string = configuration.files.compose
-                            .cascadingStyleSheet.replace(
-                                '[contenthash]', '')
+                        const urlPrefix:string = path.relative(
+                            configuration.path.target.base,
+                            configuration.files.compose.cascadingStyleSheet
+                                .replace('[contenthash]', ''))
                         const domNode:DomNode = window.document.querySelector(
                             `link[href^="${urlPrefix}"]`)
                         if (domNode) {
@@ -226,9 +227,10 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                 `selector: link[href^="${urlPrefix}"]`)
                     }
                     if (configuration.inPlace.javaScript) {
-                        const urlPrefix:string =
+                        const urlPrefix:string = path.relative(
+                            configuration.path.target.base,
                             configuration.files.compose.javaScript.replace(
-                                '[hash]', '')
+                                '[hash]', ''))
                         const domNode:DomNode = window.document.querySelector(
                             `script[src^="${urlPrefix}"]`)
                         if (domNode) {
