@@ -462,7 +462,7 @@
           "events": true,
           "navigateFallbackURL": null,
           "output": {
-            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, 'serviceWorker.js')"
+            "__evaluate__": "path.relative(self.path.target.base, path.resolve(self.path.target.asset.javaScript, 'serviceWorker.js'))"
           }
         }
       },
