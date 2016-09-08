@@ -146,6 +146,29 @@ export default class Helper {
     // endregion
     // region file handler
     /**
+     * Applies file path/name placeholder replacements with given bundle
+     * associated informations.
+     * @param filePathTemplate - File path to process placeholder in.
+     * @param informations - Scope to use for processing.
+     * @returns Processed file path.
+     */
+    static renderFilePathTemplate(
+        filePathTemplate:string, informations:{[key:string]:string} = {
+            '[name]': '.__dummy__', '[id]': '.__dummy__',
+            '[hash]': '.__dummy__'
+        }
+    ):string {
+        let filePath:string = filePathTemplate
+        for (const placeholderName:string in informations)
+            if (informations.hasOwnProperty(placeholderName))
+                filePath = filePath.replace(new RegExp(
+                    Tools.stringConvertToValidRegularExpression(
+                        placeholderName
+                    ), 'g'
+                ), informations[placeholderName])
+        return filePath
+    }
+    /**
      * Check if given request points to an external dependency not maintained
      * by current package context.
      * @param request - Request to determine.

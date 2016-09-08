@@ -23,7 +23,6 @@ import postcssFontPath from 'postcss-fontpath'
 import postcssImport from 'postcss-import'
 import postcssSprites from 'postcss-sprites'
 import postcssURL from 'postcss-url'
-import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -272,26 +271,36 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
             compilation:Object, callback:ProcedureFunction
         ):void => {
             if (configuration.files.html[0].filename in compilation.assets) {
-                // TODO wirkt komisch!!
-                if (configuration.inPlace.cascadingStyleSheet)
-                    removeDirectoryRecursivelySync(
-                        configuration.path.target.asset.cascadingStyleSheet,
-                        {glob: false})
+                if (configuration.inPlace.cascadingStyleSheet) {
+                    const assetFilePath = Helper.stripLoader(
+                        configuration.files.compose.cascadingStyleSheet)
+                    if (Helper.isFileSync(assetFilePath))
+                        fileSystem.unlinkSync(assetFilePath)
+                }
                 if (configuration.inPlace.javaScript) {
-                    const assetFilePath =
-                        configuration.files.compose.javaScript.replace(
-                            `?${configuration.hashAlgorithm}=[hash]`, '')
-                    for (const filePath:string of [
-                        assetFilePath, `${assetFilePath}.map`
-                    ])
-                        if (Helper.isFileSync(filePath))
-                            fileSystem.unlinkSync(filePath)
+                    const assetFilePathTemplate = Helper.stripLoader(
+                        configuration.files.compose.javaScript)
+                    for (
+                        const chunkName:string in
+                        configuration.injection.internal.normalized
+                    )
+                        if (configuration.injection.internal.normalized
+                        .hasOwnProperty(chunkName)) {
+                            const assetFilePath:string =
+                            Helper.renderFilePathTemplate(
+                                assetFilePathTemplate, {'[name]': chunkName})
+                            if (Helper.isFileSync(assetFilePath))
+                                fileSystem.unlinkSync(assetFilePath)
+                        }
+                }
+                for (const type:string of [
+                    'javaScript', 'cascadingStyleSheet'
+                ])
                     if (fileSystem.readdirSync(
-                        configuration.path.target.asset.javaScript
+                        configuration.path.target.asset[type]
                     ).length === 0)
                         fileSystem.rmdirSync(
-                            configuration.path.target.asset.javaScript)
-                }
+                            configuration.path.target.asset[type])
             }
             callback()
         })
@@ -299,23 +308,21 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
 // /// endregion
 // /// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
-    for (const chunkID:string in configuration.injection.internal.normalized)
+    for (const chunkName:string in configuration.injection.internal.normalized)
         if (configuration.injection.internal.normalized.hasOwnProperty(
-            chunkID
+            chunkName
         )) {
             const manifestFilePath:string =
-                `${configuration.path.target.base}/${chunkID}.` +
+                `${configuration.path.target.base}/${chunkName}.` +
                 `dll-manifest.json`
             if (configuration.dllManifestFilePaths.includes(
                 manifestFilePath
             )) {
-                delete configuration.injection.internal.normalized[chunkID]
-                // TODO replace all placeholder like "[id]", "[ext]", "[hash]"
-                // and everywhere else
-                const filePath:string =
-                    configuration.files.compose.javaScript.replace(
-                        /^(.+)(?:\?[^?]*)$/, '$1'
-                    ).replace(/\[name\]/g, chunkID)
+                delete configuration.injection.internal.normalized[chunkName]
+                const filePath:string = Helper.renderFilePathTemplate(
+                    Helper.stripLoader(
+                        configuration.files.compose.javaScript,
+                        {'[name]': chunkName}))
                 pluginInstances.push(new plugins.AddAssetHTMLPlugin({
                     filepath: filePath,
                     hash: true,
@@ -329,9 +336,9 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
 // /// endregion
 // /// region generate common chunks
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
-    for (const chunkID:string of configuration.injection.commonChunkIDs)
+    for (const chunkName:string of configuration.injection.commonChunkIDs)
         if (configuration.injection.internal.normalized.hasOwnProperty(
-            chunkID
+            chunkName
         ))
             pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
                 async: false,
@@ -340,7 +347,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                     configuration.path.context,
                     configuration.files.compose.javaScript),
                 minChunks: Infinity,
-                name: chunkID,
+                name: chunkName,
                 minSize: 0
             }))
 // /// endregion
@@ -414,14 +421,14 @@ if (configuration.injection.external === '__implicit__')
 // /// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
     let dllChunkIDExists:boolean = false
-    for (const chunkID:string in configuration.injection.internal.normalized)
+    for (const chunkName:string in configuration.injection.internal.normalized)
         if (configuration.injection.internal.normalized.hasOwnProperty(
-            chunkID
+            chunkName
         ))
-            if (configuration.injection.dllChunkIDs.includes(chunkID))
+            if (configuration.injection.dllChunkIDs.includes(chunkName))
                 dllChunkIDExists = true
             else
-                delete configuration.injection.internal.normalized[chunkID]
+                delete configuration.injection.internal.normalized[chunkName]
     if (dllChunkIDExists) {
         libraryName = '[name]DLLPackage'
         pluginInstances.push(new webpack.DllPlugin({
