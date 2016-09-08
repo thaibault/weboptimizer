@@ -383,7 +383,7 @@
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
               },
               "name": {
-                "__evaluate__": "`/${path.relative(self.path.target.base, self.path.target.asset.image, '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                "__evaluate__": "`/${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, '[name].[ext]'))}?${self.hashAlgorithm}=[hash]`"
               }
             }
           },
