@@ -186,29 +186,20 @@ if (configuration.givenCommandLineArguments.length > 2) {
                                 configuration.path.source.asset.base,
                                 configuration.path.ignore
                             ), configuration.build, configuration.path)
-                        // TODO replace all placeholder like [hash] [id] ...
-                        const filePath:string =
-                            configuration.files.compose.javaScript.replace(
-                                '[name]', path.join(path.relative(
-                                    path.dirname(moduleID),
-                                    configuration.path.context
-                                ), path.basename(moduleID))
-                            ).replace(/\?[^?]+$/, '')
                         if (typeof type === 'string' && configuration.build[
                             type
-                        ])
+                        ]) {
+                            const filePath:string =
+                                Helper.renderFilePathTemplate(
+                                    configuration.files.compose.javaScript,
+                                    {'[name]': chunkName})
                             if (configuration.build[
                                 type
-                            ].outputExtension === 'js')
-                                try {
-                                    fileSystem.chmodSync(filePath, '755')
-                                } catch (error) {}
-                            else
-                                for (const suffix:string of ['', '.map'])
-                                    try {
-                                        fileSystem.unlinkSync(
-                                            filePath + suffix)
-                                    } catch (error) {}
+                            ].outputExtension === 'js' && Helper.isFileSync(
+                                filePath
+                            ))
+                                fileSystem.chmodSync(filePath, '755')
+                        }
                     }
             for (const filePath:?string of configuration.path.tidyUp)
                 if (filePath)

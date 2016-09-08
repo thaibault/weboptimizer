@@ -114,6 +114,20 @@ QUnit.test('handleChildProcess', (assert:Object):void => {
 })
 // endregion
 // region file handler
+QUnit.test('renderFilePathTemplate', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [[''], ''],
+        [['a'], 'a'],
+        [['path'], 'path'],
+        [['a[name]b'], 'a.__dummy__b'],
+        [['a[name]b[name]'], 'a.__dummy__b.__dummy__'],
+        [['a[id]b[hash]'], 'a.__dummy__b.__dummy__'],
+        [['a[id]b[hash]', {'[id]': 1, '[hash]': 2}], 'a1b2'],
+        [['a[id]b[hash]', {}], 'a[id]b[hash]']
+    ])
+        assert.strictEqual(
+            Helper.renderFilePathTemplate.apply(Helper, test[0]), test[1])
+})
 QUnit.test('determineExternalRequest', (assert:Object):void => {
     for (const test:Array<any> of [
         [[''], ''],
