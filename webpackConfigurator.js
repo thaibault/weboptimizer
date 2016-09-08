@@ -272,6 +272,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
             compilation:Object, callback:ProcedureFunction
         ):void => {
             if (configuration.files.html[0].filename in compilation.assets) {
+                // TODO wirkt komisch!!
                 if (configuration.inPlace.cascadingStyleSheet)
                     removeDirectoryRecursivelySync(
                         configuration.path.target.asset.cascadingStyleSheet,
