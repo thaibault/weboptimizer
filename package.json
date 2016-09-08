@@ -902,12 +902,6 @@
         ]
       },
       "inPlace": {
-        "cascadingStyleSheet": {
-          "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve'"
-        },
-        "javaScript": {
-          "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve'"
-        },
         "otherMaximumFileSizeLimitInByte": 1,
         "externalLibrary": {
           "normal": {
