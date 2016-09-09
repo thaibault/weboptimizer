@@ -650,7 +650,7 @@ const webpackConfiguration:WebpackConfiguration = {
             // Convert to native web types.
             // region script
             {
-                test: /\.js$/,
+                test: /\.js(?:\?.*)?$/,
                 loader: loader.preprocessor.javaScript,
                 include: [configuration.path.source.asset.javaScript].concat(
                     configuration.module.locations.directoryPaths),
@@ -670,15 +670,17 @@ const webpackConfiguration:WebpackConfiguration = {
             // region html (templates)
             // NOTE: This is only for the main entry template.
             {
-                test: new RegExp(Tools.stringConvertToValidRegularExpression(
-                    Helper.stripLoader(
-                        configuration.files.defaultHTML.template))),
+                test: new RegExp(
+                    '^' + Tools.stringConvertToValidRegularExpression(
+                        Helper.stripLoader(
+                            configuration.files.defaultHTML.template)
+                    ) + '(?:\\?.*)?$'),
                 loader: configuration.files.defaultHTML.template.substring(
                     0, configuration.files.defaultHTML.template.lastIndexOf(
                         '!'))
             },
             {
-                test: /\.pug$/,
+                test: /\.pug(?:\?.*)?$/,
                 loader:
                     'file?name=' + path.relative(
                         configuration.path.target.asset.base,
@@ -697,7 +699,7 @@ const webpackConfiguration:WebpackConfiguration = {
             // Loads dependencies.
             // region style
             {
-                test: /\.css$/,
+                test: /\.css(?:\?.*)?$/,
                 loader: plugins.ExtractText.extract(
                     loader.style,
                     `${loader.cascadingStyleSheet}!` +
@@ -720,7 +722,7 @@ const webpackConfiguration:WebpackConfiguration = {
             // endregion
             // region html (templates)
             {
-                test: /\.html$/,
+                test: /\.html(?:\?.*)?$/,
                 loader:
                     'file?name=' + path.relative(
                         configuration.path.target.base,
@@ -738,19 +740,22 @@ const webpackConfiguration:WebpackConfiguration = {
             // Optimize loaded assets.
             // region font
             {
-                test: /\.eot(?:\?v=\d+\.\d+\.\d+)?$/,
+                test: /\.eot(?:\?.*)?$/,
                 loader: loader.postprocessor.font.eot
-            }, {test: /\.woff2?$/, loader: loader.postprocessor.font.woff}, {
-                test: /\.ttf(?:\?v=\d+\.\d+\.\d+)?$/,
+            }, {
+                test: /\.woff2?(?:\?.*)$/,
+                loader: loader.postprocessor.font.woff
+            }, {
+                test: /\.ttf(?:\?.*)?$/,
                 loader: loader.postprocessor.font.ttf
             }, {
-                test: /\.svg(?:\?v=\d+\.\d+\.\d+)?$/,
+                test: /\.svg(?:\.*)?$/,
                 loader: loader.postprocessor.font.svg
             },
             // endregion
             // region image
             {
-                test: /\.(?:png|jpg|ico|gif)$/,
+                test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/,
                 loader: loader.postprocessor.image
             },
             // endregion
