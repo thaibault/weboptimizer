@@ -749,7 +749,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 test: /\.ttf(?:\?.*)?$/,
                 loader: loader.postprocessor.font.ttf
             }, {
-                test: /\.svg(?:\.*)?$/,
+                test: /\.svg(?:\?.*)?$/,
                 loader: loader.postprocessor.font.svg
             },
             // endregion
