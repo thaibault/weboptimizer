@@ -321,8 +321,8 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 delete configuration.injection.internal.normalized[chunkName]
                 const filePath:string = Helper.renderFilePathTemplate(
                     Helper.stripLoader(
-                        configuration.files.compose.javaScript,
-                        {'[name]': chunkName}))
+                        configuration.files.compose.javaScript
+                    ), {'[name]': chunkName})
                 pluginInstances.push(new plugins.AddAssetHTMLPlugin({
                     filepath: filePath,
                     hash: true,
@@ -344,7 +344,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 async: false,
                 children: false,
                 filename: path.relative(
-                    configuration.path.context,
+                    configuration.path.target.base,
                     configuration.files.compose.javaScript),
                 minChunks: Infinity,
                 name: chunkName,
