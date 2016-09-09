@@ -743,7 +743,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 test: /\.eot(?:\?.*)?$/,
                 loader: loader.postprocessor.font.eot
             }, {
-                test: /\.woff2?(?:\?.*)$/,
+                test: /\.woff2?(?:\?.*)?$/,
                 loader: loader.postprocessor.font.woff
             }, {
                 test: /\.ttf(?:\?.*)?$/,
