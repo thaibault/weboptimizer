@@ -344,7 +344,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 async: false,
                 children: false,
                 filename: path.relative(
-                    configuration.path.context,
+                    configuration.path.target.base,
                     configuration.files.compose.javaScript),
                 minChunks: Infinity,
                 name: chunkName,
