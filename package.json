@@ -2,6 +2,10 @@
   "name": "weboptimizer",
   "version": "1.0.64",
   "description": "A generic web optimizer, (module) bundler and development environment.",
+  "documentationWebsite": {
+    "bundle": false,
+    "trackingCode": "UA-40192634-11"
+  },
   "homepage": "http://torben.website/webOptimizer",
   "license": "CC-BY-3.0",
   "bin": {
