@@ -26,7 +26,7 @@
     
 
 
-    <h3>webOptimizer 1.0.0</h3>
+    <h3>weboptimizer 1.0.64</h3>
 
 
 
@@ -69,8 +69,10 @@ needed customisations.</li>
 <li>Many needed uses-cases are <strong>preconfigured</strong> and mostly works out of the box for
 your project.<ul>
 <li><strong>API-Documentation</strong> generation</li>
+<li>Image <strong>sprite</strong> handling. Combine your images and never create sprites by
+hand again.</li>
 <li>Polymorphic <strong>testing</strong> on dom in browsers and/or in node through
-webOptimizer/browserAPI</li>
+weboptimizer/browserAPI</li>
 <li><strong>Linting</strong> and <strong>TypeChecking</strong> with Flow</li>
 <li>Preconfigured <strong>preprocessing</strong> for CSS (PostCSS), JavaScript (Babel, Flow)</li>
 <li>Preconfigured <strong>postprocessing</strong> for CSS (Minification),
@@ -112,7 +114,7 @@ server.</li>
 ...
 &quot;dependencies&quot;: {
     ...
-    &quot;webOptimizer&quot;: &quot;git+ssh://git@github.com/thaibault/webOptimizer.git&quot;,
+    &quot;weboptimizer&quot;: &quot;latest&quot;,
     ...
 },
 ...</code></pre><p>Update your <strong>packages</strong> via npm and have fun:</p>
@@ -158,27 +160,30 @@ default source, target, asset or build paths do it in your <strong>package.json<
     &quot;path&quot;: {
         ...
         &quot;apiDocumentation&quot;: &quot;apiDocumentation/&quot;,
-        &quot;asset&quot;: {
+        &quot;source&quot;: {
             ...
-            &quot;cascadingStyleSheet&quot;: &quot;cascadingStyleSheet/&quot;,
-            &quot;coffeeScript&quot;: &quot;coffeeScript/&quot;,
-            &quot;data&quot;: &quot;data/&quot;,
-            &quot;favicon&quot;: &quot;favicon.png&quot;,
-            &quot;font&quot;: &quot;font/&quot;,
-            &quot;image&quot;: &quot;image/&quot;,
-            &quot;javaScript&quot;: &quot;javaScript/&quot;,
-            &quot;less&quot;: &quot;less/&quot;,
-            &quot;publicTarget&quot;: &quot;&quot;,
-            &quot;sass&quot;: &quot;sass/&quot;,
-            &quot;scss&quot;: &quot;scss/&quot;,
-            &quot;template&quot;: &quot;template/&quot;
-            ..
+            &quot;asset&quot;: {
+                ...
+                &quot;cascadingStyleSheet&quot;: &quot;cascadingStyleSheet/&quot;,
+                &quot;data&quot;: &quot;data/&quot;,
+                &quot;favicon&quot;: &quot;favicon.png&quot;,
+                &quot;font&quot;: &quot;font/&quot;,
+                &quot;image&quot;: &quot;image/&quot;,
+                &quot;javaScript&quot;: &quot;javaScript/&quot;,
+                &quot;publicTarget&quot;: &quot;&quot;,
+                &quot;template&quot;: &quot;template/&quot;
+                ..
+            },
+            ...
         },
         &quot;ignore&quot;: [&quot;node_modules&quot;, &quot;.git&quot;],
         &quot;manifest&quot;: &quot;manifest.appcache&quot;,
-        &quot;source&quot;: &quot;source/&quot;,
-        &quot;target&quot;: &quot;build/&quot;,
-        &quot;tidyUp&quot;: [&quot;crap&quot;]
+        &quot;target&quot;: {
+            ...
+            &quot;base&quot;: &quot;build/&quot;,
+            ...
+        },
+        &quot;tidyUp&quot;: [&quot;crap&quot;],
         ...
     },
     ...
@@ -205,13 +210,16 @@ dynamically though a small evaluation mechanism:</p>
     ...
     &quot;path&quot;: {
         ...
-        &quot;source&quot;: &quot;/&quot;,
-        ...
-        &quot;asset&quot;: {
+        &quot;source&quot;: {
             ...
-            &quot;cascadingStyleSheet&quot;: &quot;cascadingStyleSheet/&quot;,
-            &quot;template&quot;: {
-                &quot;__evaluate__&quot;: &quot;self.debug ? '' : self.path.source&quot;
+            &quot;base&quot;: &quot;/&quot;,
+            &quot;asset&quot;: {
+                ...
+                &quot;cascadingStyleSheet&quot;: &quot;cascadingStyleSheet/&quot;,
+                &quot;template&quot;: {
+                    &quot;__evaluate__&quot;: &quot;self.debug ? '' : self.path.source.base&quot;
+                },
+                ...
             },
             ...
         },
@@ -222,7 +230,7 @@ dynamically though a small evaluation mechanism:</p>
         ...
         &quot;externals&quot;: [
             ...
-            {&quot;__evaluate__&quot;: &quot;self.path.asset.cascadingStyleSheet&quot;},
+            {&quot;__evaluate__&quot;: &quot;self.path.source.asset.cascadingStyleSheet&quot;},
             &quot;onlineAvailable.txt&quot;,
             ...
         ],
@@ -238,12 +246,15 @@ dynamically though a small evaluation mechanism:</p>
     ...
     &quot;path&quot;: {
         ...
-        &quot;source&quot;: &quot;/&quot;,
-        ...
-        &quot;asset&quot;: {
+        &quot;source&quot;: {
             ...
-            &quot;template&quot;: {
-                &quot;__execute__&quot;: &quot;test = self.path.source; if (test.endsWith('js')) return 'bar/';return 'foo/'&quot;
+            &quot;base&quot;: &quot;/&quot;,
+            &quot;asset&quot;: {
+                ...
+                &quot;template&quot;: {
+                    &quot;__execute__&quot;: &quot;test = self.path.source.base; if (test.endsWith('js')) return 'bar/';return 'foo/'&quot;
+                },
+                ...
             },
             ...
         },
@@ -276,7 +287,7 @@ more details):</p>
 ...
 &quot;webOptimizer&quot;: {
     ...
-    &quot;libraryName&quot;: {&quot;_evaluate__&quot;: helper.isPlainObject(self.name) ? helper.convertToValidVariableName(self.name) : 'random'},
+    &quot;libraryName&quot;: {&quot;__evaluate__&quot;: helper.isPlainObject(self.name) ? helper.convertToValidVariableName(self.name) : 'random'},
     ...
 },
 ...</code></pre><!-- region modline
@@ -293,13 +304,13 @@ endregion --></article>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Helper.html">Helper</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Helper">Helper</a></li><li><a href="global.html#value">value</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Aug 18 2016 11:52:25 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Sun Sep 11 2016 01:46:11 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>
