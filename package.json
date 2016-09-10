@@ -707,6 +707,7 @@
           "-loader.js",
           "Loader.compiled.js",
           "Loader.js",
+          ".js.compiled",
           ".js"
         ],
         "directories": [

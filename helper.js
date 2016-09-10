@@ -70,7 +70,22 @@ export default class Helper {
         )) : moduleIDWithoutLoader
     }
     // endregion
-    // region data handling
+    // region array
+    /**
+     * Converts given list of path to a normalized list with unique values.
+     * @param paths - File paths.
+     * @returns The given file path list with normalized unique values.
+     */
+    static normalizePaths(paths:Array<string>):Array<string> {
+        return Array.from(new Set(paths.map((givenPath:string):string => {
+            givenPath = path.normalize(givenPath)
+            if (givenPath.endsWith('/'))
+                return givenPath.substring(0, givenPath.length - 1)
+            return givenPath
+        })))
+    }
+    // endregion
+    // region data
     /**
      * Converts given serialized or base64 encoded string into a javaScript
      * one if possible.

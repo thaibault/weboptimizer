@@ -45,9 +45,9 @@ QUnit.test('isFilePathInLocation', (assert:Object):void => {
     for (const okArguments:Array<any> of [
         ['./', ['./']], ['./', ['../']]
     ])
-        assert.ok(Helper.isFilePathInLocation.apply(Helper, okArguments))
+        assert.ok(Helper.isFilePathInLocation.apply(this, okArguments))
     for (const notOkArguments:Array<any> of [['../', ['./']]])
-        assert.notOk(Helper.isFilePathInLocation.apply(Helper, notOkArguments))
+        assert.notOk(Helper.isFilePathInLocation.apply(this, notOkArguments))
 })
 // / endregion
 // / region string
@@ -65,6 +65,43 @@ QUnit.test('stripLoader', (assert:Object):void => {
         ['imports?$=library!moduleName', 'moduleName']
     ])
         assert.strictEqual(Helper.stripLoader(test[0]), test[1])
+})
+// / endregion
+// / region array
+QUnit.test('normalizePaths', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [[], []],
+        [['a'], ['a']],
+        [['a/'], ['a']],
+        [['a/', 'a'], ['a']],
+        [['a/', 'a/'], ['a']],
+        [['a/', 'a/', 'b/'], ['a', 'b']],
+        [['a/', 'a/', 'b'], ['a', 'b']],
+        [['a/', 'a/', 'b', '', '.'], ['a', 'b', '.']]
+    ])
+        assert.deepEqual(Helper.normalizePaths(test[0]), test[1])
+})
+// / endregion
+// / region data
+QUnit.test('parseEncodedObject', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [[''], undefined],
+        [['undefined'], null],
+        [['{a: undefined}'], {a: undefined}],
+        [[new Buffer('{a: undefined}').toString('base64')], {a: undefined}],
+        [['{a: 2}'], {a: 2}],
+        [[new Buffer('{a: 1}').toString('base64')], {a: 1}],
+        [['null'], null],
+        [[new Buffer('null').toString('base64')], null],
+        [['{}'], {}],
+        [[new Buffer('{}').toString('base64')], {}],
+        [['{a: a}'], null],
+        [[new Buffer('{a: a}').toString('base64')], null],
+        [['{a: scope.a}', {a: 2}], {a: 2}],
+        [[new Buffer('{a: scope.a}').toString('base64'), {a: 2}], {a: 2}]
+    ])
+        assert.deepEqual(
+            Helper.parseEncodedObject.apply(this, test[0]), test[1])
 })
 // / endregion
 // region process handler
@@ -126,7 +163,7 @@ QUnit.test('renderFilePathTemplate', (assert:Object):void => {
         [['a[id]b[hash]', {}], 'a[id]b[hash]']
     ])
         assert.strictEqual(
-            Helper.renderFilePathTemplate.apply(Helper, test[0]), test[1])
+            Helper.renderFilePathTemplate.apply(this, test[0]), test[1])
 })
 QUnit.test('determineExternalRequest', (assert:Object):void => {
     for (const test:Array<any> of [
@@ -197,7 +234,7 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         ]
     ])
         assert.strictEqual(
-            Helper.determineExternalRequest.apply(Helper, test[0]), test[1])
+            Helper.determineExternalRequest.apply(this, test[0]), test[1])
 })
 QUnit.test('isFileSync', (assert:Object):void => {
     for (const filePath:string of [
@@ -271,7 +308,7 @@ QUnit.test('determineAssetType', (assert:Object):void => {
         [['a.css', buildConfiguration, paths], null]
     ])
         assert.strictEqual(
-            Helper.determineAssetType.apply(Helper, test[0]), test[1])
+            Helper.determineAssetType.apply(this, test[0]), test[1])
 })
 QUnit.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
     assert.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
@@ -403,7 +440,7 @@ QUnit.test('resolveInjection', (assert:Object):void => {
         ]
     ])
         assert.deepEqual(
-            Helper.resolveInjection.apply(Helper, test[0]), test[1])
+            Helper.resolveInjection.apply(this, test[0]), test[1])
 })
 QUnit.test('getAutoChunk', (assert:Object):void => assert.deepEqual(
     Helper.getAutoChunk(Helper.resolveBuildConfigurationFilePaths(
@@ -423,7 +460,7 @@ QUnit.test('determineModuleFilePath', (assert:Object):void => {
         [['helper', {}, ['.js'], './'], 'helper.js']
     ]) {
         let result:?string = Helper.determineModuleFilePath.apply(
-            Helper, test[0])
+           this, test[0])
         if (result)
             result = path.basename(result)
         assert.strictEqual(result, test[1])

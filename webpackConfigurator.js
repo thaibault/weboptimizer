@@ -652,8 +652,9 @@ const webpackConfiguration:WebpackConfiguration = {
             {
                 test: /\.js(?:\?.*)?$/,
                 loader: loader.preprocessor.javaScript,
-                include: [configuration.path.source.asset.javaScript].concat(
-                    configuration.module.locations.directoryPaths),
+                include: Helper.normalizePaths([
+                    configuration.path.source.asset.javaScript].concat(
+                        configuration.module.locations.directoryPaths)),
                 exclude: (filePath:string):boolean => {
                     filePath = Helper.stripLoader(filePath)
                     return Helper.isFilePathInLocation(
@@ -688,10 +689,10 @@ const webpackConfiguration:WebpackConfiguration = {
                     ) + `[name].html?${configuration.hashAlgorithm}=[hash]!` +
                     `extract!${loader.html}!${loader.preprocessor.pug}`,
                 include: configuration.path.source.asset.template,
-                exclude: configuration.files.html.concat(
+                exclude: Helper.normalizePaths(configuration.files.html.concat(
                     configuration.files.defaultHTML
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
-                    Helper.stripLoader(htmlConfiguration.template))
+                    Helper.stripLoader(htmlConfiguration.template)))
             }
             // endregion
         ],
@@ -704,9 +705,9 @@ const webpackConfiguration:WebpackConfiguration = {
                     loader.style,
                     `${loader.cascadingStyleSheet}!` +
                     loader.preprocessor.cascadingStyleSheet),
-                include: [
+                include: Helper.normalizePaths([
                     configuration.path.source.asset.cascadingStyleSheet
-                ].concat(configuration.module.locations.directoryPaths),
+                ].concat(configuration.module.locations.directoryPaths)),
                 exclude: (filePath:string):boolean => {
                     filePath = Helper.stripLoader(filePath)
                     return Helper.isFilePathInLocation(
@@ -730,9 +731,9 @@ const webpackConfiguration:WebpackConfiguration = {
                     ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
                     `extract!${loader.html}`,
                 include: configuration.path.source.asset.template,
-                exclude: configuration.files.html.map((
+                exclude: Helper.normalizePaths(configuration.files.html.map((
                     htmlConfiguration:HTMLConfiguration
-                ):string => Helper.stripLoader(htmlConfiguration.template))
+                ):string => Helper.stripLoader(htmlConfiguration.template)))
             }
             // endregion
         ],
