@@ -40,7 +40,6 @@
     "babel-runtime": "latest",
     "babili": "latest",
     "css-loader": "latest",
-    "documentation-website": "latest",
     "eslint": "latest",
     "eslint-config-google": "latest",
     "eslint-plugin-flowtype": "latest",
@@ -81,6 +80,7 @@
     "webpack-sources": "latest"
   },
   "devDependencies": {
+    "documentation-website": "latest",
     "qunit-cli": "latest",
     "source-map-support": "latest"
   },
