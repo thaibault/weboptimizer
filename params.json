@@ -1,8 +1,0 @@
-{
-    "bundle": false,
-    "name": "webOptimizer",
-    "tagline": "A generic web optimizer, (module) bundler and development environment.",
-    "google": "UA-40192634-11",
-    "language": "en",
-    "languages": ["enUS"]
-}
