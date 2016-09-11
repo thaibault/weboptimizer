@@ -743,10 +743,7 @@
           },
           "preprocessor": {
             "babel": {
-              "presets": [
-                "latest",
-                "stage-0"
-              ]
+              "presets": {"__remove__": ["babili"]}
             }
           }
         }
@@ -841,10 +838,7 @@
       "module": {
         "preprocessor": {
           "babel": {
-            "presets": [
-              "latest",
-              "stage-0"
-            ]
+            "presets": {"__remove__": ["babili"]}
           },
           "pug": {
             "compiler": {
