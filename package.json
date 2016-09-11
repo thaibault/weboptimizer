@@ -3,6 +3,7 @@
   "version": "1.0.65",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
+    "name": "webOptimizer",
     "bundle": false,
     "trackingCode": "UA-40192634-11"
   },
