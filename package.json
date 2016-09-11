@@ -124,7 +124,7 @@
           "__evaluate__": "self.path.source.asset.favicon"
         },
         "prefix": {
-          "__evaluate__": "path.resolve(self.path.target.asset.image, 'favicons-[hash]/')"
+          "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, 'favicons-[hash]'))}/`"
         },
         "emitStats": false,
         "statsFilename": "iconStats.json",
