@@ -265,8 +265,7 @@
           "config": "html",
           "attrs": [
             "img:src",
-            "link:href",
-            "a:href"
+            "link:href"
           ]
         },
         "provide": {},
