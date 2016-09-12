@@ -191,8 +191,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         ]) {
                             const filePath:string =
                                 Helper.renderFilePathTemplate(
-                                    configuration.files.compose.javaScript,
-                                    {'[name]': chunkName})
+                                    Helper.stripLoader(
+                                        configuration.files.compose.javaScript,
+                                        {'[name]': chunkName}))
                             if (configuration.build[
                                 type
                             ].outputExtension === 'js' && Helper.isFileSync(
