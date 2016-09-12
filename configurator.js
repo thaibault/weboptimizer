@@ -101,7 +101,7 @@ const libraryConfiguration:PlainObject = metaConfiguration.library
 let configuration:DefaultConfiguration
 if (debug)
     configuration = Tools.extendObject(true, Tools.modifyObject(
-        Tools.metaConfiguration.default, metaConfiguration.debug
+        metaConfiguration.default, metaConfiguration.debug
     ), metaConfiguration.debug)
 else
     configuration = metaConfiguration.default
