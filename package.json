@@ -3,6 +3,7 @@
   "version": "1.0.65",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
+    "name": "webOptimizer",
     "bundle": false,
     "trackingCode": "UA-40192634-11"
   },
@@ -742,10 +743,7 @@
           },
           "preprocessor": {
             "babel": {
-              "presets": [
-                "latest",
-                "stage-0"
-              ]
+              "presets": {"__remove__": ["babili"]}
             }
           }
         }
@@ -840,10 +838,7 @@
       "module": {
         "preprocessor": {
           "babel": {
-            "presets": [
-              "latest",
-              "stage-0"
-            ]
+            "presets": {"__remove__": ["babili"]}
           },
           "pug": {
             "compiler": {
