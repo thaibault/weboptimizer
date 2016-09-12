@@ -100,13 +100,16 @@ metaConfiguration.default.path.context += '/'
 const libraryConfiguration:PlainObject = metaConfiguration.library
 let configuration:DefaultConfiguration
 if (debug)
-    configuration = Tools.extendObject(
-        true, metaConfiguration.default, metaConfiguration.debug)
+    configuration = Tools.extendObject(true, Tools.modifyObject(
+        Tools.metaConfiguration.default, metaConfiguration.debug
+    ), metaConfiguration.debug)
 else
     configuration = metaConfiguration.default
 configuration.debug = debug
 if (typeof configuration.library === 'object')
-    Tools.extendObject(true, libraryConfiguration, configuration.library)
+    Tools.extendObject(true, Tools.modifyObject(
+        libraryConfiguration, configuration.library
+    ), configuration.library)
 if (
     'library' in specificConfiguration &&
     // IgnoreTypeCheck
@@ -116,8 +119,9 @@ if (
         !('library' in specificConfiguration)
     ) && configuration.library
 )
-    configuration = Tools.extendObject(
-        true, configuration, libraryConfiguration)
+    configuration = Tools.extendObject(true, Tools.modifyObject(
+        configuration, libraryConfiguration
+    ), libraryConfiguration)
 // endregion
 // region merging and evaluating default, test, specific and dynamic settings
 // / region load additional dynamically given configuration
@@ -145,19 +149,26 @@ if (filePath) {
 if (runtimeInformation.givenCommandLineArguments.length > 2)
     // region apply documentation configuration
     if (runtimeInformation.givenCommandLineArguments[2] === 'document')
-        Tools.extendObject(true, configuration, configuration.document)
+        Tools.extendObject(true, Tools.modifyObject(
+            configuration, configuration.document
+        ), configuration.document)
     // endregion
     // region apply test configuration
     else if (
         runtimeInformation.givenCommandLineArguments[2] === 'testInBrowser'
     )
-        Tools.extendObject(true, configuration, configuration.testInBrowser)
+        Tools.extendObject(true, Tools.modifyObject(
+            configuration, configuration.testInBrowser
+        ), configuration.testInBrowser)
     else if (runtimeInformation.givenCommandLineArguments[2] === 'test')
-        Tools.extendObject(true, configuration, configuration.test)
+        Tools.extendObject(true, Tools.modifyObject(
+            configuration, configuration.test
+        ), configuration.test)
     // endregion
 // / endregion
-Tools.extendObject(
-    true, configuration, specificConfiguration, runtimeInformation)
+Tools.extendObject(true, Tools.modifyObject(Tools.modifyObject(
+    configuration, specificConfiguration
+), runtimeInformation), specificConfiguration, runtimeInformation)
 let result:?PlainObject = null
 if (runtimeInformation.givenCommandLineArguments.length > 3)
     result = Helper.parseEncodedObject(
@@ -165,7 +176,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
             .givenCommandLineArguments.length - 1],
         configuration, 'configuration')
 if (Tools.isPlainObject(result))
-    Tools.extendObject(true, configuration, result)
+    Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
 let targetDirectory:?Object = null
