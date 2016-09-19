@@ -87,8 +87,8 @@ export default class Helper {
     // endregion
     // region data
     /**
-     * Converts given serialized or base64 encoded string into a javaScript
-     * one if possible.
+     * Converts given serialized, base64 encoded or file path given object into
+     * a native javaScript one if possible.
      * @param serializedObject - Object as string.
      * @param scope - An optional scope which will be used to evaluate given
      * object in.
@@ -98,6 +98,11 @@ export default class Helper {
     static parseEncodedObject(
         serializedObject:string, scope:Object = {}, name:string = 'scope'
     ):?PlainObject {
+        if (serializedObject.endsWith('.json') && Helper.isFileSync(
+            serializedObject
+        ))
+            serializedObject = fileSystem.readFileSync(serializedObject, {
+                encoding: 'utf-8'})
         if (!serializedObject.startsWith('{'))
             serializedObject = Buffer.from(
                 serializedObject, 'base64'
