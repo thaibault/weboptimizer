@@ -24,17 +24,17 @@ QUnit.load()
 const buildConfiguration:BuildConfiguration = {
     other: {
         extension: 'other',
-        fileNamePattern: '',
+        filePathPattern: '',
         outputExtension: 'other'
     },
     javaScript: {
         extension: 'js',
-        fileNamePattern: '',
+        filePathPattern: '',
         outputExtension: 'js'
     },
     example: {
         extension: 'example',
-        fileNamePattern: '',
+        filePathPattern: '',
         outputExtension: 'example'
     }
 }
@@ -317,17 +317,17 @@ QUnit.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
     ), [
         {
             extension: 'js',
-            fileNamePattern: '',
+            filePathPattern: '',
             filePaths: [],
             outputExtension: 'js'
         }, {
             extension: 'example',
-            fileNamePattern: '',
+            filePathPattern: '',
             filePaths: [],
             outputExtension: 'example'
         }, {
             extension: 'other',
-            fileNamePattern: '',
+            filePathPattern: '',
             filePaths: [],
             outputExtension: 'other'
         }
