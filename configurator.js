@@ -286,6 +286,17 @@ resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.knownExtensions, resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base)
+console.log(Helper.resolveBuildConfigurationFilePaths(
+    resolvedConfiguration.build,
+    resolvedConfiguration.path.source.asset.base,
+    resolvedConfiguration.path.ignore.concat(
+        resolvedConfiguration.module.directories,
+        resolvedConfiguration.loader.directories
+    ).map((filePath:string):string => path.resolve(
+        resolvedConfiguration.path.context, filePath)
+    ).filter((filePath:string):boolean =>
+        !resolvedConfiguration.path.context.startsWith(filePath))
+))
 resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.injection, Helper.resolveBuildConfigurationFilePaths(
         resolvedConfiguration.build,
