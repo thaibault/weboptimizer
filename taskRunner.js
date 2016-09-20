@@ -114,7 +114,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                         return false
                     for (const type:string in configuration.build)
                         if (new RegExp(
-                            configuration.build[type].fileNamePattern
+                            configuration.build[type].filePathPattern
                         ).test(filePath)) {
                             if (stat.isDirectory()) {
                                 removeDirectoryRecursivelySync(filePath, {

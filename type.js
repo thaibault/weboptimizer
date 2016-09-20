@@ -95,7 +95,7 @@ export type AssetPath = {
 export type BuildConfigurationItem = {
     extension:string;
     outputExtension:string;
-    fileNamePattern:string
+    filePathPattern:string
 }
 export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
 export type Command = {
@@ -144,7 +144,7 @@ export type ResolvedBuildConfigurationItem = {
     filePaths:Array<string>;
     extension:string;
     outputExtension:string;
-    fileNamePattern:string
+    filePathPattern:string
 }
 export type ResolvedConfiguration = {
     contextType:string;

@@ -433,7 +433,7 @@ export default class Helper {
                     if (stat.isFile() && path.extname(filePath).substring(
                         1
                     ) === buildConfigurationItem.extension && !(new RegExp(
-                        buildConfigurationItem.fileNamePattern
+                        buildConfigurationItem.filePathPattern
                     )).test(filePath))
                         buildConfigurationItem.filePaths.push(filePath)
                 })(index, newItem))
