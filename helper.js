@@ -582,7 +582,7 @@ export default class Helper {
                             [key:string]:string
                         } = Helper.getAutoChunk(
                             buildConfigurations, moduleFilePathsToExclude,
-                            context)
+                            referencePath)
                         for (const subChunkName:string in modules)
                             if (modules.hasOwnProperty(subChunkName))
                                 injection[type][chunkName].push(

@@ -116,8 +116,8 @@
       "debug": false,
       "library": true,
       "exportFormat": {
-        "self": "umd",
-        "external": "umd"
+        "external": "umd",
+        "self": "umd"
       },
       "favicon": {
         "logo": {
@@ -517,7 +517,13 @@
             "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js')"
           },
           {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.js')"
+          },
+          {
             "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js.map')"
+          },
+          {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.js.map')"
           },
           {
             "__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"
@@ -758,7 +764,7 @@
         "files": {
           "compose": {
             "javaScript": {
-              "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 'testBundle.compiled.js')}?${self.hashAlgorithm}=[hash]`"
+              "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, `testBundle${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`)}?${self.hashAlgorithm}=[hash]`"
             }
           },
           "defaultHTML": {
@@ -886,10 +892,10 @@
       "files": {
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.compiled.css')}?${self.hashAlgorithm}=[contenthash]`"
+            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['testInBrowser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, `index${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '.compiled' : ''}.css`)}?${self.hashAlgorithm}=[contenthash]`"
           },
           "javaScript": {
-            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name].compiled.js')}?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, `[name]${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`)}?${self.hashAlgorithm}=[hash]`"
           }
         },
         "defaultHTML": {
@@ -958,7 +964,7 @@
                 "__evaluate__": "self.path.apiDocumentation"
               },
               {
-                "__evaluate__": "`'${self.path.target.asset.javaScript}'*.compiled.js`"
+                "__evaluate__": "`'${self.path.target.asset.javaScript}'*${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`"
               }
             ]
           }

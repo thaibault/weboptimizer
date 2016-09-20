@@ -125,6 +125,7 @@ export type DefaultConfiguration = {
     debug:boolean;
     dllManifestFilePaths:Array<any>;
     document:Object;
+    library:boolean;
     path:Path;
     test:Object;
     testInBrowser:Object
