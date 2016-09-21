@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.78",
+  "version": "1.0.79",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
@@ -677,7 +677,9 @@
           "command": "webpack-dev-server"
         },
         "test": {
-          "command": {"__evaluate__": "helper.stripLoader(self.files.compose.javaScript)"}
+          "command": {
+            "__evaluate__": "helper.stripLoader(self.files.compose.javaScript)"
+          }
         },
         "testInBrowser": {
           "__evaluate__": "self.commandLine.serve"
