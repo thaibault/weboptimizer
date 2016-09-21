@@ -280,7 +280,7 @@ for (const type:string in resolvedConfiguration.build)
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.injection.internal,
     resolvedConfiguration.module.aliases,
-    resolvedConfiguration.extensions, resolvedConfiguration.path.context,
+    resolvedConfiguration.extensions.file, resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base)
 resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.injection, Helper.resolveBuildConfigurationFilePaths(
@@ -295,7 +295,7 @@ resolvedConfiguration.injection = Helper.resolveInjection(
             !resolvedConfiguration.path.context.startsWith(filePath))
     ), resolvedConfiguration.injection.autoExclude,
     resolvedConfiguration.module.aliases,
-    resolvedConfiguration.extensions,
+    resolvedConfiguration.extensions.file,
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore)
@@ -306,7 +306,7 @@ resolvedConfiguration.injection.internal = {
         Helper.normalizeInternalInjection(
             resolvedConfiguration.injection.internal
         ), resolvedConfiguration.module.aliases,
-        resolvedConfiguration.extensions,
+        resolvedConfiguration.extensions.file,
         resolvedConfiguration.path.context,
         resolvedConfiguration.path.source.asset.base,
         resolvedConfiguration.path.ignore.concat(
@@ -332,7 +332,7 @@ for (
         ) {
             const filePath:?string = Helper.determineModuleFilePath(
                 moduleID, resolvedConfiguration.module.aliases,
-                resolvedConfiguration.extensions,
+                resolvedConfiguration.extensions.file,
                 resolvedConfiguration.path.context,
                 resolvedConfiguration.path.source.asset.base,
                 resolvedConfiguration.path.ignore)

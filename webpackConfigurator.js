@@ -397,7 +397,7 @@ if (configuration.injection.external === '__implicit__')
                 configuration.path.context, filePath
             )).filter((filePath:string):boolean =>
                 !configuration.path.context.startsWith(filePath)
-            ), configuration.module.aliases, configuration.extensions,
+            ), configuration.module.aliases, configuration.extensions.file,
             configuration.path.source.asset.base, configuration.path.ignore,
             configuration.injection.implicitExternalIncludePattern,
             configuration.injection.implicitExternalExcludePattern,
@@ -608,26 +608,29 @@ const loader:{
 // endregion
 // region configuration
 const webpackConfiguration:WebpackConfiguration = {
+    cache: configuration.cache.main,
     context: configuration.path.context,
     devtool: configuration.development.tool,
     devServer: configuration.development.server,
     // region input
     entry: configuration.injection.internal.normalized,
     externals: configuration.injection.external,
-    resolveLoader: {
-        alias: configuration.loader.aliases,
-        extensions: configuration.loader.extensions,
-        modulesDirectories: configuration.loader.directories,
+    resolve: {
+        alias: configuration.module.aliases,
+        extensions: configuration.extensions.file,
+        moduleExtensions: configuration.extensions.module,
+        modules: [configuration.path.source.asset.base].concat(
+            configuration.module.directoryNames),
+        unsafeCache: configuration.cache.unsafe,
         aliasFields: configuration.package.aliasPropertyNames,
         mainFields: configuration.package.main.propertyNames,
         mainFiles: configuration.package.main.fileNames
     },
-    resolve: {
-        alias: configuration.module.aliases,
-        extensions: configuration.extensions,
-        root: [configuration.path.source.asset.base].concat(
-            configuration.module.directories),
-        unsafeCache: configuration.cache.unsafe,
+    resolveLoader: {
+        alias: configuration.loader.aliases,
+        extensions: configuration.loader.extensions.file,
+        moduleExtensions: configuration.loader.extensions.module,
+        modules: configuration.loader.directoryNames,
         aliasFields: configuration.package.aliasPropertyNames,
         mainFields: configuration.package.main.propertyNames,
         mainFiles: configuration.package.main.fileNames
@@ -768,7 +771,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 loader: loader.postprocessor.data,
                 include: configuration.path.source.asset.data,
                 exclude: (filePath:string):boolean =>
-                    configuration.extensions.includes(path.extname(
+                    configuration.extensions.file.includes(path.extname(
                         Helper.stripLoader(filePath)))
             }
             // endregion
