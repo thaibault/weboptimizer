@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.83",
+  "version": "1.0.84",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
@@ -27,7 +27,9 @@
     "type": "git",
     "url": "https://github.com/thaibault/webOptimizer.git"
   },
-  "aliases": {"weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled"},
+  "aliases": {
+    "weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled"
+  },
   "dependencies": {
     "add-asset-html-webpack-plugin": "latest",
     "babel-cli": "latest",
@@ -228,19 +230,25 @@
       "package": {
         "main": {
           "propertyNames": [
-              "webpack",
-              "browser",
-              "web",
-              "browserify",
-              [
-                "jam",
-                "main"
-              ],
+            "webpack",
+            "browser",
+            "web",
+            "browserify",
+            [
+              "jam",
               "main"
             ],
-            "fileNames": ["index.js", "index.compiled.js", "main.js"]
+            "main"
+          ],
+          "fileNames": [
+            "index.js",
+            "index.compiled.js",
+            "main.js"
+          ]
         },
-        "aliasPropertyNames": ["aliases"]
+        "aliasPropertyNames": [
+          "aliases"
+        ]
       },
       "extensions": [
         ".compiled",
@@ -271,8 +279,7 @@
         ".gif"
       ],
       "module": {
-        "aliases": {
-        },
+        "aliases": {},
         "cascadingStyleSheet": "",
         "directories": [
           "web_modules",
