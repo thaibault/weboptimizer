@@ -187,8 +187,7 @@
       },
       "injection": {
         "autoExclude": [
-          "test/",
-          "test.compiled/"
+          "test"
         ],
         "commonChunkIDs": [
           "vendor"
@@ -781,11 +780,6 @@
           },
           "html": []
         },
-        "injection": {
-          "internal": {
-            "index": "test/"
-          }
-        },
         "targetTechnology": "node",
         "assetPattern": {
           "javaScript": {
@@ -806,11 +800,6 @@
         "inPlace": {
           "externalLibrary": {
             "normal": true
-          }
-        },
-        "injection": {
-          "internal": {
-            "index": "test/"
           }
         },
         "module": {
@@ -916,7 +905,6 @@
       },
       "injection": {
         "autoExclude": [
-          "test.js",
           "test"
         ]
       },
