@@ -179,11 +179,7 @@ if (Tools.isPlainObject(result))
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
-let targetDirectory:?Object = null
-try {
-    targetDirectory = fileSystem.statSync(configuration.path.target.base)
-} catch (error) {}
-if (targetDirectory && targetDirectory.isDirectory())
+if (Helper.isDirectorySync(configuration.path.target.base))
     fileSystem.readdirSync(configuration.path.target.base).forEach((
         fileName:string
     ):void => {
@@ -305,9 +301,21 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.ignore)
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
-    // IgnoreTypeCheck
-    normalized: Helper.normalizeInternalInjection(
-        resolvedConfiguration.injection.internal)}
+    normalized: Helper.resolveModulesInFolders(
+        // IgnoreTypeCheck
+        Helper.normalizeInternalInjection(
+            resolvedConfiguration.injection.internal
+        ), resolvedConfiguration.module.aliases,
+        resolvedConfiguration.knownExtensions,
+        resolvedConfiguration.path.context,
+        resolvedConfiguration.path.source.asset.base,
+        resolvedConfiguration.path.ignore.concat(
+            resolvedConfiguration.module.directories,
+            resolvedConfiguration.loader.directories
+        ).map((filePath:string):string => path.resolve(
+            resolvedConfiguration.path.context, filePath)
+        ).filter((filePath:string):boolean =>
+            !resolvedConfiguration.path.context.startsWith(filePath)))}
 resolvedConfiguration.needed = {javaScript: configuration.debug && [
     'serve', 'testInBrowser'
 ].includes(resolvedConfiguration.givenCommandLineArguments[2])}
