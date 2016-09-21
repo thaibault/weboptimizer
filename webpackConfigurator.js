@@ -163,14 +163,6 @@ pluginInstances.push({apply: (compiler:Object):void => {
                 const filePath:string = request.replace(/\?[^?]+$/, '')
                 const type:?string = Helper.determineAssetType(
                     filePath, configuration.build, configuration.path)
-                console.log()
-                // javaScript ^(?:.*/)?(?:developmentHelper|vendor)(?:.compiled)?.js$ index.js
-                console.log(
-                    type,
-                    configuration.assetPattern[type].excludeFilePathRegularExpression,
-                    filePath
-                )
-                console.log()
                 if (type && configuration.assetPattern[type] && !(new RegExp(
                     configuration.assetPattern[type]
                         .excludeFilePathRegularExpression
@@ -384,6 +376,7 @@ if (configuration.injection.external === '__implicit__')
         context:string, request:string, callback:ProcedureFunction
     ):void => {
         request = request.replace(/^!+/, '')
+        console.log('A', context, request)
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
         for (const filePath:string of configuration.module.directories.concat(
@@ -405,12 +398,16 @@ if (configuration.injection.external === '__implicit__')
                 configuration.path.context, filePath
             )).filter((filePath:string):boolean =>
                 !configuration.path.context.startsWith(filePath)
-            ), configuration.module.aliases, configuration.knownExtensions,
+            ), configuration.module.aliases, configuration.extensions,
             configuration.path.source.asset.base, configuration.path.ignore,
             configuration.injection.implicitExternalIncludePattern,
             configuration.injection.implicitExternalExcludePattern,
             configuration.inPlace.externalLibrary.normal,
             configuration.inPlace.externalLibrary.dynamic)
+        console.log()
+        console.log(
+            request, '->', resolvedRequest, Helper.isFileSync(resolvedRequest))
+        console.log()
         if (resolvedRequest) {
             if (['var', 'umd'].includes(
                 configuration.exportFormat.external
@@ -626,13 +623,18 @@ const webpackConfiguration:WebpackConfiguration = {
     resolveLoader: {
         alias: configuration.loader.aliases,
         extensions: configuration.loader.extensions,
-        modulesDirectories: configuration.loader.directories
+        modulesDirectories: configuration.loader.directories,
+        packageAlias: configuration.package.aliases,
+        packageMains: configuration.package.mains
     },
     resolve: {
         alias: configuration.module.aliases,
-        extensions: configuration.knownExtensions,
+        extensions: configuration.extensions,
         root: [(configuration.path.source.asset.base:string)],
-        modulesDirectories: configuration.module.directories
+        modulesDirectories: configuration.module.directories,
+        unsafeCache: configuration.cache.unsafe,
+        packageAlias: configuration.package.aliases,
+        packageMains: configuration.package.mains
     },
     // endregion
     // region output
@@ -774,7 +776,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 loader: loader.postprocessor.data,
                 include: configuration.path.source.asset.data,
                 exclude: (filePath:string):boolean =>
-                    configuration.knownExtensions.includes(path.extname(
+                    configuration.extensions.includes(path.extname(
                         Helper.stripLoader(filePath)))
             }
             // endregion

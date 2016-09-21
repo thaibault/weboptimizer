@@ -181,7 +181,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                             // IgnoreTypeCheck
                             Helper.determineModuleFilePath(
                                 moduleID, configuration.module.aliases,
-                                configuration.knownExtensions,
+                                configuration.extensions,
                                 configuration.path.context,
                                 configuration.path.source.asset.base,
                                 configuration.path.ignore
@@ -259,7 +259,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         const testModuleFilePaths:Array<string> =
             Helper.determineModuleLocations(
                 configuration.testInBrowser.injection.internal,
-                configuration.module.aliases, configuration.knownExtensions,
+                configuration.module.aliases, configuration.extensions,
                 configuration.path.context,
                 configuration.path.source.asset.base, configuration.path.ignore
             ).filePaths

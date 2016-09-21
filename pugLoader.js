@@ -36,7 +36,7 @@ module.exports = function(source:string):string {
     const query:Object = Tools.convertSubstringInPlainObject(
         Tools.extendObject(true, {
             moduleAliases: [],
-            knownExtensions: ['.pug', '.html', '.js', '.css'],
+            extensions: ['.pug', '.html', '.js', '.css'],
             context: './'
         }, this.options.pug || {}, loaderUtils.parseQuery(this.query)),
         /#%%%#/g, '!')
@@ -79,7 +79,7 @@ module.exports = function(source:string):string {
                     return compile(template, options)(nestedLocals)
                 const templateFilePath:?string =
                     Helper.determineModuleFilePath(
-                        template, query.moduleAliases, query.knownExtensions,
+                        template, query.moduleAliases, query.extensions,
                         query.context, configuration.path.source.asset.base,
                         configuration.path.ignore)
                 if (templateFilePath) {

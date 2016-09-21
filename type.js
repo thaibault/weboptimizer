@@ -184,7 +184,7 @@ export type ResolvedConfiguration = {
         javaScript:boolean;
         otherMaximumFileSizeLimitInByte:number
     };
-    knownExtensions:Array<string>;
+    extensions:Array<string>;
     libraryName:string;
     loader:{
         aliases:Array<string>;
