@@ -238,7 +238,7 @@
               ],
               "main"
             ],
-            "fileNames": ["index.js", "index.compiled.js", "main.js"],
+            "fileNames": ["index.js", "index.compiled.js", "main.js"]
         },
         "aliasPropertyNames": ["aliases"]
       },
