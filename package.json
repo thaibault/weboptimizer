@@ -27,6 +27,7 @@
     "type": "git",
     "url": "https://github.com/thaibault/webOptimizer.git"
   },
+  "aliases": {"weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled"},
   "dependencies": {
     "add-asset-html-webpack-plugin": "latest",
     "babel-cli": "latest",
@@ -225,18 +226,21 @@
         "otherMaximumFileSizeLimitInByte": 40960
       },
       "package": {
-        "mains": [
-          "webpack",
-          "browser",
-          "web",
-          "browserify",
-          [
-            "jam",
-            "main"
-          ],
-          "main"
-        ],
-        "aliases": []
+        "main": {
+          "propertyNames": [
+              "webpack",
+              "browser",
+              "web",
+              "browserify",
+              [
+                "jam",
+                "main"
+              ],
+              "main"
+            ],
+            "fileNames": ["index.js", "index.compiled.js", "main.js"],
+        },
+        "aliasPropertyNames": ["aliases"]
       },
       "extensions": [
         ".compiled",
@@ -268,7 +272,6 @@
       ],
       "module": {
         "aliases": {
-          "weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled"
         },
         "cascadingStyleSheet": "",
         "directories": [
