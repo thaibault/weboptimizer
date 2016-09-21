@@ -222,14 +222,14 @@ export default class Helper {
         externalModuleLocations:Array<string> = [path.resolve(
             __dirname, 'node_modules'
         )], moduleAliases:PlainObject = {}, extensions:Array<string> = [
-            '', '.js', '.css', '.svg', '.html', 'json'
+            '.js', '.css', '.svg', '.html', 'json'
         ], referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
         includePattern:Array<string|RegExp> = [],
         excludePattern:Array<string|RegExp> = [],
         inPlaceNormalLibrary:boolean = false,
         inPlaceDynamicLibrary:boolean = true,
         externalHandableFileExtensions:Array<string> = [
-            '', '.js', '.node', '.json']
+            '.js', '.node', '.json']
     ):?string {
         context = path.resolve(context)
         requestContext = path.resolve(requestContext)
@@ -479,7 +479,7 @@ export default class Helper {
     static determineModuleLocations(
         internalInjection:InternalInjection, moduleAliases:PlainObject = {},
         extensions:Array<string> = [
-            '', '.js', '.css', '.svg', '.html', 'json'
+            '.js', '.css', '.svg', '.html', 'json'
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
         relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
@@ -524,7 +524,7 @@ export default class Helper {
     static resolveModulesInFolders(
         normalizedInternalInjection:NormalizedInternalInjection,
         moduleAliases:PlainObject = {}, extensions:Array<string> = [
-            '', '.js', '.css', '.svg', '.html', 'json'
+            '.js', '.css', '.svg', '.html', 'json'
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):NormalizedInternalInjection {
@@ -620,7 +620,7 @@ export default class Helper {
         buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:InternalInjection,
         moduleAliases:PlainObject = {}, extensions:Array<string> = [
-            '', '.js', '.css', '.svg', '.html', 'json'
+            '.js', '.css', '.svg', '.html', 'json'
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):Injection {
@@ -733,9 +733,10 @@ export default class Helper {
     static determineModuleFilePath(
         moduleID:string, moduleAliases:PlainObject = {},
         extensions:Array<string> = [
-            '', '.js', '.css', '.svg', '.html', 'json'
+            '.js', '.css', '.svg', '.html', 'json'
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
+        // TODO use this from configurations.
         relativeModuleFilePaths:Array<string> = ['node_modules', '../'],
         packageEntryFileNames:Array<string> = [
             '__package__', '', 'index', 'main']
@@ -750,7 +751,7 @@ export default class Helper {
             relativeModuleFilePaths
         ))
             for (let fileName:string of packageEntryFileNames)
-                for (const extension:string of extensions) {
+                for (const extension:string of [''].concat(extensions)) {
                     let moduleFilePath:string = moduleID
                     if (!moduleFilePath.startsWith('/'))
                         moduleFilePath = path.resolve(

@@ -618,17 +618,19 @@ const webpackConfiguration:WebpackConfiguration = {
         alias: configuration.loader.aliases,
         extensions: configuration.loader.extensions,
         modulesDirectories: configuration.loader.directories,
-        aliasFields: configuration.package.aliases,
-        mainFields: configuration.package.mains
+        aliasFields: configuration.package.aliasPropertyNames,
+        mainFields: configuration.package.main.propertyNames,
+        mainFiles: configuration.package.main.fileNames
     },
     resolve: {
         alias: configuration.module.aliases,
         extensions: configuration.extensions,
-        root: [(configuration.path.source.asset.base:string)],
-        modulesDirectories: configuration.module.directories,
+        root: [configuration.path.source.asset.base].concat(
+            configuration.module.directories),
         unsafeCache: configuration.cache.unsafe,
-        aliasFields: configuration.package.aliases,
-        mainFields: configuration.package.mains
+        aliasFields: configuration.package.aliasPropertyNames,
+        mainFields: configuration.package.main.propertyNames,
+        mainFiles: configuration.package.main.fileNames
     },
     // endregion
     // region output
