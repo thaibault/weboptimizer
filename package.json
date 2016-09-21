@@ -117,6 +117,7 @@
   "configuration": {
     "default": {
       "cache": {
+        "main": true,
         "unsafe": true
       },
       "debug": false,
@@ -229,59 +230,40 @@
       },
       "package": {
         "main": {
-          "propertyNames": [
-            "webpack",
-            "browser",
-            "web",
-            "browserify",
-            [
-              "jam",
-              "main"
-            ],
-            "main"
-          ],
+          "propertyNames": {
+            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'main'])"
+          },
           "fileNames": [
             "index.js",
             "index.compiled.js",
             "main.js"
           ]
         },
-        "aliasPropertyNames": [
-          "aliases"
-        ]
+        "aliasPropertyNames": {
+          "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat('aliases')"
+        }
       },
-      "extensions": [
-        ".compiled",
-        ".compiled.js",
+      "extensions": {"module": [
+        ".compiled"
+      ], "file": [
         ".js",
-        ".compiled.html",
         ".html",
         ".pug",
-        ".compiled.css",
         ".css",
-        ".compiled.eot",
         ".eot",
-        ".compiled.woff",
         ".woff",
-        ".compiled.woff2",
         ".woff2",
-        ".compiled.ttf",
         ".ttf",
-        ".compiled.svg",
         ".svg",
-        ".compiled.png",
         ".png",
-        ".compiled.jpg",
         ".jpg",
-        ".compiled.ico",
         ".ico",
-        ".compiled.gif",
         ".gif"
-      ],
+      ]},
       "module": {
         "aliases": {},
         "cascadingStyleSheet": "",
-        "directories": [
+        "directoryNames": [
           "web_modules",
           "node_modules"
         ],
@@ -430,7 +412,7 @@
               "__evaluate__": "self.module.aliases"
             },
             "extensions": {
-              "__evaluate__": "self.extensions"
+              "__evaluate__": "self.extensions.file"
             },
             "context": {
               "__evaluate__": "self.path.context"
@@ -741,18 +723,17 @@
         "aliases": {
           "pug": "weboptimizer/pug"
         },
-        "extensions": [
-          ".webpack-loader.js",
-          ".web-loader.js",
-          ".loader.js",
-          "-loader.compiled.js",
-          "-loader.js",
-          "Loader.compiled.js",
-          "Loader.js",
-          ".js.compiled",
-          ".js"
-        ],
-        "directories": [
+        "extensions": {
+          "file": [
+            ".js"
+          ],
+          "module": [
+            "-loader",
+            "Loader.compiled",
+            "Loader"
+          ]
+        },
+        "directoryNames": [
           "web_loaders",
           "web_modules",
           "node_loaders",
