@@ -236,7 +236,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                     if (Helper.isDirectorySync(sourcePath))
                         Helper.copyDirectoryRecursiveSync(
                             sourcePath, configuration.path.target.base)
-                    else
+                    else if (Helper.isFileSync(sourcePath))
                         Helper.copyFileSync(
                             sourcePath, configuration.path.target.base)
                 }
