@@ -163,6 +163,14 @@ pluginInstances.push({apply: (compiler:Object):void => {
                 const filePath:string = request.replace(/\?[^?]+$/, '')
                 const type:?string = Helper.determineAssetType(
                     filePath, configuration.build, configuration.path)
+                console.log()
+                // javaScript ^(?:.*/)?(?:developmentHelper|vendor)(?:.compiled)?.js$ index.js
+                console.log(
+                    type,
+                    configuration.assetPattern[type].excludeFilePathRegularExpression,
+                    filePath
+                )
+                console.log()
                 if (type && configuration.assetPattern[type] && !(new RegExp(
                     configuration.assetPattern[type]
                         .excludeFilePathRegularExpression
