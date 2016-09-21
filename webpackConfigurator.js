@@ -376,7 +376,6 @@ if (configuration.injection.external === '__implicit__')
         context:string, request:string, callback:ProcedureFunction
     ):void => {
         request = request.replace(/^!+/, '')
-        console.log('A', context, request)
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
         for (const filePath:string of configuration.module.directories.concat(
@@ -404,10 +403,6 @@ if (configuration.injection.external === '__implicit__')
             configuration.injection.implicitExternalExcludePattern,
             configuration.inPlace.externalLibrary.normal,
             configuration.inPlace.externalLibrary.dynamic)
-        console.log()
-        console.log(
-            request, '->', resolvedRequest, Helper.isFileSync(resolvedRequest))
-        console.log()
         if (resolvedRequest) {
             if (['var', 'umd'].includes(
                 configuration.exportFormat.external
@@ -614,7 +609,6 @@ const loader:{
 // region configuration
 const webpackConfiguration:WebpackConfiguration = {
     context: configuration.path.context,
-    debug: configuration.debug,
     devtool: configuration.development.tool,
     devServer: configuration.development.server,
     // region input
@@ -624,8 +618,8 @@ const webpackConfiguration:WebpackConfiguration = {
         alias: configuration.loader.aliases,
         extensions: configuration.loader.extensions,
         modulesDirectories: configuration.loader.directories,
-        packageAlias: configuration.package.aliases,
-        packageMains: configuration.package.mains
+        aliasFields: configuration.package.aliases,
+        mainFields: configuration.package.mains
     },
     resolve: {
         alias: configuration.module.aliases,
@@ -633,8 +627,8 @@ const webpackConfiguration:WebpackConfiguration = {
         root: [(configuration.path.source.asset.base:string)],
         modulesDirectories: configuration.module.directories,
         unsafeCache: configuration.cache.unsafe,
-        packageAlias: configuration.package.aliases,
-        packageMains: configuration.package.mains
+        aliasFields: configuration.package.aliases,
+        mainFields: configuration.package.mains
     },
     // endregion
     // region output
@@ -656,7 +650,7 @@ const webpackConfiguration:WebpackConfiguration = {
     // endregion
     module: {
         noParse: configuration.module.skipParseRegularExpression,
-        preLoaders: [
+        loaders: [
             // Convert to native web types.
             // region script
             {
@@ -703,10 +697,8 @@ const webpackConfiguration:WebpackConfiguration = {
                     configuration.files.defaultHTML
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
                     Helper.stripLoader(htmlConfiguration.template)))
-            }
+            },
             // endregion
-        ],
-        loaders: [
             // Loads dependencies.
             // region style
             {
@@ -744,10 +736,8 @@ const webpackConfiguration:WebpackConfiguration = {
                 exclude: Helper.normalizePaths(configuration.files.html.map((
                     htmlConfiguration:HTMLConfiguration
                 ):string => Helper.stripLoader(htmlConfiguration.template)))
-            }
+            },
             // endregion
-        ],
-        postLoaders: [
             // Optimize loaded assets.
             // region font
             {
@@ -782,39 +772,40 @@ const webpackConfiguration:WebpackConfiguration = {
             // endregion
         ]
     },
-    postcss: ():Array<Object> => [
-        postcssImport({
-            addDependencyTo: webpack,
-            root: configuration.path.context
-        }),
-        /*
-            NOTE: Checking path doesn't work if fonts are referenced in
-            libraries provided in another location than the project itself like
-            the node_modules folder.
-        */
-        postcssCSSnext({browsers: '> 0%'}),
-        postcssFontPath({checkPath: false}),
-        postcssURL({filter: '', maxSize: 0}),
-        postcssSprites({
-            filterBy: ():Promise<null> => new Promise((
-                resolve:Function, reject:Function
-            ):Promise<null> => (
-                configuration.files.compose.image ? resolve : reject
-            )()),
-            hooks: {onSaveSpritesheet: (image:Object):string => path.join(
-                image.spritePath, path.relative(
-                    configuration.path.target.asset.image,
-                    configuration.files.compose.image))},
-            stylesheetPath:
-                configuration.path.source.asset.cascadingStyleSheet,
-            spritePath: configuration.path.source.asset.image
-        })
-    ],
-    html: configuration.module.optimizer.htmlMinifier,
-    // Let the "html-loader" access full html minifier processing
-    // configuration.
-    pug: configuration.module.preprocessor.pug,
-    plugins: pluginInstances
+    plugins: pluginInstances.concat(new webpack.LoaderOptionsPlugin({
+        // Let the "html-loader" access full html minifier processing
+        // configuration.
+        html: configuration.module.optimizer.htmlMinifier,
+        postcss: ():Array<Object> => [
+            postcssImport({
+                addDependencyTo: webpack,
+                root: configuration.path.context
+            }),
+            /*
+                NOTE: Checking path doesn't work if fonts are referenced in
+                libraries provided in another location than the project itself
+                like the node_modules folder.
+            */
+            postcssCSSnext({browsers: '> 0%'}),
+            postcssFontPath({checkPath: false}),
+            postcssURL({filter: '', maxSize: 0}),
+            postcssSprites({
+                filterBy: ():Promise<null> => new Promise((
+                    resolve:Function, reject:Function
+                ):Promise<null> => (
+                    configuration.files.compose.image ? resolve : reject
+                )()),
+                hooks: {onSaveSpritesheet: (image:Object):string => path.join(
+                    image.spritePath, path.relative(
+                        configuration.path.target.asset.image,
+                        configuration.files.compose.image))},
+                stylesheetPath:
+                    configuration.path.source.asset.cascadingStyleSheet,
+                spritePath: configuration.path.source.asset.image
+            })
+        ],
+        pug: configuration.module.preprocessor.pug
+    }))
 }
 if (configuration.debug)
     console.log('Using webpack configuration:', util.inspect(

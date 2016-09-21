@@ -240,7 +240,6 @@
       },
       "extensions": [
         ".compiled",
-        "",
         ".compiled.js",
         ".js",
         ".compiled.html",
@@ -733,7 +732,6 @@
           "pug": "weboptimizer/pug"
         },
         "extensions": [
-          "",
           ".webpack-loader.js",
           ".web-loader.js",
           ".loader.js",
