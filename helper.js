@@ -199,7 +199,7 @@ export default class Helper {
      * @param externalModuleLocations - Array if paths where external modules
      * take place.
      * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - List of file extensions to take into account.
+     * @param extensions - List of file extensions to take into account.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
      * @param includePattern - Array of regular expressions to explicitly mark
@@ -221,7 +221,7 @@ export default class Helper {
         normalizedInternalInjection:NormalizedInternalInjection = {},
         externalModuleLocations:Array<string> = [path.resolve(
             __dirname, 'node_modules'
-        )], moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
+        )], moduleAliases:PlainObject = {}, extensions:Array<string> = [
             '', '.js', '.css', '.svg', '.html', 'json'
         ], referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
         includePattern:Array<string|RegExp> = [],
@@ -242,7 +242,7 @@ export default class Helper {
             resolved request.
         */
         let filePath:?string = Helper.determineModuleFilePath(
-            resolvedRequest, {}, knownExtensions, requestContext,
+            resolvedRequest, {}, extensions, requestContext,
             referencePath, pathsToIgnore)
         if (!(filePath || inPlaceNormalLibrary) || Tools.isAnyMatching(
             resolvedRequest, includePattern
@@ -256,7 +256,7 @@ export default class Helper {
                     chunkName
                 ])
                     if (Helper.determineModuleFilePath(
-                        moduleID, moduleAliases, knownExtensions, context,
+                        moduleID, moduleAliases, extensions, context,
                         referencePath, pathsToIgnore
                     ) === filePath)
                         return null
@@ -466,7 +466,7 @@ export default class Helper {
      * modules as array.
      * @param internalInjection - List of module ids or module file paths.
      * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - List of file extensions to take into account.
+     * @param extensions - List of file extensions to take into account.
      * @param context - File path to resolve relative to.
      * @param referencePath - Path to search for local modules.
      * @param pathsToIgnore - Paths which marks location to ignore.
@@ -478,7 +478,7 @@ export default class Helper {
      */
     static determineModuleLocations(
         internalInjection:InternalInjection, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = [
+        extensions:Array<string> = [
             '', '.js', '.css', '.svg', '.html', 'json'
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
@@ -496,7 +496,7 @@ export default class Helper {
                     chunkName
                 ]) {
                     const filePath:?string = Helper.determineModuleFilePath(
-                        moduleID, moduleAliases, knownExtensions, context,
+                        moduleID, moduleAliases, extensions, context,
                         referencePath, pathsToIgnore, relativeModuleFilePaths,
                         packageEntryFileNames)
                     if (filePath) {
@@ -514,7 +514,7 @@ export default class Helper {
      * @param normalizedInternalInjection - Injection data structure of
      * modules with folder references to resolve.
      * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - List of known extensions.
+     * @param extensions - List of known extensions.
      * @param context - File path to determine relative to.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
@@ -523,7 +523,7 @@ export default class Helper {
     // TODO test
     static resolveModulesInFolders(
         normalizedInternalInjection:NormalizedInternalInjection,
-        moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
+        moduleAliases:PlainObject = {}, extensions:Array<string> = [
             '', '.js', '.css', '.svg', '.html', 'json'
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
@@ -608,7 +608,7 @@ export default class Helper {
      * @param modulesToExclude - A list of modules to exclude (specified by
      * path or id) or a mapping from chunk names to module ids.
      * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - File extensions to take into account.
+     * @param extensions - File extensions to take into account.
      * @param context - File path to use as starting point.
      * @param referencePath - Reference path from where local files should be
      * resolved.
@@ -619,7 +619,7 @@ export default class Helper {
         givenInjection:Injection,
         buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:InternalInjection,
-        moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
+        moduleAliases:PlainObject = {}, extensions:Array<string> = [
             '', '.js', '.css', '.svg', '.html', 'json'
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
@@ -628,7 +628,7 @@ export default class Helper {
             true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
-                modulesToExclude, moduleAliases, knownExtensions, context,
+                modulesToExclude, moduleAliases, extensions, context,
                 referencePath, pathsToIgnore
             ).filePaths
         for (const type:string of ['internal', 'external'])
@@ -718,7 +718,7 @@ export default class Helper {
      * Determines a concrete file path for given module id.
      * @param moduleID - Module id to determine.
      * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - List of known extensions.
+     * @param extensions - List of known extensions.
      * @param context - File path to determine relative to.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
@@ -732,7 +732,7 @@ export default class Helper {
      */
     static determineModuleFilePath(
         moduleID:string, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = [
+        extensions:Array<string> = [
             '', '.js', '.css', '.svg', '.html', 'json'
         ], context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
@@ -748,13 +748,13 @@ export default class Helper {
             referencePath = path.relative(context, referencePath)
         for (const moduleLocation:string of [referencePath].concat(
             relativeModuleFilePaths
-        ))
+        )) {
+            let moduleFilePath:string = moduleID
+            if (!moduleFilePath.startsWith('/'))
+                moduleFilePath = path.resolve(
+                    context, moduleLocation, moduleFilePath)
             for (let fileName:string of packageEntryFileNames)
-                for (const extension:string of knownExtensions) {
-                    let moduleFilePath:string = moduleID
-                    if (!moduleFilePath.startsWith('/'))
-                        moduleFilePath = path.resolve(
-                            context, moduleLocation, moduleFilePath)
+                for (const extension:string of extensions) {
                     if (fileName === '__package__') {
                         try {
                             if (Helper.isDirectorySync(moduleFilePath)) {
@@ -782,6 +782,7 @@ export default class Helper {
                     if (Helper.isFileSync(moduleFilePath))
                         return moduleFilePath
                 }
+        }
         return null
     }
     // endregion

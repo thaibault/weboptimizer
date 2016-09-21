@@ -113,6 +113,7 @@
   },
   "configuration": {
     "default": {
+      "cache": {"unsafe": true},
       "debug": false,
       "library": true,
       "exportFormat": {
@@ -221,7 +222,13 @@
         "javaScript": false,
         "otherMaximumFileSizeLimitInByte": 40960
       },
-      "knownExtensions": [
+      "package": {
+        "mains": [
+            "webpack", "browser", "web", "browserify", ["jam", "main"], "main"
+        ],
+        "aliases": []
+      },
+      "extensions": [
         ".compiled",
         "",
         ".compiled.js",
@@ -403,8 +410,8 @@
             "moduleAliases": {
               "__evaluate__": "self.module.aliases"
             },
-            "knownExtensions": {
-              "__evaluate__": "self.knownExtensions"
+            "extensions": {
+              "__evaluate__": "self.extensions"
             },
             "context": {
               "__evaluate__": "self.path.context"
