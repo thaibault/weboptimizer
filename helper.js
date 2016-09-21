@@ -748,28 +748,31 @@ export default class Helper {
             referencePath = path.relative(context, referencePath)
         for (const moduleLocation:string of [referencePath].concat(
             relativeModuleFilePaths
-        )) {
-            let moduleFilePath:string = moduleID
-            if (!moduleFilePath.startsWith('/'))
-                moduleFilePath = path.resolve(
-                    context, moduleLocation, moduleFilePath)
+        ))
             for (let fileName:string of packageEntryFileNames)
                 for (const extension:string of extensions) {
+                    let moduleFilePath:string = moduleID
+                    if (!moduleFilePath.startsWith('/'))
+                        moduleFilePath = path.resolve(
+                            context, moduleLocation, moduleFilePath)
                     if (fileName === '__package__') {
-                        try {
-                            if (Helper.isDirectorySync(moduleFilePath)) {
-                                const pathToPackageJSON:string = path.resolve(
-                                    moduleFilePath, 'package.json')
-                                if (Helper.isFileSync(pathToPackageJSON)) {
+                        if (Helper.isDirectorySync(moduleFilePath)) {
+                            const pathToPackageJSON:string = path.resolve(
+                                moduleFilePath, 'package.json')
+                            if (Helper.isFileSync(pathToPackageJSON)) {
+                                try {
                                     const localConfiguration:PlainObject =
                                         JSON.parse(fileSystem.readFileSync(
                                             pathToPackageJSON, {
                                                 encoding: 'utf-8'}))
-                                    if (localConfiguration.main)
-                                        fileName = localConfiguration.main
-                                }
+
+                                } catch (error) {}
+                                if (localConfiguration.hasOwnProperty(
+                                    'main'
+                                ) && localConfiguration.main)
+                                    fileName = localConfiguration.main
                             }
-                        } catch (error) {}
+                        }
                         if (fileName === '__package__')
                             continue
                     }
@@ -782,7 +785,6 @@ export default class Helper {
                     if (Helper.isFileSync(moduleFilePath))
                         return moduleFilePath
                 }
-        }
         return null
     }
     // endregion
