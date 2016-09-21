@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.81",
+  "version": "1.0.82",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
@@ -113,7 +113,9 @@
   },
   "configuration": {
     "default": {
-      "cache": {"unsafe": true},
+      "cache": {
+        "unsafe": true
+      },
       "debug": false,
       "library": true,
       "exportFormat": {
@@ -224,7 +226,15 @@
       },
       "package": {
         "mains": [
-            "webpack", "browser", "web", "browserify", ["jam", "main"], "main"
+          "webpack",
+          "browser",
+          "web",
+          "browserify",
+          [
+            "jam",
+            "main"
+          ],
+          "main"
         ],
         "aliases": []
       },
