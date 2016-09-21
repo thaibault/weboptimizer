@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.84",
+  "version": "1.0.85",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
@@ -243,23 +243,26 @@
           "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat('aliases')"
         }
       },
-      "extensions": {"module": [
-        ".compiled"
-      ], "file": [
-        ".js",
-        ".html",
-        ".pug",
-        ".css",
-        ".eot",
-        ".woff",
-        ".woff2",
-        ".ttf",
-        ".svg",
-        ".png",
-        ".jpg",
-        ".ico",
-        ".gif"
-      ]},
+      "extensions": {
+        "module": [
+          ".compiled"
+        ],
+        "file": [
+          ".js",
+          ".html",
+          ".pug",
+          ".css",
+          ".eot",
+          ".woff",
+          ".woff2",
+          ".ttf",
+          ".svg",
+          ".png",
+          ".jpg",
+          ".ico",
+          ".gif"
+        ]
+      },
       "module": {
         "aliases": {},
         "cascadingStyleSheet": "",
