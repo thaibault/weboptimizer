@@ -233,16 +233,12 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 ) {
                     const sourcePath:string = path.join(
                         configuration.path.source.base, filePath)
-                    try {
-                        if (fileSystem.lstatSync(sourcePath).isDirectory())
-                            Helper.copyDirectoryRecursiveSync(
-                                sourcePath, configuration.path.target.base)
-                        else
-                            Helper.copyFileSync(
-                                sourcePath, configuration.path.target.base)
-                    } catch (error) {
-                        break
-                    }
+                    if (Helper.isDirectorySync(sourcePath))
+                        Helper.copyDirectoryRecursiveSync(
+                            sourcePath, configuration.path.target.base)
+                    else
+                        Helper.copyFileSync(
+                            sourcePath, configuration.path.target.base)
                 }
                 tidyUp()
             }

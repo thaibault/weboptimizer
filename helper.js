@@ -278,14 +278,26 @@ export default class Helper {
         return null
     }
     /**
+     * Checks if given path points to a valid directory.
+     * @param filePath - Path to directory.
+     * @returns A boolean which indicates directory existents.
+     */
+    // TODO TEST
+    static isDirectorySync(filePath:string):boolean {
+        try {
+            return fileSystem.statSync(filePath).isDirectory()
+        } catch (error) {
+            return false
+        }
+    }
+    /**
      * Checks if given path points to a valid file.
      * @param filePath - Path to file.
      * @returns A boolean which indicates file existents.
      */
     static isFileSync(filePath:string):boolean {
         try {
-            fileSystem.accessSync(filePath, fileSystem.F_OK)
-            return true
+            return fileSystem.statSync(filePath).isFile()
         } catch (error) {
             return false
         }
@@ -328,11 +340,8 @@ export default class Helper {
             NOTE: If target path references a directory a new file with the
             same name will be created.
         */
-        try {
-            if (fileSystem.lstatSync(targetPath).isDirectory())
-                targetPath = path.resolve(targetPath, path.basename(
-                    sourcePath))
-        } catch (error) {}
+        if (Helper.isDirectorySync(targetPath))
+            targetPath = path.resolve(targetPath, path.basename(sourcePath))
         fileSystem.writeFileSync(targetPath, fileSystem.readFileSync(
             sourcePath))
         return targetPath
@@ -349,12 +358,10 @@ export default class Helper {
     static copyDirectoryRecursiveSync(
         sourcePath:string, targetPath:string
     ):string {
-        try {
-            // Check if folder needs to be created or integrated.
-            if (fileSystem.lstatSync(targetPath).isDirectory())
-                targetPath = path.resolve(targetPath, path.basename(
-                    sourcePath))
-        } catch (error) {}
+        // Check if folder needs to be created or integrated.
+        if (Helper.isDirectorySync(targetPath))
+            targetPath = path.resolve(targetPath, path.basename(
+                sourcePath))
         fileSystem.mkdirSync(targetPath)
         Helper.walkDirectoryRecursivelySync(sourcePath, (
             currentSourcePath:string, stat:Object
@@ -500,6 +507,58 @@ export default class Helper {
                     }
                 }
         return {filePaths, directoryPaths}
+    }
+    /**
+     * Determines a list of concrete file paths for given module id pointing
+     * to a folder which isn't a package.
+     * @param normalizedInternalInjection - Injection data structure of
+     * modules with folder references to resolve.
+     * @param moduleAliases - Mapping of aliases to take into account.
+     * @param knownExtensions - List of known extensions.
+     * @param context - File path to determine relative to.
+     * @param referencePath - Path to resolve local modules relative to.
+     * @param pathsToIgnore - Paths which marks location to ignore.
+     * @returns Given injections with resolved folder pointing modules.
+     */
+    // TODO test
+    static resolveModulesInFolders(
+        normalizedInternalInjection:NormalizedInternalInjection,
+        moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
+            '', '.js', '.css', '.svg', '.html', 'json'
+        ], context:string = './', referencePath:string = '',
+        pathsToIgnore:Array<string> = ['.git']
+    ):NormalizedInternalInjection {
+        if (referencePath.startsWith('/'))
+            referencePath = path.relative(context, referencePath)
+        for (const chunkName:string in normalizedInternalInjection)
+            if (normalizedInternalInjection.hasOwnProperty(chunkName)) {
+                let index:number = 0
+                for (
+                    const moduleID:string of
+                    normalizedInternalInjection[chunkName]
+                ) {
+                    const directoryPath:string = path.resolve(
+                        referencePath, moduleID)
+                    if (Helper.isDirectorySync(directoryPath)) {
+                        normalizedInternalInjection[chunkName].splice(index, 1)
+                        Helper.walkDirectoryRecursivelySync(directoryPath, (
+                            filePath:string, stat:Object
+                        ):?false => {
+                            if (Helper.isFilePathInLocation(
+                                path.resolve(directoryPath, filePath),
+                                pathsToIgnore
+                            ))
+                                return false
+                            if (stat.isFile())
+                                normalizedInternalInjection[chunkName].push(
+                                    path.relative(referencePath, path.resolve(
+                                        directoryPath, filePath)))
+                        })
+                    }
+                    index += 1
+                }
+            }
+        return normalizedInternalInjection
     }
     /**
      * Every injection definition type can be represented as plain object
@@ -698,14 +757,10 @@ export default class Helper {
                             context, moduleLocation, moduleFilePath)
                     if (fileName === '__package__') {
                         try {
-                            if (fileSystem.statSync(
-                                moduleFilePath
-                            ).isDirectory()) {
+                            if (Helper.isDirectorySync(moduleFilePath)) {
                                 const pathToPackageJSON:string = path.resolve(
                                     moduleFilePath, 'package.json')
-                                if (fileSystem.statSync(
-                                    pathToPackageJSON
-                                ).isFile()) {
+                                if (Helper.isFileSync(pathToPackageJSON)) {
                                     const localConfiguration:PlainObject =
                                         JSON.parse(fileSystem.readFileSync(
                                             pathToPackageJSON, {

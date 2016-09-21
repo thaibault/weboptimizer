@@ -677,7 +677,7 @@
           "command": "webpack-dev-server"
         },
         "test": {
-          "command": "./testBundle.compiled.js"
+          "command": {"__evaluate__": "helper.stripLoader(self.files.compose.javaScript)"}
         },
         "testInBrowser": {
           "__evaluate__": "self.commandLine.serve"
