@@ -727,7 +727,7 @@
           "port": 8080,
           "protocol": "http"
         },
-        "tool": null
+        "tool": false
       },
       "hashAlgorithm": "md5",
       "loader": {
