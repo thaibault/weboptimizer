@@ -402,8 +402,8 @@ if (configuration.injection.external.modules === '__implicit__')
                 !configuration.path.context.startsWith(filePath)
             ), configuration.module.aliases, configuration.extensions.file,
             configuration.path.source.asset.base, configuration.path.ignore,
-            configuration.injection.implicit.pattern.include,
-            configuration.injection.implicit.pattern.exclude,
+            configuration.injection.external.implicit.pattern.include,
+            configuration.injection.external.implicit.pattern.exclude,
             configuration.inPlace.externalLibrary.normal,
             configuration.inPlace.externalLibrary.dynamic)
         if (resolvedRequest) {
