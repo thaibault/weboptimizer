@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.85",
+  "version": "1.0.86",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
@@ -204,17 +204,21 @@
           "developmentHelper"
         ],
         "external": {
-            "aliases": {},
-            "implicit": {
-                "pattern": {
-                    "exclude": [
-                        {"__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"},
-                        {"__evaluate__": "/\\/webpack\\/buildin\\/module\\.js$/"}
-                    ],
-                    "include": []
+          "aliases": {},
+          "implicit": {
+            "pattern": {
+              "exclude": [
+                {
+                  "__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"
+                },
+                {
+                  "__evaluate__": "/\\/webpack\\/buildin\\/module\\.js$/"
                 }
-            },
-            "modules": "__implicit__"
+              ],
+              "include": []
+            }
+          },
+          "modules": "__implicit__"
         },
         "ignorePattern": [],
         "internal": {
@@ -552,54 +556,54 @@
         }
       },
       "build": {
-        "types":{
-        "default": {
-          "outputExtension": "js",
-          "preinstall": {
-            "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.compiled.\\${buildConfiguration.outputExtension}'`"
+        "types": {
+          "default": {
+            "outputExtension": "js",
+            "preinstall": {
+              "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.compiled.\\${buildConfiguration.outputExtension}'`"
+            },
+            "filePathPattern": {
+              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+            }
           },
-          "filePathPattern": {
-            "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+          "javaScript": {
+            "extension": "js"
+          },
+          "cascadingStyleSheet": {
+            "extension": "css",
+            "outputExtension": "css",
+            "filePathPattern": {
+              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+            }
+          },
+          "additional": {
+            "outputExtension": "",
+            "filePathPattern": "^.+\\.compiled(?:\\.map)?$"
           }
         },
-        "javaScript": {
-          "extension": "js"
-        },
-        "cascadingStyleSheet": {
-          "extension": "css",
-          "outputExtension": "css",
-          "filePathPattern": {
-            "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+        "definitions": {
+          "CONTEXT_TYPE": {
+            "__evaluate__": "self.contextType"
+          },
+          "DEBUG": {
+            "__evaluate__": "self.debug"
+          },
+          "EXTERNAL_EXPORT_FORMAT": {
+            "__evaluate__": "`'${self.exportFormat.external}'`"
+          },
+          "NAME": {
+            "__evaluate__": "`'${self.name}'`"
+          },
+          "OFFLINE": {
+            "__evaluate__": "Boolean(self.offline)"
+          },
+          "SELF_EXPORT_FORMAT": {
+            "__evaluate__": "`'${self.exportFormat.self}'`"
+          },
+          "TARGET_TECHNOLOGY": {
+            "__evaluate__": "`'${self.targetTechnology}'`"
           }
-        },
-        "additional": {
-          "outputExtension": "",
-          "filePathPattern": "^.+\\.compiled(?:\\.map)?$"
         }
-        },
-      "definitions": {
-        "CONTEXT_TYPE": {
-          "__evaluate__": "self.contextType"
-        },
-        "DEBUG": {
-          "__evaluate__": "self.debug"
-        },
-        "EXTERNAL_EXPORT_FORMAT": {
-          "__evaluate__": "`'${self.exportFormat.external}'`"
-        },
-        "NAME": {
-          "__evaluate__": "`'${self.name}'`"
-        },
-        "OFFLINE": {
-          "__evaluate__": "Boolean(self.offline)"
-        },
-        "SELF_EXPORT_FORMAT": {
-          "__evaluate__": "`'${self.exportFormat.self}'`"
-        },
-        "TARGET_TECHNOLOGY": {
-          "__evaluate__": "`'${self.targetTechnology}'`"
-        }
-      }
       },
       "commandLine": {
         "build": {
