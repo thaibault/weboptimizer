@@ -373,7 +373,7 @@ if (configuration.injection.external.modules === '__implicit__')
         (and deduplicate them) for optimal bundling results. NOTE: Only native
         javaScript and json modules will be marked as external dependency.
     */
-    configuration.injection.external = (
+    configuration.injection.external.modules = (
         context:string, request:string, callback:ProcedureFunction
     ):void => {
         request = request.replace(/^!+/, '')
@@ -402,8 +402,8 @@ if (configuration.injection.external.modules === '__implicit__')
                 !configuration.path.context.startsWith(filePath)
             ), configuration.module.aliases, configuration.extensions.file,
             configuration.path.source.asset.base, configuration.path.ignore,
-            configuration.injection.implicitExternalIncludePattern,
-            configuration.injection.implicitExternalExcludePattern,
+            configuration.injection.implicit.pattern.include,
+            configuration.injection.implicit.pattern.exclude,
             configuration.inPlace.externalLibrary.normal,
             configuration.inPlace.externalLibrary.dynamic)
         if (resolvedRequest) {
