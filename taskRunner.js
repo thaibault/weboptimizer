@@ -181,10 +181,14 @@ if (configuration.givenCommandLineArguments.length > 2) {
                             // IgnoreTypeCheck
                             Helper.determineModuleFilePath(
                                 moduleID, configuration.module.aliases,
-                                configuration.extensions.file,
+                                configuration.extensions,
                                 configuration.path.context,
                                 configuration.path.source.asset.base,
-                                configuration.path.ignore
+                                configuration.path.ignore,
+                                configuration.module.directoryNames,
+                                configuration.package.main.fileNames,
+                                configuration.package.main.propertyNames,
+                                configuration.package.aliasPropertyNames
                             ), configuration.build.types, configuration.path)
                         if (
                             typeof type === 'string' &&
@@ -260,7 +264,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         const testModuleFilePaths:Array<string> =
             Helper.determineModuleLocations(
                 configuration.testInBrowser.injection.internal,
-                configuration.module.aliases, configuration.extensions.file,
+                configuration.module.aliases, configuration.extensions,
                 configuration.path.context,
                 configuration.path.source.asset.base, configuration.path.ignore
             ).filePaths

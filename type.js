@@ -205,9 +205,9 @@ export type ResolvedConfiguration = {
         main:{
             propertyNames:Array<string>;
             fileNames:Array<string>;
-        },
+        };
         aliasPropertyNames:Array<string>
-    },
+    };
     extensions:Extensions;
     libraryName:string;
     loader:{
@@ -246,7 +246,7 @@ export type ResolvedConfiguration = {
         };
         provide:{[key:string]:string};
         style:PlainObject;
-        skipParseRegularExpression:RegExp|Array<RegExp>;
+        skipParseRegularExpressions:RegExp|Array<RegExp>;
     };
     offline:{excludes:Array<string>};
     path:Path;
@@ -268,13 +268,13 @@ export type ResolvedConfiguration = {
         lint:Command;
         serve:Command;
         test:Command;
-        testInBrowser:Command,
-        typeCheck:Command
+        testInBrowser:Command;
+        typeCheck:Command;
     };
     development:{
         openBrowser:PlainObject;
         server:PlainObject;
-        tool:PlainObject
+        tool:false|string;
     };
     hashAlgorithm:string;
     loader:{
@@ -291,8 +291,53 @@ export type ResolvedConfiguration = {
     testInBrowser:PlainObject
 }
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
-// TODO
-export type WebpackConfiguration = Object
+export type WebpackConfiguration = {
+    cache:boolean;
+    context:string;
+    devtool:false|string;
+    devServer:PlainObject;
+    // region input
+    entry:PlainObject;
+    externals:ExternalInjection;
+    resolve: {
+        alias:PlainObject;
+        extensions:Array<string>;
+        moduleExtensions:Array<string>;
+        modules:Array<string>;
+        unsafeCache:boolean;
+        aliasFields:Array<string>;
+        mainFields:Array<string>;
+        mainFiles:Array<string>;
+    },
+    resolveLoader: {
+        alias:PlainObject;
+        extensions:Array<string>;
+        moduleExtensions:Array<string>;
+        modules:Array<string>;
+        aliasFields:Array<string>;
+        mainFields:Array<string>;
+        mainFiles:Array<string>;
+    },
+    // endregion
+    // region output
+    output: {
+        filename:string;
+        hashFunction:string;
+        library:string;
+        libraryTarget:string;
+        path:string;
+        publicPath:string;
+        pathinfo:boolean;
+        umdNamedDefine:boolean;
+    },
+    target:string;
+    // endregion
+    module: {
+        noParse:RegExp|Array<RegExp>;
+        loaders:Array<PlainObject>;
+    },
+    plugins:Array<Object>;
+}
 // / endregion
 // / region specific callbacks
 export type PromiseCallbackFunction = (reason:any) => ?Promise<any>
