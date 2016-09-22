@@ -238,7 +238,6 @@
           },
           "fileNames": [
             "index.js",
-            "index.compiled.js",
             "main.js"
           ]
         },
@@ -247,9 +246,7 @@
         }
       },
       "extensions": {
-        "module": [
-          ".compiled"
-        ],
+        "module": [],
         "file": [
           ".js",
           ".html",
@@ -731,16 +728,14 @@
       "hashAlgorithm": "md5",
       "loader": {
         "aliases": {
-          "pug": "weboptimizer/pug"
+          "pug": "weboptimizer/pugLoader.compiled"
         },
         "extensions": {
           "file": [
             ".js"
           ],
           "module": [
-            "-loader",
-            "Loader.compiled",
-            "Loader"
+            "-loader"
           ]
         },
         "directoryNames": [
