@@ -357,12 +357,13 @@ if (!configuration.needed.javaScript)
         configuration.path.target.asset.javaScript, '.__dummy__.compiled.js')
 // /// endregion
 // /// region extract cascading style sheets
-pluginInstances.push(new plugins.ExtractText(
-    configuration.files.compose.cascadingStyleSheet ? path.relative(
+pluginInstances.push(new plugins.ExtractText({
+    allChunks: true, disable:
+        !configuration.files.compose.cascadingStyleSheet,
+    filename: configuration.files.compose.cascadingStyleSheet ? path.relative(
         configuration.path.target.base,
         configuration.files.compose.cascadingStyleSheet
-    ) : configuration.path.target.base, {allChunks: true, disable:
-        !configuration.files.compose.cascadingStyleSheet}))
+    ) : configuration.path.target.base}))
 // /// endregion
 // /// region performs implicit external logic
 if (configuration.injection.external.modules === '__implicit__')
@@ -711,10 +712,11 @@ const webpackConfiguration:WebpackConfiguration = {
             // region style
             {
                 test: /\.css(?:\?.*)?$/,
-                loader: plugins.ExtractText.extract(
-                    loader.style,
-                    `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.cascadingStyleSheet),
+                loader: plugins.ExtractText.extract({
+                    fallbackLoader: loader.style,
+                    loader: `${loader.cascadingStyleSheet}!` +
+                    loader.preprocessor.cascadingStyleSheet
+                }),
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.cascadingStyleSheet
                 ].concat(configuration.module.locations.directoryPaths)),
