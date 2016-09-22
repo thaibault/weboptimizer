@@ -712,10 +712,11 @@ const webpackConfiguration:WebpackConfiguration = {
             // region style
             {
                 test: /\.css(?:\?.*)?$/,
-                loader: plugins.ExtractText.extract(
-                    loader.style,
-                    `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.cascadingStyleSheet),
+                loader: plugins.ExtractText.extract({
+                    fallbackLoader: loader.style,
+                    loader: `${loader.cascadingStyleSheet}!` +
+                    loader.preprocessor.cascadingStyleSheet
+                }),
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.cascadingStyleSheet
                 ].concat(configuration.module.locations.directoryPaths)),
