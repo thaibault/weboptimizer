@@ -9,7 +9,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 // endregion
-QUnit.module('stylelintkConfigurator')
+QUnit.module('stylelintConfigurator')
 QUnit.load()
 // region tests
 QUnit.test('stylelintConfigurator', (assert:Object):void => {

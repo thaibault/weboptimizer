@@ -140,9 +140,9 @@ if (configuration.development.openBrowser && (htmlAvailable && [
         configuration.development.openBrowser))
 // // endregion
 // // region provide build environment
-if (configuration.buildDefinition)
+if (configuration.build.definitions)
     pluginInstances.push(new webpack.DefinePlugin(
-        configuration.buildDefinition))
+        configuration.build.definitions))
 if (configuration.module.provide)
     pluginInstances.push(new webpack.ProvidePlugin(
         configuration.module.provide))
@@ -162,7 +162,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
             if (compilation.assets.hasOwnProperty(request)) {
                 const filePath:string = request.replace(/\?[^?]+$/, '')
                 const type:?string = Helper.determineAssetType(
-                    filePath, configuration.build, configuration.path)
+                    filePath, configuration.build.types, configuration.path)
                 if (type && configuration.assetPattern[type] && !(new RegExp(
                     configuration.assetPattern[type]
                         .excludeFilePathRegularExpression
@@ -365,7 +365,7 @@ pluginInstances.push(new plugins.ExtractText(
         !configuration.files.compose.cascadingStyleSheet}))
 // /// endregion
 // /// region performs implicit external logic
-if (configuration.injection.external === '__implicit__')
+if (configuration.injection.external.modules === '__implicit__')
     /*
         We only want to process modules from local context in library mode,
         since a concrete project using this library should combine all assets
@@ -378,9 +378,11 @@ if (configuration.injection.external === '__implicit__')
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
-        for (const filePath:string of configuration.module.directories.concat(
-            configuration.loader.directories
-        ))
+        for (
+            const filePath:string of
+            configuration.module.directoryNames.concat(
+                configuration.loader.directoryNames)
+        )
             if (request.startsWith(filePath)) {
                 request = request.substring(filePath.length)
                 if (request.startsWith('/'))
@@ -391,8 +393,8 @@ if (configuration.injection.external === '__implicit__')
             request, configuration.path.context, context,
             configuration.injection.internal.normalized,
             configuration.path.ignore.concat(
-                configuration.module.directories,
-                configuration.loader.directories
+                configuration.module.directoryNames,
+                configuration.loader.directoryNames
             ).map((filePath:string):string => path.resolve(
                 configuration.path.context, filePath
             )).filter((filePath:string):boolean =>
@@ -406,8 +408,8 @@ if (configuration.injection.external === '__implicit__')
         if (resolvedRequest) {
             if (['var', 'umd'].includes(
                 configuration.exportFormat.external
-            ) && request in configuration.injection.externalAliases)
-                resolvedRequest = configuration.injection.externalAliases[
+            ) && request in configuration.injection.external.aliases)
+                resolvedRequest = configuration.injection.external.aliases[
                     request]
             if (configuration.exportFormat.external === 'var')
                 resolvedRequest = Tools.stringConvertToValidVariableName(
@@ -501,21 +503,21 @@ pluginInstances.push({apply: (compiler:Object):void => {
         */
         for (const assetRequest:string in compilation.assets)
             if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                configuration.build.javaScript.outputExtension
+                configuration.build.types.javaScript.outputExtension
             )) {
                 let source:string = compilation.assets[assetRequest].source()
                 if (typeof source === 'string') {
                     for (
                         const replacement:string in
-                        configuration.injection.externalAliases
+                        configuration.injection.external.aliases
                     )
-                        if (configuration.injection.externalAliases
+                        if (configuration.injection.external.aliases
                             .hasOwnProperty(replacement)
                         )
                             source = source.replace(new RegExp(
                                 '(require\\()"' +
                                 Tools.stringConvertToValidRegularExpression(
-                                    configuration.injection.externalAliases[
+                                    configuration.injection.external.aliases[
                                         replacement]
                                 ) + '"(\\))', 'g'
                             ), `$1'${replacement}'$2`).replace(new RegExp(
@@ -524,7 +526,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
                                     bundleName
                                 ) + '", \\[.*)"' +
                                 Tools.stringConvertToValidRegularExpression(
-                                    configuration.injection.externalAliases[
+                                    configuration.injection.external.aliases[
                                         replacement]
                                 ) + '"(.*\\], factory\\);)'
                             ), `$1'${replacement}'$2`)
@@ -614,13 +616,14 @@ const webpackConfiguration:WebpackConfiguration = {
     devServer: configuration.development.server,
     // region input
     entry: configuration.injection.internal.normalized,
-    externals: configuration.injection.external,
+    externals: configuration.injection.external.modules,
     resolve: {
         alias: configuration.module.aliases,
         extensions: configuration.extensions.file,
         moduleExtensions: configuration.extensions.module,
-        modules: [configuration.path.source.asset.base].concat(
-            configuration.module.directoryNames),
+        modules: Helper.normalizePaths([
+            configuration.path.source.asset.base
+        ].concat(configuration.module.directoryNames)),
         unsafeCache: configuration.cache.unsafe,
         aliasFields: configuration.package.aliasPropertyNames,
         mainFields: configuration.package.main.propertyNames,
@@ -668,8 +671,8 @@ const webpackConfiguration:WebpackConfiguration = {
                     filePath = Helper.stripLoader(filePath)
                     return Helper.isFilePathInLocation(
                         filePath, configuration.path.ignore.concat(
-                            configuration.module.directories,
-                            configuration.loader.directories
+                            configuration.module.directoryNames,
+                            configuration.loader.directoryNames
                         ).map((filePath:string):string => path.resolve(
                             configuration.path.context, filePath)
                         ).filter((filePath:string):boolean =>
@@ -719,8 +722,8 @@ const webpackConfiguration:WebpackConfiguration = {
                     filePath = Helper.stripLoader(filePath)
                     return Helper.isFilePathInLocation(
                         filePath, configuration.path.ignore.concat(
-                            configuration.module.directories,
-                            configuration.loader.directories
+                            configuration.module.directoryNames,
+                            configuration.loader.directoryNames
                         ).map((filePath:string):string => path.resolve(
                             configuration.path.context, filePath
                         )).filter((filePath:string):boolean =>
