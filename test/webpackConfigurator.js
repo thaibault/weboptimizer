@@ -14,6 +14,7 @@ QUnit.module('webpackConfigurator')
 QUnit.load()
 // region tests
 QUnit.test('webpackConfigurator', (assert:Object):void =>
+    // TODO load into webpack to check api schema
     assert.ok(require(
         '../webpackConfigurator.compiled'
     ).default.entry.index.includes(path.relative(path.resolve(
