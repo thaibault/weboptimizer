@@ -27,9 +27,6 @@
     "type": "git",
     "url": "https://github.com/thaibault/webOptimizer.git"
   },
-  "aliases": {
-    "weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled"
-  },
   "dependencies": {
     "add-asset-html-webpack-plugin": "latest",
     "babel-cli": "latest",
@@ -270,7 +267,7 @@
         ]
       },
       "module": {
-        "aliases": {},
+        "aliases": {"weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled"},
         "cascadingStyleSheet": "",
         "directoryNames": [
           "web_modules",
