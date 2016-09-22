@@ -188,46 +188,46 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         [['a', './', './', {a: ['webpack']}, [path.resolve(
             __dirname, '../node_modules'
         )], {a$: 'webpack'}], null],
-        [['a', './', './', {a: ['webpack']}, [path.resolve(
+        [['a', './', './', {a: ['not_webpack']}, [path.resolve(
             __dirname, '../node_modules'
         )], {a$: 'webpack'}, []], 'webpack'],
         [['a', './', './', {a: ['webpack']}, [path.resolve(
             __dirname, '../node_modules'
-        )], {a$: 'webpack'}, ['', '.js'], './', ['./']], 'webpack'],
+        )], {a$: 'webpack'}, ['.js'], './', ['./']], 'webpack'],
         [['a', './', './', {a: ['webpack']}, [path.resolve(
             __dirname, '../node_modules'
-        )], {a$: 'webpack'}, ['', '.js'], './', ['.git']], null],
+        )], {a$: 'webpack'}, ['.js'], './', ['.git']], null],
         [
             ['a', './', './', {a: ['webpack']}, [path.resolve(
                 __dirname, '../node_modules'
-            )], {a$: 'webpack'}, ['', '.js'], './', ['.git'], ['webpack']],
+            )], {a$: 'webpack'}, ['.js'], './', ['.git'], ['webpack']],
             'webpack'
         ],
         [['webpack', './', './', {}, [path.resolve(
             __dirname, '../node_modules'
-        )], {}, ['', '.js'], './', ['.git'], [], ['webpack']], null],
+        )], {}, ['.js'], './', ['.git'], [], ['webpack']], null],
         [['webpack', './', './', {}, [path.resolve(
             __dirname, '../node_modules'
-        )], {}, ['', '.js'], './', ['.git'], [], []], 'webpack'],
+        )], {}, ['.js'], './', ['.git'], [], []], 'webpack'],
         [['webpack', './', './', {}, [path.resolve(
             __dirname, '../node_modules'
-        )], {}, ['', '.js'], './', ['.git'], [], [], false], 'webpack'],
+        )], {}, ['.js'], './', ['.git'], [], [], false], 'webpack'],
         [['webpack', './', './', {}, [path.resolve(
             __dirname, '../node_modules'
-        )], {}, ['', '.js'], './', ['.git'], [], [], true], null],
+        )], {}, ['.js'], './', ['.git'], [], [], true], null],
         [['a!webpack', './', './', {}, [path.resolve(
             __dirname, '../node_modules'
-        )], {}, ['', '.js'], './', ['.git'], [], [], false], null],
+        )], {}, ['.js'], './', ['.git'], [], [], false], null],
         [['a!webpack', './', './', {}, [path.resolve(
             __dirname, '../node_modules'
-        )], {}, ['', '.js'], './', ['.git'], [], [], false, true], null],
+        )], {}, ['.js'], './', ['.git'], [], [], false, true], null],
         [['a!webpack', './', './', {}, [path.resolve(
             __dirname, '../node_modules'
-        )], {}, ['', '.js'], './', ['.git'], [], [], false, false], 'webpack'],
+        )], {}, ['.js'], './', ['.git'], [], [], false, false], 'webpack'],
         [
             ['a!webpack', './', './', {}, [path.resolve(
                 __dirname, '../node_modules'
-            )], {}, ['', '.js'], './', ['.git'], [], [], false, false, [
+            )], {}, ['.js'], './', ['.git'], [], [], false, false, [
                 '.ext'
             ]],
             null

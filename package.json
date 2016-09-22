@@ -203,18 +203,20 @@
           "vendor",
           "developmentHelper"
         ],
-        "external": "__implicit__",
-        "externalAliases": {},
+        "external": {
+            "aliases": {},
+            "implicit": {
+                "pattern": {
+                    "exclude": [
+                        {"__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"},
+                        {"__evaluate__": "/\\/webpack\\/buildin\\/module\\.js$/"}
+                    ],
+                    "include": []
+                }
+            },
+            "modules": "__implicit__"
+        },
         "ignorePattern": [],
-        "implicitExternalExcludePattern": [
-          {
-            "__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"
-          },
-          {
-            "__evaluate__": "/\\/webpack\\/buildin\\/module\\.js$/"
-          }
-        ],
-        "implicitExternalIncludePattern": [],
         "internal": {
           "index": "__auto__"
         }
@@ -550,6 +552,7 @@
         }
       },
       "build": {
+        "types":{
         "default": {
           "outputExtension": "js",
           "preinstall": {
@@ -573,8 +576,8 @@
           "outputExtension": "",
           "filePathPattern": "^.+\\.compiled(?:\\.map)?$"
         }
-      },
-      "buildDefinition": {
+        },
+      "definitions": {
         "CONTEXT_TYPE": {
           "__evaluate__": "self.contextType"
         },
@@ -596,6 +599,7 @@
         "TARGET_TECHNOLOGY": {
           "__evaluate__": "`'${self.targetTechnology}'`"
         }
+      }
       },
       "commandLine": {
         "build": {

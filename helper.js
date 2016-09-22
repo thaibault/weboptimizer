@@ -761,12 +761,12 @@ export default class Helper {
                             const pathToPackageJSON:string = path.resolve(
                                 moduleFilePath, 'package.json')
                             if (Helper.isFileSync(pathToPackageJSON)) {
+                                let localConfiguration:PlainObject = {}
                                 try {
-                                    const localConfiguration:PlainObject =
-                                        JSON.parse(fileSystem.readFileSync(
+                                    localConfiguration = JSON.parse(
+                                        fileSystem.readFileSync(
                                             pathToPackageJSON, {
                                                 encoding: 'utf-8'}))
-
                                 } catch (error) {}
                                 if (localConfiguration.hasOwnProperty(
                                     'main'

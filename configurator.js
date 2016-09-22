@@ -267,13 +267,15 @@ const resolvedConfiguration:ResolvedConfiguration = Tools.unwrapProxy(
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.
-const defaultConfiguration:PlainObject = resolvedConfiguration.build.default
-delete resolvedConfiguration.build.default
-for (const type:string in resolvedConfiguration.build)
-    if (resolvedConfiguration.build.hasOwnProperty(type))
-        resolvedConfiguration.build[type] = Tools.extendObject(true, {
+const defaultConfiguration:PlainObject =
+    resolvedConfiguration.build.types.default
+delete resolvedConfiguration.build.types.default
+for (const type:string in resolvedConfiguration.build.types)
+    if (resolvedConfiguration.build.types.hasOwnProperty(type))
+        resolvedConfiguration.build.types[type] = Tools.extendObject(true, {
         }, defaultConfiguration, Tools.extendObject(
-            true, {extension: type}, resolvedConfiguration.build[type], {type})
+            true, {extension: type}, resolvedConfiguration.build.types[type],
+            {type})
         )
 // endregion
 // region resolve module location and which asset types are needed
@@ -284,15 +286,15 @@ resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.path.source.asset.base)
 resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.injection, Helper.resolveBuildConfigurationFilePaths(
-        resolvedConfiguration.build,
+        resolvedConfiguration.build.types,
         resolvedConfiguration.path.source.asset.base,
-        resolvedConfiguration.path.ignore.concat(
-            resolvedConfiguration.module.directories,
-            resolvedConfiguration.loader.directories
+        Helper.normalizePaths(resolvedConfiguration.path.ignore.concat(
+            resolvedConfiguration.module.directoryNames,
+            resolvedConfiguration.loader.directoryNames
         ).map((filePath:string):string => path.resolve(
             resolvedConfiguration.path.context, filePath)
         ).filter((filePath:string):boolean =>
-            !resolvedConfiguration.path.context.startsWith(filePath))
+            !resolvedConfiguration.path.context.startsWith(filePath)))
     ), resolvedConfiguration.injection.autoExclude,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.extensions.file,
@@ -310,8 +312,8 @@ resolvedConfiguration.injection.internal = {
         resolvedConfiguration.path.context,
         resolvedConfiguration.path.source.asset.base,
         resolvedConfiguration.path.ignore.concat(
-            resolvedConfiguration.module.directories,
-            resolvedConfiguration.loader.directories
+            resolvedConfiguration.module.directoryNames,
+            resolvedConfiguration.loader.directoryNames
         ).map((filePath:string):string => path.resolve(
             resolvedConfiguration.path.context, filePath)
         ).filter((filePath:string):boolean =>
@@ -339,7 +341,7 @@ for (
             let type:?string
             if (filePath)
                 type = Helper.determineAssetType(
-                    filePath, resolvedConfiguration.build,
+                    filePath, resolvedConfiguration.build.types,
                     resolvedConfiguration.path)
             else
                 throw Error(

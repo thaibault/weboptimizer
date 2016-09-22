@@ -69,7 +69,16 @@ export type Injection = {
     autoExclude:Array<string>;
     commonChunkIDs:Array<string>;
     dllChunkIDs:Array<string>;
-    external:ExternalInjection;
+    external:{
+        aliases:PlainObject;
+        implicit:{
+            pattern:{
+                exclude:Array<RegExp|string>;
+                include:Array<RegExp|string>;
+            };
+        };
+        modules:ExternalInjection;
+    };
     externalAliases:PlainObject;
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
@@ -146,7 +155,15 @@ export type ResolvedBuildConfigurationItem = {
     outputExtension:string;
     filePathPattern:string
 }
+export type Extensions = {
+    file:Array<string>;
+    module:Array<string>;
+}
 export type ResolvedConfiguration = {
+    cache:{
+        main:boolean;
+        unsafe:boolean;
+    };
     contextType:string;
     dllManifestFilePaths:Array<string>;
     givenCommandLineArguments:Array<string>;
@@ -184,17 +201,24 @@ export type ResolvedConfiguration = {
         javaScript:boolean;
         otherMaximumFileSizeLimitInByte:number
     };
-    extensions:Array<string>;
+    package:{
+        main:{
+            propertyNames:Array<string>;
+            fileNames:Array<string>;
+        },
+        aliasPropertyNames:Array<string>
+    },
+    extensions:Extensions;
     libraryName:string;
     loader:{
         aliases:Array<string>;
-        directories:Array<string>;
-        extensions:Array<string>;
+        directoryNames:Array<string>;
+        extensions:Extensions;
     };
     module:{
         aliases:PlainObject;
         cascadingStyleSheet:string;
-        directories:Array<string>;
+        directoryNames:Array<string>;
         html:PlainObject;
         locations:{[key:string]:Array<string>};
         optimizer:{
@@ -234,8 +258,10 @@ export type ResolvedConfiguration = {
         excludeFilePathRegularExpression:string;
         pattern:string
     }};
-    build:PlainObject;
-    buildDefinition:PlainObject;
+    build:{
+        definitions:PlainObject;
+        types:PlainObject;
+    };
     commandLine:{
         build:Command;
         document:Command;
@@ -253,8 +279,8 @@ export type ResolvedConfiguration = {
     hashAlgorithm:string;
     loader:{
         aliases:PlainObject;
-        extensions:Array<string>;
-        directories:Array<string>;
+        extensions:Extensions;
+        directoryNames:Array<string>;
     };
     stylelint:PlainObject;
 
