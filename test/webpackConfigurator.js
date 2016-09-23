@@ -9,7 +9,7 @@ import * as QUnit from 'qunit-cli'
 try {
     module.require('source-map-support/register')
 } catch (error) {}
-import type {WebpackConfiguration} from '.,/type'
+import type {WebpackConfiguration} from '../type'
 import webpack from 'webpack'
 // endregion
 QUnit.module('webpackConfigurator')

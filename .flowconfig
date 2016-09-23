@@ -2,17 +2,17 @@
 [ignore]
 .*/\.git
 .*/_.*\.js
-.*/.+\.compiled\.js
-test.compiled
-.+/clientnode/test.js
+.+\.compiled(\..+)?
 
 # temporary excludes
+.*/documentation-website/.*
+.*/internationalisation/.*
+.*/website-utilities/.*
 .+/systemjs-builder/test/fixtures/sourcemaps-expectations/.+\.json
 
 [options]
-esproposal.class_static_fields=enable
-
-module.name_mapper='^weboptimizer/type$' -> '../../type'
+module.name_mapper='^weboptimizer/type$' -> '<PROJECT_ROOT>/type'
+module.name_mapper='^weboptimizer/browserAPI$' -> '<PROJECT_ROOT>/browserAPI'
 module.name_mapper='^\./browserAPI\.compiled$' -> './browserAPI'
 module.name_mapper='^\../browserAPI\.compiled$' -> '../browserAPI'
 module.name_mapper='^\./configurator\.compiled$' -> './configurator'

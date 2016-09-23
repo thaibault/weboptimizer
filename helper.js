@@ -203,6 +203,15 @@ export default class Helper {
      * account.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
+     * @param relativeModuleFilePaths - List of relative file path to search
+     * for modules in.
+     * @param packageEntryFileNames - List of package entry file names to
+     * search for. The magic name "__package__" will search for an appreciate
+     * entry in a "package.json" file.
+     * @param packageMainPropertyNames - List of package file main property
+     * names to search for package representing entry module definitions.
+     * @param packageAliasPropertyNames - List of package file alias property
+     * names to search for package specific module aliases.
      * @param includePattern - Array of regular expressions to explicitly mark
      * as external dependency.
      * @param excludePattern - Array of regular expressions to explicitly mark
@@ -483,9 +492,15 @@ export default class Helper {
      * @param context - File path to resolve relative to.
      * @param referencePath - Path to search for local modules.
      * @param pathsToIgnore - Paths which marks location to ignore.
-     * @param relativeModuleFilePaths - Module file paths relatively to given
-     * context.
-     * @param packageEntryFileNames - Names of possible package entry files.
+     * @param relativeModuleFilePaths - List of relative file path to search
+     * for modules in.
+     * @param packageEntryFileNames - List of package entry file names to
+     * search for. The magic name "__package__" will search for an appreciate
+     * entry in a "package.json" file.
+     * @param packageMainPropertyNames - List of package file main property
+     * names to search for package representing entry module definitions.
+     * @param packageAliasPropertyNames - List of package file alias property
+     * names to search for package specific module aliases.
      * @returns Object with a file path and directory path key mapping to
      * corresponding list of paths.
      */
