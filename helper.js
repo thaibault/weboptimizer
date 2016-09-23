@@ -255,7 +255,6 @@ export default class Helper {
             resolvedRequest, {}, extensions, requestContext, referencePath,
             pathsToIgnore, relativeModuleFilePaths, packageEntryFileNames,
             packageMainPropertyNames, packageAliasPropertyNames)
-        console.log('A', request, filePath)
         if (!(filePath || inPlaceNormalLibrary) || Tools.isAnyMatching(
             resolvedRequest, includePattern
         ))
@@ -788,7 +787,7 @@ export default class Helper {
             relativeModuleFilePaths.map((filePath:string):string =>
                 path.resolve(referencePath, filePath))
         ))
-            for (let fileName:string of ['__package__', ''].concat(
+            for (let fileName:string of ['', '__package__'].concat(
                 packageEntryFileNames
             ))
                 for (const moduleExtension:string of [''].concat(
@@ -797,16 +796,20 @@ export default class Helper {
                     for (const fileExtension:string of [''].concat(
                         extensions.file
                     )) {
+                        let currentModuleFilePath:string
                         if (moduleFilePath.startsWith('/'))
-                            path.resolve(moduleFilePath)
+                            currentModuleFilePath = path.resolve(
+                                moduleFilePath)
                         else
-                            moduleFilePath = path.resolve(
+                            currentModuleFilePath = path.resolve(
                                 moduleLocation, moduleFilePath)
                         let packageAliases:PlainObject = {}
                         if (fileName === '__package__') {
-                            if (Helper.isDirectorySync(moduleFilePath)) {
+                            if (Helper.isDirectorySync(
+                                currentModuleFilePath
+                            )) {
                                 const pathToPackageJSON:string = path.resolve(
-                                    moduleFilePath, 'package.json')
+                                    currentModuleFilePath, 'package.json')
                                 if (Helper.isFileSync(pathToPackageJSON)) {
                                     let localConfiguration:PlainObject = {}
                                     try {
@@ -837,8 +840,9 @@ export default class Helper {
                                         ) && localConfiguration[
                                             propertyName
                                         ]) {
-                                            packageAliases = localConfiguration[
-                                                propertyName]
+                                            packageAliases =
+                                                localConfiguration[
+                                                    propertyName]
                                             break
                                         }
                                 }
@@ -848,9 +852,14 @@ export default class Helper {
                         }
                         fileName = Helper.applyAliases(
                             fileName, packageAliases)
-                        const currentModuleFilePath:string = path.resolve(
-                            moduleFilePath,
-                            `${fileName}${moduleExtension}${fileExtension}`)
+                        if (fileName)
+                            currentModuleFilePath = path.resolve(
+                                currentModuleFilePath,
+                                `${fileName}${moduleExtension}${fileExtension}`
+                            )
+                        else
+                            currentModuleFilePath +=
+                                `${fileName}${moduleExtension}${fileExtension}`
                         if (Helper.isFilePathInLocation(
                             currentModuleFilePath, pathsToIgnore
                         ))
