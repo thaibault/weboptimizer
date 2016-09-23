@@ -174,7 +174,7 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         [['./helper', './'], null],
         [['./helper', '../'], null],
         [['./helper', './a'], './helper'],
-        [['./helper', './', './a'], null],
+        [['./helper', './', './'], null],
         [['./a', './', './node_modules/a'], './a'],
         [['a', './', './'], 'a'],
         [['path', './', './', {}, []], 'path'],
@@ -182,64 +182,98 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         [['path', './', './', {}, [], {path: 'index.js'}], 'index.js'],
         [['path', './', './', {}, [], {path: './helper.js'}], null],
         [['webpack'], 'webpack'],
-        [['a', './', './', {}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {a$: 'webpack'}], 'webpack'],
-        [['a', './', './', {a: ['webpack']}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {a$: 'webpack'}], null],
-        [['a', './', './', {a: ['not_webpack']}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {a$: 'webpack'}, []], 'webpack'],
-        [['a', './', './', {a: ['webpack']}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {a$: 'webpack'}, ['.js'], './', ['./']], 'webpack'],
-        [['a', './', './', {a: ['webpack']}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {a$: 'webpack'}, ['.js'], './', ['.git']], null],
+        [['a', './', './', {}, ['node_modules'], {a$: 'webpack'}], 'webpack'],
+        [['a', '../', './', {a: ['webpack']}, ['node_modules'], {
+            a$: 'webpack'
+        }], null],
         [
-            ['a', './', './', {a: ['webpack']}, [path.resolve(
-                __dirname, '../node_modules'
-            )], {a$: 'webpack'}, ['.js'], './', ['.git'], ['webpack']],
-            'webpack'
+            [
+                'a', '../', './', {a: ['not_webpack']}, ['node_modules'],
+                {a$: 'webpack'}, {file: [], module: []}
+            ], 'webpack'
         ],
-        [['webpack', './', './', {}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {}, ['.js'], './', ['.git'], [], ['webpack']], null],
-        [['webpack', './', './', {}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {}, ['.js'], './', ['.git'], [], []], 'webpack'],
-        [['webpack', './', './', {}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {}, ['.js'], './', ['.git'], [], [], false], 'webpack'],
-        [['webpack', './', './', {}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {}, ['.js'], './', ['.git'], [], [], true], null],
-        [['a!webpack', './', './', {}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {}, ['.js'], './', ['.git'], [], [], false], null],
-        [['a!webpack', './', './', {}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {}, ['.js'], './', ['.git'], [], [], false, true], null],
-        [['a!webpack', './', './', {}, [path.resolve(
-            __dirname, '../node_modules'
-        )], {}, ['.js'], './', ['.git'], [], [], false, false], 'webpack'],
         [
-            ['a!webpack', './', './', {}, [path.resolve(
-                __dirname, '../node_modules'
-            )], {}, ['.js'], './', ['.git'], [], [], false, false, [
-                '.ext'
-            ]],
-            null
+            [
+                'a', '../', './', {a: ['webpack']}, ['node_modules'],
+                {a$: 'webpack'}, {file: ['.js'], module: []}, './', ['./']
+            ], 'webpack'
+        ],
+        [
+            [
+                'a', '../', './', {a: ['webpack']}, ['node_modules'],
+                {a$: 'webpack'}, {file: [], module: []}, './', ['.git']
+            ], null
+        ],
+        [
+            [
+                'a', './', './', {a: ['webpack']}, ['node_modules'],
+                {a$: 'webpack'}, {file: ['.js'], module: []}, './', ['.git'],
+                [], [], [], [], ['webpack']
+            ], 'webpack'
+        ],
+        [
+            [
+                'webpack', '../', './', {}, ['node_modules'], {},
+                {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
+                ['index'], ['main'], [],
+                [], []
+            ], 'webpack'
+        ],
+        [
+            [
+                'webpack', ',./', './', {}, ['node_modules'], {},
+                {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
+                ['index'], ['main'], [], [], [], false
+            ], 'webpack'
+        ],
+        [
+            [
+                'webpack', '../', './', {}, ['node_modules'], {},
+                {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
+                ['index'], ['main'], [], [], [], true
+            ], null
+        ],
+        [
+            [
+                'a!webpack', '../', './', {}, ['node_modules'], {},
+                {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
+                ['index'], ['main'], [], [], [], false
+            ], null
+        ],
+        [
+            [
+                'a!webpack', '../', './', {}, ['node_modules'], {},
+                {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
+                ['index'], ['main'], [], [], [], false, true
+            ], null
+        ],
+        [
+            [
+                'a!webpack', '../', './', {}, ['node_modules'], {},
+                {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
+                ['index'], ['main'], [], [], [], false, false
+            ], 'webpack'
+        ],
+        [
+            [
+                'a!webpack', '../', './', {}, ['node_modules'], {},
+                {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
+                ['index'], ['main'], [], [], [], false, false, ['.ext']
+            ], null
         ]
     ])
         assert.strictEqual(
             Helper.determineExternalRequest.apply(this, test[0]), test[1])
 })
+QUnit.test('isDirectorySync', (assert:Object):void => {
+    for (const filePath:string of [
+        __dirname, path.resolve(__dirname, '../')
+    ])
+        assert.ok(Helper.isDirectorySync(filePath))
+})
 QUnit.test('isFileSync', (assert:Object):void => {
     for (const filePath:string of [
-        __filename,
-        path.join(__dirname, path.basename(__filename))
+        __filename, path.join(__dirname, path.basename(__filename))
     ])
         assert.ok(Helper.isFileSync(filePath))
 })
@@ -354,6 +388,15 @@ QUnit.test('determineModuleLocations', (assert:Object):void => {
     ])
         assert.deepEqual(Helper.determineModuleLocations(test[0]), test[1])
 })
+QUnit.test('resolveModulesInFolders', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [{}, {}],
+        [{index: []}, {index: []}]
+    ])
+        assert.deepEqual(Helper.resolveModulesInFolders(test[0]), test[1])
+    assert.ok(Helper.resolveModulesInFolders({a: [__dirname]}).a.includes(
+        'test/helper.js'))
+})
 QUnit.test('normalizeInternalInjection', (assert:Object):void => {
     for (const test:Array<any> of [
         [[], {index: []}],
@@ -451,13 +494,13 @@ QUnit.test('getAutoChunk', (assert:Object):void => assert.deepEqual(
 QUnit.test('determineModuleFilePath', (assert:Object):void => {
     for (const test:Array<any> of [
         [[''], null],
-        [['a', {}, [], './', '', []], null],
-        [['a', {a: 'b'}, [], './', '', []], null],
-        [['bba', {a: 'b'}, [], './', '', []], null],
+        [['a', {}, {file: [], module: []}, './', '', []], null],
+        [['a', {a: 'b'}, {file: [], module: []}, './', '', []], null],
+        [['bba', {a: 'b'}, {file: [], module: []}, './', '', []], null],
         [['helper'], 'helper.js'],
-        [['helper', {}, [], './', '', []], null],
-        [['helper', {}, ['.js'], '../', '', []], null],
-        [['helper', {}, ['.js'], './'], 'helper.js']
+        [['helper', {}, {file: [], module: []}, './', '', []], null],
+        [['./helper', {}, {file: ['.js'], module: []}, 'a', '', []], null],
+        [['helper', {}, {file: ['.js'], module: []}, './'], 'helper.js']
     ]) {
         let result:?string = Helper.determineModuleFilePath.apply(
            this, test[0])

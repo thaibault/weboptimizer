@@ -233,13 +233,13 @@
       },
       "package": {
         "main": {
+          "fileNames": [
+            "index",
+            "main"
+          ],
           "propertyNames": {
             "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'main'])"
-          },
-          "fileNames": [
-            "index.js",
-            "main.js"
-          ]
+          }
         },
         "aliasPropertyNames": {
           "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat('aliases')"
@@ -280,7 +280,7 @@
           ]
         },
         "provide": {},
-        "skipParseRegularExpression": [],
+        "skipParseRegularExpressions": [],
         "optimizer": {
           "data": {
             "limit": {
@@ -417,7 +417,7 @@
               "__evaluate__": "self.module.aliases"
             },
             "extensions": {
-              "__evaluate__": "self.extensions.file"
+              "__evaluate__": "self.extensions"
             },
             "context": {
               "__evaluate__": "self.path.context"

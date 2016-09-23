@@ -400,8 +400,12 @@ if (configuration.injection.external.modules === '__implicit__')
                 configuration.path.context, filePath
             )).filter((filePath:string):boolean =>
                 !configuration.path.context.startsWith(filePath)
-            ), configuration.module.aliases, configuration.extensions.file,
+            ), configuration.module.aliases, configuration.extensions,
             configuration.path.source.asset.base, configuration.path.ignore,
+            configuration.module.directoryNames,
+            configuration.package.main.fileNames,
+            configuration.package.main.propertyNames,
+            configuration.package.aliasPropertyNames,
             configuration.injection.external.implicit.pattern.include,
             configuration.injection.external.implicit.pattern.exclude,
             configuration.inPlace.externalLibrary.normal,
@@ -658,7 +662,7 @@ const webpackConfiguration:WebpackConfiguration = {
     target: configuration.targetTechnology,
     // endregion
     module: {
-        noParse: configuration.module.skipParseRegularExpression,
+        noParse: configuration.module.skipParseRegularExpressions,
         loaders: [
             // Convert to native web types.
             // region script
