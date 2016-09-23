@@ -97,7 +97,7 @@ module.exports = function(source:string):string {
                         return compile(templateFilePath, options)(nestedLocals)
                     return fileSystem.readFileSync(templateFilePath, options)
                 }
-                throw Error(
+                throw new Error(
                     `Given template file "${template}" couldn't be resolved.`)
             }}, locals))
     }

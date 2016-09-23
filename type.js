@@ -299,7 +299,7 @@ export type WebpackConfiguration = {
     // region input
     entry:PlainObject;
     externals:ExternalInjection;
-    resolve: {
+    resolve:{
         alias:PlainObject;
         extensions:Array<string>;
         moduleExtensions:Array<string>;
@@ -309,7 +309,7 @@ export type WebpackConfiguration = {
         mainFields:Array<string>;
         mainFiles:Array<string>;
     },
-    resolveLoader: {
+    resolveLoader:{
         alias:PlainObject;
         extensions:Array<string>;
         moduleExtensions:Array<string>;
@@ -320,7 +320,7 @@ export type WebpackConfiguration = {
     },
     // endregion
     // region output
-    output: {
+    output:{
         filename:string;
         hashFunction:string;
         library:string;
@@ -332,7 +332,7 @@ export type WebpackConfiguration = {
     },
     target:string;
     // endregion
-    module: {
+    module:{
         noParse:RegExp|Array<RegExp>;
         loaders:Array<PlainObject>;
     },

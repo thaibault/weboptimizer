@@ -348,7 +348,7 @@ for (
                     filePath, resolvedConfiguration.build.types,
                     resolvedConfiguration.path)
             else
-                throw Error(
+                throw new Error(
                     `Given request "${moduleID}" couldn't be resolved.`)
             if (type)
                 resolvedConfiguration.needed[type] = true
