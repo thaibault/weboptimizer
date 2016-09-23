@@ -9,18 +9,21 @@ import * as QUnit from 'qunit-cli'
 try {
     module.require('source-map-support/register')
 } catch (error) {}
+import type {WebpackConfiguration} from '.,/type'
 // endregion
 QUnit.module('webpackConfigurator')
 QUnit.load()
 // region tests
-QUnit.test('webpackConfigurator', (assert:Object):void =>
-    // TODO load into webpack to check api schema
-    // console.log('A', require('webpack'))
-    assert.ok(require(
+QUnit.test('webpackConfigurator', (assert:Object):void => {
+    const webpackConfiguration:WebpackConfiguration = require(
         '../webpackConfigurator.compiled'
-    ).default.entry.index.includes(path.relative(path.resolve(
-        __dirname, '../'
-    ), __filename).replace(/\.compiled\.js$/, '.js'))))
+    ).default
+    assert.ok(webpackConfiguration.entry.index.includes(path.relative(
+        path.resolve(__dirname, '../'), __filename
+    ).replace(/\.compiled\.js$/, '.js')))
+    assert.strictEqual(require('webpack')(
+        webpackConfiguration, assert.async()))
+})
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
