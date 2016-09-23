@@ -786,7 +786,6 @@ const webpackConfiguration:WebpackConfiguration = {
             // endregion
         ]
     },
-    a: 2,
     plugins: pluginInstances.concat(new webpack.LoaderOptionsPlugin({
         // Let the "html-loader" access full html minifier processing
         // configuration.

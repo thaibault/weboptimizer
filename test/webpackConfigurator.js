@@ -10,6 +10,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 import type {WebpackConfiguration} from '.,/type'
+import webpack from 'webpack'
 // endregion
 QUnit.module('webpackConfigurator')
 QUnit.load()
@@ -21,8 +22,9 @@ QUnit.test('webpackConfigurator', (assert:Object):void => {
     assert.ok(webpackConfiguration.entry.index.includes(path.relative(
         path.resolve(__dirname, '../'), __filename
     ).replace(/\.compiled\.js$/, '.js')))
-    assert.strictEqual(require('webpack')(
-        webpackConfiguration, assert.async()))
+    webpackConfiguration.output.path = __dirname
+    webpackConfiguration.output.filename = 'dummy.compiled.js'
+    assert.strictEqual(typeof webpack(webpackConfiguration), 'object')
 })
 // endregion
 // region vim modline
