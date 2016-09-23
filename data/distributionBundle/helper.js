@@ -198,10 +198,20 @@ export default class Helper {
      * which should be injected.
      * @param externalModuleLocations - Array if paths where external modules
      * take place.
-     * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - List of file extensions to take into account.
+     * @param aliases - Mapping of aliases to take into account.
+     * @param extensions - List of file and module extensions to take into
+     * account.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
+     * @param relativeModuleFilePaths - List of relative file path to search
+     * for modules in.
+     * @param packageEntryFileNames - List of package entry file names to
+     * search for. The magic name "__package__" will search for an appreciate
+     * entry in a "package.json" file.
+     * @param packageMainPropertyNames - List of package file main property
+     * names to search for package representing entry module definitions.
+     * @param packageAliasPropertyNames - List of package file alias property
+     * names to search for package specific module aliases.
      * @param includePattern - Array of regular expressions to explicitly mark
      * as external dependency.
      * @param excludePattern - Array of regular expressions to explicitly mark
@@ -219,31 +229,41 @@ export default class Helper {
     static determineExternalRequest(
         request:string, context:string = './', requestContext:string = './',
         normalizedInternalInjection:NormalizedInternalInjection = {},
-        externalModuleLocations:Array<string> = [path.resolve(
-            __dirname, 'node_modules'
-        )], moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
-            '', '.js', '.css', '.svg', '.html', 'json'
-        ], referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
+        externalModuleLocations:Array<string> = ['node_modules'],
+        aliases:PlainObject = {},
+        extensions:{file:Array<string>;module:Array<string>} = {
+            file: [
+                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
+                '.json', '.eot', '.ttf', '.woff'
+            ], module: []
+        }, referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
+        relativeModuleFilePaths:Array<string> = ['node_modules'],
+        packageEntryFileNames:Array<string> = ['index', 'main'],
+        packageMainPropertyNames:Array<string> = ['main', 'module'],
+        packageAliasPropertyNames:Array<string> = [],
         includePattern:Array<string|RegExp> = [],
         excludePattern:Array<string|RegExp> = [],
         inPlaceNormalLibrary:boolean = false,
         inPlaceDynamicLibrary:boolean = true,
         externalHandableFileExtensions:Array<string> = [
-            '', '.js', '.node', '.json']
+            '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
+            '.json', '.eot', '.ttf', '.woff'
+        ]
     ):?string {
         context = path.resolve(context)
         requestContext = path.resolve(requestContext)
         referencePath = path.resolve(referencePath)
         // NOTE: We apply alias on externals additionally.
         let resolvedRequest:string = Helper.applyAliases(
-            request.substring(request.lastIndexOf('!') + 1), moduleAliases)
+            request.substring(request.lastIndexOf('!') + 1), aliases)
         /*
             NOTE: Aliases doesn't have to be forwarded since we pass an already
             resolved request.
         */
         let filePath:?string = Helper.determineModuleFilePath(
-            resolvedRequest, {}, knownExtensions, requestContext,
-            referencePath, pathsToIgnore)
+            resolvedRequest, {}, extensions, requestContext, referencePath,
+            pathsToIgnore, relativeModuleFilePaths, packageEntryFileNames,
+            packageMainPropertyNames, packageAliasPropertyNames)
         if (!(filePath || inPlaceNormalLibrary) || Tools.isAnyMatching(
             resolvedRequest, includePattern
         ))
@@ -256,8 +276,10 @@ export default class Helper {
                     chunkName
                 ])
                     if (Helper.determineModuleFilePath(
-                        moduleID, moduleAliases, knownExtensions, context,
-                        referencePath, pathsToIgnore
+                        moduleID, aliases, extensions, context, referencePath,
+                        pathsToIgnore, relativeModuleFilePaths,
+                        packageEntryFileNames, packageMainPropertyNames,
+                        packageAliasPropertyNames
                     ) === filePath)
                         return null
         /*
@@ -278,14 +300,25 @@ export default class Helper {
         return null
     }
     /**
+     * Checks if given path points to a valid directory.
+     * @param filePath - Path to directory.
+     * @returns A boolean which indicates directory existents.
+     */
+    static isDirectorySync(filePath:string):boolean {
+        try {
+            return fileSystem.statSync(filePath).isDirectory()
+        } catch (error) {
+            return false
+        }
+    }
+    /**
      * Checks if given path points to a valid file.
      * @param filePath - Path to file.
      * @returns A boolean which indicates file existents.
      */
     static isFileSync(filePath:string):boolean {
         try {
-            fileSystem.accessSync(filePath, fileSystem.F_OK)
-            return true
+            return fileSystem.statSync(filePath).isFile()
         } catch (error) {
             return false
         }
@@ -328,11 +361,8 @@ export default class Helper {
             NOTE: If target path references a directory a new file with the
             same name will be created.
         */
-        try {
-            if (fileSystem.lstatSync(targetPath).isDirectory())
-                targetPath = path.resolve(targetPath, path.basename(
-                    sourcePath))
-        } catch (error) {}
+        if (Helper.isDirectorySync(targetPath))
+            targetPath = path.resolve(targetPath, path.basename(sourcePath))
         fileSystem.writeFileSync(targetPath, fileSystem.readFileSync(
             sourcePath))
         return targetPath
@@ -349,12 +379,10 @@ export default class Helper {
     static copyDirectoryRecursiveSync(
         sourcePath:string, targetPath:string
     ):string {
-        try {
-            // Check if folder needs to be created or integrated.
-            if (fileSystem.lstatSync(targetPath).isDirectory())
-                targetPath = path.resolve(targetPath, path.basename(
-                    sourcePath))
-        } catch (error) {}
+        // Check if folder needs to be created or integrated.
+        if (Helper.isDirectorySync(targetPath))
+            targetPath = path.resolve(targetPath, path.basename(
+                sourcePath))
         fileSystem.mkdirSync(targetPath)
         Helper.walkDirectoryRecursivelySync(sourcePath, (
             currentSourcePath:string, stat:Object
@@ -433,7 +461,7 @@ export default class Helper {
                     if (stat.isFile() && path.extname(filePath).substring(
                         1
                     ) === buildConfigurationItem.extension && !(new RegExp(
-                        buildConfigurationItem.fileNamePattern
+                        buildConfigurationItem.filePathPattern
                     )).test(filePath))
                         buildConfigurationItem.filePaths.push(filePath)
                 })(index, newItem))
@@ -458,26 +486,38 @@ export default class Helper {
      * Determines all file and directory paths related to given internal
      * modules as array.
      * @param internalInjection - List of module ids or module file paths.
-     * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - List of file extensions to take into account.
+     * @param aliases - Mapping of aliases to take into account.
+     * @param extensions - List of file and module extensions to take into
+     * account.
      * @param context - File path to resolve relative to.
      * @param referencePath - Path to search for local modules.
      * @param pathsToIgnore - Paths which marks location to ignore.
-     * @param relativeModuleFilePaths - Module file paths relatively to given
-     * context.
-     * @param packageEntryFileNames - Names of possible package entry files.
+     * @param relativeModuleFilePaths - List of relative file path to search
+     * for modules in.
+     * @param packageEntryFileNames - List of package entry file names to
+     * search for. The magic name "__package__" will search for an appreciate
+     * entry in a "package.json" file.
+     * @param packageMainPropertyNames - List of package file main property
+     * names to search for package representing entry module definitions.
+     * @param packageAliasPropertyNames - List of package file alias property
+     * names to search for package specific module aliases.
      * @returns Object with a file path and directory path key mapping to
      * corresponding list of paths.
      */
     static determineModuleLocations(
-        internalInjection:InternalInjection, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = [
-            '', '.js', '.css', '.svg', '.html', 'json'
-        ], context:string = './', referencePath:string = '',
+        internalInjection:InternalInjection, aliases:PlainObject = {},
+        extensions:{file:Array<string>;module:Array<string>} = {
+            file: [
+                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
+                '.json', '.eot', '.ttf', '.woff'
+            ], module: []
+        }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
         relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
         packageEntryFileNames:Array<string> = [
-            '__package__', '', 'index', 'main']
+            '__package__', '', 'index', 'main'],
+        packageMainPropertyNames:Array<string> = ['main', 'module'],
+        packageAliasPropertyNames:Array<string> = []
     ):{filePaths:Array<string>;directoryPaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
@@ -489,9 +529,10 @@ export default class Helper {
                     chunkName
                 ]) {
                     const filePath:?string = Helper.determineModuleFilePath(
-                        moduleID, moduleAliases, knownExtensions, context,
-                        referencePath, pathsToIgnore, relativeModuleFilePaths,
-                        packageEntryFileNames)
+                        moduleID, aliases, extensions, context, referencePath,
+                        pathsToIgnore, relativeModuleFilePaths,
+                        packageEntryFileNames, packageMainPropertyNames,
+                        packageAliasPropertyNames)
                     if (filePath) {
                         filePaths.push(filePath)
                         const directoryPath:string = path.dirname(filePath)
@@ -500,6 +541,62 @@ export default class Helper {
                     }
                 }
         return {filePaths, directoryPaths}
+    }
+    /**
+     * Determines a list of concrete file paths for given module id pointing
+     * to a folder which isn't a package.
+     * @param normalizedInternalInjection - Injection data structure of
+     * modules with folder references to resolve.
+     * @param aliases - Mapping of aliases to take into account.
+     * @param extensions - List of file and module extensions.
+     * @param context - File path to determine relative to.
+     * @param referencePath - Path to resolve local modules relative to.
+     * @param pathsToIgnore - Paths which marks location to ignore.
+     * @returns Given injections with resolved folder pointing modules.
+     */
+    static resolveModulesInFolders(
+        normalizedInternalInjection:NormalizedInternalInjection,
+        aliases:PlainObject = {},
+        extensions:{file:Array<string>;module:Array<string>} = {
+            file: [
+                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
+                '.json', '.eot', '.ttf', '.woff'
+            ], module: []
+        }, context:string = './', referencePath:string = '',
+        pathsToIgnore:Array<string> = ['.git']
+    ):NormalizedInternalInjection {
+        if (referencePath.startsWith('/'))
+            referencePath = path.relative(context, referencePath)
+        for (const chunkName:string in normalizedInternalInjection)
+            if (normalizedInternalInjection.hasOwnProperty(chunkName)) {
+                let index:number = 0
+                for (let moduleID:string of normalizedInternalInjection[
+                    chunkName
+                ]) {
+                    moduleID = Helper.applyAliases(
+                        Helper.stripLoader(moduleID), aliases)
+                    const directoryPath:string = path.resolve(
+                        referencePath, moduleID)
+                    if (Helper.isDirectorySync(directoryPath)) {
+                        normalizedInternalInjection[chunkName].splice(index, 1)
+                        Helper.walkDirectoryRecursivelySync(directoryPath, (
+                            filePath:string, stat:Object
+                        ):?false => {
+                            if (Helper.isFilePathInLocation(
+                                path.resolve(directoryPath, filePath),
+                                pathsToIgnore
+                            ))
+                                return false
+                            if (stat.isFile())
+                                normalizedInternalInjection[chunkName].push(
+                                    path.relative(referencePath, path.resolve(
+                                        directoryPath, filePath)))
+                        })
+                    }
+                    index += 1
+                }
+            }
+        return normalizedInternalInjection
     }
     /**
      * Every injection definition type can be represented as plain object
@@ -548,8 +645,9 @@ export default class Helper {
      * @param buildConfigurations - Resolved build configuration.
      * @param modulesToExclude - A list of modules to exclude (specified by
      * path or id) or a mapping from chunk names to module ids.
-     * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - File extensions to take into account.
+     * @param aliases - Mapping of aliases to take into account.
+     * @param extensions - List of file and module extensions to take into
+     * account.
      * @param context - File path to use as starting point.
      * @param referencePath - Reference path from where local files should be
      * resolved.
@@ -560,17 +658,21 @@ export default class Helper {
         givenInjection:Injection,
         buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:InternalInjection,
-        moduleAliases:PlainObject = {}, knownExtensions:Array<string> = [
-            '', '.js', '.css', '.svg', '.html', 'json'
-        ], context:string = './', referencePath:string = '',
+        aliases:PlainObject = {},
+        extensions:{file:Array<string>;module:Array<string>} = {
+            file: [
+                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
+                '.json', '.eot', '.ttf', '.woff'
+            ], module: []
+        }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):Injection {
         const injection:Injection = Tools.extendObject(
             true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
-                modulesToExclude, moduleAliases, knownExtensions, context,
-                referencePath, pathsToIgnore
+                modulesToExclude, aliases, extensions, context, referencePath,
+                pathsToIgnore
             ).filePaths
         for (const type:string of ['internal', 'external'])
             /* eslint-disable curly */
@@ -582,7 +684,7 @@ export default class Helper {
                             [key:string]:string
                         } = Helper.getAutoChunk(
                             buildConfigurations, moduleFilePathsToExclude,
-                            context)
+                            referencePath)
                         for (const subChunkName:string in modules)
                             if (modules.hasOwnProperty(subChunkName))
                                 injection[type][chunkName].push(
@@ -658,8 +760,9 @@ export default class Helper {
     /**
      * Determines a concrete file path for given module id.
      * @param moduleID - Module id to determine.
-     * @param moduleAliases - Mapping of aliases to take into account.
-     * @param knownExtensions - List of known extensions.
+     * @param aliases - Mapping of aliases to take into account.
+     * @param extensions - List of file and module extensions to take into
+     * account.
      * @param context - File path to determine relative to.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
@@ -668,65 +771,117 @@ export default class Helper {
      * @param packageEntryFileNames - List of package entry file names to
      * search for. The magic name "__package__" will search for an appreciate
      * entry in a "package.json" file.
+     * @param packageMainPropertyNames - List of package file main property
+     * names to search for package representing entry module definitions.
+     * @param packageAliasPropertyNames - List of package file alias property
+     * names to search for package specific module aliases.
      * @returns File path or given module id if determinations has failed or
      * wasn't necessary.
      */
     static determineModuleFilePath(
-        moduleID:string, moduleAliases:PlainObject = {},
-        knownExtensions:Array<string> = [
-            '', '.js', '.css', '.svg', '.html', 'json'
-        ], context:string = './', referencePath:string = '',
+        moduleID:string, aliases:PlainObject = {},
+        extensions:{file:Array<string>;module:Array<string>} = {
+            file: [
+                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
+                '.json', '.eot', '.ttf', '.woff'
+            ], module: []
+        }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
-        relativeModuleFilePaths:Array<string> = ['node_modules', '../'],
-        packageEntryFileNames:Array<string> = [
-            '__package__', '', 'index', 'main']
+        relativeModuleFilePaths:Array<string> = ['node_modules'],
+        packageEntryFileNames:Array<string> = ['index'],
+        packageMainPropertyNames:Array<string> = ['main'],
+        packageAliasPropertyNames:Array<string> = []
     ):?string {
-        moduleID = Helper.applyAliases(
-            Helper.stripLoader(moduleID), moduleAliases)
+        moduleID = Helper.applyAliases(Helper.stripLoader(moduleID), aliases)
         if (!moduleID)
             return null
-        if (referencePath.startsWith('/'))
-            referencePath = path.relative(context, referencePath)
+        let moduleFilePath:string = moduleID
+        if (moduleFilePath.startsWith('./'))
+            moduleFilePath = path.join(context, moduleFilePath)
         for (const moduleLocation:string of [referencePath].concat(
-            relativeModuleFilePaths
+            relativeModuleFilePaths.map((filePath:string):string =>
+                path.resolve(referencePath, filePath))
         ))
-            for (let fileName:string of packageEntryFileNames)
-                for (const extension:string of knownExtensions) {
-                    let moduleFilePath:string = moduleID
-                    if (!moduleFilePath.startsWith('/'))
-                        moduleFilePath = path.resolve(
-                            context, moduleLocation, moduleFilePath)
-                    if (fileName === '__package__') {
-                        try {
-                            if (fileSystem.statSync(
-                                moduleFilePath
-                            ).isDirectory()) {
+            for (let fileName:string of ['', '__package__'].concat(
+                packageEntryFileNames
+            ))
+                for (const moduleExtension:string of [''].concat(
+                    extensions.module
+                ))
+                    for (const fileExtension:string of [''].concat(
+                        extensions.file
+                    )) {
+                        let currentModuleFilePath:string
+                        if (moduleFilePath.startsWith('/'))
+                            currentModuleFilePath = path.resolve(
+                                moduleFilePath)
+                        else
+                            currentModuleFilePath = path.resolve(
+                                moduleLocation, moduleFilePath)
+                        let packageAliases:PlainObject = {}
+                        if (fileName === '__package__') {
+                            if (Helper.isDirectorySync(
+                                currentModuleFilePath
+                            )) {
                                 const pathToPackageJSON:string = path.resolve(
-                                    moduleFilePath, 'package.json')
-                                if (fileSystem.statSync(
-                                    pathToPackageJSON
-                                ).isFile()) {
-                                    const localConfiguration:PlainObject =
-                                        JSON.parse(fileSystem.readFileSync(
-                                            pathToPackageJSON, {
-                                                encoding: 'utf-8'}))
-                                    if (localConfiguration.main)
-                                        fileName = localConfiguration.main
+                                    currentModuleFilePath, 'package.json')
+                                if (Helper.isFileSync(pathToPackageJSON)) {
+                                    let localConfiguration:PlainObject = {}
+                                    try {
+                                        localConfiguration = JSON.parse(
+                                            fileSystem.readFileSync(
+                                                pathToPackageJSON, {
+                                                    encoding: 'utf-8'}))
+                                    } catch (error) {}
+                                    for (
+                                        const propertyName:string of
+                                        packageMainPropertyNames
+                                    )
+                                        if (localConfiguration.hasOwnProperty(
+                                            propertyName
+                                        ) && localConfiguration[
+                                            propertyName
+                                        ]) {
+                                            fileName = localConfiguration[
+                                                propertyName]
+                                            break
+                                        }
+                                    for (
+                                        const propertyName:string of
+                                        packageAliasPropertyNames
+                                    )
+                                        if (localConfiguration.hasOwnProperty(
+                                            propertyName
+                                        ) && localConfiguration[
+                                            propertyName
+                                        ]) {
+                                            packageAliases =
+                                                localConfiguration[
+                                                    propertyName]
+                                            break
+                                        }
                                 }
                             }
-                        } catch (error) {}
-                        if (fileName === '__package__')
+                            if (fileName === '__package__')
+                                continue
+                        }
+                        fileName = Helper.applyAliases(
+                            fileName, packageAliases)
+                        if (fileName)
+                            currentModuleFilePath = path.resolve(
+                                currentModuleFilePath,
+                                `${fileName}${moduleExtension}${fileExtension}`
+                            )
+                        else
+                            currentModuleFilePath +=
+                                `${fileName}${moduleExtension}${fileExtension}`
+                        if (Helper.isFilePathInLocation(
+                            currentModuleFilePath, pathsToIgnore
+                        ))
                             continue
+                        if (Helper.isFileSync(currentModuleFilePath))
+                            return currentModuleFilePath
                     }
-                    moduleFilePath = path.resolve(moduleFilePath, fileName)
-                    moduleFilePath += extension
-                    if (Helper.isFilePathInLocation(
-                        moduleFilePath, pathsToIgnore
-                    ))
-                        continue
-                    if (Helper.isFileSync(moduleFilePath))
-                        return moduleFilePath
-                }
         return null
     }
     // endregion

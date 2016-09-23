@@ -104,17 +104,17 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 ):?boolean => {
                     if (Helper.isFilePathInLocation(
                         filePath, configuration.path.ignore.concat(
-                            configuration.module.directories,
-                            configuration.loader.directories
+                            configuration.module.directoryNames,
+                            configuration.loader.directoryNames
                         ).map((filePath:string):string => path.resolve(
                             configuration.path.context, filePath)
                         ).filter((filePath:string):boolean =>
                             !configuration.path.context.startsWith(filePath))
                     ))
                         return false
-                    for (const type:string in configuration.build)
+                    for (const type:string in configuration.build.types)
                         if (new RegExp(
-                            configuration.build[type].fileNamePattern
+                            configuration.build.types[type].filePathPattern
                         ).test(filePath)) {
                             if (stat.isDirectory()) {
                                 removeDirectoryRecursivelySync(filePath, {
@@ -148,10 +148,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // region handle build
     const buildConfigurations:ResolvedBuildConfiguration =
         Helper.resolveBuildConfigurationFilePaths(
-            configuration.build, configuration.path.source.asset.base,
+            configuration.build.types, configuration.path.source.asset.base,
             configuration.path.ignore.concat(
-                configuration.module.directories,
-                configuration.loader.directories
+                configuration.module.directoryNames,
+                configuration.loader.directoryNames
             ).map((filePath:string):string => path.resolve(
                 configuration.path.context, filePath)
             ).filter((filePath:string):boolean =>
@@ -181,20 +181,25 @@ if (configuration.givenCommandLineArguments.length > 2) {
                             // IgnoreTypeCheck
                             Helper.determineModuleFilePath(
                                 moduleID, configuration.module.aliases,
-                                configuration.knownExtensions,
+                                configuration.extensions,
                                 configuration.path.context,
                                 configuration.path.source.asset.base,
-                                configuration.path.ignore
-                            ), configuration.build, configuration.path)
-                        if (typeof type === 'string' && configuration.build[
-                            type
-                        ]) {
+                                configuration.path.ignore,
+                                configuration.module.directoryNames,
+                                configuration.package.main.fileNames,
+                                configuration.package.main.propertyNames,
+                                configuration.package.aliasPropertyNames
+                            ), configuration.build.types, configuration.path)
+                        if (
+                            typeof type === 'string' &&
+                            configuration.build.types[type]
+                        ) {
                             const filePath:string =
                                 Helper.renderFilePathTemplate(
                                     Helper.stripLoader(
-                                        configuration.files.compose.javaScript,
-                                        {'[name]': chunkName}))
-                            if (configuration.build[
+                                        configuration.files.compose.javaScript
+                                    ), {'[name]': chunkName})
+                            if (configuration.build.types[
                                 type
                             ].outputExtension === 'js' && Helper.isFileSync(
                                 filePath
@@ -233,16 +238,12 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 ) {
                     const sourcePath:string = path.join(
                         configuration.path.source.base, filePath)
-                    try {
-                        if (fileSystem.lstatSync(sourcePath).isDirectory())
-                            Helper.copyDirectoryRecursiveSync(
-                                sourcePath, configuration.path.target.base)
-                        else
-                            Helper.copyFileSync(
-                                sourcePath, configuration.path.target.base)
-                    } catch (error) {
-                        break
-                    }
+                    if (Helper.isDirectorySync(sourcePath))
+                        Helper.copyDirectoryRecursiveSync(
+                            sourcePath, configuration.path.target.base)
+                    else if (Helper.isFileSync(sourcePath))
+                        Helper.copyFileSync(
+                            sourcePath, configuration.path.target.base)
                 }
                 tidyUp()
             }
@@ -263,7 +264,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
         const testModuleFilePaths:Array<string> =
             Helper.determineModuleLocations(
                 configuration.testInBrowser.injection.internal,
-                configuration.module.aliases, configuration.knownExtensions,
+                configuration.module.aliases, configuration.extensions,
                 configuration.path.context,
                 configuration.path.source.asset.base, configuration.path.ignore
             ).filePaths

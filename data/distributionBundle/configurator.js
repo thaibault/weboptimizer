@@ -179,11 +179,7 @@ if (Tools.isPlainObject(result))
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
-let targetDirectory:?Object = null
-try {
-    targetDirectory = fileSystem.statSync(configuration.path.target.base)
-} catch (error) {}
-if (targetDirectory && targetDirectory.isDirectory())
+if (Helper.isDirectorySync(configuration.path.target.base))
     fileSystem.readdirSync(configuration.path.target.base).forEach((
         fileName:string
     ):void => {
@@ -271,43 +267,57 @@ const resolvedConfiguration:ResolvedConfiguration = Tools.unwrapProxy(
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.
-const defaultConfiguration:PlainObject = resolvedConfiguration.build.default
-delete resolvedConfiguration.build.default
-for (const type:string in resolvedConfiguration.build)
-    if (resolvedConfiguration.build.hasOwnProperty(type))
-        resolvedConfiguration.build[type] = Tools.extendObject(true, {
+const defaultConfiguration:PlainObject =
+    resolvedConfiguration.build.types.default
+delete resolvedConfiguration.build.types.default
+for (const type:string in resolvedConfiguration.build.types)
+    if (resolvedConfiguration.build.types.hasOwnProperty(type))
+        resolvedConfiguration.build.types[type] = Tools.extendObject(true, {
         }, defaultConfiguration, Tools.extendObject(
-            true, {extension: type}, resolvedConfiguration.build[type], {type})
+            true, {extension: type}, resolvedConfiguration.build.types[type],
+            {type})
         )
 // endregion
 // region resolve module location and which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.injection.internal,
     resolvedConfiguration.module.aliases,
-    resolvedConfiguration.knownExtensions, resolvedConfiguration.path.context,
+    resolvedConfiguration.extensions, resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base)
 resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.injection, Helper.resolveBuildConfigurationFilePaths(
-        resolvedConfiguration.build,
+        resolvedConfiguration.build.types,
         resolvedConfiguration.path.source.asset.base,
-        resolvedConfiguration.path.ignore.concat(
-            resolvedConfiguration.module.directories,
-            resolvedConfiguration.loader.directories
+        Helper.normalizePaths(resolvedConfiguration.path.ignore.concat(
+            resolvedConfiguration.module.directoryNames,
+            resolvedConfiguration.loader.directoryNames
         ).map((filePath:string):string => path.resolve(
             resolvedConfiguration.path.context, filePath)
         ).filter((filePath:string):boolean =>
-            !resolvedConfiguration.path.context.startsWith(filePath))
+            !resolvedConfiguration.path.context.startsWith(filePath)))
     ), resolvedConfiguration.injection.autoExclude,
     resolvedConfiguration.module.aliases,
-    resolvedConfiguration.knownExtensions,
+    resolvedConfiguration.extensions,
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore)
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
-    // IgnoreTypeCheck
-    normalized: Helper.normalizeInternalInjection(
-        resolvedConfiguration.injection.internal)}
+    normalized: Helper.resolveModulesInFolders(
+        // IgnoreTypeCheck
+        Helper.normalizeInternalInjection(
+            resolvedConfiguration.injection.internal
+        ), resolvedConfiguration.module.aliases,
+        resolvedConfiguration.extensions,
+        resolvedConfiguration.path.context,
+        resolvedConfiguration.path.source.asset.base,
+        resolvedConfiguration.path.ignore.concat(
+            resolvedConfiguration.module.directoryNames,
+            resolvedConfiguration.loader.directoryNames
+        ).map((filePath:string):string => path.resolve(
+            resolvedConfiguration.path.context, filePath)
+        ).filter((filePath:string):boolean =>
+            !resolvedConfiguration.path.context.startsWith(filePath)))}
 resolvedConfiguration.needed = {javaScript: configuration.debug && [
     'serve', 'testInBrowser'
 ].includes(resolvedConfiguration.givenCommandLineArguments[2])}
@@ -324,17 +334,21 @@ for (
         ) {
             const filePath:?string = Helper.determineModuleFilePath(
                 moduleID, resolvedConfiguration.module.aliases,
-                resolvedConfiguration.knownExtensions,
+                resolvedConfiguration.extensions,
                 resolvedConfiguration.path.context,
                 resolvedConfiguration.path.source.asset.base,
-                resolvedConfiguration.path.ignore)
+                resolvedConfiguration.path.ignore,
+                resolvedConfiguration.module.directoryNames,
+                resolvedConfiguration.package.main.fileNames,
+                resolvedConfiguration.package.main.propertyNames,
+                resolvedConfiguration.package.aliasPropertyNames)
             let type:?string
             if (filePath)
                 type = Helper.determineAssetType(
-                    filePath, resolvedConfiguration.build,
+                    filePath, resolvedConfiguration.build.types,
                     resolvedConfiguration.path)
             else
-                throw Error(
+                throw new Error(
                     `Given request "${moduleID}" couldn't be resolved.`)
             if (type)
                 resolvedConfiguration.needed[type] = true

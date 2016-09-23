@@ -69,7 +69,16 @@ export type Injection = {
     autoExclude:Array<string>;
     commonChunkIDs:Array<string>;
     dllChunkIDs:Array<string>;
-    external:ExternalInjection;
+    external:{
+        aliases:PlainObject;
+        implicit:{
+            pattern:{
+                exclude:Array<RegExp|string>;
+                include:Array<RegExp|string>;
+            };
+        };
+        modules:ExternalInjection;
+    };
     externalAliases:PlainObject;
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
@@ -95,7 +104,7 @@ export type AssetPath = {
 export type BuildConfigurationItem = {
     extension:string;
     outputExtension:string;
-    fileNamePattern:string
+    filePathPattern:string
 }
 export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
 export type Command = {
@@ -125,6 +134,7 @@ export type DefaultConfiguration = {
     debug:boolean;
     dllManifestFilePaths:Array<any>;
     document:Object;
+    library:boolean;
     path:Path;
     test:Object;
     testInBrowser:Object
@@ -143,9 +153,17 @@ export type ResolvedBuildConfigurationItem = {
     filePaths:Array<string>;
     extension:string;
     outputExtension:string;
-    fileNamePattern:string
+    filePathPattern:string
+}
+export type Extensions = {
+    file:Array<string>;
+    module:Array<string>;
 }
 export type ResolvedConfiguration = {
+    cache:{
+        main:boolean;
+        unsafe:boolean;
+    };
     contextType:string;
     dllManifestFilePaths:Array<string>;
     givenCommandLineArguments:Array<string>;
@@ -183,17 +201,24 @@ export type ResolvedConfiguration = {
         javaScript:boolean;
         otherMaximumFileSizeLimitInByte:number
     };
-    knownExtensions:Array<string>;
+    package:{
+        main:{
+            propertyNames:Array<string>;
+            fileNames:Array<string>;
+        };
+        aliasPropertyNames:Array<string>
+    };
+    extensions:Extensions;
     libraryName:string;
     loader:{
         aliases:Array<string>;
-        directories:Array<string>;
-        extensions:Array<string>;
+        directoryNames:Array<string>;
+        extensions:Extensions;
     };
     module:{
         aliases:PlainObject;
         cascadingStyleSheet:string;
-        directories:Array<string>;
+        directoryNames:Array<string>;
         html:PlainObject;
         locations:{[key:string]:Array<string>};
         optimizer:{
@@ -221,7 +246,7 @@ export type ResolvedConfiguration = {
         };
         provide:{[key:string]:string};
         style:PlainObject;
-        skipParseRegularExpression:RegExp|Array<RegExp>;
+        skipParseRegularExpressions:RegExp|Array<RegExp>;
     };
     offline:{excludes:Array<string>};
     path:Path;
@@ -233,27 +258,29 @@ export type ResolvedConfiguration = {
         excludeFilePathRegularExpression:string;
         pattern:string
     }};
-    build:PlainObject;
-    buildDefinition:PlainObject;
+    build:{
+        definitions:PlainObject;
+        types:PlainObject;
+    };
     commandLine:{
         build:Command;
         document:Command;
         lint:Command;
         serve:Command;
         test:Command;
-        testInBrowser:Command,
-        typeCheck:Command
+        testInBrowser:Command;
+        typeCheck:Command;
     };
     development:{
         openBrowser:PlainObject;
         server:PlainObject;
-        tool:PlainObject
+        tool:false|string;
     };
     hashAlgorithm:string;
     loader:{
         aliases:PlainObject;
-        extensions:Array<string>;
-        directories:Array<string>;
+        extensions:Extensions;
+        directoryNames:Array<string>;
     };
     stylelint:PlainObject;
 
@@ -264,8 +291,53 @@ export type ResolvedConfiguration = {
     testInBrowser:PlainObject
 }
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
-// TODO
-export type WebpackConfiguration = Object
+export type WebpackConfiguration = {
+    cache:boolean;
+    context:string;
+    devtool:false|string;
+    devServer:PlainObject;
+    // region input
+    entry:PlainObject;
+    externals:ExternalInjection;
+    resolve:{
+        alias:PlainObject;
+        extensions:Array<string>;
+        moduleExtensions:Array<string>;
+        modules:Array<string>;
+        unsafeCache:boolean;
+        aliasFields:Array<string>;
+        mainFields:Array<string>;
+        mainFiles:Array<string>;
+    },
+    resolveLoader:{
+        alias:PlainObject;
+        extensions:Array<string>;
+        moduleExtensions:Array<string>;
+        modules:Array<string>;
+        aliasFields:Array<string>;
+        mainFields:Array<string>;
+        mainFiles:Array<string>;
+    },
+    // endregion
+    // region output
+    output:{
+        filename:string;
+        hashFunction:string;
+        library:string;
+        libraryTarget:string;
+        path:string;
+        publicPath:string;
+        pathinfo:boolean;
+        umdNamedDefine:boolean;
+    },
+    target:string;
+    // endregion
+    module:{
+        noParse:RegExp|Array<RegExp>;
+        loaders:Array<PlainObject>;
+    },
+    plugins:Array<Object>;
+}
 // / endregion
 // / region specific callbacks
 export type PromiseCallbackFunction = (reason:any) => ?Promise<any>
