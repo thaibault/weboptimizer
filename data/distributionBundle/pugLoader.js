@@ -35,9 +35,14 @@ module.exports = function(source:string):string {
         this.cacheable()
     const query:Object = Tools.convertSubstringInPlainObject(
         Tools.extendObject(true, {
-            moduleAliases: [],
-            knownExtensions: ['.pug', '.html', '.js', '.css'],
-            context: './'
+            context: './',
+            extensions: {
+                file: [
+                    '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico',
+                    '.html', '.json', '.eot', '.ttf', '.woff'
+                ], module: []
+            },
+            moduleAliases: []
         }, this.options.pug || {}, loaderUtils.parseQuery(this.query)),
         /#%%%#/g, '!')
     const compile:CompileFunction = (
@@ -79,16 +84,20 @@ module.exports = function(source:string):string {
                     return compile(template, options)(nestedLocals)
                 const templateFilePath:?string =
                     Helper.determineModuleFilePath(
-                        template, query.moduleAliases, query.knownExtensions,
+                        template, query.moduleAliases, query.extensions,
                         query.context, configuration.path.source.asset.base,
-                        configuration.path.ignore)
+                        configuration.path.ignore,
+                        configuration.module.directoryNames,
+                        configuration.package.main.fileNames,
+                        configuration.package.main.propertyNames,
+                        configuration.package.aliasPropertyNames)
                 if (templateFilePath) {
                     this.addDependency(templateFilePath)
                     if (queryMatch || templateFilePath.endsWith('.pug'))
                         return compile(templateFilePath, options)(nestedLocals)
                     return fileSystem.readFileSync(templateFilePath, options)
                 }
-                throw Error(
+                throw new Error(
                     `Given template file "${template}" couldn't be resolved.`)
             }}, locals))
     }
