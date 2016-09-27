@@ -839,7 +839,9 @@ export default class Helper {
                                     )
                                         if (localConfiguration.hasOwnProperty(
                                             propertyName
-                                        ) && localConfiguration[
+                                        ) && typeof localConfiguration[
+                                            propertyName
+                                        ] === 'string' && localConfiguration[
                                             propertyName
                                         ]) {
                                             fileName = localConfiguration[
@@ -852,9 +854,9 @@ export default class Helper {
                                     )
                                         if (localConfiguration.hasOwnProperty(
                                             propertyName
-                                        ) && localConfiguration[
+                                        ) && typeof localConfiguration[
                                             propertyName
-                                        ]) {
+                                        ] === 'object') {
                                             packageAliases =
                                                 localConfiguration[
                                                     propertyName]
