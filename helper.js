@@ -839,7 +839,9 @@ export default class Helper {
                                     )
                                         if (localConfiguration.hasOwnProperty(
                                             propertyName
-                                        ) && localConfiguration[
+                                        ) && typeof localConfiguration[
+                                            propertyName
+                                        ] === 'string' && localConfiguration[
                                             propertyName
                                         ]) {
                                             fileName = localConfiguration[
@@ -852,9 +854,9 @@ export default class Helper {
                                     )
                                         if (localConfiguration.hasOwnProperty(
                                             propertyName
-                                        ) && localConfiguration[
+                                        ) && typeof localConfiguration[
                                             propertyName
-                                        ]) {
+                                        ] === 'object') {
                                             packageAliases =
                                                 localConfiguration[
                                                     propertyName]
@@ -865,6 +867,7 @@ export default class Helper {
                             if (fileName === '__package__')
                                 continue
                         }
+                        console.log('A', fileName)
                         fileName = Helper.applyAliases(
                             fileName, packageAliases)
                         if (fileName)
