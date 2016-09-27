@@ -867,7 +867,6 @@ export default class Helper {
                             if (fileName === '__package__')
                                 continue
                         }
-                        console.log('A', fileName)
                         fileName = Helper.applyAliases(
                             fileName, packageAliases)
                         if (fileName)
