@@ -189,6 +189,50 @@ export default class Helper {
         return filePath
     }
     /**
+     * Converts given request to a resolved request with given context
+     * embedded.
+     * @param request - Request to determine.
+     * @param context - Context of given request to resolve relative to.
+     * @param referencePath - Path to resolve local modules relative to.
+     * @param aliases - Mapping of aliases to take into account.
+     * @param relativeModuleFilePaths - List of relative file path to search
+     * for modules in.
+     * @returns A new resolved request.
+     */
+    static applyContext(
+        request:string, context:string = './', referencePath:string = './',
+        aliases:PlainObject = {},
+        relativeModuleFilePaths:Array<string> = ['node_modules']
+    ):string {
+        referencePath = path.resolve(referencePath)
+        if (request.startsWith('./') && path.resolve(
+            context
+        ) !== referencePath) {
+            request = path.resolve(context, request)
+            for (const modulePath:string of relativeModuleFilePaths) {
+                const pathPrefix:string = path.resolve(
+                    referencePath, modulePath)
+                if (request.startsWith(pathPrefix)) {
+                    request = request.substring(pathPrefix.length)
+                    if (request.startsWith('/'))
+                        request = request.substring(1)
+                    return Helper.applyAliases(request.substring(
+                        request.lastIndexOf('!') + 1
+                    ), aliases)
+                }
+            }
+            if (request.startsWith(referencePath)) {
+                request = request.substring(referencePath.length)
+                if (request.startsWith('/'))
+                    request = request.substring(1)
+                return Helper.applyAliases(request.substring(
+                    request.lastIndexOf('!') + 1
+                ), aliases)
+            }
+        }
+        return request
+    }
+    /**
      * Check if given request points to an external dependency not maintained
      * by current package context.
      * @param request - Request to determine.
@@ -264,10 +308,16 @@ export default class Helper {
             resolvedRequest, {}, extensions, requestContext, referencePath,
             pathsToIgnore, relativeModuleFilePaths, packageEntryFileNames,
             packageMainPropertyNames, packageAliasPropertyNames)
+        /*
+            NOTE: We mark dependencies as external if there file couldn't be
+            resolved or are specified to be external explicitly.
+        */
         if (!(filePath || inPlaceNormalLibrary) || Tools.isAnyMatching(
             resolvedRequest, includePattern
         ))
-            return resolvedRequest
+            return Helper.applyContext(
+                resolvedRequest, requestContext, referencePath,
+                aliases, relativeModuleFilePaths)
         if (Tools.isAnyMatching(resolvedRequest, excludePattern))
             return null
         for (const chunkName:string in normalizedInternalInjection)
@@ -296,7 +346,9 @@ export default class Helper {
             !filePath.startsWith(context) || Helper.isFilePathInLocation(
                 filePath, externalModuleLocations))
         ))
-            return resolvedRequest
+            return Helper.applyContext(
+                resolvedRequest, requestContext, referencePath,
+                aliases, relativeModuleFilePaths)
         return null
     }
     /**
@@ -805,9 +857,9 @@ export default class Helper {
             for (let fileName:string of ['', '__package__'].concat(
                 packageEntryFileNames
             ))
-                for (const moduleExtension:string of [''].concat(
-                    extensions.module
-                ))
+                for (const moduleExtension:string of extensions.module.concat([
+                    ''
+                ]))
                     for (const fileExtension:string of [''].concat(
                         extensions.file
                     )) {

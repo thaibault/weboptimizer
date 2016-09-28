@@ -165,6 +165,20 @@ QUnit.test('renderFilePathTemplate', (assert:Object):void => {
         assert.strictEqual(
             Helper.renderFilePathTemplate.apply(this, test[0]), test[1])
 })
+QUnit.test('applyContext', (assert:Object):void => {
+    for (const test:Array<any> of [
+        [[''], ''],
+        [['a'], 'a'],
+        [['a', './'], 'a'],
+        [['./a', './'], './a'],
+        [['./a', './', './'], './a'],
+        [['./a', './a', './'], 'a/a'],
+        [['./a', './a', './a'], './a'],
+        [['./a', './a', './a', {a: 'b'}], './a'],
+        [['./a', './a/a', './', {a: 'b'}, ['a']], 'b/a']
+    ])
+        assert.strictEqual(Helper.applyContext.apply(this, test[0]), test[1])
+})
 QUnit.test('determineExternalRequest', (assert:Object):void => {
     for (const test:Array<any> of [
         [[''], ''],
@@ -175,7 +189,7 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         [['./helper', '../'], null],
         [['./helper', './a'], './helper'],
         [['./helper', './', './'], null],
-        [['./a', './', './node_modules/a'], './a'],
+        [['./a', './', './node_modules/a'], 'a/a'],
         [['a', './', './'], 'a'],
         [['path', './', './', {}, []], 'path'],
         [['path', './', './', {}, [], {path: './index.js'}], './index.js'],
