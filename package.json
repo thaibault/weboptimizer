@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.97",
+  "version": "1.0.98",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
