@@ -757,15 +757,15 @@ const webpackConfiguration:WebpackConfiguration = {
             {
                 test: /\.eot(?:\?.*)?$/,
                 loader: loader.postprocessor.font.eot,
-                include: configuration.path.target.asset.font
+                include: configuration.path.source.asset.font
             }, {
                 test: /\.woff2?(?:\?.*)?$/,
                 loader: loader.postprocessor.font.woff,
-                include: configuration.path.target.asset.font
+                include: configuration.path.source.asset.font
             }, {
                 test: /\.ttf(?:\?.*)?$/,
                 loader: loader.postprocessor.font.ttf,
-                include: configuration.path.target.asset.font
+                include: configuration.path.source.asset.font
             }, {
                 test: /\.svg(?:\?.*)?$/,
                 loader: loader.postprocessor.font.svg,
