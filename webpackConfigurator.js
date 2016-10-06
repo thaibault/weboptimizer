@@ -756,22 +756,27 @@ const webpackConfiguration:WebpackConfiguration = {
             // region font
             {
                 test: /\.eot(?:\?.*)?$/,
-                loader: loader.postprocessor.font.eot
+                loader: loader.postprocessor.font.eot,
+                include: configuration.path.target.asset.font
             }, {
                 test: /\.woff2?(?:\?.*)?$/,
-                loader: loader.postprocessor.font.woff
+                loader: loader.postprocessor.font.woff,
+                include: configuration.path.target.asset.font
             }, {
                 test: /\.ttf(?:\?.*)?$/,
-                loader: loader.postprocessor.font.ttf
+                loader: loader.postprocessor.font.ttf,
+                include: configuration.path.target.asset.font
             }, {
                 test: /\.svg(?:\?.*)?$/,
-                loader: loader.postprocessor.font.svg
+                loader: loader.postprocessor.font.svg,
+                include: configuration.path.source.asset.font
             },
             // endregion
             // region image
             {
                 test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/,
-                loader: loader.postprocessor.image
+                loader: loader.postprocessor.image,
+                include: configuration.path.source.asset.image
             },
             // endregion
             // region data
