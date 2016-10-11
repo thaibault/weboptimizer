@@ -73,8 +73,10 @@ if (
     } catch (error) {}
 let specificConfiguration:PlainObject
 try {
-    specificConfiguration = module.require(path.join(
+    /* eslint-disable no-eval */
+    specificConfiguration = eval('require')(path.join(
         metaConfiguration.default.path.context, 'package'))
+    /* eslint-enable no-eval */
 } catch (error) {
     specificConfiguration = {name: 'mockup'}
     metaConfiguration.default.path.context = process.cwd()
