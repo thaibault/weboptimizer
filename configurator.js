@@ -35,7 +35,7 @@ import type {
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 /*
     To assume to go two folder up from this file until there is no
-    "node_modules" parent folder  is usually resilient again dealing with
+    "node_modules" parent folder is usually resilient again dealing with
     projects where current working directory isn't the projects directory and
     this library is located as a nested dependency.
 */
@@ -73,8 +73,7 @@ if (
     } catch (error) {}
 let specificConfiguration:PlainObject
 try {
-    // IgnoreTypeCheck
-    specificConfiguration = require(path.join(
+    specificConfiguration = module.require(path.join(
         metaConfiguration.default.path.context, 'package'))
 } catch (error) {
     specificConfiguration = {name: 'mockup'}
