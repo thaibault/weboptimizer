@@ -414,22 +414,6 @@
         },
         "preprocessor": {
           "cascadingStyleSheet": "?sourceMap=inline",
-          "pug": {
-            "moduleAliases": {
-              "__evaluate__": "self.module.aliases"
-            },
-            "extensions": {
-              "__evaluate__": "self.extensions"
-            },
-            "context": {
-              "__evaluate__": "self.path.context"
-            },
-            "compiler": {
-              "pretty": false,
-              "debug": false,
-              "cache": true
-            }
-          },
           "babel": {
             "cacheDirectory": true,
             "compact": {
@@ -447,6 +431,22 @@
               "transform-flow-strip-types",
               "transform-runtime"
             ]
+          },
+          "pug": {
+            "moduleAliases": {
+              "__evaluate__": "self.module.aliases"
+            },
+            "extensions": {
+              "__evaluate__": "self.extensions"
+            },
+            "context": {
+              "__evaluate__": "self.path.context"
+            },
+            "compiler": {
+              "pretty": false,
+              "debug": false,
+              "cache": true
+            }
           }
         },
         "style": {
