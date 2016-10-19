@@ -707,7 +707,8 @@
           "arguments": [
             "--color",
             "always",
-            "--strip-root"
+            "--strip-root",
+            "--show-all-errors"
           ]
         }
       },
