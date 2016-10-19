@@ -361,10 +361,10 @@ if (configuration.givenCommandLineArguments.length > 2) {
     // endregion
 }
 let finished:boolean = false
-const closeHandler = function():void {
+const closeHandler = (...parameter:Array<any>):void => {
     if (!finished)
         for (const closeEventHandler:Function of closeEventHandlers)
-            closeEventHandler.apply(this, arguments)
+            closeEventHandler(...parameter)
     finished = true
 }
 for (const closeEventName:string of closeEventNames)

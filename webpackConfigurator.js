@@ -51,21 +51,23 @@ import Helper from './helper.compiled'
 // Monkey-Patch html loader to retrieve html loader options since the
 // "webpack-html-plugin" doesn't preserve the original loader interface.
 import htmlLoaderModuleBackup from 'html-loader'
-require.cache[require.resolve('html-loader')].exports = function():any {
+require.cache[require.resolve('html-loader')].exports = function(
+    ...parameter:Array<any>
+):any {
     Tools.extendObject(true, this.options, module, this.options)
-    return htmlLoaderModuleBackup.apply(this, arguments)
+    return htmlLoaderModuleBackup.apply(this, parameter)
 }
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
 const loaderUtilsIsUrlRequestBackup:(url:string) => boolean =
     loaderUtilsModuleBackup.isUrlRequest
-require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
-    url:string
-):boolean {
+require.cache[require.resolve('loader-utils')].exports.isUrlRequest = (
+    url:string, ...additionalParameter:Array<any>
+):boolean => {
     if (url.match(/^[a-z]+:.+/))
         return false
     return loaderUtilsIsUrlRequestBackup.apply(
-        loaderUtilsModuleBackup, arguments)
+        loaderUtilsModuleBackup, [url].concat(additionalParameter))
 }
 // / endregion
 // endregion
@@ -540,9 +542,9 @@ pluginInstances.push({apply: (compiler:Object):void => {
                         Tools.stringConvertToValidRegularExpression(
                             bundleName
                         ) + '"(\\] = )'
-                    ), "$1'" +
+                    ), `$1'` +
                         Tools.stringConvertToValidVariableName(bundleName) +
-                        "'$2"
+                        `'$2`
                     )
                     compilation.assets[assetRequest] = new WebpackRawSource(
                         source)

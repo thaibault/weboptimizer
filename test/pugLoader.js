@@ -48,7 +48,7 @@ QUnit.test('loader', (assert:Object):void => {
         complexContext, 'a #{test}'
     ), '<a>hans</a>')
     assert.strictEqual(pugLoader.call(
-        complexContext, "a\n!= require('a test?{options: {isString: true}}')"
+        complexContext, `a\n!= require('a test?{options: {isString: true}}')`
     ), '<a></a><a>test</a>')
 })
 // endregion

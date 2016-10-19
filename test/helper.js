@@ -42,12 +42,12 @@ const buildConfiguration:BuildConfiguration = {
 // region tests
 // / region boolean
 QUnit.test('isFilePathInLocation', (assert:Object):void => {
-    for (const okArguments:Array<any> of [
+    for (const test:Array<any> of [
         ['./', ['./']], ['./', ['../']]
     ])
-        assert.ok(Helper.isFilePathInLocation.apply(this, okArguments))
-    for (const notOkArguments:Array<any> of [['../', ['./']]])
-        assert.notOk(Helper.isFilePathInLocation.apply(this, notOkArguments))
+        assert.ok(Helper.isFilePathInLocation(...test))
+    for (const test:Array<any> of [['../', ['./']]])
+        assert.notOk(Helper.isFilePathInLocation(...test))
 })
 // / endregion
 // / region string
@@ -100,8 +100,7 @@ QUnit.test('parseEncodedObject', (assert:Object):void => {
         [['{a: scope.a}', {a: 2}], {a: 2}],
         [[new Buffer('{a: scope.a}').toString('base64'), {a: 2}], {a: 2}]
     ])
-        assert.deepEqual(
-            Helper.parseEncodedObject.apply(this, test[0]), test[1])
+        assert.deepEqual(Helper.parseEncodedObject(...test[0]), test[1])
 })
 // / endregion
 // region process handler
@@ -162,8 +161,7 @@ QUnit.test('renderFilePathTemplate', (assert:Object):void => {
         [['a[id]b[hash]', {'[id]': 1, '[hash]': 2}], 'a1b2'],
         [['a[id]b[hash]', {}], 'a[id]b[hash]']
     ])
-        assert.strictEqual(
-            Helper.renderFilePathTemplate.apply(this, test[0]), test[1])
+        assert.strictEqual(Helper.renderFilePathTemplate(...test[0]), test[1])
 })
 QUnit.test('applyContext', (assert:Object):void => {
     for (const test:Array<any> of [
@@ -177,7 +175,7 @@ QUnit.test('applyContext', (assert:Object):void => {
         [['./a', './a', './a', {a: 'b'}], './a'],
         [['./a', './a/a', './', {a: 'b'}, ['a']], 'b/a']
     ])
-        assert.strictEqual(Helper.applyContext.apply(this, test[0]), test[1])
+        assert.strictEqual(Helper.applyContext(...test[0]), test[1])
 })
 QUnit.test('determineExternalRequest', (assert:Object):void => {
     for (const test:Array<any> of [
@@ -277,7 +275,7 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         ]
     ])
         assert.strictEqual(
-            Helper.determineExternalRequest.apply(this, test[0]), test[1])
+            Helper.determineExternalRequest(...test[0]), test[1])
 })
 QUnit.test('isDirectorySync', (assert:Object):void => {
     for (const filePath:string of [
@@ -355,8 +353,7 @@ QUnit.test('determineAssetType', (assert:Object):void => {
         [['a.js', buildConfiguration, paths], 'javaScript'],
         [['a.css', buildConfiguration, paths], null]
     ])
-        assert.strictEqual(
-            Helper.determineAssetType.apply(this, test[0]), test[1])
+        assert.strictEqual(Helper.determineAssetType(...test[0]), test[1])
 })
 QUnit.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
     assert.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
@@ -496,8 +493,7 @@ QUnit.test('resolveInjection', (assert:Object):void => {
             }
         ]
     ])
-        assert.deepEqual(
-            Helper.resolveInjection.apply(this, test[0]), test[1])
+        assert.deepEqual(Helper.resolveInjection(...test[0]), test[1])
 })
 QUnit.test('getAutoChunk', (assert:Object):void => assert.deepEqual(
     Helper.getAutoChunk(Helper.resolveBuildConfigurationFilePaths(
@@ -516,8 +512,7 @@ QUnit.test('determineModuleFilePath', (assert:Object):void => {
         [['./helper', {}, {file: ['.js'], module: []}, 'a', '', []], null],
         [['helper', {}, {file: ['.js'], module: []}, './'], 'helper.js']
     ]) {
-        let result:?string = Helper.determineModuleFilePath.apply(
-           this, test[0])
+        let result:?string = Helper.determineModuleFilePath(...test[0])
         if (result)
             result = path.basename(result)
         assert.strictEqual(result, test[1])
