@@ -98,7 +98,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
                 defaultFetch:(callback:(
                     error:?Error, body:string
                 ) => void) => void
-            }, callback:(error:?Error, body:string) => void
+            }, callback:(error:?Error, content:any) => void
         ):void => {
             if (resource.url.hostname === 'localhost') {
                 resource.url.host = resource.url.hostname = ''
@@ -112,9 +112,11 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             }
             if (browserAPI.debug)
                 console.info(`Load resource "${resource.url.href}".`)
-            return resource.defaultFetch(function(error:?Error):void {
+            return resource.defaultFetch((
+                error:?Error, ...additionalParameter:Array<any>
+            ):void => {
                 if (!error)
-                    callback.apply(this, arguments)
+                    callback(error, additionalParameter)
             })
         },
         url: 'http://localhost',
