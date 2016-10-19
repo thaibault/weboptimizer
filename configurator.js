@@ -181,13 +181,12 @@ if (Tools.isPlainObject(result))
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
 if (Helper.isDirectorySync(configuration.path.target.base))
-    fileSystem.readdirSync(configuration.path.target.base).forEach((
-        fileName:string
-    ):void => {
+    for (const fileName:string of fileSystem.readdirSync(
+        configuration.path.target.base
+    ))
         if (fileName.match(/^.*\.dll-manifest\.json$/))
             configuration.dllManifestFilePaths.push(path.resolve(
                 configuration.path.target.base, fileName))
-    })
 // / endregion
 // / region define dynamic resolve parameter
 const parameterDescription:Array<string> = [

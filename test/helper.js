@@ -293,12 +293,12 @@ QUnit.test('isFileSync', (assert:Object):void => {
 })
 QUnit.test('walkDirectoryRecursivelySync', (assert:Object):void => {
     const filePaths:Array<string> = []
-    const callback:TraverseFilesCallbackFunction = (filePath:string):false => {
+    const callback:TraverseFilesCallbackFunction = (filePath:string):null => {
         filePaths.push(filePath)
-        return false
+        return null
     }
     Helper.walkDirectoryRecursivelySync('./', callback)
-    assert.ok(filePaths.length > 0)
+    assert.strictEqual(filePaths.length, 1)
 })
 QUnit.test('copyFileSync', (assert:Object):void => {
     assert.ok(Helper.copyFileSync(

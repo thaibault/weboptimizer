@@ -125,9 +125,9 @@ if (configuration.givenCommandLineArguments.length > 2) {
                             break
                         }
                 })
-            fileSystem.readdirSync(configuration.path.target.base).forEach((
-                fileName:string
-            ):void => {
+            for (const fileName:string of fileSystem.readdirSync(
+                configuration.path.target.base
+            ))
                 if (
                     fileName.length > '.dll-manifest.json'.length &&
                     fileName.endsWith('.dll-manifest.json') ||
@@ -135,7 +135,6 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 )
                     fileSystem.unlinkSync(path.resolve(
                         configuration.path.target.base, fileName))
-            })
         } else
             removeDirectoryRecursivelySync(configuration.path.target.base, {
                 glob: false})

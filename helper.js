@@ -388,15 +388,15 @@ export default class Helper {
             _filePath:string, _stat:Object
         ):?boolean => true
     ):TraverseFilesCallbackFunction {
-        fileSystem.readdirSync(directoryPath).forEach((
-            fileName:string
-        ):void => {
+        for (const fileName:string of fileSystem.readdirSync(directoryPath)) {
             const filePath:string = path.resolve(directoryPath, fileName)
             const stat:Object = fileSystem.statSync(filePath)
-            if (callback(filePath, stat) !== false && stat && stat.isDirectory(
-            ))
+            const result:any = callback(filePath, stat)
+            if (result === null)
+                return callback
+            if (result !== false && stat && stat.isDirectory())
                 Helper.walkDirectoryRecursivelySync(filePath, callback)
-        })
+        }
         return callback
     }
     /**
