@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.108",
+  "version": "1.0.109",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
@@ -1024,7 +1024,8 @@
       ],
       "block-scoped-var": 0,
       "comma-dangle": [
-        "error", "never"
+        "error",
+        "never"
       ],
       "curly": [
         "error",
