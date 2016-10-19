@@ -1023,6 +1023,9 @@
         "always"
       ],
       "block-scoped-var": 0,
+      "comma-dangle": [
+        "error", "never"
+      ],
       "curly": [
         "error",
         "multi"
