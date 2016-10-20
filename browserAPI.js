@@ -116,7 +116,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
                 error:?Error, ...additionalParameter:Array<any>
             ):void => {
                 if (!error)
-                    callback(error, additionalParameter)
+                    callback(error, ...additionalParameter)
             })
         },
         url: 'http://localhost',
