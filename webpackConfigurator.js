@@ -55,7 +55,7 @@ require.cache[require.resolve('html-loader')].exports = function(
     ...parameter:Array<any>
 ):any {
     Tools.extendObject(true, this.options, module, this.options)
-    return htmlLoaderModuleBackup.apply(this, parameter)
+    return htmlLoaderModuleBackup.call(this, ...parameter)
 }
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
