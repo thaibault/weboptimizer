@@ -24,9 +24,9 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, Injection, InternalInjection,
+    BuildConfiguration, File, Injection, InternalInjection,
     NormalizedInternalInjection, Path, PlainObject, ResolvedBuildConfiguration,
-    ResolvedBuildConfigurationItem, TraverseFilesCallbackFunction
+    ResolvedBuildConfigurationItem
 } from './type'
 // endregion
 // region methods
@@ -352,103 +352,6 @@ export default class Helper {
         return null
     }
     /**
-     * Checks if given path points to a valid directory.
-     * @param filePath - Path to directory.
-     * @returns A boolean which indicates directory existents.
-     */
-    static isDirectorySync(filePath:string):boolean {
-        try {
-            return fileSystem.statSync(filePath).isDirectory()
-        } catch (error) {
-            return false
-        }
-    }
-    /**
-     * Checks if given path points to a valid file.
-     * @param filePath - Path to file.
-     * @returns A boolean which indicates file existents.
-     */
-    static isFileSync(filePath:string):boolean {
-        try {
-            return fileSystem.statSync(filePath).isFile()
-        } catch (error) {
-            return false
-        }
-    }
-    /**
-     * Iterates through given directory structure recursively and calls given
-     * callback for each found file. Callback gets file path and corresponding
-     * stat object as argument.
-     * @param directoryPath - Path to directory structure to traverse.
-     * @param callback - Function to invoke for each traversed file.
-     * @returns Given callback function.
-     */
-    static walkDirectoryRecursivelySync(
-        directoryPath:string, callback:TraverseFilesCallbackFunction = (
-            _filePath:string, _stat:Object
-        ):?boolean => true
-    ):TraverseFilesCallbackFunction {
-        for (const fileName:string of fileSystem.readdirSync(directoryPath)) {
-            const filePath:string = path.resolve(directoryPath, fileName)
-            const stat:Object = fileSystem.statSync(filePath)
-            const result:any = callback(filePath, stat)
-            if (result === null)
-                return callback
-            if (result !== false && stat && stat.isDirectory())
-                Helper.walkDirectoryRecursivelySync(filePath, callback)
-        }
-        return callback
-    }
-    /**
-     * Copies given source file via path to given target directory location
-     * with same target name as source file has or copy to given complete
-     * target file path.
-     * @param sourcePath - Path to file to copy.
-     * @param targetPath - Target directory or complete file location to copy
-     * to.
-     * @returns Determined target file path.
-     */
-    static copyFileSync(sourcePath:string, targetPath:string):string {
-        /*
-            NOTE: If target path references a directory a new file with the
-            same name will be created.
-        */
-        if (Helper.isDirectorySync(targetPath))
-            targetPath = path.resolve(targetPath, path.basename(sourcePath))
-        fileSystem.writeFileSync(targetPath, fileSystem.readFileSync(
-            sourcePath))
-        return targetPath
-    }
-    /**
-     * Copies given source directory via path to given target directory
-     * location with same target name as source file has or copy to given
-     * complete target directory path.
-     * @param sourcePath - Path to directory to copy.
-     * @param targetPath - Target directory or complete directory location to
-     * copy in.
-     * @returns Determined target directory path.
-     */
-    static copyDirectoryRecursiveSync(
-        sourcePath:string, targetPath:string
-    ):string {
-        // Check if folder needs to be created or integrated.
-        if (Helper.isDirectorySync(targetPath))
-            targetPath = path.resolve(targetPath, path.basename(
-                sourcePath))
-        fileSystem.mkdirSync(targetPath)
-        Helper.walkDirectoryRecursivelySync(sourcePath, (
-            currentSourcePath:string, stat:Object
-        ):void => {
-            const currentTargetPath:string = path.join(
-                targetPath, currentSourcePath.substring(sourcePath.length))
-            if (stat.isDirectory())
-                fileSystem.mkdirSync(currentTargetPath)
-            else
-                Helper.copyFileSync(currentSourcePath, currentTargetPath)
-        })
-        return targetPath
-    }
-    /**
      * Determines a asset type if given file.
      * @param filePath - Path to file to analyse.
      * @param buildConfiguration - Meta informations for available asset
@@ -505,7 +408,7 @@ export default class Helper {
                 Helper.walkDirectoryRecursivelySync(entryPath, ((
                     index:number,
                     buildConfigurationItem:ResolvedBuildConfigurationItem
-                ):TraverseFilesCallbackFunction => (
+                ):Function => (
                     filePath:string, stat:Object
                 ):?boolean => {
                     if (Helper.isFilePathInLocation(filePath, pathsToIgnore))

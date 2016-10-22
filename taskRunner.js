@@ -27,9 +27,7 @@ try {
 
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
-import type {
-    PlainObject, PromiseCallbackFunction, ResolvedBuildConfiguration
-} from './type'
+import type {PlainObject, ResolvedBuildConfiguration} from './type'
 // endregion
 // region controller
 const childProcessOptions:Object = {
@@ -218,7 +216,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
             productive output.
         */
         processPromises.push(new Promise((
-            resolve:PromiseCallbackFunction, reject:PromiseCallbackFunction
+            resolve:Function, reject:Function
         ):void => {
             const commandLineArguments:Array<string> = (
                 configuration.commandLine.build.arguments || []
@@ -286,8 +284,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                             global, self, buildConfiguration, path,
                             additionalArguments, filePath)
                     processPromises.push(new Promise((
-                        resolve:PromiseCallbackFunction,
-                        reject:PromiseCallbackFunction
+                        resolve:Function, reject:Function
                     ):void => {
                         const command:string = evaluationFunction(
                             global, configuration, buildConfiguration, path,
@@ -325,8 +322,7 @@ if (configuration.givenCommandLineArguments.length > 2) {
                 )(global, self, path)
             if (evaluationFunction(global, configuration, path))
                 processPromises.push(new Promise((
-                    resolve:PromiseCallbackFunction,
-                    reject:PromiseCallbackFunction
+                    resolve:Function, reject:Function
                 ):void => {
                     const commandLineArguments:Array<string> = (
                         task.arguments || []

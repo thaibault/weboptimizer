@@ -41,8 +41,7 @@ plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
 import type {
-    DomNode, HTMLConfiguration, ProcedureFunction, PromiseCallbackFunction,
-    WebpackConfiguration, Window
+    DomNode, HTMLConfiguration, ProcedureFunction, WebpackConfiguration, Window
 } from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -462,8 +461,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
         for (const htmlConfiguration of configuration.files.html)
             if (htmlConfiguration.filename in compilation.assets)
                 promises.push(new Promise((
-                    resolve:PromiseCallbackFunction,
-                    reject:PromiseCallbackFunction
+                    resolve:Function, reject:Function
                 ):Window => dom.env(compilation.assets[
                     htmlConfiguration.filename
                 ].source(), (error:?Error, window:Window):?Promise<string> => {

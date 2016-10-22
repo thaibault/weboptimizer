@@ -13,9 +13,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 
-import type {
-    BuildConfiguration, Path, TraverseFilesCallbackFunction
-} from '../type'
+import type {BuildConfiguration, Path} from '../type'
 import Helper from '../helper.compiled'
 // endregion
 QUnit.module('helper')
@@ -277,38 +275,6 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         assert.strictEqual(
             Helper.determineExternalRequest(...test[0]), test[1])
 })
-QUnit.test('isDirectorySync', (assert:Object):void => {
-    for (const filePath:string of [
-        __dirname, path.resolve(__dirname, '../')
-    ])
-        assert.ok(Helper.isDirectorySync(filePath))
-})
-QUnit.test('isFileSync', (assert:Object):void => {
-    for (const filePath:string of [
-        __filename, path.join(__dirname, path.basename(__filename))
-    ])
-        assert.ok(Helper.isFileSync(filePath))
-})
-QUnit.test('walkDirectoryRecursivelySync', (assert:Object):void => {
-    const filePaths:Array<string> = []
-    const callback:TraverseFilesCallbackFunction = (filePath:string):null => {
-        filePaths.push(filePath)
-        return null
-    }
-    Helper.walkDirectoryRecursivelySync('./', callback)
-    assert.strictEqual(filePaths.length, 1)
-})
-QUnit.test('copyFileSync', (assert:Object):void => {
-    assert.ok(Helper.copyFileSync(
-        path.join(__dirname, 'helper.js'),
-        path.join(__dirname, 'test.compiled.js')
-    ).endsWith('/test.compiled.js'))
-    fileSystem.unlinkSync(path.join(__dirname, 'test.compiled.js'))
-})
-QUnit.test('copyDirectoryRecursiveSync', (assert:Object):void =>
-    assert.ok(Helper.copyDirectoryRecursiveSync(
-        __dirname, path.resolve(__dirname, '../test.compiled')
-    ).endsWith('/test.compiled')))
 QUnit.test('determineAssetType', (assert:Object):void => {
     const paths:Path = {
         apiDocumentation: '',

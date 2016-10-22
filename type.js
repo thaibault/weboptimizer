@@ -339,12 +339,6 @@ export type WebpackConfiguration = {
     plugins:Array<Object>;
 }
 // / endregion
-// / region specific callbacks
-export type PromiseCallbackFunction = (reason:any) => ?Promise<any>
-export type TraverseFilesCallbackFunction = (
-    filePath:string, stat:Object
-) => ?boolean
-// / endregion
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
