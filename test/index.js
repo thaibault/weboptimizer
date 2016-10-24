@@ -8,12 +8,20 @@ import * as QUnit from 'qunit-cli'
 try {
     module.require('source-map-support/register')
 } catch (error) {}
+import main from '../taskRunner.compiled'
 // endregion
 QUnit.module('taskRunner')
 QUnit.load()
 // region tests
-QUnit.test('taskRunner', (assert:Object):void => {
-    assert.deepEqual(require('../taskRunner.compiled'), {})
+QUnit.test('main', async (assert:Object):void => {
+    const done:Function = assert.async()
+    try {
+        await main()
+    } catch (error) {
+        console.error(error)
+    }
+    assert.ok(true)
+    done()
 })
 // endregion
 // region vim modline

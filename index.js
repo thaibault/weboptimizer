@@ -14,6 +14,7 @@
     endregion
 */
 // region imports
+import 'babel-polyfill'
 import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
@@ -31,7 +32,7 @@ import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 import type {ResolvedBuildConfiguration} from './type'
 // endregion
-(async ():Promise<any> => {
+export default async function main():Promise<any> {
     try {
         // region controller
         const childProcessOptions:Object = {
@@ -412,7 +413,9 @@ import type {ResolvedBuildConfiguration} from './type'
         else
             console.error(error)
     }
-})()
+}
+if (require.main === module)
+    main()
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
