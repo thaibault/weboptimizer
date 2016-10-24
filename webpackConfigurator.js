@@ -561,7 +561,7 @@ pluginInstances.push(new plugins.Imagemin(
 // / region loader
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
-    return Tools.isFilePathInLocation(
+    return Helper.isFilePathInLocation(
         filePath, configuration.path.ignore.concat(
             configuration.module.directoryNames,
             configuration.loader.directoryNames
