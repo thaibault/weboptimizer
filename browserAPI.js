@@ -14,9 +14,8 @@
     endregion
 */
 // region imports
-/* eslint-disable no-unused-vars */
-import type {BrowserAPI, DomNode, Window} from './type'
-/* eslint-enable no-unused-vars */
+import type {DomNode, Window} from 'clientnode'
+import type {BrowserAPI} from './type'
  // endregion
 // region declaration
 declare var NAME:string

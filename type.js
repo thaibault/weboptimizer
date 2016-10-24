@@ -13,41 +13,11 @@
     3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
+// region imports
+import type {PlainObject, ProcedureFunction, Window} from 'clientnode'
+// endregion
 // region exports
 // / region generic
-// // region browser
-export type DomNode = any
-export type Location = {
-    hash:string;
-    search:string;
-    pathname:string;
-    port:string;
-    hostname:string;
-    host:string;
-    protocol:string;
-    origin:string;
-    href:string;
-    username:string;
-    password:string;
-    assign:Function;
-    reload:Function;
-    replace:Function;
-    toString:() => string
-}
-export type Storage = {
-    getItem(key:string):any;
-    setItem(key:string, value:any):void;
-    removeItem(key:string, value:any):void;
-}
-export type Window = {
-    addEventListener:(type:string, callback:Function) => void;
-    document:Object;
-    location:Location;
-    localStorage:Storage;
-    sessionStorage:Storage;
-    close:() => void;
-}
-// // endregion
 export type BrowserAPI = {
     debug:boolean;
     domContentLoaded:boolean;
@@ -55,8 +25,6 @@ export type BrowserAPI = {
     window:Window;
     windowLoaded:boolean;
 }
-export type PlainObject = {[key:string]:any}
-export type ProcedureFunction = () => void
 // / endregion
 // / region injection
 export type ExternalInjection = string|((
@@ -338,12 +306,6 @@ export type WebpackConfiguration = {
     },
     plugins:Array<Object>;
 }
-// / endregion
-// / region specific callbacks
-export type PromiseCallbackFunction = (reason:any) => ?Promise<any>
-export type TraverseFilesCallbackFunction = (
-    filePath:string, stat:Object
-) => ?boolean
 // / endregion
 // endregion
 // region vim modline

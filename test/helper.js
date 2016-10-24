@@ -3,9 +3,6 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import {ChildProcess} from 'child_process'
-import {Duplex as DuplexStream} from 'stream'
-import * as fileSystem from 'fs'
 import path from 'path'
 import * as QUnit from 'qunit-cli'
 // NOTE: Only needed for debugging this file.
@@ -13,9 +10,7 @@ try {
     module.require('source-map-support/register')
 } catch (error) {}
 
-import type {
-    BuildConfiguration, Path, TraverseFilesCallbackFunction
-} from '../type'
+import type {BuildConfiguration, Path} from '../type'
 import Helper from '../helper.compiled'
 // endregion
 QUnit.module('helper')
@@ -103,52 +98,6 @@ QUnit.test('parseEncodedObject', (assert:Object):void => {
         assert.deepEqual(Helper.parseEncodedObject(...test[0]), test[1])
 })
 // / endregion
-// region process handler
-QUnit.test('getProcessCloseHandler', (assert:Object):void =>
-    assert.strictEqual(typeof Helper.getProcessCloseHandler(
-        ():void => {}, ():void => {}
-    ), 'function'))
-QUnit.test('handleChildProcess', (assert:Object):void => {
-    /**
-     * A mockup duplex stream for mocking "stdout" and "strderr" process
-     * connections.
-     */
-    class MockupDuplexStream extends DuplexStream {
-        /**
-         * Triggers if contents from current stream should be red.
-         * @param size - Number of bytes to read asynchronously.
-         * @returns Red data.
-         */
-        _read(size:number):string {
-            return `${size}`
-        }
-        /**
-         * Triggers if contents should be written on current stream.
-         * @param chunk - The chunk to be written. Will always be a buffer
-         * unless the "decodeStrings" option was set to "false".
-         * @param encoding - Specifies encoding to be used as input data.
-         * @param callback - Will be called if data has been written.
-         * @returns Returns "true" if more data could be written and "false"
-         * otherwise.
-         */
-        _write(
-            chunk:Buffer|string, encoding:string, callback:Function
-        ):boolean {
-            callback(new Error('test'))
-            return true
-        }
-    }
-    const stdoutMockupDuplexStream:MockupDuplexStream =
-        new MockupDuplexStream()
-    const stderrMockupDuplexStream:MockupDuplexStream =
-        new MockupDuplexStream()
-    const childProcess:ChildProcess = new ChildProcess()
-    childProcess.stdout = stdoutMockupDuplexStream
-    childProcess.stderr = stderrMockupDuplexStream
-
-    assert.strictEqual(Helper.handleChildProcess(childProcess), childProcess)
-})
-// endregion
 // region file handler
 QUnit.test('renderFilePathTemplate', (assert:Object):void => {
     for (const test:Array<any> of [
@@ -190,8 +139,8 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         [['./a', './', './node_modules/a'], 'a/a'],
         [['a', './', './'], 'a'],
         [['path', './', './', {}, []], 'path'],
-        [['path', './', './', {}, [], {path: './index.js'}], './index.js'],
-        [['path', './', './', {}, [], {path: 'index.js'}], 'index.js'],
+        [['path', './', './', {}, [], {path: './main.js'}], './main.js'],
+        [['path', './', './', {}, [], {path: 'main.js'}], 'main.js'],
         [['path', './', './', {}, [], {path: './helper.js'}], null],
         [['webpack'], 'webpack'],
         [['a', './', './', {}, ['node_modules'], {a$: 'webpack'}], 'webpack'],
@@ -227,7 +176,7 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
             [
                 'webpack', '../', './', {}, ['node_modules'], {},
                 {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
-                ['index'], ['main'], [],
+                ['main'], ['main'], [],
                 [], []
             ], 'webpack'
         ],
@@ -235,80 +184,48 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
             [
                 'webpack', ',./', './', {}, ['node_modules'], {},
                 {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
-                ['index'], ['main'], [], [], [], false
+                ['main'], ['main'], [], [], [], false
             ], 'webpack'
         ],
         [
             [
                 'webpack', '../', './', {}, ['node_modules'], {},
                 {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
-                ['index'], ['main'], [], [], [], true
+                ['main'], ['main'], [], [], [], true
             ], null
         ],
         [
             [
                 'a!webpack', '../', './', {}, ['node_modules'], {},
                 {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
-                ['index'], ['main'], [], [], [], false
+                ['main'], ['main'], [], [], [], false
             ], null
         ],
         [
             [
                 'a!webpack', '../', './', {}, ['node_modules'], {},
                 {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
-                ['index'], ['main'], [], [], [], false, true
+                ['main'], ['main'], [], [], [], false, true
             ], null
         ],
         [
             [
                 'a!webpack', '../', './', {}, ['node_modules'], {},
                 {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
-                ['index'], ['main'], [], [], [], false, false
+                ['main'], ['main'], [], [], [], false, false
             ], 'webpack'
         ],
         [
             [
                 'a!webpack', '../', './', {}, ['node_modules'], {},
                 {file: ['.js'], module: []}, './', ['.git'], ['node_modules'],
-                ['index'], ['main'], [], [], [], false, false, ['.ext']
+                ['main'], ['main'], [], [], [], false, false, ['.ext']
             ], null
         ]
     ])
         assert.strictEqual(
             Helper.determineExternalRequest(...test[0]), test[1])
 })
-QUnit.test('isDirectorySync', (assert:Object):void => {
-    for (const filePath:string of [
-        __dirname, path.resolve(__dirname, '../')
-    ])
-        assert.ok(Helper.isDirectorySync(filePath))
-})
-QUnit.test('isFileSync', (assert:Object):void => {
-    for (const filePath:string of [
-        __filename, path.join(__dirname, path.basename(__filename))
-    ])
-        assert.ok(Helper.isFileSync(filePath))
-})
-QUnit.test('walkDirectoryRecursivelySync', (assert:Object):void => {
-    const filePaths:Array<string> = []
-    const callback:TraverseFilesCallbackFunction = (filePath:string):null => {
-        filePaths.push(filePath)
-        return null
-    }
-    Helper.walkDirectoryRecursivelySync('./', callback)
-    assert.strictEqual(filePaths.length, 1)
-})
-QUnit.test('copyFileSync', (assert:Object):void => {
-    assert.ok(Helper.copyFileSync(
-        path.join(__dirname, 'helper.js'),
-        path.join(__dirname, 'test.compiled.js')
-    ).endsWith('/test.compiled.js'))
-    fileSystem.unlinkSync(path.join(__dirname, 'test.compiled.js'))
-})
-QUnit.test('copyDirectoryRecursiveSync', (assert:Object):void =>
-    assert.ok(Helper.copyDirectoryRecursiveSync(
-        __dirname, path.resolve(__dirname, '../test.compiled')
-    ).endsWith('/test.compiled')))
 QUnit.test('determineAssetType', (assert:Object):void => {
     const paths:Path = {
         apiDocumentation: '',

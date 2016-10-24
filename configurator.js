@@ -15,6 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
+import type {PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -28,7 +29,7 @@ import Helper from './helper.compiled'
 import {configuration as givenMetaConfiguration} from './package'
 /* eslint-disable no-unused-vars */
 import type {
-    DefaultConfiguration, HTMLConfiguration, MetaConfiguration, PlainObject,
+    DefaultConfiguration, HTMLConfiguration, MetaConfiguration,
     ResolvedConfiguration
 } from './type'
 /* eslint-enable no-unused-vars */
@@ -131,7 +132,7 @@ let filePath:?string = null
 while (true) {
     const newFilePath:string = configuration.path.context +
         `.dynamicConfiguration-${count}.json`
-    if (!Helper.isFileSync(newFilePath))
+    if (!Tools.isFileSync(newFilePath))
         break
     filePath = newFilePath
     count += 1
@@ -180,7 +181,7 @@ if (Tools.isPlainObject(result))
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
-if (Helper.isDirectorySync(configuration.path.target.base))
+if (Tools.isDirectorySync(configuration.path.target.base))
     for (const fileName:string of fileSystem.readdirSync(
         configuration.path.target.base
     ))

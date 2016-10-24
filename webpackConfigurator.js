@@ -15,6 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
+import type {DomNode, ProcedureFunction, Window} from 'clientnode'
 import * as dom from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
@@ -40,10 +41,7 @@ plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
-import type {
-    DomNode, HTMLConfiguration, ProcedureFunction, PromiseCallbackFunction,
-    WebpackConfiguration, Window
-} from './type'
+import type {HTMLConfiguration, WebpackConfiguration} from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 
@@ -55,7 +53,7 @@ require.cache[require.resolve('html-loader')].exports = function(
     ...parameter:Array<any>
 ):any {
     Tools.extendObject(true, this.options, module, this.options)
-    return htmlLoaderModuleBackup.apply(this, parameter)
+    return htmlLoaderModuleBackup.call(this, ...parameter)
 }
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
@@ -95,7 +93,7 @@ for (const ignorePattern:string of configuration.injection.ignorePattern)
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
-        if (Helper.isFileSync(htmlConfiguration.template.substring(
+        if (Tools.isFileSync(htmlConfiguration.template.substring(
             htmlConfiguration.template.lastIndexOf('!') + 1
         ))) {
             if (
@@ -110,7 +108,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
         }
 // // endregion
 // // region generate favicons
-if (htmlAvailable && configuration.favicon && Helper.isFileSync(
+if (htmlAvailable && configuration.favicon && Tools.isFileSync(
     configuration.favicon.logo
 ))
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
@@ -276,7 +274,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                 if (configuration.inPlace.cascadingStyleSheet) {
                     const assetFilePath = Helper.stripLoader(
                         configuration.files.compose.cascadingStyleSheet)
-                    if (Helper.isFileSync(assetFilePath))
+                    if (Tools.isFileSync(assetFilePath))
                         fileSystem.unlinkSync(assetFilePath)
                 }
                 if (configuration.inPlace.javaScript) {
@@ -291,7 +289,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                             const assetFilePath:string =
                             Helper.renderFilePathTemplate(
                                 assetFilePathTemplate, {'[name]': chunkName})
-                            if (Helper.isFileSync(assetFilePath))
+                            if (Tools.isFileSync(assetFilePath))
                                 fileSystem.unlinkSync(assetFilePath)
                         }
                 }
@@ -328,7 +326,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 pluginInstances.push(new plugins.AddAssetHTMLPlugin({
                     filepath: filePath,
                     hash: true,
-                    includeSourcemap: Helper.isFileSync(`${filePath}.map`)
+                    includeSourcemap: Tools.isFileSync(`${filePath}.map`)
                 }))
                 pluginInstances.push(new webpack.DllReferencePlugin({
                     context: configuration.path.context, manifest: require(
@@ -462,8 +460,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
         for (const htmlConfiguration of configuration.files.html)
             if (htmlConfiguration.filename in compilation.assets)
                 promises.push(new Promise((
-                    resolve:PromiseCallbackFunction,
-                    reject:PromiseCallbackFunction
+                    resolve:Function, reject:Function
                 ):Window => dom.env(compilation.assets[
                     htmlConfiguration.filename
                 ].source(), (error:?Error, window:Window):?Promise<string> => {
@@ -564,7 +561,7 @@ pluginInstances.push(new plugins.Imagemin(
 // / region loader
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
-    return Helper.isFilePathInLocation(
+    return Tools.isFilePathInLocation(
         filePath, configuration.path.ignore.concat(
             configuration.module.directoryNames,
             configuration.loader.directoryNames
@@ -831,7 +828,7 @@ const webpackConfiguration:WebpackConfiguration = {
     }))
 }
 if (configuration.debug)
-    console.log('Using webpack configuration:', util.inspect(
+    console.debug('Using webpack configuration:', util.inspect(
         webpackConfiguration, {depth: null}))
 // endregion
 export default webpackConfiguration

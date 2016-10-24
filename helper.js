@@ -14,8 +14,8 @@
     endregion
 */
 // region imports
-import {ChildProcess} from 'child_process'
 import Tools from 'clientnode'
+import type {File, PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -25,8 +25,8 @@ try {
 
 import type {
     BuildConfiguration, Injection, InternalInjection,
-    NormalizedInternalInjection, Path, PlainObject, ResolvedBuildConfiguration,
-    ResolvedBuildConfigurationItem, TraverseFilesCallbackFunction
+    NormalizedInternalInjection, Path, ResolvedBuildConfiguration,
+    ResolvedBuildConfigurationItem
 } from './type'
 // endregion
 // region methods
@@ -98,7 +98,7 @@ export default class Helper {
     static parseEncodedObject(
         serializedObject:string, scope:Object = {}, name:string = 'scope'
     ):?PlainObject {
-        if (serializedObject.endsWith('.json') && Helper.isFileSync(
+        if (serializedObject.endsWith('.json') && Tools.isFileSync(
             serializedObject
         ))
             serializedObject = fileSystem.readFileSync(serializedObject, {
@@ -108,60 +108,9 @@ export default class Helper {
                 serializedObject, 'base64'
             ).toString('utf8')
         try {
-            // IgnoreTypeCheck
             return new Function(name, `return ${serializedObject}`)(scope)
         } catch (error) {}
         return null
-    }
-    // endregion
-    // region process handler
-    /**
-     * Generates a one shot close handler which triggers given promise methods.
-     * If a reason is provided it will be given as resolve target. An Error
-     * will be generated if return code is not zero. The generated Error has
-     * a property "returnCode" which provides corresponding process return
-     * code.
-     * @param resolve - Promise's resolve function.
-     * @param reject - Promise's reject function.
-     * @param reason - Promise target if process has a zero return code.
-     * @param callback - Optional function to call of process has successfully
-     * finished.
-     * @returns Process close handler function.
-     */
-    static getProcessCloseHandler(
-        resolve:Function, reject:Function, reason:any = null,
-        callback:Function = ():void => {}
-    ):((returnCode:?number) => void) {
-        let finished:boolean = false
-        return (returnCode:?number):void => {
-            if (!finished)
-                if (typeof returnCode !== 'number' || returnCode === 0) {
-                    callback()
-                    resolve(reason)
-                } else {
-                    const error:Error = new Error(
-                        `Task exited with error code ${returnCode}`)
-                    // IgnoreTypeCheck
-                    error.returnCode = returnCode
-                    reject(error)
-                }
-            finished = true
-        }
-    }
-    /**
-     * Forwards given child process communication channels to corresponding
-     * current process communication channels.
-     * @param childProcess - Child process meta data.
-     * @returns Given child process meta data.
-     */
-    static handleChildProcess(childProcess:ChildProcess):ChildProcess {
-        childProcess.stdout.pipe(process.stdout)
-        childProcess.stderr.pipe(process.stderr)
-        childProcess.on('close', (returnCode:number):void => {
-            if (returnCode !== 0)
-                console.error(`Task exited with error code ${returnCode}`)
-        })
-        return childProcess
     }
     // endregion
     // region file handler
@@ -352,103 +301,6 @@ export default class Helper {
         return null
     }
     /**
-     * Checks if given path points to a valid directory.
-     * @param filePath - Path to directory.
-     * @returns A boolean which indicates directory existents.
-     */
-    static isDirectorySync(filePath:string):boolean {
-        try {
-            return fileSystem.statSync(filePath).isDirectory()
-        } catch (error) {
-            return false
-        }
-    }
-    /**
-     * Checks if given path points to a valid file.
-     * @param filePath - Path to file.
-     * @returns A boolean which indicates file existents.
-     */
-    static isFileSync(filePath:string):boolean {
-        try {
-            return fileSystem.statSync(filePath).isFile()
-        } catch (error) {
-            return false
-        }
-    }
-    /**
-     * Iterates through given directory structure recursively and calls given
-     * callback for each found file. Callback gets file path and corresponding
-     * stat object as argument.
-     * @param directoryPath - Path to directory structure to traverse.
-     * @param callback - Function to invoke for each traversed file.
-     * @returns Given callback function.
-     */
-    static walkDirectoryRecursivelySync(
-        directoryPath:string, callback:TraverseFilesCallbackFunction = (
-            _filePath:string, _stat:Object
-        ):?boolean => true
-    ):TraverseFilesCallbackFunction {
-        for (const fileName:string of fileSystem.readdirSync(directoryPath)) {
-            const filePath:string = path.resolve(directoryPath, fileName)
-            const stat:Object = fileSystem.statSync(filePath)
-            const result:any = callback(filePath, stat)
-            if (result === null)
-                return callback
-            if (result !== false && stat && stat.isDirectory())
-                Helper.walkDirectoryRecursivelySync(filePath, callback)
-        }
-        return callback
-    }
-    /**
-     * Copies given source file via path to given target directory location
-     * with same target name as source file has or copy to given complete
-     * target file path.
-     * @param sourcePath - Path to file to copy.
-     * @param targetPath - Target directory or complete file location to copy
-     * to.
-     * @returns Determined target file path.
-     */
-    static copyFileSync(sourcePath:string, targetPath:string):string {
-        /*
-            NOTE: If target path references a directory a new file with the
-            same name will be created.
-        */
-        if (Helper.isDirectorySync(targetPath))
-            targetPath = path.resolve(targetPath, path.basename(sourcePath))
-        fileSystem.writeFileSync(targetPath, fileSystem.readFileSync(
-            sourcePath))
-        return targetPath
-    }
-    /**
-     * Copies given source directory via path to given target directory
-     * location with same target name as source file has or copy to given
-     * complete target directory path.
-     * @param sourcePath - Path to directory to copy.
-     * @param targetPath - Target directory or complete directory location to
-     * copy in.
-     * @returns Determined target directory path.
-     */
-    static copyDirectoryRecursiveSync(
-        sourcePath:string, targetPath:string
-    ):string {
-        // Check if folder needs to be created or integrated.
-        if (Helper.isDirectorySync(targetPath))
-            targetPath = path.resolve(targetPath, path.basename(
-                sourcePath))
-        fileSystem.mkdirSync(targetPath)
-        Helper.walkDirectoryRecursivelySync(sourcePath, (
-            currentSourcePath:string, stat:Object
-        ):void => {
-            const currentTargetPath:string = path.join(
-                targetPath, currentSourcePath.substring(sourcePath.length))
-            if (stat.isDirectory())
-                fileSystem.mkdirSync(currentTargetPath)
-            else
-                Helper.copyFileSync(currentSourcePath, currentTargetPath)
-        })
-        return targetPath
-    }
-    /**
      * Determines a asset type if given file.
      * @param filePath - Path to file to analyse.
      * @param buildConfiguration - Meta informations for available asset
@@ -496,29 +348,26 @@ export default class Helper {
         pathsToIgnore:Array<string> = ['.git']
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
-        let index:number = 0
         for (const type:string in configuration)
             if (configuration.hasOwnProperty(type)) {
                 const newItem:ResolvedBuildConfigurationItem =
                     Tools.extendObject(true, {filePaths: []}, configuration[
                         type])
-                Helper.walkDirectoryRecursivelySync(entryPath, ((
-                    index:number,
-                    buildConfigurationItem:ResolvedBuildConfigurationItem
-                ):TraverseFilesCallbackFunction => (
-                    filePath:string, stat:Object
-                ):?boolean => {
-                    if (Helper.isFilePathInLocation(filePath, pathsToIgnore))
-                        return false
-                    if (stat.isFile() && path.extname(filePath).substring(
-                        1
-                    ) === buildConfigurationItem.extension && !(new RegExp(
-                        buildConfigurationItem.filePathPattern
-                    )).test(filePath))
-                        buildConfigurationItem.filePaths.push(filePath)
-                })(index, newItem))
+                for (const file:File of Tools.walkDirectoryRecursivelySync(
+                    entryPath, (file:File):?false => {
+                        if (Helper.isFilePathInLocation(
+                            file.path, pathsToIgnore
+                        ))
+                            return false
+                    }
+                ))
+                    if (file.stat.isFile() && path.extname(
+                        file.path
+                    ).substring(1) === newItem.extension && !(
+                        new RegExp(newItem.filePathPattern)
+                    ).test(file.path))
+                        newItem.filePaths.push(file.path)
                 buildConfiguration.push(newItem)
-                index += 1
             }
         return buildConfiguration.sort((
             first:ResolvedBuildConfigurationItem,
@@ -629,21 +478,23 @@ export default class Helper {
                         Helper.stripLoader(moduleID), aliases)
                     const directoryPath:string = path.resolve(
                         referencePath, moduleID)
-                    if (Helper.isDirectorySync(directoryPath)) {
+                    if (Tools.isDirectorySync(directoryPath)) {
                         normalizedInternalInjection[chunkName].splice(index, 1)
-                        Helper.walkDirectoryRecursivelySync(directoryPath, (
-                            filePath:string, stat:Object
-                        ):?false => {
-                            if (Helper.isFilePathInLocation(
-                                path.resolve(directoryPath, filePath),
-                                pathsToIgnore
-                            ))
-                                return false
-                            if (stat.isFile())
+                        for (
+                            const file:File of
+                            Tools.walkDirectoryRecursivelySync(directoryPath, (
+                                file:File
+                            ):?false => {
+                                if (Helper.isFilePathInLocation(
+                                    file.path, pathsToIgnore
+                                ))
+                                    return false
+                            })
+                        )
+                            if (file.stat.isFile())
                                 normalizedInternalInjection[chunkName].push(
                                     path.relative(referencePath, path.resolve(
-                                        directoryPath, filePath)))
-                        })
+                                        directoryPath, file.path)))
                     }
                     index += 1
                 }
@@ -872,12 +723,12 @@ export default class Helper {
                                 moduleLocation, moduleFilePath)
                         let packageAliases:PlainObject = {}
                         if (fileName === '__package__') {
-                            if (Helper.isDirectorySync(
+                            if (Tools.isDirectorySync(
                                 currentModuleFilePath
                             )) {
                                 const pathToPackageJSON:string = path.resolve(
                                     currentModuleFilePath, 'package.json')
-                                if (Helper.isFileSync(pathToPackageJSON)) {
+                                if (Tools.isFileSync(pathToPackageJSON)) {
                                     let localConfiguration:PlainObject = {}
                                     try {
                                         localConfiguration = JSON.parse(
@@ -933,7 +784,7 @@ export default class Helper {
                             currentModuleFilePath, pathsToIgnore
                         ))
                             continue
-                        if (Helper.isFileSync(currentModuleFilePath))
+                        if (Tools.isFileSync(currentModuleFilePath))
                             return currentModuleFilePath
                     }
         return null
