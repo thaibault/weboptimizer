@@ -8,9 +8,9 @@ import * as QUnit from 'qunit-cli'
 try {
     module.require('source-map-support/register')
 } catch (error) {}
-import main from '../taskRunner.compiled'
+import main from '../index.compiled'
 // endregion
-QUnit.module('taskRunner')
+QUnit.module('index')
 QUnit.load()
 // region tests
 QUnit.test('main', async (assert:Object):void => {
