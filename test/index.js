@@ -8,7 +8,7 @@ import * as QUnit from 'qunit-cli'
 try {
     module.require('source-map-support/register')
 } catch (error) {}
-import main from '../index'
+import main from '../index.compiled'
 // endregion
 QUnit.module('index')
 QUnit.load()
