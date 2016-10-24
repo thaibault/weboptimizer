@@ -13,6 +13,7 @@ import main from '../index.compiled'
 QUnit.module('index')
 QUnit.load()
 // region tests
+/*
 QUnit.test('main', async (assert:Object):Promise<void> => {
     const done:Function = assert.async()
     try {
@@ -23,6 +24,7 @@ QUnit.test('main', async (assert:Object):Promise<void> => {
     assert.ok(true)
     done()
 })
+*/
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
