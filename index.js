@@ -415,7 +415,9 @@ const main = async ():Promise<any> => {
 }
 // IgnoreTypeCheck
 if (require.main === module)
-    main()
+    main().catch((error:Error):void => {
+        throw error
+    })
 export default main
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
