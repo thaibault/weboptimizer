@@ -15,6 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
+import type {PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -28,7 +29,7 @@ import Helper from './helper.compiled'
 import {configuration as givenMetaConfiguration} from './package'
 /* eslint-disable no-unused-vars */
 import type {
-    DefaultConfiguration, HTMLConfiguration, MetaConfiguration, PlainObject,
+    DefaultConfiguration, HTMLConfiguration, MetaConfiguration,
     ResolvedConfiguration
 } from './type'
 /* eslint-enable no-unused-vars */

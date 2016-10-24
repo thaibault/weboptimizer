@@ -15,6 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
+import type {DomNode, ProcedureFunction, Window} from 'clientnode'
 import * as dom from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
@@ -40,9 +41,7 @@ plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
-import type {
-    DomNode, HTMLConfiguration, ProcedureFunction, WebpackConfiguration, Window
-} from './type'
+import type {HTMLConfiguration, WebpackConfiguration} from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 

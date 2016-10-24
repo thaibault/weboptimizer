@@ -18,6 +18,7 @@ import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
 import Tools from 'clientnode'
+import type {File, PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
 import {sync as removeDirectoryRecursivelySync} from 'rimraf'
@@ -28,7 +29,7 @@ try {
 
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
-import type {PlainObject, ResolvedBuildConfiguration} from './type'
+import type {ResolvedBuildConfiguration} from './type'
 // endregion
 (async ():Promise<any> => {
     try {
@@ -64,7 +65,7 @@ import type {PlainObject, ResolvedBuildConfiguration} from './type'
             while (true) {
                 filePath = `${configuration.path.context}.` +
                     `dynamicConfiguration-${count}.json`
-                if (!await Tools.isFile(filePath))
+                if (await !Tools.isFile(filePath))
                     break
                 count += 1
             }
@@ -84,10 +85,11 @@ import type {PlainObject, ResolvedBuildConfiguration} from './type'
             // endregion
             // region handle clear
             /*
-                NOTE: A build,serve or test in browser could depend on previously
-                created dll packages so a clean should not be performed in that case.
-                NOTE: If we have dependency cycle it needed to preserve files during
-                preinstall phase.
+                NOTE: A build,serve or test in browser could depend on
+                previously created dll packages so a clean should not be
+                performed in that case.
+                NOTE: If we have dependency cycle it needed to preserve files
+                during preinstall phase.
             */
             if (![
                 'build', 'preinstall', 'serve', 'test', 'testInBrowser'
@@ -100,18 +102,16 @@ import type {PlainObject, ResolvedBuildConfiguration} from './type'
                 ) === path.resolve(configuration.path.context)) {
                     // Removes all compiled files.
                     await Tools.walkDirectoryRecursively(
-                        configuration.path.target.base, (
-                            file:File
-                        ):?boolean => {
+                        configuration.path.target.base, (file:File):?false => {
                             if (Helper.isFilePathInLocation(
                                 file.path, configuration.path.ignore.concat(
                                     configuration.module.directoryNames,
                                     configuration.loader.directoryNames
                                 ).map((file:File):string => path.resolve(
                                     configuration.path.context, file.path)
-                                ).filter((file:File):boolean =>
+                                ).filter((filePath:string):boolean =>
                                     !configuration.path.context.startsWith(
-                                        file.path))
+                                        filePath))
                             ))
                                 return false
                             for (
@@ -128,7 +128,7 @@ import type {PlainObject, ResolvedBuildConfiguration} from './type'
                                     fileSystem.unlinkSync(file.path)
                                     break
                                 }
-                    })
+                        })
                     for (const fileName:string of fileSystem.readdirSync(
                         configuration.path.target.base
                     ))
@@ -164,7 +164,7 @@ import type {PlainObject, ResolvedBuildConfiguration} from './type'
                 process.argv[2]
             )) {
                 let tidiedUp:boolean = false
-                const tidyUp:Function = ():void => {
+                const tidyUp:Function = async ():Promise<void> => {
                     /*
                         Determines all none javaScript entities which have been
                         emitted as single javaScript module to remove.
@@ -225,8 +225,8 @@ import type {PlainObject, ResolvedBuildConfiguration} from './type'
                 }
                 closeEventHandlers.push(tidyUp)
                 /*
-                    Triggers complete asset compiling and bundles them into the final
-                    productive output.
+                    Triggers complete asset compiling and bundles them into the
+                    final productive output.
                 */
                 processPromises.push(new Promise((
                     resolve:Function, reject:Function
@@ -242,7 +242,7 @@ import type {PlainObject, ResolvedBuildConfiguration} from './type'
                         configuration.commandLine.build.command,
                         commandLineArguments, childProcessOptions)
                     const copyAdditionalFilesAndTidyUp:Function = async (
-                    ):void => {
+                    ):Promise<void> => {
                         for (
                             const filePath:string of
                             configuration.files.additionalPaths
@@ -366,16 +366,13 @@ import type {PlainObject, ResolvedBuildConfiguration} from './type'
                         }))
                 }
             }
-            // / region asynchronous
+            // / region a-/synchronous
             if (['document', 'test'].includes(
                 configuration.givenCommandLineArguments[2]
             )) {
-                async Promise.all(processPromises)
+                await Promise.all(processPromises)
                 handleTask(configuration.givenCommandLineArguments[2])
-            }
-            // / endregion
-            // / region synchronous
-            else if (['lint', 'testInBrowser', 'typeCheck', 'serve'].includes(
+            } else if (['lint', 'testInBrowser', 'typeCheck', 'serve'].includes(
                 configuration.givenCommandLineArguments[2]
             ))
                 handleTask(configuration.givenCommandLineArguments[2])
@@ -404,9 +401,8 @@ import type {PlainObject, ResolvedBuildConfiguration} from './type'
         // endregion
         // region forward nested return codes
         try {
-            async Promise.all(processPromises)
+            await Promise.all(processPromises)
         } catch (error) {
-            // IgnoreTypeCheck
             process.exit(error.returnCode)
         }
         // endregion

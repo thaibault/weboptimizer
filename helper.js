@@ -14,8 +14,8 @@
     endregion
 */
 // region imports
-import {ChildProcess} from 'child_process'
 import Tools from 'clientnode'
+import type {File, PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -24,8 +24,8 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, File, Injection, InternalInjection,
-    NormalizedInternalInjection, Path, PlainObject, ResolvedBuildConfiguration,
+    BuildConfiguration, Injection, InternalInjection,
+    NormalizedInternalInjection, Path, ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem
 } from './type'
 // endregion
@@ -108,7 +108,6 @@ export default class Helper {
                 serializedObject, 'base64'
             ).toString('utf8')
         try {
-            // IgnoreTypeCheck
             return new Function(name, `return ${serializedObject}`)(scope)
         } catch (error) {}
         return null
@@ -349,31 +348,26 @@ export default class Helper {
         pathsToIgnore:Array<string> = ['.git']
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
-        let index:number = 0
         for (const type:string in configuration)
             if (configuration.hasOwnProperty(type)) {
                 const newItem:ResolvedBuildConfigurationItem =
                     Tools.extendObject(true, {filePaths: []}, configuration[
                         type])
                 for (const file:File of Tools.walkDirectoryRecursivelySync(
-                    entryPath, ((
-                        index:number,
-                        buildConfigurationItem:ResolvedBuildConfigurationItem
-                    ):Function => (file:File):?false => {
+                    entryPath, (file:File):?false => {
                         if (Helper.isFilePathInLocation(
                             file.path, pathsToIgnore
                         ))
                             return false
-                    })(index, newItem)
+                    }
                 ))
                     if (file.stat.isFile() && path.extname(
                         file.path
-                    ).substring(1) === buildConfigurationItem.extension && !(
-                        new RegExp(buildConfigurationItem.filePathPattern)
+                    ).substring(1) === newItem.extension && !(
+                        new RegExp(newItem.filePathPattern)
                     ).test(file.path))
-                        buildConfigurationItem.filePaths.push(file.path)
+                        newItem.filePaths.push(file.path)
                 buildConfiguration.push(newItem)
-                index += 1
             }
         return buildConfiguration.sort((
             first:ResolvedBuildConfigurationItem,
@@ -489,11 +483,10 @@ export default class Helper {
                         for (
                             const file:File of
                             Tools.walkDirectoryRecursivelySync(directoryPath, (
-                                filePath:string, stat:Object
+                                file:File
                             ):?false => {
                                 if (Helper.isFilePathInLocation(
-                                    path.resolve(directoryPath, filePath),
-                                    pathsToIgnore
+                                    file.path, pathsToIgnore
                                 ))
                                     return false
                             })
