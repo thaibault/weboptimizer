@@ -32,7 +32,7 @@ import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 import type {ResolvedBuildConfiguration} from './type'
 // endregion
-export default async function main():Promise<any> {
+const main = async ():Promise<any> => {
     try {
         // region controller
         const childProcessOptions:Object = {
@@ -416,6 +416,7 @@ export default async function main():Promise<any> {
 }
 if (require.main === module)
     main()
+export default main
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

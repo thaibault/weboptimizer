@@ -8,12 +8,12 @@ import * as QUnit from 'qunit-cli'
 try {
     module.require('source-map-support/register')
 } catch (error) {}
-import main from '../index.compiled'
+import main from '../index'
 // endregion
 QUnit.module('index')
 QUnit.load()
 // region tests
-QUnit.test('main', async (assert:Object):void => {
+QUnit.test('main', async (assert:Object):Promise<void> => {
     const done:Function = assert.async()
     try {
         await main()
