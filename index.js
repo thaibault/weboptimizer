@@ -65,7 +65,7 @@ const main = async ():Promise<any> => {
             while (true) {
                 filePath = `${configuration.path.context}.` +
                     `dynamicConfiguration-${count}.json`
-                if (await !Tools.isFile(filePath))
+                if (!(await Tools.isFile(filePath)))
                     break
                 count += 1
             }
@@ -107,8 +107,8 @@ const main = async ():Promise<any> => {
                                 file.path, configuration.path.ignore.concat(
                                     configuration.module.directoryNames,
                                     configuration.loader.directoryNames
-                                ).map((file:File):string => path.resolve(
-                                    configuration.path.context, file.path)
+                                ).map((filePath:string):string => path.resolve(
+                                    configuration.path.context, filePath)
                                 ).filter((filePath:string):boolean =>
                                     !configuration.path.context.startsWith(
                                         filePath))
