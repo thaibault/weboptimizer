@@ -14,7 +14,6 @@
     endregion
 */
 // region imports
-import 'babel-polyfill'
 import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
