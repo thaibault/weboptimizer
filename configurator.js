@@ -131,7 +131,7 @@ let filePath:?string = null
 while (true) {
     const newFilePath:string = configuration.path.context +
         `.dynamicConfiguration-${count}.json`
-    if (!Helper.isFileSync(newFilePath))
+    if (!Tools.isFileSync(newFilePath))
         break
     filePath = newFilePath
     count += 1
@@ -180,7 +180,7 @@ if (Tools.isPlainObject(result))
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
-if (Helper.isDirectorySync(configuration.path.target.base))
+if (Tools.isDirectorySync(configuration.path.target.base))
     for (const fileName:string of fileSystem.readdirSync(
         configuration.path.target.base
     ))

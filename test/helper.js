@@ -3,9 +3,6 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import {ChildProcess} from 'child_process'
-import {Duplex as DuplexStream} from 'stream'
-import * as fileSystem from 'fs'
 import path from 'path'
 import * as QUnit from 'qunit-cli'
 // NOTE: Only needed for debugging this file.
@@ -101,52 +98,6 @@ QUnit.test('parseEncodedObject', (assert:Object):void => {
         assert.deepEqual(Helper.parseEncodedObject(...test[0]), test[1])
 })
 // / endregion
-// region process handler
-QUnit.test('getProcessCloseHandler', (assert:Object):void =>
-    assert.strictEqual(typeof Helper.getProcessCloseHandler(
-        ():void => {}, ():void => {}
-    ), 'function'))
-QUnit.test('handleChildProcess', (assert:Object):void => {
-    /**
-     * A mockup duplex stream for mocking "stdout" and "strderr" process
-     * connections.
-     */
-    class MockupDuplexStream extends DuplexStream {
-        /**
-         * Triggers if contents from current stream should be red.
-         * @param size - Number of bytes to read asynchronously.
-         * @returns Red data.
-         */
-        _read(size:number):string {
-            return `${size}`
-        }
-        /**
-         * Triggers if contents should be written on current stream.
-         * @param chunk - The chunk to be written. Will always be a buffer
-         * unless the "decodeStrings" option was set to "false".
-         * @param encoding - Specifies encoding to be used as input data.
-         * @param callback - Will be called if data has been written.
-         * @returns Returns "true" if more data could be written and "false"
-         * otherwise.
-         */
-        _write(
-            chunk:Buffer|string, encoding:string, callback:Function
-        ):boolean {
-            callback(new Error('test'))
-            return true
-        }
-    }
-    const stdoutMockupDuplexStream:MockupDuplexStream =
-        new MockupDuplexStream()
-    const stderrMockupDuplexStream:MockupDuplexStream =
-        new MockupDuplexStream()
-    const childProcess:ChildProcess = new ChildProcess()
-    childProcess.stdout = stdoutMockupDuplexStream
-    childProcess.stderr = stderrMockupDuplexStream
-
-    assert.strictEqual(Helper.handleChildProcess(childProcess), childProcess)
-})
-// endregion
 // region file handler
 QUnit.test('renderFilePathTemplate', (assert:Object):void => {
     for (const test:Array<any> of [

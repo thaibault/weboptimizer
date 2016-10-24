@@ -94,7 +94,7 @@ for (const ignorePattern:string of configuration.injection.ignorePattern)
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
-        if (Helper.isFileSync(htmlConfiguration.template.substring(
+        if (Tools.isFileSync(htmlConfiguration.template.substring(
             htmlConfiguration.template.lastIndexOf('!') + 1
         ))) {
             if (
@@ -109,7 +109,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
         }
 // // endregion
 // // region generate favicons
-if (htmlAvailable && configuration.favicon && Helper.isFileSync(
+if (htmlAvailable && configuration.favicon && Tools.isFileSync(
     configuration.favicon.logo
 ))
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
@@ -275,7 +275,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                 if (configuration.inPlace.cascadingStyleSheet) {
                     const assetFilePath = Helper.stripLoader(
                         configuration.files.compose.cascadingStyleSheet)
-                    if (Helper.isFileSync(assetFilePath))
+                    if (Tools.isFileSync(assetFilePath))
                         fileSystem.unlinkSync(assetFilePath)
                 }
                 if (configuration.inPlace.javaScript) {
@@ -290,7 +290,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                             const assetFilePath:string =
                             Helper.renderFilePathTemplate(
                                 assetFilePathTemplate, {'[name]': chunkName})
-                            if (Helper.isFileSync(assetFilePath))
+                            if (Tools.isFileSync(assetFilePath))
                                 fileSystem.unlinkSync(assetFilePath)
                         }
                 }
@@ -327,7 +327,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 pluginInstances.push(new plugins.AddAssetHTMLPlugin({
                     filepath: filePath,
                     hash: true,
-                    includeSourcemap: Helper.isFileSync(`${filePath}.map`)
+                    includeSourcemap: Tools.isFileSync(`${filePath}.map`)
                 }))
                 pluginInstances.push(new webpack.DllReferencePlugin({
                     context: configuration.path.context, manifest: require(
@@ -562,7 +562,7 @@ pluginInstances.push(new plugins.Imagemin(
 // / region loader
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
-    return Helper.isFilePathInLocation(
+    return Tools.isFilePathInLocation(
         filePath, configuration.path.ignore.concat(
             configuration.module.directoryNames,
             configuration.loader.directoryNames

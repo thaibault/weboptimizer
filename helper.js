@@ -98,7 +98,7 @@ export default class Helper {
     static parseEncodedObject(
         serializedObject:string, scope:Object = {}, name:string = 'scope'
     ):?PlainObject {
-        if (serializedObject.endsWith('.json') && Helper.isFileSync(
+        if (serializedObject.endsWith('.json') && Tools.isFileSync(
             serializedObject
         ))
             serializedObject = fileSystem.readFileSync(serializedObject, {
@@ -112,56 +112,6 @@ export default class Helper {
             return new Function(name, `return ${serializedObject}`)(scope)
         } catch (error) {}
         return null
-    }
-    // endregion
-    // region process handler
-    /**
-     * Generates a one shot close handler which triggers given promise methods.
-     * If a reason is provided it will be given as resolve target. An Error
-     * will be generated if return code is not zero. The generated Error has
-     * a property "returnCode" which provides corresponding process return
-     * code.
-     * @param resolve - Promise's resolve function.
-     * @param reject - Promise's reject function.
-     * @param reason - Promise target if process has a zero return code.
-     * @param callback - Optional function to call of process has successfully
-     * finished.
-     * @returns Process close handler function.
-     */
-    static getProcessCloseHandler(
-        resolve:Function, reject:Function, reason:any = null,
-        callback:Function = ():void => {}
-    ):((returnCode:?number) => void) {
-        let finished:boolean = false
-        return (returnCode:?number):void => {
-            if (!finished)
-                if (typeof returnCode !== 'number' || returnCode === 0) {
-                    callback()
-                    resolve(reason)
-                } else {
-                    const error:Error = new Error(
-                        `Task exited with error code ${returnCode}`)
-                    // IgnoreTypeCheck
-                    error.returnCode = returnCode
-                    reject(error)
-                }
-            finished = true
-        }
-    }
-    /**
-     * Forwards given child process communication channels to corresponding
-     * current process communication channels.
-     * @param childProcess - Child process meta data.
-     * @returns Given child process meta data.
-     */
-    static handleChildProcess(childProcess:ChildProcess):ChildProcess {
-        childProcess.stdout.pipe(process.stdout)
-        childProcess.stderr.pipe(process.stderr)
-        childProcess.on('close', (returnCode:number):void => {
-            if (returnCode !== 0)
-                console.error(`Task exited with error code ${returnCode}`)
-        })
-        return childProcess
     }
     // endregion
     // region file handler
@@ -405,21 +355,23 @@ export default class Helper {
                 const newItem:ResolvedBuildConfigurationItem =
                     Tools.extendObject(true, {filePaths: []}, configuration[
                         type])
-                Helper.walkDirectoryRecursivelySync(entryPath, ((
-                    index:number,
-                    buildConfigurationItem:ResolvedBuildConfigurationItem
-                ):Function => (
-                    filePath:string, stat:Object
-                ):?boolean => {
-                    if (Helper.isFilePathInLocation(filePath, pathsToIgnore))
-                        return false
-                    if (stat.isFile() && path.extname(filePath).substring(
-                        1
-                    ) === buildConfigurationItem.extension && !(new RegExp(
-                        buildConfigurationItem.filePathPattern
-                    )).test(filePath))
-                        buildConfigurationItem.filePaths.push(filePath)
-                })(index, newItem))
+                for (const file:File of Tools.walkDirectoryRecursivelySync(
+                    entryPath, ((
+                        index:number,
+                        buildConfigurationItem:ResolvedBuildConfigurationItem
+                    ):Function => (file:File):?false => {
+                        if (Helper.isFilePathInLocation(
+                            file.path, pathsToIgnore
+                        ))
+                            return false
+                    })(index, newItem)
+                ))
+                    if (file.stat.isFile() && path.extname(
+                        file.path
+                    ).substring(1) === buildConfigurationItem.extension && !(
+                        new RegExp(buildConfigurationItem.filePathPattern)
+                    ).test(file.path))
+                        buildConfigurationItem.filePaths.push(file.path)
                 buildConfiguration.push(newItem)
                 index += 1
             }
@@ -532,21 +484,24 @@ export default class Helper {
                         Helper.stripLoader(moduleID), aliases)
                     const directoryPath:string = path.resolve(
                         referencePath, moduleID)
-                    if (Helper.isDirectorySync(directoryPath)) {
+                    if (Tools.isDirectorySync(directoryPath)) {
                         normalizedInternalInjection[chunkName].splice(index, 1)
-                        Helper.walkDirectoryRecursivelySync(directoryPath, (
-                            filePath:string, stat:Object
-                        ):?false => {
-                            if (Helper.isFilePathInLocation(
-                                path.resolve(directoryPath, filePath),
-                                pathsToIgnore
-                            ))
-                                return false
-                            if (stat.isFile())
+                        for (
+                            const file:File of
+                            Tools.walkDirectoryRecursivelySync(directoryPath, (
+                                filePath:string, stat:Object
+                            ):?false => {
+                                if (Helper.isFilePathInLocation(
+                                    path.resolve(directoryPath, filePath),
+                                    pathsToIgnore
+                                ))
+                                    return false
+                            })
+                        )
+                            if (file.stat.isFile())
                                 normalizedInternalInjection[chunkName].push(
                                     path.relative(referencePath, path.resolve(
-                                        directoryPath, filePath)))
-                        })
+                                        directoryPath, file.path)))
                     }
                     index += 1
                 }
@@ -775,12 +730,12 @@ export default class Helper {
                                 moduleLocation, moduleFilePath)
                         let packageAliases:PlainObject = {}
                         if (fileName === '__package__') {
-                            if (Helper.isDirectorySync(
+                            if (Tools.isDirectorySync(
                                 currentModuleFilePath
                             )) {
                                 const pathToPackageJSON:string = path.resolve(
                                     currentModuleFilePath, 'package.json')
-                                if (Helper.isFileSync(pathToPackageJSON)) {
+                                if (Tools.isFileSync(pathToPackageJSON)) {
                                     let localConfiguration:PlainObject = {}
                                     try {
                                         localConfiguration = JSON.parse(
@@ -836,7 +791,7 @@ export default class Helper {
                             currentModuleFilePath, pathsToIgnore
                         ))
                             continue
-                        if (Helper.isFileSync(currentModuleFilePath))
+                        if (Tools.isFileSync(currentModuleFilePath))
                             return currentModuleFilePath
                     }
         return null
