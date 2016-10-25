@@ -395,7 +395,11 @@ export default class Helper {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
         const normalizedInternalInjection:NormalizedInternalInjection =
-            Helper.normalizeInternalInjection(internalInjection)
+            Helper.resolveModulesInFolders(
+                Helper.normalizeInternalInjection(internalInjection),
+                aliases, extensions, context, referencePath, pathsToIgnore,
+                relativeModuleFilePaths, packageEntryFileNames,
+                packageMainPropertyNames, packageAliasPropertyNames)
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
