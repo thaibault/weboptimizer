@@ -85,34 +85,6 @@ export default class Helper {
         })))
     }
     // endregion
-    // region data
-    /**
-     * Converts given serialized, base64 encoded or file path given object into
-     * a native javaScript one if possible.
-     * @param serializedObject - Object as string.
-     * @param scope - An optional scope which will be used to evaluate given
-     * object in.
-     * @param name - The name under given scope will be available.
-     * @returns The parsed object if possible and null otherwise.
-     */
-    static parseEncodedObject(
-        serializedObject:string, scope:Object = {}, name:string = 'scope'
-    ):?PlainObject {
-        if (serializedObject.endsWith('.json') && Tools.isFileSync(
-            serializedObject
-        ))
-            serializedObject = fileSystem.readFileSync(serializedObject, {
-                encoding: 'utf-8'})
-        if (!serializedObject.startsWith('{'))
-            serializedObject = Buffer.from(
-                serializedObject, 'base64'
-            ).toString('utf8')
-        try {
-            return new Function(name, `return ${serializedObject}`)(scope)
-        } catch (error) {}
-        return null
-    }
-    // endregion
     // region file handler
     /**
      * Applies file path/name placeholder replacements with given bundle

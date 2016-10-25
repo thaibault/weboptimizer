@@ -77,27 +77,6 @@ QUnit.test('normalizePaths', (assert:Object):void => {
         assert.deepEqual(Helper.normalizePaths(test[0]), test[1])
 })
 // / endregion
-// / region data
-QUnit.test('parseEncodedObject', (assert:Object):void => {
-    for (const test:Array<any> of [
-        [[''], undefined],
-        [['undefined'], null],
-        [['{a: undefined}'], {a: undefined}],
-        [[new Buffer('{a: undefined}').toString('base64')], {a: undefined}],
-        [['{a: 2}'], {a: 2}],
-        [[new Buffer('{a: 1}').toString('base64')], {a: 1}],
-        [['null'], null],
-        [[new Buffer('null').toString('base64')], null],
-        [['{}'], {}],
-        [[new Buffer('{}').toString('base64')], {}],
-        [['{a: a}'], null],
-        [[new Buffer('{a: a}').toString('base64')], null],
-        [['{a: scope.a}', {a: 2}], {a: 2}],
-        [[new Buffer('{a: scope.a}').toString('base64'), {a: 2}], {a: 2}]
-    ])
-        assert.deepEqual(Helper.parseEncodedObject(...test[0]), test[1])
-})
-// / endregion
 // region file handler
 QUnit.test('renderFilePathTemplate', (assert:Object):void => {
     for (const test:Array<any> of [
