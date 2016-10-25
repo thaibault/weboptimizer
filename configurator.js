@@ -173,7 +173,7 @@ Tools.extendObject(true, Tools.modifyObject(Tools.modifyObject(
 ), runtimeInformation), specificConfiguration, runtimeInformation)
 let result:?PlainObject = null
 if (runtimeInformation.givenCommandLineArguments.length > 3)
-    result = Helper.parseEncodedObject(
+    result = Tools.stringParseEncodedObject(
         runtimeInformation.givenCommandLineArguments[runtimeInformation
             .givenCommandLineArguments.length - 1],
         configuration, 'configuration')

@@ -53,7 +53,7 @@ const main = async ():Promise<any> => {
                 configuration.givenCommandLineArguments.slice()}
             if (
                 configuration.givenCommandLineArguments.length > 3 &&
-                Helper.parseEncodedObject(
+                Tools.stringParseEncodedObject(
                     configuration.givenCommandLineArguments[
                         configuration.givenCommandLineArguments.length - 1],
                     configuration, 'configuration')
