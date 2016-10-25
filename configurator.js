@@ -305,7 +305,6 @@ resolvedConfiguration.injection = Helper.resolveInjection(
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
     normalized: Helper.resolveModulesInFolders(
-        // IgnoreTypeCheck
         Helper.normalizeInternalInjection(
             resolvedConfiguration.injection.internal
         ), resolvedConfiguration.module.aliases,

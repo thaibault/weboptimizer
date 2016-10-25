@@ -54,7 +54,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
         // IgnoreTypeCheck
         template = require('webOptimizerDefaultTemplateFilePath')
     metaDOM.env({
-        created: (error:?Error, window:Object):void => {
+        created: (error:?Error, window:Window):void => {
             browserAPI = {
                 debug: false, domContentLoaded: false, metaDOM, window,
                 windowLoaded: false}

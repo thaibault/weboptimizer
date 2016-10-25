@@ -185,7 +185,6 @@ const main = async ():Promise<any> => {
                                     .injection.internal.normalized[chunkName]
                             ) {
                                 const type:?string = Helper.determineAssetType(
-                                    // IgnoreTypeCheck
                                     Helper.determineModuleFilePath(
                                         moduleID, configuration.module.aliases,
                                         configuration.extensions,
