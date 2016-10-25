@@ -828,7 +828,7 @@ const webpackConfiguration:WebpackConfiguration = {
     }))
 }
 if (configuration.debug)
-    console.debug('Using webpack configuration:', util.inspect(
+    console.info('Using webpack configuration:', util.inspect(
         webpackConfiguration, {depth: null}))
 // endregion
 export default webpackConfiguration
