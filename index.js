@@ -184,7 +184,7 @@ const main = async ():Promise<any> => {
                                 const moduleID:string of configuration
                                     .injection.internal.normalized[chunkName]
                             ) {
-                                const type:?string = Helper.determineAssetType(
+                                const filePath:?string =
                                     Helper.determineModuleFilePath(
                                         moduleID, configuration.module.aliases,
                                         configuration.extensions,
@@ -196,9 +196,12 @@ const main = async ():Promise<any> => {
                                         configuration.package.main
                                             .propertyNames,
                                         configuration.package
-                                            .aliasPropertyNames
-                                    ), configuration.build.types,
-                                    configuration.path)
+                                            .aliasPropertyNames)
+                                let type:?string
+                                if (filePath)
+                                    type = Helper.determineAssetType(
+                                        filePath, configuration.build.types,
+                                        configuration.path)
                                 if (
                                     typeof type === 'string' &&
                                     configuration.build.types[type]
