@@ -3,7 +3,6 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import path from 'path'
 import * as QUnit from 'qunit-cli'
 // NOTE: Only needed for debugging this file.
 try {
