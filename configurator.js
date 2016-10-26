@@ -191,9 +191,10 @@ if (Tools.isDirectorySync(configuration.path.target.base))
 // / endregion
 // / region define dynamic resolve parameter
 const parameterDescription:Array<string> = [
-    'self', 'webOptimizerPath', 'currentPath', 'path', 'helper', 'tools']
+    'currentPath', 'fileSystem', 'helper', 'path', 'self', 'tools',
+    'webOptimizerPath']
 const parameter:Array<any> = [
-    configuration, __dirname, process.cwd(), path, Helper, Tools]
+    process.cwd(), fileSystem, Helper, path, configuration, Tools, __dirname]
 // / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
