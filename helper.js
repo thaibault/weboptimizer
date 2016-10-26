@@ -605,32 +605,37 @@ export default class Helper {
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
                     const relativeModuleFilePath:string = path.relative(
                         context, moduleFilePath)
+                    const directoryPath:string = path.dirname(
+                        relativeModuleFilePath)
                     const baseName:string = path.basename(
                         relativeModuleFilePath,
                         `.${buildConfiguration.extension}`)
+                    let moduleID:string = baseName
+                    if (directoryPath !== '.')
+                        moduleID = path.join(directoryPath, baseName)
                     /*
                         Ensure that each output type has only one source
                         representation.
                     */
                     if (!injectedBaseNames[
                         buildConfiguration.outputExtension
-                    ].includes(baseName)) {
+                    ].includes(moduleID)) {
                         /*
-                            Ensure that same basenames and different output
+                            Ensure that same module ids and different output
                             types can be distinguished by their extension
                             (JavaScript-Modules remains without extension since
                             they will be handled first because the build
                             configurations are expected to be sorted in this
                             context).
                         */
-                        if (result[baseName])
+                        if (result.hasOwnProperty(moduleID))
                             result[relativeModuleFilePath] =
                                 relativeModuleFilePath
                         else
-                            result[baseName] = relativeModuleFilePath
+                            result[moduleID] = relativeModuleFilePath
                         injectedBaseNames[
                             buildConfiguration.outputExtension
-                        ].push(baseName)
+                        ].push(moduleID)
                     }
                 }
         }

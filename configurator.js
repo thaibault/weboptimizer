@@ -29,8 +29,8 @@ import Helper from './helper.compiled'
 import {configuration as givenMetaConfiguration} from './package'
 /* eslint-disable no-unused-vars */
 import type {
-    DefaultConfiguration, HTMLConfiguration, MetaConfiguration,
-    ResolvedConfiguration
+    DefaultConfiguration, HTMLConfiguration, InternalInjection,
+    MetaConfiguration, ResolvedConfiguration
 } from './type'
 /* eslint-enable no-unused-vars */
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
@@ -302,13 +302,14 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore)
+// IgnoreTypeCheck
+const internalInjection:InternalInjection =
+    resolvedConfiguration.injection.internal
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
     normalized: Helper.resolveModulesInFolders(
-        // IgnoreTypeCheck
-        Helper.normalizeInternalInjection(
-            resolvedConfiguration.injection.internal
-        ), resolvedConfiguration.module.aliases,
+        Helper.normalizeInternalInjection(internalInjection),
+        resolvedConfiguration.module.aliases,
         resolvedConfiguration.extensions,
         resolvedConfiguration.path.context,
         resolvedConfiguration.path.source.asset.base,
