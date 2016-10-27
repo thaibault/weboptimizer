@@ -171,8 +171,8 @@ export type ResolvedConfiguration = {
     };
     package:{
         main:{
-            propertyNames:Array<string>;
             fileNames:Array<string>;
+            propertyNames:Array<string>;
         };
         aliasPropertyNames:Array<string>
     };
