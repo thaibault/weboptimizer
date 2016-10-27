@@ -299,7 +299,8 @@ resolvedConfiguration.injection = Helper.resolveInjection(
         ).map((filePath:string):string => path.resolve(
             resolvedConfiguration.path.context, filePath)
         ).filter((filePath:string):boolean =>
-            !resolvedConfiguration.path.context.startsWith(filePath)))
+            !resolvedConfiguration.path.context.startsWith(filePath))),
+        resolvedConfiguration.package.main.fileNames
     ), resolvedConfiguration.injection.autoExclude,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.extensions,

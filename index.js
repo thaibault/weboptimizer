@@ -159,7 +159,8 @@ const main = async ():Promise<any> => {
                     ).map((filePath:string):string => path.resolve(
                         configuration.path.context, filePath)
                     ).filter((filePath:string):boolean =>
-                        !configuration.path.context.startsWith(filePath)))
+                        !configuration.path.context.startsWith(filePath)),
+                    configuration.package.main.fileNames)
             if (['build', 'buildDLL', 'document', 'test'].includes(
                 process.argv[2]
             )) {

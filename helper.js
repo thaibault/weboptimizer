@@ -313,11 +313,13 @@ export default class Helper {
      * @param configuration - Given build configurations.
      * @param entryPath - Path to analyse nested structure.
      * @param pathsToIgnore - Paths which marks location to ignore.
+     * @param mainFileBasenames - File basenames to sort into the front.
      * @returns Converted build configuration.
      */
     static resolveBuildConfigurationFilePaths(
         configuration:BuildConfiguration, entryPath:string = './',
-        pathsToIgnore:Array<string> = ['.git']
+        pathsToIgnore:Array<string> = ['.git'],
+        mainFileBasenames:Array<string> = ['index', 'main']
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
         for (const type:string in configuration)
@@ -339,6 +341,22 @@ export default class Helper {
                         new RegExp(newItem.filePathPattern)
                     ).test(file.path))
                         newItem.filePaths.push(file.path)
+                newItem.filePaths.sort((
+                    firstFilePath:string, secondFilePath:string
+                ):number => {
+                    if (mainFileBasenames.includes(path.basename(
+                        firstFilePath, path.extname(firstFilePath)
+                    ))) {
+                        if (mainFileBasenames.includes(path.basename(
+                            secondFilePath, path.extname(secondFilePath)
+                        )))
+                            return 0
+                    } else if (mainFileBasenames.includes(path.basename(
+                        secondFilePath, path.extname(secondFilePath)
+                    )))
+                        return 1
+                    return 0
+                })
                 buildConfiguration.push(newItem)
             }
         return buildConfiguration.sort((
@@ -569,8 +587,8 @@ export default class Helper {
                                 injection[type][chunkName].push(
                                     modules[subChunkName])
                         /*
-                            Reverse array to let javaScript files be the last
-                            ones to export them rather.
+                            Reverse array to let javaScript and main files be
+                            the last ones to export them rather.
                         */
                         injection[type][chunkName].reverse()
                     }
@@ -594,13 +612,13 @@ export default class Helper {
         moduleFilePathsToExclude:Array<string>, context:string
     ):{[key:string]:string} {
         const result:{[key:string]:string} = {}
-        const injectedBaseNames:{[key:string]:Array<string>} = {}
+        const injectedModuleIDs:{[key:string]:Array<string>} = {}
         for (
             const buildConfiguration:ResolvedBuildConfigurationItem of
             buildConfigurations
         ) {
-            if (!injectedBaseNames[buildConfiguration.outputExtension])
-                injectedBaseNames[buildConfiguration.outputExtension] = []
+            if (!injectedModuleIDs[buildConfiguration.outputExtension])
+                injectedModuleIDs[buildConfiguration.outputExtension] = []
             for (const moduleFilePath:string of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
                     const relativeModuleFilePath:string = path.relative(
@@ -617,7 +635,7 @@ export default class Helper {
                         Ensure that each output type has only one source
                         representation.
                     */
-                    if (!injectedBaseNames[
+                    if (!injectedModuleIDs[
                         buildConfiguration.outputExtension
                     ].includes(moduleID)) {
                         /*
@@ -633,7 +651,7 @@ export default class Helper {
                                 relativeModuleFilePath
                         else
                             result[moduleID] = relativeModuleFilePath
-                        injectedBaseNames[
+                        injectedModuleIDs[
                             buildConfiguration.outputExtension
                         ].push(moduleID)
                     }
