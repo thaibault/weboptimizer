@@ -565,8 +565,8 @@ if (configuration.module.contextReplacements)
     )
         pluginInstances.push(new webpack.ContextReplacementPlugin(
             ...contextReplacement.map((value:string):any => (new Function(
-                'configuration', `return ${value}`
-            ))(configuration))))
+                'configuration', '__dirname', '__filename', `return ${value}`
+            ))(configuration, __dirname, __filename))))
 // // endregion
 // / endregion
 // / region loader
