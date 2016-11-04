@@ -343,7 +343,12 @@ for (
                 moduleID, resolvedConfiguration.module.aliases,
                 resolvedConfiguration.extensions,
                 resolvedConfiguration.path.context,
-                resolvedConfiguration.path.source.asset.base,
+                /*
+                    NOTE: We doesn't use
+                    "resolvedConfiguration.path.source.asset.base" because we
+                    have already resolve all module ids.
+                */
+                './',
                 resolvedConfiguration.path.ignore,
                 resolvedConfiguration.module.directoryNames,
                 resolvedConfiguration.package.main.fileNames,

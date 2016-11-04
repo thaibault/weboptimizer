@@ -470,13 +470,13 @@ export default class Helper {
                 ]) {
                     moduleID = Helper.applyAliases(
                         Helper.stripLoader(moduleID), aliases)
-                    const directoryPath:string = path.resolve(
+                    const resolvedPath:string = path.resolve(
                         referencePath, moduleID)
-                    if (Tools.isDirectorySync(directoryPath)) {
+                    if (Tools.isDirectorySync(resolvedPath)) {
                         normalizedInternalInjection[chunkName].splice(index, 1)
                         for (
                             const file:File of
-                            Tools.walkDirectoryRecursivelySync(directoryPath, (
+                            Tools.walkDirectoryRecursivelySync(resolvedPath, (
                                 file:File
                             ):?false => {
                                 if (Helper.isFilePathInLocation(
@@ -488,8 +488,10 @@ export default class Helper {
                             if (file.stat.isFile())
                                 normalizedInternalInjection[chunkName].push(
                                     path.relative(referencePath, path.resolve(
-                                        directoryPath, file.path)))
-                    }
+                                        resolvedPath, file.path)))
+                    } else if (moduleID.startsWith('./'))
+                        normalizedInternalInjection[chunkName][index] =
+                            `./${path.relative(context, resolvedPath)}`
                     index += 1
                 }
             }
