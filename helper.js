@@ -198,8 +198,8 @@ export default class Helper {
         aliases:PlainObject = {},
         extensions:{file:Array<string>;module:Array<string>} = {
             file: [
-                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
-                '.json', '.eot', '.ttf', '.woff'
+                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
             ], module: []
         }, referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
         relativeModuleFilePaths:Array<string> = ['node_modules'],
@@ -211,8 +211,8 @@ export default class Helper {
         inPlaceNormalLibrary:boolean = false,
         inPlaceDynamicLibrary:boolean = true,
         externalHandableFileExtensions:Array<string> = [
-            '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
-            '.json', '.eot', '.ttf', '.woff'
+            '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico', '.jpg',
+            '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
         ]
     ):?string {
         context = path.resolve(context)
@@ -399,8 +399,8 @@ export default class Helper {
         internalInjection:InternalInjection, aliases:PlainObject = {},
         extensions:{file:Array<string>;module:Array<string>} = {
             file: [
-                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
-                '.json', '.eot', '.ttf', '.woff'
+                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
             ], module: []
         }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
@@ -454,8 +454,8 @@ export default class Helper {
         aliases:PlainObject = {},
         extensions:{file:Array<string>;module:Array<string>} = {
             file: [
-                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
-                '.json', '.eot', '.ttf', '.woff'
+                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
             ], module: []
         }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
@@ -558,8 +558,8 @@ export default class Helper {
         aliases:PlainObject = {},
         extensions:{file:Array<string>;module:Array<string>} = {
             file: [
-                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
-                '.json', '.eot', '.ttf', '.woff'
+                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
             ], module: []
         }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
@@ -684,8 +684,8 @@ export default class Helper {
         moduleID:string, aliases:PlainObject = {},
         extensions:{file:Array<string>;module:Array<string>} = {
             file: [
-                '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html',
-                '.json', '.eot', '.ttf', '.woff'
+                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
             ], module: []
         }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
@@ -694,6 +694,15 @@ export default class Helper {
         packageMainPropertyNames:Array<string> = ['main'],
         packageAliasPropertyNames:Array<string> = []
     ):?string {
+        console.log(
+            moduleID,
+            aliases,
+            extensions,
+            context,
+            referencePath,
+            pathsToIgnore,
+            relativeModuleFilePaths
+        )
         moduleID = Helper.applyAliases(Helper.stripLoader(moduleID), aliases)
         if (!moduleID)
             return null
