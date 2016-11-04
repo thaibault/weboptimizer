@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.130",
+  "version": "1.0.131",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
@@ -252,7 +252,6 @@
         "file": [
           ".js",
           ".json",
-
           ".css",
           ".eot",
           ".gif",
