@@ -250,14 +250,15 @@
       "extensions": {
         "module": [],
         "file": [
+          ".js",
+          ".json",
+
           ".css",
           ".eot",
           ".gif",
           ".html",
           ".ico",
           ".jpg",
-          ".js",
-          ".json",
           ".png",
           ".pug",
           ".svg",
