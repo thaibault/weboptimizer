@@ -702,7 +702,7 @@ export default class Helper {
             moduleFilePath = path.join(context, moduleFilePath)
         for (const moduleLocation:string of [referencePath].concat(
             relativeModuleFilePaths.map((filePath:string):string =>
-                path.resolve(referencePath, filePath))
+                path.resolve(context, filePath))
         ))
             for (let fileName:string of ['', '__package__'].concat(
                 packageEntryFileNames
