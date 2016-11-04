@@ -489,7 +489,11 @@ export default class Helper {
                                 normalizedInternalInjection[chunkName].push(
                                     path.relative(referencePath, path.resolve(
                                         resolvedPath, file.path)))
-                    } else if (moduleID.startsWith('./'))
+                    } else if (moduleID.startsWith(
+                        './'
+                    ) && !moduleID.startsWith('./' + path.relative(
+                        context, referencePath
+                    )))
                         normalizedInternalInjection[chunkName][index] =
                             `./${path.relative(context, resolvedPath)}`
                     index += 1
