@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.133",
+  "version": "1.0.134",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
@@ -273,8 +273,8 @@
         },
         "cascadingStyleSheet": "",
         "contextReplacements": [
-            "/angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/",
-            "__dirname"
+          "/angular(\\|/)core(\\|/)(esm(\\|/)src|src)(\\|/)linker/",
+          "__dirname"
         ],
         "directoryNames": [
           "web_modules",
