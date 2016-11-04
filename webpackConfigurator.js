@@ -636,24 +636,22 @@ const webpackConfiguration:WebpackConfiguration = {
     externals: configuration.injection.external.modules,
     resolve: {
         alias: configuration.module.aliases,
-        extensions: configuration.extensions.file,
-        moduleExtensions: configuration.extensions.module,
-        modules: Helper.normalizePaths([
-            configuration.path.source.asset.base
-        ].concat(configuration.module.directoryNames)),
-        unsafeCache: configuration.cache.unsafe,
         aliasFields: configuration.package.aliasPropertyNames,
+        extensions: configuration.extensions.file,
         mainFields: configuration.package.main.propertyNames,
-        mainFiles: configuration.package.main.fileNames
+        mainFiles: configuration.package.main.fileNames,
+        moduleExtensions: configuration.extensions.module,
+        modules: Helper.normalizePaths(configuration.module.directoryNames),
+        unsafeCache: configuration.cache.unsafe
     },
     resolveLoader: {
         alias: configuration.loader.aliases,
-        extensions: configuration.loader.extensions.file,
-        moduleExtensions: configuration.loader.extensions.module,
-        modules: configuration.loader.directoryNames,
         aliasFields: configuration.package.aliasPropertyNames,
+        extensions: configuration.loader.extensions.file,
         mainFields: configuration.package.main.propertyNames,
-        mainFiles: configuration.package.main.fileNames
+        mainFiles: configuration.package.main.fileNames,
+        moduleExtensions: configuration.loader.extensions.module,
+        modules: configuration.loader.directoryNames
     },
     // endregion
     // region output
