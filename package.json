@@ -272,10 +272,7 @@
           "weboptimizer/helper$": "weboptimizer/helper.compiled"
         },
         "cascadingStyleSheet": "",
-        "contextReplacements": [
-          "/angular(\\|/)core(\\|/)(esm(\\|/)src|src)(\\|/)linker/",
-          "__dirname"
-        ],
+        "contextReplacements": [],
         "directoryNames": [
           "web_modules",
           "node_modules"
