@@ -557,6 +557,17 @@ pluginInstances.push({apply: (compiler:Object):void => {
 pluginInstances.push(new plugins.Imagemin(
     configuration.module.optimizer.image.content))
 // // endregion
+// // region context replacements
+if (configuration.module.contextReplacements)
+    for (
+        const contextReplacement:Array<string> of
+        configuration.module.contextReplacements
+    )
+        pluginInstances.push(new webpack.ContextReplacementPlugin(
+            ...contextReplacement.map((value:string):any => (new Function(
+                'configuration', `return ${value}`
+            ))(configuration))))
+// // endregion
 // / endregion
 // / region loader
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {

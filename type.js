@@ -186,6 +186,7 @@ export type ResolvedConfiguration = {
     module:{
         aliases:PlainObject;
         cascadingStyleSheet:string;
+        contextReplacements:?Array<Array<string>>;
         directoryNames:Array<string>;
         html:PlainObject;
         locations:{[key:string]:Array<string>};
