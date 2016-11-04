@@ -83,6 +83,7 @@
   "devDependencies": {
     "documentation-website": "latest",
     "qunit-cli": "latest",
+    "rimraf": "latest",
     "source-map-support": "latest"
   },
   "files": [
@@ -104,7 +105,7 @@
   ],
   "scripts": {
     "build": "command='babel --plugins transform-flow-strip-types,transform-runtime --presets latest,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command index.compiled.js index.js && $command webpackConfigurator.compiled.js webpackConfigurator.js",
-    "clear": "rm *.compiled.* &>/dev/null;rm --recursive *.compiled &>/dev/null;rm test/*.compiled.* &>/dev/null;rm --recursive apiDocumentation &>/dev/null; rm *.html &>/dev/null || true",
+    "clear": "rimraf *.compiled.*; rimraf *.compiled;rimraf test/*.compiled.*; rimraf apiDocumentation; rimraf *.html || true",
     "document": "npm run build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
     "lint": "flow --color always --strip-root && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
     "prepublish": "npm run build",
@@ -249,20 +250,20 @@
       "extensions": {
         "module": [],
         "file": [
-          ".js",
-          ".json",
-          ".html",
-          ".pug",
           ".css",
           ".eot",
-          ".woff",
-          ".woff2",
-          ".ttf",
-          ".svg",
-          ".png",
-          ".jpg",
+          ".gif",
+          ".html",
           ".ico",
-          ".gif"
+          ".jpg",
+          ".js",
+          ".json",
+          ".png",
+          ".pug",
+          ".svg",
+          ".ttf",
+          ".woff",
+          ".woff2"
         ]
       },
       "module": {
