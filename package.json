@@ -115,17 +115,220 @@
   },
   "configuration": {
     "default": {
+      "assetPattern": {
+        "javaScript": {
+          "excludeFilePathRegularExpression": {
+            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|vendor${self.debug && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
+          },
+          "pattern": "'use strict';\n{1}"
+        }
+      },
+      "build": {
+        "types": {
+          "default": {
+            "outputExtension": "js",
+            "preinstall": {
+              "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.compiled.\\${buildConfiguration.outputExtension}'`"
+            },
+            "filePathPattern": {
+              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+            }
+          },
+          "javaScript": {
+            "extension": "js"
+          },
+          "cascadingStyleSheet": {
+            "extension": "css",
+            "outputExtension": "css",
+            "filePathPattern": {
+              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+            }
+          },
+          "additional": {
+            "outputExtension": "",
+            "filePathPattern": "^.+\\.compiled(?:\\.map)?$"
+          }
+        },
+        "definitions": {
+          "CONTEXT_TYPE": {
+            "__evaluate__": "self.contextType"
+          },
+          "DEBUG": {
+            "__evaluate__": "self.debug"
+          },
+          "EXTERNAL_EXPORT_FORMAT": {
+            "__evaluate__": "`'${self.exportFormat.external}'`"
+          },
+          "NAME": {
+            "__evaluate__": "`'${self.name}'`"
+          },
+          "OFFLINE": {
+            "__evaluate__": "Boolean(self.offline)"
+          },
+          "SELF_EXPORT_FORMAT": {
+            "__evaluate__": "`'${self.exportFormat.self}'`"
+          },
+          "TARGET_TECHNOLOGY": {
+            "__evaluate__": "`'${self.targetTechnology}'`"
+          }
+        }
+      },
       "cache": {
         "main": true,
         "unsafe": true
       },
+      "commandLine": {
+        "build": {
+          "arguments": [
+            "--bail",
+            "--config",
+            {
+              "__evaluate__": "`${webOptimizerPath}/webpackConfigurator.compiled.js`"
+            },
+            "--progress",
+            "--display-chunks",
+            "--display-reasons",
+            "--display-error-details"
+          ],
+          "command": "webpack"
+        },
+        "document": {
+          "arguments": [
+            "--package",
+            "./package.json",
+            "--readme",
+            "./readme.md",
+            "--destination",
+            {
+              "__evaluate__": "self.path.apiDocumentation"
+            },
+            {
+              "__evaluate__": "`'${self.path.target.asset.javaScript}'*.js`"
+            }
+          ],
+          "command": "jsdoc",
+          "indicator": "self.needed.javaScript"
+        },
+        "lint": [
+          {
+            "arguments": [
+              {
+                "__evaluate__": "path.resolve(self.path.source.asset.cascadingStyleSheet, '**/*.css')"
+              },
+              "--config",
+              {
+                "__evaluate__": "path.relative(self.path.context, path.resolve(webOptimizerPath, 'stylelintConfigurator.compiled.js'))"
+              }
+            ],
+            "command": "stylelint",
+            "indicator": "self.needed.cascadingStyleSheet"
+          },
+          {
+            "arguments": [
+              "--config",
+              {
+                "__evaluate__": "`'${webOptimizerPath}/package.json'`"
+              },
+              "--ignore-pattern",
+              {
+                "__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? path.relative(currentPath, self.path.target.base, '**') : \"*.compiled.js\"}'`"
+              },
+              "--ignore-pattern",
+              {
+                "__evaluate__": "`'${self.path.apiDocumentation}'`"
+              },
+              "'**/*.js'"
+            ],
+            "command": "eslint",
+            "indicator": "self.needed.javaScript"
+          }
+        ],
+        "serve": {
+          "arguments": [
+            "--config",
+            {
+              "__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"
+            },
+            {
+              "__evaluate__": "self.debug ? '--hot' : ''"
+            },
+            {
+              "__evaluate__": "self.debug ? '--inline' : ''"
+            },
+            "--host",
+            "0.0.0.0",
+            "--port",
+            {
+              "__evaluate__": "self.development.server.port"
+            },
+            "--colors",
+            "--compress",
+            "--history-api-fallback"
+          ],
+          "command": "webpack-dev-server"
+        },
+        "test": {
+          "command": {
+            "__evaluate__": "helper.stripLoader(self.files.compose.javaScript)"
+          }
+        },
+        "testInBrowser": {
+          "__evaluate__": "self.commandLine.serve"
+        },
+        "typeCheck": {
+          "command": "flow",
+          "arguments": [
+            "--color",
+            "always",
+            "--strip-root",
+            "--show-all-errors"
+          ]
+        }
+      },
       "debug": false,
+      "development": {
+        "openBrowser": null,
+        "server": {
+          "contentBase": {
+            "__evaluate__": "self.path.source.base"
+          },
+          "historyApiFallback": true,
+          "hot": true,
+          "stats": {
+            "colors": true
+          },
+          "host": "localhost",
+          "port": 8080,
+          "protocol": "http"
+        },
+        "tool": false
+      },
+      "document": {
+        "inPlace": {
+          "externalLibrary": {
+            "normal": false
+          }
+        },
+        "module": {
+          "optimizer": {
+            "uglifyJS": null
+          },
+          "preprocessor": {
+            "babel": {
+              "presets": {
+                "__remove__": [
+                  "babili"
+                ]
+              }
+            }
+          }
+        }
+      },
       "exportFormat": {
         "external": "umd",
         "self": "umd"
       },
       "extensions": {
-        "module": [],
         "file": [
           ".js",
           ".json",
@@ -141,7 +344,8 @@
           ".ttf",
           ".woff",
           ".woff2"
-        ]
+        ],
+        "module": []
       },
       "favicon": {
         "logo": {
@@ -172,6 +376,15 @@
         }
       },
       "files": {
+        "additionalPaths": [
+          "robots.txt",
+          "404.html",
+          "crossdomain.xml",
+          "humans.txt",
+          ".htaccess",
+          "license.txt",
+          "favicon.ico"
+        ],
         "compose": {
           "cascadingStyleSheet": {
             "__evaluate__": "self.debug ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[contenthash]`"
@@ -198,17 +411,9 @@
         },
         "html": [
           {}
-        ],
-        "additionalPaths": [
-          "robots.txt",
-          "404.html",
-          "crossdomain.xml",
-          "humans.txt",
-          ".htaccess",
-          "license.txt",
-          "favicon.ico"
         ]
       },
+      "hashAlgorithm": "md5",
       "injection": {
         "autoExclude": [
           "test"
@@ -252,19 +457,24 @@
         "otherMaximumFileSizeLimitInByte": 40960
       },
       "library": true,
-      "package": {
-        "main": {
-          "fileNames": [
-            "index",
-            "main"
-          ],
-          "propertyNames": {
-            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'main'])"
-          }
+      "loader": {
+        "aliases": {
+          "pug": "weboptimizer/pugLoader.compiled"
         },
-        "aliasPropertyNames": {
-          "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat('aliases')"
-        }
+        "extensions": {
+          "file": [
+            ".js"
+          ],
+          "module": [
+            "-loader"
+          ]
+        },
+        "directoryNames": [
+          "web_loaders",
+          "web_modules",
+          "node_loaders",
+          "node_modules"
+        ]
       },
       "module": {
         "additional": [],
@@ -293,8 +503,6 @@
           "exclude": "false",
           "loader": "html"
         },
-        "provide": {},
-        "skipParseRegularExpressions": [],
         "optimizer": {
           "data": {
             "configuration": {
@@ -492,10 +700,12 @@
             }
           },
           "json": {
-            "loader": "json",
-            "exclude": "false"
+            "exclude": "false",
+            "loader": "json"
           }
         },
+        "provide": {},
+        "skipParseRegularExpressions": [],
         "style": {
           "loader": "style",
           "configuration": {
@@ -532,6 +742,20 @@
           "navigateFallbackURL": null,
           "output": {
             "__evaluate__": "path.relative(self.path.target.base, path.resolve(self.path.target.asset.javaScript, 'serviceWorker.js'))"
+          }
+        }
+      },
+      "package": {
+        "aliasPropertyNames": {
+          "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat('aliases')"
+        },
+        "main": {
+          "fileNames": [
+            "index",
+            "main"
+          ],
+          "propertyNames": {
+            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'main'])"
           }
         }
       },
@@ -594,210 +818,6 @@
           }
         ]
       },
-      "targetTechnology": "web",
-      "assetPattern": {
-        "javaScript": {
-          "excludeFilePathRegularExpression": {
-            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|vendor${self.debug && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
-          },
-          "pattern": "'use strict';\n{1}"
-        }
-      },
-      "build": {
-        "types": {
-          "default": {
-            "outputExtension": "js",
-            "preinstall": {
-              "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.compiled.\\${buildConfiguration.outputExtension}'`"
-            },
-            "filePathPattern": {
-              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
-            }
-          },
-          "javaScript": {
-            "extension": "js"
-          },
-          "cascadingStyleSheet": {
-            "extension": "css",
-            "outputExtension": "css",
-            "filePathPattern": {
-              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
-            }
-          },
-          "additional": {
-            "outputExtension": "",
-            "filePathPattern": "^.+\\.compiled(?:\\.map)?$"
-          }
-        },
-        "definitions": {
-          "CONTEXT_TYPE": {
-            "__evaluate__": "self.contextType"
-          },
-          "DEBUG": {
-            "__evaluate__": "self.debug"
-          },
-          "EXTERNAL_EXPORT_FORMAT": {
-            "__evaluate__": "`'${self.exportFormat.external}'`"
-          },
-          "NAME": {
-            "__evaluate__": "`'${self.name}'`"
-          },
-          "OFFLINE": {
-            "__evaluate__": "Boolean(self.offline)"
-          },
-          "SELF_EXPORT_FORMAT": {
-            "__evaluate__": "`'${self.exportFormat.self}'`"
-          },
-          "TARGET_TECHNOLOGY": {
-            "__evaluate__": "`'${self.targetTechnology}'`"
-          }
-        }
-      },
-      "commandLine": {
-        "build": {
-          "arguments": [
-            "--bail",
-            "--config",
-            {
-              "__evaluate__": "`${webOptimizerPath}/webpackConfigurator.compiled.js`"
-            },
-            "--progress",
-            "--display-chunks",
-            "--display-reasons",
-            "--display-error-details"
-          ],
-          "command": "webpack"
-        },
-        "document": {
-          "arguments": [
-            "--package",
-            "./package.json",
-            "--readme",
-            "./readme.md",
-            "--destination",
-            {
-              "__evaluate__": "self.path.apiDocumentation"
-            },
-            {
-              "__evaluate__": "`'${self.path.target.asset.javaScript}'*.js`"
-            }
-          ],
-          "command": "jsdoc",
-          "indicator": "self.needed.javaScript"
-        },
-        "lint": [
-          {
-            "arguments": [
-              {
-                "__evaluate__": "path.resolve(self.path.source.asset.cascadingStyleSheet, '**/*.css')"
-              },
-              "--config",
-              {
-                "__evaluate__": "path.relative(self.path.context, path.resolve(webOptimizerPath, 'stylelintConfigurator.compiled.js'))"
-              }
-            ],
-            "command": "stylelint",
-            "indicator": "self.needed.cascadingStyleSheet"
-          },
-          {
-            "arguments": [
-              "--config",
-              {
-                "__evaluate__": "`'${webOptimizerPath}/package.json'`"
-              },
-              "--ignore-pattern",
-              {
-                "__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? path.relative(currentPath, self.path.target.base, '**') : \"*.compiled.js\"}'`"
-              },
-              "--ignore-pattern",
-              {
-                "__evaluate__": "`'${self.path.apiDocumentation}'`"
-              },
-              "'**/*.js'"
-            ],
-            "command": "eslint",
-            "indicator": "self.needed.javaScript"
-          }
-        ],
-        "serve": {
-          "arguments": [
-            "--config",
-            {
-              "__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"
-            },
-            {
-              "__evaluate__": "self.debug ? '--hot' : ''"
-            },
-            {
-              "__evaluate__": "self.debug ? '--inline' : ''"
-            },
-            "--host",
-            "0.0.0.0",
-            "--port",
-            {
-              "__evaluate__": "self.development.server.port"
-            },
-            "--colors",
-            "--compress",
-            "--history-api-fallback"
-          ],
-          "command": "webpack-dev-server"
-        },
-        "test": {
-          "command": {
-            "__evaluate__": "helper.stripLoader(self.files.compose.javaScript)"
-          }
-        },
-        "testInBrowser": {
-          "__evaluate__": "self.commandLine.serve"
-        },
-        "typeCheck": {
-          "command": "flow",
-          "arguments": [
-            "--color",
-            "always",
-            "--strip-root",
-            "--show-all-errors"
-          ]
-        }
-      },
-      "development": {
-        "openBrowser": null,
-        "server": {
-          "contentBase": {
-            "__evaluate__": "self.path.source.base"
-          },
-          "historyApiFallback": true,
-          "hot": true,
-          "stats": {
-            "colors": true
-          },
-          "host": "localhost",
-          "port": 8080,
-          "protocol": "http"
-        },
-        "tool": false
-      },
-      "hashAlgorithm": "md5",
-      "loader": {
-        "aliases": {
-          "pug": "weboptimizer/pugLoader.compiled"
-        },
-        "extensions": {
-          "file": [
-            ".js"
-          ],
-          "module": [
-            "-loader"
-          ]
-        },
-        "directoryNames": [
-          "web_loaders",
-          "web_modules",
-          "node_loaders",
-          "node_modules"
-        ]
-      },
       "stylelint": {
         "extends": "stylelint-config-standard",
         "rules": {
@@ -805,28 +825,13 @@
           "indentation": 4
         }
       },
-      "document": {
-        "inPlace": {
-          "externalLibrary": {
-            "normal": false
+      "targetTechnology": "web",
+      "test": {
+        "assetPattern": {
+          "javaScript": {
+            "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';\n{1}"
           }
         },
-        "module": {
-          "optimizer": {
-            "uglifyJS": null
-          },
-          "preprocessor": {
-            "babel": {
-              "presets": {
-                "__remove__": [
-                  "babili"
-                ]
-              }
-            }
-          }
-        }
-      },
-      "test": {
         "exportFormat": {
           "external": "commonjs2",
           "self": "commonjs2"
@@ -846,12 +851,7 @@
           },
           "html": []
         },
-        "targetTechnology": "node",
-        "assetPattern": {
-          "javaScript": {
-            "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';\n{1}"
-          }
-        }
+        "targetTechnology": "node"
       },
       "testInBrowser": {
         "files": {
@@ -878,15 +878,13 @@
     },
     "debug": {
       "debug": true,
-      "injection": {
-        "internal": {
-          "developmentHelper": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && (['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
-          },
-          "vendor": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'qunitjs', 'weboptimizer/browserAPI'] : [])"
+      "development": {
+        "openBrowser": {
+          "url": {
+            "__evaluate__": "`${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${self.files.defaultHTML.filename}`"
           }
-        }
+        },
+        "tool": "#eval-cheap-module-source-map"
       },
       "files": {
         "compose": {
@@ -896,6 +894,16 @@
         },
         "defaultHTML": {
           "debug": true
+        }
+      },
+      "injection": {
+        "internal": {
+          "developmentHelper": {
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && (['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
+          },
+          "vendor": {
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'qunitjs', 'weboptimizer/browserAPI'] : [])"
+          }
         }
       },
       "inPlace": {
@@ -933,17 +941,32 @@
           }
         }
       },
-      "offline": null,
-      "development": {
-        "openBrowser": {
-          "url": {
-            "__evaluate__": "`${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${self.files.defaultHTML.filename}`"
-          }
-        },
-        "tool": "#eval-cheap-module-source-map"
-      }
+      "offline": null
     },
     "library": {
+      "document": {
+        "commandLine": {
+          "document": {
+            "arguments": [
+              "--package",
+              "./package.json",
+              "--readme",
+              "./readme.md",
+              "--destination",
+              {
+                "__evaluate__": "self.path.apiDocumentation"
+              },
+              {
+                "__evaluate__": "`'${self.path.target.asset.javaScript}'*${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`"
+              }
+            ]
+          }
+        },
+        "exportFormat": {
+          "self": "var"
+        },
+        "targetTechnology": "node"
+      },
       "exportFormat": {
         "self": {
           "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'var' : 'umd'"
@@ -985,6 +1008,7 @@
       "libraryName": {
         "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [tools.stringConvertToValidVariableName(self.name), '[name]']: null"
       },
+      "offline": null,
       "path": {
         "source": {
           "asset": {
@@ -1008,30 +1032,6 @@
           },
           "base": "./"
         }
-      },
-      "offline": null,
-      "document": {
-        "commandLine": {
-          "document": {
-            "arguments": [
-              "--package",
-              "./package.json",
-              "--readme",
-              "./readme.md",
-              "--destination",
-              {
-                "__evaluate__": "self.path.apiDocumentation"
-              },
-              {
-                "__evaluate__": "`'${self.path.target.asset.javaScript}'*${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`"
-              }
-            ]
-          }
-        },
-        "exportFormat": {
-          "self": "var"
-        },
-        "targetTechnology": "node"
       },
       "test": {
         "injection": {

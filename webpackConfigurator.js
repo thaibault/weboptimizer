@@ -712,7 +712,7 @@ const webpackConfiguration:WebpackConfiguration = {
                         filePath),
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.javaScript
-                ].concat(configuration.module.locations.directoryPaths))
+                ].concat(configuration.module.locations.directoryPaths)),
                 loader: loader.preprocessor.javaScript,
                 test: /\.js(?:\?.*)?$/
             },
@@ -721,7 +721,7 @@ const webpackConfiguration:WebpackConfiguration = {
             {
                 exclude: (filePath:string):boolean => evaluate(
                     configuration.preprocessor.json.exclude, filePath),
-                loader: loader.preprocessor.json
+                loader: loader.preprocessor.json,
                 test: /\.json(?:\?.*)?$/
             },
             // endregion
@@ -851,9 +851,12 @@ const webpackConfiguration:WebpackConfiguration = {
         ].concat(configuration.module.additional.map((
             loaderConfiguration:PlainObject
         ):PlainObject => {
-            exclude: (filePath:string):boolean => evaluate(
-                loaderConfiguration.exclude || 'false', filePath),
-            loader: evaluate(loaderConfiguration.loader, '')
+            return {
+                exclude: (filePath:string):boolean => evaluate(
+                    loaderConfiguration.exclude || 'false', filePath),
+                loader: evaluate(loaderConfiguration.loader, ''),
+                test: new RegExp(loaderConfiguration.test)
+            }
         }))
     },
     plugins: pluginInstances.concat(new webpack.LoaderOptionsPlugin({
