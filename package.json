@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.138",
+  "version": "1.0.139",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "documentationWebsite": {
     "name": "webOptimizer",
@@ -483,9 +483,9 @@
           "weboptimizer/helper$": "weboptimizer/helper.compiled"
         },
         "cascadingStyleSheet": {
-            "configuration": "",
-            "exclude": "false",
-            "loader": "css"
+          "configuration": "",
+          "exclude": "false",
+          "loader": "css"
         },
         "contextReplacements": [],
         "directoryNames": [
@@ -618,7 +618,9 @@
           },
           "image": {
             "content": {
-              "disable": {"__evaluate__": "self.debug"},
+              "disable": {
+                "__evaluate__": "self.debug"
+              },
               "gifsicle": {
                 "optimizationLevel": 3,
                 "interlanced": false,
