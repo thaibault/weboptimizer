@@ -125,7 +125,10 @@ if (
         configuration, libraryConfiguration
     ), libraryConfiguration)
 // endregion
-// region merging and evaluating default, test, specific and dynamic settings
+/*
+    region merging and evaluating default, test, document, specific and dynamic
+    settings
+*/
 // / region load additional dynamically given configuration
 let count:number = 0
 let filePath:?string = null
@@ -149,24 +152,15 @@ if (filePath) {
     })
 }
 if (runtimeInformation.givenCommandLineArguments.length > 2)
-    // region apply documentation configuration
-    if (runtimeInformation.givenCommandLineArguments[2] === 'document')
-        Tools.extendObject(true, Tools.modifyObject(
-            configuration, configuration.document
-        ), configuration.document)
+    // region apply use case specific configuration
+    for (const type:string of ['document', 'test', 'testInBrowser'])
+        if (runtimeInformation.givenCommandLineArguments[2] === type)
+            Tools.extendObject(true, Tools.modifyObject(
+                configuration, configuration[type]
+            ), configuration[type])
     // endregion
-    // region apply test configuration
-    else if (
-        runtimeInformation.givenCommandLineArguments[2] === 'testInBrowser'
-    )
-        Tools.extendObject(true, Tools.modifyObject(
-            configuration, configuration.testInBrowser
-        ), configuration.testInBrowser)
-    else if (runtimeInformation.givenCommandLineArguments[2] === 'test')
-        Tools.extendObject(true, Tools.modifyObject(
-            configuration, configuration.test
-        ), configuration.test)
-    // endregion
+for (const type:string of ['document', 'test', 'testInBrowser'])
+    delete configuration[type]
 // / endregion
 Tools.extendObject(true, Tools.modifyObject(Tools.modifyObject(
     configuration, specificConfiguration
@@ -280,8 +274,7 @@ for (const type:string in resolvedConfiguration.build.types)
         resolvedConfiguration.build.types[type] = Tools.extendObject(true, {
         }, defaultConfiguration, Tools.extendObject(
             true, {extension: type}, resolvedConfiguration.build.types[type],
-            {type})
-        )
+            {type}))
 // endregion
 // region resolve module location and which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(

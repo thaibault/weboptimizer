@@ -627,7 +627,7 @@ export default class Helper {
                 injectedModuleIDs[buildConfiguration.outputExtension] = []
             for (const moduleFilePath:string of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
-                    const relativeModuleFilePath:string = path.relative(
+                    const relativeModuleFilePath:string = './' + path.relative(
                         context, moduleFilePath)
                     const directoryPath:string = path.dirname(
                         relativeModuleFilePath)

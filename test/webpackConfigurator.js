@@ -18,7 +18,7 @@ QUnit.test('webpackConfigurator', (assert:Object):void => {
     const webpackConfiguration:WebpackConfiguration = require(
         '../webpackConfigurator.compiled'
     ).default
-    assert.ok(webpackConfiguration.entry.index.includes('index.js'))
+    assert.ok(webpackConfiguration.entry.index.includes('./index.js'))
     webpackConfiguration.output.path = __dirname
     webpackConfiguration.output.filename = 'dummy.compiled.js'
     assert.strictEqual(typeof webpack(webpackConfiguration), 'object')

@@ -639,7 +639,7 @@
               "pngquant": null,
               "svgo": {}
             },
-            "exclude": "console.warn('Image compression disabled. Use configuration: \"{module:{optimizer:{image:{exclude:'false'}}}}}\". to enable it.') || true",
+            "exclude": "console.warn(`Imagecompression for file \"${fileName}\" disabled. Use configuration: \"{module:{optimizer:{image:{exclude:'false'}}}}}\". to enable it.') || true",
             "file": {
               "limit": {
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
