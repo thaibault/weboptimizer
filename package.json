@@ -418,7 +418,7 @@
       "hashAlgorithm": "md5",
       "injection": {
         "autoExclude": [
-          "test"
+          "./test"
         ],
         "commonChunkIDs": [
           "vendor"
@@ -1044,14 +1044,14 @@
       "test": {
         "injection": {
           "internal": {
-            "index": "test"
+            "index": "./test"
           }
         }
       },
       "testInBrowser": {
         "injection": {
           "internal": {
-            "index": "test"
+            "index": "./test"
           }
         }
       }
