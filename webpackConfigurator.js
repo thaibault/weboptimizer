@@ -15,7 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
-import type {DomNode, ProcedureFunction, Window} from 'clientnode'
+import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
 import * as dom from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
@@ -619,14 +619,16 @@ const loader:{
                 configuration.module.optimizer.data.configuration)
     },
     preprocessor: {
-        cascadingStyleSheet: `${configuration.module.preprocessor.loader}?` +
+        cascadingStyleSheet:
+            configuration.module.preprocessor.cascadingStyleSheet.loader +
+            '?' +
             configuration.module.preprocessor.cascadingStyleSheet
                 .configuration,
         javaScript: `${configuration.module.preprocessor.javaScript.loader}?` +
             Tools.convertCircularObjectToJSON(
                 configuration.module.preprocessor.javaScript.configuration),
-        json: configuration.module.preprocessor.json,
-        html: `${configuration.module.preprocessor.html}?` +
+        json: configuration.module.preprocessor.json.loader,
+        html: `${configuration.module.preprocessor.html.loader}?` +
             Tools.convertCircularObjectToJSON(
                 configuration.module.preprocessor.html.configuration)
     },
@@ -708,7 +710,7 @@ const webpackConfiguration:WebpackConfiguration = {
             {
                 exclude: (filePath:string):boolean =>
                     rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.preprocessor.javaScript.exclude,
+                        configuration.module.preprocessor.javaScript.exclude,
                         filePath),
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.javaScript
@@ -720,7 +722,7 @@ const webpackConfiguration:WebpackConfiguration = {
             // region json
             {
                 exclude: (filePath:string):boolean => evaluate(
-                    configuration.preprocessor.json.exclude, filePath),
+                    configuration.module.preprocessor.json.exclude, filePath),
                 loader: loader.preprocessor.json,
                 test: /\.json(?:\?.*)?$/
             },
@@ -746,7 +748,7 @@ const webpackConfiguration:WebpackConfiguration = {
                     ).map((htmlConfiguration:HTMLConfiguration):string =>
                         Helper.stripLoader(htmlConfiguration.template))
                 ).includes(filePath) || evaluate(
-                    configuration.preprocessor.html.exclude, filePath),
+                    configuration.module.preprocessor.html.exclude, filePath),
                 include: configuration.path.source.asset.template,
                 loader:
                     'file?name=' + path.relative(
@@ -760,9 +762,9 @@ const webpackConfiguration:WebpackConfiguration = {
                 exclude: (filePath:string):boolean => Helper.normalizePaths(
                     configuration.files.html.map((
                         htmlConfiguration:HTMLConfiguration
-                    ):string => Helper.stripLoader(htmlConfiguration.template)
-                    ).includes(filePath) || evaluate(
-                        configuration.html.exclude, filePath)),
+                    ):string => Helper.stripLoader(htmlConfiguration.template))
+                ).includes(filePath) || evaluate(
+                    configuration.module.html.exclude, filePath),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
                     configuration.path.target.base,
@@ -777,7 +779,8 @@ const webpackConfiguration:WebpackConfiguration = {
             {
                 exclude: (filePath:string):boolean =>
                     rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.cascadingStyleSheet.exclude, filePath),
+                        configuration.module.cascadingStyleSheet.exclude,
+                        filePath),
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.cascadingStyleSheet
                 ].concat(configuration.module.locations.directoryPaths)),
@@ -802,7 +805,8 @@ const webpackConfiguration:WebpackConfiguration = {
             }, {
                 exclude: (filePath:string):boolean =>
                     rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.module.optimizer.woff.exclude, filePath),
+                        configuration.module.optimizer.font.woff.exclude,
+                        filePath),
                 include: configuration.path.source.asset.font,
                 loader: loader.optimizer.font.woff,
                 test: /\.woff2?(?:\?.*)?$/
@@ -891,7 +895,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 spritePath: configuration.path.source.asset.image
             })
         ],
-        pug: configuration.module.preprocessor.pug
+        pug: configuration.module.preprocessor.html.configuration
     }))
 }
 if (configuration.debug) {

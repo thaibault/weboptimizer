@@ -314,7 +314,7 @@
             "uglifyJS": null
           },
           "preprocessor": {
-            "babel": {
+            "javaScript": {
               "presets": {
                 "__remove__": [
                   "babili"
@@ -669,7 +669,7 @@
                 "__evaluate__": "self.path.context"
               },
               "compiler": {
-                "cache": true.
+                "cache": true,
                 "debug": false,
                 "pretty": false
               }
@@ -927,14 +927,14 @@
           "uglifyJS": null
         },
         "preprocessor": {
-          "babel": {
+          "javaScript": {
             "presets": {
               "__remove__": [
                 "babili"
               ]
             }
           },
-          "pug": {
+          "html": {
             "compiler": {
               "pretty": true
             }

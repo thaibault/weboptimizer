@@ -208,6 +208,7 @@ export type ResolvedConfiguration = {
         contextReplacements:?Array<Array<string>>;
         directoryNames:Array<string>;
         html:LoaderConfiguration;
+        locations:{filePaths:Array<string>;directoryPaths:Array<string>};
         optimizer:{
             data:LoaderConfiguration;
             font:{
@@ -230,7 +231,7 @@ export type ResolvedConfiguration = {
                 loader:string;
                 configuration:string;
             };
-            html:LoaderConfiguration;;
+            html:LoaderConfiguration;
             javaScript:LoaderConfiguration;
             json:{
                 exclude:string;
