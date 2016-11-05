@@ -286,8 +286,8 @@ for (const type:string in resolvedConfiguration.build.types)
 // region resolve module location and which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.injection.internal,
-    resolvedConfiguration.module.aliases,
-    resolvedConfiguration.extensions, resolvedConfiguration.path.context,
+    resolvedConfiguration.module.aliases, resolvedConfiguration.extensions,
+    resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base)
 resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.injection, Helper.resolveBuildConfigurationFilePaths(

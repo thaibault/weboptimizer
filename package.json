@@ -115,439 +115,6 @@
   },
   "configuration": {
     "default": {
-      "cache": {
-        "main": true,
-        "unsafe": true
-      },
-      "debug": false,
-      "library": true,
-      "exportFormat": {
-        "external": "umd",
-        "self": "umd"
-      },
-      "favicon": {
-        "logo": {
-          "__evaluate__": "self.path.source.asset.favicon"
-        },
-        "prefix": {
-          "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, 'favicons-[hash]'))}/`"
-        },
-        "emitStats": false,
-        "statsFilename": "iconStats.json",
-        "persistentCache": true,
-        "inject": true,
-        "background": "white",
-        "title": {
-          "__evaluate__": "self.name"
-        },
-        "icons": {
-          "android": true,
-          "appleIcon": true,
-          "appleStartup": true,
-          "coast": true,
-          "favicons": true,
-          "firefox": true,
-          "opengraph": true,
-          "twitter": true,
-          "yandex": true,
-          "windows": true
-        }
-      },
-      "files": {
-        "compose": {
-          "cascadingStyleSheet": {
-            "__evaluate__": "self.debug ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[contenthash]`"
-          },
-          "image": {
-            "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
-          },
-          "javaScript": {
-            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index')}.js?${self.hashAlgorithm}=[hash]`"
-          }
-        },
-        "defaultHTML": {
-          "chunksSortMode": "auto",
-          "debug": false,
-          "filename": "index.html",
-          "hash": true,
-          "inject": "body",
-          "minify": {
-            "__evaluate__": "self.module.optimizer.htmlMinifier"
-          },
-          "template": {
-            "__evaluate__": "`html?${tools.convertCircularObjectToJSON(tools.extendObject({}, self.module.html, {minimize: false}))}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${tools.isFileSync(path.resolve(self.path.source.base, 'index.pug')) ? path.resolve(self.path.source.base, 'index.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
-          }
-        },
-        "html": [
-          {}
-        ],
-        "additionalPaths": [
-          "robots.txt",
-          "404.html",
-          "crossdomain.xml",
-          "humans.txt",
-          ".htaccess",
-          "license.txt",
-          "favicon.ico"
-        ]
-      },
-      "injection": {
-        "autoExclude": [
-          "test"
-        ],
-        "commonChunkIDs": [
-          "vendor"
-        ],
-        "dllChunkIDs": [
-          "vendor",
-          "developmentHelper"
-        ],
-        "external": {
-          "aliases": {},
-          "implicit": {
-            "pattern": {
-              "exclude": [
-                {
-                  "__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"
-                },
-                {
-                  "__evaluate__": "/(?:^|\\/)webpack(?:$|\\/)/"
-                }
-              ],
-              "include": []
-            }
-          },
-          "modules": "__implicit__"
-        },
-        "ignorePattern": [],
-        "internal": {
-          "index": "__auto__"
-        }
-      },
-      "inPlace": {
-        "cascadingStyleSheet": true,
-        "externalLibrary": {
-          "normal": true,
-          "dynamic": true
-        },
-        "javaScript": false,
-        "otherMaximumFileSizeLimitInByte": 40960
-      },
-      "package": {
-        "main": {
-          "fileNames": [
-            "index",
-            "main"
-          ],
-          "propertyNames": {
-            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'main'])"
-          }
-        },
-        "aliasPropertyNames": {
-          "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat('aliases')"
-        }
-      },
-      "extensions": {
-        "module": [],
-        "file": [
-          ".js",
-          ".json",
-          ".css",
-          ".eot",
-          ".gif",
-          ".html",
-          ".ico",
-          ".jpg",
-          ".png",
-          ".pug",
-          ".svg",
-          ".ttf",
-          ".woff",
-          ".woff2"
-        ]
-      },
-      "module": {
-        "aliases": {
-          "weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled",
-          "weboptimizer/helper$": "weboptimizer/helper.compiled"
-        },
-        "cascadingStyleSheet": "",
-        "contextReplacements": [],
-        "directoryNames": [
-          "web_modules",
-          "node_modules"
-        ],
-        "html": {
-          "config": "html",
-          "attrs": [
-            "img:src",
-            "link:href"
-          ]
-        },
-        "provide": {},
-        "skipParseRegularExpressions": [],
-        "optimizer": {
-          "data": {
-            "limit": {
-              "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-            },
-            "name": {
-              "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.data), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
-            }
-          },
-          "font": {
-            "eot": {
-              "limit": {
-                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-              },
-              "name": {
-                "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
-              }
-            },
-            "svg": {
-              "limit": {
-                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-              },
-              "mimetype": "image/svg+xml",
-              "name": {
-                "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
-              }
-            },
-            "ttf": {
-              "limit": {
-                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-              },
-              "mimetype": "application/octet-stream",
-              "name": {
-                "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
-              }
-            },
-            "woff": {
-              "limit": {
-                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-              },
-              "name": {
-                "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
-              }
-            }
-          },
-          "htmlMinifier": {
-            "caseSensitive": true,
-            "collapseBooleanAttributes": true,
-            "collapseInlineTagWhitespace": true,
-            "collapseWhitespace": true,
-            "conservativeCollapse": true,
-            "ignoreCustomComments": [],
-            "ignoreCustomFragments": [
-              {
-                "__evaluate__": "/<%[\\s\\S]*?%>/"
-              },
-              {
-                "__evaluate__": "/<\\?[\\s\\S]*?\\?>/"
-              },
-              {
-                "__evaluate__": "/<link[^>]*>/"
-              },
-              {
-                "__evaluate__": "/<img[^>]*>/"
-              }
-            ],
-            "includeAutoGeneratedTags": false,
-            "removeAttributeQuotes": false,
-            "removeComments": true,
-            "removeCommentsFromCDATA": true,
-            "removeCDATASectionsFromCDATA": true,
-            "removeTagWhitespace": false,
-            "removeRedundantAttributes": false,
-            "removeEmptyAttributes": false,
-            "removeScriptTypeAttributes": true,
-            "removeStyleLinkTypeAttributes": true,
-            "removeOptionalTags": false,
-            "removeEmptyElements": false,
-            "useShortDoctype": false,
-            "lint": false,
-            "keepClosingSlash": true,
-            "maxLineLength": 1e+31,
-            "minifyJS": {
-              "__evaluate__": "self.module.optimizer.uglifyJS"
-            },
-            "minifyCSS": false,
-            "minifyURLs": false,
-            "preserveLineBreaks": true,
-            "preventAttributesEscaping": true,
-            "processScripts": [],
-            "processConditionalComments": false,
-            "quoteCharacter": "\""
-          },
-          "image": {
-            "content": {
-              "disable": {
-                "__evaluate__": "self.debug || true"
-              },
-              "optipng": {
-                "optimizationLevel": 7
-              },
-              "gifsicle": {
-                "optimizationLevel": 3,
-                "interlanced": false,
-                "colors": 256
-              },
-              "jpegtran": {
-                "progressive": true,
-                "arithmetic": true
-              },
-              "svgo": {},
-              "pngquant": null,
-              "plugins": []
-            },
-            "file": {
-              "limit": {
-                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-              },
-              "name": {
-                "__evaluate__": "`/${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, '[name].[ext]'))}?${self.hashAlgorithm}=[hash]`"
-              }
-            }
-          },
-          "uglifyJS": {
-            "compress": {
-              "warnings": false
-            }
-          }
-        },
-        "preprocessor": {
-          "cascadingStyleSheet": "?sourceMap=inline",
-          "babel": {
-            "cacheDirectory": true,
-            "compact": {
-              "__evaluate__": "!self.debug"
-            },
-            "minified": {
-              "__evaluate__": "!self.debug"
-            },
-            "presets": [
-              "latest",
-              "stage-0",
-              "babili"
-            ],
-            "plugins": [
-              "transform-flow-strip-types",
-              "transform-runtime"
-            ]
-          },
-          "pug": {
-            "moduleAliases": {
-              "__evaluate__": "self.module.aliases"
-            },
-            "extensions": {
-              "__evaluate__": "self.extensions"
-            },
-            "context": {
-              "__evaluate__": "self.path.context"
-            },
-            "compiler": {
-              "pretty": false,
-              "debug": false,
-              "cache": true
-            }
-          }
-        },
-        "style": {
-          "insertAt": "top",
-          "singleton": true
-        }
-      },
-      "offline": {
-        "caches": {
-          "main": [
-            "index.html",
-            ":rest:"
-          ]
-        },
-        "excludes": [
-          {
-            "__evaluate__": "`**/*.map?${self.hashAlgorithm}=*`"
-          },
-          "**/.*"
-        ],
-        "externals": [
-          "index.html"
-        ],
-        "publicPath": "/",
-        "relativePaths": false,
-        "updateStrategy": "changed",
-        "version": "[hash]",
-        "AppCache": {
-          "directory": "/"
-        },
-        "ServiceWorker": {
-          "events": true,
-          "navigateFallbackURL": null,
-          "output": {
-            "__evaluate__": "path.relative(self.path.target.base, path.resolve(self.path.target.asset.javaScript, 'serviceWorker.js'))"
-          }
-        }
-      },
-      "path": {
-        "apiDocumentation": "apiDocumentation/",
-        "base": "./",
-        "ignore": [
-          ".git",
-          {
-            "__evaluate__": "self.path.apiDocumentation"
-          }
-        ],
-        "source": {
-          "asset": {
-            "base": "./",
-            "cascadingStyleSheet": "cascadingStyleSheet/",
-            "data": "data/",
-            "favicon": {
-              "__evaluate__": "path.resolve(self.path.source.asset.image, 'favicon.png')"
-            },
-            "font": "font/",
-            "image": "image/",
-            "javaScript": "javaScript/",
-            "template": "template/"
-          },
-          "base": "source/"
-        },
-        "target": {
-          "asset": {
-            "base": "./",
-            "cascadingStyleSheet": "cascadingStyleSheet/",
-            "data": "data/",
-            "favicon": {
-              "__evaluate__": "path.resolve(self.path.target.asset.image, 'favicon.png')"
-            },
-            "font": "font/",
-            "image": "image/",
-            "javaScript": "javaScript/",
-            "template": "template/"
-          },
-          "base": "build/",
-          "manifest": "manifest.appcache",
-          "public": ""
-        },
-        "tidyUp": [
-          {
-            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js')"
-          },
-          {
-            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.js')"
-          },
-          {
-            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js.map')"
-          },
-          {
-            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.js.map')"
-          },
-          {
-            "__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"
-          }
-        ]
-      },
-      "targetTechnology": "web",
       "assetPattern": {
         "javaScript": {
           "excludeFilePathRegularExpression": {
@@ -559,12 +126,12 @@
       "build": {
         "types": {
           "default": {
+            "filePathPattern": {
+              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+            },
             "outputExtension": "js",
             "preinstall": {
               "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.compiled.\\${buildConfiguration.outputExtension}'`"
-            },
-            "filePathPattern": {
-              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
             }
           },
           "javaScript": {
@@ -572,14 +139,14 @@
           },
           "cascadingStyleSheet": {
             "extension": "css",
-            "outputExtension": "css",
             "filePathPattern": {
               "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
-            }
+            },
+            "outputExtension": "css"
           },
           "additional": {
-            "outputExtension": "",
-            "filePathPattern": "^.+\\.compiled(?:\\.map)?$"
+            "filePathPattern": "^.+\\.compiled(?:\\.map)?$",
+            "outputExtension": ""
           }
         },
         "definitions": {
@@ -605,6 +172,10 @@
             "__evaluate__": "`'${self.targetTechnology}'`"
           }
         }
+      },
+      "cache": {
+        "main": true,
+        "unsafe": true
       },
       "commandLine": {
         "build": {
@@ -705,15 +276,16 @@
           "__evaluate__": "self.commandLine.serve"
         },
         "typeCheck": {
-          "command": "flow",
           "arguments": [
             "--color",
             "always",
             "--strip-root",
             "--show-all-errors"
-          ]
+          ],
+          "command": "flow"
         }
       },
+      "debug": false,
       "development": {
         "openBrowser": null,
         "server": {
@@ -731,7 +303,160 @@
         },
         "tool": false
       },
+      "document": {
+        "inPlace": {
+          "externalLibrary": {
+            "normal": false
+          }
+        },
+        "module": {
+          "optimizer": {
+            "uglifyJS": null
+          },
+          "preprocessor": {
+            "javaScript": {
+              "presets": {
+                "__remove__": [
+                  "babili"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "exportFormat": {
+        "external": "umd",
+        "self": "umd"
+      },
+      "extensions": {
+        "file": [
+          ".js",
+          ".json",
+          ".css",
+          ".eot",
+          ".gif",
+          ".html",
+          ".ico",
+          ".jpg",
+          ".png",
+          ".pug",
+          ".svg",
+          ".ttf",
+          ".woff",
+          ".woff2"
+        ],
+        "module": []
+      },
+      "favicon": {
+        "background": "white",
+        "emitStats": false,
+        "icons": {
+          "android": true,
+          "appleIcon": true,
+          "appleStartup": true,
+          "coast": true,
+          "favicons": true,
+          "firefox": true,
+          "opengraph": true,
+          "twitter": true,
+          "windows": true,
+          "yandex": true
+        },
+        "inject": true,
+        "logo": {
+          "__evaluate__": "self.path.source.asset.favicon"
+        },
+        "persistentCache": true,
+        "prefix": {
+          "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, 'favicons-[hash]'))}/`"
+        },
+        "statsFilename": "iconStats.json",
+        "title": {
+          "__evaluate__": "self.name"
+        }
+      },
+      "files": {
+        "additionalPaths": [
+          "crossdomain.xml",
+          "favicon.ico",
+          "humans.txt",
+          "license.txt",
+          "robots.txt",
+          "404.html",
+          ".htaccess"
+        ],
+        "compose": {
+          "cascadingStyleSheet": {
+            "__evaluate__": "self.debug ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[contenthash]`"
+          },
+          "image": {
+            "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
+          },
+          "javaScript": {
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index')}.js?${self.hashAlgorithm}=[hash]`"
+          }
+        },
+        "defaultHTML": {
+          "chunksSortMode": "auto",
+          "debug": false,
+          "filename": "index.html",
+          "hash": true,
+          "inject": "body",
+          "minify": {
+            "__evaluate__": "self.module.optimizer.htmlMinifier"
+          },
+          "template": {
+            "__evaluate__": "`html?${tools.convertCircularObjectToJSON(tools.extendObject({}, self.module.html, {minimize: false}))}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.pug)}!${tools.isFileSync(path.resolve(self.path.source.base, 'index.pug')) ? path.resolve(self.path.source.base, 'index.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+          }
+        },
+        "html": [
+          {}
+        ]
+      },
       "hashAlgorithm": "md5",
+      "injection": {
+        "autoExclude": [
+          "test"
+        ],
+        "commonChunkIDs": [
+          "vendor"
+        ],
+        "dllChunkIDs": [
+          "vendor",
+          "developmentHelper"
+        ],
+        "external": {
+          "aliases": {},
+          "implicit": {
+            "pattern": {
+              "exclude": [
+                {
+                  "__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"
+                },
+                {
+                  "__evaluate__": "/(?:^|\\/)webpack(?:$|\\/)/"
+                }
+              ],
+              "include": []
+            }
+          },
+          "modules": "__implicit__"
+        },
+        "ignorePattern": [],
+        "internal": {
+          "index": "__auto__"
+        }
+      },
+      "inPlace": {
+        "cascadingStyleSheet": true,
+        "externalLibrary": {
+          "normal": true,
+          "dynamic": true
+        },
+        "javaScript": false,
+        "otherMaximumFileSizeLimitInByte": 40960
+      },
+      "library": true,
       "loader": {
         "aliases": {
           "pug": "weboptimizer/pugLoader.compiled"
@@ -751,6 +476,348 @@
           "node_modules"
         ]
       },
+      "module": {
+        "additional": [],
+        "aliases": {
+          "weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled",
+          "weboptimizer/helper$": "weboptimizer/helper.compiled"
+        },
+        "cascadingStyleSheet": {
+            "configuration": "",
+            "exclude": "false",
+            "loader": "css"
+        },
+        "contextReplacements": [],
+        "directoryNames": [
+          "web_modules",
+          "node_modules"
+        ],
+        "html": {
+          "configuration": {
+            "config": "html",
+            "attrs": [
+              "img:src",
+              "link:href"
+            ]
+          },
+          "exclude": "false",
+          "loader": "html"
+        },
+        "optimizer": {
+          "data": {
+            "configuration": {
+              "limit": {
+                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+              },
+              "name": {
+                "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.data), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+              }
+            },
+            "exclude": "false",
+            "loader": "url"
+          },
+          "font": {
+            "eot": {
+              "configuration": {
+                "limit": {
+                  "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                },
+                "name": {
+                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                }
+              },
+              "exclude": "false",
+              "loader": "url"
+            },
+            "svg": {
+              "configuration": {
+                "limit": {
+                  "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                },
+                "mimetype": "image/svg+xml",
+                "name": {
+                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                }
+              },
+              "exclude": "false",
+              "loader": "url"
+            },
+            "ttf": {
+              "configuration": {
+                "limit": {
+                  "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                },
+                "mimetype": "application/octet-stream",
+                "name": {
+                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                }
+              },
+              "exclude": "false",
+              "loader": "url"
+            },
+            "woff": {
+              "configuration": {
+                "limit": {
+                  "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+                },
+                "name": {
+                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                }
+              },
+              "exclude": "false",
+              "loader": "url"
+            }
+          },
+          "htmlMinifier": {
+            "caseSensitive": true,
+            "collapseBooleanAttributes": true,
+            "collapseInlineTagWhitespace": true,
+            "collapseWhitespace": true,
+            "conservativeCollapse": true,
+            "ignoreCustomComments": [],
+            "ignoreCustomFragments": [
+              {
+                "__evaluate__": "/<%[\\s\\S]*?%>/"
+              },
+              {
+                "__evaluate__": "/<\\?[\\s\\S]*?\\?>/"
+              },
+              {
+                "__evaluate__": "/<link[^>]*>/"
+              },
+              {
+                "__evaluate__": "/<img[^>]*>/"
+              }
+            ],
+            "includeAutoGeneratedTags": false,
+            "keepClosingSlash": true,
+            "lint": false,
+            "maxLineLength": 1e+31,
+            "minifyJS": {
+              "__evaluate__": "self.module.optimizer.uglifyJS"
+            },
+            "minifyCSS": false,
+            "minifyURLs": false,
+            "preserveLineBreaks": true,
+            "preventAttributesEscaping": true,
+            "processScripts": [],
+            "processConditionalComments": false,
+            "quoteCharacter": "\"",
+            "removeAttributeQuotes": false,
+            "removeComments": true,
+            "removeCommentsFromCDATA": true,
+            "removeCDATASectionsFromCDATA": true,
+            "removeTagWhitespace": false,
+            "removeRedundantAttributes": false,
+            "removeEmptyAttributes": false,
+            "removeScriptTypeAttributes": true,
+            "removeStyleLinkTypeAttributes": true,
+            "removeOptionalTags": false,
+            "removeEmptyElements": false,
+            "useShortDoctype": false
+          },
+          "image": {
+            "content": {
+              "disable": {"__evaluate__": "self.debug"},
+              "gifsicle": {
+                "optimizationLevel": 3,
+                "interlanced": false,
+                "colors": 256
+              },
+              "jpegtran": {
+                "progressive": true,
+                "arithmetic": true
+              },
+              "optipng": {
+                "optimizationLevel": 7
+              },
+              "plugins": [],
+              "pngquant": null,
+              "svgo": {}
+            },
+            "exclude": "console.warn('Image compression disabled. Use configuration: \"{module:{optimizer:{image:{exclude:'false'}}}}}\". to enable it.') || true",
+            "file": {
+              "limit": {
+                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
+              },
+              "name": {
+                "__evaluate__": "`/${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, '[name].[ext]'))}?${self.hashAlgorithm}=[hash]`"
+              }
+            },
+            "loader": "url"
+          },
+          "uglifyJS": {
+            "compress": {
+              "warnings": false
+            }
+          }
+        },
+        "preprocessor": {
+          "cascadingStyleSheet": {
+            "configuration": "sourceMap=inline",
+            "loader": "postcss"
+          },
+          "html": {
+            "configuration": {
+              "moduleAliases": {
+                "__evaluate__": "self.module.aliases"
+              },
+              "extensions": {
+                "__evaluate__": "self.extensions"
+              },
+              "context": {
+                "__evaluate__": "self.path.context"
+              },
+              "compiler": {
+                "cache": true,
+                "debug": false,
+                "pretty": false
+              }
+            },
+            "exclude": "false",
+            "loader": "pug"
+          },
+          "javaScript": {
+            "configuration": {
+              "cacheDirectory": true,
+              "compact": {
+                "__evaluate__": "!self.debug"
+              },
+              "minified": {
+                "__evaluate__": "!self.debug"
+              },
+              "presets": [
+                "latest",
+                "stage-0",
+                "babili"
+              ],
+              "plugins": [
+                "transform-flow-strip-types",
+                "transform-runtime"
+              ]
+            },
+            "exclude": "false",
+            "loader": "babel"
+          },
+          "json": {
+            "exclude": "false",
+            "loader": "json"
+          }
+        },
+        "provide": {},
+        "skipParseRegularExpressions": [],
+        "style": {
+          "configuration": {
+            "insertAt": "top",
+            "singleton": true
+          },
+          "loader": "style"
+        }
+      },
+      "offline": {
+        "AppCache": {
+          "directory": "/"
+        },
+        "caches": {
+          "main": [
+            "index.html",
+            ":rest:"
+          ]
+        },
+        "excludes": [
+          {
+            "__evaluate__": "`**/*.map?${self.hashAlgorithm}=*`"
+          },
+          "**/.*"
+        ],
+        "externals": [
+          "index.html"
+        ],
+        "publicPath": "/",
+        "relativePaths": false,
+        "ServiceWorker": {
+          "events": true,
+          "navigateFallbackURL": null,
+          "output": {
+            "__evaluate__": "path.relative(self.path.target.base, path.resolve(self.path.target.asset.javaScript, 'serviceWorker.js'))"
+          }
+        },
+        "updateStrategy": "changed",
+        "version": "[hash]"
+      },
+      "package": {
+        "aliasPropertyNames": {
+          "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat('aliases')"
+        },
+        "main": {
+          "fileNames": [
+            "index",
+            "main"
+          ],
+          "propertyNames": {
+            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'main'])"
+          }
+        }
+      },
+      "path": {
+        "apiDocumentation": "apiDocumentation/",
+        "base": "./",
+        "ignore": [
+          ".git",
+          {
+            "__evaluate__": "self.path.apiDocumentation"
+          }
+        ],
+        "source": {
+          "asset": {
+            "base": "./",
+            "cascadingStyleSheet": "cascadingStyleSheet/",
+            "data": "data/",
+            "favicon": {
+              "__evaluate__": "path.resolve(self.path.source.asset.image, 'favicon.png')"
+            },
+            "font": "font/",
+            "image": "image/",
+            "javaScript": "javaScript/",
+            "template": "template/"
+          },
+          "base": "source/"
+        },
+        "target": {
+          "asset": {
+            "base": "./",
+            "cascadingStyleSheet": "cascadingStyleSheet/",
+            "data": "data/",
+            "favicon": {
+              "__evaluate__": "path.resolve(self.path.target.asset.image, 'favicon.png')"
+            },
+            "font": "font/",
+            "image": "image/",
+            "javaScript": "javaScript/",
+            "template": "template/"
+          },
+          "base": "build/",
+          "manifest": "manifest.appcache",
+          "public": ""
+        },
+        "tidyUp": [
+          {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js')"
+          },
+          {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.js')"
+          },
+          {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js.map')"
+          },
+          {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.js.map')"
+          },
+          {
+            "__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"
+          }
+        ]
+      },
       "stylelint": {
         "extends": "stylelint-config-standard",
         "rules": {
@@ -758,28 +825,13 @@
           "indentation": 4
         }
       },
-      "document": {
-        "inPlace": {
-          "externalLibrary": {
-            "normal": false
+      "targetTechnology": "web",
+      "test": {
+        "assetPattern": {
+          "javaScript": {
+            "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';\n{1}"
           }
         },
-        "module": {
-          "optimizer": {
-            "uglifyJS": null
-          },
-          "preprocessor": {
-            "babel": {
-              "presets": {
-                "__remove__": [
-                  "babili"
-                ]
-              }
-            }
-          }
-        }
-      },
-      "test": {
         "exportFormat": {
           "external": "commonjs2",
           "self": "commonjs2"
@@ -799,12 +851,7 @@
           },
           "html": []
         },
-        "targetTechnology": "node",
-        "assetPattern": {
-          "javaScript": {
-            "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';\n{1}"
-          }
-        }
+        "targetTechnology": "node"
       },
       "testInBrowser": {
         "files": {
@@ -831,15 +878,13 @@
     },
     "debug": {
       "debug": true,
-      "injection": {
-        "internal": {
-          "developmentHelper": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && (['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
-          },
-          "vendor": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'qunitjs', 'weboptimizer/browserAPI'] : [])"
+      "development": {
+        "openBrowser": {
+          "url": {
+            "__evaluate__": "`${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${self.files.defaultHTML.filename}`"
           }
-        }
+        },
+        "tool": "#eval-cheap-module-source-map"
       },
       "files": {
         "compose": {
@@ -851,29 +896,24 @@
           "debug": true
         }
       },
+      "injection": {
+        "internal": {
+          "developmentHelper": {
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && (['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
+          },
+          "vendor": {
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'qunitjs', 'weboptimizer/browserAPI'] : [])"
+          }
+        }
+      },
       "inPlace": {
         "cascadingStyleSheet": false,
         "javaScript": false,
         "otherMaximumFileSizeLimitInByte": 1
       },
       "module": {
-        "preprocessor": {
-          "babel": {
-            "presets": {
-              "__remove__": [
-                "babili"
-              ]
-            }
-          },
-          "pug": {
-            "compiler": {
-              "pretty": true
-            }
-          }
-        },
         "cascadingStyleSheet": "?sourceMap",
         "optimizer": {
-          "uglifyJS": null,
           "htmlMinifier": {
             "collapseWhitespace": false,
             "removeComments": false,
@@ -883,20 +923,50 @@
             "collapseBooleanAttributes": false,
             "removeScriptTypeAttributes": false,
             "removeStyleLinkTypeAttributes": false
+          },
+          "uglifyJS": null
+        },
+        "preprocessor": {
+          "javaScript": {
+            "presets": {
+              "__remove__": [
+                "babili"
+              ]
+            }
+          },
+          "html": {
+            "compiler": {
+              "pretty": true
+            }
           }
         }
       },
-      "offline": null,
-      "development": {
-        "openBrowser": {
-          "url": {
-            "__evaluate__": "`${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${self.files.defaultHTML.filename}`"
-          }
-        },
-        "tool": "#eval-cheap-module-source-map"
-      }
+      "offline": null
     },
     "library": {
+      "document": {
+        "commandLine": {
+          "document": {
+            "arguments": [
+              "--package",
+              "./package.json",
+              "--readme",
+              "./readme.md",
+              "--destination",
+              {
+                "__evaluate__": "self.path.apiDocumentation"
+              },
+              {
+                "__evaluate__": "`'${self.path.target.asset.javaScript}'*${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`"
+              }
+            ]
+          }
+        },
+        "exportFormat": {
+          "self": "var"
+        },
+        "targetTechnology": "node"
+      },
       "exportFormat": {
         "self": {
           "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'var' : 'umd'"
@@ -928,16 +998,17 @@
         ]
       },
       "inPlace": {
-        "otherMaximumFileSizeLimitInByte": 1,
         "externalLibrary": {
           "normal": {
             "__evaluate__": "2 < self.givenCommandLineArguments.length && ['buildDLL', 'serve', 'watchDLL'].includes(self.givenCommandLineArguments[2])"
           }
-        }
+        },
+        "otherMaximumFileSizeLimitInByte": 1
       },
       "libraryName": {
         "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [tools.stringConvertToValidVariableName(self.name), '[name]']: null"
       },
+      "offline": null,
       "path": {
         "source": {
           "asset": {
@@ -961,30 +1032,6 @@
           },
           "base": "./"
         }
-      },
-      "offline": null,
-      "document": {
-        "commandLine": {
-          "document": {
-            "arguments": [
-              "--package",
-              "./package.json",
-              "--readme",
-              "./readme.md",
-              "--destination",
-              {
-                "__evaluate__": "self.path.apiDocumentation"
-              },
-              {
-                "__evaluate__": "`'${self.path.target.asset.javaScript}'*${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`"
-              }
-            ]
-          }
-        },
-        "exportFormat": {
-          "self": "var"
-        },
-        "targetTechnology": "node"
       },
       "test": {
         "injection": {
