@@ -850,7 +850,7 @@
             "filename": "test.html",
             "inject": "head",
             "template": {
-              "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(self.module.html.configuration)}!pug?${tools.convertCircularObjectToJSON(self.module.preprocessor.html)}!${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+              "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(self.module.html.configuration)}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(self.module.preprocessor.html.configuration)}!${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
             }
           },
           "html": []
