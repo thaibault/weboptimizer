@@ -730,14 +730,6 @@ const webpackConfiguration:WebpackConfiguration = {
                 loader: configuration.files.defaultHTML.template.substring(
                     0, configuration.files.defaultHTML.template.lastIndexOf(
                         '!')),
-                exclude: (filePath) => {
-                    console.log()
-                    console.log()
-                    console.log('A', filePath)
-                    console.log()
-                    console.log()
-                    return false
-                },
                 test: new RegExp(
                     '^' + Tools.stringConvertToValidRegularExpression(
                         Helper.stripLoader(
@@ -747,21 +739,13 @@ const webpackConfiguration:WebpackConfiguration = {
             // endregion
             // region html templates
             {
-                exclude: (filePath:string):boolean => {
-                    console.log()
-                    console.log()
-                    console.log(filePath)
-                    console.log()
-                    console.log()
-                    var r = Helper.normalizePaths(
-                        configuration.files.html.concat(
-                            configuration.files.defaultHTML
-                        ).map((htmlConfiguration:HTMLConfiguration):string =>
-                            Helper.stripLoader(htmlConfiguration.template))
-                    ).includes(filePath) || evaluate(
-                        configuration.module.preprocessor.html.exclude, filePath)
-                    return r
-                },
+                exclude: (filePath:string):boolean => Helper.normalizePaths(
+                    configuration.files.html.concat(
+                        configuration.files.defaultHTML
+                    ).map((htmlConfiguration:HTMLConfiguration):string =>
+                        Helper.stripLoader(htmlConfiguration.template))
+                ).includes(filePath) || evaluate(
+                    configuration.module.preprocessor.html.exclude, filePath),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
                     configuration.path.target.asset.base,
