@@ -280,7 +280,7 @@ QUnit.test('resolveModulesInFolders', (assert:Object):void => {
     ])
         assert.deepEqual(Helper.resolveModulesInFolders(test[0]), test[1])
     assert.ok(Helper.resolveModulesInFolders({a: [__dirname]}).a.includes(
-        'test/helper.js'))
+        './test/helper.js'))
 })
 QUnit.test('normalizeInternalInjection', (assert:Object):void => {
     for (const test:Array<any> of [
