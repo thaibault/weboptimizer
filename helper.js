@@ -211,8 +211,8 @@ export default class Helper {
         inPlaceNormalLibrary:boolean = false,
         inPlaceDynamicLibrary:boolean = true,
         externalHandableFileExtensions:Array<string> = [
-            '.js', '.css', '.eot', '.gif', '.html', '.ico', '.jpg', '.png',
-            '.svg', '.ttf', '.woff', '.woff2'
+            '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico', '.jpg',
+            '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
         ]
     ):?string {
         context = path.resolve(context)
