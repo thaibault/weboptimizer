@@ -258,10 +258,9 @@ for (const key:string in configuration.path)
         }
     }
 // / endregion
-const resolvedConfiguration:ResolvedConfiguration = Tools.unwrapProxy(
-    Tools.resolveDynamicDataStructure(Tools.resolveDynamicDataStructure(
-        configuration, parameterDescription, parameter
-    ), parameterDescription, parameter, true))
+const resolvedConfiguration:ResolvedConfiguration =
+    Tools.resolveDynamicDataStructure(
+        configuration, parameterDescription, parameter, true)
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
