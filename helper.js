@@ -438,8 +438,8 @@ export default class Helper {
         return {filePaths, directoryPaths}
     }
     /**
-     * Determines a list of concrete file paths for given module id pointing
-     * to a folder which isn't a package.
+     * Determines a list of concrete file paths for given module id pointing to
+     * a folder which isn't a package.
      * @param normalizedInternalInjection - Injection data structure of
      * modules with folder references to resolve.
      * @param aliases - Mapping of aliases to take into account.
@@ -487,8 +487,9 @@ export default class Helper {
                         )
                             if (file.stat.isFile())
                                 normalizedInternalInjection[chunkName].push(
-                                    path.relative(referencePath, path.resolve(
-                                        resolvedPath, file.path)))
+                                    './' + path.relative(
+                                        referencePath, path.resolve(
+                                            resolvedPath, file.path)))
                     } else if (moduleID.startsWith(
                         './'
                     ) && !moduleID.startsWith('./' + path.relative(
