@@ -93,16 +93,13 @@ for (const ignorePattern:string of configuration.injection.ignorePattern)
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
-        if (Tools.isFileSync(htmlConfiguration.template.substring(
-            htmlConfiguration.template.lastIndexOf('!') + 1
-        ))) {
+        if (Tools.isFileSync(Helper.stripLoader(htmlConfiguration.template))) {
             if (
                 htmlConfiguration.template ===
                 configuration.files.defaultHTML.template
             )
-                htmlConfiguration.template =
-                    htmlConfiguration.template.substring(
-                        htmlConfiguration.template.lastIndexOf('!') + 1)
+                htmlConfiguration.template = Helper.stripLoader(
+                    htmlConfiguration.template)
             pluginInstances.push(new plugins.HTML(htmlConfiguration))
             htmlAvailable = true
         }
@@ -733,6 +730,14 @@ const webpackConfiguration:WebpackConfiguration = {
                 loader: configuration.files.defaultHTML.template.substring(
                     0, configuration.files.defaultHTML.template.lastIndexOf(
                         '!')),
+                exclude: (filePath) => {
+                    console.log()
+                    console.log()
+                    console.log('A', filePath)
+                    console.log()
+                    console.log()
+                    return false
+                },
                 test: new RegExp(
                     '^' + Tools.stringConvertToValidRegularExpression(
                         Helper.stripLoader(
@@ -742,20 +747,27 @@ const webpackConfiguration:WebpackConfiguration = {
             // endregion
             // region html templates
             {
-                exclude: (filePath:string):boolean => Helper.normalizePaths(
-                    configuration.files.html.concat(
-                        configuration.files.defaultHTML
-                    ).map((htmlConfiguration:HTMLConfiguration):string =>
-                        Helper.stripLoader(htmlConfiguration.template))
-                ).includes(filePath) || evaluate(
-                    configuration.module.preprocessor.html.exclude, filePath),
+                exclude: (filePath:string):boolean => {
+                    console.log()
+                    console.log()
+                    console.log(filePath)
+                    console.log()
+                    console.log()
+                    var r = Helper.normalizePaths(
+                        configuration.files.html.concat(
+                            configuration.files.defaultHTML
+                        ).map((htmlConfiguration:HTMLConfiguration):string =>
+                            Helper.stripLoader(htmlConfiguration.template))
+                    ).includes(filePath) || evaluate(
+                        configuration.module.preprocessor.html.exclude, filePath)
+                    return r
+                },
                 include: configuration.path.source.asset.template,
-                loader:
-                    'file?name=' + path.relative(
-                        configuration.path.target.asset.base,
-                        configuration.path.target.asset.template
-                    ) + `[name].html?${configuration.hashAlgorithm}=[hash]!` +
-                    `extract!${loader.html}!${loader.preprocessor.html}`,
+                loader: 'file?name=' + path.relative(
+                    configuration.path.target.asset.base,
+                    configuration.path.target.asset.template
+                ) + `[name].html?${configuration.hashAlgorithm}=[hash]!` +
+                `extract!${loader.html}!${loader.preprocessor.html}`,
                 test: /\.pug(?:\?.*)?$/
             },
             {
