@@ -124,7 +124,10 @@ export type ResolvedBuildConfigurationItem = {
     filePathPattern:string
 }
 export type Extensions = {
-    file:Array<string>;
+    file:{
+        external:Array<string>;
+        internal:Array<string>;
+    };
     module:Array<string>;
 }
 export type LoaderConfiguration = {
@@ -199,7 +202,10 @@ export type ResolvedConfiguration = {
     loader:{
         aliases:PlainObject;
         directoryNames:Array<string>;
-        extensions:Extensions;
+        extensions:{
+            file:Array<string>;
+            module:Array<string>;
+        };
     };
     module:{
         additional:Array<PlainObject>;

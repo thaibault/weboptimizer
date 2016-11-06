@@ -331,22 +331,27 @@
         "self": "umd"
       },
       "extensions": {
-        "file": [
-          ".js",
-          ".json",
-          ".css",
-          ".eot",
-          ".gif",
-          ".html",
-          ".ico",
-          ".jpg",
-          ".png",
-          ".pug",
-          ".svg",
-          ".ttf",
-          ".woff",
-          ".woff2"
-        ],
+        "file": {
+          "internal": [
+            ".js",
+            ".json",
+            ".css",
+            ".eot",
+            ".gif",
+            ".html",
+            ".ico",
+            ".jpg",
+            ".png",
+            ".pug",
+            ".svg",
+            ".ttf",
+            ".woff",
+            ".woff2"
+          ],
+          "external": {
+            "__evaluate__": "self.targetTechnology === 'node' ? ['.js', '.json'] : ['.js', '.css', '.eot', '.gif', '.html', '.ico', '.jpg', '.png', '.svg', '.ttf', '.woff', '.woff2']"
+          }
+        },
         "module": []
       },
       "favicon": {

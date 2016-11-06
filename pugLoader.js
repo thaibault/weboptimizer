@@ -37,10 +37,13 @@ module.exports = function(source:string):string {
         Tools.extendObject(true, {
             context: './',
             extensions: {
-                file: [
-                    '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico',
-                    '.html', '.json', '.eot', '.ttf', '.woff'
-                ], module: []
+                file: {
+                    external: ['.js'],
+                    internal: [
+                        '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico',
+                        '.html', '.json', '.eot', '.ttf', '.woff'
+                    ]
+                }, module: []
             },
             moduleAliases: []
         }, this.options.pug || {}, loaderUtils.parseQuery(this.query)),

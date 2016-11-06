@@ -24,7 +24,7 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, Injection, InternalInjection,
+    BuildConfiguration, Extensions, Injection, InternalInjection,
     NormalizedInternalInjection, Path, ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem
 } from './type'
@@ -185,9 +185,6 @@ export default class Helper {
      * be external or not.
      * @param inPlaceDynamicLibrary - Indicates whether requests with
      * integrated loader configurations should be marked as external or not.
-     * @param externalHandableFileExtensions - File extensions which should be
-     * able to be handled by the external module bundler. If array is empty
-     * every extension will be assumed to be supported.
      * @returns A new resolved request indicating whether given request is an
      * external one.
      */
@@ -196,11 +193,14 @@ export default class Helper {
         normalizedInternalInjection:NormalizedInternalInjection = {},
         externalModuleLocations:Array<string> = ['node_modules'],
         aliases:PlainObject = {},
-        extensions:{file:Array<string>;module:Array<string>} = {
-            file: [
-                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
-            ], module: []
+        extensions:Extensions = {
+            file: {
+                external: ['.js'],
+                internal: [
+                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                ]
+            }, module: []
         }, referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
         relativeModuleFilePaths:Array<string> = ['node_modules'],
         packageEntryFileNames:Array<string> = ['index', 'main'],
@@ -209,11 +209,7 @@ export default class Helper {
         includePattern:Array<string|RegExp> = [],
         excludePattern:Array<string|RegExp> = [],
         inPlaceNormalLibrary:boolean = false,
-        inPlaceDynamicLibrary:boolean = true,
-        externalHandableFileExtensions:Array<string> = [
-            '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico', '.jpg',
-            '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
-        ]
+        inPlaceDynamicLibrary:boolean = true
     ):?string {
         context = path.resolve(context)
         requestContext = path.resolve(requestContext)
@@ -226,7 +222,7 @@ export default class Helper {
             resolved request.
         */
         let filePath:?string = Helper.determineModuleFilePath(
-            resolvedRequest, {}, extensions, requestContext, referencePath,
+            resolvedRequest, {}, extensions, context, requestContext,
             pathsToIgnore, relativeModuleFilePaths, packageEntryFileNames,
             packageMainPropertyNames, packageAliasPropertyNames)
         /*
@@ -247,7 +243,7 @@ export default class Helper {
                     chunkName
                 ])
                     if (Helper.determineModuleFilePath(
-                        moduleID, aliases, extensions, context, referencePath,
+                        moduleID, aliases, extensions, context, requestContext,
                         pathsToIgnore, relativeModuleFilePaths,
                         packageEntryFileNames, packageMainPropertyNames,
                         packageAliasPropertyNames
@@ -259,9 +255,9 @@ export default class Helper {
             or have a file extension other than javaScript aware.
         */
         if (!inPlaceNormalLibrary && (
-            externalHandableFileExtensions.length === 0 || filePath &&
-            externalHandableFileExtensions.includes(path.extname(filePath)) ||
-            !filePath && externalHandableFileExtensions.includes('')
+            extensions.file.external.length === 0 || filePath &&
+            extensions.file.external.includes(path.extname(filePath)) ||
+            !filePath && extensions.file.external.includes('')
         ) && !(inPlaceDynamicLibrary && request.includes('!')) && (
             !filePath && inPlaceDynamicLibrary || filePath && (
             !filePath.startsWith(context) || Helper.isFilePathInLocation(
@@ -397,11 +393,14 @@ export default class Helper {
      */
     static determineModuleLocations(
         internalInjection:InternalInjection, aliases:PlainObject = {},
-        extensions:{file:Array<string>;module:Array<string>} = {
-            file: [
-                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
-            ], module: []
+        extensions:Extensions = {
+            file: {
+                external: ['.js'],
+                internal: [
+                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                ]
+            }, module: []
         }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
         relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
@@ -452,11 +451,14 @@ export default class Helper {
     static resolveModulesInFolders(
         normalizedInternalInjection:NormalizedInternalInjection,
         aliases:PlainObject = {},
-        extensions:{file:Array<string>;module:Array<string>} = {
-            file: [
-                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
-            ], module: []
+        extensions:Extensions = {
+            file: {
+                external: ['.js'],
+                internal: [
+                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                ]
+            }, module: []
         }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):NormalizedInternalInjection {
@@ -563,11 +565,14 @@ export default class Helper {
         buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:InternalInjection,
         aliases:PlainObject = {},
-        extensions:{file:Array<string>;module:Array<string>} = {
-            file: [
-                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
-            ], module: []
+        extensions:Extensions = {
+            file: {
+                external: ['.js'],
+                internal: [
+                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                ]
+            }, module: []
         }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):Injection {
@@ -689,11 +694,14 @@ export default class Helper {
      */
     static determineModuleFilePath(
         moduleID:string, aliases:PlainObject = {},
-        extensions:{file:Array<string>;module:Array<string>;} = {
-            file: [
-                '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
-            ], module: []
+        extensions:Extensions = {
+            file: {
+                external: ['.js'],
+                internal: [
+                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
+                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                ]
+            }, module: []
         }, context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
         relativeModuleFilePaths:Array<string> = ['node_modules'],
@@ -718,7 +726,7 @@ export default class Helper {
                     ''
                 ]))
                     for (const fileExtension:string of [''].concat(
-                        extensions.file
+                        extensions.file.internal
                     )) {
                         let currentModuleFilePath:string
                         if (moduleFilePath.startsWith('/'))
