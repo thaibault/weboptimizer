@@ -665,7 +665,7 @@ const webpackConfiguration:WebpackConfiguration = {
     resolve: {
         alias: configuration.module.aliases,
         aliasFields: configuration.package.aliasPropertyNames,
-        extensions: configuration.extensions.file,
+        extensions: configuration.extensions.file.internal,
         mainFields: configuration.package.main.propertyNames,
         mainFiles: configuration.package.main.fileNames,
         moduleExtensions: configuration.extensions.module,
@@ -838,8 +838,8 @@ const webpackConfiguration:WebpackConfiguration = {
             // region data
             {
                 exclude: (filePath:string):boolean =>
-                    configuration.extensions.file.includes(path.extname(
-                        Helper.stripLoader(filePath))
+                    configuration.extensions.file.internal.includes(
+                        path.extname(Helper.stripLoader(filePath))
                     ) || rejectFilePathInDependencies(filePath) || evaluate(
                         configuration.module.optimizer.data.exclude,
                         filePath),
