@@ -185,82 +185,60 @@ if (Tools.isDirectorySync(configuration.path.target.base))
 // / endregion
 // / region define dynamic resolve parameter
 const parameterDescription:Array<string> = [
-    'currentPath', 'fileSystem', 'helper', 'path', 'require', 'self', 'tools',
+    'currentPath', 'fileSystem', 'helper', 'path', 'require', 'tools',
     'webOptimizerPath']
 const parameter:Array<any> = [
     /* eslint-disable no-eval */
-    process.cwd(), fileSystem, Helper, path, eval('require'), configuration,
+    process.cwd(), fileSystem, Helper, path, eval('require'), Tools, __dirname]
     /* eslint-enable no-eval */
-    Tools, __dirname]
 // / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
-    configuration.path.context, Tools.resolveDynamicDataStructure(
-        configuration.path.base, parameterDescription, parameter, false))
+    configuration.path.context, configuration.path.base)
 for (const key:string in configuration.path)
     if (
         configuration.path.hasOwnProperty(key) && key !== 'base' &&
         typeof configuration.path[key] === 'string'
     )
         configuration.path[key] = path.resolve(
-            configuration.path.base, Tools.resolveDynamicDataStructure(
-                configuration.path[key], parameterDescription, parameter,
-                false)
+            configuration.path.base, configuration.path[key]
         ) + '/'
-    else {
-        configuration.path[key] = Tools.resolveDynamicDataStructure(
-            configuration.path[key], parameterDescription, parameter, false)
-        if (Tools.isPlainObject(configuration.path[key])) {
-            configuration.path[key].base = path.resolve(
-                configuration.path.base, configuration.path[key].base)
-            for (const subKey:string in configuration.path[key])
-                if (
-                    configuration.path[key].hasOwnProperty(subKey) &&
-                    !['base', 'public'].includes(subKey) &&
-                    typeof configuration.path[key][subKey] === 'string'
-                )
-                    configuration.path[key][subKey] = path.resolve(
-                        configuration.path[key].base,
-                        Tools.resolveDynamicDataStructure(
-                            configuration.path[key][subKey],
-                            parameterDescription, parameter, false)
-                    ) + '/'
-                else {
-                    configuration.path[key][subKey] =
-                        Tools.resolveDynamicDataStructure(
-                            configuration.path[key][subKey],
-                            parameterDescription, parameter, false)
-                    if (Tools.isPlainObject(configuration.path[key][subKey])) {
-                        configuration.path[key][subKey].base = path.resolve(
-                            configuration.path[key].base,
-                            configuration.path[key][subKey].base)
-                        for (
-                            const subSubKey:string in configuration.path[key][
-                                subKey]
-                        )
-                            if (configuration.path[key][subKey].hasOwnProperty(
-                                subSubKey
-                            ) && subSubKey !== 'base' &&
-                            typeof configuration.path[key][subKey][
-                                subSubKey
-                            ] === 'string')
-                                configuration.path[key][subKey][
-                                    subSubKey
-                                ] = path.resolve(
-                                    configuration.path[key][subKey].base,
-                                    Tools.resolveDynamicDataStructure(
-                                        configuration.path[key][subKey][
-                                            subSubKey],
-                                        parameterDescription, parameter, false)
-                                ) + '/'
-                    }
-                }
-        }
+    else if (Tools.isPlainObject(configuration.path[key])) {
+        configuration.path[key].base = path.resolve(
+            configuration.path.base, configuration.path[key].base)
+        for (const subKey:string in configuration.path[key])
+            if (
+                configuration.path[key].hasOwnProperty(subKey) &&
+                !['base', 'public'].includes(subKey) &&
+                typeof configuration.path[key][subKey] === 'string'
+            )
+                configuration.path[key][subKey] = path.resolve(
+                    configuration.path[key].base,
+                    configuration.path[key][subKey]
+                ) + '/'
+            else if (Tools.isPlainObject(configuration.path[key][subKey])) {
+                configuration.path[key][subKey].base = path.resolve(
+                    configuration.path[key].base,
+                    configuration.path[key][subKey].base)
+                for (const subSubKey:string in configuration.path[key][subKey])
+                    if (configuration.path[key][subKey].hasOwnProperty(
+                        subSubKey
+                    ) && subSubKey !== 'base' &&
+                    typeof configuration.path[key][subKey][
+                        subSubKey
+                    ] === 'string')
+                        configuration.path[key][subKey][
+                            subSubKey
+                        ] = path.resolve(
+                            configuration.path[key][subKey].base,
+                            configuration.path[key][subKey][subSubKey]
+                        ) + '/'
+            }
     }
 // / endregion
 const resolvedConfiguration:ResolvedConfiguration =
     Tools.resolveDynamicDataStructure(
-        configuration, parameterDescription, parameter, true)
+        configuration, parameterDescription, parameter)
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
