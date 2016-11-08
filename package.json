@@ -150,7 +150,7 @@
         },
         "definitions": {
           "CONTEXT_TYPE": {
-            "__evaluate__": "self.contextType"
+            "__evaluate__": "`'${self.contextType}'`"
           },
           "DEBUG": {
             "__evaluate__": "self.debug"
@@ -643,7 +643,7 @@
               "pngquant": null,
               "svgo": {}
             },
-            "exclude": "console.warn(`Imagecompression for file \"${fileName}\" disabled. Use configuration: \"{module:{optimizer:{image:{exclude:'false'}}}}}\". to enable it.') || true",
+            "exclude": "console.warn(`Image compression for file \"${fileName}\" disabled. Use configuration: \"{module:{optimizer:{image:{exclude:'false'}}}}}\". to enable it.') || true",
             "file": {
               "limit": {
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
@@ -910,7 +910,7 @@
             "__evaluate__": "2 < self.givenCommandLineArguments.length && (['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
           },
           "vendor": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'qunitjs', 'weboptimizer/browserAPI'] : [])"
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'qunitjs', 'weboptimizer/browserAPI'] : []) || []"
           }
         }
       },
