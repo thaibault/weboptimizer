@@ -700,7 +700,21 @@ const webpackConfiguration:WebpackConfiguration = {
     // endregion
     module: {
         noParse: configuration.module.skipParseRegularExpressions,
-        loaders: [
+        loaders: configuration.module.additional.map((
+            loaderConfiguration:PlainObject
+        ):PlainObject => {
+            return {
+                exclude: (filePath:string):boolean => evaluate(
+                    loaderConfiguration.exclude || 'false', filePath),
+                include: loaderConfiguration.include && evaluate(
+                    loaderConfiguration.include, configuration.path.context
+                ) || configuration.path.source.base,
+                loader: evaluate(
+                    loaderConfiguration.loader, configuration.path.context),
+                test: new RegExp(evaluate(
+                    loaderConfiguration.test, configuration.path.context))
+            }
+        }).concat([
             // Convert to compatible native web types.
             // region script
             {
@@ -847,17 +861,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 test: /.+/
             }
             // endregion
-        ].concat(configuration.module.additional.map((
-            loaderConfiguration:PlainObject
-        ):PlainObject => {
-            return {
-                exclude: (filePath:string):boolean => evaluate(
-                    loaderConfiguration.exclude || 'false', filePath),
-                loader: evaluate(
-                    loaderConfiguration.loader, configuration.path.context),
-                test: new RegExp(loaderConfiguration.test)
-            }
-        }))
+        ])
     },
     plugins: pluginInstances.concat(new webpack.LoaderOptionsPlugin({
         // Let the "html-loader" access full html minifier processing
