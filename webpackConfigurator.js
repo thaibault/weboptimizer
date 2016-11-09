@@ -645,11 +645,10 @@ const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
         ).filter((filePath:string):boolean =>
             !configuration.path.context.startsWith(filePath)))
 }
-const evaluate:Function = (code:string, filePath:string):any => (
-    new Function(
-        'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
-        code)
-)(configuration, filePath, loader, rejectFilePathInDependencies)
+const evaluate:Function = (code:string, filePath:string):any => (new Function(
+    'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
+    `return ${code}`
+))(configuration, filePath, loader, rejectFilePathInDependencies)
 // // endregion
 // / endregion
 // endregion
@@ -854,7 +853,8 @@ const webpackConfiguration:WebpackConfiguration = {
             return {
                 exclude: (filePath:string):boolean => evaluate(
                     loaderConfiguration.exclude || 'false', filePath),
-                loader: evaluate(loaderConfiguration.loader, ''),
+                loader: evaluate(
+                    loaderConfiguration.loader, configuration.path.context),
                 test: new RegExp(loaderConfiguration.test)
             }
         }))

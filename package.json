@@ -920,7 +920,9 @@
         "otherMaximumFileSizeLimitInByte": 1
       },
       "module": {
-        "cascadingStyleSheet": "?sourceMap",
+        "cascadingStyleSheet": {
+          "configuration": "?sourceMap"
+        },
         "optimizer": {
           "htmlMinifier": {
             "collapseWhitespace": false,
