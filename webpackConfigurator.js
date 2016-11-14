@@ -699,7 +699,8 @@ const webpackConfiguration:WebpackConfiguration = {
     target: configuration.targetTechnology,
     // endregion
     module: {
-        noParse: configuration.module.skipParseRegularExpressions,
+        noParse: configuration.module.skipParseRegularExpressions.length &&
+            configuration.module.skipParseRegularExpressions || [/.*/],
         loaders: configuration.module.additional.map((
             loaderConfiguration:PlainObject
         ):PlainObject => {
