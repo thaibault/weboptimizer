@@ -699,8 +699,6 @@ const webpackConfiguration:WebpackConfiguration = {
     target: configuration.targetTechnology,
     // endregion
     module: {
-        noParse: configuration.module.skipParseRegularExpressions.length &&
-            configuration.module.skipParseRegularExpressions || [/.*/],
         loaders: configuration.module.additional.map((
             loaderConfiguration:PlainObject
         ):PlainObject => {
@@ -899,6 +897,11 @@ const webpackConfiguration:WebpackConfiguration = {
         pug: configuration.module.preprocessor.html.configuration
     }))
 }
+if (!Array.isArray(
+    configuration.module.skipParseRegularExpressions
+) || configuration.module.skipParseRegularExpressions.length)
+    webpackConfiguration.module.noParse =
+        configuration.module.skipParseRegularExpressions
 if (configuration.debug) {
     console.info('Using internal configuration:', util.inspect(configuration, {
         depth: null}))

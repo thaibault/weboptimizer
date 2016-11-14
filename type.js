@@ -309,7 +309,7 @@ export type WebpackConfiguration = {
     target:string;
     // endregion
     module:{
-        noParse:RegExp|Array<RegExp>;
+        noParse?:RegExp|Array<RegExp>;
         loaders:Array<PlainObject>;
     },
     plugins:Array<Object>;
