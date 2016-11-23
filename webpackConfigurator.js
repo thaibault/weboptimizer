@@ -638,14 +638,6 @@ const loader:{
 // // region helper
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
-    var r = Helper.isFilePathInLocation(
-        filePath, configuration.path.ignore.concat(
-            configuration.module.directoryNames,
-            configuration.loader.directoryNames
-        ).map((filePath:string):string => path.resolve(
-            configuration.path.context, filePath)
-        ).filter((filePath:string):boolean =>
-            !configuration.path.context.startsWith(filePath)))
     return Helper.isFilePathInLocation(
         filePath, configuration.path.ignore.concat(
             configuration.module.directoryNames,
