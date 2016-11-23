@@ -657,7 +657,8 @@
           "uglifyJS": {
             "compress": {
               "warnings": false
-            }
+            },
+            "sourceMap": false
           }
         },
         "preprocessor": {
@@ -892,7 +893,7 @@
             "__evaluate__": "`${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${self.files.defaultHTML.filename}`"
           }
         },
-        "tool": "#eval-cheap-module-source-map"
+        "tool": "eval"
       },
       "files": {
         "compose": {
