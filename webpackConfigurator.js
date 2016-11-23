@@ -84,7 +84,10 @@ else {
 // / endregion
 // / region plugins
 const pluginInstances:Array<Object> = [
-    new webpack.optimize.OccurrenceOrderPlugin(true)]
+    new webpack.NoErrorsPlugin(),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(true)
+]
 // // region define modules to ignore
 for (const ignorePattern:string of configuration.injection.ignorePattern)
     pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
