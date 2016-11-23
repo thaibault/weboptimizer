@@ -756,11 +756,10 @@
         },
         "main": {
           "fileNames": [
-            "index",
-            "main"
+            "index"
           ],
           "propertyNames": {
-            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'main'])"
+            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'ain'])"
           }
         }
       },
