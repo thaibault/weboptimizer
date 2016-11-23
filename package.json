@@ -759,7 +759,7 @@
             "index"
           ],
           "propertyNames": {
-            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'ain'])"
+            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'main'])"
           }
         }
       },
