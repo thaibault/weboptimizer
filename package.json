@@ -476,9 +476,6 @@
           ]
         },
         "directoryNames": [
-          "web_loaders",
-          "web_modules",
-          "node_loaders",
           "node_modules"
         ]
       },
@@ -495,7 +492,6 @@
         },
         "contextReplacements": [],
         "directoryNames": [
-          "web_modules",
           "node_modules"
         ],
         "html": {
