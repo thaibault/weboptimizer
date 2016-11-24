@@ -297,8 +297,7 @@
             "colors": true
           },
           "host": "localhost",
-          "port": 8080,
-          "protocol": "http"
+          "port": 8080
         },
         "tool": false
       },
@@ -885,7 +884,7 @@
       "development": {
         "openBrowser": {
           "url": {
-            "__evaluate__": "`${self.development.server.protocol}://${self.development.server.host}:${self.development.server.port}/${self.files.defaultHTML.filename}`"
+            "__evaluate__": "`http${self.development.server.cert ? 's' : ''}://${self.development.server.host}:${self.development.server.port}/${self.files.defaultHTML.filename}`"
           }
         },
         "tool": "eval"
@@ -903,7 +902,7 @@
       "injection": {
         "internal": {
           "developmentHelper": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && (['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?${self.development.server.protocol}://0.0.0.0:${self.development.server.port}`] : []"
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && (['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?http${self.development.server.cert ? 's' : ''}://0.0.0.0:${self.development.server.port}`] : []"
           },
           "vendor": {
             "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'qunitjs', 'weboptimizer/browserAPI'] : []) || []"
