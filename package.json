@@ -244,6 +244,7 @@
         ],
         "serve": {
           "arguments": [
+            "--cache",
             "--config",
             {
               "__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"
@@ -260,7 +261,6 @@
             {
               "__evaluate__": "self.development.server.port"
             },
-            "--colors",
             "--compress",
             "--history-api-fallback"
           ],
