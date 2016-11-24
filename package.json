@@ -262,7 +262,8 @@
               "__evaluate__": "self.development.server.port"
             },
             "--compress",
-            "--history-api-fallback"
+            "--history-api-fallback",
+            "--progress"
           ],
           "command": "webpack-dev-server"
         },
