@@ -935,9 +935,7 @@
           "javaScript": {
             "configuration": {
               "presets": {
-                "__remove__": [
-                  "babili"
-                ]
+                "__remove__": "babili"
               }
             }
           },
