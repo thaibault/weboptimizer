@@ -357,12 +357,13 @@ if (!configuration.needed.javaScript)
 // /// endregion
 // /// region extract cascading style sheets
 pluginInstances.push(new plugins.ExtractText({
-    allChunks: true, disable:
-        !configuration.files.compose.cascadingStyleSheet,
+    allChunks: true,
+    disable: !configuration.files.compose.cascadingStyleSheet,
     filename: configuration.files.compose.cascadingStyleSheet ? path.relative(
         configuration.path.target.base,
         configuration.files.compose.cascadingStyleSheet
-    ) : configuration.path.target.base}))
+    ) : configuration.path.target.base
+}))
 // /// endregion
 // /// region performs implicit external logic
 if (configuration.injection.external.modules === '__implicit__')
@@ -764,7 +765,7 @@ const webpackConfiguration:WebpackConfiguration = {
                         Helper.stripLoader(htmlConfiguration.template))
                 ).includes(filePath) || (
                     configuration.module.preprocessor.html.exclude === null
-                ) ? false : evaluate(
+                ) ? true : evaluate(
                     configuration.module.preprocessor.html.exclude, filePath),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
@@ -783,7 +784,7 @@ const webpackConfiguration:WebpackConfiguration = {
                     ):string => Helper.stripLoader(htmlConfiguration.template))
                 ).includes(filePath) || (
                     configuration.module.html.exclude === null
-                ) ? false : evaluate(
+                ) ? true : evaluate(
                     configuration.module.html.exclude, filePath),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
