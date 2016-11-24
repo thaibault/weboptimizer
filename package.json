@@ -117,7 +117,7 @@
       "assetPattern": {
         "javaScript": {
           "excludeFilePathRegularExpression": {
-            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|vendor${self.debug && self.targetTechnology === 'web' && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
+            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
           "pattern": "'use strict';\n{1}"
         }
