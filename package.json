@@ -886,8 +886,7 @@
           "url": {
             "__evaluate__": "`http${self.development.server.cert ? 's' : ''}://${self.development.server.host}:${self.development.server.port}/${self.files.defaultHTML.filename}`"
           }
-        },
-        "tool": "eval"
+        }
       },
       "files": {
         "compose": {
