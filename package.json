@@ -486,7 +486,7 @@
         },
         "cascadingStyleSheet": {
           "configuration": "",
-          "exclude": "null",
+          "exclude": null,
           "loader": "css"
         },
         "contextReplacements": [],
@@ -501,7 +501,7 @@
               "link:href"
             ]
           },
-          "exclude": "null",
+          "exclude": null,
           "loader": "html"
         },
         "optimizer": {
@@ -514,7 +514,7 @@
                 "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.data), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
               }
             },
-            "exclude": "null",
+            "exclude": null,
             "loader": "url"
           },
           "font": {
@@ -527,7 +527,7 @@
                   "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
                 }
               },
-              "exclude": "null",
+              "exclude": null,
               "loader": "url"
             },
             "svg": {
@@ -540,7 +540,7 @@
                   "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
                 }
               },
-              "exclude": "null",
+              "exclude": null,
               "loader": "url"
             },
             "ttf": {
@@ -553,7 +553,7 @@
                   "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
                 }
               },
-              "exclude": "null",
+              "exclude": null,
               "loader": "url"
             },
             "woff": {
@@ -565,7 +565,7 @@
                   "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
                 }
               },
-              "exclude": "null",
+              "exclude": null,
               "loader": "url"
             }
           },
@@ -678,7 +678,7 @@
                 "pretty": false
               }
             },
-            "exclude": "null",
+            "exclude": null,
             "loader": "pug"
           },
           "javaScript": {
@@ -700,11 +700,11 @@
                 "transform-runtime"
               ]
             },
-            "exclude": "null",
+            "exclude": null,
             "loader": "babel"
           },
           "json": {
-            "exclude": "null",
+            "exclude": null,
             "loader": "json"
           }
         },
