@@ -795,7 +795,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 test: /\.html(?:\?.*)?$/
             },
             // endregion
-            // Loads dependencies.
+            // Load dependencies.
             // region style
             {
                 exclude: (filePath:string):boolean => (
