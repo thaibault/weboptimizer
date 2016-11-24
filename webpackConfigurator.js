@@ -719,10 +719,12 @@ const webpackConfiguration:WebpackConfiguration = {
             // Convert to compatible native web types.
             // region script
             {
-                exclude: (filePath:string):boolean =>
-                    rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.module.preprocessor.javaScript.exclude,
-                        filePath),
+                exclude: (filePath:string):boolean => (
+                    configuration.module.preprocessor.javaScript
+                        .exclude === null
+                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                    configuration.module.preprocessor.javaScript.exclude,
+                    filePath),
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.javaScript
                 ].concat(configuration.module.locations.directoryPaths)),
@@ -732,7 +734,9 @@ const webpackConfiguration:WebpackConfiguration = {
             // endregion
             // region json
             {
-                exclude: (filePath:string):boolean => evaluate(
+                exclude: (filePath:string):boolean => (
+                    configuration.module.preprocessor.json.exclude === null
+                ) ? false : evaluate(
                     configuration.module.preprocessor.json.exclude, filePath),
                 loader: loader.preprocessor.json,
                 test: /\.json(?:\?.*)?$/
@@ -758,7 +762,9 @@ const webpackConfiguration:WebpackConfiguration = {
                         configuration.files.defaultHTML
                     ).map((htmlConfiguration:HTMLConfiguration):string =>
                         Helper.stripLoader(htmlConfiguration.template))
-                ).includes(filePath) || evaluate(
+                ).includes(filePath) || (
+                    configuration.module.preprocessor.html.exclude === null
+                ) ? false : evaluate(
                     configuration.module.preprocessor.html.exclude, filePath),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
@@ -770,10 +776,14 @@ const webpackConfiguration:WebpackConfiguration = {
             },
             {
                 exclude: (filePath:string):boolean => Helper.normalizePaths(
-                    configuration.files.html.map((
+                    configuration.files.html.concat(
+                        configuration.files.defaultHTML
+                    ).map((
                         htmlConfiguration:HTMLConfiguration
                     ):string => Helper.stripLoader(htmlConfiguration.template))
-                ).includes(filePath) || evaluate(
+                ).includes(filePath) || (
+                    configuration.module.html.exclude === null
+                ) ? false : evaluate(
                     configuration.module.html.exclude, filePath),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
@@ -787,10 +797,11 @@ const webpackConfiguration:WebpackConfiguration = {
             // Loads dependencies.
             // region style
             {
-                exclude: (filePath:string):boolean =>
-                    rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.module.cascadingStyleSheet.exclude,
-                        filePath),
+                exclude: (filePath:string):boolean => (
+                    configuration.module.cascadingStyleSheet.exclude === null
+                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                    configuration.module.cascadingStyleSheet.exclude, filePath
+                ),
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.cascadingStyleSheet
                 ].concat(configuration.module.locations.directoryPaths)),
@@ -805,34 +816,35 @@ const webpackConfiguration:WebpackConfiguration = {
             // Optimize loaded assets.
             // region font
             {
-                exclude: (filePath:string):boolean =>
-                    rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.module.optimizer.font.eot.exclude,
-                        filePath),
+                exclude: (filePath:string):boolean => (
+                    configuration.module.optimizer.font.eot.exclude === null
+                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                    configuration.module.optimizer.font.eot.exclude, filePath),
                 include: configuration.path.source.asset.font,
                 loader: loader.optimizer.font.eot,
                 test: /\.eot(?:\?.*)?$/
             }, {
-                exclude: (filePath:string):boolean =>
-                    rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.module.optimizer.font.woff.exclude,
-                        filePath),
+                exclude: (filePath:string):boolean => (
+                    configuration.module.optimizer.font.woff.exclude === null
+                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                    configuration.module.optimizer.font.woff.exclude, filePath
+                ),
                 include: configuration.path.source.asset.font,
                 loader: loader.optimizer.font.woff,
                 test: /\.woff2?(?:\?.*)?$/
             }, {
-                exclude: (filePath:string):boolean =>
-                    rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.module.optimizer.font.ttf.exclude,
-                        filePath),
+                exclude: (filePath:string):boolean => (
+                    configuration.module.optimizer.font.ttf.exclude === null
+                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                    configuration.module.optimizer.font.ttf.exclude, filePath),
                 include: configuration.path.source.asset.font,
                 loader: loader.optimizer.font.ttf,
                 test: /\.ttf(?:\?.*)?$/
             }, {
-                exclude: (filePath:string):boolean =>
-                    rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.module.optimizer.font.svg.exclude,
-                        filePath),
+                exclude: (filePath:string):boolean => (
+                    configuration.module.optimizer.font.svg.exclude === null
+                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                    configuration.module.optimizer.font.svg.exclude, filePath),
                 include: configuration.path.source.asset.font,
                 loader: loader.optimizer.font.svg,
                 test: /\.svg(?:\?.*)?$/
@@ -840,10 +852,11 @@ const webpackConfiguration:WebpackConfiguration = {
             // endregion
             // region image
             {
-                exclude: (filePath:string):boolean =>
-                    rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.module.optimizer.image.exclude, filePath
-                    ),
+                exclude: (filePath:string):boolean => (
+                    configuration.module.optimizer.image.exclude === null
+                ) ? evaluate(
+                    configuration.module.optimizer.image.exclude, filePath
+                ) : rejectFilePathInDependencies(filePath),
                 include: configuration.path.source.asset.image,
                 loader: loader.optimizer.image,
                 test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/
@@ -854,9 +867,10 @@ const webpackConfiguration:WebpackConfiguration = {
                 exclude: (filePath:string):boolean =>
                     configuration.extensions.file.internal.includes(
                         path.extname(Helper.stripLoader(filePath))
-                    ) || rejectFilePathInDependencies(filePath) || evaluate(
-                        configuration.module.optimizer.data.exclude,
-                        filePath),
+                    ) || (
+                        configuration.module.optimizer.data.exclude === null
+                    ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                        configuration.module.optimizer.data.exclude, filePath),
                 include: configuration.path.source.asset.data,
                 loader: loader.optimizer.data,
                 test: /.+/
