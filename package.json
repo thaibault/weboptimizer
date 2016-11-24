@@ -76,7 +76,7 @@
     "clientnode": "latest",
     "url-loader": "latest",
     "webpack": ">=2.1.0-beta.27",
-    "webpack-dev-server": ">=2.1.0.beta.11",
+    "webpack-dev-server": ">=2.1.0-beta.11",
     "webpack-load-plugins": "latest",
     "webpack-sources": "latest"
   },
