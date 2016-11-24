@@ -765,7 +765,7 @@ const webpackConfiguration:WebpackConfiguration = {
                         Helper.stripLoader(htmlConfiguration.template))
                 ).includes(filePath) || (
                     configuration.module.preprocessor.html.exclude === null
-                ) ? false : evaluate(
+                ) ? true : evaluate(
                     configuration.module.preprocessor.html.exclude, filePath),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
@@ -784,7 +784,7 @@ const webpackConfiguration:WebpackConfiguration = {
                     ):string => Helper.stripLoader(htmlConfiguration.template))
                 ).includes(filePath) || (
                     configuration.module.html.exclude === null
-                ) ? false : evaluate(
+                ) ? true : evaluate(
                     configuration.module.html.exclude, filePath),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
