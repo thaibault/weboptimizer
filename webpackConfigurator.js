@@ -763,10 +763,10 @@ const webpackConfiguration:WebpackConfiguration = {
                         configuration.files.defaultHTML
                     ).map((htmlConfiguration:HTMLConfiguration):string =>
                         Helper.stripLoader(htmlConfiguration.template))
-                ).includes(filePath) || (
+                ).includes(filePath) || ((
                     configuration.module.preprocessor.html.exclude === null
                 ) ? true : evaluate(
-                    configuration.module.preprocessor.html.exclude, filePath),
+                    configuration.module.preprocessor.html.exclude, filePath)),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
                     configuration.path.target.asset.base,
@@ -782,10 +782,10 @@ const webpackConfiguration:WebpackConfiguration = {
                     ).map((
                         htmlConfiguration:HTMLConfiguration
                     ):string => Helper.stripLoader(htmlConfiguration.template))
-                ).includes(filePath) || (
+                ).includes(filePath) || ((
                     configuration.module.html.exclude === null
                 ) ? true : evaluate(
-                    configuration.module.html.exclude, filePath),
+                    configuration.module.html.exclude, filePath)),
                 include: configuration.path.source.asset.template,
                 loader: 'file?name=' + path.relative(
                     configuration.path.target.base,
@@ -868,10 +868,11 @@ const webpackConfiguration:WebpackConfiguration = {
                 exclude: (filePath:string):boolean =>
                     configuration.extensions.file.internal.includes(
                         path.extname(Helper.stripLoader(filePath))
-                    ) || (
+                    ) || ((
                         configuration.module.optimizer.data.exclude === null
                     ) ? rejectFilePathInDependencies(filePath) : evaluate(
-                        configuration.module.optimizer.data.exclude, filePath),
+                        configuration.module.optimizer.data.exclude, filePath)
+                    ),
                 include: configuration.path.source.asset.data,
                 loader: loader.optimizer.data,
                 test: /.+/
