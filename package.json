@@ -751,7 +751,7 @@
       },
       "package": {
         "aliasPropertyNames": {
-          "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat('aliases')"
+          "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : [])"
         },
         "main": {
           "fileNames": [
