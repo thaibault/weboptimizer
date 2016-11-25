@@ -245,6 +245,7 @@ export type ResolvedConfiguration = {
             };
         };
         provide:{[key:string]:string};
+        replacements:{[key:string]:Function|string};
         skipParseRegularExpressions:RegExp|Array<RegExp>;
         style:PlainObject;
     };

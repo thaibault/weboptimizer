@@ -710,6 +710,7 @@
           }
         },
         "provide": {},
+        "replacements": {},
         "skipParseRegularExpressions": [],
         "style": {
           "configuration": {
