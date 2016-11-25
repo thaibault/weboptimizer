@@ -84,12 +84,18 @@ else {
 // / endregion
 // / region plugins
 const pluginInstances:Array<Object> = [
-    //new webpack.NoErrorsPlugin(),
+    new webpack.NoErrorsPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(true)
 ]
 // // region define modules to ignore
 for (const ignorePattern:string of configuration.injection.ignorePattern)
     pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
+// // endregion
+// // region define modules to replace
+for (const source:string in configuration.module.replacements)
+    if (configuration.module.replacements.hasOwnProperty(source))
+        pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
+            new RegExp(source), configuration.module.replacements[source]))
 // // endregion
 // // region generate html file
 let htmlAvailable:boolean = false
