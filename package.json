@@ -34,9 +34,9 @@
     "babel-loader": "latest",
     "babel-plugin-transform-runtime": "latest",
     "babel-plugin-transform-flow-strip-types": "latest",
-    "babel-preset-es2016": "latest",
+    "babel-preset-modern-browsers": "latest",
     "babel-preset-es2017": "latest",
-    "babel-preset-node7": "latest",
+    "babel-preset-es2017-node7": "latest",
     "babel-preset-stage-0": "latest",
     "babel-runtime": "latest",
     "babili": "latest",
@@ -104,12 +104,12 @@
     "webpackConfigurator.compiled.js"
   ],
   "scripts": {
-    "build": "command='babel --plugins transform-flow-strip-types,transform-runtime --presets node7,stage-0,babili --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command index.compiled.js index.js && $command webpackConfigurator.compiled.js webpackConfigurator.js",
+    "build": "command='babel --plugins transform-flow-strip-types,transform-runtime --presets es2017-node7,stage-0,babili --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command pugLoader.compiled.js pugLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command index.compiled.js index.js && $command webpackConfigurator.compiled.js webpackConfigurator.js",
     "clear": "rimraf *.compiled.*; rimraf *.compiled;rimraf test/*.compiled.*; rimraf apiDocumentation; rimraf *.html || true",
     "document": "npm run build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
     "lint": "flow --color always --strip-root && eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
     "prepublish": "npm run build",
-    "test": "npm run clear && command='babel --plugins transform-flow-strip-types,transform-runtime --presets node7,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command index.compiled.js index.js && $command test/index.compiled.js test/index.js && chmod +x test/* && test/index.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true",
+    "test": "npm run clear && command='babel --plugins transform-flow-strip-types,transform-runtime --presets es2017-node7,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command pugLoader.compiled.js pugLoader.js && $command test/pugLoader.compiled.js test/pugLoader.js && chmod +x test/* && test/pugLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command index.compiled.js index.js && $command test/index.compiled.js test/index.js && chmod +x test/* && test/index.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js || true",
     "update": "npm version patch && npm publish",
     "updateDocumentation": "documentationWebsite --log-level info"
   },
@@ -682,7 +682,7 @@
                 "__evaluate__": "!self.debug"
               },
               "presets": {
-                "__evaluate__": "(self.target === 'node' ? ['node7'] : ['es2016', 'es2017']).concat('stage-0').concat((self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : 'babili')"
+                "__evaluate__": "(self.target === 'node' ? ['es2017-node7'] : [['modern-browsers', {loose: true}], 'es2017']).concat('stage-0').concat((self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : 'babili')"
               },
               "plugins": [
                 "transform-flow-strip-types",
