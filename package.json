@@ -39,7 +39,7 @@
     "babel-preset-es2017-node7": "latest",
     "babel-preset-stage-0": "latest",
     "babel-runtime": "latest",
-    "babili": "latest",
+    "babel-preset-babili": "latest",
     "css-loader": "latest",
     "eslint": "latest",
     "eslint-config-google": "latest",
