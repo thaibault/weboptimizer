@@ -229,7 +229,6 @@ export type ResolvedConfiguration = {
                 file:PlainObject;
                 loader:string;
             };
-            uglifyJS:PlainObject
         };
         preprocessor:{
             cascadingStyleSheet:{
