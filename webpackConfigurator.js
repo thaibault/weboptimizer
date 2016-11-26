@@ -564,15 +564,14 @@ pluginInstances.push(new plugins.Imagemin(
     configuration.module.optimizer.image.content))
 // // endregion
 // // region context replacements
-if (configuration.module.contextReplacements)
-    for (
-        const contextReplacement:Array<string> of
-        configuration.module.contextReplacements
-    )
-        pluginInstances.push(new webpack.ContextReplacementPlugin(
-            ...contextReplacement.map((value:string):any => (new Function(
-                'configuration', '__dirname', '__filename', `return ${value}`
-            ))(configuration, __dirname, __filename))))
+for (
+    const contextReplacement:Array<string> of
+    configuration.module.replacements.context
+)
+    pluginInstances.push(new webpack.ContextReplacementPlugin(
+        ...contextReplacement.map((value:string):any => (new Function(
+            'configuration', '__dirname', '__filename', `return ${value}`
+        ))(configuration, __dirname, __filename))))
 // // endregion
 // / endregion
 // / region loader
