@@ -211,7 +211,6 @@ export type ResolvedConfiguration = {
         additional:Array<PlainObject>;
         aliases:PlainObject;
         cascadingStyleSheet:LoaderConfiguration;
-        contextReplacements:?Array<Array<string>>;
         directoryNames:Array<string>;
         html:LoaderConfiguration;
         locations:{filePaths:Array<string>;directoryPaths:Array<string>};
@@ -245,7 +244,10 @@ export type ResolvedConfiguration = {
             };
         };
         provide:{[key:string]:string};
-        replacements:{[key:string]:Function|string};
+        replacements:{
+            context:Array<Array<string>>;
+            normal:{[key:string]:Function|string};
+        };
         skipParseRegularExpressions:RegExp|Array<RegExp>;
         style:PlainObject;
     };
