@@ -154,6 +154,12 @@ if (configuration.module.provide)
         configuration.module.provide))
 // // endregion
 // // region modules/assets
+// /// region perform javaScript minification/optimisation
+// TODO wait until uglify supports es2017 syntax
+if (configuration.module.optimizer.uglifyJS && false)
+    pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
+        configuration.module.optimizer.uglifyJS))
+// /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
     compiler.plugin('emit', (

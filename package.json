@@ -308,6 +308,11 @@
           "externalLibrary": {
             "normal": false
           }
+        },
+        "module": {
+          "optimizer": {
+            "uglifyJS": null
+          }
         }
       },
       "exportFormat": {
@@ -579,7 +584,9 @@
             "keepClosingSlash": true,
             "lint": false,
             "maxLineLength": 1e+31,
-            "minifyJS": null,
+            "minifyJS": {
+              "__evaluate__": "self.module.optimizer.uglifyJS"
+            },
             "minifyCSS": false,
             "minifyURLs": false,
             "preserveLineBreaks": true,
@@ -631,6 +638,12 @@
               }
             },
             "loader": "url"
+          },
+          "uglifyJS": {
+            "compress": {
+              "warnings": false
+            },
+            "sourceMap": false
           }
         },
         "preprocessor": {
@@ -850,6 +863,11 @@
             "normal": true
           }
         },
+        "module": {
+          "optimizer": {
+            "uglifyJS": null
+          }
+        },
         "offline": null
       }
     },
@@ -901,7 +919,8 @@
             "collapseBooleanAttributes": false,
             "removeScriptTypeAttributes": false,
             "removeStyleLinkTypeAttributes": false
-          }
+          },
+          "uglifyJS": null
         },
         "preprocessor": {
           "html": {
