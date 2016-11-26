@@ -34,8 +34,8 @@
     "babel-loader": "latest",
     "babel-plugin-transform-runtime": "latest",
     "babel-plugin-transform-flow-strip-types": "latest",
-    "babel-polyfill": "latest",
-    "babel-preset-latest": "latest",
+    "babel-preset-es2016": "latest",
+    "babel-preset-es2017": "latest",
     "babel-preset-stage-0": "latest",
     "babel-runtime": "latest",
     "babili": "latest",
@@ -692,7 +692,8 @@
                 "__evaluate__": "!self.debug"
               },
               "presets": [
-                "latest",
+                "es2016",
+                "es2017",
                 "stage-0",
                 "babili"
               ],
