@@ -92,10 +92,11 @@ for (const ignorePattern:string of configuration.injection.ignorePattern)
     pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
 // // endregion
 // // region define modules to replace
-for (const source:string in configuration.module.replacements)
-    if (configuration.module.replacements.hasOwnProperty(source))
+for (const source:string in configuration.module.replacements.normal)
+    if (configuration.module.replacements.normal.hasOwnProperty(source))
         pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
-            new RegExp(source), configuration.module.replacements[source]))
+            new RegExp(source),
+            configuration.module.replacements.normal[source]))
 // // endregion
 // // region generate html file
 let htmlAvailable:boolean = false
