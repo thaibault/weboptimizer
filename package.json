@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "add-asset-html-webpack-plugin": "latest",
+    "babili-webpack-plugin": "latest",
     "babel-cli": "latest",
     "babel-eslint": "latest",
     "babel-loader": "latest",
@@ -311,7 +312,7 @@
         },
         "module": {
           "optimizer": {
-            "uglifyJS": null
+            "babili": null
           }
         }
       },
@@ -585,7 +586,7 @@
             "lint": false,
             "maxLineLength": 1e+31,
             "minifyJS": {
-              "__evaluate__": "self.module.optimizer.uglifyJS"
+              "__evaluate__": "self.module.optimizer.babili"
             },
             "minifyCSS": false,
             "minifyURLs": false,
@@ -639,11 +640,8 @@
             },
             "loader": "url"
           },
-          "uglifyJS": {
-            "compress": {
-              "warnings": false
-            },
-            "sourceMap": false
+          "babili": {
+            "comments": false
           }
         },
         "preprocessor": {
@@ -865,7 +863,7 @@
         },
         "module": {
           "optimizer": {
-            "uglifyJS": null
+            "babili": null
           }
         },
         "offline": null
@@ -920,7 +918,7 @@
             "removeScriptTypeAttributes": false,
             "removeStyleLinkTypeAttributes": false
           },
-          "uglifyJS": null
+          "babili": null
         },
         "preprocessor": {
           "html": {
