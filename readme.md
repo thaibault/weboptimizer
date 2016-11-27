@@ -266,7 +266,7 @@ behavoir. Any JavaScript will be supported:
 
     #!JSON
 
-    npm run build '{module: {optimizer: uglifyJS: {compress: {warnings": false}}}}'
+    npm run build '{module: {preprocessor: {javaScript: {loader: "babel"}}}}'
 
 If you're using webOptimizer in a toolchain were none printable or none unicode
 compatible symbols should be used (for example content which should replace

@@ -14,6 +14,7 @@
     endregion
 */
 // region imports
+import BabiliPlugin from 'babili-webpack-plugin'
 import Tools from 'clientnode'
 import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
 import * as dom from 'jsdom'
@@ -154,6 +155,11 @@ if (configuration.module.provide)
         configuration.module.provide))
 // // endregion
 // // region modules/assets
+// /// region perform javaScript minification/optimisation
+if (configuration.module.optimizer.babili)
+    pluginInstances.push(new BabiliPlugin(
+        configuration.module.optimizer.babili))
+// /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
     compiler.plugin('emit', (
