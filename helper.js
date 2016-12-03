@@ -103,9 +103,7 @@ export default class Helper {
         for (const placeholderName:string in informations)
             if (informations.hasOwnProperty(placeholderName))
                 filePath = filePath.replace(new RegExp(
-                    Tools.stringConvertToValidRegularExpression(
-                        placeholderName
-                    ), 'g'
+                    Tools.stringEscapeRegularExpressions(placeholderName), 'g'
                 ), informations[placeholderName])
         return filePath
     }

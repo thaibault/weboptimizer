@@ -528,25 +528,24 @@ pluginInstances.push({apply: (compiler:Object):void => {
                         )
                             source = source.replace(new RegExp(
                                 '(require\\()"' +
-                                Tools.stringConvertToValidRegularExpression(
+                                Tools.stringEscapeRegularExpressions(
                                     configuration.injection.external.aliases[
                                         replacement]
                                 ) + '"(\\))', 'g'
                             ), `$1'${replacement}'$2`).replace(new RegExp(
                                 '(define\\("' +
-                                Tools.stringConvertToValidRegularExpression(
+                                Tools.stringEscapeRegularExpressions(
                                     bundleName
                                 ) + '", \\[.*)"' +
-                                Tools.stringConvertToValidRegularExpression(
+                                Tools.stringEscapeRegularExpressions(
                                     configuration.injection.external.aliases[
                                         replacement]
                                 ) + '"(.*\\], factory\\);)'
                             ), `$1'${replacement}'$2`)
                     source = source.replace(new RegExp(
                         '(root\\[)"' +
-                        Tools.stringConvertToValidRegularExpression(
-                            bundleName
-                        ) + '"(\\] = )'
+                        Tools.stringEscapeRegularExpressions(bundleName) +
+                        '"(\\] = )'
                     ), `$1'` +
                         Tools.stringConvertToValidVariableName(bundleName) +
                         `'$2`
@@ -756,11 +755,10 @@ const webpackConfiguration:WebpackConfiguration = {
                 loader: configuration.files.defaultHTML.template.substring(
                     0, configuration.files.defaultHTML.template.lastIndexOf(
                         '!')),
-                test: new RegExp(
-                    '^' + Tools.stringConvertToValidRegularExpression(
-                        Helper.stripLoader(
-                            configuration.files.defaultHTML.template)
-                    ) + '(?:\\?.*)?$')
+                test: new RegExp('^' + Tools.stringEscapeRegularExpressions(
+                    Helper.stripLoader(
+                        configuration.files.defaultHTML.template)
+                ) + '(?:\\?.*)?$')
             },
             // endregion
             // region html templates
