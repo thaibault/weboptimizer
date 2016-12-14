@@ -114,13 +114,15 @@ export default class Helper {
      * @param context - Context of given request to resolve relative to.
      * @param referencePath - Path to resolve local modules relative to.
      * @param aliases - Mapping of aliases to take into account.
+     * @param moduleReplacements - Mapping of replacements to take into
+     * account.
      * @param relativeModuleFilePaths - List of relative file path to search
      * for modules in.
      * @returns A new resolved request.
      */
     static applyContext(
         request:string, context:string = './', referencePath:string = './',
-        aliases:PlainObject = {},
+        aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
         relativeModuleFilePaths:Array<string> = ['node_modules']
     ):string {
         referencePath = path.resolve(referencePath)
@@ -135,18 +137,19 @@ export default class Helper {
                     request = request.substring(pathPrefix.length)
                     if (request.startsWith('/'))
                         request = request.substring(1)
-                    return Helper.applyAliases(request.substring(
-                        request.lastIndexOf('!') + 1
-                    ), aliases)
+                    return Helper.applyModuleReplacements(Helper.applyAliases(
+                        request.substring(request.lastIndexOf('!') + 1),
+                        aliases
+                    ), moduleReplacements)
                 }
             }
             if (request.startsWith(referencePath)) {
                 request = request.substring(referencePath.length)
                 if (request.startsWith('/'))
                     request = request.substring(1)
-                return Helper.applyAliases(request.substring(
-                    request.lastIndexOf('!') + 1
-                ), aliases)
+                return Helper.applyModuleReplacements(Helper.applyAliases(
+                    request.substring(request.lastIndexOf('!') + 1), aliases
+                ), moduleReplacements)
             }
         }
         return request
@@ -162,6 +165,8 @@ export default class Helper {
      * @param externalModuleLocations - Array if paths where external modules
      * take place.
      * @param aliases - Mapping of aliases to take into account.
+     * @param moduleReplacements - Mapping of replacements to take into
+     * account.
      * @param extensions - List of file and module extensions to take into
      * account.
      * @param referencePath - Path to resolve local modules relative to.
@@ -190,7 +195,7 @@ export default class Helper {
         request:string, context:string = './', requestContext:string = './',
         normalizedInternalInjection:NormalizedInternalInjection = {},
         externalModuleLocations:Array<string> = ['node_modules'],
-        aliases:PlainObject = {},
+        aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
         extensions:Extensions = {
             file: {
                 external: ['.js'],
@@ -213,14 +218,16 @@ export default class Helper {
         requestContext = path.resolve(requestContext)
         referencePath = path.resolve(referencePath)
         // NOTE: We apply alias on externals additionally.
-        let resolvedRequest:string = Helper.applyAliases(
-            request.substring(request.lastIndexOf('!') + 1), aliases)
+        let resolvedRequest:string = Helper.applyModuleReplacements(
+            Helper.applyAliases(request.substring(
+                request.lastIndexOf('!') + 1
+            ), aliases), moduleReplacements)
         /*
-            NOTE: Aliases doesn't have to be forwarded since we pass an already
-            resolved request.
+            NOTE: Aliases and module replacements doesn't have to be forwarded
+            since we pass an already resolved request.
         */
         let filePath:?string = Helper.determineModuleFilePath(
-            resolvedRequest, {}, extensions, context, requestContext,
+            resolvedRequest, {}, {}, extensions, context, requestContext,
             pathsToIgnore, relativeModuleFilePaths, packageEntryFileNames,
             packageMainPropertyNames, packageAliasPropertyNames)
         /*
@@ -232,7 +239,7 @@ export default class Helper {
         ))
             return Helper.applyContext(
                 resolvedRequest, requestContext, referencePath,
-                aliases, relativeModuleFilePaths)
+                aliases, moduleReplacements, relativeModuleFilePaths)
         if (Tools.isAnyMatching(resolvedRequest, excludePattern))
             return null
         for (const chunkName:string in normalizedInternalInjection)
@@ -241,10 +248,10 @@ export default class Helper {
                     chunkName
                 ])
                     if (Helper.determineModuleFilePath(
-                        moduleID, aliases, extensions, context, requestContext,
-                        pathsToIgnore, relativeModuleFilePaths,
-                        packageEntryFileNames, packageMainPropertyNames,
-                        packageAliasPropertyNames
+                        moduleID, aliases, moduleReplacements, extensions,
+                        context, requestContext, pathsToIgnore,
+                        relativeModuleFilePaths, packageEntryFileNames,
+                        packageMainPropertyNames, packageAliasPropertyNames
                     ) === filePath)
                         return null
         /*
@@ -263,7 +270,7 @@ export default class Helper {
         ))
             return Helper.applyContext(
                 resolvedRequest, requestContext, referencePath,
-                aliases, relativeModuleFilePaths)
+                aliases, moduleReplacements, relativeModuleFilePaths)
         return null
     }
     /**
@@ -372,6 +379,8 @@ export default class Helper {
      * modules as array.
      * @param internalInjection - List of module ids or module file paths.
      * @param aliases - Mapping of aliases to take into account.
+     * @param moduleReplacements - Mapping of module replacements to take into
+     * account.
      * @param extensions - List of file and module extensions to take into
      * account.
      * @param context - File path to resolve relative to.
@@ -391,7 +400,7 @@ export default class Helper {
      */
     static determineModuleLocations(
         internalInjection:InternalInjection, aliases:PlainObject = {},
-        extensions:Extensions = {
+        moduleReplacements:PlainObject = {}, extensions:Extensions = {
             file: {
                 external: ['.js'],
                 internal: [
@@ -412,19 +421,20 @@ export default class Helper {
         const normalizedInternalInjection:NormalizedInternalInjection =
             Helper.resolveModulesInFolders(
                 Helper.normalizeInternalInjection(internalInjection),
-                aliases, extensions, context, referencePath, pathsToIgnore,
-                relativeModuleFilePaths, packageEntryFileNames,
-                packageMainPropertyNames, packageAliasPropertyNames)
+                aliases, moduleReplacements, extensions, context,
+                referencePath, pathsToIgnore, relativeModuleFilePaths,
+                packageEntryFileNames, packageMainPropertyNames,
+                packageAliasPropertyNames)
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
                     chunkName
                 ]) {
                     const filePath:?string = Helper.determineModuleFilePath(
-                        moduleID, aliases, extensions, context, referencePath,
-                        pathsToIgnore, relativeModuleFilePaths,
-                        packageEntryFileNames, packageMainPropertyNames,
-                        packageAliasPropertyNames)
+                        moduleID, aliases, moduleReplacements, extensions,
+                        context, referencePath, pathsToIgnore,
+                        relativeModuleFilePaths, packageEntryFileNames,
+                        packageMainPropertyNames, packageAliasPropertyNames)
                     if (filePath) {
                         filePaths.push(filePath)
                         const directoryPath:string = path.dirname(filePath)
@@ -440,6 +450,8 @@ export default class Helper {
      * @param normalizedInternalInjection - Injection data structure of
      * modules with folder references to resolve.
      * @param aliases - Mapping of aliases to take into account.
+     * @param moduleReplacements - Mapping of replacements to take into
+     * account.
      * @param extensions - List of file and module extensions.
      * @param context - File path to determine relative to.
      * @param referencePath - Path to resolve local modules relative to.
@@ -448,7 +460,7 @@ export default class Helper {
      */
     static resolveModulesInFolders(
         normalizedInternalInjection:NormalizedInternalInjection,
-        aliases:PlainObject = {},
+        aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
         extensions:Extensions = {
             file: {
                 external: ['.js'],
@@ -468,8 +480,10 @@ export default class Helper {
                 for (let moduleID:string of normalizedInternalInjection[
                     chunkName
                 ]) {
-                    moduleID = Helper.applyAliases(
-                        Helper.stripLoader(moduleID), aliases)
+                    moduleID = Helper.applyModuleReplacements(
+                        Helper.applyAliases(Helper.stripLoader(
+                            moduleID
+                        ), aliases), moduleReplacements)
                     const resolvedPath:string = path.resolve(
                         referencePath, moduleID)
                     if (Tools.isDirectorySync(resolvedPath)) {
@@ -550,6 +564,8 @@ export default class Helper {
      * @param modulesToExclude - A list of modules to exclude (specified by
      * path or id) or a mapping from chunk names to module ids.
      * @param aliases - Mapping of aliases to take into account.
+     * @param moduleReplacements - Mapping of replacements to take into
+     * account.
      * @param extensions - List of file and module extensions to take into
      * account.
      * @param context - File path to use as starting point.
@@ -562,7 +578,7 @@ export default class Helper {
         givenInjection:Injection,
         buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:InternalInjection,
-        aliases:PlainObject = {},
+        aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
         extensions:Extensions = {
             file: {
                 external: ['.js'],
@@ -578,8 +594,8 @@ export default class Helper {
             true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
-                modulesToExclude, aliases, extensions, context, referencePath,
-                pathsToIgnore
+                modulesToExclude, aliases, moduleReplacements, extensions,
+                context, referencePath, pathsToIgnore
             ).filePaths
         for (const type:string of ['internal', 'external'])
             /* eslint-disable curly */
@@ -673,6 +689,8 @@ export default class Helper {
      * Determines a concrete file path for given module id.
      * @param moduleID - Module id to determine.
      * @param aliases - Mapping of aliases to take into account.
+     * @param moduleReplacements - Mapping of replacements to take into
+     * account.
      * @param extensions - List of file and module extensions to take into
      * account.
      * @param context - File path to determine relative to.
@@ -692,7 +710,7 @@ export default class Helper {
      */
     static determineModuleFilePath(
         moduleID:string, aliases:PlainObject = {},
-        extensions:Extensions = {
+        moduleReplacements:PlainObject = {}, extensions:Extensions = {
             file: {
                 external: ['.js'],
                 internal: [
@@ -707,7 +725,9 @@ export default class Helper {
         packageMainPropertyNames:Array<string> = ['main'],
         packageAliasPropertyNames:Array<string> = []
     ):?string {
-        moduleID = Helper.applyAliases(Helper.stripLoader(moduleID), aliases)
+        moduleID = Helper.applyModuleReplacements(Helper.applyAliases(
+            Helper.stripLoader(moduleID), aliases
+        ), moduleReplacements)
         if (!moduleID)
             return null
         let moduleFilePath:string = moduleID
@@ -782,8 +802,9 @@ export default class Helper {
                             if (fileName === '__package__')
                                 continue
                         }
-                        fileName = Helper.applyAliases(
-                            fileName, packageAliases)
+                        fileName = Helper.applyModuleReplacements(
+                            Helper.applyAliases(fileName, packageAliases),
+                            moduleReplacements)
                         if (fileName)
                             currentModuleFilePath = path.resolve(
                                 currentModuleFilePath,
@@ -815,6 +836,19 @@ export default class Helper {
                     moduleID = aliases[alias]
             } else
                 moduleID = moduleID.replace(alias, aliases[alias])
+        return moduleID
+    }
+    /**
+     * Determines a concrete file path for given module id.
+     * @param moduleID - Module id to determine.
+     * @param replacements - Mapping of regular expressions to their
+     * corresponding replacements.
+     * @returns The replacement applied given module id.
+     */
+    static applyModuleReplacements(moduleID:string, replacements:PlainObject):string {
+        for (const replacement:string in replacements)
+            moduleID = moduleID.replace(
+                new RegExp(replacement), replacements[replacement])
         return moduleID
     }
 }

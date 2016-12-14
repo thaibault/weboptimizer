@@ -101,7 +101,7 @@ QUnit.test('applyContext', (assert:Object):void => {
         [['./a', './a', './'], 'a/a'],
         [['./a', './a', './a'], './a'],
         [['./a', './a', './a', {a: 'b'}], './a'],
-        [['./a', './a/a', './', {a: 'b'}, ['a']], 'b/a']
+        [['./a', './a/a', './', {a: 'b'}, {}, ['a']], 'b/a']
     ])
         assert.strictEqual(Helper.applyContext(...test[0]), test[1])
 })
@@ -128,60 +128,61 @@ QUnit.test('determineExternalRequest', (assert:Object):void => {
         }], null],
         [[
             'a', '../', './', {a: ['not_webpack']}, ['node_modules'],
-            {a$: 'webpack'}, {file: {external: [], internal: []}, module: []}
+            {a$: 'webpack'}, {},
+            {file: {external: [], internal: []}, module: []}
         ], 'webpack'],
         [[
             'a', '../', './', {a: ['webpack']}, ['node_modules'],
-            {a$: 'webpack'},
+            {a$: 'webpack'}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []},
             './', ['./']
         ], 'webpack'],
         [[
             'a', './', './', {a: ['webpack']}, ['node_modules'],
-            {a$: 'webpack'},
+            {a$: 'webpack'}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
             ['.git']
         ], null],
         [[
             'a', './', './', {a: ['webpack']}, ['node_modules'],
-            {a$: 'webpack'},
+            {a$: 'webpack'}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
             ['.git'], [], [], [], [], ['webpack']
         ], 'webpack'],
         [[
-            'webpack', './', '../', {}, ['node_modules'], {},
+            'webpack', './', '../', {}, ['node_modules'], {}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
             ['.git'], ['node_modules'], ['main'], ['main'], [], [], []
         ], 'webpack'],
         [[
-            'webpack', './', '../', {}, ['node_modules'], {},
+            'webpack', './', '../', {}, ['node_modules'], {}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
             ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false
         ], 'webpack'],
         [[
-            'webpack', './', '../', {}, ['node_modules'], {},
+            'webpack', './', '../', {}, ['node_modules'], {}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
             ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], true
         ], null],
         [[
-            'a!webpack', './', '../', {}, ['node_modules'], {},
+            'a!webpack', './', '../', {}, ['node_modules'], {}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
             ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false
         ], null],
         [[
-            'a!webpack', './', '../', {}, ['node_modules'], {},
+            'a!webpack', './', '../', {}, ['node_modules'], {}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
             ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false,
             true
         ], null],
         [[
-            'a!webpack', './', '../', {}, ['node_modules'], {},
+            'a!webpack', './', '../', {}, ['node_modules'], {}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
             ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false,
             false
         ], 'webpack'],
         [[
-            'a!webpack', './', '../', {}, ['node_modules'], {},
+            'a!webpack', './', '../', {}, ['node_modules'], {}, {},
             {file: {external: ['.eot'], internal: ['.js']}, module: []}, './',
             ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false,
             false
@@ -312,7 +313,7 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                 },
                 Helper.resolveBuildConfigurationFilePaths(
                     buildConfiguration, './', ['.git', 'node_modules']
-                ), [], {}, [], './', '', ['.git', 'node_modules']
+                ), [], {}, {}, [], './', '', ['.git', 'node_modules']
             ],
             {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []}
         ],
@@ -324,7 +325,7 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                 },
                 Helper.resolveBuildConfigurationFilePaths(
                     buildConfiguration, './', ['.git', 'node_modules']
-                ), [], {}, [], './', '', ['.git', 'node_modules']
+                ), [], {}, {}, [], './', '', ['.git', 'node_modules']
             ],
             {
                 internal: 'a.js', external: [], commonChunkIDs: [],
@@ -339,7 +340,7 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                 },
                 Helper.resolveBuildConfigurationFilePaths(
                     buildConfiguration, './', ['.git', 'node_modules']
-                ), [], {}, [], './', '', ['.git', 'node_modules']
+                ), [], {}, {}, [], './', '', ['.git', 'node_modules']
             ],
             {
                 internal: ['a'], external: [], commonChunkIDs: [],
@@ -354,7 +355,7 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                 },
                 Helper.resolveBuildConfigurationFilePaths(
                     buildConfiguration, './', ['.git', 'node_modules']
-                ), [], {}, [], './', '', ['.git', 'node_modules']
+                ), [], {}, {}, [], './', '', ['.git', 'node_modules']
             ],
             {internal: {}, external: [], commonChunkIDs: [], dllChunkIDs: []}
         ],
@@ -366,7 +367,7 @@ QUnit.test('resolveInjection', (assert:Object):void => {
                 },
                 Helper.resolveBuildConfigurationFilePaths(
                     buildConfiguration, './', ['.git', 'node_modules']
-                ), [], {}, [], './', '', ['.git', 'node_modules']
+                ), [], {}, {}, [], './', '', ['.git', 'node_modules']
             ],
             {
                 internal: {index: []}, external: [], commonChunkIDs: [],
@@ -385,18 +386,18 @@ QUnit.test('getAutoChunk', (assert:Object):void => assert.deepEqual(
 QUnit.test('determineModuleFilePath', (assert:Object):void => {
     for (const test:Array<any> of [
         [[''], null],
-        [['a', {}, {file: [], module: []}, './', '', []], null],
-        [['a', {a: 'b'}, {file: [], module: []}, './', '', []], null],
-        [['bba', {a: 'b'}, {file: [], module: []}, './', '', []], null],
+        [['a', {}, {}, {file: [], module: []}, './', '', []], null],
+        [['a', {a: 'b'}, {}, {file: [], module: []}, './', '', []], null],
+        [['bba', {a: 'b'}, {}, {file: [], module: []}, './', '', []], null],
         [['helper'], 'helper.js'],
-        [['helper', {}, {file: [], module: []}, './', '', []], null],
+        [['helper', {}, {}, {file: [], module: []}, './', '', []], null],
         [[
-            './helper', {},
+            './helper', {}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, '',
             'a', []], null
         ],
         [[
-            'helper', {},
+            'helper', {}, {},
             {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
             './'
         ], 'helper.js']
@@ -417,6 +418,19 @@ QUnit.test('applyAliases', (assert:Object):void => {
         ['a', {a$: 'b'}, 'b'],
         ['aa', {a$: 'b'}, 'aa'],
         ['bba', {a: 'b'}, 'bbb'],
+        ['helper', {}, 'helper']
+    ])
+        assert.strictEqual(Helper.applyAliases(test[0], test[1]), test[2])
+})
+QUnit.test('applyModuleReplacements', (assert:Object):void => {
+    for (const test:Array<any> of [
+        ['', {}, ''],
+        ['', {a: 'b'}, ''],
+        ['a', {}, 'a'],
+        ['a', {a: 'b'}, 'b'],
+        ['a', {a$: 'b'}, 'b'],
+        ['a', {'^a$': 'b'}, 'b'],
+        ['aa', {a: 'b'}, 'ba'],
         ['helper', {}, 'helper']
     ])
         assert.strictEqual(Helper.applyAliases(test[0], test[1]), test[2])

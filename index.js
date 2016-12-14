@@ -188,6 +188,8 @@ const main = async ():Promise<any> => {
                                 const filePath:?string =
                                     Helper.determineModuleFilePath(
                                         moduleID, configuration.module.aliases,
+                                        configuration.module.replacements
+                                            .normal,
                                         configuration.extensions,
                                         configuration.path.context,
                                         configuration.path.source.asset.base,
@@ -279,8 +281,9 @@ const main = async ():Promise<any> => {
                 const testModuleFilePaths:Array<string> =
                     Helper.determineModuleLocations(
                         configuration.testInBrowser.injection.internal,
-                        configuration.module.aliases, configuration.extensions,
-                        configuration.path.context,
+                        configuration.module.aliases,
+                        configuration.module.replacements.normal,
+                        configuration.extensions, configuration.path.context,
                         configuration.path.source.asset.base,
                         configuration.path.ignore
                     ).filePaths
