@@ -433,7 +433,8 @@ QUnit.test('applyModuleReplacements', (assert:Object):void => {
         ['aa', {a: 'b'}, 'ba'],
         ['helper', {}, 'helper']
     ])
-        assert.strictEqual(Helper.applyAliases(test[0], test[1]), test[2])
+        assert.strictEqual(
+            Helper.applyModuleReplacements(test[0], test[1]), test[2])
 })
 // endregion
 // region vim modline

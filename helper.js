@@ -845,10 +845,13 @@ export default class Helper {
      * corresponding replacements.
      * @returns The replacement applied given module id.
      */
-    static applyModuleReplacements(moduleID:string, replacements:PlainObject):string {
+    static applyModuleReplacements(
+        moduleID:string, replacements:PlainObject
+    ):string {
         for (const replacement:string in replacements)
-            moduleID = moduleID.replace(
-                new RegExp(replacement), replacements[replacement])
+            if (replacements.hasOwnProperty(replacement))
+                moduleID = moduleID.replace(
+                    new RegExp(replacement), replacements[replacement])
         return moduleID
     }
 }
