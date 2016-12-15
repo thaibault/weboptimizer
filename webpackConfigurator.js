@@ -408,7 +408,8 @@ if (configuration.injection.external.modules === '__implicit__')
                 configuration.path.context, filePath
             )).filter((filePath:string):boolean =>
                 !configuration.path.context.startsWith(filePath)
-            ), configuration.module.aliases, configuration.extensions,
+            ), configuration.module.aliases,
+            configuration.module.replacements.normal, configuration.extensions,
             configuration.path.source.asset.base, configuration.path.ignore,
             configuration.module.directoryNames,
             configuration.package.main.fileNames,

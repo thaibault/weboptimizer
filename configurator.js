@@ -253,11 +253,12 @@ for (const type:string in resolvedConfiguration.build.types)
             true, {extension: type}, resolvedConfiguration.build.types[type],
             {type}))
 // endregion
-// region resolve module location and which asset types are needed
+// region resolve module location and determine which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.injection.internal,
-    resolvedConfiguration.module.aliases, resolvedConfiguration.extensions,
-    resolvedConfiguration.path.context,
+    resolvedConfiguration.module.aliases,
+    resolvedConfiguration.module.replacements.normal,
+    resolvedConfiguration.extensions, resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base)
 resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.injection, Helper.resolveBuildConfigurationFilePaths(
@@ -273,6 +274,7 @@ resolvedConfiguration.injection = Helper.resolveInjection(
         resolvedConfiguration.package.main.fileNames
     ), resolvedConfiguration.injection.autoExclude,
     resolvedConfiguration.module.aliases,
+    resolvedConfiguration.module.replacements.normal,
     resolvedConfiguration.extensions,
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
@@ -285,6 +287,7 @@ resolvedConfiguration.injection.internal = {
     normalized: Helper.resolveModulesInFolders(
         Helper.normalizeInternalInjection(internalInjection),
         resolvedConfiguration.module.aliases,
+        resolvedConfiguration.module.replacements.normal,
         resolvedConfiguration.extensions,
         resolvedConfiguration.path.context,
         resolvedConfiguration.path.source.asset.base,
@@ -311,6 +314,7 @@ for (
         ) {
             const filePath:?string = Helper.determineModuleFilePath(
                 moduleID, resolvedConfiguration.module.aliases,
+                resolvedConfiguration.module.replacements.normal,
                 resolvedConfiguration.extensions,
                 resolvedConfiguration.path.context,
                 /*

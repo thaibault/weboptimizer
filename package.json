@@ -651,8 +651,13 @@
           },
           "html": {
             "configuration": {
-              "moduleAliases": {
-                "__evaluate__": "self.module.aliases"
+              "module": {
+                "aliases": {
+                  "__evaluate__": "self.module.aliases"
+                },
+                "replacements": {
+                  "__evaluate__": "self.module.replacements"
+                }
               },
               "extensions": {
                 "__evaluate__": "self.extensions"
