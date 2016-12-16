@@ -816,6 +816,9 @@
           }
         ]
       },
+      "showConfiguration": {
+        "__evaluate__": "self.debug"
+      },
       "stylelint": {
         "extends": "stylelint-config-standard",
         "rules": {

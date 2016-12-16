@@ -926,7 +926,7 @@ if (!Array.isArray(
 ) || configuration.module.skipParseRegularExpressions.length)
     webpackConfiguration.module.noParse =
         configuration.module.skipParseRegularExpressions
-if (configuration.debug) {
+if (configuration.showConfiguration) {
     console.info('Using internal configuration:', util.inspect(configuration, {
         depth: null}))
     console.info('-----------------------------------------------------------')
