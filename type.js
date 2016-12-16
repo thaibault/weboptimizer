@@ -262,6 +262,7 @@ export type ResolvedConfiguration = {
         };
     };
     path:Path;
+    showConfiguration:boolean;
     stylelint:PlainObject;
     /* eslint-disable max-len */
     targetTechnology:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
