@@ -295,7 +295,9 @@
             "__evaluate__": "self.path.source.base"
           },
           "historyApiFallback": true,
-          "hot": true,
+          "hot": {
+            "__evaluate__": "self.debug"
+          },
           "stats": {
             "colors": true
           },
