@@ -405,7 +405,7 @@
             "__evaluate__": "self.module.optimizer.htmlMinifier"
           },
           "template": {
-            "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(tools.extendObject({}, self.module.html.configuration, {minimize: false}))}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(self.module.preprocessor.html.configuration)}!${tools.isFileSync(path.resolve(self.path.source.base, 'index.pug')) ? path.resolve(self.path.source.base, 'index.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+            "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(tools.extendObject({}, resolve(self.module.html.configuration), {minimize: false}))}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.preprocessor.html.configuration))}!${tools.isFileSync(path.resolve(self.path.source.base, 'index.pug')) ? path.resolve(self.path.source.base, 'index.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
           }
         },
         "html": [
@@ -849,7 +849,7 @@
             "filename": "test.html",
             "inject": "head",
             "template": {
-              "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(self.module.html.configuration)}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(self.module.preprocessor.html.configuration)}!${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+              "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.html.configuration))}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.preprocessor.html.configuration))}!${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
             }
           },
           "html": []
@@ -984,7 +984,7 @@
           "filename": "playground.html",
           "inject": "head",
           "template": {
-            "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(self.module.html.configuration)}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(self.module.preprocessor.html.configuration)}!${tools.isFileSync(path.resolve(self.path.source.base, 'playground.pug')) ? path.resolve(self.path.source.base, 'playground.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+            "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.html.configuration))}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.preprocessor.html.configuration))}!${tools.isFileSync(path.resolve(self.path.source.base, 'playground.pug')) ? path.resolve(self.path.source.base, 'playground.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
           }
         },
         "html": {
