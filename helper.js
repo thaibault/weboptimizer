@@ -269,8 +269,8 @@ export default class Helper {
                 filePath, externalModuleLocations))
         ))
             return Helper.applyContext(
-                resolvedRequest, requestContext, referencePath,
-                aliases, moduleReplacements, relativeModuleFilePaths)
+                resolvedRequest, requestContext, referencePath, aliases,
+                moduleReplacements, relativeModuleFilePaths)
         return null
     }
     /**
