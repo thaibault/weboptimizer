@@ -717,7 +717,7 @@
       },
       "offline": {
         "AppCache": {
-          "directory": "/"
+          "directory": ""
         },
         "caches": {
           "main": [
