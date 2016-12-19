@@ -238,6 +238,10 @@
               {
                 "__evaluate__": "`'${self.path.apiDocumentation}'`"
               },
+              "--ignore-pattern",
+              {
+                "__evaluate__": "`'.*/node_modules/.*'`"
+              },
               "'**/*.js'"
             ],
             "command": "eslint",
@@ -823,6 +827,7 @@
       },
       "stylelint": {
         "extends": "stylelint-config-standard",
+        "ignoreFiles": "**/node_modules/*",
         "rules": {
           "comment-empty-line-before": "never",
           "indentation": 4
