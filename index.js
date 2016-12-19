@@ -308,19 +308,18 @@ const main = async ():Promise<any> => {
                                 )(
                                     global, self, buildConfiguration, path,
                                     additionalArguments, filePath)
+                            const command:string = evaluationFunction(
+                                global, configuration, buildConfiguration,
+                                path, additionalArguments, filePath)
+                            console.info(`Running "${command}"`)
                             processPromises.push(new Promise((
                                 resolve:Function, reject:Function
-                            ):void => {
-                                const command:string = evaluationFunction(
-                                    global, configuration, buildConfiguration,
-                                    path, additionalArguments, filePath)
-                                console.info(`Running "${command}"`)
-                                Tools.handleChildProcess(execChildProcess(
-                                    command, childProcessOptions,
-                                    (error:?Error):void => error ? reject(
-                                        error
-                                    ) : resolve('exit')))
-                            }))
+                            ):void => Tools.handleChildProcess(
+                                execChildProcess(
+                                    command, childProcessOptions, (
+                                        error:?Error
+                                    ):void => error ? reject(error) : resolve(
+                                        'exit')))))
                         }
             }
             // endregion
