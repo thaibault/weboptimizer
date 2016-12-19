@@ -318,8 +318,8 @@ const main = async ():Promise<any> => {
                                 execChildProcess(
                                     command, childProcessOptions, (
                                         error:?Error
-                                    ):void => error ? reject(error) : resolve(
-                                        'exit')))))
+                                    ):void => error ? reject(error) : resolve()
+                                ))))
                         }
             }
             // endregion
