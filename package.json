@@ -240,7 +240,7 @@
               },
               "--ignore-pattern",
               {
-                "__evaluate__": "`'.*/node_modules/.*'`"
+                "__evaluate__": "`'**/node_modules/*'`"
               },
               "'**/*.js'"
             ],
