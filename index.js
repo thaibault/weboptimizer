@@ -317,12 +317,9 @@ const main = async ():Promise<any> => {
                                 console.info(`Running "${command}"`)
                                 Tools.handleChildProcess(execChildProcess(
                                     command, childProcessOptions,
-                                    (error:?Error):void => {
-                                        if (error)
-                                            reject(error)
-                                        else
-                                            resolve('exit')
-                                    }))
+                                    (error:?Error):void => error ? reject(
+                                        error
+                                    ) : resolve('exit')))
                             }))
                         }
             }
