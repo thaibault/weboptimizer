@@ -3,6 +3,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import Tools from 'clientnode'
 import * as QUnit from 'qunit-cli'
 // NOTE: Only needed for debugging this file.
 try {
@@ -23,11 +24,12 @@ browserAPI((api:BrowserAPI):void => {
         assert.ok(api.window.document.hasOwnProperty('location'))
         assert.ok(api.window.document.querySelector('body') instanceof Object)
         const done:Function = assert.async()
-        const timeoutID:number = setTimeout(done, 100)
+        const timer:Promise<boolean> = Tools.timeout(done, 100)
         api.window.document.addEventListener('DOMContentLoaded', (
             event:Object
         ):void => {
-            clearTimeout(timeoutID)
+            // IgnoreTypeCheck
+            timer.clear()
             assert.ok(event)
             done()
         })
