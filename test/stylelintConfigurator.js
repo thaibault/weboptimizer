@@ -3,19 +3,19 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import * as QUnit from 'qunit-cli'
+import registerTest from 'clientnode/test.compiled'
 // NOTE: Only needed for debugging this file.
 try {
-    module.require('source-map-support/register')
+    require('source-map-support/register')
 } catch (error) {}
 // endregion
-QUnit.module('stylelintConfigurator')
-QUnit.load()
-// region tests
-QUnit.test('stylelintConfigurator', (assert:Object):void => {
-    assert.ok(require('../stylelintConfigurator.compiled'))
-})
-// endregion
+registerTest(function():void {
+    this.module('stylelintConfigurator')
+    // region tests
+    this.test('stylelintConfigurator', (assert:Object):void => assert.ok(
+        require('../stylelintConfigurator.compiled')))
+    // endregion
+}, ['plain'])
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

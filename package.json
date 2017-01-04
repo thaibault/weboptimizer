@@ -111,7 +111,6 @@
   },
   "devDependencies": {
     "documentation-website": "latest",
-    "qunitjs": "latest",
     "source-map-support": "latest"
   },
   "configuration": {
@@ -909,7 +908,7 @@
             "__evaluate__": "2 < self.givenCommandLineArguments.length && (['buildDLL', 'watchDLL'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'testInBrowser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?http${self.development.server.cert ? 's' : ''}://0.0.0.0:${self.development.server.port}`] : []"
           },
           "vendor": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'qunitjs', 'weboptimizer/browserAPI'] : []) || []"
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['buildDLL', 'testInBrowser', 'watchDLL'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'script!qunitjs', 'weboptimizer/browserAPI'] : []) || []"
           }
         }
       },
