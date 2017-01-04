@@ -7,8 +7,9 @@
 # temporary excludes
 .*/documentation-website/.*
 .*/internationalisation/.*
-.*/website-utilities/.*
+.*/stylelint/.*
 .+/systemjs-builder/test/fixtures/sourcemaps-expectations/.+\.json
+.*/website-utilities/.*
 
 [options]
 module.name_mapper='^weboptimizer/type$' -> '<PROJECT_ROOT>/type'
