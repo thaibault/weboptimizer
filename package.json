@@ -111,7 +111,7 @@
   },
   "devDependencies": {
     "documentation-website": "latest",
-    "qunit-cli": "latest",
+    "qunitjs": "latest",
     "source-map-support": "latest"
   },
   "configuration": {
