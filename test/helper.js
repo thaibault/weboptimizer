@@ -89,7 +89,8 @@ registerTest(function():void {
             [['a[id]b[hash]', {'[id]': 1, '[hash]': 2}], 'a1b2'],
             [['a[id]b[hash]', {}], 'a[id]b[hash]']
         ])
-            assert.strictEqual(Helper.renderFilePathTemplate(...test[0]), test[1])
+            assert.strictEqual(
+                Helper.renderFilePathTemplate(...test[0]), test[1])
     })
     this.test('applyContext', (assert:Object):void => {
         for (const test:Array<any> of [
@@ -122,7 +123,10 @@ registerTest(function():void {
             [['path', './', './', {}, [], {path: 'main.js'}], 'main.js'],
             [['path', './', './', {}, [], {path: './helper.js'}], null],
             [['webpack'], 'webpack'],
-            [['a', './', './', {}, ['node_modules'], {a$: 'webpack'}], 'webpack'],
+            [
+                ['a', './', './', {}, ['node_modules'], {a$: 'webpack'}],
+                'webpack'
+            ],
             [['a', './', './', {a: ['webpack']}, ['node_modules'], {
                 a$: 'webpack'
             }], null],
@@ -140,52 +144,56 @@ registerTest(function():void {
             [[
                 'a', './', './', {a: ['webpack']}, ['node_modules'],
                 {a$: 'webpack'}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
-                ['.git']
+                {file: {external: ['.js'], internal: ['.js']}, module: []},
+                './', ['.git']
             ], null],
             [[
                 'a', './', './', {a: ['webpack']}, ['node_modules'],
                 {a$: 'webpack'}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
-                ['.git'], [], [], [], [], ['webpack']
+                {file: {external: ['.js'], internal: ['.js']}, module: []},
+                './', ['.git'], [], [], [], [], ['webpack']
             ], 'webpack'],
             [[
                 'webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
-                ['.git'], ['node_modules'], ['main'], ['main'], [], [], []
+                {file: {external: ['.js'], internal: ['.js']}, module: []},
+                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
+                []
             ], 'webpack'],
             [[
                 'webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
-                ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false
+                {file: {external: ['.js'], internal: ['.js']}, module: []},
+                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
+                [], false
             ], 'webpack'],
             [[
                 'webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
-                ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], true
+                {file: {external: ['.js'], internal: ['.js']}, module: []},
+                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
+                [], true
             ], null],
             [[
                 'a!webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
-                ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false
+                {file: {external: ['.js'], internal: ['.js']}, module: []},
+                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
+                [], false
             ], null],
             [[
                 'a!webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
-                ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false,
-                true
+                {file: {external: ['.js'], internal: ['.js']}, module: []},
+                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
+                [], false, true
             ], null],
             [[
                 'a!webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
-                ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false,
-                false
+                {file: {external: ['.js'], internal: ['.js']}, module: []},
+                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
+                [], false, false
             ], 'webpack'],
             [[
                 'a!webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.eot'], internal: ['.js']}, module: []}, './',
-                ['.git'], ['node_modules'], ['main'], ['main'], [], [], [], false,
-                false
+                {file: {external: ['.eot'], internal: ['.js']}, module: []},
+                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
+                [], false, false
             ], null]
         ])
             assert.strictEqual(
@@ -301,7 +309,8 @@ registerTest(function():void {
             [{a: ['example'], b: []}, {a: ['example']}],
             [{a: [], b: []}, {index: []}]
         ])
-            assert.deepEqual(Helper.normalizeInternalInjection(test[0]), test[1])
+            assert.deepEqual(
+                Helper.normalizeInternalInjection(test[0]), test[1])
     })
     this.test('resolveInjection', (assert:Object):void => {
         for (const test:Array<any> of [
@@ -315,13 +324,20 @@ registerTest(function():void {
                         buildConfiguration, './', ['.git', 'node_modules']
                     ), [], {}, {}, [], './', '', ['.git', 'node_modules']
                 ],
-                {internal: [], external: [], commonChunkIDs: [], dllChunkIDs: []}
+                {
+                    commonChunkIDs: [],
+                    dllChunkIDs: [],
+                    external: [],
+                    internal: []
+                }
             ],
             [
                 [
                     {
-                        internal: 'a.js', external: [], commonChunkIDs: [],
-                        dllChunkIDs: []
+                        commonChunkIDs: [],
+                        dllChunkIDs: [],
+                        external: [],
+                        internal: 'a.js'
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
@@ -335,35 +351,48 @@ registerTest(function():void {
             [
                 [
                     {
-                        internal: ['a'], external: [], commonChunkIDs: [],
-                        dllChunkIDs: []
+                        commonChunkIDs: [],
+                        dllChunkIDs: [],
+                        external: [],
+                        internal: ['a']
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
                     ), [], {}, {}, [], './', '', ['.git', 'node_modules']
                 ],
                 {
-                    internal: ['a'], external: [], commonChunkIDs: [],
-                    dllChunkIDs: []
+                    commonChunkIDs: [],
+                    dllChunkIDs: [],
+                    external: [],
+                    internal: ['a']
                 }
             ],
             [
                 [
                     {
-                        internal: '__auto__', external: [], commonChunkIDs: [],
-                        dllChunkIDs: []
+                        commonChunkIDs: [],
+                        dllChunkIDs: [],
+                        external: [],
+                        internal: '__auto__'
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
                     ), [], {}, {}, [], './', '', ['.git', 'node_modules']
                 ],
-                {internal: {}, external: [], commonChunkIDs: [], dllChunkIDs: []}
+                {
+                    commonChunkIDs: [],
+                    dllChunkIDs: [],
+                    external: [],
+                    internal: {}
+                }
             ],
             [
                 [
                     {
-                        internal: {index: '__auto__'}, external: [],
-                        commonChunkIDs: [], dllChunkIDs: []
+                        commonChunkIDs: [],
+                        dllChunkIDs: [],
+                        external: [],
+                        internal: {index: '__auto__'}
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
@@ -398,8 +427,8 @@ registerTest(function():void {
             ],
             [[
                 'helper', {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, './',
-                './'
+                {file: {external: ['.js'], internal: ['.js']}, module: []},
+                './', './'
             ], 'helper.js']
         ]) {
             let result:?string = Helper.determineModuleFilePath(...test[0])
