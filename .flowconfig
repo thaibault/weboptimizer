@@ -12,6 +12,8 @@
 .*/website-utilities/.*
 
 [options]
+unsafe.enable_getters_and_setters=true
+
 module.name_mapper='^weboptimizer/type$' -> '<PROJECT_ROOT>/type'
 module.name_mapper='^weboptimizer/browserAPI$' -> '<PROJECT_ROOT>/browserAPI'
 module.name_mapper='^\./browserAPI\.compiled$' -> './browserAPI'
