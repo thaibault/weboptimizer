@@ -709,7 +709,9 @@
           "context": [],
           "normal": {}
         },
-        "skipParseRegularExpressions": [],
+        "skipParseRegularExpressions": {
+          "__evaluate__": "/\\/(?:module|global)\\.js(?:\\?.+|$)/"
+        },
         "style": {
           "configuration": {
             "insertAt": "top",
