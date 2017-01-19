@@ -15,7 +15,7 @@ import Helper from '../helper.compiled'
 // endregion
 registerTest(function():void {
     this.module('helper')
-    // region mockups
+    // region mockup
     const buildConfiguration:BuildConfiguration = {
         other: {
             extension: 'other',

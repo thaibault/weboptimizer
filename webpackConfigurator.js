@@ -85,7 +85,7 @@ else {
 // / endregion
 // / region plugins
 const pluginInstances:Array<Object> = [
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(true)
 ]
 // // region define modules to ignore
