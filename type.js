@@ -262,6 +262,9 @@ export type ResolvedConfiguration = {
         };
     };
     path:Path;
+    performanceHints:{
+        hints:false|string;
+    };
     showConfiguration:boolean;
     stylelint:PlainObject;
     /* eslint-disable max-len */
@@ -314,8 +317,11 @@ export type WebpackConfiguration = {
     // endregion
     module:{
         noParse?:RegExp|Array<RegExp>;
-        loaders:Array<PlainObject>;
+        rules:Array<PlainObject>;
     },
+    performance:{
+        hints:false|string;
+    };
     plugins:Array<Object>;
 }
 // / endregion

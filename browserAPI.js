@@ -16,10 +16,11 @@
 // region imports
 import type {DomNode, Window} from 'clientnode'
 import type {BrowserAPI} from './type'
- // endregion
+// endregion
 // region declaration
-declare var NAME:string
-declare var TARGET_TECHNOLOGY:string
+// NOTE: Produces a babel error yet.
+//declare var NAME:string
+//declare var TARGET_TECHNOLOGY:string
 declare var window:Window
 // endregion
 // region variables

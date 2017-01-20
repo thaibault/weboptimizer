@@ -577,8 +577,8 @@ for (
 // // endregion
 // / endregion
 // / region loader
+// TODO migrate to loader to remove legacy config and loader chaning styles..
 const loader:{
-    cascadingStyleSheet:string;
     html:string;
     optimizer:{
         image:string;
@@ -590,16 +590,8 @@ const loader:{
         };
         data:string;
     };
-    preprocessor:{
-        cascadingStyleSheet:string;
-        javaScript:string;
-        json:string;
-        html:string;
-    };
-    style:string;
+    preprocessor:{html:string;};
 } = {
-    cascadingStyleSheet: configuration.module.cascadingStyleSheet.loader +
-        configuration.module.cascadingStyleSheet.configuration,
     html: `${configuration.module.html.loader}?` +
         Tools.convertCircularObjectToJSON(
             configuration.module.html.configuration),
@@ -626,22 +618,10 @@ const loader:{
                 configuration.module.optimizer.data.configuration)
     },
     preprocessor: {
-        cascadingStyleSheet:
-            configuration.module.preprocessor.cascadingStyleSheet.loader +
-            '?' +
-            configuration.module.preprocessor.cascadingStyleSheet
-                .configuration,
-        javaScript: `${configuration.module.preprocessor.javaScript.loader}?` +
-            Tools.convertCircularObjectToJSON(
-                configuration.module.preprocessor.javaScript.configuration),
-        json: configuration.module.preprocessor.json.loader,
         html: `${configuration.module.preprocessor.html.loader}?` +
             Tools.convertCircularObjectToJSON(
                 configuration.module.preprocessor.html.configuration)
-    },
-    style: `${configuration.module.style.loader}?` +
-        Tools.convertCircularObjectToJSON(
-            configuration.module.style.configuration)
+    }
 }
 // // region helper
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
@@ -664,6 +644,7 @@ const evaluate:Function = (code:string, filePath:string):any => (new Function(
 // endregion
 // region configuration
 const webpackConfiguration:WebpackConfiguration = {
+    bail: true,
     cache: configuration.cache.main,
     context: configuration.path.context,
     devtool: configuration.development.tool,
@@ -706,10 +687,11 @@ const webpackConfiguration:WebpackConfiguration = {
         pathinfo: configuration.debug,
         umdNamedDefine: true
     },
+    performance: configuration.performanceHints,
     target: configuration.targetTechnology,
     // endregion
     module: {
-        loaders: configuration.module.additional.map((
+        rules: configuration.module.additional.map((
             loaderConfiguration:PlainObject
         ):PlainObject => {
             return {
@@ -736,18 +718,10 @@ const webpackConfiguration:WebpackConfiguration = {
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.javaScript
                 ].concat(configuration.module.locations.directoryPaths)),
-                loader: loader.preprocessor.javaScript,
+                loader: configuration.module.preprocessor.javaScript.loader,
+                options: configuration.module.preprocessor.javaScript
+                    .configuration,
                 test: /\.js(?:\?.*)?$/
-            },
-            // endregion
-            // region json
-            {
-                exclude: (filePath:string):boolean => (
-                    configuration.module.preprocessor.json.exclude === null
-                ) ? false : evaluate(
-                    configuration.module.preprocessor.json.exclude, filePath),
-                loader: loader.preprocessor.json,
-                test: /\.json(?:\?.*)?$/
             },
             // endregion
             // region main html template
@@ -813,9 +787,65 @@ const webpackConfiguration:WebpackConfiguration = {
                     configuration.path.source.asset.cascadingStyleSheet
                 ].concat(configuration.module.locations.directoryPaths)),
                 loader: plugins.ExtractText.extract({
-                    fallbackLoader: loader.style,
-                    loader: `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.cascadingStyleSheet
+                    fallbackLoader: {
+                        loader: configuration.module.style.loader,
+                        options: configuration.module.style.configuration
+                    },
+                    loader: [
+                        {
+                            loader: configuration.module.cascadingStyleSheet
+                                .loader,
+                            options: configuration.module.cascadingStyleSheet
+                                .configuration
+                        },
+                        {
+                            loader: configuration.module.preprocessor
+                                .cascadingStyleSheet.loader,
+                            options: Tools.extendObject(true, {
+                                plugins: ():Array<Object> => [
+                                    postcssImport({
+                                        addDependencyTo: webpack,
+                                        root: configuration.path.context
+                                    }),
+                                    /*
+                                        NOTE: Checking path doesn't work if
+                                        fonts are referenced in libraries
+                                        provided in another location than the
+                                        project itself like the "node_modules"
+                                        folder.
+                                    */
+                                    postcssCSSnext({browsers: '> 0%'}),
+                                    postcssFontPath({checkPath: false}),
+                                    postcssURL({filter: '', maxSize: 0}),
+                                    postcssSprites({
+                                        filterBy: ():Promise<null> =>
+                                            new Promise((
+                                                resolve:Function,
+                                                reject:Function
+                                            ):Promise<null> => (
+                                                configuration.files.compose
+                                                    .image ? resolve : reject
+                                            )()),
+                                        hooks: {onSaveSpritesheet: (
+                                            image:Object
+                                        ):string => path.join(
+                                            image.spritePath, path.relative(
+                                                configuration.path.target.asset
+                                                    .image,
+                                                configuration.files.compose
+                                                    .image))},
+                                        stylesheetPath:
+                                            configuration.path.source.asset
+                                                .cascadingStyleSheet,
+                                        spritePath: configuration.path.source
+                                            .asset.image
+                                    })
+                                ]
+                            },
+                            configuration.module.preprocessor
+                                .cascadingStyleSheet.configuration)
+                        }
+                    ]
                 }),
                 test: /\.css(?:\?.*)?$/
             },
@@ -887,37 +917,11 @@ const webpackConfiguration:WebpackConfiguration = {
         ])
     },
     plugins: pluginInstances.concat(new webpack.LoaderOptionsPlugin({
-        // Let the "html-loader" access full html minifier processing
-        // configuration.
+        /*
+            Let the "html-loader" access full html minifier processing
+            configuration.
+        */
         html: configuration.module.optimizer.htmlMinifier,
-        postcss: ():Array<Object> => [
-            postcssImport({
-                addDependencyTo: webpack,
-                root: configuration.path.context
-            }),
-            /*
-                NOTE: Checking path doesn't work if fonts are referenced in
-                libraries provided in another location than the project itself
-                like the node_modules folder.
-            */
-            postcssCSSnext({browsers: '> 0%'}),
-            postcssFontPath({checkPath: false}),
-            postcssURL({filter: '', maxSize: 0}),
-            postcssSprites({
-                filterBy: ():Promise<null> => new Promise((
-                    resolve:Function, reject:Function
-                ):Promise<null> => (
-                    configuration.files.compose.image ? resolve : reject
-                )()),
-                hooks: {onSaveSpritesheet: (image:Object):string => path.join(
-                    image.spritePath, path.relative(
-                        configuration.path.target.asset.image,
-                        configuration.files.compose.image))},
-                stylesheetPath:
-                    configuration.path.source.asset.cascadingStyleSheet,
-                spritePath: configuration.path.source.asset.image
-            })
-        ],
         pug: configuration.module.preprocessor.html.configuration
     }))
 }
