@@ -649,9 +649,6 @@
             "comments": false
           }
         },
-        "performanceHints": {
-          "hints": false
-        },
         "preprocessor": {
           "cascadingStyleSheet": {
             "configuration": {},
@@ -821,6 +818,9 @@
             "__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"
           }
         ]
+      },
+      "performanceHints": {
+        "hints": false
       },
       "showConfiguration": {
         "__evaluate__": "self.debug"
