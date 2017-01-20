@@ -114,7 +114,6 @@ if (typeof configuration.library === 'object')
     ), configuration.library)
 if (
     'library' in specificConfiguration &&
-    // IgnoreTypeCheck
     specificConfiguration.library === true || (
         'library' in specificConfiguration &&
         specificConfiguration.library === undefined ||

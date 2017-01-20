@@ -75,7 +75,7 @@
     "eslint-plugin-jsdoc": "latest",
     "exports-loader": "latest",
     "extract-loader": "latest",
-    "extract-text-webpack-plugin": ">=2.0.0-beta.4",
+    "extract-text-webpack-plugin": "latest",
     "favicons-webpack-plugin": "latest",
     "file-loader": "latest",
     "flow-bin": "latest",
@@ -104,8 +104,8 @@
     "style-loader": "latest",
     "clientnode": "latest",
     "url-loader": "latest",
-    "webpack": ">=2.1.0-beta.27",
-    "webpack-dev-server": ">=2.1.0-beta.11",
+    "webpack": ">=2.2.0",
+    "webpack-dev-server": "latest",
     "webpack-load-plugins": "latest",
     "webpack-sources": "latest"
   },
@@ -482,7 +482,7 @@
           "weboptimizer/helper$": "weboptimizer/helper.compiled"
         },
         "cascadingStyleSheet": {
-          "configuration": "",
+          "configuration": {},
           "exclude": null,
           "loader": "css"
         },
@@ -649,10 +649,13 @@
             "comments": false
           }
         },
+        "performanceHints": {
+          "hints": false
+        },
         "preprocessor": {
           "cascadingStyleSheet": {
-            "configuration": "sourceMap=inline",
-            "loader": "postcss"
+            "configuration": {},
+            "loader": "postcss?sourceMap=inline"
           },
           "html": {
             "configuration": {
@@ -677,7 +680,7 @@
               }
             },
             "exclude": null,
-            "loader": "pug"
+            "loader": "pugLoader"
           },
           "javaScript": {
             "configuration": {
@@ -698,10 +701,6 @@
             },
             "exclude": null,
             "loader": "babel"
-          },
-          "json": {
-            "exclude": null,
-            "loader": "json"
           }
         },
         "provide": {},
@@ -921,7 +920,7 @@
       },
       "module": {
         "cascadingStyleSheet": {
-          "configuration": "?sourceMap"
+          "loader": "postcss?sourceMap"
         },
         "optimizer": {
           "htmlMinifier": {

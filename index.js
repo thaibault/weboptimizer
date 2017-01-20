@@ -390,7 +390,6 @@ const main = async ():Promise<any> => {
         }
         for (const closeEventName:string of Tools.closeEventNames)
             process.on(closeEventName, closeHandler)
-        // IgnoreTypeCheck
         if (require.main === module && (
             configuration.givenCommandLineArguments.length < 3 ||
             !possibleArguments.includes(configuration
@@ -415,7 +414,6 @@ const main = async ():Promise<any> => {
             console.error(error)
     }
 }
-// IgnoreTypeCheck
 if (require.main === module)
     main().catch((error:Error):void => {
         throw error
