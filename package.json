@@ -680,7 +680,7 @@
               }
             },
             "exclude": null,
-            "loader": "pugLoader"
+            "loader": "pug"
           },
           "javaScript": {
             "configuration": {
