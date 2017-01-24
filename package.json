@@ -75,7 +75,7 @@
     "eslint-plugin-jsdoc": "latest",
     "exports-loader": "latest",
     "extract-loader": "latest",
-    "extract-text-webpack-plugin": "latest",
+    "extract-text-webpack-plugin": "2.0.0-beta.5",
     "favicons-webpack-plugin": "latest",
     "file-loader": "latest",
     "flow-bin": "latest",
