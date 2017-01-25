@@ -786,12 +786,12 @@ const webpackConfiguration:WebpackConfiguration = {
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.cascadingStyleSheet
                 ].concat(configuration.module.locations.directoryPaths)),
-                loader: plugins.ExtractText.extract({
-                    fallbackLoader: {
+                use: plugins.ExtractText.extract({
+                    fallbackUse: [{
                         loader: configuration.module.style.loader,
                         options: configuration.module.style.configuration
-                    },
-                    loader: [
+                    }],
+                    use: [
                         {
                             loader: configuration.module.cascadingStyleSheet
                                 .loader,
@@ -802,11 +802,13 @@ const webpackConfiguration:WebpackConfiguration = {
                             loader: configuration.module.preprocessor
                                 .cascadingStyleSheet.loader,
                             options: Tools.extendObject(true, {
+                                ident: 'postcss',
                                 plugins: ():Array<Object> => [
                                     postcssImport({
                                         addDependencyTo: webpack,
                                         root: configuration.path.context
                                     }),
+                                    postcssCSSnext({browsers: '> 0%'}),
                                     /*
                                         NOTE: Checking path doesn't work if
                                         fonts are referenced in libraries
@@ -814,7 +816,6 @@ const webpackConfiguration:WebpackConfiguration = {
                                         project itself like the "node_modules"
                                         folder.
                                     */
-                                    postcssCSSnext({browsers: '> 0%'}),
                                     postcssFontPath({checkPath: false}),
                                     postcssURL({filter: '', maxSize: 0}),
                                     postcssSprites({

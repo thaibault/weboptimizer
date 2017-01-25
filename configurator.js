@@ -16,6 +16,7 @@
 // region imports
 import Tools from 'clientnode'
 import type {PlainObject} from 'clientnode'
+import ExtractText from 'extract-text-webpack-plugin'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -348,7 +349,8 @@ resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader =
 resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath$ =
     Helper.stripLoader(resolvedConfiguration.files.defaultHTML.template)
 // endregion
-// region apply webpack html plugin workaround
+// region apply webpack plugin workarounds
+// / region html
 /*
     NOTE: Provides a workaround to handle a bug with chained loader
     configurations.
@@ -373,6 +375,14 @@ for (
         htmlConfiguration.template = newTemplateString
     }
 }
+// / endregion
+// / region extract text
+ExtractText.extract = function(options:Object):Array<Object> {
+    return [this.loader({
+        omit: Boolean(options.fallbackUse), remove: true
+    })].concat(options.fallbackUse, options.use)
+}
+// / endregion
 // endregion
 export default resolvedConfiguration
 // region vim modline
