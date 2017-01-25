@@ -841,8 +841,7 @@ const webpackConfiguration:WebpackConfiguration = {
                                             .asset.image
                                     })
                                 ]
-                            },
-                            configuration.module.preprocessor
+                            }, configuration.module.preprocessor
                                 .cascadingStyleSheet.configuration)
                         }
                     ]

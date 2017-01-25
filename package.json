@@ -919,9 +919,6 @@
         "otherMaximumFileSizeLimitInByte": 1
       },
       "module": {
-        "cascadingStyleSheet": {
-          "loader": "postcss?sourceMap"
-        },
         "optimizer": {
           "htmlMinifier": {
             "collapseWhitespace": false,
@@ -936,6 +933,9 @@
           "babili": null
         },
         "preprocessor": {
+          "cascadingStyleSheet": {
+            "loader": "postcss?sourceMap"
+          },
           "html": {
             "configuration": {
               "compiler": {
