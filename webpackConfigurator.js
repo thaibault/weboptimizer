@@ -857,7 +857,7 @@ const webpackConfiguration:WebpackConfiguration = {
                     configuration.module.optimizer.font.eot.exclude === null
                 ) ? rejectFilePathInDependencies(filePath) : evaluate(
                     configuration.module.optimizer.font.eot.exclude, filePath),
-                include: configuration.path.source.asset.font,
+                include: configuration.path.base,
                 loader: loader.optimizer.font.eot,
                 test: /\.eot(?:\?.*)?$/
             }, {
@@ -866,7 +866,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 ) ? rejectFilePathInDependencies(filePath) : evaluate(
                     configuration.module.optimizer.font.woff.exclude, filePath
                 ),
-                include: configuration.path.source.asset.font,
+                include: configuration.path.base,
                 loader: loader.optimizer.font.woff,
                 test: /\.woff2?(?:\?.*)?$/
             }, {
@@ -874,7 +874,7 @@ const webpackConfiguration:WebpackConfiguration = {
                     configuration.module.optimizer.font.ttf.exclude === null
                 ) ? rejectFilePathInDependencies(filePath) : evaluate(
                     configuration.module.optimizer.font.ttf.exclude, filePath),
-                include: configuration.path.source.asset.font,
+                include: configuration.path.base,
                 loader: loader.optimizer.font.ttf,
                 test: /\.ttf(?:\?.*)?$/
             }, {
@@ -882,7 +882,7 @@ const webpackConfiguration:WebpackConfiguration = {
                     configuration.module.optimizer.font.svg.exclude === null
                 ) ? rejectFilePathInDependencies(filePath) : evaluate(
                     configuration.module.optimizer.font.svg.exclude, filePath),
-                include: configuration.path.source.asset.font,
+                include: configuration.path.base,
                 loader: loader.optimizer.font.svg,
                 test: /\.svg(?:\?.*)?$/
             },
