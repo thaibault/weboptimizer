@@ -855,7 +855,7 @@ const webpackConfiguration:WebpackConfiguration = {
             {
                 exclude: (filePath:string):boolean => (
                     configuration.module.optimizer.font.eot.exclude === null
-                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                ) ? false : evaluate(
                     configuration.module.optimizer.font.eot.exclude, filePath),
                 include: configuration.path.base,
                 loader: loader.optimizer.font.eot,
@@ -863,7 +863,7 @@ const webpackConfiguration:WebpackConfiguration = {
             }, {
                 exclude: (filePath:string):boolean => (
                     configuration.module.optimizer.font.woff.exclude === null
-                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                ) ? false : evaluate(
                     configuration.module.optimizer.font.woff.exclude, filePath
                 ),
                 include: configuration.path.base,
@@ -872,7 +872,7 @@ const webpackConfiguration:WebpackConfiguration = {
             }, {
                 exclude: (filePath:string):boolean => (
                     configuration.module.optimizer.font.ttf.exclude === null
-                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                ) ? false : evaluate(
                     configuration.module.optimizer.font.ttf.exclude, filePath),
                 include: configuration.path.base,
                 loader: loader.optimizer.font.ttf,
@@ -880,7 +880,7 @@ const webpackConfiguration:WebpackConfiguration = {
             }, {
                 exclude: (filePath:string):boolean => (
                     configuration.module.optimizer.font.svg.exclude === null
-                ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                ) ? false : evaluate(
                     configuration.module.optimizer.font.svg.exclude, filePath),
                 include: configuration.path.base,
                 loader: loader.optimizer.font.svg,
