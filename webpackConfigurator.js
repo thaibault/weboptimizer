@@ -103,14 +103,10 @@ for (const source:string in configuration.module.replacements.normal)
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
-        if (Tools.isFileSync(Helper.stripLoader(htmlConfiguration.template))) {
-            if (
-                htmlConfiguration.template ===
-                configuration.files.defaultHTML.template
-            )
-                htmlConfiguration.template = Helper.stripLoader(
-                    htmlConfiguration.template)
-            pluginInstances.push(new plugins.HTML(htmlConfiguration))
+        if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
+            pluginInstances.push(new plugins.HTML(Tools.extendObject(
+                {}, htmlConfiguration, {
+                    template: htmlConfiguration.template.request})))
             htmlAvailable = true
         }
 // // endregion
@@ -613,7 +609,7 @@ const loader:Object = {
                 configuration.files.html.concat(
                     configuration.files.defaultHTML
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
-                    Helper.stripLoader(htmlConfiguration.template))
+                    htmlConfiguration.template.filePath)
             ).includes(filePath) || ((
                 configuration.module.preprocessor.html.exclude === null
             ) ? true : evaluate(
@@ -641,7 +637,7 @@ const loader:Object = {
                 configuration.files.html.concat(
                     configuration.files.defaultHTML
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
-                    Helper.stripLoader(htmlConfiguration.template))
+                    htmlConfiguration.template.filePath)
             ).includes(filePath) || ((
                 configuration.module.html.exclude === null
             ) ? true : evaluate(
@@ -681,10 +677,8 @@ const loader:Object = {
             }],
             use: [
                 {
-                    loader: configuration.module.cascadingStyleSheet
-                        .loader,
-                    options: configuration.module.cascadingStyleSheet
-                        .options
+                    loader: configuration.module.cascadingStyleSheet.loader,
+                    options: configuration.module.cascadingStyleSheet.options
                 },
                 {
                     loader: configuration.module.preprocessor
@@ -698,40 +692,36 @@ const loader:Object = {
                             }),
                             postcssCSSnext({browsers: '> 0%'}),
                             /*
-                                NOTE: Checking path doesn't work if
-                                fonts are referenced in libraries
-                                provided in another location than the
-                                project itself like the "node_modules"
-                                folder.
+                                NOTE: Checking path doesn't work if fonts are
+                                referenced in libraries provided in another
+                                location than the project itself like the
+                                "node_modules" folder.
                             */
                             postcssFontPath({checkPath: false}),
                             postcssURL({filter: '', maxSize: 0}),
                             postcssSprites({
-                                filterBy: ():Promise<null> =>
-                                    new Promise((
-                                        resolve:Function,
-                                        reject:Function
-                                    ):Promise<null> => (
-                                        configuration.files.compose
-                                            .image ? resolve : reject
-                                    )()),
+                                filterBy: ():Promise<null> => new Promise((
+                                    resolve:Function,
+                                    reject:Function
+                                ):Promise<null> => (
+                                    configuration.files.compose.image ?
+                                    resolve : reject
+                                )()),
                                 hooks: {onSaveSpritesheet: (
                                     image:Object
                                 ):string => path.join(
                                     image.spritePath, path.relative(
-                                        configuration.path.target.asset
-                                            .image,
-                                        configuration.files.compose
-                                            .image))},
+                                        configuration.path.target.asset.image,
+                                        configuration.files.compose.image))},
                                 stylesheetPath:
                                     configuration.path.source.asset
                                         .cascadingStyleSheet,
-                                spritePath: configuration.path.source
-                                    .asset.image
+                                spritePath: configuration.path.source.asset
+                                   .image
                             })
                         ]
-                    }, configuration.module.preprocessor
-                        .cascadingStyleSheet.options)
+                    }, configuration.module.preprocessor.cascadingStyleSheet
+                        .options)
                 }
             ]
         })
@@ -908,7 +898,8 @@ const webpackConfiguration:WebpackConfiguration = {
             loader.script,
             loader.html.main, loader.html.pug, loader.html.html,
             loader.style,
-            loader.font.eot, loader.font.svg, loader.font.ttf, loader.font.woff
+            loader.font.eot, loader.font.svg, loader.font.ttf,
+            loader.font.woff,
             loader.image,
             loader.data
         ])

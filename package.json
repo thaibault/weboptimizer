@@ -409,7 +409,7 @@
           },
           "template": {
             "filePath": {
-              "__evaluate__": "${tools.isFileSync(path.resolve(self.path.source.base, 'index.pug')) ? path.resolve(self.path.source.base, 'index.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+              "__evaluate__": "`${tools.isFileSync(path.resolve(self.path.source.base, 'index.pug')) ? path.resolve(self.path.source.base, 'index.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
             },
             "use": [
               {
@@ -875,7 +875,7 @@
             "inject": "head",
             "template": {
               "filePath": {
-                "__evaluate__": "${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}"
+                "__evaluate__": "`${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
               }
             }
           },
@@ -1014,7 +1014,7 @@
           "inject": "head",
           "template": {
             "filePath": {
-              "__evaluate__": "${tools.isFileSync(path.resolve(self.path.source.base, 'playground.pug')) ? path.resolve(self.path.source.base, 'playground.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+              "__evaluate__": "`${tools.isFileSync(path.resolve(self.path.source.base, 'playground.pug')) ? path.resolve(self.path.source.base, 'playground.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
             }
           }
         },
