@@ -19,8 +19,8 @@ import type {BrowserAPI} from './type'
 // endregion
 // region declaration
 // NOTE: Produces a babel error yet.
-//declare var NAME:string
-//declare var TARGET_TECHNOLOGY:string
+// declare var NAME:string
+// declare var TARGET_TECHNOLOGY:string
 declare var window:Window
 // endregion
 // region variables
