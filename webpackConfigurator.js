@@ -576,44 +576,7 @@ for (
         ))(configuration, __dirname, __filename))))
 // // endregion
 // / endregion
-// / region loader
-// TODO migrate to loader to remove legacy config and loader chaning styles..
-const loader:{
-    optimizer:{
-        image:string;
-        font:{
-            eot:string;
-            woff:string;
-            ttf:string;
-            svg:string
-        };
-        data:string;
-    };
-} = {
-    optimizer: {
-        image: `${configuration.module.optimizer.image.loader}?` +
-            Tools.convertCircularObjectToJSON(
-                configuration.module.optimizer.image.file),
-        font: {
-            eot: `${configuration.module.optimizer.font.eot.loader}?` +
-                Tools.convertCircularObjectToJSON(
-                    configuration.module.optimizer.font.eot.configuration),
-            svg: `${configuration.module.optimizer.font.svg.loader}?` +
-                Tools.convertCircularObjectToJSON(
-                    configuration.module.optimizer.font.svg.configuration),
-            ttf: `${configuration.module.optimizer.font.ttf.loader}?` +
-                Tools.convertCircularObjectToJSON(
-                    configuration.module.optimizer.font.ttf.configuration),
-            woff: `${configuration.module.optimizer.font.woff.loader}?` +
-                Tools.convertCircularObjectToJSON(
-                    configuration.module.optimizer.font.woff.configuration)
-        },
-        data: `${configuration.module.optimizer.data.loader}?` +
-            Tools.convertCircularObjectToJSON(
-                configuration.module.optimizer.data.configuration)
-    }
-}
-// // region helper
+// / region loader helper
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
     return Helper.isFilePathInLocation(
@@ -626,10 +589,9 @@ const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
             !configuration.path.context.startsWith(filePath)))
 }
 const evaluate:Function = (code:string, filePath:string):any => (new Function(
-    'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
+    'configuration', 'filePath', 'rejectFilePathInDependencies',
     `return ${code}`
-))(configuration, filePath, loader, rejectFilePathInDependencies)
-// // endregion
+))(configuration, filePath, rejectFilePathInDependencies)
 // / endregion
 // endregion
 // region configuration
@@ -690,10 +652,14 @@ const webpackConfiguration:WebpackConfiguration = {
                 include: loaderConfiguration.include && evaluate(
                     loaderConfiguration.include, configuration.path.context
                 ) || configuration.path.source.base,
-                loader: evaluate(
-                    loaderConfiguration.loader, configuration.path.context),
                 test: new RegExp(evaluate(
-                    loaderConfiguration.test, configuration.path.context))
+                    loaderConfiguration.test, configuration.path.context)),
+                use: [{
+                    loader: evaluate(
+                        loaderConfiguration.loader, configuration.path.context
+                    ),
+                    options: loaderConfiguration.configuration || {}
+                }]
             }
         }).concat([
             // Convert to compatible native web types.
@@ -708,22 +674,30 @@ const webpackConfiguration:WebpackConfiguration = {
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.javaScript
                 ].concat(configuration.module.locations.directoryPaths)),
-                loader: configuration.module.preprocessor.javaScript.loader,
-                options: configuration.module.preprocessor.javaScript
-                    .configuration,
-                test: /\.js(?:\?.*)?$/
+                test: /\.js(?:\?.*)?$/,
+                use: [{
+                    loader: configuration.module.preprocessor.javaScript
+                        .loader,
+                    options: configuration.module.preprocessor.javaScript
+                        .configuration
+                }]
             },
             // endregion
             // region main html template
             // NOTE: This is only for the main entry template.
             {
-                loader: configuration.files.defaultHTML.template.substring(
-                    0, configuration.files.defaultHTML.template.lastIndexOf(
-                        '!')),
                 test: new RegExp('^' + Tools.stringEscapeRegularExpressions(
                     Helper.stripLoader(
                         configuration.files.defaultHTML.template)
-                ) + '(?:\\?.*)?$')
+                ) + '(?:\\?.*)?$'),
+                use: {
+                    loader: configuration.files.defaultHTML.template.substring(
+                        0,
+                        configuration.files.defaultHTML.template.lastIndexOf(
+                            '!')),
+                    options: configuration.files.defaultHTML.configuration ||
+                        {}
+                }
             },
             // endregion
             // region html templates
@@ -738,6 +712,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 ) ? true : evaluate(
                     configuration.module.preprocessor.html.exclude, filePath)),
                 include: configuration.path.source.asset.template,
+                test: /\.pug(?:\?.*)?$/,
                 use: [
                     {loader: 'file?name=' + path.relative(
                         configuration.path.target.asset.base,
@@ -753,8 +728,7 @@ const webpackConfiguration:WebpackConfiguration = {
                         options: configuration.module.preprocessor.html
                             .configuration
                     }
-                ],
-                test: /\.pug(?:\?.*)?$/
+                ]
             },
             {
                 exclude: (filePath:string):boolean => Helper.normalizePaths(
@@ -768,6 +742,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 ) ? true : evaluate(
                     configuration.module.html.exclude, filePath)),
                 include: configuration.path.source.asset.template,
+                test: /\.html(?:\?.*)?$/,
                 use: [
                     {loader: 'file?name=' + path.relative(
                         configuration.path.target.base,
@@ -778,8 +753,7 @@ const webpackConfiguration:WebpackConfiguration = {
                         loader: configuration.module.html.loader,
                         options: configuration.module.html.configuration
                     }
-                ],
-                test: /\.html(?:\?.*)?$/
+                ]
             },
             // endregion
             // Load dependencies.
@@ -793,6 +767,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 include: Helper.normalizePaths([
                     configuration.path.source.asset.cascadingStyleSheet
                 ].concat(configuration.module.locations.directoryPaths)),
+                test: /\.css(?:\?.*)?$/,
                 use: plugins.ExtractText.extract({
                     fallbackUse: [{
                         loader: configuration.module.style.loader,
@@ -853,8 +828,7 @@ const webpackConfiguration:WebpackConfiguration = {
                                 .cascadingStyleSheet.configuration)
                         }
                     ]
-                }),
-                test: /\.css(?:\?.*)?$/
+                })
             },
             // endregion
             // Optimize loaded assets.
@@ -865,8 +839,12 @@ const webpackConfiguration:WebpackConfiguration = {
                 ) ? false : evaluate(
                     configuration.module.optimizer.font.eot.exclude, filePath),
                 include: configuration.path.base,
-                loader: loader.optimizer.font.eot,
-                test: /\.eot(?:\?.*)?$/
+                test: /\.eot(?:\?.*)?$/,
+                use: [{
+                    loader: configuration.module.optimizer.font.eot.loader,
+                    options: configuration.module.optimizer.font.eot
+                        .configuration
+                }]
             }, {
                 exclude: (filePath:string):boolean => (
                     configuration.module.optimizer.font.woff.exclude === null
@@ -874,24 +852,36 @@ const webpackConfiguration:WebpackConfiguration = {
                     configuration.module.optimizer.font.woff.exclude, filePath
                 ),
                 include: configuration.path.base,
-                loader: loader.optimizer.font.woff,
-                test: /\.woff2?(?:\?.*)?$/
+                test: /\.woff2?(?:\?.*)?$/,
+                use: [{
+                    loader: configuration.module.optimizer.font.woff.loader,
+                    options: configuration.module.optimizer.font.woff
+                        .configuration
+                }]
             }, {
                 exclude: (filePath:string):boolean => (
                     configuration.module.optimizer.font.ttf.exclude === null
                 ) ? false : evaluate(
                     configuration.module.optimizer.font.ttf.exclude, filePath),
                 include: configuration.path.base,
-                loader: loader.optimizer.font.ttf,
-                test: /\.ttf(?:\?.*)?$/
+                test: /\.ttf(?:\?.*)?$/,
+                use: [{
+                    loader: configuration.module.optimizer.font.ttf.loader,
+                    options: configuration.module.optimizer.font.ttf
+                        .configuration
+                }]
             }, {
                 exclude: (filePath:string):boolean => (
                     configuration.module.optimizer.font.svg.exclude === null
                 ) ? false : evaluate(
                     configuration.module.optimizer.font.svg.exclude, filePath),
                 include: configuration.path.base,
-                loader: loader.optimizer.font.svg,
-                test: /\.svg(?:\?.*)?$/
+                test: /\.svg(?:\?.*)?$/,
+                use: [{
+                    loader: configuration.module.optimizer.font.svg.loader,
+                    options: configuration.module.optimizer.font.svg
+                        .configuration
+                }]
             },
             // endregion
             // region image
@@ -902,8 +892,11 @@ const webpackConfiguration:WebpackConfiguration = {
                     configuration.module.optimizer.image.exclude, filePath
                 ) : rejectFilePathInDependencies(filePath),
                 include: configuration.path.source.asset.image,
-                loader: loader.optimizer.image,
-                test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/
+                test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/,
+                use: {
+                    loader: configuration.module.optimizer.image.loader,
+                    options: configuration.module.optimizer.image.file
+                }
             },
             // endregion
             // region data
@@ -917,8 +910,11 @@ const webpackConfiguration:WebpackConfiguration = {
                         configuration.module.optimizer.data.exclude, filePath)
                     ),
                 include: configuration.path.source.asset.data,
-                loader: loader.optimizer.data,
-                test: /.+/
+                test: /.+/,
+                use: [{
+                    loader: configuration.module.optimizer.data.loader,
+                    options: configuration.module.optimizer.data.configuration
+                }]
             }
             // endregion
         ])
