@@ -612,6 +612,7 @@ const loader:{
             Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.data.configuration)
     }
+}
 // // region helper
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
