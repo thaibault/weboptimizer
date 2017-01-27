@@ -579,7 +579,6 @@ for (
 // / region loader
 // TODO migrate to loader to remove legacy config and loader chaning styles..
 const loader:{
-    html:string;
     optimizer:{
         image:string;
         font:{
@@ -590,11 +589,7 @@ const loader:{
         };
         data:string;
     };
-    preprocessor:{html:string;};
 } = {
-    html: `${configuration.module.html.loader}?` +
-        Tools.convertCircularObjectToJSON(
-            configuration.module.html.configuration),
     optimizer: {
         image: `${configuration.module.optimizer.image.loader}?` +
             Tools.convertCircularObjectToJSON(
@@ -616,13 +611,7 @@ const loader:{
         data: `${configuration.module.optimizer.data.loader}?` +
             Tools.convertCircularObjectToJSON(
                 configuration.module.optimizer.data.configuration)
-    },
-    preprocessor: {
-        html: `${configuration.module.preprocessor.html.loader}?` +
-            Tools.convertCircularObjectToJSON(
-                configuration.module.preprocessor.html.configuration)
     }
-}
 // // region helper
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
@@ -748,11 +737,22 @@ const webpackConfiguration:WebpackConfiguration = {
                 ) ? true : evaluate(
                     configuration.module.preprocessor.html.exclude, filePath)),
                 include: configuration.path.source.asset.template,
-                loader: 'file?name=' + path.relative(
-                    configuration.path.target.asset.base,
-                    configuration.path.target.asset.template
-                ) + `[name].html?${configuration.hashAlgorithm}=[hash]!` +
-                `extract!${loader.html}!${loader.preprocessor.html}`,
+                use: [
+                    {loader: 'file?name=' + path.relative(
+                        configuration.path.target.asset.base,
+                        configuration.path.target.asset.template
+                    ) + `[name].html?${configuration.hashAlgorithm}=[hash]`},
+                    {loader: 'extract'},
+                    {
+                        loader: configuration.module.html.loader,
+                        options: configuration.module.html.configuration
+                    },
+                    {
+                        loader: configuration.module.preprocessor.html.loader,
+                        options: configuration.module.preprocessor.html
+                            .configuration
+                    }
+                ],
                 test: /\.pug(?:\?.*)?$/
             },
             {
@@ -767,11 +767,17 @@ const webpackConfiguration:WebpackConfiguration = {
                 ) ? true : evaluate(
                     configuration.module.html.exclude, filePath)),
                 include: configuration.path.source.asset.template,
-                loader: 'file?name=' + path.relative(
-                    configuration.path.target.base,
-                    configuration.path.target.asset.template
-                ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
-                `extract!${loader.html}`,
+                use: [
+                    {loader: 'file?name=' + path.relative(
+                        configuration.path.target.base,
+                        configuration.path.target.asset.template
+                    ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]`},
+                    {loader: 'extract'},
+                    {
+                        loader: configuration.module.html.loader,
+                        options: configuration.module.html.configuration
+                    }
+                ],
                 test: /\.html(?:\?.*)?$/
             },
             // endregion
