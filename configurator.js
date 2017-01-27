@@ -343,11 +343,26 @@ for (
 // region adding special aliases
 // NOTE: This alias couldn't be set in the "package.json" file since this would
 // result in an endless loop.
-resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader =
-    resolvedConfiguration.files.defaultHTML.template.substring(
-        0, resolvedConfiguration.files.defaultHTML.template.lastIndexOf('!'))
+resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader = ''
+for (
+    const loader:PlainObject of
+    resolvedConfiguration.files.defaultHTML.template.use
+) {
+    if (
+        resolvedConfiguration.loader.aliases
+        .webOptimizerDefaultTemplateFileLoader
+    )
+        resolvedConfiguration.loader.aliases
+            .webOptimizerDefaultTemplateFileLoader += '!'
+    resolvedConfiguration.loader.aliases
+        .webOptimizerDefaultTemplateFileLoader += loader.loader
+    if (loader.options)
+        resolvedConfiguration.loader.aliases
+            .webOptimizerDefaultTemplateFileLoader += '?' +
+                Tools.convertCircularObjectToJSON(loader.options)
+}
 resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath$ =
-    Helper.stripLoader(resolvedConfiguration.files.defaultHTML.template)
+    resolvedConfiguration.files.defaultHTML.template.filePath
 // endregion
 // region apply webpack plugin workarounds
 // / region html
@@ -360,19 +375,22 @@ for (
 ) {
     Tools.extendObject(
         true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)
+    htmlConfiguration.template.request = htmlConfiguration.template.filePath
     if (
-        typeof htmlConfiguration.template === 'string' &&
-        htmlConfiguration.template.includes('!') &&
-        htmlConfiguration.template !==
-            resolvedConfiguration.files.defaultHTML.template
+        htmlConfiguration.template.filePath !==
+            resolvedConfiguration.files.defaultHTML.template.filePath &&
+        htmlConfiguration.template.options
     ) {
-        const newTemplateString:Object = new String(htmlConfiguration.template)
-        newTemplateString.replace = ((string:string):Function => (
+        const requestString:Object = new String(
+            htmlConfiguration.template.request +
+            Tools.convertCircularObjectToJSON(
+                htmlConfiguration.template.options))
+        requestString.replace = ((string:string):Function => (
             _search:RegExp|string, _replacement:string|(
                 ...matches:Array<string>
             ) => string
-        ):string => string)(htmlConfiguration.template)
-        htmlConfiguration.template = newTemplateString
+        ):string => string)(htmlConfiguration.template.filePath)
+        htmlConfiguration.template.request = requestString
     }
 }
 // / endregion

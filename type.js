@@ -109,8 +109,12 @@ export type DefaultConfiguration = {
 }
 export type ExportFormat = 'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
 export type HTMLConfiguration = {
-    template:string|String;
-    filename:string
+    filename:string;
+    template:{
+        filePath:string;
+        request:string|String;
+        use:Array<{loader:string;options:Object}>;
+    };
 }
 export type MetaConfiguration = {
     default:DefaultConfiguration;
@@ -131,9 +135,10 @@ export type Extensions = {
     module:Array<string>;
 }
 export type LoaderConfiguration = {
-    configuration:string;
     exclude:string;
+    include:string;
     loader:string;
+    options:Object;
 }
 export type ResolvedConfiguration = {
     assetPattern:{[key:string]:{
@@ -234,7 +239,7 @@ export type ResolvedConfiguration = {
         preprocessor:{
             cascadingStyleSheet:{
                 loader:string;
-                configuration:string;
+                options:Object;
             };
             html:LoaderConfiguration;
             javaScript:LoaderConfiguration;
