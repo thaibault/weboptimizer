@@ -577,6 +577,254 @@ for (
 // // endregion
 // / endregion
 // / region loader helper
+const loader:Object = {
+    // Convert to compatible native web types.
+    // region script
+    script: {
+        exclude: (filePath:string):boolean => (
+            configuration.module.preprocessor.javaScript
+                .exclude === null
+        ) ? rejectFilePathInDependencies(filePath) : evaluate(
+            configuration.module.preprocessor.javaScript.exclude,
+            filePath),
+        include: Helper.normalizePaths([
+            configuration.path.source.asset.javaScript
+        ].concat(configuration.module.locations.directoryPaths)),
+        test: /\.js(?:\?.*)?$/,
+        use: [{
+            loader: configuration.module.preprocessor.javaScript
+                .loader,
+            options: configuration.module.preprocessor.javaScript
+                .options
+        }]
+    },
+    // endregion
+    // region html template
+    html: {
+        // NOTE: This is only for the main entry template.
+        main: {
+            test: new RegExp('^' + Tools.stringEscapeRegularExpressions(
+                configuration.files.defaultHTML.template.filePath
+            ) + '(?:\\?.*)?$'),
+            use: configuration.files.defaultHTML.template.use
+        },
+        pug: {
+            exclude: (filePath:string):boolean => Helper.normalizePaths(
+                configuration.files.html.concat(
+                    configuration.files.defaultHTML
+                ).map((htmlConfiguration:HTMLConfiguration):string =>
+                    Helper.stripLoader(htmlConfiguration.template))
+            ).includes(filePath) || ((
+                configuration.module.preprocessor.html.exclude === null
+            ) ? true : evaluate(
+                configuration.module.preprocessor.html.exclude, filePath)),
+            include: configuration.path.source.asset.template,
+            test: /\.pug(?:\?.*)?$/,
+            use: [
+                {loader: 'file?name=' + path.relative(
+                    configuration.path.target.asset.base,
+                    configuration.path.target.asset.template
+                ) + `[name].html?${configuration.hashAlgorithm}=[hash]`},
+                {loader: 'extract'},
+                {
+                    loader: configuration.module.html.loader,
+                    options: configuration.module.html.options
+                },
+                {
+                    loader: configuration.module.preprocessor.html.loader,
+                    options: configuration.module.preprocessor.html.options
+                }
+            ]
+        },
+        html: {
+            exclude: (filePath:string):boolean => Helper.normalizePaths(
+                configuration.files.html.concat(
+                    configuration.files.defaultHTML
+                ).map((htmlConfiguration:HTMLConfiguration):string =>
+                    Helper.stripLoader(htmlConfiguration.template))
+            ).includes(filePath) || ((
+                configuration.module.html.exclude === null
+            ) ? true : evaluate(
+                configuration.module.html.exclude, filePath)),
+            include: configuration.path.source.asset.template,
+            test: /\.html(?:\?.*)?$/,
+            use: [
+                {loader: 'file?name=' + path.relative(
+                    configuration.path.target.base,
+                    configuration.path.target.asset.template
+                ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]`},
+                {loader: 'extract'},
+                {
+                    loader: configuration.module.html.loader,
+                    options: configuration.module.html.options
+                }
+            ]
+        }
+    },
+    // endregion
+    // Load dependencies.
+    // region style
+    style: {
+        exclude: (filePath:string):boolean => (
+            configuration.module.cascadingStyleSheet.exclude === null
+        ) ? rejectFilePathInDependencies(filePath) : evaluate(
+            configuration.module.cascadingStyleSheet.exclude, filePath
+        ),
+        include: Helper.normalizePaths([
+            configuration.path.source.asset.cascadingStyleSheet
+        ].concat(configuration.module.locations.directoryPaths)),
+        test: /\.css(?:\?.*)?$/,
+        use: plugins.ExtractText.extract({
+            fallbackUse: [{
+                loader: configuration.module.style.loader,
+                options: configuration.module.style.options
+            }],
+            use: [
+                {
+                    loader: configuration.module.cascadingStyleSheet
+                        .loader,
+                    options: configuration.module.cascadingStyleSheet
+                        .options
+                },
+                {
+                    loader: configuration.module.preprocessor
+                        .cascadingStyleSheet.loader,
+                    options: Tools.extendObject(true, {
+                        ident: 'postcss',
+                        plugins: ():Array<Object> => [
+                            postcssImport({
+                                addDependencyTo: webpack,
+                                root: configuration.path.context
+                            }),
+                            postcssCSSnext({browsers: '> 0%'}),
+                            /*
+                                NOTE: Checking path doesn't work if
+                                fonts are referenced in libraries
+                                provided in another location than the
+                                project itself like the "node_modules"
+                                folder.
+                            */
+                            postcssFontPath({checkPath: false}),
+                            postcssURL({filter: '', maxSize: 0}),
+                            postcssSprites({
+                                filterBy: ():Promise<null> =>
+                                    new Promise((
+                                        resolve:Function,
+                                        reject:Function
+                                    ):Promise<null> => (
+                                        configuration.files.compose
+                                            .image ? resolve : reject
+                                    )()),
+                                hooks: {onSaveSpritesheet: (
+                                    image:Object
+                                ):string => path.join(
+                                    image.spritePath, path.relative(
+                                        configuration.path.target.asset
+                                            .image,
+                                        configuration.files.compose
+                                            .image))},
+                                stylesheetPath:
+                                    configuration.path.source.asset
+                                        .cascadingStyleSheet,
+                                spritePath: configuration.path.source
+                                    .asset.image
+                            })
+                        ]
+                    }, configuration.module.preprocessor
+                        .cascadingStyleSheet.options)
+                }
+            ]
+        })
+    },
+    // endregion
+    // Optimize loaded assets.
+    // region font
+    font: {
+        eot: {
+            exclude: (filePath:string):boolean => (
+                configuration.module.optimizer.font.eot.exclude === null
+            ) ? false : evaluate(
+                configuration.module.optimizer.font.eot.exclude, filePath),
+            include: configuration.path.base,
+            test: /\.eot(?:\?.*)?$/,
+            use: [{
+                loader: configuration.module.optimizer.font.eot.loader,
+                options: configuration.module.optimizer.font.eot.options
+            }]
+        },
+        svg: {
+            exclude: (filePath:string):boolean => (
+                configuration.module.optimizer.font.svg.exclude === null
+            ) ? false : evaluate(
+                configuration.module.optimizer.font.svg.exclude, filePath),
+            include: configuration.path.base,
+            test: /\.svg(?:\?.*)?$/,
+            use: [{
+                loader: configuration.module.optimizer.font.svg.loader,
+                options: configuration.module.optimizer.font.svg.options
+            }]
+        },
+        ttf: {
+            exclude: (filePath:string):boolean => (
+                configuration.module.optimizer.font.ttf.exclude === null
+            ) ? false : evaluate(
+                configuration.module.optimizer.font.ttf.exclude, filePath),
+            include: configuration.path.base,
+            test: /\.ttf(?:\?.*)?$/,
+            use: [{
+                loader: configuration.module.optimizer.font.ttf.loader,
+                options: configuration.module.optimizer.font.ttf.options
+            }]
+        },
+        woff: {
+            exclude: (filePath:string):boolean => (
+                configuration.module.optimizer.font.woff.exclude === null
+            ) ? false : evaluate(
+                configuration.module.optimizer.font.woff.exclude, filePath
+            ),
+            include: configuration.path.base,
+            test: /\.woff2?(?:\?.*)?$/,
+            use: [{
+                loader: configuration.module.optimizer.font.woff.loader,
+                options: configuration.module.optimizer.font.woff.options
+            }]
+        }
+    },
+    // endregion
+    // region image
+    image: {
+        exclude: (filePath:string):boolean => (
+            configuration.module.optimizer.image.exclude === null
+        ) ? evaluate(
+            configuration.module.optimizer.image.exclude, filePath
+        ) : rejectFilePathInDependencies(filePath),
+        include: configuration.path.source.asset.image,
+        test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/,
+        use: {
+            loader: configuration.module.optimizer.image.loader,
+            options: configuration.module.optimizer.image.file
+        }
+    },
+    // endregion
+    // region data
+    data: {
+        exclude: (filePath:string):boolean =>
+            configuration.extensions.file.internal.includes(
+                path.extname(Helper.stripLoader(filePath))
+            ) || ((
+                configuration.module.optimizer.data.exclude === null
+            ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                configuration.module.optimizer.data.exclude, filePath)
+            ),
+        include: configuration.path.source.asset.data,
+        test: /.+/,
+        use: [{
+            loader: configuration.module.optimizer.data.loader,
+            options: configuration.module.optimizer.data.options
+        }]
+    }
+    // endregion
+}
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
     return Helper.isFilePathInLocation(
@@ -589,9 +837,9 @@ const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
             !configuration.path.context.startsWith(filePath)))
 }
 const evaluate:Function = (code:string, filePath:string):any => (new Function(
-    'configuration', 'filePath', 'rejectFilePathInDependencies',
+    'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
     `return ${code}`
-))(configuration, filePath, rejectFilePathInDependencies)
+))(configuration, filePath, loader, rejectFilePathInDependencies)
 // / endregion
 // endregion
 // region configuration
@@ -654,269 +902,15 @@ const webpackConfiguration:WebpackConfiguration = {
                 ) || configuration.path.source.base,
                 test: new RegExp(evaluate(
                     loaderConfiguration.test, configuration.path.context)),
-                use: [{
-                    loader: evaluate(
-                        loaderConfiguration.loader, configuration.path.context
-                    ),
-                    options: loaderConfiguration.configuration || {}
-                }]
+                use: loaderConfiguration.use
             }
         }).concat([
-            // Convert to compatible native web types.
-            // region script
-            {
-                exclude: (filePath:string):boolean => (
-                    configuration.module.preprocessor.javaScript
-                        .exclude === null
-                ) ? rejectFilePathInDependencies(filePath) : evaluate(
-                    configuration.module.preprocessor.javaScript.exclude,
-                    filePath),
-                include: Helper.normalizePaths([
-                    configuration.path.source.asset.javaScript
-                ].concat(configuration.module.locations.directoryPaths)),
-                test: /\.js(?:\?.*)?$/,
-                use: [{
-                    loader: configuration.module.preprocessor.javaScript
-                        .loader,
-                    options: configuration.module.preprocessor.javaScript
-                        .configuration
-                }]
-            },
-            // endregion
-            // region main html template
-            // NOTE: This is only for the main entry template.
-            {
-                test: new RegExp('^' + Tools.stringEscapeRegularExpressions(
-                    Helper.stripLoader(
-                        configuration.files.defaultHTML.template)
-                ) + '(?:\\?.*)?$'),
-                use: {
-                    loader: configuration.files.defaultHTML.template.substring(
-                        0,
-                        configuration.files.defaultHTML.template.lastIndexOf(
-                            '!')),
-                    options: configuration.files.defaultHTML.configuration ||
-                        {}
-                }
-            },
-            // endregion
-            // region html templates
-            {
-                exclude: (filePath:string):boolean => Helper.normalizePaths(
-                    configuration.files.html.concat(
-                        configuration.files.defaultHTML
-                    ).map((htmlConfiguration:HTMLConfiguration):string =>
-                        Helper.stripLoader(htmlConfiguration.template))
-                ).includes(filePath) || ((
-                    configuration.module.preprocessor.html.exclude === null
-                ) ? true : evaluate(
-                    configuration.module.preprocessor.html.exclude, filePath)),
-                include: configuration.path.source.asset.template,
-                test: /\.pug(?:\?.*)?$/,
-                use: [
-                    {loader: 'file?name=' + path.relative(
-                        configuration.path.target.asset.base,
-                        configuration.path.target.asset.template
-                    ) + `[name].html?${configuration.hashAlgorithm}=[hash]`},
-                    {loader: 'extract'},
-                    {
-                        loader: configuration.module.html.loader,
-                        options: configuration.module.html.configuration
-                    },
-                    {
-                        loader: configuration.module.preprocessor.html.loader,
-                        options: configuration.module.preprocessor.html
-                            .configuration
-                    }
-                ]
-            },
-            {
-                exclude: (filePath:string):boolean => Helper.normalizePaths(
-                    configuration.files.html.concat(
-                        configuration.files.defaultHTML
-                    ).map((
-                        htmlConfiguration:HTMLConfiguration
-                    ):string => Helper.stripLoader(htmlConfiguration.template))
-                ).includes(filePath) || ((
-                    configuration.module.html.exclude === null
-                ) ? true : evaluate(
-                    configuration.module.html.exclude, filePath)),
-                include: configuration.path.source.asset.template,
-                test: /\.html(?:\?.*)?$/,
-                use: [
-                    {loader: 'file?name=' + path.relative(
-                        configuration.path.target.base,
-                        configuration.path.target.asset.template
-                    ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]`},
-                    {loader: 'extract'},
-                    {
-                        loader: configuration.module.html.loader,
-                        options: configuration.module.html.configuration
-                    }
-                ]
-            },
-            // endregion
-            // Load dependencies.
-            // region style
-            {
-                exclude: (filePath:string):boolean => (
-                    configuration.module.cascadingStyleSheet.exclude === null
-                ) ? rejectFilePathInDependencies(filePath) : evaluate(
-                    configuration.module.cascadingStyleSheet.exclude, filePath
-                ),
-                include: Helper.normalizePaths([
-                    configuration.path.source.asset.cascadingStyleSheet
-                ].concat(configuration.module.locations.directoryPaths)),
-                test: /\.css(?:\?.*)?$/,
-                use: plugins.ExtractText.extract({
-                    fallbackUse: [{
-                        loader: configuration.module.style.loader,
-                        options: configuration.module.style.configuration
-                    }],
-                    use: [
-                        {
-                            loader: configuration.module.cascadingStyleSheet
-                                .loader,
-                            options: configuration.module.cascadingStyleSheet
-                                .configuration
-                        },
-                        {
-                            loader: configuration.module.preprocessor
-                                .cascadingStyleSheet.loader,
-                            options: Tools.extendObject(true, {
-                                ident: 'postcss',
-                                plugins: ():Array<Object> => [
-                                    postcssImport({
-                                        addDependencyTo: webpack,
-                                        root: configuration.path.context
-                                    }),
-                                    postcssCSSnext({browsers: '> 0%'}),
-                                    /*
-                                        NOTE: Checking path doesn't work if
-                                        fonts are referenced in libraries
-                                        provided in another location than the
-                                        project itself like the "node_modules"
-                                        folder.
-                                    */
-                                    postcssFontPath({checkPath: false}),
-                                    postcssURL({filter: '', maxSize: 0}),
-                                    postcssSprites({
-                                        filterBy: ():Promise<null> =>
-                                            new Promise((
-                                                resolve:Function,
-                                                reject:Function
-                                            ):Promise<null> => (
-                                                configuration.files.compose
-                                                    .image ? resolve : reject
-                                            )()),
-                                        hooks: {onSaveSpritesheet: (
-                                            image:Object
-                                        ):string => path.join(
-                                            image.spritePath, path.relative(
-                                                configuration.path.target.asset
-                                                    .image,
-                                                configuration.files.compose
-                                                    .image))},
-                                        stylesheetPath:
-                                            configuration.path.source.asset
-                                                .cascadingStyleSheet,
-                                        spritePath: configuration.path.source
-                                            .asset.image
-                                    })
-                                ]
-                            }, configuration.module.preprocessor
-                                .cascadingStyleSheet.configuration)
-                        }
-                    ]
-                })
-            },
-            // endregion
-            // Optimize loaded assets.
-            // region font
-            {
-                exclude: (filePath:string):boolean => (
-                    configuration.module.optimizer.font.eot.exclude === null
-                ) ? false : evaluate(
-                    configuration.module.optimizer.font.eot.exclude, filePath),
-                include: configuration.path.base,
-                test: /\.eot(?:\?.*)?$/,
-                use: [{
-                    loader: configuration.module.optimizer.font.eot.loader,
-                    options: configuration.module.optimizer.font.eot
-                        .configuration
-                }]
-            }, {
-                exclude: (filePath:string):boolean => (
-                    configuration.module.optimizer.font.woff.exclude === null
-                ) ? false : evaluate(
-                    configuration.module.optimizer.font.woff.exclude, filePath
-                ),
-                include: configuration.path.base,
-                test: /\.woff2?(?:\?.*)?$/,
-                use: [{
-                    loader: configuration.module.optimizer.font.woff.loader,
-                    options: configuration.module.optimizer.font.woff
-                        .configuration
-                }]
-            }, {
-                exclude: (filePath:string):boolean => (
-                    configuration.module.optimizer.font.ttf.exclude === null
-                ) ? false : evaluate(
-                    configuration.module.optimizer.font.ttf.exclude, filePath),
-                include: configuration.path.base,
-                test: /\.ttf(?:\?.*)?$/,
-                use: [{
-                    loader: configuration.module.optimizer.font.ttf.loader,
-                    options: configuration.module.optimizer.font.ttf
-                        .configuration
-                }]
-            }, {
-                exclude: (filePath:string):boolean => (
-                    configuration.module.optimizer.font.svg.exclude === null
-                ) ? false : evaluate(
-                    configuration.module.optimizer.font.svg.exclude, filePath),
-                include: configuration.path.base,
-                test: /\.svg(?:\?.*)?$/,
-                use: [{
-                    loader: configuration.module.optimizer.font.svg.loader,
-                    options: configuration.module.optimizer.font.svg
-                        .configuration
-                }]
-            },
-            // endregion
-            // region image
-            {
-                exclude: (filePath:string):boolean => (
-                    configuration.module.optimizer.image.exclude === null
-                ) ? evaluate(
-                    configuration.module.optimizer.image.exclude, filePath
-                ) : rejectFilePathInDependencies(filePath),
-                include: configuration.path.source.asset.image,
-                test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/,
-                use: {
-                    loader: configuration.module.optimizer.image.loader,
-                    options: configuration.module.optimizer.image.file
-                }
-            },
-            // endregion
-            // region data
-            {
-                exclude: (filePath:string):boolean =>
-                    configuration.extensions.file.internal.includes(
-                        path.extname(Helper.stripLoader(filePath))
-                    ) || ((
-                        configuration.module.optimizer.data.exclude === null
-                    ) ? rejectFilePathInDependencies(filePath) : evaluate(
-                        configuration.module.optimizer.data.exclude, filePath)
-                    ),
-                include: configuration.path.source.asset.data,
-                test: /.+/,
-                use: [{
-                    loader: configuration.module.optimizer.data.loader,
-                    options: configuration.module.optimizer.data.configuration
-                }]
-            }
-            // endregion
+            loader.script,
+            loader.html.main, loader.html.pug, loader.html.html,
+            loader.style,
+            loader.font.eot, loader.font.svg, loader.font.ttf, loader.font.woff
+            loader.image,
+            loader.data
         ])
     },
     plugins: pluginInstances.concat(new webpack.LoaderOptionsPlugin({
@@ -925,7 +919,7 @@ const webpackConfiguration:WebpackConfiguration = {
             configuration.
         */
         html: configuration.module.optimizer.htmlMinifier,
-        pug: configuration.module.preprocessor.html.configuration
+        pug: configuration.module.preprocessor.html.options
     }))
 }
 if (!Array.isArray(

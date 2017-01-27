@@ -408,7 +408,27 @@
             "__evaluate__": "self.module.optimizer.htmlMinifier"
           },
           "template": {
-            "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(tools.extendObject({}, resolve(self.module.html.configuration), {minimize: false}))}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.preprocessor.html.configuration))}!${tools.isFileSync(path.resolve(self.path.source.base, 'index.pug')) ? path.resolve(self.path.source.base, 'index.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+            "filePath": {
+              "__evaluate__": "${tools.isFileSync(path.resolve(self.path.source.base, 'index.pug')) ? path.resolve(self.path.source.base, 'index.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+            },
+            "use": [
+              {
+                "loader": {
+                  "__evaluate__": "self.module.html.loader"
+                },
+                "options": {
+                  "__evaluate__": "self.module.html.options"
+                }
+              },
+              {
+                "loader": {
+                  "__evaluate__": "self.module.preprocessor.html.loader"
+                },
+                "options": {
+                  "__evaluate__": "self.module.preprocessor.html.options"
+                }
+              }
+            ]
           }
         },
         "html": [
@@ -482,52 +502,54 @@
           "weboptimizer/helper$": "weboptimizer/helper.compiled"
         },
         "cascadingStyleSheet": {
-          "configuration": {},
           "exclude": null,
-          "loader": "css"
+          "loader": "css",
+          "options": {}
         },
         "directoryNames": [
           "node_modules"
         ],
         "html": {
-          "configuration": {
+          "exclude": null,
+          "loader": "html",
+          "options": {
             "config": "html",
             "attrs": [
               "img:src",
               "link:href"
             ]
-          },
-          "exclude": null,
-          "loader": "html"
+          }
         },
         "optimizer": {
           "data": {
-            "configuration": {
+            "exclude": null,
+            "loader": "url",
+            "options": {
               "limit": {
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
               },
               "name": {
                 "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.data), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
               }
-            },
-            "exclude": null,
-            "loader": "url"
+            }
           },
           "font": {
             "eot": {
-              "configuration": {
+              "exclude": null,
+              "loader": "url",
+              "options": {
                 "limit": {
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                 },
                 "name": {
                   "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
                 }
-              },
-              "exclude": null,
-              "loader": "url"
+              }
             },
             "svg": {
-              "configuration": {
+              "exclude": null,
+              "loader": "url",
+              "options": {
                 "limit": {
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                 },
@@ -535,12 +557,12 @@
                 "name": {
                   "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
                 }
-              },
-              "exclude": null,
-              "loader": "url"
+              }
             },
             "ttf": {
-              "configuration": {
+              "exclude": null,
+              "loader": "url",
+              "options": {
                 "limit": {
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                 },
@@ -548,21 +570,19 @@
                 "name": {
                   "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
                 }
-              },
-              "exclude": null,
-              "loader": "url"
+              }
             },
             "woff": {
-              "configuration": {
+              "exclude": null,
+              "loader": "url",
+              "options": {
                 "limit": {
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                 },
                 "name": {
                   "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
                 }
-              },
-              "exclude": null,
-              "loader": "url"
+              }
             }
           },
           "htmlMinifier": {
@@ -651,11 +671,13 @@
         },
         "preprocessor": {
           "cascadingStyleSheet": {
-            "configuration": {},
-            "loader": "postcss?sourceMap=inline"
+            "loader": "postcss?sourceMap=inline",
+            "options": {}
           },
           "html": {
-            "configuration": {
+            "exclude": null,
+            "loader": "pug",
+            "options": {
               "module": {
                 "aliases": {
                   "__evaluate__": "self.module.aliases"
@@ -675,12 +697,12 @@
                 "debug": false,
                 "pretty": false
               }
-            },
-            "exclude": null,
-            "loader": "pug"
+            }
           },
           "javaScript": {
-            "configuration": {
+            "exclude": null,
+            "loader": "babel",
+            "options": {
               "cacheDirectory": true,
               "compact": {
                 "__evaluate__": "!self.debug"
@@ -695,9 +717,7 @@
                 "transform-flow-strip-types",
                 "transform-runtime"
               ]
-            },
-            "exclude": null,
-            "loader": "babel"
+            }
           }
         },
         "provide": {},
@@ -709,11 +729,11 @@
           "__evaluate__": "/\\/(?:module|global)\\.js(?:\\?.+|$)/"
         },
         "style": {
-          "configuration": {
+          "loader": "style",
+          "options": {
             "insertAt": "top",
             "singleton": true
-          },
-          "loader": "style"
+          }
         }
       },
       "offline": {
@@ -854,7 +874,9 @@
             "filename": "test.html",
             "inject": "head",
             "template": {
-              "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.html.configuration))}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.preprocessor.html.configuration))}!${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+              "filePath": {
+                "__evaluate__": "${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}"
+              }
             }
           },
           "html": []
@@ -867,7 +889,9 @@
             "filename": "test.html",
             "inject": "head",
             "template": {
-              "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(self.module.html.configuration)}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(self.module.preprocessor.html.configuration)}!${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+              "filePath": {
+                "__evaluate__": "`${tools.isFileSync(path.resolve(self.path.source.base, 'test.pug')) ? path.resolve(self.path.source.base, 'test.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+              }
             }
           }
         },
@@ -937,7 +961,7 @@
             "loader": "postcss?sourceMap"
           },
           "html": {
-            "configuration": {
+            "options": {
               "compiler": {
                 "pretty": true
               }
@@ -989,7 +1013,9 @@
           "filename": "playground.html",
           "inject": "head",
           "template": {
-            "__evaluate__": "`${self.module.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.html.configuration))}!${self.module.preprocessor.html.loader}?${tools.convertCircularObjectToJSON(resolve(self.module.preprocessor.html.configuration))}!${tools.isFileSync(path.resolve(self.path.source.base, 'playground.pug')) ? path.resolve(self.path.source.base, 'playground.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+            "filePath": {
+              "__evaluate__": "${tools.isFileSync(path.resolve(self.path.source.base, 'playground.pug')) ? path.resolve(self.path.source.base, 'playground.pug') : path.resolve(webOptimizerPath, 'index.pug')}`"
+            }
           }
         },
         "html": {
