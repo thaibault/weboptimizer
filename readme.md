@@ -15,8 +15,9 @@ Use case
 --------
 
 The main goal of This plugin is providing an generic module bundler and
-workflow for all you development use cases in any project related to the web
-or node.
+workflow for all you development use cases in any project related to the web or
+node. All native web types like html, css and JavaScript are supported natively
+in their latest language specification through preconfigured transpiler.
 
 Content
 -------
@@ -27,8 +28,8 @@ Content
 Features
 --------
 
-- Complete and flexible configured Wrapper for **webpack** with many automatically
-  determined pre configuration.
+- Complete and flexible configured wrapper for **webpack2+** with many
+  automatically determined pre configuration.
 - **Completely** adaptable for your needs.
 - Targets **library** and **web** bundle building out of the box.
 - Only one configuration file (your already existing **package.json**) for all
@@ -36,12 +37,13 @@ Features
 - Many needed uses-cases are **preconfigured** and mostly works out of the box for
   your project.
     - **API-Documentation** generation
-    - Image **sprite** handling. Combine your images and never create sprites by
-      hand again.
+    - Image **sprite** handling. Combine your images and never create sprites
+      by hand again.
     - Polymorphic **testing** on dom in browsers and/or in node through
       weboptimizer/browserAPI
     - **Linting** and **TypeChecking** with Flow
-    - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel, Flow)
+    - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel,
+      Flow)
     - Preconfigured **postprocessing** for CSS (Minification),
       JavaScript (Minification), Images (Compression)
     - Various pre configured and adaptable implemented concepts for building
@@ -55,21 +57,21 @@ Features
       workflows: Each (pre-)defined chunk can be outsourced to a DLL-Bundle in
       a complete delclarative and generic way.
     - Generic support for all known **favicon** types using only one png file as
-      source (watching, compressing and auto-generating is integrated)
+      source (watching, compressing and auto-generating integrated)
     - Brings **offline** support though service worker and/or html5 manifest to
       your application without any manual intervention needed!
     - Many development helper:
-        - Automatic watching and (re-)building any assets thorugh cross
+        - Automatic watching and (re-)building any assets through cross
           platform file watching
         - Preconfigured local webserver with websocket connections to
           **livereload** you browser when any asset has changed
           (webpack-dev-server).
         - Preconfigured **hot module replacement** integration to update parts
           of your library/application with no siteeffects in a generic way
-          without event the need to refresh your browser
-        - Automaticaly watch and integrate any **css updates** trough hot module
-          replacements in app which will be shiped through the development
-          server.
+          without even the need to refresh your browser
+        - Automaticaly watch and integrate any **css updates** trough hot
+          module replacements in app which will be shiped through the
+          development server.
 
 Installation
 ------------
@@ -94,8 +96,8 @@ Configuration
 -------------
 
 First you should specify some tasks/use-cases you want to have in you project.
-You can do this in your package.json. All supported scripts and some usefull
-compostitions are listed below:
+You can do this in your **package.json**. All supported scripts and some useful
+compositions are listed below:
 
     #!JSON
 
@@ -173,10 +175,10 @@ default source, target, asset or build paths do it in your **package.json**:
     ...
 
 It's recommended to first specify if you're writing a library (preserve
-external dependencies note managed within current project) or an application
+external dependencies not managed within current project) or an application
 (everything should be bundled including external libraries) since many
 preconfigurations are targeting on this two different use cases. Anyway you can
-customize each coonfiguration by hand in each case.
+customize each configure by hand in each case.
 
     #!JSON
 
@@ -189,7 +191,7 @@ customize each coonfiguration by hand in each case.
     ...
 
 You can even reference any value or evaluate any configuration value
-dynamically though a small evaluation mechanism:
+dynamically though a complete JavaScript compatible evaluation mechanism:
 
 
     #!JSON
@@ -256,17 +258,17 @@ You can even execute script to determine a value:
     },
     ...
 
-For all availbale configuration possibilties pleas have a look at the *
+For all available configuration possibilities please have a look at the
 **package.json** file in this project since these values a extended on runtime.
 
 Additionally its even possible to overwrite any value on runtime via a
 complete generic command line interface: The last argument should evaluate to
-a javaScript object witch will be used as source for exending the default
-behavoir. Any JavaScript will be supported:
+a javaScript object witch will be used as source for extending the default
+behavior. Any JavaScript will be supported:
 
     #!JSON
 
-    npm run build '{module: {preprocessor: {javaScript: {loader: "babel"}}}}'
+    npm run build '{module:{preprocessor:{javaScript:{loader:"babel"}}}}'
 
 If you're using webOptimizer in a toolchain were none printable or none unicode
 compatible symbols should be used (for example content which should replace
@@ -280,16 +282,16 @@ placeholder) you can encode your javaScript expression as base64 code:
 
     npm run build 'e21vZHVsZTp7cHJlcHJvY2Vzc29yOntwdWc6e2xvY2Fsczp7bmFtZTonaMOkbnMnfX19fX0='
 
-There is a static helper instance provided to each evaluation or execution
-context within the package.json (see the API-Documentation, link above, for
-more details):
+There is a static tools [clientnode](http://torben.website/clientNode) and
+helper instance provided to each evaluation or execution context within the
+package.json (see the API-Documentation, link above, for more details):
 
     #!JSON
 
     ...
     "webOptimizer": {
         ...
-        "libraryName": {"__evaluate__": tools.isPlainObject(self.name) ? helper.convertToValidVariableName(self.name) : 'random'},
+        "libraryName": {"__evaluate__": tools.isPlainObject(self.name) ? tools.stringConvertToValidVariableName(self.name) : 'random'},
         ...
     },
     ...
