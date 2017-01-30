@@ -785,9 +785,8 @@ const loader:Object = {
     image: {
         exclude: (filePath:string):boolean => (
             configuration.module.optimizer.image.exclude === null
-        ) ? evaluate(
-            configuration.module.optimizer.image.exclude, filePath
-        ) : rejectFilePathInDependencies(filePath),
+        ) ? rejectFilePathInDependencies(filePath) : evaluate(
+            configuration.module.optimizer.image.exclude, filePath),
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/,
         use: {
