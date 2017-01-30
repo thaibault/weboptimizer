@@ -14,7 +14,9 @@
     endregion
 */
 // region imports
+import BabiliPlugin from 'babili-webpack-plugin'
 import Tools from 'clientnode'
+import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
 import * as dom from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
@@ -40,10 +42,7 @@ plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
-import type {
-    DomNode, HTMLConfiguration, ProcedureFunction, PromiseCallbackFunction,
-    WebpackConfiguration, Window
-} from './type'
+import type {HTMLConfiguration, WebpackConfiguration} from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 
@@ -51,21 +50,23 @@ import Helper from './helper.compiled'
 // Monkey-Patch html loader to retrieve html loader options since the
 // "webpack-html-plugin" doesn't preserve the original loader interface.
 import htmlLoaderModuleBackup from 'html-loader'
-require.cache[require.resolve('html-loader')].exports = function():any {
+require.cache[require.resolve('html-loader')].exports = function(
+    ...parameter:Array<any>
+):any {
     Tools.extendObject(true, this.options, module, this.options)
-    return htmlLoaderModuleBackup.apply(this, arguments)
+    return htmlLoaderModuleBackup.call(this, ...parameter)
 }
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
 const loaderUtilsIsUrlRequestBackup:(url:string) => boolean =
     loaderUtilsModuleBackup.isUrlRequest
-require.cache[require.resolve('loader-utils')].exports.isUrlRequest = function(
-    url:string
-):boolean {
+require.cache[require.resolve('loader-utils')].exports.isUrlRequest = (
+    url:string, ...additionalParameter:Array<any>
+):boolean => {
     if (url.match(/^[a-z]+:.+/))
         return false
     return loaderUtilsIsUrlRequestBackup.apply(
-        loaderUtilsModuleBackup, arguments)
+        loaderUtilsModuleBackup, [url].concat(additionalParameter))
 }
 // / endregion
 // endregion
@@ -84,31 +85,33 @@ else {
 // / endregion
 // / region plugins
 const pluginInstances:Array<Object> = [
-    new webpack.optimize.OccurrenceOrderPlugin(true)]
+    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(true)
+]
 // // region define modules to ignore
 for (const ignorePattern:string of configuration.injection.ignorePattern)
     pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
+// // endregion
+// // region define modules to replace
+for (const source:string in configuration.module.replacements.normal)
+    if (configuration.module.replacements.normal.hasOwnProperty(source))
+        pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
+            new RegExp(source),
+            configuration.module.replacements.normal[source]))
 // // endregion
 // // region generate html file
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
     for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
-        if (Helper.isFileSync(htmlConfiguration.template.substring(
-            htmlConfiguration.template.lastIndexOf('!') + 1
-        ))) {
-            if (
-                htmlConfiguration.template ===
-                configuration.files.defaultHTML.template
-            )
-                htmlConfiguration.template =
-                    htmlConfiguration.template.substring(
-                        htmlConfiguration.template.lastIndexOf('!') + 1)
-            pluginInstances.push(new plugins.HTML(htmlConfiguration))
+        if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
+            pluginInstances.push(new plugins.HTML(Tools.extendObject(
+                {}, htmlConfiguration, {
+                    template: htmlConfiguration.template.request})))
             htmlAvailable = true
         }
 // // endregion
 // // region generate favicons
-if (htmlAvailable && configuration.favicon && Helper.isFileSync(
+if (htmlAvailable && configuration.favicon && Tools.isFileSync(
     configuration.favicon.logo
 ))
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
@@ -149,9 +152,9 @@ if (configuration.module.provide)
 // // endregion
 // // region modules/assets
 // /// region perform javaScript minification/optimisation
-if (configuration.module.optimizer.uglifyJS)
-    pluginInstances.push(new webpack.optimize.UglifyJsPlugin(
-        configuration.module.optimizer.uglifyJS))
+if (configuration.module.optimizer.babili)
+    pluginInstances.push(new BabiliPlugin(
+        configuration.module.optimizer.babili))
 // /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
@@ -274,7 +277,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                 if (configuration.inPlace.cascadingStyleSheet) {
                     const assetFilePath = Helper.stripLoader(
                         configuration.files.compose.cascadingStyleSheet)
-                    if (Helper.isFileSync(assetFilePath))
+                    if (Tools.isFileSync(assetFilePath))
                         fileSystem.unlinkSync(assetFilePath)
                 }
                 if (configuration.inPlace.javaScript) {
@@ -289,7 +292,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                             const assetFilePath:string =
                             Helper.renderFilePathTemplate(
                                 assetFilePathTemplate, {'[name]': chunkName})
-                            if (Helper.isFileSync(assetFilePath))
+                            if (Tools.isFileSync(assetFilePath))
                                 fileSystem.unlinkSync(assetFilePath)
                         }
                 }
@@ -326,7 +329,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                 pluginInstances.push(new plugins.AddAssetHTMLPlugin({
                     filepath: filePath,
                     hash: true,
-                    includeSourcemap: Helper.isFileSync(`${filePath}.map`)
+                    includeSourcemap: Tools.isFileSync(`${filePath}.map`)
                 }))
                 pluginInstances.push(new webpack.DllReferencePlugin({
                     context: configuration.path.context, manifest: require(
@@ -358,12 +361,13 @@ if (!configuration.needed.javaScript)
 // /// endregion
 // /// region extract cascading style sheets
 pluginInstances.push(new plugins.ExtractText({
-    allChunks: true, disable:
-        !configuration.files.compose.cascadingStyleSheet,
+    allChunks: true,
+    disable: !configuration.files.compose.cascadingStyleSheet,
     filename: configuration.files.compose.cascadingStyleSheet ? path.relative(
         configuration.path.target.base,
         configuration.files.compose.cascadingStyleSheet
-    ) : configuration.path.target.base}))
+    ) : configuration.path.target.base
+}))
 // /// endregion
 // /// region performs implicit external logic
 if (configuration.injection.external.modules === '__implicit__')
@@ -400,7 +404,8 @@ if (configuration.injection.external.modules === '__implicit__')
                 configuration.path.context, filePath
             )).filter((filePath:string):boolean =>
                 !configuration.path.context.startsWith(filePath)
-            ), configuration.module.aliases, configuration.extensions,
+            ), configuration.module.aliases,
+            configuration.module.replacements.normal, configuration.extensions,
             configuration.path.source.asset.base, configuration.path.ignore,
             configuration.module.directoryNames,
             configuration.package.main.fileNames,
@@ -460,8 +465,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
         for (const htmlConfiguration of configuration.files.html)
             if (htmlConfiguration.filename in compilation.assets)
                 promises.push(new Promise((
-                    resolve:PromiseCallbackFunction,
-                    reject:PromiseCallbackFunction
+                    resolve:Function, reject:Function
                 ):Window => dom.env(compilation.assets[
                     htmlConfiguration.filename
                 ].source(), (error:?Error, window:Window):?Promise<string> => {
@@ -521,28 +525,27 @@ pluginInstances.push({apply: (compiler:Object):void => {
                         )
                             source = source.replace(new RegExp(
                                 '(require\\()"' +
-                                Tools.stringConvertToValidRegularExpression(
+                                Tools.stringEscapeRegularExpressions(
                                     configuration.injection.external.aliases[
                                         replacement]
                                 ) + '"(\\))', 'g'
                             ), `$1'${replacement}'$2`).replace(new RegExp(
                                 '(define\\("' +
-                                Tools.stringConvertToValidRegularExpression(
+                                Tools.stringEscapeRegularExpressions(
                                     bundleName
                                 ) + '", \\[.*)"' +
-                                Tools.stringConvertToValidRegularExpression(
+                                Tools.stringEscapeRegularExpressions(
                                     configuration.injection.external.aliases[
                                         replacement]
                                 ) + '"(.*\\], factory\\);)'
                             ), `$1'${replacement}'$2`)
                     source = source.replace(new RegExp(
                         '(root\\[)"' +
-                        Tools.stringConvertToValidRegularExpression(
-                            bundleName
-                        ) + '"(\\] = )'
-                    ), "$1'" +
+                        Tools.stringEscapeRegularExpressions(bundleName) +
+                        '"(\\] = )'
+                    ), `$1'` +
                         Tools.stringConvertToValidVariableName(bundleName) +
-                        "'$2"
+                        `'$2`
                     )
                     compilation.assets[assetRequest] = new WebpackRawSource(
                         source)
@@ -558,63 +561,279 @@ pluginInstances.push({apply: (compiler:Object):void => {
 pluginInstances.push(new plugins.Imagemin(
     configuration.module.optimizer.image.content))
 // // endregion
+// // region context replacements
+for (
+    const contextReplacement:Array<string> of
+    configuration.module.replacements.context
+)
+    pluginInstances.push(new webpack.ContextReplacementPlugin(
+        ...contextReplacement.map((value:string):any => (new Function(
+            'configuration', '__dirname', '__filename', `return ${value}`
+        ))(configuration, __dirname, __filename))))
+// // endregion
 // / endregion
-// / region loader
-let imageLoader:string = 'url?' + Tools.convertCircularObjectToJSON(
-    configuration.module.optimizer.image.file)
-const loader:{
-    preprocessor:{
-        cascadingStyleSheet:string;
-        javaScript:string;
-        pug:string;
-    };
-    html:string;
-    cascadingStyleSheet:string;
-    style:string;
-    postprocessor:{
-        image:string;
-        font:{
-            eot:string;
-            woff:string;
-            ttf:string;
-            svg:string
-        };
-        data:string
-    }
-} = {
-    preprocessor: {
-        cascadingStyleSheet: 'postcss' +
-            configuration.module.preprocessor.cascadingStyleSheet,
-        javaScript: 'babel?' + Tools.convertCircularObjectToJSON(
-            configuration.module.preprocessor.babel),
-        pug: 'pug?' + Tools.convertCircularObjectToJSON(
-            configuration.module.preprocessor.pug)
+// / region loader helper
+const loader:Object = {
+    // Convert to compatible native web types.
+    // region script
+    script: {
+        exclude: (filePath:string):boolean => (
+            configuration.module.preprocessor.javaScript
+                .exclude === null
+        ) ? rejectFilePathInDependencies(filePath) : evaluate(
+            configuration.module.preprocessor.javaScript.exclude,
+            filePath),
+        include: Helper.normalizePaths([
+            configuration.path.source.asset.javaScript
+        ].concat(configuration.module.locations.directoryPaths)),
+        test: /\.js(?:\?.*)?$/,
+        use: [{
+            loader: configuration.module.preprocessor.javaScript
+                .loader,
+            options: configuration.module.preprocessor.javaScript
+                .options
+        }]
     },
-    html: 'html?' + Tools.convertCircularObjectToJSON(
-        configuration.module.html),
-    cascadingStyleSheet: `css${configuration.module.cascadingStyleSheet}`,
-    style: 'style?' + Tools.convertCircularObjectToJSON(
-        configuration.module.style),
-    postprocessor: {
-        image: imageLoader,
-        font: {
-            eot: 'url?' + Tools.convertCircularObjectToJSON(
-                configuration.module.optimizer.font.eot),
-            woff: 'url?' + Tools.convertCircularObjectToJSON(
-                configuration.module.optimizer.font.woff),
-            ttf: 'url?' + Tools.convertCircularObjectToJSON(
-                configuration.module.optimizer.font.ttf),
-            svg: 'url?' + Tools.convertCircularObjectToJSON(
-                configuration.module.optimizer.font.svg)
+    // endregion
+    // region html template
+    html: {
+        // NOTE: This is only for the main entry template.
+        main: {
+            test: new RegExp('^' + Tools.stringEscapeRegularExpressions(
+                configuration.files.defaultHTML.template.filePath
+            ) + '(?:\\?.*)?$'),
+            use: configuration.files.defaultHTML.template.use
         },
-        data: 'url?' + Tools.convertCircularObjectToJSON(
-            configuration.module.optimizer.data)
+        pug: {
+            exclude: (filePath:string):boolean => Helper.normalizePaths(
+                configuration.files.html.concat(
+                    configuration.files.defaultHTML
+                ).map((htmlConfiguration:HTMLConfiguration):string =>
+                    htmlConfiguration.template.filePath)
+            ).includes(filePath) || ((
+                configuration.module.preprocessor.html.exclude === null
+            ) ? true : evaluate(
+                configuration.module.preprocessor.html.exclude, filePath)),
+            include: configuration.path.source.asset.template,
+            test: /\.pug(?:\?.*)?$/,
+            use: [
+                {loader: 'file?name=' + path.relative(
+                    configuration.path.target.asset.base,
+                    configuration.path.target.asset.template
+                ) + `[name].html?${configuration.hashAlgorithm}=[hash]`},
+                {loader: 'extract'},
+                {
+                    loader: configuration.module.html.loader,
+                    options: configuration.module.html.options
+                },
+                {
+                    loader: configuration.module.preprocessor.html.loader,
+                    options: configuration.module.preprocessor.html.options
+                }
+            ]
+        },
+        html: {
+            exclude: (filePath:string):boolean => Helper.normalizePaths(
+                configuration.files.html.concat(
+                    configuration.files.defaultHTML
+                ).map((htmlConfiguration:HTMLConfiguration):string =>
+                    htmlConfiguration.template.filePath)
+            ).includes(filePath) || ((
+                configuration.module.html.exclude === null
+            ) ? true : evaluate(
+                configuration.module.html.exclude, filePath)),
+            include: configuration.path.source.asset.template,
+            test: /\.html(?:\?.*)?$/,
+            use: [
+                {loader: 'file?name=' + path.relative(
+                    configuration.path.target.base,
+                    configuration.path.target.asset.template
+                ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]`},
+                {loader: 'extract'},
+                {
+                    loader: configuration.module.html.loader,
+                    options: configuration.module.html.options
+                }
+            ]
+        }
+    },
+    // endregion
+    // Load dependencies.
+    // region style
+    style: {
+        exclude: (filePath:string):boolean => (
+            configuration.module.cascadingStyleSheet.exclude === null
+        ) ? rejectFilePathInDependencies(filePath) : evaluate(
+            configuration.module.cascadingStyleSheet.exclude, filePath
+        ),
+        include: Helper.normalizePaths([
+            configuration.path.source.asset.cascadingStyleSheet
+        ].concat(configuration.module.locations.directoryPaths)),
+        test: /\.css(?:\?.*)?$/,
+        use: plugins.ExtractText.extract({
+            fallbackUse: [{
+                loader: configuration.module.style.loader,
+                options: configuration.module.style.options
+            }],
+            use: [
+                {
+                    loader: configuration.module.cascadingStyleSheet.loader,
+                    options: configuration.module.cascadingStyleSheet.options
+                },
+                {
+                    loader: configuration.module.preprocessor
+                        .cascadingStyleSheet.loader,
+                    options: Tools.extendObject(true, {
+                        ident: 'postcss',
+                        plugins: ():Array<Object> => [
+                            postcssImport({
+                                addDependencyTo: webpack,
+                                root: configuration.path.context
+                            }),
+                            postcssCSSnext({browsers: '> 0%'}),
+                            /*
+                                NOTE: Checking path doesn't work if fonts are
+                                referenced in libraries provided in another
+                                location than the project itself like the
+                                "node_modules" folder.
+                            */
+                            postcssFontPath({checkPath: false}),
+                            postcssURL({filter: '', maxSize: 0}),
+                            postcssSprites({
+                                filterBy: ():Promise<null> => new Promise((
+                                    resolve:Function,
+                                    reject:Function
+                                ):Promise<null> => (
+                                    configuration.files.compose.image ?
+                                    resolve : reject
+                                )()),
+                                hooks: {onSaveSpritesheet: (
+                                    image:Object
+                                ):string => path.join(
+                                    image.spritePath, path.relative(
+                                        configuration.path.target.asset.image,
+                                        configuration.files.compose.image))},
+                                stylesheetPath:
+                                    configuration.path.source.asset
+                                        .cascadingStyleSheet,
+                                spritePath: configuration.path.source.asset
+                                   .image
+                            })
+                        ]
+                    }, configuration.module.preprocessor.cascadingStyleSheet
+                        .options)
+                }
+            ]
+        })
+    },
+    // endregion
+    // Optimize loaded assets.
+    // region font
+    font: {
+        eot: {
+            exclude: (filePath:string):boolean => (
+                configuration.module.optimizer.font.eot.exclude === null
+            ) ? false : evaluate(
+                configuration.module.optimizer.font.eot.exclude, filePath),
+            include: configuration.path.base,
+            test: /\.eot(?:\?.*)?$/,
+            use: [{
+                loader: configuration.module.optimizer.font.eot.loader,
+                options: configuration.module.optimizer.font.eot.options
+            }]
+        },
+        svg: {
+            exclude: (filePath:string):boolean => (
+                configuration.module.optimizer.font.svg.exclude === null
+            ) ? false : evaluate(
+                configuration.module.optimizer.font.svg.exclude, filePath),
+            include: configuration.path.base,
+            test: /\.svg(?:\?.*)?$/,
+            use: [{
+                loader: configuration.module.optimizer.font.svg.loader,
+                options: configuration.module.optimizer.font.svg.options
+            }]
+        },
+        ttf: {
+            exclude: (filePath:string):boolean => (
+                configuration.module.optimizer.font.ttf.exclude === null
+            ) ? false : evaluate(
+                configuration.module.optimizer.font.ttf.exclude, filePath),
+            include: configuration.path.base,
+            test: /\.ttf(?:\?.*)?$/,
+            use: [{
+                loader: configuration.module.optimizer.font.ttf.loader,
+                options: configuration.module.optimizer.font.ttf.options
+            }]
+        },
+        woff: {
+            exclude: (filePath:string):boolean => (
+                configuration.module.optimizer.font.woff.exclude === null
+            ) ? false : evaluate(
+                configuration.module.optimizer.font.woff.exclude, filePath
+            ),
+            include: configuration.path.base,
+            test: /\.woff2?(?:\?.*)?$/,
+            use: [{
+                loader: configuration.module.optimizer.font.woff.loader,
+                options: configuration.module.optimizer.font.woff.options
+            }]
+        }
+    },
+    // endregion
+    // region image
+    image: {
+        exclude: (filePath:string):boolean => (
+            configuration.module.optimizer.image.exclude === null
+        ) ? rejectFilePathInDependencies(filePath) : evaluate(
+            configuration.module.optimizer.image.exclude, filePath),
+        include: configuration.path.source.asset.image,
+        test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/,
+        use: {
+            loader: configuration.module.optimizer.image.loader,
+            options: configuration.module.optimizer.image.file
+        }
+    },
+    // endregion
+    // region data
+    data: {
+        exclude: (filePath:string):boolean =>
+            configuration.extensions.file.internal.includes(
+                path.extname(Helper.stripLoader(filePath))
+            ) || ((
+                configuration.module.optimizer.data.exclude === null
+            ) ? rejectFilePathInDependencies(filePath) : evaluate(
+                configuration.module.optimizer.data.exclude, filePath)
+            ),
+        include: configuration.path.source.asset.data,
+        test: /.+/,
+        use: [{
+            loader: configuration.module.optimizer.data.loader,
+            options: configuration.module.optimizer.data.options
+        }]
     }
+    // endregion
 }
+const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
+    filePath = Helper.stripLoader(filePath)
+    return Helper.isFilePathInLocation(
+        filePath, configuration.path.ignore.concat(
+            configuration.module.directoryNames,
+            configuration.loader.directoryNames
+        ).map((filePath:string):string => path.resolve(
+            configuration.path.context, filePath)
+        ).filter((filePath:string):boolean =>
+            !configuration.path.context.startsWith(filePath)))
+}
+const evaluate:Function = (code:string, filePath:string):any => (new Function(
+    'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
+    `return ${code}`
+))(configuration, filePath, loader, rejectFilePathInDependencies)
 // / endregion
 // endregion
 // region configuration
 const webpackConfiguration:WebpackConfiguration = {
+    bail: true,
     cache: configuration.cache.main,
     context: configuration.path.context,
     devtool: configuration.development.tool,
@@ -624,24 +843,22 @@ const webpackConfiguration:WebpackConfiguration = {
     externals: configuration.injection.external.modules,
     resolve: {
         alias: configuration.module.aliases,
-        extensions: configuration.extensions.file,
-        moduleExtensions: configuration.extensions.module,
-        modules: Helper.normalizePaths([
-            configuration.path.source.asset.base
-        ].concat(configuration.module.directoryNames)),
-        unsafeCache: configuration.cache.unsafe,
         aliasFields: configuration.package.aliasPropertyNames,
+        extensions: configuration.extensions.file.internal,
         mainFields: configuration.package.main.propertyNames,
-        mainFiles: configuration.package.main.fileNames
+        mainFiles: configuration.package.main.fileNames,
+        moduleExtensions: configuration.extensions.module,
+        modules: Helper.normalizePaths(configuration.module.directoryNames),
+        unsafeCache: configuration.cache.unsafe
     },
     resolveLoader: {
         alias: configuration.loader.aliases,
-        extensions: configuration.loader.extensions.file,
-        moduleExtensions: configuration.loader.extensions.module,
-        modules: configuration.loader.directoryNames,
         aliasFields: configuration.package.aliasPropertyNames,
+        extensions: configuration.loader.extensions.file,
         mainFields: configuration.package.main.propertyNames,
-        mainFiles: configuration.package.main.fileNames
+        mainFiles: configuration.package.main.fileNames,
+        moduleExtensions: configuration.loader.extensions.module,
+        modules: configuration.loader.directoryNames
     },
     // endregion
     // region output
@@ -659,171 +876,54 @@ const webpackConfiguration:WebpackConfiguration = {
         pathinfo: configuration.debug,
         umdNamedDefine: true
     },
+    performance: configuration.performanceHints,
     target: configuration.targetTechnology,
     // endregion
     module: {
-        noParse: configuration.module.skipParseRegularExpressions,
-        loaders: [
-            // Convert to native web types.
-            // region script
-            {
-                test: /\.js(?:\?.*)?$/,
-                loader: loader.preprocessor.javaScript,
-                include: Helper.normalizePaths([
-                    configuration.path.source.asset.javaScript].concat(
-                        configuration.module.locations.directoryPaths)),
-                exclude: (filePath:string):boolean => {
-                    filePath = Helper.stripLoader(filePath)
-                    return Helper.isFilePathInLocation(
-                        filePath, configuration.path.ignore.concat(
-                            configuration.module.directoryNames,
-                            configuration.loader.directoryNames
-                        ).map((filePath:string):string => path.resolve(
-                            configuration.path.context, filePath)
-                        ).filter((filePath:string):boolean =>
-                            !configuration.path.context.startsWith(filePath)))
-                }
-            },
-            // endregion
-            // region html (templates)
-            // NOTE: This is only for the main entry template.
-            {
-                test: new RegExp(
-                    '^' + Tools.stringConvertToValidRegularExpression(
-                        Helper.stripLoader(
-                            configuration.files.defaultHTML.template)
-                    ) + '(?:\\?.*)?$'),
-                loader: configuration.files.defaultHTML.template.substring(
-                    0, configuration.files.defaultHTML.template.lastIndexOf(
-                        '!'))
-            },
-            {
-                test: /\.pug(?:\?.*)?$/,
-                loader:
-                    'file?name=' + path.relative(
-                        configuration.path.target.asset.base,
-                        configuration.path.target.asset.template
-                    ) + `[name].html?${configuration.hashAlgorithm}=[hash]!` +
-                    `extract!${loader.html}!${loader.preprocessor.pug}`,
-                include: configuration.path.source.asset.template,
-                exclude: Helper.normalizePaths(configuration.files.html.concat(
-                    configuration.files.defaultHTML
-                ).map((htmlConfiguration:HTMLConfiguration):string =>
-                    Helper.stripLoader(htmlConfiguration.template)))
-            },
-            // endregion
-            // Loads dependencies.
-            // region style
-            {
-                test: /\.css(?:\?.*)?$/,
-                loader: plugins.ExtractText.extract({
-                    fallbackLoader: loader.style,
-                    loader: `${loader.cascadingStyleSheet}!` +
-                    loader.preprocessor.cascadingStyleSheet
-                }),
-                include: Helper.normalizePaths([
-                    configuration.path.source.asset.cascadingStyleSheet
-                ].concat(configuration.module.locations.directoryPaths)),
-                exclude: (filePath:string):boolean => {
-                    filePath = Helper.stripLoader(filePath)
-                    return Helper.isFilePathInLocation(
-                        filePath, configuration.path.ignore.concat(
-                            configuration.module.directoryNames,
-                            configuration.loader.directoryNames
-                        ).map((filePath:string):string => path.resolve(
-                            configuration.path.context, filePath
-                        )).filter((filePath:string):boolean =>
-                            !configuration.path.context.startsWith(filePath)))
-                }
-            },
-            // endregion
-            // region html (templates)
-            {
-                test: /\.html(?:\?.*)?$/,
-                loader:
-                    'file?name=' + path.relative(
-                        configuration.path.target.base,
-                        configuration.path.target.asset.template
-                    ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]!` +
-                    `extract!${loader.html}`,
-                include: configuration.path.source.asset.template,
-                exclude: Helper.normalizePaths(configuration.files.html.map((
-                    htmlConfiguration:HTMLConfiguration
-                ):string => Helper.stripLoader(htmlConfiguration.template)))
-            },
-            // endregion
-            // Optimize loaded assets.
-            // region font
-            {
-                test: /\.eot(?:\?.*)?$/,
-                loader: loader.postprocessor.font.eot
-            }, {
-                test: /\.woff2?(?:\?.*)?$/,
-                loader: loader.postprocessor.font.woff
-            }, {
-                test: /\.ttf(?:\?.*)?$/,
-                loader: loader.postprocessor.font.ttf
-            }, {
-                test: /\.svg(?:\?.*)?$/,
-                loader: loader.postprocessor.font.svg
-            },
-            // endregion
-            // region image
-            {
-                test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/,
-                loader: loader.postprocessor.image
-            },
-            // endregion
-            // region data
-            {
-                test: /.+/,
-                loader: loader.postprocessor.data,
-                include: configuration.path.source.asset.data,
-                exclude: (filePath:string):boolean =>
-                    configuration.extensions.file.includes(path.extname(
-                        Helper.stripLoader(filePath)))
+        rules: configuration.module.additional.map((
+            loaderConfiguration:PlainObject
+        ):PlainObject => {
+            return {
+                exclude: (filePath:string):boolean => evaluate(
+                    loaderConfiguration.exclude || 'false', filePath),
+                include: loaderConfiguration.include && evaluate(
+                    loaderConfiguration.include, configuration.path.context
+                ) || configuration.path.source.base,
+                test: new RegExp(evaluate(
+                    loaderConfiguration.test, configuration.path.context)),
+                use: loaderConfiguration.use
             }
-            // endregion
-        ]
+        }).concat([
+            loader.script,
+            loader.html.main, loader.html.pug, loader.html.html,
+            loader.style,
+            loader.font.eot, loader.font.svg, loader.font.ttf,
+            loader.font.woff,
+            loader.image,
+            loader.data
+        ])
     },
     plugins: pluginInstances.concat(new webpack.LoaderOptionsPlugin({
-        // Let the "html-loader" access full html minifier processing
-        // configuration.
+        /*
+            Let the "html-loader" access full html minifier processing
+            configuration.
+        */
         html: configuration.module.optimizer.htmlMinifier,
-        postcss: ():Array<Object> => [
-            postcssImport({
-                addDependencyTo: webpack,
-                root: configuration.path.context
-            }),
-            /*
-                NOTE: Checking path doesn't work if fonts are referenced in
-                libraries provided in another location than the project itself
-                like the node_modules folder.
-            */
-            postcssCSSnext({browsers: '> 0%'}),
-            postcssFontPath({checkPath: false}),
-            postcssURL({filter: '', maxSize: 0}),
-            postcssSprites({
-                filterBy: ():Promise<null> => new Promise((
-                    resolve:Function, reject:Function
-                ):Promise<null> => (
-                    configuration.files.compose.image ? resolve : reject
-                )()),
-                hooks: {onSaveSpritesheet: (image:Object):string => path.join(
-                    image.spritePath, path.relative(
-                        configuration.path.target.asset.image,
-                        configuration.files.compose.image))},
-                stylesheetPath:
-                    configuration.path.source.asset.cascadingStyleSheet,
-                spritePath: configuration.path.source.asset.image
-            })
-        ],
-        pug: configuration.module.preprocessor.pug
+        pug: configuration.module.preprocessor.html.options
     }))
 }
-if (configuration.debug)
-    console.log('Using webpack configuration:', util.inspect(
+if (!Array.isArray(
+    configuration.module.skipParseRegularExpressions
+) || configuration.module.skipParseRegularExpressions.length)
+    webpackConfiguration.module.noParse =
+        configuration.module.skipParseRegularExpressions
+if (configuration.showConfiguration) {
+    console.info('Using internal configuration:', util.inspect(configuration, {
+        depth: null}))
+    console.info('-----------------------------------------------------------')
+    console.info('Using webpack configuration:', util.inspect(
         webpackConfiguration, {depth: null}))
+}
 // endregion
 export default webpackConfiguration
 // region vim modline

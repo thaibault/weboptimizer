@@ -14,13 +14,13 @@
     endregion
 */
 // region imports
-/* eslint-disable no-unused-vars */
-import type {BrowserAPI, DomNode, Window} from './type'
-/* eslint-enable no-unused-vars */
- // endregion
+import type {DomNode, Window} from 'clientnode'
+import type {BrowserAPI} from './type'
+// endregion
 // region declaration
-declare var NAME:string
-declare var TARGET_TECHNOLOGY:string
+// NOTE: Produces a babel error yet.
+// declare var NAME:string
+// declare var TARGET_TECHNOLOGY:string
 declare var window:Window
 // endregion
 // region variables
@@ -55,7 +55,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
         // IgnoreTypeCheck
         template = require('webOptimizerDefaultTemplateFilePath')
     metaDOM.env({
-        created: (error:?Error, window:Object):void => {
+        created: (error:?Error, window:Window):void => {
             browserAPI = {
                 debug: false, domContentLoaded: false, metaDOM, window,
                 windowLoaded: false}
@@ -98,7 +98,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
                 defaultFetch:(callback:(
                     error:?Error, body:string
                 ) => void) => void
-            }, callback:(error:?Error, body:string) => void
+            }, callback:(error:?Error, content:any) => void
         ):void => {
             if (resource.url.hostname === 'localhost') {
                 resource.url.host = resource.url.hostname = ''
@@ -112,9 +112,11 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             }
             if (browserAPI.debug)
                 console.info(`Load resource "${resource.url.href}".`)
-            return resource.defaultFetch(function(error:?Error):void {
+            return resource.defaultFetch((
+                error:?Error, ...additionalParameter:Array<any>
+            ):void => {
                 if (!error)
-                    callback.apply(this, arguments)
+                    callback(error, ...additionalParameter)
             })
         },
         url: 'http://localhost',
