@@ -13,41 +13,11 @@
     3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
+// region imports
+import type {PlainObject, ProcedureFunction, Window} from 'clientnode'
+// endregion
 // region exports
 // / region generic
-// // region browser
-export type DomNode = any
-export type Location = {
-    hash:string;
-    search:string;
-    pathname:string;
-    port:string;
-    hostname:string;
-    host:string;
-    protocol:string;
-    origin:string;
-    href:string;
-    username:string;
-    password:string;
-    assign:Function;
-    reload:Function;
-    replace:Function;
-    toString:() => string
-}
-export type Storage = {
-    getItem(key:string):any;
-    setItem(key:string, value:any):void;
-    removeItem(key:string, value:any):void;
-}
-export type Window = {
-    addEventListener:(type:string, callback:Function) => void;
-    document:Object;
-    location:Location;
-    localStorage:Storage;
-    sessionStorage:Storage;
-    close:() => void;
-}
-// // endregion
 export type BrowserAPI = {
     debug:boolean;
     domContentLoaded:boolean;
@@ -55,8 +25,6 @@ export type BrowserAPI = {
     window:Window;
     windowLoaded:boolean;
 }
-export type PlainObject = {[key:string]:any}
-export type ProcedureFunction = () => void
 // / endregion
 // / region injection
 export type ExternalInjection = string|((
@@ -141,8 +109,12 @@ export type DefaultConfiguration = {
 }
 export type ExportFormat = 'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
 export type HTMLConfiguration = {
-    template:string|String;
-    filename:string
+    filename:string;
+    template:{
+        filePath:string;
+        request:string|String;
+        use:Array<{loader:string;options:Object}>;
+    };
 }
 export type MetaConfiguration = {
     default:DefaultConfiguration;
@@ -156,104 +128,19 @@ export type ResolvedBuildConfigurationItem = {
     filePathPattern:string
 }
 export type Extensions = {
-    file:Array<string>;
+    file:{
+        external:Array<string>;
+        internal:Array<string>;
+    };
     module:Array<string>;
 }
+export type LoaderConfiguration = {
+    exclude:string;
+    include:string;
+    loader:string;
+    options:Object;
+}
 export type ResolvedConfiguration = {
-    cache:{
-        main:boolean;
-        unsafe:boolean;
-    };
-    contextType:string;
-    dllManifestFilePaths:Array<string>;
-    givenCommandLineArguments:Array<string>;
-    name:string;
-    needed:{[key:string]:boolean};
-
-    debug:boolean;
-    library:boolean;
-
-    exportFormat:{
-        external:ExportFormat;
-        self:ExportFormat;
-    };
-    favicon:{
-        logo:string;
-        [key:string]:any
-    };
-    files:{
-        compose:{
-            cascadingStyleSheet:string;
-            image:string;
-            javaScript:string;
-        };
-        additionalPaths:Array<string>;
-        defaultHTML:HTMLConfiguration;
-        html:Array<HTMLConfiguration>;
-    };
-    injection:PlainObject;
-    inPlace:{
-        cascadingStyleSheet:boolean;
-        externalLibrary:{
-            normal:boolean;
-            dynamic:boolean;
-        };
-        javaScript:boolean;
-        otherMaximumFileSizeLimitInByte:number
-    };
-    package:{
-        main:{
-            propertyNames:Array<string>;
-            fileNames:Array<string>;
-        };
-        aliasPropertyNames:Array<string>
-    };
-    extensions:Extensions;
-    libraryName:string;
-    loader:{
-        aliases:Array<string>;
-        directoryNames:Array<string>;
-        extensions:Extensions;
-    };
-    module:{
-        aliases:PlainObject;
-        cascadingStyleSheet:string;
-        directoryNames:Array<string>;
-        html:PlainObject;
-        locations:{[key:string]:Array<string>};
-        optimizer:{
-            data:PlainObject;
-            font:{
-                eot:PlainObject;
-                woff:PlainObject;
-                ttf:PlainObject;
-                svg:PlainObject
-            };
-            htmlMinifier:PlainObject;
-            image:{
-                content:PlainObject;
-                file:PlainObject
-            };
-            uglifyJS:PlainObject
-        };
-        preprocessor:{
-            cascadingStyleSheet:string;
-            pug:PlainObject;
-            less:PlainObject;
-            babel:PlainObject;
-            sass:PlainObject;
-            scss:PlainObject
-        };
-        provide:{[key:string]:string};
-        style:PlainObject;
-        skipParseRegularExpressions:RegExp|Array<RegExp>;
-    };
-    offline:{excludes:Array<string>};
-    path:Path;
-    /* eslint-disable max-len */
-    targetTechnology:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
-    /* eslint-enable max-len */
-
     assetPattern:{[key:string]:{
         excludeFilePathRegularExpression:string;
         pattern:string
@@ -261,6 +148,10 @@ export type ResolvedConfiguration = {
     build:{
         definitions:PlainObject;
         types:PlainObject;
+    };
+    cache:{
+        main:boolean;
+        unsafe:boolean;
     };
     commandLine:{
         build:Command;
@@ -271,23 +162,120 @@ export type ResolvedConfiguration = {
         testInBrowser:Command;
         typeCheck:Command;
     };
+    contextType:string;
+    debug:boolean;
     development:{
         openBrowser:PlainObject;
         server:PlainObject;
         tool:false|string;
     };
+    dllManifestFilePaths:Array<string>;
+    document:PlainObject;
+    exportFormat:{
+        external:ExportFormat;
+        self:ExportFormat;
+    };
+    extensions:Extensions;
+    favicon:{
+        logo:string;
+        [key:string]:any;
+    };
+    files:{
+        additionalPaths:Array<string>;
+        compose:{
+            cascadingStyleSheet:string;
+            image:string;
+            javaScript:string;
+        };
+        defaultHTML:HTMLConfiguration;
+        html:Array<HTMLConfiguration>;
+    };
+    givenCommandLineArguments:Array<string>;
     hashAlgorithm:string;
+    injection:PlainObject;
+    inPlace:{
+        cascadingStyleSheet:boolean;
+        externalLibrary:{
+            normal:boolean;
+            dynamic:boolean;
+        };
+        javaScript:boolean;
+        otherMaximumFileSizeLimitInByte:number
+    };
+    library:boolean;
+    libraryName:string;
     loader:{
         aliases:PlainObject;
-        extensions:Extensions;
         directoryNames:Array<string>;
+        extensions:{
+            file:Array<string>;
+            module:Array<string>;
+        };
     };
+    module:{
+        additional:Array<PlainObject>;
+        aliases:PlainObject;
+        cascadingStyleSheet:LoaderConfiguration;
+        directoryNames:Array<string>;
+        html:LoaderConfiguration;
+        locations:{filePaths:Array<string>;directoryPaths:Array<string>};
+        optimizer:{
+            data:LoaderConfiguration;
+            font:{
+                eot:LoaderConfiguration;
+                svg:LoaderConfiguration;
+                ttf:LoaderConfiguration;
+                woff:LoaderConfiguration;
+            };
+            htmlMinifier:PlainObject;
+            image:{
+                content:PlainObject;
+                exclude:string;
+                file:PlainObject;
+                loader:string;
+            };
+            babili:PlainObject
+        };
+        preprocessor:{
+            cascadingStyleSheet:{
+                loader:string;
+                options:Object;
+            };
+            html:LoaderConfiguration;
+            javaScript:LoaderConfiguration;
+            json:{
+                exclude:string;
+                loader:string;
+            };
+        };
+        provide:{[key:string]:string};
+        replacements:{
+            context:Array<Array<string>>;
+            normal:{[key:string]:Function|string};
+        };
+        skipParseRegularExpressions:RegExp|Array<RegExp>;
+        style:PlainObject;
+    };
+    name:string;
+    needed:{[key:string]:boolean};
+    offline:PlainObject;
+    package:{
+        aliasPropertyNames:Array<string>;
+        main:{
+            fileNames:Array<string>;
+            propertyNames:Array<string>;
+        };
+    };
+    path:Path;
+    performanceHints:{
+        hints:false|string;
+    };
+    showConfiguration:boolean;
     stylelint:PlainObject;
-
-    document:PlainObject;
-
+    /* eslint-disable max-len */
+    targetTechnology:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
+    /* eslint-enable max-len */
     test:PlainObject;
-
     testInBrowser:PlainObject
 }
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
@@ -333,17 +321,14 @@ export type WebpackConfiguration = {
     target:string;
     // endregion
     module:{
-        noParse:RegExp|Array<RegExp>;
-        loaders:Array<PlainObject>;
+        noParse?:RegExp|Array<RegExp>;
+        rules:Array<PlainObject>;
     },
+    performance:{
+        hints:false|string;
+    };
     plugins:Array<Object>;
 }
-// / endregion
-// / region specific callbacks
-export type PromiseCallbackFunction = (reason:any) => ?Promise<any>
-export type TraverseFilesCallbackFunction = (
-    filePath:string, stat:Object
-) => ?boolean
 // / endregion
 // endregion
 // region vim modline

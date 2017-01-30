@@ -37,12 +37,18 @@ module.exports = function(source:string):string {
         Tools.extendObject(true, {
             context: './',
             extensions: {
-                file: [
-                    '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico',
-                    '.html', '.json', '.eot', '.ttf', '.woff'
-                ], module: []
+                file: {
+                    external: ['.js'],
+                    internal: [
+                        '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico',
+                        '.html', '.json', '.eot', '.ttf', '.woff'
+                    ]
+                }, module: []
             },
-            moduleAliases: []
+            module: {
+                aliases: {},
+                replacements: {}
+            }
         }, this.options.pug || {}, loaderUtils.parseQuery(this.query)),
         /#%%%#/g, '!')
     const compile:CompileFunction = (
@@ -84,7 +90,8 @@ module.exports = function(source:string):string {
                     return compile(template, options)(nestedLocals)
                 const templateFilePath:?string =
                     Helper.determineModuleFilePath(
-                        template, query.moduleAliases, query.extensions,
+                        template, query.module.aliases,
+                        query.module.replacements, query.extensions,
                         query.context, configuration.path.source.asset.base,
                         configuration.path.ignore,
                         configuration.module.directoryNames,

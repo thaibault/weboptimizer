@@ -15,6 +15,8 @@
 */
 // region imports
 import Tools from 'clientnode'
+import type {PlainObject} from 'clientnode'
+import ExtractText from 'extract-text-webpack-plugin'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -28,14 +30,14 @@ import Helper from './helper.compiled'
 import {configuration as givenMetaConfiguration} from './package'
 /* eslint-disable no-unused-vars */
 import type {
-    DefaultConfiguration, HTMLConfiguration, MetaConfiguration, PlainObject,
-    ResolvedConfiguration
+    DefaultConfiguration, HTMLConfiguration, InternalInjection,
+    MetaConfiguration, ResolvedConfiguration
 } from './type'
 /* eslint-enable no-unused-vars */
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 /*
     To assume to go two folder up from this file until there is no
-    "node_modules" parent folder  is usually resilient again dealing with
+    "node_modules" parent folder is usually resilient again dealing with
     projects where current working directory isn't the projects directory and
     this library is located as a nested dependency.
 */
@@ -73,9 +75,10 @@ if (
     } catch (error) {}
 let specificConfiguration:PlainObject
 try {
-    // IgnoreTypeCheck
-    specificConfiguration = require(path.join(
+    /* eslint-disable no-eval */
+    specificConfiguration = eval('require')(path.join(
         metaConfiguration.default.path.context, 'package'))
+    /* eslint-enable no-eval */
 } catch (error) {
     specificConfiguration = {name: 'mockup'}
     metaConfiguration.default.path.context = process.cwd()
@@ -112,7 +115,6 @@ if (typeof configuration.library === 'object')
     ), configuration.library)
 if (
     'library' in specificConfiguration &&
-    // IgnoreTypeCheck
     specificConfiguration.library === true || (
         'library' in specificConfiguration &&
         specificConfiguration.library === undefined ||
@@ -123,14 +125,17 @@ if (
         configuration, libraryConfiguration
     ), libraryConfiguration)
 // endregion
-// region merging and evaluating default, test, specific and dynamic settings
+/*
+    region merging and evaluating default, test, document, specific and dynamic
+    settings
+*/
 // / region load additional dynamically given configuration
 let count:number = 0
 let filePath:?string = null
 while (true) {
     const newFilePath:string = configuration.path.context +
         `.dynamicConfiguration-${count}.json`
-    if (!Helper.isFileSync(newFilePath))
+    if (!Tools.isFileSync(newFilePath))
         break
     filePath = newFilePath
     count += 1
@@ -147,31 +152,22 @@ if (filePath) {
     })
 }
 if (runtimeInformation.givenCommandLineArguments.length > 2)
-    // region apply documentation configuration
-    if (runtimeInformation.givenCommandLineArguments[2] === 'document')
-        Tools.extendObject(true, Tools.modifyObject(
-            configuration, configuration.document
-        ), configuration.document)
+    // region apply use case specific configuration
+    for (const type:string of ['document', 'test', 'testInBrowser'])
+        if (runtimeInformation.givenCommandLineArguments[2] === type)
+            Tools.extendObject(true, Tools.modifyObject(
+                configuration, configuration[type]
+            ), configuration[type])
     // endregion
-    // region apply test configuration
-    else if (
-        runtimeInformation.givenCommandLineArguments[2] === 'testInBrowser'
-    )
-        Tools.extendObject(true, Tools.modifyObject(
-            configuration, configuration.testInBrowser
-        ), configuration.testInBrowser)
-    else if (runtimeInformation.givenCommandLineArguments[2] === 'test')
-        Tools.extendObject(true, Tools.modifyObject(
-            configuration, configuration.test
-        ), configuration.test)
-    // endregion
+for (const type:string of ['document', 'test', 'testInBrowser'])
+    delete configuration[type]
 // / endregion
 Tools.extendObject(true, Tools.modifyObject(Tools.modifyObject(
     configuration, specificConfiguration
 ), runtimeInformation), specificConfiguration, runtimeInformation)
 let result:?PlainObject = null
 if (runtimeInformation.givenCommandLineArguments.length > 3)
-    result = Helper.parseEncodedObject(
+    result = Tools.stringParseEncodedObject(
         runtimeInformation.givenCommandLineArguments[runtimeInformation
             .givenCommandLineArguments.length - 1],
         configuration, 'configuration')
@@ -179,90 +175,70 @@ if (Tools.isPlainObject(result))
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
-if (Helper.isDirectorySync(configuration.path.target.base))
-    fileSystem.readdirSync(configuration.path.target.base).forEach((
-        fileName:string
-    ):void => {
+if (Tools.isDirectorySync(configuration.path.target.base))
+    for (const fileName:string of fileSystem.readdirSync(
+        configuration.path.target.base
+    ))
         if (fileName.match(/^.*\.dll-manifest\.json$/))
             configuration.dllManifestFilePaths.push(path.resolve(
                 configuration.path.target.base, fileName))
-    })
 // / endregion
 // / region define dynamic resolve parameter
 const parameterDescription:Array<string> = [
-    'self', 'webOptimizerPath', 'currentPath', 'path', 'helper', 'tools']
+    'currentPath', 'fileSystem', 'helper', 'path', 'require', 'tools',
+    'webOptimizerPath']
 const parameter:Array<any> = [
-    configuration, __dirname, process.cwd(), path, Helper, Tools]
+    /* eslint-disable no-eval */
+    process.cwd(), fileSystem, Helper, path, eval('require'), Tools, __dirname]
+    /* eslint-enable no-eval */
 // / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
-    configuration.path.context, Tools.resolveDynamicDataStructure(
-        configuration.path.base, parameterDescription, parameter, false))
+    configuration.path.context, configuration.path.base)
 for (const key:string in configuration.path)
     if (
         configuration.path.hasOwnProperty(key) && key !== 'base' &&
         typeof configuration.path[key] === 'string'
     )
         configuration.path[key] = path.resolve(
-            configuration.path.base, Tools.resolveDynamicDataStructure(
-                configuration.path[key], parameterDescription, parameter,
-                false)
+            configuration.path.base, configuration.path[key]
         ) + '/'
-    else {
-        configuration.path[key] = Tools.resolveDynamicDataStructure(
-            configuration.path[key], parameterDescription, parameter, false)
-        if (Tools.isPlainObject(configuration.path[key])) {
-            configuration.path[key].base = path.resolve(
-                configuration.path.base, configuration.path[key].base)
-            for (const subKey:string in configuration.path[key])
-                if (
-                    configuration.path[key].hasOwnProperty(subKey) &&
-                    !['base', 'public'].includes(subKey) &&
-                    typeof configuration.path[key][subKey] === 'string'
-                )
-                    configuration.path[key][subKey] = path.resolve(
-                        configuration.path[key].base,
-                        Tools.resolveDynamicDataStructure(
-                            configuration.path[key][subKey],
-                            parameterDescription, parameter, false)
-                    ) + '/'
-                else {
-                    configuration.path[key][subKey] =
-                        Tools.resolveDynamicDataStructure(
-                            configuration.path[key][subKey],
-                            parameterDescription, parameter, false)
-                    if (Tools.isPlainObject(configuration.path[key][subKey])) {
-                        configuration.path[key][subKey].base = path.resolve(
-                            configuration.path[key].base,
-                            configuration.path[key][subKey].base)
-                        for (
-                            const subSubKey:string in configuration.path[key][
-                                subKey]
-                        )
-                            if (configuration.path[key][subKey].hasOwnProperty(
-                                subSubKey
-                            ) && subSubKey !== 'base' &&
-                            typeof configuration.path[key][subKey][
-                                subSubKey
-                            ] === 'string')
-                                configuration.path[key][subKey][
-                                    subSubKey
-                                ] = path.resolve(
-                                    configuration.path[key][subKey].base,
-                                    Tools.resolveDynamicDataStructure(
-                                        configuration.path[key][subKey][
-                                            subSubKey],
-                                        parameterDescription, parameter, false)
-                                ) + '/'
-                    }
-                }
-        }
+    else if (Tools.isPlainObject(configuration.path[key])) {
+        configuration.path[key].base = path.resolve(
+            configuration.path.base, configuration.path[key].base)
+        for (const subKey:string in configuration.path[key])
+            if (
+                configuration.path[key].hasOwnProperty(subKey) &&
+                !['base', 'public'].includes(subKey) &&
+                typeof configuration.path[key][subKey] === 'string'
+            )
+                configuration.path[key][subKey] = path.resolve(
+                    configuration.path[key].base,
+                    configuration.path[key][subKey]
+                ) + '/'
+            else if (Tools.isPlainObject(configuration.path[key][subKey])) {
+                configuration.path[key][subKey].base = path.resolve(
+                    configuration.path[key].base,
+                    configuration.path[key][subKey].base)
+                for (const subSubKey:string in configuration.path[key][subKey])
+                    if (configuration.path[key][subKey].hasOwnProperty(
+                        subSubKey
+                    ) && subSubKey !== 'base' &&
+                    typeof configuration.path[key][subKey][
+                        subSubKey
+                    ] === 'string')
+                        configuration.path[key][subKey][
+                            subSubKey
+                        ] = path.resolve(
+                            configuration.path[key][subKey].base,
+                            configuration.path[key][subKey][subSubKey]
+                        ) + '/'
+            }
     }
 // / endregion
-const resolvedConfiguration:ResolvedConfiguration = Tools.unwrapProxy(
-    Tools.resolveDynamicDataStructure(Tools.resolveDynamicDataStructure(
-        configuration, parameterDescription, parameter
-    ), parameterDescription, parameter, true))
+const resolvedConfiguration:ResolvedConfiguration =
+    Tools.resolveDynamicDataStructure(
+        configuration, parameterDescription, parameter)
 // endregion
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
@@ -275,13 +251,13 @@ for (const type:string in resolvedConfiguration.build.types)
         resolvedConfiguration.build.types[type] = Tools.extendObject(true, {
         }, defaultConfiguration, Tools.extendObject(
             true, {extension: type}, resolvedConfiguration.build.types[type],
-            {type})
-        )
+            {type}))
 // endregion
-// region resolve module location and which asset types are needed
+// region resolve module location and determine which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.injection.internal,
     resolvedConfiguration.module.aliases,
+    resolvedConfiguration.module.replacements.normal,
     resolvedConfiguration.extensions, resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base)
 resolvedConfiguration.injection = Helper.resolveInjection(
@@ -294,20 +270,24 @@ resolvedConfiguration.injection = Helper.resolveInjection(
         ).map((filePath:string):string => path.resolve(
             resolvedConfiguration.path.context, filePath)
         ).filter((filePath:string):boolean =>
-            !resolvedConfiguration.path.context.startsWith(filePath)))
+            !resolvedConfiguration.path.context.startsWith(filePath))),
+        resolvedConfiguration.package.main.fileNames
     ), resolvedConfiguration.injection.autoExclude,
     resolvedConfiguration.module.aliases,
+    resolvedConfiguration.module.replacements.normal,
     resolvedConfiguration.extensions,
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore)
+// IgnoreTypeCheck
+const internalInjection:InternalInjection =
+    resolvedConfiguration.injection.internal
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
     normalized: Helper.resolveModulesInFolders(
-        // IgnoreTypeCheck
-        Helper.normalizeInternalInjection(
-            resolvedConfiguration.injection.internal
-        ), resolvedConfiguration.module.aliases,
+        Helper.normalizeInternalInjection(internalInjection),
+        resolvedConfiguration.module.aliases,
+        resolvedConfiguration.module.replacements.normal,
         resolvedConfiguration.extensions,
         resolvedConfiguration.path.context,
         resolvedConfiguration.path.source.asset.base,
@@ -334,9 +314,15 @@ for (
         ) {
             const filePath:?string = Helper.determineModuleFilePath(
                 moduleID, resolvedConfiguration.module.aliases,
+                resolvedConfiguration.module.replacements.normal,
                 resolvedConfiguration.extensions,
                 resolvedConfiguration.path.context,
-                resolvedConfiguration.path.source.asset.base,
+                /*
+                    NOTE: We doesn't use
+                    "resolvedConfiguration.path.source.asset.base" because we
+                    have already resolve all module ids.
+                */
+                './',
                 resolvedConfiguration.path.ignore,
                 resolvedConfiguration.module.directoryNames,
                 resolvedConfiguration.package.main.fileNames,
@@ -357,13 +343,29 @@ for (
 // region adding special aliases
 // NOTE: This alias couldn't be set in the "package.json" file since this would
 // result in an endless loop.
-resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader =
-    resolvedConfiguration.files.defaultHTML.template.substring(
-        0, resolvedConfiguration.files.defaultHTML.template.lastIndexOf('!'))
+resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader = ''
+for (
+    const loader:PlainObject of
+    resolvedConfiguration.files.defaultHTML.template.use
+) {
+    if (
+        resolvedConfiguration.loader.aliases
+        .webOptimizerDefaultTemplateFileLoader
+    )
+        resolvedConfiguration.loader.aliases
+            .webOptimizerDefaultTemplateFileLoader += '!'
+    resolvedConfiguration.loader.aliases
+        .webOptimizerDefaultTemplateFileLoader += loader.loader
+    if (loader.options)
+        resolvedConfiguration.loader.aliases
+            .webOptimizerDefaultTemplateFileLoader += '?' +
+                Tools.convertCircularObjectToJSON(loader.options)
+}
 resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath$ =
-    Helper.stripLoader(resolvedConfiguration.files.defaultHTML.template)
+    resolvedConfiguration.files.defaultHTML.template.filePath
 // endregion
-// region apply webpack html plugin workaround
+// region apply webpack plugin workarounds
+// / region html
 /*
     NOTE: Provides a workaround to handle a bug with chained loader
     configurations.
@@ -373,21 +375,32 @@ for (
 ) {
     Tools.extendObject(
         true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)
+    htmlConfiguration.template.request = htmlConfiguration.template.filePath
     if (
-        typeof htmlConfiguration.template === 'string' &&
-        htmlConfiguration.template.includes('!') &&
-        htmlConfiguration.template !==
-            resolvedConfiguration.files.defaultHTML.template
+        htmlConfiguration.template.filePath !==
+            resolvedConfiguration.files.defaultHTML.template.filePath &&
+        htmlConfiguration.template.options
     ) {
-        const newTemplateString:Object = new String(htmlConfiguration.template)
-        newTemplateString.replace = ((string:string):Function => (
+        const requestString:Object = new String(
+            htmlConfiguration.template.request +
+            Tools.convertCircularObjectToJSON(
+                htmlConfiguration.template.options))
+        requestString.replace = ((string:string):Function => (
             _search:RegExp|string, _replacement:string|(
                 ...matches:Array<string>
             ) => string
-        ):string => string)(htmlConfiguration.template)
-        htmlConfiguration.template = newTemplateString
+        ):string => string)(htmlConfiguration.template.filePath)
+        htmlConfiguration.template.request = requestString
     }
 }
+// / endregion
+// / region extract text
+ExtractText.extract = function(options:Object):Array<Object> {
+    return [this.loader({
+        omit: Boolean(options.fallbackUse), remove: true
+    })].concat(options.fallbackUse, options.use)
+}
+// / endregion
 // endregion
 export default resolvedConfiguration
 // region vim modline
