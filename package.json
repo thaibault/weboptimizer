@@ -636,7 +636,7 @@
           "image": {
             "content": {
               "disable": {
-                "__evaluate__": "self.debug ? true : console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{disable:false}}}}}\". to enable it.`) || true"
+                "__evaluate__": "self.debug ? true : console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{disable:false}}}}}\" to enable it.`) || true"
               },
               "gifsicle": {
                 "optimizationLevel": 3,
