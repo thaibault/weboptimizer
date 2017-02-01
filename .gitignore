@@ -81,8 +81,8 @@ nosetests.xml
 *Thumbs.db
 
 # NPM/yarn's runtime files
--yarn-error.log
--yarn.lock
+yarn-error.log
+yarn.lock
 node_modules/
 .npm/
 .v8flags.*
