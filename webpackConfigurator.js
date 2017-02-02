@@ -190,73 +190,103 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
             compilation:Object, callback:ProcedureFunction
         ):void => {
             if (configuration.files.html[0].filename in compilation.assets && (
-                configuration.inPlace.cascadingStyleSheet ||
-                configuration.inPlace.javaScript
+                Object.keys(
+                    configuration.inPlace.cascadingStyleSheet
+                ).length ||
+                Object.keys(configuration.inPlace.javaScript).length
             ))
                 dom.env(compilation.assets[configuration.files.html[
                     0
                 ].filename].source(), (error:?Error, window:Object):void => {
-                    if (configuration.inPlace.cascadingStyleSheet) {
-                        const urlPrefix:string = path.relative(
-                            configuration.path.target.base,
-                            configuration.files.compose.cascadingStyleSheet
-                                .replace('[contenthash]', ''))
-                        const domNode:DomNode = window.document.querySelector(
-                            `link[href^="${urlPrefix}"]`)
-                        if (domNode) {
-                            let asset:string
-                            for (asset in compilation.assets)
-                                if (asset.startsWith(urlPrefix))
-                                    break
-                            const inPlaceDomNode:DomNode =
-                                window.document.createElement('style')
-                            inPlaceDomNode.textContent =
-                                compilation.assets[asset].source()
-                            domNode.parentNode.insertBefore(
-                                inPlaceDomNode, domNode)
-                            domNode.parentNode.removeChild(domNode)
-                            /*
-                                NOTE: This doesn't prevent webpack from
-                                creating this file if present in another chunk
-                                so removing it (and a potential source map
-                                file) later in the "done" hook.
-                            */
-                            delete compilation.assets[asset]
-                        } else
-                            console.warn(
-                                'No referenced cascading style sheet file in' +
-                                ' resulting markup found with ' +
-                                `selector: link[href^="${urlPrefix}"]`)
-                    }
-                    if (configuration.inPlace.javaScript) {
-                        const urlPrefix:string = path.relative(
-                            configuration.path.target.base,
-                            configuration.files.compose.javaScript.replace(
-                                '[hash]', ''))
-                        const domNode:DomNode = window.document.querySelector(
-                            `script[src^="${urlPrefix}"]`)
-                        if (domNode) {
-                            let asset:string
-                            for (asset in compilation.assets)
-                                if (asset.startsWith(urlPrefix))
-                                    break
-                            domNode.textContent = compilation.assets[
-                                asset
-                            ].source()
-                            domNode.removeAttribute('src')
-                            /*
-                                NOTE: This doesn't prevent webpack from
-                                creating this file if present in another chunk
-                                so removing it (and a potential source map
-                                file) later in the "done" hook.
-                            */
-                            delete compilation.assets[asset]
-                        } else
-                            console.warn(
-                                'No referenced javaScript file in resulting ' +
-                                'markup found with selector: ' +
-                                `script[src^="${urlPrefix}"]`)
-                    }
+                    for (
+                        const pattern:string in
+                        configuration.inPlace.cascadingStyleSheet
+                    )
+                        if (configuration.inPlace.cascadingStyleSheet
+                            .hasOwnProperty(pattern)
+                        ) {
+                            const urlPrefix:string = path.relative(
+                                configuration.path.target.base,
+                                configuration.files.compose.cascadingStyleSheet
+                                    .replace('[contenthash]', '')
+                                    .replace('[id]', pattern)
+                                    .replace('[name]', pattern))
+                            const domNode:DomNode =
+                                window.document.querySelector(
+                                    `link[href^="${urlPrefix}"]`)
+                            if (domNode) {
+                                let asset:string
+                                for (asset in compilation.assets)
+                                    if (asset.startsWith(urlPrefix))
+                                        break
+                                const inPlaceDomNode:DomNode =
+                                    window.document.createElement('style')
+                                inPlaceDomNode.textContent =
+                                    compilation.assets[asset].source()
+                                if (configuration.inPlace.cascadingStyleSheet[
+                                    pattern
+                                ] === 'body')
+                                    // TODO
+                                else if (configuration.inPlace.cascadingStyleSheet[
+                                    pattern
+                                ] === 'in')
+                                    domNode.parentNode.insertBefore(
+                                        inPlaceDomNode, domNode)
+                                else if (configuration.inPlace.cascadingStyleSheet[
+                                    pattern
+                                ] === 'head')
+                                    // TODO
+                                domNode.parentNode.removeChild(domNode)
+                                /*
+                                    NOTE: This doesn't prevent webpack from
+                                    creating this file if present in another
+                                    chunk so removing it (and a potential
+                                    source map file) later in the "done" hook.
+                                */
+                                delete compilation.assets[asset]
+                            } else
+                                console.warn(
+                                    'No referenced cascading style sheet ' +
+                                    'file in resulting markup found with ' +
+                                    `selector: link[href^="${urlPrefix}"]`)
+                        }
+                    for (
+                        const pattern:string in
+                        configuration.inPlace.javaScript
+                    )
+                        if (configuration.inPlace.javaScript.hasOwnProperty(
+                            pattern
+                        )) {
+                            // TODO
+                            const urlPrefix:string = path.relative(
+                                configuration.path.target.base,
+                                configuration.files.compose.javaScript.replace(
+                                    '[hash]', ''))
+                            const domNode:DomNode =
+                                window.document.querySelector(
+                                    `script[src^="${urlPrefix}"]`)
+                            if (domNode) {
+                                let asset:string
+                                for (asset in compilation.assets)
+                                    if (asset.startsWith(urlPrefix))
+                                        break
+                                domNode.textContent = compilation.assets[
+                                    asset
+                                ].source()
+                                domNode.removeAttribute('src')
+                                /*
+                                    NOTE: This doesn't prevent webpack from
+                                    creating this file if present in another
+                                    chunk so removing it (and a potential
+                                    source map file) later in the "done" hook.
+                                */
+                                delete compilation.assets[asset]
+                            } else
+                                console.warn(
+                                    'No referenced javaScript file in ' +
+                                    'resulting markup found with selector: ' +
+                                    `script[src^="${urlPrefix}"]`)
+                        }
                     compilation.assets[configuration.files.html[
                         0
                     ].filename] = new WebpackRawSource(

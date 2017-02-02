@@ -470,12 +470,12 @@
         }
       },
       "inPlace": {
-        "cascadingStyleSheet": true,
+        "cascadingStyleSheet": {".+": "in"},
         "externalLibrary": {
           "normal": true,
           "dynamic": true
         },
-        "javaScript": false,
+        "javaScript": {"errorreporter": "head"},
         "otherMaximumFileSizeLimitInByte": 40960
       },
       "library": true,
@@ -937,8 +937,8 @@
         }
       },
       "inPlace": {
-        "cascadingStyleSheet": false,
-        "javaScript": false,
+        "cascadingStyleSheet": {},
+        "javaScript": {},
         "otherMaximumFileSizeLimitInByte": 1
       },
       "module": {
