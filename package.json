@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.227",
+  "version": "1.0.228",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "http://torben.website/webOptimizer",
@@ -470,12 +470,16 @@
         }
       },
       "inPlace": {
-        "cascadingStyleSheet": {"*": "in"},
+        "cascadingStyleSheet": {
+          "*": "in"
+        },
         "externalLibrary": {
           "normal": true,
           "dynamic": true
         },
-        "javaScript": {"errorreporter": "head"},
+        "javaScript": {
+          "errorreporter": "head"
+        },
         "otherMaximumFileSizeLimitInByte": 40960
       },
       "library": true,
