@@ -222,47 +222,46 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                 window.document.querySelectorAll(
                                     `link${selector}`)
                             if (domNodes.length) {
-                                // TODO we have a list of dom nodes now.
-                                let asset:string
-                                // TODO ??
-                                for (asset in compilation.assets)
-                                    if (asset.startsWith(urlPrefix))
-                                        break
-                                const inPlaceDomNode:DomNode =
-                                    window.document.createElement('style')
-                                inPlaceDomNode.textContent =
-                                    compilation.assets[asset].source()
-                                if (configuration.inPlace.cascadingStyleSheet[
-                                    pattern
-                                ] === 'body')
-                                    // TODO
-                                else if (
-                                    configuration.inPlace.cascadingStyleSheet[
+                                for (const domNode:DomNode of domNodes)
+                                    console.log('A', domNode.attributes.href.value)
+                                    console.log('B', compilation.assets)
+                                    return
+                                    const inPlaceDomNode:DomNode =
+                                        window.document.createElement('style')
+                                    inPlaceDomNode.textContent =
+                                        compilation.assets[asset].source()
+                                    if (configuration.inPlace.cascadingStyleSheet[
                                         pattern
-                                    ] === 'in'
-                                )
-                                    domNode.parentNode.insertBefore(
-                                        inPlaceDomNode, domNode)
-                                else if (
-                                    configuration.inPlace.cascadingStyleSheet[
-                                        pattern
-                                    ] === 'head'
-                                )
-                                    // TODO
-                                domNode.parentNode.removeChild(domNode)
-                                /*
-                                    NOTE: This doesn't prevent webpack from
-                                    creating this file if present in another
-                                    chunk so removing it (and a potential
-                                    source map file) later in the "done" hook.
-                                */
-                                delete compilation.assets[asset]
+                                    ] === 'body')
+                                        // TODO
+                                    else if (
+                                        configuration.inPlace.cascadingStyleSheet[
+                                            pattern
+                                        ] === 'in'
+                                    )
+                                        domNode.parentNode.insertBefore(
+                                            inPlaceDomNode, domNode)
+                                    else if (
+                                        configuration.inPlace.cascadingStyleSheet[
+                                            pattern
+                                        ] === 'head'
+                                    )
+                                        // TODO
+                                    domNode.parentNode.removeChild(domNode)
+                                    /*
+                                        NOTE: This doesn't prevent webpack from
+                                        creating this file if present in another
+                                        chunk so removing it (and a potential
+                                        source map file) later in the "done" hook.
+                                    */
+                                    delete compilation.assets[asset]
                             } else
                                 console.warn(
                                     'No referenced cascading style sheet ' +
                                     'file in resulting markup found with ' +
                                     `selector: link${selector}`)
                         }
+                    return
                     if (configuration.inPlace.javaScript)
                         for (
                             const pattern:string in

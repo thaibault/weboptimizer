@@ -937,8 +937,8 @@
         }
       },
       "inPlace": {
-        "cascadingStyleSheet": {},
-        "javaScript": {},
+        "cascadingStyleSheet": null,
+        "javaScript": null,
         "otherMaximumFileSizeLimitInByte": 1
       },
       "module": {
