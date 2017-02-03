@@ -470,7 +470,7 @@
         }
       },
       "inPlace": {
-        "cascadingStyleSheet": {".+": "in"},
+        "cascadingStyleSheet": {"*": "in"},
         "externalLibrary": {
           "normal": true,
           "dynamic": true

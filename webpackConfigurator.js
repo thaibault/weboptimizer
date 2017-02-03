@@ -190,32 +190,41 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
             compilation:Object, callback:ProcedureFunction
         ):void => {
             if (configuration.files.html[0].filename in compilation.assets && (
-                Object.keys(
+                configuration.inPlace.cascadingStyleSheet && Object.keys(
                     configuration.inPlace.cascadingStyleSheet
-                ).length ||
-                Object.keys(configuration.inPlace.javaScript).length
+                ).length || configuration.inPlace.javaScript && Object.keys(
+                    configuration.inPlace.javaScript
+                ).length
             ))
                 dom.env(compilation.assets[configuration.files.html[
                     0
                 ].filename].source(), (error:?Error, window:Object):void => {
-                    for (
-                        const pattern:string in
-                        configuration.inPlace.cascadingStyleSheet
-                    )
-                        if (configuration.inPlace.cascadingStyleSheet
-                            .hasOwnProperty(pattern)
+                    if (configuration.inPlace.cascadingStyleSheet)
+                        for (
+                            const pattern:string in
+                            configuration.inPlace.cascadingStyleSheet
                         ) {
-                            const urlPrefix:string = path.relative(
-                                configuration.path.target.base,
-                                configuration.files.compose.cascadingStyleSheet
-                                    .replace('[contenthash]', '')
-                                    .replace('[id]', pattern)
-                                    .replace('[name]', pattern))
-                            const domNode:DomNode =
-                                window.document.querySelector(
-                                    `link[href^="${urlPrefix}"]`)
-                            if (domNode) {
+                            if (!configuration.inPlace.cascadingStyleSheet
+                                .hasOwnProperty(pattern)
+                            )
+                                continue
+                            let selector:string = ''
+                            if (pattern !== '*')
+                                selector = '[href^="' + path.relative(
+                                    configuration.path.target.base,
+                                    configuration.files.compose
+                                        .cascadingStyleSheet
+                                        .replace('[contenthash]', '')
+                                        .replace('[id]', pattern)
+                                        .replace('[name]', pattern)
+                                ) + `"]`
+                            const domNodes:Array<DomNode> =
+                                window.document.querySelectorAll(
+                                    `link${selector}`)
+                            if (domNodes.length) {
+                                // TODO we have a list of dom nodes now.
                                 let asset:string
+                                // TODO ??
                                 for (asset in compilation.assets)
                                     if (asset.startsWith(urlPrefix))
                                         break
@@ -227,14 +236,18 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                     pattern
                                 ] === 'body')
                                     // TODO
-                                else if (configuration.inPlace.cascadingStyleSheet[
-                                    pattern
-                                ] === 'in')
+                                else if (
+                                    configuration.inPlace.cascadingStyleSheet[
+                                        pattern
+                                    ] === 'in'
+                                )
                                     domNode.parentNode.insertBefore(
                                         inPlaceDomNode, domNode)
-                                else if (configuration.inPlace.cascadingStyleSheet[
-                                    pattern
-                                ] === 'head')
+                                else if (
+                                    configuration.inPlace.cascadingStyleSheet[
+                                        pattern
+                                    ] === 'head'
+                                )
                                     // TODO
                                 domNode.parentNode.removeChild(domNode)
                                 /*
@@ -248,24 +261,32 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                 console.warn(
                                     'No referenced cascading style sheet ' +
                                     'file in resulting markup found with ' +
-                                    `selector: link[href^="${urlPrefix}"]`)
+                                    `selector: link${selector}`)
                         }
-                    for (
-                        const pattern:string in
-                        configuration.inPlace.javaScript
-                    )
-                        if (configuration.inPlace.javaScript.hasOwnProperty(
-                            pattern
-                        )) {
+                    if (configuration.inPlace.javaScript)
+                        for (
+                            const pattern:string in
+                            configuration.inPlace.javaScript
+                        ) {
+                            if (!configuration.inPlace.javaScript
+                                .hasOwnProperty(pattern)
+                            )
+                                continue
+                            let selector:string = ''
+                            if (pattern !== '*')
+                                selector = '[src^="' + path.relative(
+                                    configuration.path.target.base,
+                                    configuration.files.compose
+                                        .cascadingStyleSheet
+                                        .replace('[contenthash]', '')
+                                        .replace('[id]', pattern)
+                                        .replace('[name]', pattern)
+                                ) + `"]`
+                            const domNodes:Array<DomNode> =
+                                window.document.querySelectorAll(
+                                    `script${selector}`)
                             // TODO
-                            const urlPrefix:string = path.relative(
-                                configuration.path.target.base,
-                                configuration.files.compose.javaScript.replace(
-                                    '[hash]', ''))
-                            const domNode:DomNode =
-                                window.document.querySelector(
-                                    `script[src^="${urlPrefix}"]`)
-                            if (domNode) {
+                            if (domNodes.length) {
                                 let asset:string
                                 for (asset in compilation.assets)
                                     if (asset.startsWith(urlPrefix))
@@ -285,7 +306,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                 console.warn(
                                     'No referenced javaScript file in ' +
                                     'resulting markup found with selector: ' +
-                                    `script[src^="${urlPrefix}"]`)
+                                    `script${selector}`)
                         }
                     compilation.assets[configuration.files.html[
                         0
