@@ -230,6 +230,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                         window.document.createElement('style')
                                     inPlaceDomNode.textContent =
                                         compilation.assets[asset].source()
+                                    /*
                                     if (configuration.inPlace.cascadingStyleSheet[
                                         pattern
                                     ] === 'body')
@@ -247,6 +248,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                         ] === 'head'
                                     )
                                         // TODO
+                                    */
                                     domNode.parentNode.removeChild(domNode)
                                     /*
                                         NOTE: This doesn't prevent webpack from
