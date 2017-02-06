@@ -26,7 +26,7 @@
     
 
 
-    <h3>weboptimizer 1.0.227</h3>
+    <h3>weboptimizer 1.0.232</h3>
 
 
 
@@ -55,24 +55,25 @@ This library written by Torben Sickert stand under a creative commons naming
 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
 endregion -->
 <h2>Use case</h2><p>The main goal of This plugin is providing an generic module bundler and
-workflow for all you development use cases in any project related to the web or
-node. All native web types like html, css and JavaScript are supported natively
-in their latest language specification through preconfigured transpiler.</p>
+workflow for all your development use cases in any project related to the web
+or node. All native web types like html, css and JavaScript are supported
+natively in their latest language specification through preconfigured
+transpiler.</p>
 <h2>Content</h2><!--Place for automatic generated table of contents.-->
 <p>[TOC]</p>
 <h2>Features</h2><ul>
 <li>Complete and flexible configured wrapper for <strong>webpack2+</strong> with many
-automatically determined pre configuration.</li>
-<li><strong>Completely</strong> adaptable for your needs.</li>
+automatically determined pre configurations.</li>
+<li>Completely <strong>adaptable</strong> for your needs.</li>
 <li>Targets <strong>library</strong> and <strong>web</strong> bundle building out of the box.</li>
 <li>Only one configuration file (your already existing <strong>package.json</strong>) for all
-needed customisations.</li>
-<li>Many needed uses-cases are <strong>preconfigured</strong> and mostly works out of the box for
+needed customisations needed.</li>
+<li>Many <strong>uses-cases</strong> are preconfigured and mostly works out of the box for
 your project.<ul>
 <li><strong>API-Documentation</strong> generation</li>
 <li>Image <strong>sprite</strong> handling. Combine your images and never create sprites
 by hand again.</li>
-<li>Polymorphic <strong>testing</strong> on dom in browsers and/or in node through
+<li>Polymorphic <strong>testing</strong> on dom in browsers and/or node through
 weboptimizer/browserAPI</li>
 <li><strong>Linting</strong> and <strong>TypeChecking</strong> with Flow</li>
 <li>Preconfigured <strong>preprocessing</strong> for CSS (PostCSS), JavaScript (Babel,
@@ -81,12 +82,12 @@ Flow)</li>
 JavaScript (Minification), Images (Compression)</li>
 <li>Various pre configured and adaptable implemented concepts for building
 development-, production-, testing- and/or vendor <strong>bundles</strong>.</li>
-<li>Support for building <strong>libraries</strong> with well defined (UMD) external
-dependencies (preconfigred extendable weback configuration)</li>
+<li>Support for building <strong>libraries</strong> with well defined (UMD, AMD, commonjs...)
+external, dependencies (preconfigred extendable weback configuration)</li>
 <li>Support for building and <strong>shimming</strong> a whole package managed application
 structure to build for various target environments like browsers or node
 (preconfigred extensable weback configuration)</li>
-<li>Generic management for dealing with <strong>DLL-Bundle</strong> to speed up any
+<li>Generic management for dealing with <strong>DLL-Bundles</strong> to speed up any
 workflows: Each (pre-)defined chunk can be outsourced to a DLL-Bundle in
 a complete delclarative and generic way.</li>
 <li>Generic support for all known <strong>favicon</strong> types using only one png file as
@@ -120,7 +121,7 @@ development server.</li>
     ...
 },
 ...</code></pre><p>Update your <strong>packages</strong> via npm and have fun:</p>
-<pre class="prettyprint source"><code>npm update</code></pre><h2>Configuration</h2><p>First you should specify some tasks/use-cases you want to have in you project.
+<pre class="prettyprint source"><code>npm update</code></pre><h2>Configuration</h2><p>First you should specify some tasks/use-cases you want to use in you project.
 You can do this in your <strong>package.json</strong>. All supported scripts and some useful
 compositions are listed below:</p>
 <pre class="prettyprint source"><code>#!JSON
@@ -152,7 +153,7 @@ npm run build -debug
 npm run lint
 npm run watch -debug
 npm run serve
-...</code></pre><p>If you want to configure your app for example to change any of the expected
+...</code></pre><p>If you want to configure your application to change any of the expected
 default source, target, asset or build paths do it in your <strong>package.json</strong>:</p>
 <pre class="prettyprint source"><code>#!JSON
 
@@ -194,7 +195,7 @@ default source, target, asset or build paths do it in your <strong>package.json<
 external dependencies not managed within current project) or an application
 (everything should be bundled including external libraries) since many
 preconfigurations are targeting on this two different use cases. Anyway you can
-customize each configure by hand in each case.</p>
+customize each configuration preset by hand.</p>
 <pre class="prettyprint source"><code>#!JSON
 
 ...
@@ -204,7 +205,7 @@ customize each configure by hand in each case.</p>
     ...
 },
 ...</code></pre><p>You can even reference any value or evaluate any configuration value
-dynamically though a complete JavaScript compatible evaluation mechanism:</p>
+dynamically though a complete javaScript compatible evaluation mechanism:</p>
 <pre class="prettyprint source"><code>#!JSON
 
 ...
@@ -240,7 +241,7 @@ dynamically though a complete JavaScript compatible evaluation mechanism:</p>
     },
     ...
 },
-...</code></pre><p>You can even execute script to determine a value:</p>
+...</code></pre><p>You can even execute scripts to determine a value:</p>
 <pre class="prettyprint source"><code>#!JSON
 
 ...
@@ -265,11 +266,12 @@ dynamically though a complete JavaScript compatible evaluation mechanism:</p>
     ...
 },
 ...</code></pre><p>For all available configuration possibilities please have a look at the
-<strong>package.json</strong> file in this project since these values a extended on runtime.</p>
+<strong>package.json</strong> file in this project since these values will be extended on
+runtime.</p>
 <p>Additionally its even possible to overwrite any value on runtime via a
 complete generic command line interface: The last argument should evaluate to
-a javaScript object witch will be used as source for extending the default
-behavior. Any JavaScript will be supported:</p>
+a javaScript object which will be used as source for extending the default
+behavior. Any javaScript will be supported:</p>
 <pre class="prettyprint source"><code>#!JSON
 
 npm run build '{module:{preprocessor:{javaScript:{loader:&quot;babel&quot;}}}}'</code></pre><p>If you're using webOptimizer in a toolchain were none printable or none unicode
@@ -281,7 +283,7 @@ npm run build '{module:{preprocessor:{pug:{locals:{name:'häns'}}}}}'
 
 # is the same as:
 
-npm run build 'e21vZHVsZTp7cHJlcHJvY2Vzc29yOntwdWc6e2xvY2Fsczp7bmFtZTonaMOkbnMnfX19fX0='</code></pre><p>There is a static tools <a href="http://torben.website/clientNode">clientnode</a> and
+npm run build 'e21vZHVsZTp7cHJlcHJvY2Vzc29yOntwdWc6e2xvY2Fsczp7bmFtZTonaMOkbnMnfX19fX0='</code></pre><p>There is a static tool <a href="http://torben.website/clientNode">clientnode</a> and
 helper instance provided to each evaluation or execution context within the
 package.json (see the API-Documentation, link above, for more details):</p>
 <pre class="prettyprint source"><code>#!JSON
@@ -289,7 +291,7 @@ package.json (see the API-Documentation, link above, for more details):</p>
 ...
 &quot;webOptimizer&quot;: {
     ...
-    &quot;libraryName&quot;: {&quot;__evaluate__&quot;: tools.isPlainObject(self.name) ? tools.stringConvertToValidVariableName(self.name) : 'random'},
+    &quot;libraryName&quot;: {&quot;__evaluate__&quot;: tools.isPlainObject(self.name) ? helper.stripLoader(self.request) : 'random'},
     ...
 },
 ...</code></pre><!-- region modline
@@ -312,7 +314,7 @@ endregion --></article>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Feb 01 2017 09:00:00 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Feb 06 2017 23:34:23 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -194,13 +194,13 @@ export type ResolvedConfiguration = {
     hashAlgorithm:string;
     injection:PlainObject;
     inPlace:{
-        cascadingStyleSheet:boolean;
+        cascadingStyleSheet:{[key:string]:'body'|'head'|'in'};
         externalLibrary:{
             normal:boolean;
             dynamic:boolean;
         };
-        javaScript:boolean;
-        otherMaximumFileSizeLimitInByte:number
+        javaScript:{[key:string]:'body'|'head'|'in'};
+        otherMaximumFileSizeLimitInByte:number;
     };
     library:boolean;
     libraryName:string;
