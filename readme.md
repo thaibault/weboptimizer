@@ -30,17 +30,17 @@ Features
 --------
 
 - Complete and flexible configured wrapper for **webpack2+** with many
-  automatically determined pre configuration.
-- **Completely** adaptable for your needs.
+  automatically determined pre configurations.
+- Completely **adaptable** for your needs.
 - Targets **library** and **web** bundle building out of the box.
 - Only one configuration file (your already existing **package.json**) for all
-  needed customisations.
-- Many needed uses-cases are **preconfigured** and mostly works out of the box for
+  needed customisations needed.
+- Many **uses-cases** are preconfigured and mostly works out of the box for
   your project.
     - **API-Documentation** generation
     - Image **sprite** handling. Combine your images and never create sprites
       by hand again.
-    - Polymorphic **testing** on dom in browsers and/or in node through
+    - Polymorphic **testing** on dom in browsers and/or node through
       weboptimizer/browserAPI
     - **Linting** and **TypeChecking** with Flow
     - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel,
@@ -49,12 +49,12 @@ Features
       JavaScript (Minification), Images (Compression)
     - Various pre configured and adaptable implemented concepts for building
       development-, production-, testing- and/or vendor **bundles**.
-    - Support for building **libraries** with well defined (UMD) external
-      dependencies (preconfigred extendable weback configuration)
+    - Support for building **libraries** with well defined (UMD, AMD, commonjs...)
+      external, dependencies (preconfigred extendable weback configuration)
     - Support for building and **shimming** a whole package managed application
       structure to build for various target environments like browsers or node
       (preconfigred extensable weback configuration)
-    - Generic management for dealing with **DLL-Bundle** to speed up any
+    - Generic management for dealing with **DLL-Bundles** to speed up any
       workflows: Each (pre-)defined chunk can be outsourced to a DLL-Bundle in
       a complete delclarative and generic way.
     - Generic support for all known **favicon** types using only one png file as
@@ -96,7 +96,7 @@ Update your **packages** via npm and have fun:
 Configuration
 -------------
 
-First you should specify some tasks/use-cases you want to have in you project.
+First you should specify some tasks/use-cases you want to use in you project.
 You can do this in your **package.json**. All supported scripts and some useful
 compositions are listed below:
 
@@ -134,7 +134,7 @@ You can easily run any specified script via npm's command lint interface:
     npm run serve
     ...
 
-If you want to configure your app for example to change any of the expected
+If you want to configure your application to change any of the expected
 default source, target, asset or build paths do it in your **package.json**:
 
     #!JSON
@@ -179,7 +179,7 @@ It's recommended to first specify if you're writing a library (preserve
 external dependencies not managed within current project) or an application
 (everything should be bundled including external libraries) since many
 preconfigurations are targeting on this two different use cases. Anyway you can
-customize each configure by hand in each case.
+customize each configuration preset by hand.
 
     #!JSON
 
@@ -192,7 +192,7 @@ customize each configure by hand in each case.
     ...
 
 You can even reference any value or evaluate any configuration value
-dynamically though a complete JavaScript compatible evaluation mechanism:
+dynamically though a complete javaScript compatible evaluation mechanism:
 
 
     #!JSON
@@ -232,7 +232,7 @@ dynamically though a complete JavaScript compatible evaluation mechanism:
     },
     ...
 
-You can even execute script to determine a value:
+You can even execute scripts to determine a value:
 
     #!JSON
 
@@ -260,12 +260,13 @@ You can even execute script to determine a value:
     ...
 
 For all available configuration possibilities please have a look at the
-**package.json** file in this project since these values a extended on runtime.
+**package.json** file in this project since these values will be extended on
+runtime.
 
 Additionally its even possible to overwrite any value on runtime via a
 complete generic command line interface: The last argument should evaluate to
-a javaScript object witch will be used as source for extending the default
-behavior. Any JavaScript will be supported:
+a javaScript object which will be used as source for extending the default
+behavior. Any javaScript will be supported:
 
     #!JSON
 
@@ -283,7 +284,7 @@ placeholder) you can encode your javaScript expression as base64 code:
 
     npm run build 'e21vZHVsZTp7cHJlcHJvY2Vzc29yOntwdWc6e2xvY2Fsczp7bmFtZTonaMOkbnMnfX19fX0='
 
-There is a static tools [clientnode](http://torben.website/clientNode) and
+There is a static tool [clientnode](http://torben.website/clientNode) and
 helper instance provided to each evaluation or execution context within the
 package.json (see the API-Documentation, link above, for more details):
 
@@ -292,7 +293,7 @@ package.json (see the API-Documentation, link above, for more details):
     ...
     "webOptimizer": {
         ...
-        "libraryName": {"__evaluate__": tools.isPlainObject(self.name) ? tools.stringConvertToValidVariableName(self.name) : 'random'},
+        "libraryName": {"__evaluate__": tools.isPlainObject(self.name) ? helper.stripLoader(self.request) : 'random'},
         ...
     },
     ...
