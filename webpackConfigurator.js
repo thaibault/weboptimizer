@@ -190,11 +190,10 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
     configuration.givenCommandLineArguments[2]
 ))
     pluginInstances.push({apply: (compiler:Object):void => {
+        console.log('AAA')
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
         ):void => {
-            callback()
-            return
             if (configuration.files.html[0].filename in compilation.assets && (
                 configuration.inPlace.cascadingStyleSheet && Object.keys(
                     configuration.inPlace.cascadingStyleSheet
