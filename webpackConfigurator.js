@@ -121,12 +121,16 @@ if (htmlAvailable && configuration.offline) {
     if (!['serve', 'testInBrowser'].includes(
         configuration.givenCommandLineArguments[2]
     )) {
-        if (configuration.inPlace.cascadingStyleSheet)
+        if (configuration.inPlace.cascadingStyleSheet && Object.keys(
+            configuration.inPlace.cascadingStyleSheet
+        ).length)
             configuration.offline.excludes.push(path.relative(
                 configuration.path.target.base,
                 configuration.path.target.asset.cascadingStyleSheet
             ) + `*.css?${configuration.hashAlgorithm}=*`)
-        if (configuration.inPlace.javaScript)
+        if (configuration.inPlace.javaScript && Object.keys(
+            configuration.inPlace.javaScript
+        ).length)
             configuration.offline.excludes.push(path.relative(
                 configuration.path.target.base,
                 configuration.path.target.asset.javaScript
@@ -189,6 +193,8 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
         compiler.plugin('emit', (
             compilation:Object, callback:ProcedureFunction
         ):void => {
+            callback()
+            return
             if (configuration.files.html[0].filename in compilation.assets && (
                 configuration.inPlace.cascadingStyleSheet && Object.keys(
                     configuration.inPlace.cascadingStyleSheet
@@ -221,11 +227,11 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                             const domNodes:Array<DomNode> =
                                 window.document.querySelectorAll(
                                     `link${selector}`)
-                            if (domNodes.length) {
-                                for (const domNode:DomNode of domNodes)
+                            if (domNodes.length)
+                                for (const domNode:DomNode of domNodes) {
                                     console.log('A', domNode.attributes.href.value)
                                     console.log('B', compilation.assets)
-                                    return
+                                    break
                                     const inPlaceDomNode:DomNode =
                                         window.document.createElement('style')
                                     inPlaceDomNode.textContent =
@@ -257,13 +263,17 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                         source map file) later in the "done" hook.
                                     */
                                     delete compilation.assets[asset]
-                            } else
+                                }
+                            else
                                 console.warn(
                                     'No referenced cascading style sheet ' +
                                     'file in resulting markup found with ' +
                                     `selector: link${selector}`)
                         }
+
+                    callback()
                     return
+
                     if (configuration.inPlace.javaScript)
                         for (
                             const pattern:string in
@@ -326,13 +336,17 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
             compilation:Object, callback:ProcedureFunction
         ):void => {
             if (configuration.files.html[0].filename in compilation.assets) {
-                if (configuration.inPlace.cascadingStyleSheet) {
+                if (configuration.inPlace.cascadingStyleSheet && Object.keys(
+                    configuration.inPlace.cascadingStyleSheet
+                ).length) {
                     const assetFilePath = Helper.stripLoader(
                         configuration.files.compose.cascadingStyleSheet)
                     if (Tools.isFileSync(assetFilePath))
                         fileSystem.unlinkSync(assetFilePath)
                 }
-                if (configuration.inPlace.javaScript) {
+                if (configuration.inPlace.javaScript && Object.keys(
+                    configuration.inPlace.javaScript
+                ).length) {
                     const assetFilePathTemplate = Helper.stripLoader(
                         configuration.files.compose.javaScript)
                     for (
