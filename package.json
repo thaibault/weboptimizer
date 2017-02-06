@@ -395,7 +395,7 @@
             "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
           },
           "javaScript": {
-            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'buildDLL' ? '[name]' : 'index')}.js?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name]')}.js?${self.hashAlgorithm}=[hash]`"
           }
         },
         "defaultHTML": {
