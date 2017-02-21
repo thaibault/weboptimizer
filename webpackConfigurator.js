@@ -985,8 +985,7 @@ const webpackConfiguration:WebpackConfiguration = {
             Let the "html-loader" access full html minifier processing
             configuration.
         */
-        html: configuration.module.optimizer.htmlMinifier,
-        pug: configuration.module.preprocessor.html.options
+        html: configuration.module.optimizer.htmlMinifier
     }))
 }
 if (!Array.isArray(
