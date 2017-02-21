@@ -88,6 +88,8 @@ const pluginInstances:Array<Object> = [
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(true)
 ]
+if (configuration.debug)
+    pluginInstances.push(new webpack.NamedModulesPlugin())
 // // region define modules to ignore
 for (const ignorePattern:string of configuration.injection.ignorePattern)
     pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
@@ -983,8 +985,7 @@ const webpackConfiguration:WebpackConfiguration = {
             Let the "html-loader" access full html minifier processing
             configuration.
         */
-        html: configuration.module.optimizer.htmlMinifier,
-        pug: configuration.module.preprocessor.html.options
+        html: configuration.module.optimizer.htmlMinifier
     }))
 }
 if (!Array.isArray(
