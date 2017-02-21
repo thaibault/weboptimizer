@@ -50,10 +50,10 @@ Features
     - Various pre configured and adaptable implemented concepts for building
       development-, production-, testing- and/or vendor **bundles**.
     - Support for building **libraries** with well defined (UMD, AMD, commonjs...)
-      external, dependencies (preconfigred extendable weback configuration)
+      external, dependencies (preconfigured extendable weback configuration)
     - Support for building and **shimming** a whole package managed application
       structure to build for various target environments like browsers or node
-      (preconfigred extensable weback configuration)
+      (preconfigured extensable weback configuration)
     - Generic management for dealing with **DLL-Bundles** to speed up any
       workflows: Each (pre-)defined chunk can be outsourced to a DLL-Bundle in
       a complete delclarative and generic way.
