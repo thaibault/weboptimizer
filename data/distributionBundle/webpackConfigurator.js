@@ -980,13 +980,7 @@ const webpackConfiguration:WebpackConfiguration = {
             loader.data
         ])
     },
-    plugins: pluginInstances.concat(new webpack.LoaderOptionsPlugin({
-        /*
-            Let the "html-loader" access full html minifier processing
-            configuration.
-        */
-        html: configuration.module.optimizer.htmlMinifier
-    }))
+    plugins: pluginInstances
 }
 if (!Array.isArray(
     configuration.module.skipParseRegularExpressions
