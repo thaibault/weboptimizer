@@ -516,11 +516,11 @@
           "exclude": null,
           "loader": "html",
           "options": {
-            "config": "html",
             "attrs": [
               "img:src",
               "link:href"
-            ]
+            ],
+            "minimize": true
           }
         },
         "optimizer": {
@@ -945,6 +945,11 @@
         "otherMaximumFileSizeLimitInByte": 1
       },
       "module": {
+        "html": {
+          "options": {
+            "minimize": true
+          }
+        },
         "optimizer": {
           "htmlMinifier": {
             "collapseWhitespace": false,
