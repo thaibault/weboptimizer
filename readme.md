@@ -14,7 +14,7 @@ endregion -->
 Use case
 --------
 
-The main goal of This plugin is providing an generic module bundler and
+The main goal of This plugin is providing a generic module bundler and
 workflow for all your development use cases in any project related to the web
 or node. All native web types like html, css and JavaScript are supported
 natively in their latest language specification through preconfigured
