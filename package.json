@@ -947,7 +947,7 @@
       "module": {
         "html": {
           "options": {
-            "minimize": true
+            "minimize": false
           }
         },
         "optimizer": {
