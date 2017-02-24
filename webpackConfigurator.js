@@ -748,7 +748,7 @@ const loader:Object = {
         ].concat(configuration.module.locations.directoryPaths)),
         test: /\.css(?:\?.*)?$/,
         use: plugins.ExtractText.extract({
-            fallbackUse: [{
+            fallback: [{
                 loader: configuration.module.style.loader,
                 options: configuration.module.style.options
             }],

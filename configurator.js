@@ -394,13 +394,6 @@ for (
     }
 }
 // / endregion
-// / region extract text
-ExtractText.extract = function(options:Object):Array<Object> {
-    return [this.loader({
-        omit: Boolean(options.fallbackUse), remove: true
-    })].concat(options.fallbackUse, options.use)
-}
-// / endregion
 // endregion
 export default resolvedConfiguration
 // region vim modline
