@@ -437,14 +437,12 @@ if (!configuration.needed.javaScript)
         configuration.path.target.asset.javaScript, '.__dummy__.compiled.js')
 // /// endregion
 // /// region extract cascading style sheets
-pluginInstances.push(new plugins.ExtractText({
-    allChunks: true,
-    disable: !configuration.files.compose.cascadingStyleSheet,
-    filename: configuration.files.compose.cascadingStyleSheet ? path.relative(
-        configuration.path.target.base,
-        configuration.files.compose.cascadingStyleSheet
-    ) : configuration.path.target.base
-}))
+if (configuration.files.compose.cascadingStyleSheet)
+    pluginInstances.push(new plugins.ExtractText({
+        allChunks: true, filename: path.relative(
+            configuration.path.target.base,
+            configuration.files.compose.cascadingStyleSheet)
+    }))
 // /// endregion
 // /// region performs implicit external logic
 if (configuration.injection.external.modules === '__implicit__')
@@ -747,61 +745,10 @@ const loader:Object = {
             configuration.path.source.asset.cascadingStyleSheet
         ].concat(configuration.module.locations.directoryPaths)),
         test: /\.css(?:\?.*)?$/,
-        use: plugins.ExtractText.extract({
-            fallback: [{
-                loader: configuration.module.style.loader,
-                options: configuration.module.style.options
-            }],
-            use: [
-                {
-                    loader: configuration.module.cascadingStyleSheet.loader,
-                    options: configuration.module.cascadingStyleSheet.options
-                },
-                {
-                    loader: configuration.module.preprocessor
-                        .cascadingStyleSheet.loader,
-                    options: Tools.extendObject(true, {
-                        ident: 'postcss',
-                        plugins: ():Array<Object> => [
-                            postcssImport({
-                                addDependencyTo: webpack,
-                                root: configuration.path.context
-                            }),
-                            postcssCSSnext({browsers: '> 0%'}),
-                            /*
-                                NOTE: Checking path doesn't work if fonts are
-                                referenced in libraries provided in another
-                                location than the project itself like the
-                                "node_modules" folder.
-                            */
-                            postcssFontPath({checkPath: false}),
-                            postcssURL({filter: '', maxSize: 0}),
-                            postcssSprites({
-                                filterBy: ():Promise<null> => new Promise((
-                                    resolve:Function,
-                                    reject:Function
-                                ):Promise<null> => (
-                                    configuration.files.compose.image ?
-                                    resolve : reject
-                                )()),
-                                hooks: {onSaveSpritesheet: (
-                                    image:Object
-                                ):string => path.join(
-                                    image.spritePath, path.relative(
-                                        configuration.path.target.asset.image,
-                                        configuration.files.compose.image))},
-                                stylesheetPath:
-                                    configuration.path.source.asset
-                                        .cascadingStyleSheet,
-                                spritePath: configuration.path.source.asset
-                                   .image
-                            })
-                        ]
-                    }, configuration.module.preprocessor.cascadingStyleSheet
-                        .options)
-                }
-            ]
-        })
+        use: [{
+            loader: configuration.module.style.loader,
+            options: configuration.module.style.options
+        }]
     },
     // endregion
     // Optimize loaded assets.
@@ -891,6 +838,49 @@ const loader:Object = {
     }
     // endregion
 }
+if (configuration.files.compose.cascadingStyleSheet)
+    loader.style.use = plugins.ExtractText.extract({use: [
+        {
+            loader: configuration.module.cascadingStyleSheet.loader,
+            options: configuration.module.cascadingStyleSheet.options
+        },
+        {
+            loader: configuration.module.preprocessor.cascadingStyleSheet
+                .loader,
+            options: Tools.extendObject(true, {
+                ident: 'postcss',
+                plugins: ():Array<Object> => [
+                    postcssImport({
+                        addDependencyTo: webpack,
+                        root: configuration.path.context
+                    }),
+                    postcssCSSnext({browsers: '> 0%'}),
+                    /*
+                        NOTE: Checking path doesn't work if fonts are
+                        referenced in libraries provided in another location
+                        than the project itself like the "node_modules" folder.
+                    */
+                    postcssFontPath({checkPath: false}),
+                    postcssURL({filter: '', maxSize: 0}),
+                    postcssSprites({
+                        filterBy: ():Promise<null> => new Promise((
+                            resolve:Function, reject:Function
+                        ):Promise<null> => (
+                            configuration.files.compose.image ? resolve :
+                                reject
+                        )()),
+                        hooks: {onSaveSpritesheet: (image:Object):string =>
+                            path.join(image.spritePath, path.relative(
+                                configuration.path.target.asset.image,
+                                configuration.files.compose.image))
+                        },
+                        stylesheetPath: configuration.path.source.asset
+                            .cascadingStyleSheet,
+                        spritePath: configuration.path.source.asset.image
+                    })
+                ]
+            }, configuration.module.preprocessor.cascadingStyleSheet.options)
+        }]})
 const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
     return Helper.isFilePathInLocation(
