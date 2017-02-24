@@ -107,6 +107,9 @@ module.exports = function(source:string):string {
                     `Given template file "${template}" couldn't be resolved.`)
             }}, locals))
     }
+    console.log()
+    console.log('A', loaderUtils.getRemainingRequest(this))
+    console.log()
     return compile(source, Tools.extendObject(true, {
         isString: true,
         filename: loaderUtils.getRemainingRequest(this).replace(/^!/, '')
