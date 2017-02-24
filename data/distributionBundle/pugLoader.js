@@ -65,9 +65,6 @@ module.exports = function(source:string):string {
             templateFunction = pug.compileFile(template, options)
         return templateFunction(Tools.extendObject(true, {
             configuration, require: (request:string):string => {
-                console.log()
-                console.log('B', request)
-                console.log()
                 const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
                 const queryMatch:?Array<string> = request.match(
                     /^[^?]+\?(.+)$/, '$1')
@@ -110,9 +107,6 @@ module.exports = function(source:string):string {
                     `Given template file "${template}" couldn't be resolved.`)
             }}, locals))
     }
-    console.log()
-    console.log('A', loaderUtils.getRemainingRequest(this))
-    console.log()
     return compile(source, Tools.extendObject(true, {
         isString: true,
         filename: loaderUtils.getRemainingRequest(this).replace(/^!/, '')
