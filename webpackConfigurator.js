@@ -767,8 +767,9 @@ const loader:Object = {
                         postcssCSSnext({browsers: '> 0%'}),
                         /*
                             NOTE: Checking path doesn't work if fonts are
-                            referenced in libraries provided in another location
-                            than the project itself like the "node_modules" folder.
+                            referenced in libraries provided in another
+                            location than the project itself like the
+                            "node_modules" folder.
                         */
                         postcssFontPath({checkPath: false}),
                         postcssURL({filter: '', maxSize: 0}),
@@ -789,7 +790,8 @@ const loader:Object = {
                             spritePath: configuration.path.source.asset.image
                         })
                     ]
-                }, configuration.module.preprocessor.cascadingStyleSheet.options)
+                },
+                configuration.module.preprocessor.cascadingStyleSheet.options)
             }]
     },
     // endregion

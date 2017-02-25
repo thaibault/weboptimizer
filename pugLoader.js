@@ -49,7 +49,8 @@ module.exports = function(source:string):string {
                 aliases: {},
                 replacements: {}
             }
-        }, this.options.pug || {}), /#%%%#/g, '!')
+        }, this.options || {}, loaderUtils.getOptions(this) || {}),
+        /#%%%#/g, '!')
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler
     ):TemplateFunction => (locals:Object = {}):string => {
