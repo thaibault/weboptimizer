@@ -38,11 +38,10 @@ registerTest(function():void {
     this.test('loader', (assert:Object):void => {
         assert.strictEqual(pugLoader.call(context, 'a'), '<a></a>')
         const complexContext = Tools.extendObject(true, {}, context, {
-            cacheable: ():void => {},
-            options: {pug: {
+            cacheable: ():void => {}, options: {
                 locals: {test: 'hans'},
                 compiler: {pretty: true}
-            }}
+            }
         })
         assert.strictEqual(pugLoader.call(
             complexContext, 'a #{test}'
