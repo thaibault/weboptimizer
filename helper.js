@@ -201,7 +201,7 @@ export default class Helper {
                 external: ['.js'],
                 internal: [
                     '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
                 ]
             }, module: []
         }, referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
@@ -405,7 +405,7 @@ export default class Helper {
                 external: ['.js'],
                 internal: [
                     '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
                 ]
             }, module: []
         }, context:string = './', referencePath:string = '',
@@ -466,7 +466,7 @@ export default class Helper {
                 external: ['.js'],
                 internal: [
                     '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
                 ]
             }, module: []
         }, context:string = './', referencePath:string = '',
@@ -584,7 +584,7 @@ export default class Helper {
                 external: ['.js'],
                 internal: [
                     '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
                 ]
             }, module: []
         }, context:string = './', referencePath:string = '',
@@ -715,7 +715,7 @@ export default class Helper {
                 external: ['.js'],
                 internal: [
                     '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.pug', '.svg', '.ttf', '.woff', '.woff2'
+                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
                 ]
             }, module: []
         }, context:string = './', referencePath:string = '',

@@ -679,7 +679,7 @@ const loader:Object = {
             ) + '(?:\\?.*)?$'),
             use: configuration.files.defaultHTML.template.use
         },
-        pug: {
+        ejs: {
             exclude: (filePath:string):boolean => Helper.normalizePaths(
                 configuration.files.html.concat(
                     configuration.files.defaultHTML
@@ -690,7 +690,7 @@ const loader:Object = {
             ) ? true : evaluate(
                 configuration.module.preprocessor.html.exclude, filePath)),
             include: configuration.path.source.asset.template,
-            test: /\.pug(?:\?.*)?$/,
+            test: /\.html\.ejs(?:\?.*)?$/,
             use: [
                 {loader: 'file?name=' + path.relative(
                     configuration.path.target.asset.base,
@@ -967,7 +967,7 @@ const webpackConfiguration:WebpackConfiguration = {
             }
         }).concat([
             loader.script,
-            loader.html.main, loader.html.pug, loader.html.html,
+            loader.html.main, loader.html.ejs, loader.html.html,
             loader.style,
             loader.font.eot, loader.font.svg, loader.font.ttf,
             loader.font.woff,
