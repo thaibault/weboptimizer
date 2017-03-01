@@ -278,7 +278,7 @@ placeholder) you can encode your javaScript expression as base64 code:
 
     #!bash
 
-    npm run build '{module:{preprocessor:{pug:{locals:{name:'häns'}}}}}'
+    npm run build '{module:{preprocessor:{ejs:{locals:{name:'häns'}}}}}'
 
     # is the same as:
 

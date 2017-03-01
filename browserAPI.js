@@ -46,8 +46,8 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     })
     let template:string
     if (typeof NAME === 'undefined' || NAME === 'webOptimizer')
-        template = require('pug').compileFile(path.join(
-            __dirname, 'index.pug'
+        template = require('ejs2').compileFile(path.join(
+            __dirname, 'index.html.ejs'
         ), {pretty: true})({configuration: {
             name: 'test', givenCommandLineArguments: []
         }})
