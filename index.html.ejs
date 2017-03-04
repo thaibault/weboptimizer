@@ -11,7 +11,7 @@
     http://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */ %>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <% if (2 < configuration.givenCommandLineArguments.length && ['serve', 'test', 'testInBrowser'].includes(configuration.givenCommandLineArguments[2])) { %>
@@ -29,8 +29,18 @@
                 type="text/css"
             >
         <% } %>
+        <script>
+            window.document.documentElement.className =
+                window.document.documentElement.className.replace(
+                    /(^|\s)no-javascript(\s|$)/, '$1javascript$2');
+        </script>
     </head>
     <body>
+        <script>
+            window.document.body.className =
+                window.document.body.className.replace(
+                    /(^|\s)no-javascript(\s|$)/, '$1javascript$2');
+        </script>
     </body>
 </html>
 <% /*
