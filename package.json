@@ -94,7 +94,7 @@
     "postcss-loader": "latest",
     "postcss-sprites": "latest",
     "postcss-url": "latest",
-    "ejs2": "latest",
+    "ejs": "latest",
     "rimraf": "latest",
     "script-loader": "latest",
     "stylelint": "latest",

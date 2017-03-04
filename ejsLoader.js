@@ -17,7 +17,7 @@
 import Tools from 'clientnode'
 import * as fileSystem from 'fs'
 import * as loaderUtils from 'loader-utils'
-import * as ejs from 'ejs2'
+import * as ejs from 'ejs'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -55,15 +55,19 @@ module.exports = function(source:string):string {
         template:string, options:Object = query.compiler
     ):TemplateFunction => (locals:Object = {}):string => {
         options = Tools.extendObject(true, {
-            filename: template, doctype: 'html',
-            compileDebug: this.debug || false
+            compileDebug: this.debug || false,
+            debug: this.debug || false,
+            filename: template
         }, options)
         let templateFunction:TemplateFunction
         if (options.isString) {
             delete options.isString
             templateFunction = ejs.compile(template, options)
         } else
-            templateFunction = ejs.compileFile(template, options)
+            templateFunction = ejs.compile(fileSystem.readFileSync(
+                template,
+                Tools.extendObject(true, {encoding: 'utf-8'}, options), options
+            ))
         return templateFunction(Tools.extendObject(true, {
             configuration, require: (request:string):string => {
                 const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
@@ -108,10 +112,10 @@ module.exports = function(source:string):string {
                     `Given template file "${template}" couldn't be resolved.`)
             }}, locals))
     }
-    return compile(source, Tools.extendObject(true, {
+    return compile(source, {
         isString: true,
         filename: loaderUtils.getRemainingRequest(this).replace(/^!/, '')
-    }, query.compiler || {}))(query.locals || {})
+    })(query.locals || {})
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
