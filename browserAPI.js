@@ -15,6 +15,7 @@
 */
 // region imports
 import type {DomNode, Window} from 'clientnode'
+import * as fileSystem from 'fs'
 import type {BrowserAPI} from './type'
 // endregion
 // region declaration

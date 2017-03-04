@@ -36,7 +36,7 @@ registerTest(function():void {
     // endregion
     // region tests
     this.test('loader', (assert:Object):void => {
-        assert.strictEqual(ejsLoader.call(context, 'a'), '<a></a>')
+        assert.strictEqual(ejsLoader.call(context, '<a></a>'), '<a></a>')
         const complexContext = Tools.extendObject(true, {}, context, {
             cacheable: ():void => {}, options: {
                 locals: {test: 'hans'},
@@ -44,11 +44,11 @@ registerTest(function():void {
             }
         })
         assert.strictEqual(ejsLoader.call(
-            complexContext, 'a #{test}'
+            complexContext, '<a><%- test %></a>'
         ), '<a>hans</a>')
         assert.strictEqual(ejsLoader.call(
             complexContext,
-            `a\n!= require('a test?{options: {isString: true}}')`
+            `<a></a><%- require('<a>test</a>?{options: {isString: true}}') %>`
         ), '<a></a><a>test</a>')
     })
     // endregion
