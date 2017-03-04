@@ -15,6 +15,7 @@
 */
 // region imports
 import type {DomNode, Window} from 'clientnode'
+import * as fileSystem from 'fs'
 import type {BrowserAPI} from './type'
 // endregion
 // region declaration
@@ -44,17 +45,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             // IgnoreTypeCheck
             console.error(error.stack, error.detail)
     })
-    let template:string
-    if (typeof NAME === 'undefined' || NAME === 'webOptimizer')
-        template = require('ejs2').compileFile(path.join(
-            __dirname, 'index.html.ejs'
-        ), {pretty: true})({configuration: {
-            name: 'test', givenCommandLineArguments: []
-        }})
-    else
-        // IgnoreTypeCheck
-        template = require('webOptimizerDefaultTemplateFilePath')
-    metaDOM.env({
+    const render:Function = (template:string):void => metaDOM.env({
         created: (error:?Error, window:Window):void => {
             browserAPI = {
                 debug: false, domContentLoaded: false, metaDOM, window,
@@ -122,6 +113,18 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
         url: 'http://localhost',
         virtualConsole
     })
+    if (typeof NAME === 'undefined' || NAME === 'webOptimizer')
+        fileSystem.readFile(path.join(__dirname, 'index.html.ejs'), {
+            encoding: 'utf-8'
+        }, (error:?Error, content:string):void => {
+            if (error)
+                throw error
+            render(require('ejs').compile(content, {
+                configuration: {name: 'test', givenCommandLineArguments: []}}))
+        })
+    else
+        // IgnoreTypeCheck
+        render(require('webOptimizerDefaultTemplateFilePath'))
     // endregion
 } else {
     browserAPI = {
