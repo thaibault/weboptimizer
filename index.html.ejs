@@ -1,5 +1,5 @@
-<doctype html>
-<% /*
+<!doctype html>
+<%_ /*
     region header
     Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
 
@@ -10,25 +10,19 @@
     naming 3.0 unported license. see
     http://creativecommons.org/licenses/by/3.0/deed.de
     endregion
-*/ %>
+*/ _%>
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <% if (2 < configuration.givenCommandLineArguments.length && ['serve', 'test', 'testInBrowser'].includes(configuration.givenCommandLineArguments[2])) { %>
+        <%_ if (2 < configuration.givenCommandLineArguments.length && ['serve', 'test', 'testInBrowser'].includes(configuration.givenCommandLineArguments[2])) { _%>
             <!--Prevent browser caching-->
             <meta http-equiv="cache-control" content="no-cache">
             <meta http-equiv="expires" content="0">
             <meta http-equiv="pragma" content="no-cache">
             <title><%- configuration.name %> - test</title>
-        <% } else { %>
+        <%_ } else { _%>
             <title><%- configuration.name %></title>
-        <% }
-        if (2 < configuration.givenCommandLineArguments.length && 'testInBrowser' === configuration.givenCommandLineArguments[2]) { %>
-            <link
-                href="/node_modules/qunitjs/qunit/qunit.css" rel="stylesheet"
-                type="text/css"
-            >
-        <% } %>
+        <%_ } _%>
         <script>
             window.document.documentElement.className =
                 window.document.documentElement.className.replace(
@@ -43,9 +37,9 @@
         </script>
     </body>
 </html>
-<% /*
+<%_ /*
      region vim modline
     vim: set tabstop=4 shiftwidth=4 expandtab:
     vim: foldmethod=marker foldmarker=region,endregion:
     endregion
-*/ %>
+*/ _%>
