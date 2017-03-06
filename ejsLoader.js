@@ -68,49 +68,49 @@ module.exports = function(source:string):string {
                 template,
                 Tools.extendObject(true, {encoding: 'utf-8'}, options), options
             ))
+        const require:Function = (request:string):string => {
+            const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
+            const queryMatch:?Array<string> = request.match(
+                /^[^?]+\?(.+)$/, '$1')
+            let nestedLocals:Object = {}
+            if (queryMatch) {
+                const evaluationFunction = (
+                    request:string, template:string, source:string,
+                    compile:CompileFunction, locals:Object
+                // IgnoreTypeCheck
+                ):Object => new Function(
+                    'request', 'template', 'source', 'compile', 'locals',
+                    `return ${queryMatch[1]}`
+                )(request, template, source, compile, locals)
+                nestedLocals = evaluationFunction(
+                    request, template, source, compile, locals)
+            }
+            const options:Object = Tools.extendObject(
+                true, {encoding: 'utf-8'}, nestedLocals.options || {})
+            if (options.isString)
+                return compile(template, options)(nestedLocals)
+            const templateFilePath:?string =
+                Helper.determineModuleFilePath(
+                    template, query.module.aliases,
+                    query.module.replacements, query.extensions,
+                    query.context, configuration.path.source.asset.base,
+                    configuration.path.ignore,
+                    configuration.module.directoryNames,
+                    configuration.package.main.fileNames,
+                    configuration.package.main.propertyNames,
+                    configuration.package.aliasPropertyNames)
+            if (templateFilePath) {
+                this.addDependency(templateFilePath)
+                if (queryMatch || templateFilePath.endsWith('.ejs'))
+                    return compile(templateFilePath, options)(nestedLocals)
+                return fileSystem.readFileSync(templateFilePath, options)
+            }
+            throw new Error(
+                `Given template file "${template}" couldn't be resolved.`)
+        }
         return templateFunction(Tools.extendObject(true, {
-            configuration, require: (request:string):string => {
-                const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
-                const queryMatch:?Array<string> = request.match(
-                    /^[^?]+\?(.+)$/, '$1')
-                let nestedLocals:Object = {}
-                if (queryMatch) {
-                    const evaluationFunction = (
-                        request:string, template:string, source:string,
-                        compile:CompileFunction, locals:Object
-                    ):Object =>
-                        // IgnoreTypeCheck
-                        new Function(
-                            'request', 'template', 'source', 'compile',
-                            'locals', `return ${queryMatch[1]}`
-                        )(request, template, source, compile, locals)
-                    nestedLocals = evaluationFunction(
-                        request, template, source, compile, locals)
-                }
-                const options:Object = Tools.extendObject(true, {
-                    encoding: 'utf-8'
-                }, nestedLocals.options || {})
-                if (options.isString)
-                    return compile(template, options)(nestedLocals)
-                const templateFilePath:?string =
-                    Helper.determineModuleFilePath(
-                        template, query.module.aliases,
-                        query.module.replacements, query.extensions,
-                        query.context, configuration.path.source.asset.base,
-                        configuration.path.ignore,
-                        configuration.module.directoryNames,
-                        configuration.package.main.fileNames,
-                        configuration.package.main.propertyNames,
-                        configuration.package.aliasPropertyNames)
-                if (templateFilePath) {
-                    this.addDependency(templateFilePath)
-                    if (queryMatch || templateFilePath.endsWith('.ejs'))
-                        return compile(templateFilePath, options)(nestedLocals)
-                    return fileSystem.readFileSync(templateFilePath, options)
-                }
-                throw new Error(
-                    `Given template file "${template}" couldn't be resolved.`)
-            }}, locals))
+            configuration, require, include: require
+        }, locals))
     }
     return compile(source, {
         isString: true,
