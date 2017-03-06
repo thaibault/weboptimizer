@@ -11,10 +11,12 @@
     http://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */ _%>
-<html lang="en">
+<html class="no-javascript" lang="en">
     <head>
         <meta charset="utf-8">
-        <%_ if (2 < configuration.givenCommandLineArguments.length && ['serve', 'test', 'testInBrowser'].includes(configuration.givenCommandLineArguments[2])) { _%>
+        <%_ if (2 < configuration.givenCommandLineArguments.length && [
+            'serve', 'test', 'testInBrowser'
+        ].includes(configuration.givenCommandLineArguments[2])) { _%>
             <!--Prevent browser caching-->
             <meta http-equiv="cache-control" content="no-cache">
             <meta http-equiv="expires" content="0">
@@ -29,7 +31,7 @@
                     /(^|\s)no-javascript(\s|$)/, '$1javascript$2');
         </script>
     </head>
-    <body>
+    <body class="no-javascript">
         <script>
             window.document.body.className =
                 window.document.body.className.replace(
