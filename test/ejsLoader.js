@@ -48,7 +48,7 @@ registerTest(function():void {
         ), '<a>hans</a>')
         assert.strictEqual(ejsLoader.call(
             complexContext,
-            `<a></a><%- require('<a>test</a>?{options: {isString: true}}') %>`
+            `<a></a><%- include('<a>test</a>?{options: {isString: true}}') %>`
         ), '<a></a><a>test</a>')
     })
     // endregion
