@@ -15,7 +15,6 @@
 */
 // region imports
 import type {DomNode, Window} from 'clientnode'
-import * as fileSystem from 'fs'
 import type {BrowserAPI} from './type'
 // endregion
 // region declaration
@@ -114,9 +113,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
         virtualConsole
     })
     if (typeof NAME === 'undefined' || NAME === 'webOptimizer')
-        fileSystem.readFile(path.join(__dirname, 'index.html.ejs'), {
-            encoding: 'utf-8'
-        }, (error:?Error, content:string):void => {
+        require('fs').readFile(path.join(
+            __dirname, 'index.html.ejs'
+        ), {encoding: 'utf-8'}, (error:?Error, content:string):void => {
             if (error)
                 throw error
             render(require('ejs').compile(content, {
