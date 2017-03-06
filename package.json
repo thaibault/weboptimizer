@@ -29,7 +29,7 @@
     "ejsLoader.js",
     "ejsLoader.compiled.js",
     "index.js",
-    "index.ejs",
+    "index.html.ejs",
     "stylelintConfigurator.js",
     "stylelintConfigurator.compiled.js",
     "type.js",
