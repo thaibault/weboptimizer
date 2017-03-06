@@ -125,7 +125,7 @@
         "types": {
           "default": {
             "filePathPattern": {
-              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+              "__evaluate__": "`^${Tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
             },
             "outputExtension": "js",
             "preinstall": {
@@ -138,7 +138,7 @@
           "cascadingStyleSheet": {
             "extension": "css",
             "filePathPattern": {
-              "__evaluate__": "`^${tools.stringGetRegularExpressionValidated(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+              "__evaluate__": "`^${Tools.stringGetRegularExpressionValidated(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
             },
             "outputExtension": "css"
           },
@@ -272,7 +272,7 @@
         },
         "test": {
           "command": {
-            "__evaluate__": "helper.stripLoader(self.files.compose.javaScript)"
+            "__evaluate__": "Helper.stripLoader(self.files.compose.javaScript)"
           }
         },
         "testInBrowser": {
@@ -407,7 +407,7 @@
           },
           "template": {
             "filePath": {
-              "__evaluate__": "`${tools.isFileSync(path.resolve(self.path.source.base, 'index.html.ejs')) ? path.resolve(self.path.source.base, 'index.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
+              "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, 'index.html.ejs')) ? path.resolve(self.path.source.base, 'index.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
             },
             "use": [
               {
@@ -695,8 +695,8 @@
               },
               "compiler": {
                 "cache": true,
-                "debug": false,
-                "pretty": false
+                "compileDebug": false,
+                "debug": false
               }
             }
           },
@@ -876,7 +876,7 @@
             "inject": "head",
             "template": {
               "filePath": {
-                "__evaluate__": "`${tools.isFileSync(path.resolve(self.path.source.base, 'test.html.ejs')) ? path.resolve(self.path.source.base, 'test.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
+                "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, 'test.html.ejs')) ? path.resolve(self.path.source.base, 'test.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
               }
             }
           },
@@ -891,7 +891,7 @@
             "inject": "head",
             "template": {
               "filePath": {
-                "__evaluate__": "`${tools.isFileSync(path.resolve(self.path.source.base, 'test.html.ejs')) ? path.resolve(self.path.source.base, 'test.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
+                "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, 'test.html.ejs')) ? path.resolve(self.path.source.base, 'test.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
               }
             }
           }
@@ -1020,7 +1020,7 @@
           "inject": "head",
           "template": {
             "filePath": {
-              "__evaluate__": "`${tools.isFileSync(path.resolve(self.path.source.base, 'playground.html.ejs')) ? path.resolve(self.path.source.base, 'playground.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
+              "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, 'playground.html.ejs')) ? path.resolve(self.path.source.base, 'playground.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
             }
           }
         },
@@ -1042,7 +1042,7 @@
         "otherMaximumFileSizeLimitInByte": 1
       },
       "libraryName": {
-        "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [tools.stringConvertToValidVariableName(self.name), '[name]']: null"
+        "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [Tools.stringConvertToValidVariableName(self.name), '[name]']: null"
       },
       "offline": null,
       "path": {

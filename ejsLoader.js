@@ -109,7 +109,7 @@ module.exports = function(source:string):string {
                 `Given template file "${template}" couldn't be resolved.`)
         }
         return templateFunction(Tools.extendObject(true, {
-            configuration, require, include: require
+            configuration, Helper, include: require, require, Tools
         }, locals))
     }
     return compile(source, {
