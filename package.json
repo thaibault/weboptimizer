@@ -914,7 +914,7 @@
       "development": {
         "openBrowser": {
           "url": {
-            "__evaluate__": "`http${self.development.server.cert ? 's' : ''}://${self.development.server.host}:${self.development.server.port}/${self.path.target.public}/${self.files.defaultHTML.filename}`"
+            "__evaluate__": "`http${self.development.server.cert ? 's' : ''}://${self.development.server.host}:${self.development.server.port}${path.join('/', self.path.target.public, self.files.defaultHTML.filename)}`"
           }
         }
       },
