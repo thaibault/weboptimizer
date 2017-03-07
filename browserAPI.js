@@ -145,22 +145,25 @@ export default (callback:Function, clear:boolean = true):any => {
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.
     */
-    if (
-        clear && typeof global !== 'undefined' && browserAPI &&
-        global !== browserAPI.window
-    )
-        global.window = browserAPI.window
+    const wrappedCallback:Function = (...parameter:Array<any>):any => {
+        if (
+            clear && typeof global !== 'undefined' &&
+            global !== browserAPI.window
+        )
+            global.window = browserAPI.window
+        return callback(...parameter)
+    }
     // endregion
     if (
         typeof TARGET_TECHNOLOGY === 'undefined' ||
         TARGET_TECHNOLOGY === 'node'
     )
-        return (browserAPI) ? callback(
+        return (browserAPI) ? wrappedCallback(
             browserAPI, true
-        ) : onCreatedListener.push(callback)
-    return (browserAPI.domContentLoaded) ? callback(
+        ) : onCreatedListener.push(wrappedCallback)
+    return (browserAPI.domContentLoaded) ? wrappedCallback(
         browserAPI, true
-    ) : onCreatedListener.push(callback)
+    ) : onCreatedListener.push(wrappedCallback)
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
