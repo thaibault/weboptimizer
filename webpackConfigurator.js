@@ -695,17 +695,21 @@ const loader:Object = {
                 {loader: 'file?name=' + path.join(path.relative(
                     configuration.path.target.asset.base,
                     configuration.path.target.asset.template
-                ), `[name].html?${configuration.hashAlgorithm}=[hash]`)},
-                {loader: 'extract'},
-                {
+                ), '[name].' + (
+                    configuration.module.preprocessor.html.options.precompile ?
+                    'js' : 'html'
+                ) + `?${configuration.hashAlgorithm}=[hash]`)},
+                {loader: 'extract'}
+            ].concat(
+                configuration.module.preprocessor.html.options.precompile ? [
+                ] : {
                     loader: configuration.module.html.loader,
                     options: configuration.module.html.options
-                },
-                {
-                    loader: configuration.module.preprocessor.html.loader,
-                    options: configuration.module.preprocessor.html.options
                 }
-            ]
+            ).concat({
+                loader: configuration.module.preprocessor.html.loader,
+                options: configuration.module.preprocessor.html.options
+            })
         },
         html: {
             exclude: (filePath:string):boolean => Helper.normalizePaths(
