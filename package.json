@@ -423,7 +423,7 @@
                   "__evaluate__": "self.module.preprocessor.html.loader"
                 },
                 "options": {
-                  "__evaluate__": "Tools.extendObject(true, self.module.preprocessor.html.options, {precompile: false})"
+                  "__evaluate__": "Tools.extendObject(true, {}, self.module.preprocessor.html.options, {precompile: false})"
                 }
               }
             ]
