@@ -423,7 +423,7 @@
                   "__evaluate__": "self.module.preprocessor.html.loader"
                 },
                 "options": {
-                  "__evaluate__": "self.module.preprocessor.html.options"
+                  "__evaluate__": "Tools.extendObject(true, {precompile: false}, self.module.preprocessor.html.options)"
                 }
               }
             ]
@@ -679,7 +679,6 @@
             "exclude": null,
             "loader": "ejs",
             "options": {
-              "precompile": false,
               "compiler": {
                 "cache": true,
                 "compileDebug": false,
@@ -698,7 +697,8 @@
                 "replacements": {
                   "__evaluate__": "self.module.replacements"
                 }
-              }
+              },
+              "precompile": false
             }
           },
           "javaScript": {
