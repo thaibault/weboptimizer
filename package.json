@@ -335,14 +335,14 @@
             ".ico",
             ".jpg",
             ".png",
-            ".ejs",
             ".svg",
             ".ttf",
             ".woff",
-            ".woff2"
+            ".woff2",
+            ".ejs"
           ],
           "external": {
-            "__evaluate__": "self.targetTechnology === 'node' ? ['.js', '.json'] : ['.js', '.css', '.eot', '.gif', '.html', '.ico', '.jpg', '.png', '.svg', '.ttf', '.woff', '.woff2']"
+            "__evaluate__": "self.targetTechnology === 'node' ? ['.js', '.json', '.ejs'] : ['.js', '.css', '.eot', '.gif', '.html', '.ico', '.jpg', '.png', '.svg', '.ttf', '.woff', '.woff2', '.ejs']"
           }
         },
         "module": []
