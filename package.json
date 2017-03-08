@@ -970,7 +970,8 @@
           "html": {
             "options": {
               "compiler": {
-                "pretty": true
+                "compileDebug": true,
+                "debug": true
               }
             }
           }
