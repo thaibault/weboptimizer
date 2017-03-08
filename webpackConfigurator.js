@@ -692,10 +692,10 @@ const loader:Object = {
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/,
             use: [
-                {loader: 'file?name=' + path.relative(
+                {loader: 'file?name=' + path.join(path.relative(
                     configuration.path.target.asset.base,
                     configuration.path.target.asset.template
-                ) + `[name].html?${configuration.hashAlgorithm}=[hash]`},
+                ), `[name].html?${configuration.hashAlgorithm}=[hash]`)},
                 {loader: 'extract'},
                 {
                     loader: configuration.module.html.loader,
@@ -720,10 +720,10 @@ const loader:Object = {
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/,
             use: [
-                {loader: 'file?name=' + path.relative(
+                {loader: 'file?name=' + path.join(path.relative(
                     configuration.path.target.base,
                     configuration.path.target.asset.template
-                ) + `[name].[ext]?${configuration.hashAlgorithm}=[hash]`},
+                ), `[name].[ext]?${configuration.hashAlgorithm}=[hash]`)},
                 {loader: 'extract'},
                 {
                     loader: configuration.module.html.loader,
