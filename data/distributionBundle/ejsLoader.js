@@ -54,11 +54,7 @@ module.exports = function(source:string):string {
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler
     ):TemplateFunction => (locals:Object = {}):string => {
-        options = Tools.extendObject(true, {
-            compileDebug: this.debug || false,
-            debug: this.debug || false,
-            filename: template
-        }, options)
+        options = Tools.extendObject(true, {filename: template}, options)
         let templateFunction:TemplateFunction
         if (options.isString) {
             delete options.isString
@@ -85,10 +81,13 @@ module.exports = function(source:string):string {
                 nestedLocals = evaluationFunction(
                     request, template, source, compile, locals)
             }
-            const options:Object = Tools.extendObject(
-                true, {encoding: 'utf-8'}, nestedLocals.options || {})
-            if (options.isString)
-                return compile(template, options)(nestedLocals)
+            let nestedOptions:Object = Tools.copyLimitedRecursively(options)
+            delete nestedOptions.client
+            nestedOptions = Tools.extendObject(
+                true, {encoding: 'utf-8'}, nestedOptions,
+                nestedLocals.options || {})
+            if (nestedOptions.isString)
+                return compile(template, nestedOptions)(nestedLocals)
             const templateFilePath:?string =
                 Helper.determineModuleFilePath(
                     template, query.module.aliases,
@@ -101,9 +100,16 @@ module.exports = function(source:string):string {
                     configuration.package.aliasPropertyNames)
             if (templateFilePath) {
                 this.addDependency(templateFilePath)
+                /*
+                    NOTE: If there aren't any locals options or variables and
+                    file doesn't seem to be an ejs template we simply load
+                    included file content.
+                */
                 if (queryMatch || templateFilePath.endsWith('.ejs'))
-                    return compile(templateFilePath, options)(nestedLocals)
-                return fileSystem.readFileSync(templateFilePath, options)
+                    return compile(templateFilePath, nestedOptions)(
+                        nestedLocals)
+                // IgnoreTypeCheck
+                return fileSystem.readFileSync(templateFilePath, nestedOptions)
             }
             throw new Error(
                 `Given template file "${template}" couldn't be resolved.`)
@@ -112,10 +118,15 @@ module.exports = function(source:string):string {
             configuration, Helper, include: require, require, Tools
         }, locals))
     }
-    return compile(source, {
-        isString: true,
-        filename: loaderUtils.getRemainingRequest(this).replace(/^!/, '')
-    })(query.locals || {})
+    const template:Function = compile(source, {
+        client: query.precompile,
+        compileDebug: this.debug || false,
+        debug: this.debug || false,
+        filename: loaderUtils.getRemainingRequest(this).replace(/^!/, ''),
+        isString: true
+    })
+    return query.precompile ? `module.exports = ${template.toString()};` :
+        template(query.locals || {})
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
