@@ -680,7 +680,7 @@ const loader:Object = {
             use: configuration.files.defaultHTML.template.use
         },
         ejs: {
-            exclude: (filePath:string):boolean => {const b = Helper.normalizePaths(
+            exclude: (filePath:string):boolean => Helper.normalizePaths(
                 configuration.files.html.concat(
                     configuration.files.defaultHTML
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
@@ -688,9 +688,9 @@ const loader:Object = {
             ).includes(filePath) || ((
                 configuration.module.preprocessor.html.exclude === null
             ) ? true : evaluate(
-                configuration.module.preprocessor.html.exclude, filePath));console.log();console.log();console.log('A', filePath, b);console.log();return true},
-            //include: configuration.path.source.base, //configuration.path.source.asset.template,
-            //test: /\.html\.ejs(?:\?.*)?$/,
+                configuration.module.preprocessor.html.exclude, filePath)),
+            include: configuration.path.source.asset.template,
+            test: /\.html\.ejs(?:\?.*)?$/,
             use: [
                 {loader: 'file?name=' + path.join(path.relative(
                     configuration.path.target.asset.base,
