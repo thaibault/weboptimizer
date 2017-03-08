@@ -184,7 +184,7 @@ if (Tools.isDirectorySync(configuration.path.target.base))
 // / endregion
 // / region define dynamic resolve parameter
 const parameterDescription:Array<string> = [
-    'currentPath', 'fileSystem', 'helper', 'path', 'require', 'tools',
+    'currentPath', 'fileSystem', 'Helper', 'path', 'require', 'Tools',
     'webOptimizerPath']
 const parameter:Array<any> = [
     /* eslint-disable no-eval */
