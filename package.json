@@ -679,6 +679,18 @@
             "exclude": null,
             "loader": "ejs",
             "options": {
+              "precompile": false,
+              "compiler": {
+                "cache": true,
+                "compileDebug": false,
+                "debug": false
+              },
+              "context": {
+                "__evaluate__": "self.path.context"
+              },
+              "extensions": {
+                "__evaluate__": "self.extensions"
+              },
               "module": {
                 "aliases": {
                   "__evaluate__": "self.module.aliases"
@@ -686,17 +698,6 @@
                 "replacements": {
                   "__evaluate__": "self.module.replacements"
                 }
-              },
-              "extensions": {
-                "__evaluate__": "self.extensions"
-              },
-              "context": {
-                "__evaluate__": "self.path.context"
-              },
-              "compiler": {
-                "cache": true,
-                "compileDebug": false,
-                "debug": false
               }
             }
           },

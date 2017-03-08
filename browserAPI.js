@@ -49,8 +49,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             browserAPI = {
                 debug: false, domContentLoaded: false, metaDOM, window,
                 windowLoaded: false}
-            browserAPI.window.document.addEventListener('DOMContentLoaded', (
-            ):void => {
+            window.document.addEventListener('DOMContentLoaded', ():void => {
                 browserAPI.domContentLoaded = true
             })
             if (error)
@@ -112,16 +111,19 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
         url: 'http://localhost',
         virtualConsole
     })
-    if (typeof NAME === 'undefined' || NAME === 'webOptimizer')
-        require('fs').readFile(path.join(
-            __dirname, 'index.html.ejs'
-        ), {encoding: 'utf-8'}, (error:?Error, content:string):void => {
+    if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
+        const filePath:string = path.join(__dirname, 'index.html.ejs')
+        require('fs').readFile(filePath, {encoding: 'utf-8'}, (
+            error:?Error, content:string
+        ):void => {
             if (error)
                 throw error
             render(require('ejs').compile(content, {
-                configuration: {name: 'test', givenCommandLineArguments: []}}))
+                cache: true, compileDebug: false, debug: false,
+                filename: filePath
+            })({configuration: {name: 'test', givenCommandLineArguments: []}}))
         })
-    else
+    } else
         // IgnoreTypeCheck
         render(require('webOptimizerDefaultTemplateFilePath'))
     // endregion
