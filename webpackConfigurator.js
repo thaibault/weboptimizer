@@ -670,7 +670,7 @@ const loader:Object = {
         }]
     },
     // endregion
-    // region template
+    // region generic template
     ejs: {
         exclude: (filePath:string):boolean => Helper.normalizePaths(
             configuration.files.html.concat(
