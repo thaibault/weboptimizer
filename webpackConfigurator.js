@@ -994,7 +994,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 ) || configuration.path.source.base,
                 test: new RegExp(evaluate(
                     loaderConfiguration.test, configuration.path.context)),
-                use: loaderConfiguration.use
+                use: evaluate(loaderConfiguration.use)
             }
         }).concat([
             loader.ejs,

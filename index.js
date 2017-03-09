@@ -21,7 +21,10 @@ import Tools from 'clientnode'
 import type {File, PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
-import {sync as removeDirectoryRecursivelySync} from 'rimraf'
+import {
+    default as removeDirectoryRecursively,
+    sync as removeDirectoryRecursivelySync
+} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -256,18 +259,19 @@ const main = async ():Promise<any> => {
                                 configuration.path.source.base, filePath)
                             const targetPath:string = path.join(
                                 configuration.path.target.base, filePath)
-                            if (await Tools.isDirectory(sourcePath))
+                            if (await Tools.isDirectory(sourcePath)) {
                                 if (await Tools.isDirectory(targetPath))
-                                    Tools.
+                                    removeDirectoryRecursivelySync(
+                                        targetPath, {glob: false})
                                 await Tools.copyDirectoryRecursive(
                                     sourcePath, targetPath)
-                            else if (await Tools.isFile(sourcePath))
+                            } else if (await Tools.isFile(sourcePath))
                                 await Tools.copyFile(sourcePath, targetPath)
                         }
                         tidyUp()
                     }
                     const closeHandler:Function = Tools.getProcessCloseHandler(
-                        resolve, reject, closeEventName, (
+                        resolve, reject, null, (
                             process.argv[2] === 'build'
                         ) ? copyAdditionalFilesAndTidyUp : tidyUp)
                     for (const closeEventName:string of Tools.closeEventNames)
@@ -360,8 +364,7 @@ const main = async ():Promise<any> => {
                                     task.command, commandLineArguments,
                                     childProcessOptions)
                             const closeHandler:Function =
-                                Tools.getProcessCloseHandler(
-                                    resolve, reject, closeEventName)
+                                Tools.getProcessCloseHandler(resolve, reject)
                             for (
                                 const closeEventName:string of
                                 Tools.closeEventNames
