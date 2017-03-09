@@ -648,8 +648,6 @@ for (
 // // endregion
 // / endregion
 // / region loader helper
-console.log('A', configuration.module.preprocessor.ejs)
-console.log('B', configuration.module.preprocessor.html)
 const loader:Object = {
     // Convert to compatible native web types.
     // region generic template
@@ -729,13 +727,13 @@ const loader:Object = {
                     '.js' : ''
                 ) + `?${configuration.hashAlgorithm}=[hash]`)},
                 {loader: 'extract'}
-            ].concat(
+            ].concat((
                 configuration.module.preprocessor.html.options.precompile ? [
                 ] : {
                     loader: configuration.module.html.loader,
                     options: configuration.module.html.options
                 }
-            ).concat({
+            ), {
                 loader: configuration.module.preprocessor.html.loader,
                 options: configuration.module.preprocessor.html.options
             })
