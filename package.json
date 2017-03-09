@@ -339,6 +339,7 @@
             ".ttf",
             ".woff",
             ".woff2",
+            ".html.ejs",
             ".ejs"
           ],
           "external": {
@@ -702,7 +703,27 @@
             }
           },
           "html": {
-            "__evaluate__": "Tools.copyLimitedRecursively(self.module.preprocessor.ejs)"
+            "exclude": {
+              "__evaluate__": "self.module.preprocessor.ejs.exclude"
+            },
+            "loader": {
+              "__evaluate__": "self.module.preprocessor.ejs.loader"
+            },
+            "options": {
+              "compiler": {
+                "__evaluate__": "self.module.preprocessor.ejs.options.compiler"
+              },
+              "context": {
+                "__evaluate__": "self.path.context"
+              },
+              "extensions": {
+                "__evaluate__": "self.extensions"
+              },
+              "module": {
+                "__evaluate__": "self.module.preprocessor.ejs.options.module"
+              },
+              "precompile": false
+            }
           },
           "javaScript": {
             "exclude": null,
