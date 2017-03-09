@@ -675,7 +675,7 @@
             "loader": "postcss?sourceMap=inline",
             "options": {}
           },
-          "html": {
+          "ejs": {
             "exclude": null,
             "loader": "ejs",
             "options": {
@@ -700,6 +700,9 @@
               },
               "precompile": false
             }
+          },
+          "html": {
+            "__evaluate__": "self.module.preprocessor.ejs"
           },
           "javaScript": {
             "exclude": null,
