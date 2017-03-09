@@ -714,7 +714,7 @@ const loader:Object = {
                     htmlConfiguration.template.filePath)
             ).includes(filePath) || ((
                 configuration.module.preprocessor.html.exclude === null
-            ) ? true : evaluate(
+            ) ? false : evaluate(
                 configuration.module.preprocessor.html.exclude, filePath)),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
