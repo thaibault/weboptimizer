@@ -702,7 +702,7 @@
             }
           },
           "html": {
-            "__evaluate__": "Tools.copyLimitedRecursively(self.module.preprocessor.ejs.options)"
+            "__evaluate__": "Tools.copyLimitedRecursively(self.module.preprocessor.ejs)"
           },
           "javaScript": {
             "exclude": null,

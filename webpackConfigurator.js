@@ -648,6 +648,8 @@ for (
 // // endregion
 // / endregion
 // / region loader helper
+console.log('A', configuration.module.preprocessor.ejs)
+console.log('B', configuration.module.preprocessor.html)
 const loader:Object = {
     // Convert to compatible native web types.
     // region generic template
@@ -666,17 +668,14 @@ const loader:Object = {
         ].concat(configuration.module.locations.directoryPaths)),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: [
-            {loader: 'file?name=' + path.join(path.relative(
-                configuration.path.target.asset.base,
-                configuration.path.target.asset.template
-            ), '[name]' + (
-                configuration.module.preprocessor.html.options.precompile ?
+            {loader: 'file?name=[path][name]' + (
+                configuration.module.preprocessor.ejs.options.precompile ?
                 '.js' : ''
-            ) + `?${configuration.hashAlgorithm}=[hash]`)},
+            ) + `?${configuration.hashAlgorithm}=[hash]`},
             {loader: 'extract'},
             {
-                loader: configuration.module.preprocessor.html.loader,
-                options: configuration.module.preprocessor.html.options
+                loader: configuration.module.preprocessor.ejs.loader,
+                options: configuration.module.preprocessor.ejs.options
             }
         ]
     },
