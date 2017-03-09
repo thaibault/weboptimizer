@@ -343,7 +343,7 @@
             ".ejs"
           ],
           "external": {
-            "__evaluate__": "self.targetTechnology === 'node' ? ['.js', '.json', '.ejs'] : self.extensions.file.internal"
+            "__evaluate__": "self.targetTechnology === 'node' ? ['.js', '.json'] : self.extensions.file.internal"
           }
         },
         "module": []
@@ -424,7 +424,19 @@
                   "__evaluate__": "self.module.preprocessor.html.loader"
                 },
                 "options": {
-                  "__evaluate__": "Tools.extendObject(true, {}, self.module.preprocessor.html.options, {precompile: false})"
+                  "compiler": {
+                    "__evaluate__": "self.module.preprocessor.ejs.options.compiler"
+                  },
+                  "context": {
+                    "__evaluate__": "self.path.context"
+                  },
+                  "extensions": {
+                    "__evaluate__": "self.extensions"
+                  },
+                  "module": {
+                    "__evaluate__": "self.module.preprocessor.ejs.options.module"
+                  },
+                  "precompile": false
                 }
               }
             ]
