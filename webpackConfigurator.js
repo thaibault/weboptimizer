@@ -691,17 +691,12 @@ const loader:Object = {
                 configuration.module.preprocessor.html.options.precompile ?
                 '.js' : ''
             ) + `?${configuration.hashAlgorithm}=[hash]`)},
-            {loader: 'extract'}
-        ].concat(
-            configuration.module.preprocessor.html.options.precompile ? [
-            ] : {
-                loader: configuration.module.html.loader,
-                options: configuration.module.html.options
+            {loader: 'extract'},
+            {
+                loader: configuration.module.preprocessor.html.loader,
+                options: configuration.module.preprocessor.html.options
             }
-        ).concat({
-            loader: configuration.module.preprocessor.html.loader,
-            options: configuration.module.preprocessor.html.options
-        })
+        ]
     },
     // endregion
     // region html template
