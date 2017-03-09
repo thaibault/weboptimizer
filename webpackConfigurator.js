@@ -661,13 +661,47 @@ const loader:Object = {
         include: Helper.normalizePaths([
             configuration.path.source.asset.javaScript
         ].concat(configuration.module.locations.directoryPaths)),
-        test: /\.js(?:\?.*)?$/,
+        test: /\.js(?:\?.*)?$/i,
         use: [{
             loader: configuration.module.preprocessor.javaScript
                 .loader,
             options: configuration.module.preprocessor.javaScript
                 .options
         }]
+    },
+    // endregion
+    // region template
+    ejs: {
+        exclude: (filePath:string):boolean => Helper.normalizePaths(
+            configuration.files.html.concat(
+                configuration.files.defaultHTML
+            ).map((htmlConfiguration:HTMLConfiguration):string =>
+                htmlConfiguration.template.filePath)
+        ).includes(filePath) || ((
+            configuration.module.preprocessor.html.exclude === null
+        ) ? true : evaluate(
+            configuration.module.preprocessor.html.exclude, filePath))
+        include: configuration.path.source.asset.template,
+        test: /\.ejs(?:\?.*)?$/i,
+        use: [
+            {loader: 'file?name=' + path.join(path.relative(
+                configuration.path.target.asset.base,
+                configuration.path.target.asset.template
+            ), '[name]' + (
+                configuration.module.preprocessor.html.options.precompile ?
+                '.js' : ''
+            ) + `?${configuration.hashAlgorithm}=[hash]`)},
+            {loader: 'extract'}
+        ].concat(
+            configuration.module.preprocessor.html.options.precompile ? [
+            ] : {
+                loader: configuration.module.html.loader,
+                options: configuration.module.html.options
+            }
+        ).concat({
+            loader: configuration.module.preprocessor.html.loader,
+            options: configuration.module.preprocessor.html.options
+        })
     },
     // endregion
     // region html template
@@ -688,16 +722,16 @@ const loader:Object = {
             ).includes(filePath) || ((
                 configuration.module.preprocessor.html.exclude === null
             ) ? true : evaluate(
-                configuration.module.preprocessor.html.exclude, filePath)),
+                configuration.module.preprocessor.html.exclude, filePath))
             include: configuration.path.source.asset.template,
-            test: /\.html\.ejs(?:\?.*)?$/,
+            test: /\.html\.ejs(?:\?.*)?$/i,
             use: [
                 {loader: 'file?name=' + path.join(path.relative(
                     configuration.path.target.asset.base,
                     configuration.path.target.asset.template
-                ), '[name].' + (
+                ), '[name]' + (
                     configuration.module.preprocessor.html.options.precompile ?
-                    'js' : 'html'
+                    '.js' : ''
                 ) + `?${configuration.hashAlgorithm}=[hash]`)},
                 {loader: 'extract'}
             ].concat(
@@ -722,7 +756,7 @@ const loader:Object = {
             ) ? true : evaluate(
                 configuration.module.html.exclude, filePath)),
             include: configuration.path.source.asset.template,
-            test: /\.html(?:\?.*)?$/,
+            test: /\.html(?:\?.*)?$/i,
             use: [
                 {loader: 'file?name=' + path.join(path.relative(
                     configuration.path.target.base,
@@ -748,7 +782,7 @@ const loader:Object = {
         include: Helper.normalizePaths([
             configuration.path.source.asset.cascadingStyleSheet
         ].concat(configuration.module.locations.directoryPaths)),
-        test: /\.css(?:\?.*)?$/,
+        test: /\.css(?:\?.*)?$/i,
         use: [
             {
                 loader: configuration.module.style.loader,
@@ -808,7 +842,7 @@ const loader:Object = {
             ) ? false : evaluate(
                 configuration.module.optimizer.font.eot.exclude, filePath),
             include: configuration.path.base,
-            test: /\.eot(?:\?.*)?$/,
+            test: /\.eot(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.eot.loader,
                 options: configuration.module.optimizer.font.eot.options
@@ -820,7 +854,7 @@ const loader:Object = {
             ) ? false : evaluate(
                 configuration.module.optimizer.font.svg.exclude, filePath),
             include: configuration.path.base,
-            test: /\.svg(?:\?.*)?$/,
+            test: /\.svg(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.svg.loader,
                 options: configuration.module.optimizer.font.svg.options
@@ -832,7 +866,7 @@ const loader:Object = {
             ) ? false : evaluate(
                 configuration.module.optimizer.font.ttf.exclude, filePath),
             include: configuration.path.base,
-            test: /\.ttf(?:\?.*)?$/,
+            test: /\.ttf(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.ttf.loader,
                 options: configuration.module.optimizer.font.ttf.options
@@ -845,7 +879,7 @@ const loader:Object = {
                 configuration.module.optimizer.font.woff.exclude, filePath
             ),
             include: configuration.path.base,
-            test: /\.woff2?(?:\?.*)?$/,
+            test: /\.woff2?(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.woff.loader,
                 options: configuration.module.optimizer.font.woff.options
@@ -860,7 +894,7 @@ const loader:Object = {
         ) ? rejectFilePathInDependencies(filePath) : evaluate(
             configuration.module.optimizer.image.exclude, filePath),
         include: configuration.path.source.asset.image,
-        test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/,
+        test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
         use: {
             loader: configuration.module.optimizer.image.loader,
             options: configuration.module.optimizer.image.file
