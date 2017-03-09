@@ -257,6 +257,8 @@ const main = async ():Promise<any> => {
                             const targetPath:string = path.join(
                                 configuration.path.target.base, filePath)
                             if (await Tools.isDirectory(sourcePath))
+                                if (await Tools.isDirectory(targetPath))
+                                    Tools.
                                 await Tools.copyDirectoryRecursive(
                                     sourcePath, targetPath)
                             else if (await Tools.isFile(sourcePath))
@@ -264,12 +266,12 @@ const main = async ():Promise<any> => {
                         }
                         tidyUp()
                     }
+                    const closeHandler:Function = Tools.getProcessCloseHandler(
+                        resolve, reject, closeEventName, (
+                            process.argv[2] === 'build'
+                        ) ? copyAdditionalFilesAndTidyUp : tidyUp)
                     for (const closeEventName:string of Tools.closeEventNames)
-                        childProcess.on(
-                            closeEventName, Tools.getProcessCloseHandler(
-                                resolve, reject, closeEventName, (
-                                    process.argv[2] === 'build'
-                                ) ? copyAdditionalFilesAndTidyUp : tidyUp))
+                        childProcess.on(closeEventName, closeHandler)
                     childProcesses.push(childProcess)
                 }))
             // endregion
@@ -357,14 +359,14 @@ const main = async ():Promise<any> => {
                                 spawnChildProcess(
                                     task.command, commandLineArguments,
                                     childProcessOptions)
+                            const closeHandler:Function =
+                                Tools.getProcessCloseHandler(
+                                    resolve, reject, closeEventName)
                             for (
                                 const closeEventName:string of
                                 Tools.closeEventNames
                             )
-                                childProcess.on(
-                                    closeEventName,
-                                    Tools.getProcessCloseHandler(
-                                        resolve, reject, closeEventName))
+                                childProcess.on(closeEventName, closeHandler)
                             childProcesses.push(childProcess)
                         }))
                 }
