@@ -38,10 +38,10 @@ Features
 - Many **uses-cases** are preconfigured and mostly works out of the box for
   your project.
     - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel,
-      Flow)
+      Flow) and any generic text (template) file (ejs).
     - Preconfigured **postprocessing** for CSS (Minification),
       JavaScript (Minification), Images (Compression)
-    - Image **sprite** handling. Combine your images and never create sprites
+    - Image **sprite** handling: Combine your images and never create sprites
       by hand again.
     - Polymorphic **testing** on dom in browsers and/or node through
       weboptimizer/browserAPI
