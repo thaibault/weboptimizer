@@ -50,6 +50,9 @@ registerTest(function():void {
             complexContext,
             `<a></a><%- include('<a>test</a>?{options: {isString: true}}') %>`
         ), '<a></a><a>test</a>')
+        complexContext.options.precompile = true
+        assert.ok(ejsLoader.call(complexContext, '<a></a>').startsWith(
+            'module.exports = '))
     })
     // endregion
 }, ['plain'])
