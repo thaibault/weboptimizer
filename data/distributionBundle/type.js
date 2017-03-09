@@ -241,6 +241,7 @@ export type ResolvedConfiguration = {
                 loader:string;
                 options:Object;
             };
+            ejs:LoaderConfiguration;
             html:LoaderConfiguration;
             javaScript:LoaderConfiguration;
             json:{

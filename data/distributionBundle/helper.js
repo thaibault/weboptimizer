@@ -274,7 +274,7 @@ export default class Helper {
         return null
     }
     /**
-     * Determines a asset type if given file.
+     * Determines asset type of given file.
      * @param filePath - Path to file to analyse.
      * @param buildConfiguration - Meta informations for available asset
      * types.
