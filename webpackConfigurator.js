@@ -680,8 +680,10 @@ const loader:Object = {
         ).includes(filePath) || ((
             configuration.module.preprocessor.html.exclude === null
         ) ? true : evaluate(
-            configuration.module.preprocessor.html.exclude, filePath))
-        include: configuration.path.source.asset.template,
+            configuration.module.preprocessor.html.exclude, filePath)),
+        include: Helper.normalizePaths([
+            configuration.path.source.base
+        ].concat(configuration.module.locations.directoryPaths)),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: [
             {loader: 'file?name=' + path.join(path.relative(
@@ -717,7 +719,7 @@ const loader:Object = {
             ).includes(filePath) || ((
                 configuration.module.preprocessor.html.exclude === null
             ) ? true : evaluate(
-                configuration.module.preprocessor.html.exclude, filePath))
+                configuration.module.preprocessor.html.exclude, filePath)),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
             use: [
