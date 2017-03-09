@@ -433,6 +433,9 @@
                   "extensions": {
                     "__evaluate__": "self.extensions"
                   },
+                  "locals": {
+                    "__evaluate__": "self.module.preprocessor.ejs.options.locals"
+                  },
                   "module": {
                     "__evaluate__": "self.module.preprocessor.ejs.options.module"
                   },
@@ -703,6 +706,7 @@
               "extensions": {
                 "__evaluate__": "self.extensions"
               },
+              "locals": {},
               "module": {
                 "aliases": {
                   "__evaluate__": "self.module.aliases"
@@ -730,6 +734,9 @@
               },
               "extensions": {
                 "__evaluate__": "self.extensions"
+              },
+              "locals": {
+                "__evaluate__": "self.module.preprocessor.ejs.options.locals"
               },
               "module": {
                 "__evaluate__": "self.module.preprocessor.ejs.options.module"
