@@ -339,6 +339,7 @@
             ".ttf",
             ".woff",
             ".woff2",
+            ".html.ejs",
             ".ejs"
           ],
           "external": {

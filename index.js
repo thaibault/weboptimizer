@@ -21,10 +21,7 @@ import Tools from 'clientnode'
 import type {File, PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
-import {
-    default as removeDirectoryRecursively,
-    sync as removeDirectoryRecursivelySync
-} from 'rimraf'
+import {sync as removeDirectoryRecursivelySync} from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -88,10 +85,9 @@ const main = async ():Promise<any> => {
             // endregion
             // region handle clear
             /*
-                NOTE: A build,serve or test in browser could depend on
-                previously created dll packages so a clean should not be
-                performed in that case.
-                NOTE: If we have dependency cycle it needed to preserve files
+                NOTE: Some tasks could depend on previously created dll
+                packages so a clean should not be performed in that case.
+                NOTE: If we have a dependency cycle we need to preserve files
                 during preinstall phase.
             */
             if (![
