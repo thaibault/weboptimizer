@@ -48,11 +48,12 @@ module.exports = function(source:string):string {
             module: {
                 aliases: {},
                 replacements: {}
-            }
+            },
+            precompile: false
         }, this.options || {}, loaderUtils.getOptions(this) || {}),
         /#%%%#/g, '!')
     const compile:CompileFunction = (
-        template:string, options:Object = query.compiler
+        template:string, options:Object = query.compiler, pre:boolean = false
     ):TemplateFunction => (locals:Object = {}):string => {
         options = Tools.extendObject(true, {filename: template}, options)
         let templateFunction:TemplateFunction
@@ -64,6 +65,8 @@ module.exports = function(source:string):string {
                 template,
                 Tools.extendObject(true, {encoding: 'utf-8'}, options), options
             ))
+        if (pre)
+            return `module.exports = ${templateFunction.toString()};`
         const require:Function = (request:string):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
             const queryMatch:?Array<string> = request.match(
@@ -118,15 +121,13 @@ module.exports = function(source:string):string {
             configuration, Helper, include: require, require, Tools
         }, locals))
     }
-    const template:Function = compile(source, {
+    return compile(source, {
         client: query.precompile,
         compileDebug: this.debug || false,
         debug: this.debug || false,
         filename: loaderUtils.getRemainingRequest(this).replace(/^!/, ''),
         isString: true
-    })
-    return query.precompile ? `module.exports = ${template.toString()};` :
-        template(query.locals || {})
+    }, query.precompile)(query.locals || {})
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
