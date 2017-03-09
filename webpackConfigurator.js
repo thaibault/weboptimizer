@@ -682,7 +682,7 @@ const loader:Object = {
         ) ? true : evaluate(
             configuration.module.preprocessor.html.exclude, filePath))
         include: configuration.path.source.asset.template,
-        test: /\.ejs(?:\?.*)?$/i,
+        test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: [
             {loader: 'file?name=' + path.join(path.relative(
                 configuration.path.target.asset.base,
