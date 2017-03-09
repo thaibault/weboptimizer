@@ -66,7 +66,7 @@ module.exports = function(source:string):string {
                 Tools.extendObject(true, {encoding: 'utf-8'}, options), options
             ))
         if (pre)
-            return `module.exports = ${template.toString()};`
+            return `module.exports = ${templateFunction.toString()};`
         const require:Function = (request:string):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
             const queryMatch:?Array<string> = request.match(
