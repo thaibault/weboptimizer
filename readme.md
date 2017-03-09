@@ -37,20 +37,21 @@ Features
   needed customisations needed.
 - Many **uses-cases** are preconfigured and mostly works out of the box for
   your project.
-    - **API-Documentation** generation
+    - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel,
+      Flow)
+    - Preconfigured **postprocessing** for CSS (Minification),
+      JavaScript (Minification), Images (Compression)
     - Image **sprite** handling. Combine your images and never create sprites
       by hand again.
     - Polymorphic **testing** on dom in browsers and/or node through
       weboptimizer/browserAPI
     - **Linting** and **TypeChecking** with Flow
-    - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel,
-      Flow)
-    - Preconfigured **postprocessing** for CSS (Minification),
-      JavaScript (Minification), Images (Compression)
+    - **API-Documentation** generation
     - Various pre configured and adaptable implemented concepts for building
       development-, production-, testing- and/or vendor **bundles**.
-    - Support for building **libraries** with well defined (UMD, AMD, commonjs...)
-      external, dependencies (preconfigured extendable weback configuration)
+    - Support for building **libraries** with well defined (UMD, AMD,
+      commonjs...) external, dependencies (preconfigured extendable weback
+      configuration)
     - Support for building and **shimming** a whole package managed application
       structure to build for various target environments like browsers or node
       (preconfigured extendable weback configuration)
