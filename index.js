@@ -254,12 +254,13 @@ const main = async ():Promise<any> => {
                         ) {
                             const sourcePath:string = path.join(
                                 configuration.path.source.base, filePath)
+                            const targetPath:string = path.join(
+                                configuration.path.target.base, filePath)
                             if (await Tools.isDirectory(sourcePath))
                                 await Tools.copyDirectoryRecursive(
-                                    sourcePath, configuration.path.target.base)
+                                    sourcePath, targetPath)
                             else if (await Tools.isFile(sourcePath))
-                                await Tools.copyFile(
-                                    sourcePath, configuration.path.target.base)
+                                await Tools.copyFile(sourcePath, targetPath)
                         }
                         tidyUp()
                     }

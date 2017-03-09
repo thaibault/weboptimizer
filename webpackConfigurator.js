@@ -666,17 +666,14 @@ const loader:Object = {
         ].concat(configuration.module.locations.directoryPaths)),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: [
-            {loader: 'file?name=' + path.join(path.relative(
-                configuration.path.target.asset.base,
-                configuration.path.target.asset.template
-            ), '[name]' + (
-                configuration.module.preprocessor.html.options.precompile ?
+            {loader: 'file?name=[path][name]' + (
+                configuration.module.preprocessor.ejs.options.precompile ?
                 '.js' : ''
-            ) + `?${configuration.hashAlgorithm}=[hash]`)},
+            ) + `?${configuration.hashAlgorithm}=[hash]`},
             {loader: 'extract'},
             {
-                loader: configuration.module.preprocessor.html.loader,
-                options: configuration.module.preprocessor.html.options
+                loader: configuration.module.preprocessor.ejs.loader,
+                options: configuration.module.preprocessor.ejs.options
             }
         ]
     },
@@ -717,7 +714,7 @@ const loader:Object = {
                     htmlConfiguration.template.filePath)
             ).includes(filePath) || ((
                 configuration.module.preprocessor.html.exclude === null
-            ) ? true : evaluate(
+            ) ? false : evaluate(
                 configuration.module.preprocessor.html.exclude, filePath)),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
@@ -730,13 +727,13 @@ const loader:Object = {
                     '.js' : ''
                 ) + `?${configuration.hashAlgorithm}=[hash]`)},
                 {loader: 'extract'}
-            ].concat(
+            ].concat((
                 configuration.module.preprocessor.html.options.precompile ? [
                 ] : {
                     loader: configuration.module.html.loader,
                     options: configuration.module.html.options
                 }
-            ).concat({
+            ), {
                 loader: configuration.module.preprocessor.html.loader,
                 options: configuration.module.preprocessor.html.options
             })
