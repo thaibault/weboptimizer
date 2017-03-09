@@ -650,26 +650,6 @@ for (
 // / region loader helper
 const loader:Object = {
     // Convert to compatible native web types.
-    // region script
-    script: {
-        exclude: (filePath:string):boolean => (
-            configuration.module.preprocessor.javaScript
-                .exclude === null
-        ) ? rejectFilePathInDependencies(filePath) : evaluate(
-            configuration.module.preprocessor.javaScript.exclude,
-            filePath),
-        include: Helper.normalizePaths([
-            configuration.path.source.asset.javaScript
-        ].concat(configuration.module.locations.directoryPaths)),
-        test: /\.js(?:\?.*)?$/i,
-        use: [{
-            loader: configuration.module.preprocessor.javaScript
-                .loader,
-            options: configuration.module.preprocessor.javaScript
-                .options
-        }]
-    },
-    // endregion
     // region generic template
     ejs: {
         exclude: (filePath:string):boolean => Helper.normalizePaths(
@@ -678,9 +658,9 @@ const loader:Object = {
             ).map((htmlConfiguration:HTMLConfiguration):string =>
                 htmlConfiguration.template.filePath)
         ).includes(filePath) || ((
-            configuration.module.preprocessor.html.exclude === null
-        ) ? true : evaluate(
-            configuration.module.preprocessor.html.exclude, filePath)),
+            configuration.module.preprocessor.ejs.exclude === null
+        ) ? false : evaluate(
+            configuration.module.preprocessor.ejs.exclude, filePath)),
         include: Helper.normalizePaths([
             configuration.path.source.base
         ].concat(configuration.module.locations.directoryPaths)),
@@ -699,6 +679,25 @@ const loader:Object = {
                 options: configuration.module.preprocessor.html.options
             }
         ]
+    },
+    // endregion
+    // region script
+    script: {
+        exclude: (filePath:string):boolean => (
+            configuration.module.preprocessor.javaScript.exclude === null
+        ) ? rejectFilePathInDependencies(filePath) : evaluate(
+            configuration.module.preprocessor.javaScript.exclude,
+            filePath),
+        include: Helper.normalizePaths([
+            configuration.path.source.asset.javaScript
+        ].concat(configuration.module.locations.directoryPaths)),
+        test: /\.js(?:\?.*)?$/i,
+        use: [{
+            loader: configuration.module.preprocessor.javaScript
+                .loader,
+            options: configuration.module.preprocessor.javaScript
+                .options
+        }]
     },
     // endregion
     // region html template
@@ -1001,6 +1000,7 @@ const webpackConfiguration:WebpackConfiguration = {
                 use: loaderConfiguration.use
             }
         }).concat([
+            loader.ejs,
             loader.script,
             loader.html.main, loader.html.ejs, loader.html.html,
             loader.style,
