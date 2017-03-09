@@ -85,10 +85,9 @@ const main = async ():Promise<any> => {
             // endregion
             // region handle clear
             /*
-                NOTE: A build,serve or test in browser could depend on
-                previously created dll packages so a clean should not be
-                performed in that case.
-                NOTE: If we have dependency cycle it needed to preserve files
+                NOTE: Some tasks could depend on previously created dll
+                packages so a clean should not be performed in that case.
+                NOTE: If we have a dependency cycle we need to preserve files
                 during preinstall phase.
             */
             if (![
@@ -254,21 +253,25 @@ const main = async ():Promise<any> => {
                         ) {
                             const sourcePath:string = path.join(
                                 configuration.path.source.base, filePath)
-                            if (await Tools.isDirectory(sourcePath))
+                            const targetPath:string = path.join(
+                                configuration.path.target.base, filePath)
+                            if (await Tools.isDirectory(sourcePath)) {
+                                if (await Tools.isDirectory(targetPath))
+                                    removeDirectoryRecursivelySync(
+                                        targetPath, {glob: false})
                                 await Tools.copyDirectoryRecursive(
-                                    sourcePath, configuration.path.target.base)
-                            else if (await Tools.isFile(sourcePath))
-                                await Tools.copyFile(
-                                    sourcePath, configuration.path.target.base)
+                                    sourcePath, targetPath)
+                            } else if (await Tools.isFile(sourcePath))
+                                await Tools.copyFile(sourcePath, targetPath)
                         }
                         tidyUp()
                     }
+                    const closeHandler:Function = Tools.getProcessCloseHandler(
+                        resolve, reject, null, (
+                            process.argv[2] === 'build'
+                        ) ? copyAdditionalFilesAndTidyUp : tidyUp)
                     for (const closeEventName:string of Tools.closeEventNames)
-                        childProcess.on(
-                            closeEventName, Tools.getProcessCloseHandler(
-                                resolve, reject, closeEventName, (
-                                    process.argv[2] === 'build'
-                                ) ? copyAdditionalFilesAndTidyUp : tidyUp))
+                        childProcess.on(closeEventName, closeHandler)
                     childProcesses.push(childProcess)
                 }))
             // endregion
@@ -356,14 +359,13 @@ const main = async ():Promise<any> => {
                                 spawnChildProcess(
                                     task.command, commandLineArguments,
                                     childProcessOptions)
+                            const closeHandler:Function =
+                                Tools.getProcessCloseHandler(resolve, reject)
                             for (
                                 const closeEventName:string of
                                 Tools.closeEventNames
                             )
-                                childProcess.on(
-                                    closeEventName,
-                                    Tools.getProcessCloseHandler(
-                                        resolve, reject, closeEventName))
+                                childProcess.on(closeEventName, closeHandler)
                             childProcesses.push(childProcess)
                         }))
                 }
