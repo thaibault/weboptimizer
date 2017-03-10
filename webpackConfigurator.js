@@ -666,10 +666,9 @@ const loader:Object = {
         ].concat(configuration.module.locations.directoryPaths)),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: [
-            {loader: 'file?name=[path][name]' + (
-                configuration.module.preprocessor.ejs.options.precompile ?
-                '.js' : ''
-            ) + `?${configuration.hashAlgorithm}=[hash]`},
+            {loader: 'file?name=[path][name]' + (Boolean(
+                configuration.module.preprocessor.ejs.options.compileSteps % 2
+            ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`},
             {loader: 'extract'},
             {
                 loader: configuration.module.preprocessor.ejs.loader,
@@ -722,18 +721,17 @@ const loader:Object = {
                 {loader: 'file?name=' + path.join(path.relative(
                     configuration.path.target.asset.base,
                     configuration.path.target.asset.template
-                ), '[name]' + (
-                    configuration.module.preprocessor.html.options.precompile ?
-                    '.js' : ''
-                ) + `?${configuration.hashAlgorithm}=[hash]`)},
+                ), '[name]' + (Boolean(
+                    configuration.module.preprocessor.html.options.compileSteps
+                    % 2
+                ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)},
                 {loader: 'extract'}
-            ].concat((
-                configuration.module.preprocessor.html.options.precompile ? [
-                ] : {
-                    loader: configuration.module.html.loader,
-                    options: configuration.module.html.options
-                }
-            ), {
+            ].concat((Boolean(
+                configuration.module.preprocessor.html.options.compileSteps % 2
+            ) ? [] : {
+                loader: configuration.module.html.loader,
+                options: configuration.module.html.options
+            }), {
                 loader: configuration.module.preprocessor.html.loader,
                 options: configuration.module.preprocessor.html.options
             })
