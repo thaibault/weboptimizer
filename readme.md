@@ -38,7 +38,8 @@ Features
 - Many **uses-cases** are preconfigured and mostly works out of the box for
   your project.
     - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel,
-      Flow) and any generic text (template) file (ejs).
+      Flow) and any generic text (template) file (in ejs) with any number of
+      precompile/render steps for optimal runtime performance.
     - Preconfigured **postprocessing** for CSS (Minification),
       JavaScript (Minification), Images (Compression)
     - Image **sprite** handling: Combine your images and never create sprites

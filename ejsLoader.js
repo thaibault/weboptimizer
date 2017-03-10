@@ -49,24 +49,14 @@ module.exports = function(source:string):string {
                 aliases: {},
                 replacements: {}
             },
-            precompile: false
+            compileSteps: 2
         }, this.options || {}, loaderUtils.getOptions(this) || {}),
         /#%%%#/g, '!')
     const compile:CompileFunction = (
-        template:string, options:Object = query.compiler, pre:boolean = false
+        template:string, options:Object = query.compiler,
+        compileSteps:number = 2
     ):TemplateFunction => (locals:Object = {}):string => {
         options = Tools.extendObject(true, {filename: template}, options)
-        let templateFunction:TemplateFunction
-        if (options.isString) {
-            delete options.isString
-            templateFunction = ejs.compile(template, options)
-        } else
-            templateFunction = ejs.compile(fileSystem.readFileSync(
-                template,
-                Tools.extendObject(true, {encoding: 'utf-8'}, options), options
-            ))
-        if (pre)
-            return `module.exports = ${templateFunction.toString()};`
         const require:Function = (request:string):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
             const queryMatch:?Array<string> = request.match(
@@ -117,17 +107,40 @@ module.exports = function(source:string):string {
             throw new Error(
                 `Given template file "${template}" couldn't be resolved.`)
         }
-        return templateFunction(Tools.extendObject(true, {
-            configuration, Helper, include: require, require, Tools
-        }, locals))
+        let remainingSteps:number = compileSteps
+        let result:TemplateFunction|string = template
+        while (remainingSteps > 0) {
+            if (typeof result === 'string') {
+                if (options.isString) {
+                    delete options.isString
+                    result = ejs.compile(result, options)
+                } else {
+                    let encoding:string = 'utf-8'
+                    if ('encoding' in options)
+                        encoding = options.encoding
+                    result = ejs.compile(fileSystem.readFileSync(
+                        result, {encoding}
+                    ), options)
+                }
+                options.isString = true
+            } else
+                result = result(Tools.extendObject(true, {
+                    configuration, Helper, include: require, require, Tools
+                }, locals))
+            remainingSteps -= 1
+        }
+        if (Boolean(compileSteps % 2))
+            return `module.exports = ${result.toString()};`
+        // IgnoreTypeCheck
+        return result
     }
     return compile(source, {
-        client: query.precompile,
+        client: Boolean(query.compileSteps % 2),
         compileDebug: this.debug || false,
         debug: this.debug || false,
         filename: loaderUtils.getRemainingRequest(this).replace(/^!/, ''),
         isString: true
-    }, query.precompile)(query.locals || {})
+    }, query.compileSteps)(query.locals || {})
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
