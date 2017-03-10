@@ -50,7 +50,16 @@ registerTest(function():void {
             complexContext,
             `<a></a><%- include('<a>test</a>?{options: {isString: true}}') %>`
         ), '<a></a><a>test</a>')
-        complexContext.options.precompile = true
+        complexContext.options.compileSteps = 0
+        assert.strictEqual(
+            ejsLoader.call(complexContext, '<a></a>'), '<a></a>')
+        complexContext.options.compileSteps = 1
+        assert.ok(ejsLoader.call(complexContext, '<a></a>').startsWith(
+            'module.exports = '))
+        complexContext.options.compileSteps = 2
+        assert.strictEqual(
+            ejsLoader.call(complexContext, '<a></a>'), '<a></a>')
+        complexContext.options.compileSteps = 3
         assert.ok(ejsLoader.call(complexContext, '<a></a>').startsWith(
             'module.exports = '))
     })

@@ -439,7 +439,7 @@
                   "module": {
                     "__evaluate__": "self.module.preprocessor.ejs.options.module"
                   },
-                  "precompile": false
+                  "compileSteps": 2
                 }
               }
             ]
@@ -715,7 +715,7 @@
                   "__evaluate__": "self.module.replacements"
                 }
               },
-              "precompile": false
+              "compileSteps": 2
             }
           },
           "html": {
@@ -741,7 +741,7 @@
               "module": {
                 "__evaluate__": "self.module.preprocessor.ejs.options.module"
               },
-              "precompile": false
+              "compileSteps": 2
             }
           },
           "javaScript": {
