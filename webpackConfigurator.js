@@ -42,6 +42,7 @@ plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
+import ejsLoader from './ejsLoader.compiled'
 import type {HTMLConfiguration, WebpackConfiguration} from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -646,6 +647,18 @@ for (
             'configuration', '__dirname', '__filename', `return ${value}`
         ))(configuration, __dirname, __filename))))
 // // endregion
+pluginInstances.push({apply: (compiler:Object):void => {
+    compiler.plugin('compilation', function(compilation) {
+        compilation.plugin('html-webpack-plugin-after-html-processing', (
+            htmlPluginData, callback:Function
+        ):void => {
+            // ejsLoader
+            console.log('O', htmlPluginData)
+            htmlPluginData.html += 'TEST'
+            callback(null, htmlPluginData);
+        })
+    })
+}})
 // / endregion
 // / region loader helper
 const loader:Object = {

@@ -439,7 +439,8 @@
                   "module": {
                     "__evaluate__": "self.module.preprocessor.ejs.options.module"
                   },
-                  "compileSteps": 2
+                  "compileSteps": 2,
+                  "postCompilationSteps": 0
                 }
               }
             ]
