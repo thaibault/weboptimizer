@@ -138,7 +138,9 @@ module.exports = function(source:string):string {
         client: Boolean(query.compileSteps % 2),
         compileDebug: this.debug || false,
         debug: this.debug || false,
-        filename: loaderUtils.getRemainingRequest(this).replace(/^!/, ''),
+        filename: 'query' in this ? loaderUtils.getRemainingRequest(
+            this
+        ).replace(/^!/, '') : null,
         isString: true
     }, query.compileSteps)(query.locals || {})
 }
