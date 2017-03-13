@@ -444,6 +444,9 @@
                 }
               }
             ]
+          },
+          "title": {
+            "__evaluate__": "self.name"
           }
         },
         "html": [

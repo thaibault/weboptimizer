@@ -652,9 +652,10 @@ pluginInstances.push({apply: (compiler:Object):void => {
         compilation.plugin('html-webpack-plugin-after-html-processing', (
             htmlPluginData, callback:Function
         ):void => {
-            // ejsLoader
-            console.log('O', htmlPluginData)
-            htmlPluginData.html += 'TEST'
+            console.log()
+            console.log('O', htmlPluginData.plugin.options.filename)
+            console.log()
+            // TODO htmlPluginData.html = ejsLoader(htmlPluginData.html)
             callback(null, htmlPluginData);
         })
     })
