@@ -702,7 +702,8 @@
               "compiler": {
                 "cache": true,
                 "compileDebug": false,
-                "debug": false
+                "debug": false,
+                "_with": false
               },
               "context": {
                 "__evaluate__": "self.path.context"
