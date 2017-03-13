@@ -114,9 +114,9 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
         }
 if (htmlAvailable)
     pluginInstances.push({apply: (compiler:Object):void => {
-        compiler.plugin('compilation', function(compilation) {
+        compiler.plugin('compilation', (compilation:Object):void => {
             compilation.plugin('html-webpack-plugin-after-html-processing', (
-                htmlPluginData, callback:Function
+                htmlPluginData:PlainObject, callback:ProcedureFunction
             ):void => {
                 for (
                     const htmlFileSpecification:PlainObject of
@@ -148,7 +148,7 @@ if (htmlAvailable)
                             }
                         break
                     }
-                callback(null, htmlPluginData);
+                callback(null, htmlPluginData)
             })
         })
     }})
