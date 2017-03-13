@@ -109,12 +109,13 @@ module.exports = function(source:string):string {
         }
         let remainingSteps:number = compileSteps
         let result:TemplateFunction|string = template
+        let isString:boolean = options.isString
+        delete options.isString
         while (remainingSteps > 0) {
-            if (typeof result === 'string') {
-                if (options.isString) {
-                    delete options.isString
+            if (typeof result === 'string')
+                if (isString)
                     result = ejs.compile(result, options)
-                } else {
+                else {
                     let encoding:string = 'utf-8'
                     if ('encoding' in options)
                         encoding = options.encoding
@@ -122,8 +123,7 @@ module.exports = function(source:string):string {
                         result, {encoding}
                     ), options)
                 }
-                options.isString = true
-            } else
+            else
                 result = result(Tools.extendObject(true, {
                     configuration, Helper, include: require, require, Tools
                 }, locals))
