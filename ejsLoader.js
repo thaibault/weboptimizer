@@ -15,9 +15,10 @@
 */
 // region imports
 import Tools from 'clientnode'
+import * as ejs from 'ejs'
 import * as fileSystem from 'fs'
 import * as loaderUtils from 'loader-utils'
-import * as ejs from 'ejs'
+import path from 'path'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -31,7 +32,7 @@ type TemplateFunction = (locals:Object) => string
 type CompileFunction = (template:string, options:Object) => TemplateFunction
 // endregion
 module.exports = function(source:string):string {
-    if (this.cacheable)
+    if ('cachable' in this && this.cacheable)
         this.cacheable()
     const query:Object = Tools.convertSubstringInPlainObject(
         Tools.extendObject(true, {
@@ -50,7 +51,9 @@ module.exports = function(source:string):string {
                 replacements: {}
             },
             compileSteps: 2
-        }, this.options || {}, loaderUtils.getOptions(this) || {}),
+        }, this.options || {}, 'query' in this ? loaderUtils.getOptions(
+            this
+        ) || {} : {}),
         /#%%%#/g, '!')
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler,
@@ -92,7 +95,8 @@ module.exports = function(source:string):string {
                     configuration.package.main.propertyNames,
                     configuration.package.aliasPropertyNames)
             if (templateFilePath) {
-                this.addDependency(templateFilePath)
+                if ('query' in this)
+                    this.addDependency(templateFilePath)
                 /*
                     NOTE: If there aren't any locals options or variables and
                     file doesn't seem to be an ejs template we simply load
@@ -112,8 +116,12 @@ module.exports = function(source:string):string {
         let isString:boolean = options.isString
         delete options.isString
         while (remainingSteps > 0) {
-            if (typeof result === 'string')
-                if (isString)
+            if (typeof result === 'string') {
+                const filePath:?string =
+                    isString && options.filename && options.filename || result
+                if (filePath && path.extname(filePath) === '.js')
+                    result = eval('require')(filePath)
+                else if (isString)
                     result = ejs.compile(result, options)
                 else {
                     let encoding:string = 'utf-8'
@@ -123,7 +131,7 @@ module.exports = function(source:string):string {
                         result, {encoding}
                     ), options)
                 }
-            else
+            } else
                 result = result(Tools.extendObject(true, {
                     configuration, Helper, include: require, require, Tools
                 }, locals))
