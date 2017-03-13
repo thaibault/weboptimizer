@@ -112,7 +112,47 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
                     template: htmlConfiguration.template.request})))
             htmlAvailable = true
         }
-// // endregion
+if (htmlAvailable)
+    pluginInstances.push({apply: (compiler:Object):void => {
+        compiler.plugin('compilation', function(compilation) {
+            compilation.plugin('html-webpack-plugin-after-html-processing', (
+                htmlPluginData, callback:Function
+            ):void => {
+                for (
+                    const htmlFileSpecification:PlainObject of
+                    configuration.files.html
+                )
+                    if (
+                        htmlFileSpecification.filename ===
+                        htmlPluginData.plugin.options.filename
+                    ) {
+                        for (
+                            const loaderConfiguration:PlainObject of
+                            htmlFileSpecification.template.use
+                        )
+                            if (loaderConfiguration.hasOwnProperty(
+                                'options'
+                            ) && loaderConfiguration.options.hasOwnProperty(
+                                'compileSteps'
+                            ) && typeof loaderConfiguration.options
+                                .compileSteps === 'number'
+                            ) {
+                                htmlPluginData.html = ejsLoader.bind(
+                                    Tools.extendObject(true, {}, {
+                                        options: loaderConfiguration.options
+                                    }, {options: {
+                                        compileSteps: htmlFileSpecification
+                                            .template.postCompileSteps
+                                    }}))(htmlPluginData.html)
+                                break
+                            }
+                        break
+                    }
+                callback(null, htmlPluginData);
+            })
+        })
+    }})
+ // // endregion
 // // region generate favicons
 if (htmlAvailable && configuration.favicon && Tools.isFileSync(
     configuration.favicon.logo
@@ -647,19 +687,6 @@ for (
             'configuration', '__dirname', '__filename', `return ${value}`
         ))(configuration, __dirname, __filename))))
 // // endregion
-pluginInstances.push({apply: (compiler:Object):void => {
-    compiler.plugin('compilation', function(compilation) {
-        compilation.plugin('html-webpack-plugin-after-html-processing', (
-            htmlPluginData, callback:Function
-        ):void => {
-            console.log()
-            console.log('O', htmlPluginData.plugin.options.filename)
-            console.log()
-            // TODO htmlPluginData.html = ejsLoader(htmlPluginData.html)
-            callback(null, htmlPluginData);
-        })
-    })
-}})
 // / endregion
 // / region loader helper
 const loader:Object = {

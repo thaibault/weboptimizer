@@ -410,6 +410,7 @@
             "filePath": {
               "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, 'index.html.ejs')) ? path.resolve(self.path.source.base, 'index.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
             },
+            "postCompileSteps": 0,
             "use": [
               {
                 "loader": {
@@ -439,8 +440,7 @@
                   "module": {
                     "__evaluate__": "self.module.preprocessor.ejs.options.module"
                   },
-                  "compileSteps": 2,
-                  "postCompileSteps": 0
+                  "compileSteps": 2
                 }
               }
             ]
