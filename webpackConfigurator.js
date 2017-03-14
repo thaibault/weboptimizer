@@ -200,11 +200,11 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     htmlPluginData:PlainObject, callback:ProcedureFunction
                 ):void => {
                     if (
-                        configuration.inPlace.cascadingStyleSheet && Object.keys(
+                        configuration.inPlace.cascadingStyleSheet &&
+                        Object.keys(
                             configuration.inPlace.cascadingStyleSheet
-                        ).length || configuration.inPlace.javaScript && Object.keys(
-                            configuration.inPlace.javaScript
-                        ).length
+                        ).length || configuration.inPlace.javaScript &&
+                        Object.keys(configuration.inPlace.javaScript).length
                     )
                         /*
                             NOTE: We have to translate template delimiter to
@@ -212,7 +212,11 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                             later to avoid unexpected escape sequences in
                             resulting html.
                         */
-                        dom.env(htmlPluginData.html.replace(/<%/g, '##+#+#+##').replace(/%>/g, '##-#-#-##'), (error:?Error, window:Object):void => {
+                        dom.env(htmlPluginData.html.replace(
+                            /<%/g, '##+#+#+##'
+                        ).replace(/%>/g, '##-#-#-##'), (
+                            error:?Error, window:Object
+                        ):void => {
                             if (error)
                                 return callback(error, htmlPluginData)
                             if (configuration.inPlace.cascadingStyleSheet)
@@ -220,8 +224,9 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                     const pattern:string in
                                     configuration.inPlace.cascadingStyleSheet
                                 ) {
-                                    if (!configuration.inPlace.cascadingStyleSheet
-                                        .hasOwnProperty(pattern)
+                                    if (!configuration.inPlace
+                                        .cascadingStyleSheet.hasOwnProperty(
+                                            pattern)
                                     )
                                         continue
                                     let selector:string = '[href*=".css"]'
@@ -241,52 +246,65 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                         window.document.querySelectorAll(
                                             `link${selector}`)
                                     if (domNodes.length)
-                                        for (const domNode:DomNode of domNodes) {
+                                        for (
+                                            const domNode:DomNode of domNodes
+                                        ) {
                                             const inPlaceDomNode:DomNode =
-                                                window.document.createElement('style')
-                                            const path:string = domNode.attributes.href
-                                                .value.replace(/&.*/g, '')
+                                                window.document.createElement(
+                                                    'style')
+                                            const path:string =
+                                                domNode.attributes.href.value
+                                                .replace(/&.*/g, '')
                                             inPlaceDomNode.textContent =
-                                                compilation.assets[path].source()
+                                                compilation.assets[path]
+                                                    .source()
                                             if (
                                                 configuration.inPlace
                                                 .cascadingStyleSheet[
                                                     pattern
                                                 ] === 'body'
                                             )
-                                                window.document.body.appendChild(
-                                                    inPlaceDomNode)
+                                                window.document.body
+                                                    .appendChild(inPlaceDomNode)
                                             else if (
                                                 configuration.inPlace
-                                                .cascadingStyleSheet[pattern] === 'in'
+                                                .cascadingStyleSheet[
+                                                    pattern
+                                                ] === 'in'
                                             )
-                                                domNode.parentNode.insertBefore(
-                                                    inPlaceDomNode, domNode)
+                                                domNode.parentNode
+                                                    .insertBefore(
+                                                        inPlaceDomNode, domNode
+                                                    )
                                             else if (
                                                 configuration.inPlace
                                                 .cascadingStyleSheet[
                                                     pattern
                                                 ] === 'head'
                                             )
-                                                window.document.head.appendChild(
-                                                    inPlaceDomNode)
-                                            domNode.parentNode.removeChild(domNode)
+                                                window.document.head
+                                                    .appendChild(
+                                                        inPlaceDomNode)
+                                            domNode.parentNode.removeChild(
+                                                domNode)
                                             /*
-                                                NOTE: This doesn't prevent webpack from
-                                                creating this file if present in
-                                                another chunk so removing it (and a
-                                                potential source map file) later in the
+                                                NOTE: This doesn't prevent
+                                                webpack from creating this file
+                                                if present in another chunk so
+                                                removing it (and a potential
+                                                source map file) later in the
                                                 "done" hook.
                                             */
-                                            filePathsToRemove.push(Helper.stripLoader(
-                                                path))
+                                            filePathsToRemove.push(
+                                                Helper.stripLoader(path))
                                             delete compilation.assets[path]
                                         }
                                     else
                                         console.warn(
-                                            'No referenced cascading style sheet ' +
-                                            'file in resulting markup found with ' +
-                                            `selector: link${selector}`)
+                                            'No referenced cascading style ' +
+                                            'sheet file in resulting markup ' +
+                                            'found with selector: link' +
+                                            selector)
                                 }
                             if (configuration.inPlace.javaScript)
                                 for (
@@ -302,7 +320,8 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                         selector = '[src^="' + path.relative(
                                             configuration.path.target.base,
                                             Helper.renderFilePathTemplate(
-                                                configuration.files.compose.javaScript,
+                                                configuration.files.compose
+                                                    .javaScript,
                                                 {
                                                     '[hash]': '',
                                                     '[id]': pattern,
@@ -313,47 +332,56 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                                         window.document.querySelectorAll(
                                             `script${selector}`)
                                     if (domNodes.length)
-                                        for (const domNode:DomNode of domNodes) {
+                                        for (
+                                            const domNode:DomNode of domNodes
+                                        ) {
                                             const inPlaceDomNode:DomNode =
-                                                window.document.createElement('script')
-                                            const path:string = domNode.attributes.src
-                                                .value.replace(/&.*/g, '')
+                                                window.document.createElement(
+                                                    'script')
+                                            const path:string =
+                                                domNode.attributes.src.value
+                                                    .replace(/&.*/g, '')
                                             inPlaceDomNode.textContent =
-                                                compilation.assets[path].source()
-                                            if (
-                                                configuration.inPlace.javaScript[
-                                                    pattern
-                                                ] === 'body'
+                                                compilation.assets[path]
+                                                    .source()
+                                            if (configuration.inPlace
+                                                .javaScript[pattern] === 'body'
                                             )
-                                                window.document.body.appendChild(
-                                                    inPlaceDomNode)
-                                            else if (configuration.inPlace.javaScript[
-                                                pattern
-                                            ] === 'in')
-                                                domNode.parentNode.insertBefore(
-                                                    inPlaceDomNode, domNode)
-                                            else if (configuration.inPlace.javaScript[
-                                                pattern
-                                            ] === 'head')
-                                                window.document.head.appendChild(
-                                                    inPlaceDomNode)
-                                            domNode.parentNode.removeChild(domNode)
+                                                window.document.body
+                                                    .appendChild(
+                                                        inPlaceDomNode)
+                                            else if (configuration.inPlace
+                                                .javaScript[pattern] === 'in'
+                                            )
+                                                domNode.parentNode
+                                                    .insertBefore(
+                                                        inPlaceDomNode, domNode
+                                                    )
+                                            else if (configuration.inPlace
+                                                .javaScript[pattern] === 'head'
+                                            )
+                                                window.document.head
+                                                    .appendChild(
+                                                        inPlaceDomNode)
+                                            domNode.parentNode.removeChild(
+                                                domNode)
                                             /*
-                                                NOTE: This doesn't prevent webpack from
-                                                creating this file if present in
-                                                another chunk so removing it (and a
-                                                potential source map file) later in the
+                                                NOTE: This doesn't prevent
+                                                webpack from creating this file
+                                                if present in another chunk so
+                                                removing it (and a potential
+                                                source map file) later in the
                                                 "done" hook.
                                             */
-                                            filePathsToRemove.push(Helper.stripLoader(
-                                                path))
+                                            filePathsToRemove.push(
+                                                Helper.stripLoader(path))
                                             delete compilation.assets[path]
                                         }
                                     else
                                         console.warn(
-                                            'No referenced javaScript file in ' +
-                                            'resulting markup found with selector: ' +
-                                            `script${selector}`)
+                                            'No referenced javaScript file ' +
+                                            'in resulting markup found with ' +
+                                            `selector: script${selector}`)
                                 }
                             htmlPluginData.html = htmlPluginData.html.replace(
                                 /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
@@ -540,7 +568,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
     'compilation', (compilation:Object):void => compilation.plugin(
         'html-webpack-plugin-after-html-processing', async (
             htmlPluginData:PlainObject, callback:ProcedureFunction
-        ):void => dom.env(htmlPluginData.html.replace(
+        ):Window => dom.env(htmlPluginData.html.replace(
             /<%/g, '##+#+#+##'
         ).replace(/%>/g, '##-#-#-##'), (error:?Error, window:Window):void => {
             if (error)
