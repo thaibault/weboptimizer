@@ -568,18 +568,11 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                                 `(\\?${configuration.hashAlgorithm}=` +
                                 '[^&]+).*$'
                             ), '$1'))
-            console.log()
-            console.log()
-            console.log(window.document.documentElement.outerHTML)
-            console.log()
-            console.log()
-            /*
             htmlPluginData.html = htmlPluginData.html.replace(
                 /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
             ) + window.document.documentElement.outerHTML.replace(
                 /##\+#\+#\+##/g, '<%'
             ).replace(/##-#-#-##/g, '%>')
-            */
             callback(null, htmlPluginData)
         })))})
 if (configuration.exportFormat.external.startsWith('umd'))
@@ -665,6 +658,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                                 }}))(htmlPluginData.html)
                     break
                 }
+            callback(null, htmlPluginData)
         }))})
 // // endregion
 // // region add automatic image compression
