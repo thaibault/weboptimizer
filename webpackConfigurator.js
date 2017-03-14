@@ -582,15 +582,16 @@ if (configuration.exportFormat.external.startsWith('umd'))
                 typeof libraryName === 'string'
             ) ? libraryName : libraryName[0]
             /*
-                NOTE: The umd module export doesn't handle cases where the package
-                name doesn't match exported library name. This post processing
-                fixes this issue.
+                NOTE: The umd module export doesn't handle cases where the
+                package name doesn't match exported library name. This post
+                processing fixes this issue.
             */
             for (const assetRequest:string in compilation.assets)
                 if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
                     configuration.build.types.javaScript.outputExtension
                 )) {
-                    let source:string = compilation.assets[assetRequest].source()
+                    let source:string =
+                        compilation.assets[assetRequest].source()
                     if (typeof source === 'string') {
                         for (
                             const replacement:string in
@@ -602,8 +603,8 @@ if (configuration.exportFormat.external.startsWith('umd'))
                                 source = source.replace(new RegExp(
                                     '(require\\()"' +
                                     Tools.stringEscapeRegularExpressions(
-                                        configuration.injection.external.aliases[
-                                            replacement]
+                                        configuration.injection.external
+                                            .aliases[replacement]
                                     ) + '"(\\))', 'g'
                                 ), `$1'${replacement}'$2`).replace(new RegExp(
                                     '(define\\("' +
@@ -611,20 +612,19 @@ if (configuration.exportFormat.external.startsWith('umd'))
                                         bundleName
                                     ) + '", \\[.*)"' +
                                     Tools.stringEscapeRegularExpressions(
-                                        configuration.injection.external.aliases[
-                                            replacement]
+                                        configuration.injection.external
+                                            .aliases[replacement]
                                     ) + '"(.*\\], factory\\);)'
                                 ), `$1'${replacement}'$2`)
                         source = source.replace(new RegExp(
                             '(root\\[)"' +
                             Tools.stringEscapeRegularExpressions(bundleName) +
                             '"(\\] = )'
-                        ), `$1'` +
-                            Tools.stringConvertToValidVariableName(bundleName) +
-                            `'$2`
-                        )
-                        compilation.assets[assetRequest] = new WebpackRawSource(
-                            source)
+                        ), `$1'` + Tools.stringConvertToValidVariableName(
+                            bundleName
+                        ) + `'$2`)
+                        compilation.assets[assetRequest] =
+                            new WebpackRawSource(source)
                     }
                 }
             callback()
@@ -642,7 +642,10 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                     htmlFileSpecification.filename ===
                     htmlPluginData.plugin.options.filename
                 ) {
-                    for (const loaderConfiguration:PlainObject of htmlFileSpecification.template.use)
+                    for (
+                        const loaderConfiguration:PlainObject of
+                        htmlFileSpecification.template.use
+                    )
                         if (loaderConfiguration.hasOwnProperty(
                             'options'
                         ) && loaderConfiguration.options.hasOwnProperty(
