@@ -60,11 +60,12 @@ module.exports = function(source:string):string {
         compileSteps:number = 2
     ):TemplateFunction => (locals:Object = {}):string => {
         options = Tools.extendObject(true, {filename: template}, options)
-        const require:Function = (request:string):string => {
+        const require:Function = (
+            request:string, nestedLocals:Object = {}
+        ):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
             const queryMatch:?Array<string> = request.match(
                 /^[^?]+\?(.+)$/, '$1')
-            let nestedLocals:Object = {}
             if (queryMatch) {
                 const evaluationFunction = (
                     request:string, template:string, source:string,
@@ -74,8 +75,9 @@ module.exports = function(source:string):string {
                     'request', 'template', 'source', 'compile', 'locals',
                     `return ${queryMatch[1]}`
                 )(request, template, source, compile, locals)
-                nestedLocals = evaluationFunction(
-                    request, template, source, compile, locals)
+                nestedLocals = Tools.extendObject(
+                    true, nestedLocals, evaluationFunction(
+                        request, template, source, compile, locals))
             }
             let nestedOptions:Object = Tools.copyLimitedRecursively(options)
             delete nestedOptions.client
