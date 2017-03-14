@@ -54,6 +54,25 @@ export default class Helper {
     // endregion
     // region string
     /**
+     * TODO
+     */
+    static postCompile(
+        content:string, loader:Array<PlainObject>, steps:number,
+        postLoader:Function
+    ):string {
+        for (const loaderConfiguration:PlainObject of loader)
+            if (loaderConfiguration.hasOwnProperty(
+                'options'
+            ) && loaderConfiguration.options.hasOwnProperty(
+                'compileSteps'
+            ) && typeof loaderConfiguration.options.compileSteps === 'number'
+            )
+                content = postLoader.bind(Tools.extendObject(true, {}, {
+                    options: loaderConfiguration.options
+                }, {options: {compileSteps: steps}}))(content)
+        return content
+    }
+    /**
      * Strips loader informations form given module request including loader
      * prefix and query parameter.
      * @param moduleID - Module request to strip.

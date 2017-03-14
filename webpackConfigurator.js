@@ -194,227 +194,208 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
 ))
     pluginInstances.push({apply: (compiler:Object):void => {
         const filePathsToRemove:Array<string> = []
-        compiler.plugin('emit', (
-            compilation:Object, callback:ProcedureFunction
-        ):void => {
-            // TODO
-            for (
-                const htmlFileSpecification:PlainObject of
-                configuration.files.html
-            )
-                if (htmlFileSpecification.filename in compilation.assets && (
-                    configuration.inPlace.cascadingStyleSheet && Object.keys(
-                        configuration.inPlace.cascadingStyleSheet
-                    ).length || configuration.inPlace.javaScript && Object.keys(
-                        configuration.inPlace.javaScript
-                    ).length
-                ))
-                    dom.env(compilation.assets[
-                        htmlFileSpecification.filename
-                    ].source(), (error:?Error, window:Object):void => {
-                        if (configuration.inPlace.cascadingStyleSheet)
-                            for (
-                                const pattern:string in
+        compiler.plugin('compilation', (compilation:Object):void =>
+            compilation.plugin(
+                'html-webpack-plugin-after-html-processing', async (
+                    htmlPluginData:PlainObject, callback:ProcedureFunction
+                ):Promise<void> => {
+                    const promises:Array<Promise<void>> = []
+                    // TODO
+                    for (
+                        const htmlFileSpecification:PlainObject of
+                        configuration.files.html
+                    ) {
+                        if (
+                            configuration.inPlace.cascadingStyleSheet && Object.keys(
                                 configuration.inPlace.cascadingStyleSheet
-                            ) {
-                                if (!configuration.inPlace.cascadingStyleSheet
-                                    .hasOwnProperty(pattern)
-                                )
-                                    continue
-                                let selector:string = '[href*=".css"]'
-                                if (pattern !== '*')
-                                    selector = '[href="' + path.relative(
-                                        configuration.path.target.base,
-                                        Helper.renderFilePathTemplate(
-                                            configuration.files.compose
-                                                .cascadingStyleSheet,
-                                            {
-                                                '[contenthash]': '',
-                                                '[id]': pattern,
-                                                '[name]': pattern
-                                            }
-                                        )) + '"]'
-                                const domNodes:Array<DomNode> =
-                                    window.document.querySelectorAll(
-                                        `link${selector}`)
-                                if (domNodes.length)
-                                    for (const domNode:DomNode of domNodes) {
-                                        const inPlaceDomNode:DomNode =
-                                            window.document.createElement('style')
-                                        const path:string = domNode.attributes.href
-                                            .value.replace(/&.*/g, '')
-                                        inPlaceDomNode.textContent =
-                                            compilation.assets[path].source()
-                                        if (
-                                            configuration.inPlace
-                                            .cascadingStyleSheet[
-                                                pattern
-                                            ] === 'body'
-                                        )
-                                            window.document.body.appendChild(
-                                                inPlaceDomNode)
-                                        else if (
-                                            configuration.inPlace
-                                            .cascadingStyleSheet[pattern] === 'in'
-                                        )
-                                            domNode.parentNode.insertBefore(
-                                                inPlaceDomNode, domNode)
-                                        else if (
-                                            configuration.inPlace
-                                            .cascadingStyleSheet[
-                                                pattern
-                                            ] === 'head'
-                                        )
-                                            window.document.head.appendChild(
-                                                inPlaceDomNode)
-                                        domNode.parentNode.removeChild(domNode)
-                                        /*
-                                            NOTE: This doesn't prevent webpack from
-                                            creating this file if present in
-                                            another chunk so removing it (and a
-                                            potential source map file) later in the
-                                            "done" hook.
-                                        */
-                                        filePathsToRemove.push(Helper.stripLoader(
-                                            path))
-                                        delete compilation.assets[path]
-                                    }
-                                else
-                                    console.warn(
-                                        'No referenced cascading style sheet ' +
-                                        'file in resulting markup found with ' +
-                                        `selector: link${selector}`)
-                            }
-                        if (configuration.inPlace.javaScript)
-                            for (
-                                const pattern:string in
+                            ).length || configuration.inPlace.javaScript && Object.keys(
                                 configuration.inPlace.javaScript
-                            ) {
-                                if (!configuration.inPlace.javaScript
-                                    .hasOwnProperty(pattern)
-                                )
-                                    continue
-                                let selector:string = '[href*=".js"]'
-                                if (pattern !== '*')
-                                    selector = '[src^="' + path.relative(
-                                        configuration.path.target.base,
-                                        Helper.renderFilePathTemplate(
-                                            configuration.files.compose.javaScript,
-                                            {
-                                                '[hash]': '',
-                                                '[id]': pattern,
-                                                '[name]': pattern
-                                            }
-                                        ) + '"]')
-                                const domNodes:Array<DomNode> =
-                                    window.document.querySelectorAll(
-                                        `script${selector}`)
-                                if (domNodes.length)
-                                    for (const domNode:DomNode of domNodes) {
-                                        const inPlaceDomNode:DomNode =
-                                            window.document.createElement('script')
-                                        const path:string = domNode.attributes.src
-                                            .value.replace(/&.*/g, '')
-                                        inPlaceDomNode.textContent =
-                                            compilation.assets[path].source()
-                                        if (
-                                            configuration.inPlace.javaScript[
-                                                pattern
-                                            ] === 'body'
-                                        )
-                                            window.document.body.appendChild(
-                                                inPlaceDomNode)
-                                        else if (configuration.inPlace.javaScript[
-                                            pattern
-                                        ] === 'in')
-                                            domNode.parentNode.insertBefore(
-                                                inPlaceDomNode, domNode)
-                                        else if (configuration.inPlace.javaScript[
-                                            pattern
-                                        ] === 'head')
-                                            window.document.head.appendChild(
-                                                inPlaceDomNode)
-                                        domNode.parentNode.removeChild(domNode)
-                                        /*
-                                            NOTE: This doesn't prevent webpack from
-                                            creating this file if present in
-                                            another chunk so removing it (and a
-                                            potential source map file) later in the
-                                            "done" hook.
-                                        */
-                                        filePathsToRemove.push(Helper.stripLoader(
-                                            path))
-                                        delete compilation.assets[path]
-                                    }
-                                else
-                                    console.warn(
-                                        'No referenced javaScript file in ' +
-                                        'resulting markup found with selector: ' +
-                                        `script${selector}`)
-                            }
-                        let content:string = compilation.assets[
-                            htmlFileSpecification.filename
-                        ].source().replace(
-                            /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
-                        ) + window.document.documentElement.outerHTML
-                        for (
-                            const loaderConfiguration:PlainObject of
-                            htmlFileSpecification.template.use
+                            ).length
                         )
-                            if (loaderConfiguration.hasOwnProperty(
-                                'options'
-                            ) && loaderConfiguration.options.hasOwnProperty(
-                                'compileSteps'
-                            ) && typeof loaderConfiguration.options
-                                .compileSteps === 'number'
-                            ) {
-                                content = ejsLoader.bind(
-                                    Tools.extendObject(true, {}, {
-                                        options: loaderConfiguration.options
-                                    }, {options: {
-                                        compileSteps: htmlFileSpecification
-                                            .template.postCompileSteps
-                                    }}))(content)
-                                break
-                            }
-                        compilation.assets[
-                            htmlFileSpecification.filename
-                        ] = new WebpackRawSource(content)
-                        callback()
-                    })
-                else
-                    callback()
-        })
+                            promises.push(new Promise((resolve:Function, reject:Function):void => dom.env(htmlPluginData.html, (error:?Error, window:Object):void => {
+                                if (configuration.inPlace.cascadingStyleSheet)
+                                    for (
+                                        const pattern:string in
+                                        configuration.inPlace.cascadingStyleSheet
+                                    ) {
+                                        if (!configuration.inPlace.cascadingStyleSheet
+                                            .hasOwnProperty(pattern)
+                                        )
+                                            continue
+                                        let selector:string = '[href*=".css"]'
+                                        if (pattern !== '*')
+                                            selector = '[href="' + path.relative(
+                                                configuration.path.target.base,
+                                                Helper.renderFilePathTemplate(
+                                                    configuration.files.compose
+                                                        .cascadingStyleSheet,
+                                                    {
+                                                        '[contenthash]': '',
+                                                        '[id]': pattern,
+                                                        '[name]': pattern
+                                                    }
+                                                )) + '"]'
+                                        const domNodes:Array<DomNode> =
+                                            window.document.querySelectorAll(
+                                                `link${selector}`)
+                                        if (domNodes.length)
+                                            for (const domNode:DomNode of domNodes) {
+                                                const inPlaceDomNode:DomNode =
+                                                    window.document.createElement('style')
+                                                const path:string = domNode.attributes.href
+                                                    .value.replace(/&.*/g, '')
+                                                inPlaceDomNode.textContent =
+                                                    compilation.assets[path].source()
+                                                if (
+                                                    configuration.inPlace
+                                                    .cascadingStyleSheet[
+                                                        pattern
+                                                    ] === 'body'
+                                                )
+                                                    window.document.body.appendChild(
+                                                        inPlaceDomNode)
+                                                else if (
+                                                    configuration.inPlace
+                                                    .cascadingStyleSheet[pattern] === 'in'
+                                                )
+                                                    domNode.parentNode.insertBefore(
+                                                        inPlaceDomNode, domNode)
+                                                else if (
+                                                    configuration.inPlace
+                                                    .cascadingStyleSheet[
+                                                        pattern
+                                                    ] === 'head'
+                                                )
+                                                    window.document.head.appendChild(
+                                                        inPlaceDomNode)
+                                                domNode.parentNode.removeChild(domNode)
+                                                /*
+                                                    NOTE: This doesn't prevent webpack from
+                                                    creating this file if present in
+                                                    another chunk so removing it (and a
+                                                    potential source map file) later in the
+                                                    "done" hook.
+                                                */
+                                                filePathsToRemove.push(Helper.stripLoader(
+                                                    path))
+                                                delete compilation.assets[path]
+                                            }
+                                        else
+                                            console.warn(
+                                                'No referenced cascading style sheet ' +
+                                                'file in resulting markup found with ' +
+                                                `selector: link${selector}`)
+                                    }
+                                if (configuration.inPlace.javaScript)
+                                    for (
+                                        const pattern:string in
+                                        configuration.inPlace.javaScript
+                                    ) {
+                                        if (!configuration.inPlace.javaScript
+                                            .hasOwnProperty(pattern)
+                                        )
+                                            continue
+                                        let selector:string = '[href*=".js"]'
+                                        if (pattern !== '*')
+                                            selector = '[src^="' + path.relative(
+                                                configuration.path.target.base,
+                                                Helper.renderFilePathTemplate(
+                                                    configuration.files.compose.javaScript,
+                                                    {
+                                                        '[hash]': '',
+                                                        '[id]': pattern,
+                                                        '[name]': pattern
+                                                    }
+                                                ) + '"]')
+                                        const domNodes:Array<DomNode> =
+                                            window.document.querySelectorAll(
+                                                `script${selector}`)
+                                        if (domNodes.length)
+                                            for (const domNode:DomNode of domNodes) {
+                                                const inPlaceDomNode:DomNode =
+                                                    window.document.createElement('script')
+                                                const path:string = domNode.attributes.src
+                                                    .value.replace(/&.*/g, '')
+                                                inPlaceDomNode.textContent =
+                                                    compilation.assets[path].source()
+                                                if (
+                                                    configuration.inPlace.javaScript[
+                                                        pattern
+                                                    ] === 'body'
+                                                )
+                                                    window.document.body.appendChild(
+                                                        inPlaceDomNode)
+                                                else if (configuration.inPlace.javaScript[
+                                                    pattern
+                                                ] === 'in')
+                                                    domNode.parentNode.insertBefore(
+                                                        inPlaceDomNode, domNode)
+                                                else if (configuration.inPlace.javaScript[
+                                                    pattern
+                                                ] === 'head')
+                                                    window.document.head.appendChild(
+                                                        inPlaceDomNode)
+                                                domNode.parentNode.removeChild(domNode)
+                                                /*
+                                                    NOTE: This doesn't prevent webpack from
+                                                    creating this file if present in
+                                                    another chunk so removing it (and a
+                                                    potential source map file) later in the
+                                                    "done" hook.
+                                                */
+                                                filePathsToRemove.push(Helper.stripLoader(
+                                                    path))
+                                                delete compilation.assets[path]
+                                            }
+                                        else
+                                            console.warn(
+                                                'No referenced javaScript file in ' +
+                                                'resulting markup found with selector: ' +
+                                                `script${selector}`)
+                                    }
+                                htmlPluginData.html = Helper.postCompile(
+                                    htmlPluginData.html.replace(
+                                        /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
+                                    ) + window.document.documentElement.outerHTML,
+                                    htmlFileSpecification.template.use,
+                                    htmlFileSpecification.template.postCompileSteps,
+                                    ejsLoader)
+                                resolve()
+                            })))
+                        else
+                            htmlPluginData.html = Helper.postCompile(
+                                htmlPluginData.html,
+                                htmlFileSpecification.template.use,
+                                htmlFileSpecification.template.postCompileSteps,
+                                ejsLoader)
+                    }
+                    await Promise.all(promises)
+                    callback(null, htmlPluginData)
+                }))
         compiler.plugin('after-emit', async (
             compilation:Object, callback:ProcedureFunction
         ):Promise<void> => {
-            for (
-                const htmlFileSpecification:PlainObject of
-                configuration.files.html
-            )
-                if (htmlFileSpecification.filename in compilation.assets) {
-                    const promises:Array<Promise<void>> = []
-                    for (const path:string of filePathsToRemove)
-                        if (Tools.isFileSync(path))
-                            promises.push(new Promise((
-                                resolve:Function
-                            ):void => fileSystem.unlink(path, (
-                                error:?Error
-                            ):void => {
-                                if (error)
-                                    console.error(error)
-                                resolve()
-                            })))
-                    await Promise.all(promises)
-                    for (const type:string of [
-                        'javaScript', 'cascadingStyleSheet'
-                    ])
-                        if (fileSystem.readdirSync(
-                            configuration.path.target.asset[type]
-                        ).length === 0)
-                            fileSystem.rmdirSync(
-                                configuration.path.target.asset[type])
-                }
+            const promises:Array<Promise<void>> = []
+            for (const path:string of filePathsToRemove)
+                if (Tools.isFileSync(path))
+                    promises.push(new Promise((
+                        resolve:Function
+                    ):void => fileSystem.unlink(path, (
+                        error:?Error
+                    ):void => {
+                        if (error)
+                            console.error(error)
+                        resolve()
+                    })))
+            await Promise.all(promises)
+            for (const type:string of [
+                'javaScript', 'cascadingStyleSheet'
+            ])
+                if (fileSystem.readdirSync(
+                    configuration.path.target.asset[type]
+                ).length === 0)
+                    fileSystem.rmdirSync(
+                        configuration.path.target.asset[type])
             callback()
         })
     }})
@@ -561,6 +542,8 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
 // /// endregion
 // // endregion
 // // region apply final dom/javaScript modifications/fixes
+// TODO what if we have an intermediate template file?? "<%" will be escaped.
+if (false)
 pluginInstances.push({apply: (compiler:Object):void => {
     compiler.plugin('emit', (
         compilation:Object, callback:ProcedureFunction
