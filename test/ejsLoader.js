@@ -54,14 +54,15 @@ registerTest(function():void {
         assert.strictEqual(
             ejsLoader.call(complexContext, '<a></a>'), '<a></a>')
         complexContext.options.compileSteps = 1
+        console.log(ejsLoader.call(complexContext, '<a></a>'))
         assert.ok(ejsLoader.call(complexContext, '<a></a>').startsWith(
-            'module.exports = '))
+            'module.exports='))
         complexContext.options.compileSteps = 2
         assert.strictEqual(
             ejsLoader.call(complexContext, '<a></a>'), '<a></a>')
         complexContext.options.compileSteps = 3
         assert.ok(ejsLoader.call(complexContext, '<a></a>').startsWith(
-            'module.exports = '))
+            'module.exports='))
     })
     // endregion
 }, ['plain'])

@@ -14,11 +14,13 @@
     endregion
 */
 // region imports
-import babel from 'babel-core'
+import {transform as babelTransform} from 'babel-core'
 import babiliPreset from 'babel-preset-babili'
+import transformWith from 'babel-plugin-transform-with'
 import Tools from 'clientnode'
 import * as ejs from 'ejs'
 import * as fileSystem from 'fs'
+import {minify as minifyHTML} from 'html-minifier'
 import * as loaderUtils from 'loader-utils'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -38,6 +40,10 @@ module.exports = function(source:string):string {
         this.cacheable()
     const query:Object = Tools.convertSubstringInPlainObject(
         Tools.extendObject(true, {
+            compress: {
+                html: {},
+                javaScript: {}
+            },
             context: './',
             extensions: {
                 file: {
@@ -115,42 +121,70 @@ module.exports = function(source:string):string {
             throw new Error(
                 `Given template file "${template}" couldn't be resolved.`)
         }
+        const compressHTML:Function = (content:string):string =>
+            query.compress.html ? minifyHTML(content, Tools.extendObject(
+                true, {
+                    caseSensitive: true,
+                    collapseInlineTagWhitespace: true,
+                    collapseWhitespace: true,
+                    conservativeCollapse: true,
+                    minifyCSS: true,
+                    minifyJS: true,
+                    processScripts: [
+                        'text/ng-template', 'text/x-handlebars-template'
+                    ],
+                    removeAttributeQuotes: true,
+                    removeComments: true,
+                    removeRedundantAttributes: true,
+                    removeScriptTypeAttributes: true,
+                    removeStyleLinkTypeAttributes: true,
+                    sortAttributes: true,
+                    sortClassName: true,
+                    trimCustomFragments: false,
+                    useShortDoctype: true
+                })) : content
         let remainingSteps:number = compileSteps
         let result:TemplateFunction|string = template
         let isString:boolean = options.isString
         delete options.isString
         while (remainingSteps > 0) {
             if (typeof result === 'string') {
-                const filePath:?string =
-                    isString && options.filename && options.filename || result
+                const filePath:?string = isString && options.filename || result
                 if (filePath && path.extname(filePath) === '.js')
                     result = eval('require')(filePath)
-                else if (isString)
-                    result = ejs.compile(result, options)
                 else {
-                    let encoding:string = 'utf-8'
-                    if ('encoding' in options)
-                        encoding = options.encoding
-                    result = ejs.compile(fileSystem.readFileSync(
-                        result, {encoding}
-                    ), options)
+                    if (!isString) {
+                        let encoding:string = 'utf-8'
+                        if ('encoding' in options)
+                            encoding = options.encoding
+                        result = fileSystem.readFileSync(result, {encoding})
+                    }
+                    if (remainingSteps === 1)
+                        result = compressHTML(result)
+                    result = ejs.compile(result, options)
                 }
             } else
-                result = result(Tools.extendObject(true, {
+                result = compressHTML(result(Tools.extendObject(true, {
                     configuration, Helper, include: require, require, Tools
-                }, locals))
+                }, locals)))
             remainingSteps -= 1
         }
         if (Boolean(compileSteps % 2)) {
             result = `module.exports = ${result.toString()};`
-            return options.debug ? result : babel.transform(result, {
-                presets: [[babiliPreset, {}]],
-                sourceMaps: false,
+            return babelTransform(result, {
+                ast: false,
                 babelrc: false,
-                shouldPrintComment():false {
-                    return false
-                }
-            })
+                comments: false,
+                compact: true,
+                filename: options.filename || 'unknown',
+                minified: true,
+                plugins: [transformWith],
+                presets: query.compress.javaScript ? [[
+                    babiliPreset, query.compress.javaScript
+                ]] : [],
+                sourceMaps: false,
+                sourceType: 'script'
+            }).code
         }
         // IgnoreTypeCheck
         return result
