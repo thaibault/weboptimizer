@@ -14,6 +14,8 @@
     endregion
 */
 // region imports
+import babel from 'babel-core'
+import babiliPreset from 'babel-preset-babili'
 import Tools from 'clientnode'
 import * as ejs from 'ejs'
 import * as fileSystem from 'fs'
@@ -139,8 +141,17 @@ module.exports = function(source:string):string {
                 }, locals))
             remainingSteps -= 1
         }
-        if (Boolean(compileSteps % 2))
-            return `module.exports = ${result.toString()};`
+        if (Boolean(compileSteps % 2)) {
+            result = `module.exports = ${result.toString()};`
+            return options.debug ? result : babel.transform(result, {
+                presets: [[babiliPreset, {}]],
+                sourceMaps: false,
+                babelrc: false,
+                shouldPrintComment():false {
+                    return false
+                }
+            })
+        }
         // IgnoreTypeCheck
         return result
     }

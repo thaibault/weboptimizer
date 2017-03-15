@@ -786,14 +786,16 @@ const loader:Object = {
                 ), '[name]' + (Boolean(
                     configuration.module.preprocessor.html.options.compileSteps
                     % 2
-                ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)},
-                {loader: 'extract'}
+                ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)}
             ].concat((Boolean(
                 configuration.module.preprocessor.html.options.compileSteps % 2
-            ) ? [] : {
-                loader: configuration.module.html.loader,
-                options: configuration.module.html.options
-            }), {
+            ) ? [] : [
+                {loader: 'extract'},
+                {
+                    loader: configuration.module.html.loader,
+                    options: configuration.module.html.options
+                }
+            ]), {
                 loader: configuration.module.preprocessor.html.loader,
                 options: configuration.module.preprocessor.html.options
             })
