@@ -169,23 +169,22 @@ module.exports = function(source:string):string {
                 }, locals)))
             remainingSteps -= 1
         }
-        if (Boolean(compileSteps % 2)) {
-            result = `module.exports = ${result.toString()};`
-            return babelTransform(result, {
-                ast: false,
-                babelrc: false,
-                comments: false,
-                compact: true,
-                filename: options.filename || 'unknown',
-                minified: true,
-                plugins: [transformWith],
-                presets: query.compress.javaScript ? [[
-                    babiliPreset, query.compress.javaScript
-                ]] : [],
-                sourceMaps: false,
-                sourceType: 'script'
-            }).code
-        }
+        if (Boolean(compileSteps % 2))
+            return `'use strict';\n` + babelTransform(
+                `module.exports = ${result.toString()};`, {
+                    ast: false,
+                    babelrc: false,
+                    comments: false,
+                    compact: true,
+                    filename: options.filename || 'unknown',
+                    minified: true,
+                    plugins: [transformWith],
+                    presets: query.compress.javaScript ? [[
+                        babiliPreset, query.compress.javaScript
+                    ]] : [],
+                    sourceMaps: false,
+                    sourceType: 'script'
+                }).code
         // IgnoreTypeCheck
         return result
     }
