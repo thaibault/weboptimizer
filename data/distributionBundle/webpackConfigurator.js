@@ -42,6 +42,7 @@ plugins.Favicon = require('favicons-webpack-plugin')
 plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
+import ejsLoader from './ejsLoader.compiled'
 import type {HTMLConfiguration, WebpackConfiguration} from './type'
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -193,195 +194,230 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
 ))
     pluginInstances.push({apply: (compiler:Object):void => {
         const filePathsToRemove:Array<string> = []
-        compiler.plugin('emit', (
-            compilation:Object, callback:ProcedureFunction
-        ):void => {
-            if (configuration.files.html[0].filename in compilation.assets && (
-                configuration.inPlace.cascadingStyleSheet && Object.keys(
-                    configuration.inPlace.cascadingStyleSheet
-                ).length || configuration.inPlace.javaScript && Object.keys(
-                    configuration.inPlace.javaScript
-                ).length
-            ))
-                dom.env(compilation.assets[configuration.files.html[
-                    0
-                ].filename].source(), (error:?Error, window:Object):void => {
-                    if (configuration.inPlace.cascadingStyleSheet)
-                        for (
-                            const pattern:string in
+        compiler.plugin('compilation', (compilation:Object):void =>
+            compilation.plugin(
+                'html-webpack-plugin-after-html-processing', (
+                    htmlPluginData:PlainObject, callback:ProcedureFunction
+                ):void => {
+                    if (
+                        configuration.inPlace.cascadingStyleSheet &&
+                        Object.keys(
                             configuration.inPlace.cascadingStyleSheet
-                        ) {
-                            if (!configuration.inPlace.cascadingStyleSheet
-                                .hasOwnProperty(pattern)
-                            )
-                                continue
-                            let selector:string = '[href*=".css"]'
-                            if (pattern !== '*')
-                                selector = '[href="' + path.relative(
-                                    configuration.path.target.base,
-                                    Helper.renderFilePathTemplate(
-                                        configuration.files.compose
-                                            .cascadingStyleSheet,
-                                        {
-                                            '[contenthash]': '',
-                                            '[id]': pattern,
-                                            '[name]': pattern
+                        ).length || configuration.inPlace.javaScript &&
+                        Object.keys(configuration.inPlace.javaScript).length
+                    )
+                        /*
+                            NOTE: We have to translate template delimiter to
+                            html compatible sequences and translate it back
+                            later to avoid unexpected escape sequences in
+                            resulting html.
+                        */
+                        dom.env(htmlPluginData.html.replace(
+                            /<%/g, '##+#+#+##'
+                        ).replace(/%>/g, '##-#-#-##'), (
+                            error:?Error, window:Object
+                        ):void => {
+                            if (error)
+                                return callback(error, htmlPluginData)
+                            if (configuration.inPlace.cascadingStyleSheet)
+                                for (
+                                    const pattern:string in
+                                    configuration.inPlace.cascadingStyleSheet
+                                ) {
+                                    if (!configuration.inPlace
+                                        .cascadingStyleSheet.hasOwnProperty(
+                                            pattern)
+                                    )
+                                        continue
+                                    let selector:string = '[href*=".css"]'
+                                    if (pattern !== '*')
+                                        selector = '[href="' + path.relative(
+                                            configuration.path.target.base,
+                                            Helper.renderFilePathTemplate(
+                                                configuration.files.compose
+                                                    .cascadingStyleSheet,
+                                                {
+                                                    '[contenthash]': '',
+                                                    '[id]': pattern,
+                                                    '[name]': pattern
+                                                }
+                                            )) + '"]'
+                                    const domNodes:Array<DomNode> =
+                                        window.document.querySelectorAll(
+                                            `link${selector}`)
+                                    if (domNodes.length)
+                                        for (
+                                            const domNode:DomNode of domNodes
+                                        ) {
+                                            const inPlaceDomNode:DomNode =
+                                                window.document.createElement(
+                                                    'style')
+                                            const path:string =
+                                                domNode.attributes.href.value
+                                                .replace(/&.*/g, '')
+                                            inPlaceDomNode.textContent =
+                                                compilation.assets[path]
+                                                    .source()
+                                            if (
+                                                configuration.inPlace
+                                                .cascadingStyleSheet[
+                                                    pattern
+                                                ] === 'body'
+                                            )
+                                                window.document.body
+                                                    .appendChild(inPlaceDomNode)
+                                            else if (
+                                                configuration.inPlace
+                                                .cascadingStyleSheet[
+                                                    pattern
+                                                ] === 'in'
+                                            )
+                                                domNode.parentNode
+                                                    .insertBefore(
+                                                        inPlaceDomNode, domNode
+                                                    )
+                                            else if (
+                                                configuration.inPlace
+                                                .cascadingStyleSheet[
+                                                    pattern
+                                                ] === 'head'
+                                            )
+                                                window.document.head
+                                                    .appendChild(
+                                                        inPlaceDomNode)
+                                            domNode.parentNode.removeChild(
+                                                domNode)
+                                            /*
+                                                NOTE: This doesn't prevent
+                                                webpack from creating this file
+                                                if present in another chunk so
+                                                removing it (and a potential
+                                                source map file) later in the
+                                                "done" hook.
+                                            */
+                                            filePathsToRemove.push(
+                                                Helper.stripLoader(path))
+                                            delete compilation.assets[path]
                                         }
-                                    )) + '"]'
-                            const domNodes:Array<DomNode> =
-                                window.document.querySelectorAll(
-                                    `link${selector}`)
-                            if (domNodes.length)
-                                for (const domNode:DomNode of domNodes) {
-                                    const inPlaceDomNode:DomNode =
-                                        window.document.createElement('style')
-                                    const path:string = domNode.attributes.href
-                                        .value.replace(/&.*/g, '')
-                                    inPlaceDomNode.textContent =
-                                        compilation.assets[path].source()
-                                    if (
-                                        configuration.inPlace
-                                        .cascadingStyleSheet[
-                                            pattern
-                                        ] === 'body'
-                                    )
-                                        window.document.body.appendChild(
-                                            inPlaceDomNode)
-                                    else if (
-                                        configuration.inPlace
-                                        .cascadingStyleSheet[pattern] === 'in'
-                                    )
-                                        domNode.parentNode.insertBefore(
-                                            inPlaceDomNode, domNode)
-                                    else if (
-                                        configuration.inPlace
-                                        .cascadingStyleSheet[
-                                            pattern
-                                        ] === 'head'
-                                    )
-                                        window.document.head.appendChild(
-                                            inPlaceDomNode)
-                                    domNode.parentNode.removeChild(domNode)
-                                    /*
-                                        NOTE: This doesn't prevent webpack from
-                                        creating this file if present in
-                                        another chunk so removing it (and a
-                                        potential source map file) later in the
-                                        "done" hook.
-                                    */
-                                    filePathsToRemove.push(Helper.stripLoader(
-                                        path))
-                                    delete compilation.assets[path]
+                                    else
+                                        console.warn(
+                                            'No referenced cascading style ' +
+                                            'sheet file in resulting markup ' +
+                                            'found with selector: link' +
+                                            selector)
                                 }
-                            else
-                                console.warn(
-                                    'No referenced cascading style sheet ' +
-                                    'file in resulting markup found with ' +
-                                    `selector: link${selector}`)
-                        }
-                    if (configuration.inPlace.javaScript)
-                        for (
-                            const pattern:string in
-                            configuration.inPlace.javaScript
-                        ) {
-                            if (!configuration.inPlace.javaScript
-                                .hasOwnProperty(pattern)
-                            )
-                                continue
-                            let selector:string = '[href*=".js"]'
-                            if (pattern !== '*')
-                                selector = '[src^="' + path.relative(
-                                    configuration.path.target.base,
-                                    Helper.renderFilePathTemplate(
-                                        configuration.files.compose.javaScript,
-                                        {
-                                            '[hash]': '',
-                                            '[id]': pattern,
-                                            '[name]': pattern
+                            if (configuration.inPlace.javaScript)
+                                for (
+                                    const pattern:string in
+                                    configuration.inPlace.javaScript
+                                ) {
+                                    if (!configuration.inPlace.javaScript
+                                        .hasOwnProperty(pattern)
+                                    )
+                                        continue
+                                    let selector:string = '[href*=".js"]'
+                                    if (pattern !== '*')
+                                        selector = '[src^="' + path.relative(
+                                            configuration.path.target.base,
+                                            Helper.renderFilePathTemplate(
+                                                configuration.files.compose
+                                                    .javaScript,
+                                                {
+                                                    '[hash]': '',
+                                                    '[id]': pattern,
+                                                    '[name]': pattern
+                                                }
+                                            ) + '"]')
+                                    const domNodes:Array<DomNode> =
+                                        window.document.querySelectorAll(
+                                            `script${selector}`)
+                                    if (domNodes.length)
+                                        for (
+                                            const domNode:DomNode of domNodes
+                                        ) {
+                                            const inPlaceDomNode:DomNode =
+                                                window.document.createElement(
+                                                    'script')
+                                            const path:string =
+                                                domNode.attributes.src.value
+                                                    .replace(/&.*/g, '')
+                                            inPlaceDomNode.textContent =
+                                                compilation.assets[path]
+                                                    .source()
+                                            if (configuration.inPlace
+                                                .javaScript[pattern] === 'body'
+                                            )
+                                                window.document.body
+                                                    .appendChild(
+                                                        inPlaceDomNode)
+                                            else if (configuration.inPlace
+                                                .javaScript[pattern] === 'in'
+                                            )
+                                                domNode.parentNode
+                                                    .insertBefore(
+                                                        inPlaceDomNode, domNode
+                                                    )
+                                            else if (configuration.inPlace
+                                                .javaScript[pattern] === 'head'
+                                            )
+                                                window.document.head
+                                                    .appendChild(
+                                                        inPlaceDomNode)
+                                            domNode.parentNode.removeChild(
+                                                domNode)
+                                            /*
+                                                NOTE: This doesn't prevent
+                                                webpack from creating this file
+                                                if present in another chunk so
+                                                removing it (and a potential
+                                                source map file) later in the
+                                                "done" hook.
+                                            */
+                                            filePathsToRemove.push(
+                                                Helper.stripLoader(path))
+                                            delete compilation.assets[path]
                                         }
-                                    ) + '"]')
-                            const domNodes:Array<DomNode> =
-                                window.document.querySelectorAll(
-                                    `script${selector}`)
-                            if (domNodes.length)
-                                for (const domNode:DomNode of domNodes) {
-                                    const inPlaceDomNode:DomNode =
-                                        window.document.createElement('script')
-                                    const path:string = domNode.attributes.src
-                                        .value.replace(/&.*/g, '')
-                                    inPlaceDomNode.textContent =
-                                        compilation.assets[path].source()
-                                    if (
-                                        configuration.inPlace.javaScript[
-                                            pattern
-                                        ] === 'body'
-                                    )
-                                        window.document.body.appendChild(
-                                            inPlaceDomNode)
-                                    else if (configuration.inPlace.javaScript[
-                                        pattern
-                                    ] === 'in')
-                                        domNode.parentNode.insertBefore(
-                                            inPlaceDomNode, domNode)
-                                    else if (configuration.inPlace.javaScript[
-                                        pattern
-                                    ] === 'head')
-                                        window.document.head.appendChild(
-                                            inPlaceDomNode)
-                                    domNode.parentNode.removeChild(domNode)
-                                    /*
-                                        NOTE: This doesn't prevent webpack from
-                                        creating this file if present in
-                                        another chunk so removing it (and a
-                                        potential source map file) later in the
-                                        "done" hook.
-                                    */
-                                    filePathsToRemove.push(Helper.stripLoader(
-                                        path))
-                                    delete compilation.assets[path]
+                                    else
+                                        console.warn(
+                                            'No referenced javaScript file ' +
+                                            'in resulting markup found with ' +
+                                            `selector: script${selector}`)
                                 }
-                            else
-                                console.warn(
-                                    'No referenced javaScript file in ' +
-                                    'resulting markup found with selector: ' +
-                                    `script${selector}`)
-                        }
-                    compilation.assets[configuration.files.html[
-                        0
-                    ].filename] = new WebpackRawSource(
-                        compilation.assets[configuration.files.html[
-                            0
-                        ].filename].source().replace(
-                            /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
-                        ) + window.document.documentElement.outerHTML)
-                    callback()
-                })
-            else
-                callback()
-        })
+                            htmlPluginData.html = htmlPluginData.html.replace(
+                                /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
+                            ) +
+                            window.document.documentElement.outerHTML.replace(
+                                /##\+#\+#\+##/g, '<%'
+                            ).replace(/##-#-#-##/g, '%>')
+                            callback(null, htmlPluginData)
+                        })
+                    else
+                        callback(null, htmlPluginData)
+                }))
         compiler.plugin('after-emit', async (
             compilation:Object, callback:ProcedureFunction
         ):Promise<void> => {
-            if (configuration.files.html[0].filename in compilation.assets) {
-                const promises:Array<Promise<void>> = []
-                for (const path:string of filePathsToRemove)
-                    if (Tools.isFileSync(path))
-                        promises.push(new Promise((resolve:Function):void =>
-                            fileSystem.unlink(path, (error:?Error):void => {
-                                if (error)
-                                    console.error(error)
-                                resolve()
-                            })))
-                await Promise.all(promises)
-                for (const type:string of [
-                    'javaScript', 'cascadingStyleSheet'
-                ])
-                    if (fileSystem.readdirSync(
-                        configuration.path.target.asset[type]
-                    ).length === 0)
-                        fileSystem.rmdirSync(
-                            configuration.path.target.asset[type])
-            }
+            const promises:Array<Promise<void>> = []
+            for (const path:string of filePathsToRemove)
+                if (Tools.isFileSync(path))
+                    promises.push(new Promise((
+                        resolve:Function
+                    ):void => fileSystem.unlink(path, (
+                        error:?Error
+                    ):void => {
+                        if (error)
+                            console.error(error)
+                        resolve()
+                    })))
+            await Promise.all(promises)
+            for (const type:string of [
+                'javaScript', 'cascadingStyleSheet'
+            ])
+                if (fileSystem.readdirSync(
+                    configuration.path.target.asset[type]
+                ).length === 0)
+                    fileSystem.rmdirSync(
+                        configuration.path.target.asset[type])
             callback()
         })
     }})
@@ -528,107 +564,133 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
 // /// endregion
 // // endregion
 // // region apply final dom/javaScript modifications/fixes
-pluginInstances.push({apply: (compiler:Object):void => {
-    compiler.plugin('emit', (
-        compilation:Object, callback:ProcedureFunction
-    ):void => {
-        const promises:Array<Promise<string>> = []
-        /*
-            NOTE: Removing symbols after a "&" in hash string is necessary to
-            match the generated request strings in offline plugin.
-        */
-        for (const htmlConfiguration of configuration.files.html)
-            if (htmlConfiguration.filename in compilation.assets)
-                promises.push(new Promise((
-                    resolve:Function, reject:Function
-                ):Window => dom.env(compilation.assets[
-                    htmlConfiguration.filename
-                ].source(), (error:?Error, window:Window):?Promise<string> => {
-                    if (error)
-                        return reject(error)
-                    const linkables:{[key:string]:string} = {
-                        script: 'src', link: 'href'}
-                    for (const tagName:string in linkables)
-                        if (linkables.hasOwnProperty(tagName))
-                            for (
-                                const domNode:DomNode of
-                                window.document.querySelectorAll(
-                                    `${tagName}[${linkables[tagName]}*="?` +
-                                    `${configuration.hashAlgorithm}="]`)
-                            )
-                                domNode.setAttribute(
-                                    linkables[tagName],
-                                    domNode.getAttribute(
-                                        linkables[tagName]
-                                    ).replace(new RegExp(
-                                        `(\\?${configuration.hashAlgorithm}=` +
-                                        '[^&]+).*$'
-                                    ), '$1'))
-                    compilation.assets[htmlConfiguration.filename] =
-                        new WebpackRawSource(compilation.assets[
-                            htmlConfiguration.filename
-                        ].source().replace(
-                            /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
-                        ) + window.document.documentElement.outerHTML)
-                    return resolve(
-                        compilation.assets[htmlConfiguration.filename])
-                })))
-        if (!configuration.exportFormat.external.startsWith('umd')) {
-            Promise.all(promises).then(():void => callback())
-            return
-        }
-        const bundleName:string = (
-            typeof libraryName === 'string'
-        ) ? libraryName : libraryName[0]
-        /*
-            NOTE: The umd module export doesn't handle cases where the package
-            name doesn't match exported library name. This post processing
-            fixes this issue.
-        */
-        for (const assetRequest:string in compilation.assets)
-            if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                configuration.build.types.javaScript.outputExtension
-            )) {
-                let source:string = compilation.assets[assetRequest].source()
-                if (typeof source === 'string') {
+pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
+    'compilation', (compilation:Object):void => compilation.plugin(
+        'html-webpack-plugin-after-html-processing', async (
+            htmlPluginData:PlainObject, callback:ProcedureFunction
+        ):Window => dom.env(htmlPluginData.html.replace(
+            /<%/g, '##+#+#+##'
+        ).replace(/%>/g, '##-#-#-##'), (error:?Error, window:Window):void => {
+            if (error)
+                return callback(error, htmlPluginData)
+            const linkables:{[key:string]:string} = {
+                script: 'src', link: 'href'}
+            for (const tagName:string in linkables)
+                if (linkables.hasOwnProperty(tagName))
                     for (
-                        const replacement:string in
-                        configuration.injection.external.aliases
+                        const domNode:DomNode of
+                        window.document.querySelectorAll(
+                            `${tagName}[${linkables[tagName]}*="?` +
+                            `${configuration.hashAlgorithm}="]`)
                     )
-                        if (configuration.injection.external.aliases
-                            .hasOwnProperty(replacement)
+                        /*
+                            NOTE: Removing symbols after a "&" in hash string
+                            is necessary to match the generated request strings
+                            in offline plugin.
+                        */
+                        domNode.setAttribute(
+                            linkables[tagName],
+                            domNode.getAttribute(
+                                linkables[tagName]
+                            ).replace(new RegExp(
+                                `(\\?${configuration.hashAlgorithm}=` +
+                                '[^&]+).*$'
+                            ), '$1'))
+            htmlPluginData.html = htmlPluginData.html.replace(
+                /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
+            ) + window.document.documentElement.outerHTML.replace(
+                /##\+#\+#\+##/g, '<%'
+            ).replace(/##-#-#-##/g, '%>')
+            callback(null, htmlPluginData)
+        })))})
+if (configuration.exportFormat.external.startsWith('umd'))
+    pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
+        'emit', (compilation:Object, callback:ProcedureFunction):void => {
+            const bundleName:string = (
+                typeof libraryName === 'string'
+            ) ? libraryName : libraryName[0]
+            /*
+                NOTE: The umd module export doesn't handle cases where the
+                package name doesn't match exported library name. This post
+                processing fixes this issue.
+            */
+            for (const assetRequest:string in compilation.assets)
+                if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
+                    configuration.build.types.javaScript.outputExtension
+                )) {
+                    let source:string =
+                        compilation.assets[assetRequest].source()
+                    if (typeof source === 'string') {
+                        for (
+                            const replacement:string in
+                            configuration.injection.external.aliases
                         )
-                            source = source.replace(new RegExp(
-                                '(require\\()"' +
-                                Tools.stringEscapeRegularExpressions(
-                                    configuration.injection.external.aliases[
-                                        replacement]
-                                ) + '"(\\))', 'g'
-                            ), `$1'${replacement}'$2`).replace(new RegExp(
-                                '(define\\("' +
-                                Tools.stringEscapeRegularExpressions(
-                                    bundleName
-                                ) + '", \\[.*)"' +
-                                Tools.stringEscapeRegularExpressions(
-                                    configuration.injection.external.aliases[
-                                        replacement]
-                                ) + '"(.*\\], factory\\);)'
-                            ), `$1'${replacement}'$2`)
-                    source = source.replace(new RegExp(
-                        '(root\\[)"' +
-                        Tools.stringEscapeRegularExpressions(bundleName) +
-                        '"(\\] = )'
-                    ), `$1'` +
-                        Tools.stringConvertToValidVariableName(bundleName) +
-                        `'$2`
-                    )
-                    compilation.assets[assetRequest] = new WebpackRawSource(
-                        source)
+                            if (configuration.injection.external.aliases
+                                .hasOwnProperty(replacement)
+                            )
+                                source = source.replace(new RegExp(
+                                    '(require\\()"' +
+                                    Tools.stringEscapeRegularExpressions(
+                                        configuration.injection.external
+                                            .aliases[replacement]
+                                    ) + '"(\\))', 'g'
+                                ), `$1'${replacement}'$2`).replace(new RegExp(
+                                    '(define\\("' +
+                                    Tools.stringEscapeRegularExpressions(
+                                        bundleName
+                                    ) + '", \\[.*)"' +
+                                    Tools.stringEscapeRegularExpressions(
+                                        configuration.injection.external
+                                            .aliases[replacement]
+                                    ) + '"(.*\\], factory\\);)'
+                                ), `$1'${replacement}'$2`)
+                        source = source.replace(new RegExp(
+                            '(root\\[)"' +
+                            Tools.stringEscapeRegularExpressions(bundleName) +
+                            '"(\\] = )'
+                        ), `$1'` + Tools.stringConvertToValidVariableName(
+                            bundleName
+                        ) + `'$2`)
+                        compilation.assets[assetRequest] =
+                            new WebpackRawSource(source)
+                    }
                 }
-            }
-        Promise.all(promises).then(():void => callback())
-    })
-}})
+            callback()
+        })})
+pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
+    'compilation', (compilation:Object):void => compilation.plugin(
+        'html-webpack-plugin-after-html-processing', (
+            htmlPluginData:PlainObject, callback:ProcedureFunction
+        ):void => {
+            for (
+                const htmlFileSpecification:PlainObject of
+                configuration.files.html
+            )
+                if (
+                    htmlFileSpecification.filename ===
+                    htmlPluginData.plugin.options.filename
+                ) {
+                    for (
+                        const loaderConfiguration:PlainObject of
+                        htmlFileSpecification.template.use
+                    )
+                        if (loaderConfiguration.hasOwnProperty(
+                            'options'
+                        ) && loaderConfiguration.options.hasOwnProperty(
+                            'compileSteps'
+                        ) && typeof loaderConfiguration.options.compileSteps
+                        === 'number')
+                            htmlPluginData.html = ejsLoader.bind(
+                                Tools.extendObject(true, {}, {
+                                    options: loaderConfiguration.options
+                                }, {options: {
+                                    compileSteps: htmlFileSpecification
+                                        .template.postCompileSteps
+                                }}))(htmlPluginData.html)
+                    break
+                }
+            callback(null, htmlPluginData)
+        }))})
 // // endregion
 // // region add automatic image compression
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
@@ -724,14 +786,16 @@ const loader:Object = {
                 ), '[name]' + (Boolean(
                     configuration.module.preprocessor.html.options.compileSteps
                     % 2
-                ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)},
-                {loader: 'extract'}
+                ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)}
             ].concat((Boolean(
                 configuration.module.preprocessor.html.options.compileSteps % 2
-            ) ? [] : {
-                loader: configuration.module.html.loader,
-                options: configuration.module.html.options
-            }), {
+            ) ? [] : [
+                {loader: 'extract'},
+                {
+                    loader: configuration.module.html.loader,
+                    options: configuration.module.html.options
+                }
+            ]), {
                 loader: configuration.module.preprocessor.html.loader,
                 options: configuration.module.preprocessor.html.options
             })
