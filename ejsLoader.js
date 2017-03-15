@@ -174,10 +174,10 @@ module.exports = function(source:string):string {
                 `module.exports = ${result.toString()};`, {
                     ast: false,
                     babelrc: false,
-                    comments: false,
-                    compact: true,
+                    comments: !Boolean(query.compress.javaScript),
+                    compact: Boolean(query.compress.javaScript),
                     filename: options.filename || 'unknown',
-                    minified: true,
+                    minified: Boolean(query.compress.javaScript),
                     plugins: [transformWith],
                     presets: query.compress.javaScript ? [[
                         babiliPreset, query.compress.javaScript
