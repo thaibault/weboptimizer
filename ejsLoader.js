@@ -139,11 +139,6 @@ module.exports = function(source:string):string {
                 }, locals))
             remainingSteps -= 1
         }
-        console.log()
-        console.log()
-        console.log('A', compileSteps, Boolean(compileSteps % 2))
-        console.log()
-        console.log()
         if (Boolean(compileSteps % 2))
             return `module.exports = ${result.toString()};`
         // IgnoreTypeCheck
