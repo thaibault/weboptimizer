@@ -61,8 +61,9 @@
     "babel-core": "latest",
     "babel-eslint": "latest",
     "babel-loader": "latest",
-    "babel-plugin-transform-runtime": "latest",
     "babel-plugin-transform-flow-strip-types": "latest",
+    "babel-plugin-transform-runtime": "latest",
+    "babel-plugin-transform-with": "latest",
     "babel-preset-babili": "latest",
     "babel-preset-modern-browsers": "latest",
     "babel-preset-es2017": "latest",
@@ -81,6 +82,7 @@
     "file-loader": "latest",
     "flow-bin": "latest",
     "html-loader": "latest",
+    "html-minifier": "latest",
     "html-webpack-plugin": "latest",
     "imagemin-webpack-plugin": "latest",
     "imports-loader": "latest",
@@ -117,7 +119,7 @@
       "assetPattern": {
         "javaScript": {
           "excludeFilePathRegularExpression": {
-            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\.html|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
+            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
           "pattern": "'use strict';\n{1}"
         }
