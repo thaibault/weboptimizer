@@ -48,18 +48,19 @@ registerTest(function():void {
     // / region string
     this.test('inPlaceCSSAndJavaScriptAssetReferences', async (
         assert:Object
-    ):void => {
+    ):Promise<void> => {
         const done:Function = assert.async()
-        for (const test:Array<string> of [
+        for (const test:Array<any> of [
             [['', null, null, '', '', '', {}], {
                 content: '<html><head></head><body></body></html>',
                 filePathsToRemove: []
             }],
             [[
-                '<html><head></head><body></body></html>', null, null, '', '',
-                '', {}
+                '<!doctype html><html><head></head><body></body></html>', null,
+                null, '', '', '', {}
             ], {
-                content: '<html><head></head><body></body></html>',
+                content:
+                    '<!doctype html><html><head></head><body></body></html>',
                 filePathsToRemove: []
             }]
         ])

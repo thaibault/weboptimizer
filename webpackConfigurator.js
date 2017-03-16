@@ -442,7 +442,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                                 '[^&]+).*$'
                             ), '$1'))
             htmlPluginData.html = htmlPluginData.html.replace(
-                /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
+                /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
             ) + window.document.documentElement.outerHTML.replace(
                 /##\+#\+#\+##/g, '<%'
             ).replace(/##-#-#-##/g, '%>')

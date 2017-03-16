@@ -192,7 +192,7 @@ export default class Helper {
                 }
             resolve({
                 content: content.replace(
-                    /^(\s*<!doctype[^>]+?>\s*)[\s\S]*$/i, '$1'
+                    /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
                 ) + window.document.documentElement.outerHTML.replace(
                     /##\+#\+#\+##/g, '<%'
                 ).replace(/##-#-#-##/g, '%>'),
