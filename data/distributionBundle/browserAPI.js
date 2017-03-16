@@ -118,10 +118,8 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
         ):void => {
             if (error)
                 throw error
-            render(require('ejs').compile(content, {
-                cache: true, compileDebug: false, debug: false,
-                filename: filePath
-            })({configuration: {name: 'test', givenCommandLineArguments: []}}))
+            render(require('./ejsLoader.compiled').bind({filename: filePath})(
+                content))
         })
     } else
         // IgnoreTypeCheck

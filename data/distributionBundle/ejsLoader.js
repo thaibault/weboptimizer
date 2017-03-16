@@ -90,7 +90,7 @@ module.exports = function(source:string):string {
             let nestedOptions:Object = Tools.copyLimitedRecursively(options)
             delete nestedOptions.client
             nestedOptions = Tools.extendObject(
-                true, {encoding: 'utf-8'}, nestedOptions,
+                true, {encoding: configuration.encoding}, nestedOptions,
                 nestedLocals.options || {})
             if (nestedOptions.isString)
                 return compile(template, nestedOptions)(nestedLocals)
@@ -103,7 +103,8 @@ module.exports = function(source:string):string {
                     configuration.module.directoryNames,
                     configuration.package.main.fileNames,
                     configuration.package.main.propertyNames,
-                    configuration.package.aliasPropertyNames)
+                    configuration.package.aliasPropertyNames,
+                    configuration.encoding)
             if (templateFilePath) {
                 if ('query' in this)
                     this.addDependency(templateFilePath)
@@ -154,7 +155,7 @@ module.exports = function(source:string):string {
                     result = eval('require')(filePath)
                 else {
                     if (!isString) {
-                        let encoding:string = 'utf-8'
+                        let encoding:string = configuration.encoding
                         if ('encoding' in options)
                             encoding = options.encoding
                         result = fileSystem.readFileSync(result, {encoding})
@@ -194,7 +195,7 @@ module.exports = function(source:string):string {
         debug: this.debug || false,
         filename: 'query' in this ? loaderUtils.getRemainingRequest(
             this
-        ).replace(/^!/, '') : null,
+        ).replace(/^!/, '') : this.filename || null,
         isString: true
     }, query.compileSteps)(query.locals || {})
 }
