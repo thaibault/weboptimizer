@@ -36,20 +36,21 @@ Features
 - Only one configuration file (your already existing **package.json**) for all
   needed customisations needed.
 - Many **uses-cases** are preconfigured and mostly works out of the box for
-  your project.
-    - Preconfigured **preprocessing** for CSS (PostCSS), JavaScript (Babel,
+  your project:
+    - Preconfigured **preprocessing** for css (PostCSS), javaScript (Babel,
       Flow) and any generic text (template) file (in ejs) with any number of
       precompile/render steps for optimal runtime performance.
-    - Preconfigured **postprocessing** for CSS (Minification),
+    - Preconfigured **postprocessing** for css (Minification),
       JavaScript (Minification), Images (Compression)
-    - Image **sprite** handling: Combine your images and never create sprites
+    - Image **sprite** handling: Combine your images and never manage sprites
       by hand again.
     - Polymorphic **testing** on dom in browsers and/or node through
       weboptimizer/browserAPI
-    - **Linting** and **TypeChecking** with Flow
-    - **API-Documentation** generation
+    - **Linting** and **TypeChecking** with Flow on css and javaScript
+    - Automatic **API-Documentation** generation for javaScript
     - Various pre configured and adaptable implemented concepts for building
-      development-, production-, testing- and/or vendor **bundles**.
+      development-, production-, testing-, errorhandler and/or vendor
+      **bundles**.
     - Support for building **libraries** with well defined (UMD, AMD,
       commonjs...) external, dependencies (preconfigured extendable weback
       configuration)
@@ -64,7 +65,7 @@ Features
     - Brings **offline** support though service worker and/or html5 manifest to
       your application without any manual intervention needed!
     - Many development helper:
-        - Automatic watching and (re-)building any assets through cross
+        - Automatic watching and (re-)building on any assets through cross
           platform **file watching**
         - Preconfigured local webserver with websocket connections to
           **livereload** you browser when any asset has changed
