@@ -147,23 +147,21 @@ const main = async ():Promise<any> => {
                                 }
                         })
                     for (
-                        const fileName:string of (
+                        const file:File of (
                         await Tools.walkDirectoryRecursively(
                             configuration.path.target.base, ():false => false,
-                            {encoding: configuration.encoding})
-                    ))
+                            {encoding: configuration.encoding}))
+                    )
                         if (
-                            fileName.length > '.dll-manifest.json'.length &&
-                            fileName.endsWith('.dll-manifest.json') ||
-                            fileName.startsWith('npm-debug')
+                            file.name.length > '.dll-manifest.json'.length &&
+                            file.name.endsWith('.dll-manifest.json') ||
+                            file.name.startsWith('npm-debug')
                         )
                             await new Promise((
                                 resolve:Function, reject:Function
-                            ):void => fileSystem.unlink(path.resolve(
-                                configuration.path.target.base, fileName
-                            ), (error:?Error):void => error ? reject(
-                                error
-                            ) : resolve()))
+                            ):void => fileSystem.unlink(file.path, (
+                                error:?Error
+                            ):void => error ? reject(error) : resolve()))
                 } else
                     await new Promise((
                         resolve:Function, reject:Function
@@ -171,14 +169,15 @@ const main = async ():Promise<any> => {
                         configuration.path.target.base, {glob: false}, (
                             error:?Error
                         ):void => error ? reject(error) : resolve()))
-                try {
+                if (await Tools.isDirectory(
+                    configuration.path.apiDocumentation
+                ))
                     await new Promise((
                         resolve:Function, reject:Function
                     ):void => removeDirectoryRecursively(
                         configuration.path.apiDocumentation, {glob: false}, (
                             error:?Error
                         ):void => error ? reject(error) : resolve()))
-                } catch (error) {}
             }
             // endregion
             // region handle build
