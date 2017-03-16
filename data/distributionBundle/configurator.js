@@ -144,7 +144,7 @@ let runtimeInformation:PlainObject = {
 }
 if (filePath) {
     runtimeInformation = JSON.parse(fileSystem.readFileSync(filePath, {
-        encoding: 'utf-8'}))
+        encoding: (configuration.encoding:string)}))
     fileSystem.unlink(filePath, (error:?Error):void => {
         if (error)
             throw error
@@ -278,8 +278,8 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore)
-// IgnoreTypeCheck
 const internalInjection:InternalInjection =
+    // IgnoreTypeCheck
     resolvedConfiguration.injection.internal
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
@@ -326,7 +326,8 @@ for (
                 resolvedConfiguration.module.directoryNames,
                 resolvedConfiguration.package.main.fileNames,
                 resolvedConfiguration.package.main.propertyNames,
-                resolvedConfiguration.package.aliasPropertyNames)
+                resolvedConfiguration.package.aliasPropertyNames,
+                resolvedConfiguration.encoding)
             let type:?string
             if (filePath)
                 type = Helper.determineAssetType(

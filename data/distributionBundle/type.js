@@ -102,6 +102,7 @@ export type DefaultConfiguration = {
     debug:boolean;
     dllManifestFilePaths:Array<any>;
     document:Object;
+    encoding:string;
     library:boolean;
     path:Path;
     test:Object;
@@ -171,6 +172,7 @@ export type ResolvedConfiguration = {
     };
     dllManifestFilePaths:Array<string>;
     document:PlainObject;
+    encoding:string;
     exportFormat:{
         external:ExportFormat;
         self:ExportFormat;

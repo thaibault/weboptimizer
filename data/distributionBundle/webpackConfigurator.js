@@ -397,9 +397,9 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
         compiler.plugin('after-emit', async (
             compilation:Object, callback:ProcedureFunction
         ):Promise<void> => {
-            const promises:Array<Promise<void>> = []
+            let promises:Array<Promise<void>> = []
             for (const path:string of filePathsToRemove)
-                if (Tools.isFileSync(path))
+                if (await Tools.isFile(path))
                     promises.push(new Promise((
                         resolve:Function
                     ):void => fileSystem.unlink(path, (
@@ -410,14 +410,26 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                         resolve()
                     })))
             await Promise.all(promises)
+            promises = []
             for (const type:string of [
                 'javaScript', 'cascadingStyleSheet'
             ])
-                if (fileSystem.readdirSync(
-                    configuration.path.target.asset[type]
-                ).length === 0)
-                    fileSystem.rmdirSync(
-                        configuration.path.target.asset[type])
+                promises.push(new Promise((
+                    resolve:Function, reject:Function
+                ):void => fileSystem.readdir(
+                    configuration.path.target.asset[type],
+                    // IgnoreTypeCheck
+                    configuration.encoding,
+                    (error:?Error, files:Array<string>):void => {
+                        if (error)
+                            reject(error)
+                        if (files.length === 0)
+                            fileSystem.rmdir(
+                                configuration.path.target.asset[type], (
+                                    error:?Error
+                                ):void => error ? reject(error) : resolve())
+                    })))
+            await Promise.all(promises)
             callback()
         })
     }})
@@ -525,7 +537,8 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.injection.external.implicit.pattern.include,
             configuration.injection.external.implicit.pattern.exclude,
             configuration.inPlace.externalLibrary.normal,
-            configuration.inPlace.externalLibrary.dynamic)
+            configuration.inPlace.externalLibrary.dynamic,
+            configuration.encoding)
         if (resolvedRequest) {
             if (['var', 'umd'].includes(
                 configuration.exportFormat.external
