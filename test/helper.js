@@ -46,6 +46,30 @@ registerTest(function():void {
     })
     // / endregion
     // / region string
+    this.test('inPlaceCSSAndJavaScriptAssetReferences', async (
+        assert:Object
+    ):Promise<void> => {
+        const done:Function = assert.async()
+        for (const test:Array<any> of [
+            [['', null, null, '', '', '', {}], {
+                content: '<html><head></head><body></body></html>',
+                filePathsToRemove: []
+            }],
+            [[
+                '<!doctype html><html><head></head><body></body></html>', null,
+                null, '', '', '', {}
+            ], {
+                content:
+                    '<!doctype html><html><head></head><body></body></html>',
+                filePathsToRemove: []
+            }]
+        ])
+            assert.deepEqual(
+                await Helper.inPlaceCSSAndJavaScriptAssetReferences(
+                    ...test[0]
+                ), test[1])
+        done()
+    })
     this.test('stripLoader', (assert:Object):void => {
         for (const test:Array<string> of [
             ['', ''],
