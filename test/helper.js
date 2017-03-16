@@ -46,6 +46,15 @@ registerTest(function():void {
     })
     // / endregion
     // / region string
+    this.test('inPlaceCSSAndJavaScriptAssetReferences', (
+        assert:Object
+    ):void => {
+        // TODO
+        for (const test:Array<string> of [
+            ['', '']
+        ])
+            assert.strictEqual(true, true)
+    })
     this.test('stripLoader', (assert:Object):void => {
         for (const test:Array<string> of [
             ['', ''],
