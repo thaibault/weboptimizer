@@ -49,11 +49,15 @@ registerTest(function():void {
     this.test('inPlaceCSSAndJavaScriptAssetReferences', (
         assert:Object
     ):void => {
-        // TODO
         for (const test:Array<string> of [
-            ['', '']
+            [
+                ['', null, null, '', '', '', {}],
+                {content: '', filePathsToRemove: []}
+            ]
         ])
-            assert.strictEqual(true, true)
+            assert.deepEqual(
+                Helper.inPlaceCSSAndJavaScriptAssetReferences(...test[0]),
+                test[1])
     })
     this.test('stripLoader', (assert:Object):void => {
         for (const test:Array<string> of [
