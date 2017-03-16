@@ -188,6 +188,7 @@ export default class Helper {
      * be external or not.
      * @param inPlaceDynamicLibrary - Indicates whether requests with
      * integrated loader configurations should be marked as external or not.
+     * @param encoding - Encoding for file names to use during file traversing.
      * @returns A new resolved request indicating whether given request is an
      * external one.
      */
@@ -212,7 +213,8 @@ export default class Helper {
         includePattern:Array<string|RegExp> = [],
         excludePattern:Array<string|RegExp> = [],
         inPlaceNormalLibrary:boolean = false,
-        inPlaceDynamicLibrary:boolean = true
+        inPlaceDynamicLibrary:boolean = true,
+        encoding:string = 'utf-8'
     ):?string {
         context = path.resolve(context)
         requestContext = path.resolve(requestContext)
@@ -229,7 +231,7 @@ export default class Helper {
         let filePath:?string = Helper.determineModuleFilePath(
             resolvedRequest, {}, {}, extensions, context, requestContext,
             pathsToIgnore, relativeModuleFilePaths, packageEntryFileNames,
-            packageMainPropertyNames, packageAliasPropertyNames)
+            packageMainPropertyNames, packageAliasPropertyNames, encoding)
         /*
             NOTE: We mark dependencies as external if there file couldn't be
             resolved or are specified to be external explicitly.
@@ -251,7 +253,8 @@ export default class Helper {
                         moduleID, aliases, moduleReplacements, extensions,
                         context, requestContext, pathsToIgnore,
                         relativeModuleFilePaths, packageEntryFileNames,
-                        packageMainPropertyNames, packageAliasPropertyNames
+                        packageMainPropertyNames, packageAliasPropertyNames,
+                        encoding
                     ) === filePath)
                         return null
         /*
@@ -395,6 +398,7 @@ export default class Helper {
      * names to search for package representing entry module definitions.
      * @param packageAliasPropertyNames - List of package file alias property
      * names to search for package specific module aliases.
+     * @param encoding - File name encoding to use during file traversing.
      * @returns Object with a file path and directory path key mapping to
      * corresponding list of paths.
      */
@@ -414,7 +418,8 @@ export default class Helper {
         packageEntryFileNames:Array<string> = [
             '__package__', '', 'index', 'main'],
         packageMainPropertyNames:Array<string> = ['main', 'module'],
-        packageAliasPropertyNames:Array<string> = []
+        packageAliasPropertyNames:Array<string> = [],
+        encoding:string = 'utf-8'
     ):{filePaths:Array<string>;directoryPaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
@@ -434,7 +439,8 @@ export default class Helper {
                         moduleID, aliases, moduleReplacements, extensions,
                         context, referencePath, pathsToIgnore,
                         relativeModuleFilePaths, packageEntryFileNames,
-                        packageMainPropertyNames, packageAliasPropertyNames)
+                        packageMainPropertyNames, packageAliasPropertyNames,
+                        encoding)
                     if (filePath) {
                         filePaths.push(filePath)
                         const directoryPath:string = path.dirname(filePath)
@@ -705,6 +711,7 @@ export default class Helper {
      * names to search for package representing entry module definitions.
      * @param packageAliasPropertyNames - List of package file alias property
      * names to search for package specific module aliases.
+     * @param encoding - Encoding to use for file names during file traversing.
      * @returns File path or given module id if determinations has failed or
      * wasn't necessary.
      */
@@ -723,7 +730,8 @@ export default class Helper {
         relativeModuleFilePaths:Array<string> = ['node_modules'],
         packageEntryFileNames:Array<string> = ['index'],
         packageMainPropertyNames:Array<string> = ['main'],
-        packageAliasPropertyNames:Array<string> = []
+        packageAliasPropertyNames:Array<string> = [],
+        encoding:string = 'utf-8'
     ):?string {
         moduleID = Helper.applyModuleReplacements(Helper.applyAliases(
             Helper.stripLoader(moduleID), aliases
@@ -765,8 +773,7 @@ export default class Helper {
                                     try {
                                         localConfiguration = JSON.parse(
                                             fileSystem.readFileSync(
-                                                pathToPackageJSON, {
-                                                    encoding: 'utf-8'}))
+                                                pathToPackageJSON, {encoding}))
                                     } catch (error) {}
                                     for (
                                         const propertyName:string of
