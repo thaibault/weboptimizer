@@ -75,17 +75,36 @@ const main = async ():Promise<any> => {
                 ), (error:?Error):void => error ? reject(error) : resolve()))
             const additionalArguments:Array<string> = process.argv.splice(3)
             // / region register exit handler to tidy up
-            closeEventHandlers.push(async (error:?Error):Promise<void> => {
-                try {
-                    await new Promise((
-                        resolve:Function, reject:Function
-                    ):void => fileSystem.unlink(filePath, (
-                        error:?Error
-                    ):void => error ? reject(error) : resolve()))
-                } catch (error) {}
-                if (error)
-                    throw error
+            // NOTE: Make "process.stdin" begin emitting events for any key press.
+            keypress(process.stdin)
+            let cancelTriggered:boolean = false
+            process.stdin.on('keypress', async (
+                char:number, key:Object
+            ):Promise<void> => {
+                if (key && key.name === 'c' && key.ctrl) {
+                    if (cancelTriggered)
+                        console.warn('Stopping ungracefully.')
+                    else {
+                        cancelTriggered = true
+                        console.log(
+                            'You have requested to shut down all services. A' +
+                            ' second request will force to stop ungracefully.')
+                        try {
+                            await new Promise((
+                                resolve:Function, reject:Function
+                            ):void => fileSystem.unlink(filePath, (
+                                error:?Error
+                            ):void => error ? reject(error) : resolve()))
+                        } catch (error) {}
+                        if (error)
+                            throw error
+                    }
+                    process.exit()
+                }
             })
+            if ('setRawMode' in process.stdin)
+                // IgnoreTypeCheck
+                process.stdin.setRawMode(true)
             // / endregion
             // endregion
             // region handle clear
@@ -445,8 +464,8 @@ const main = async ():Promise<any> => {
             process.on(closeEventName, closeHandler)
         if (require.main === module && (
             configuration.givenCommandLineArguments.length < 3 ||
-            !possibleArguments.includes(configuration
-                .givenCommandLineArguments[2])
+            !possibleArguments.includes(
+                configuration.givenCommandLineArguments[2])
         ))
             console.info(
                 `Give one of "${possibleArguments.join('", "')}" as command ` +
