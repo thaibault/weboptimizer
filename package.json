@@ -88,7 +88,6 @@
     "imports-loader": "latest",
     "jsdoc": "latest",
     "jsdom": "latest",
-    "keypress": "latest",
     "loader-utils": "latest",
     "offline-plugin": "latest",
     "open-browser-webpack-plugin": "latest",

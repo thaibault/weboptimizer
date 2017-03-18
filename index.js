@@ -75,36 +75,14 @@ const main = async ():Promise<any> => {
                 ), (error:?Error):void => error ? reject(error) : resolve()))
             const additionalArguments:Array<string> = process.argv.splice(3)
             // / region register exit handler to tidy up
-            // NOTE: Make "process.stdin" begin emitting events for any key press.
-            keypress(process.stdin)
-            let cancelTriggered:boolean = false
-            process.stdin.on('keypress', async (
-                char:number, key:Object
-            ):Promise<void> => {
-                if (key && key.name === 'c' && key.ctrl) {
-                    if (cancelTriggered)
-                        console.warn('Stopping ungracefully.')
-                    else {
-                        cancelTriggered = true
-                        console.log(
-                            'You have requested to shut down all services. A' +
-                            ' second request will force to stop ungracefully.')
-                        try {
-                            await new Promise((
-                                resolve:Function, reject:Function
-                            ):void => fileSystem.unlink(filePath, (
-                                error:?Error
-                            ):void => error ? reject(error) : resolve()))
-                        } catch (error) {}
-                        if (error)
-                            throw error
-                    }
-                    process.exit()
-                }
+            closeEventHandlers.push((error:?Error):void => {
+                console.log('A')
+                // NOTE: Close handler have to be synchronous.
+                if (Tools.isFileSync(filePath))
+                    fileSystem.unlinkSync(filePath)
+                if (error)
+                    throw error
             })
-            if ('setRawMode' in process.stdin)
-                // IgnoreTypeCheck
-                process.stdin.setRawMode(true)
             // / endregion
             // endregion
             // region handle clear
@@ -216,7 +194,7 @@ const main = async ():Promise<any> => {
                 process.argv[2]
             )) {
                 let tidiedUp:boolean = false
-                const tidyUp:Function = async ():Promise<void> => {
+                const tidyUp:Function = ():void => {
                     /*
                         Determines all none javaScript entities which have been
                         emitted as single javaScript module to remove.
@@ -228,13 +206,11 @@ const main = async ():Promise<any> => {
                         const chunkName:string in
                         configuration.injection.internal.normalized
                     )
-                        if (
-                            configuration.injection.internal.normalized
-                                .hasOwnProperty(chunkName)
+                        if (configuration.injection.internal.normalized
+                            .hasOwnProperty(chunkName)
                         )
-                            for (
-                                const moduleID:string of configuration
-                                    .injection.internal.normalized[chunkName]
+                            for (const moduleID:string of configuration
+                                .injection.internal.normalized[chunkName]
                             ) {
                                 const filePath:?string =
                                     Helper.determineModuleFilePath(
@@ -267,29 +243,23 @@ const main = async ():Promise<any> => {
                                                 configuration.files.compose
                                                     .javaScript
                                             ), {'[name]': chunkName})
-                                    if (configuration.build.types[
-                                        type
-                                    ].outputExtension === 'js' &&
-                                    await Tools.isFile(filePath))
-                                        await new Promise((
-                                            resolve:Function, reject:Function
-                                        ):void => fileSystem.chmod(
-                                            filePath, '755', (
-                                                error:?Error
-                                            ):void => error ? reject(
-                                                error
-                                            ) : resolve()))
+                                    /*
+                                        NOTE: Close handler have to be
+                                        synchronous.
+                                    */
+                                    if (
+                                        configuration.build.types[
+                                            type
+                                        ].outputExtension === 'js' &&
+                                        Tools.isFileSync(filePath)
+                                    )
+                                        fileSystem.chmodSync(filePath, '755')
                                 }
                             }
                     for (const filePath:?string of configuration.path.tidyUp)
-                        if (filePath)
-                            try {
-                                await new Promise((
-                                    resolve:Function, reject:Function
-                                ):void => fileSystem.unlink(filePath, (
-                                    error:?Error
-                                ):void => error ? reject(error) : resolve()))
-                            } catch (error) {}
+                        if (filePath && Tools.isFileSync(filePath))
+                            // NOTE: Close handler have to be synchronous.
+                            fileSystem.unlinkSync(filePath)
                 }
                 closeEventHandlers.push(tidyUp)
                 /*
