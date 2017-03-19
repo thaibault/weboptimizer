@@ -21,7 +21,7 @@ import Tools from 'clientnode'
 import type {File, PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
-import {sync as removeDirectoryRecursively} from 'rimraf'
+import removeDirectoryRecursively from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -60,11 +60,13 @@ const main = async ():Promise<any> => {
             )
                 configuration.givenCommandLineArguments.pop()
             let count:number = 0
-            let filePath:string = `${configuration.path.context}.` +
-                `dynamicConfiguration-${count}.json`
+            let filePath:string = path.resolve(
+                configuration.path.context,
+                `.dynamicConfiguration-${count}.json`)
             while (true) {
-                filePath = `${configuration.path.context}.` +
-                    `dynamicConfiguration-${count}.json`
+                filePath = path.resolve(
+                    configuration.path.context,
+                    `.dynamicConfiguration-${count}.json`)
                 if (!(await Tools.isFile(filePath)))
                     break
                 count += 1
@@ -75,14 +77,10 @@ const main = async ():Promise<any> => {
                 ), (error:?Error):void => error ? reject(error) : resolve()))
             const additionalArguments:Array<string> = process.argv.splice(3)
             // / region register exit handler to tidy up
-            closeEventHandlers.push(async (error:?Error):Promise<void> => {
-                try {
-                    await new Promise((
-                        resolve:Function, reject:Function
-                    ):void => fileSystem.unlink(filePath, (
-                        error:?Error
-                    ):void => error ? reject(error) : resolve()))
-                } catch (error) {}
+            closeEventHandlers.push((error:?Error):void => {
+                // NOTE: Close handler have to be synchronous.
+                if (Tools.isFileSync(filePath))
+                    fileSystem.unlinkSync(filePath)
                 if (error)
                     throw error
             })
@@ -147,23 +145,21 @@ const main = async ():Promise<any> => {
                                 }
                         })
                     for (
-                        const fileName:string of await
-                        Tools.walkDirectoryRecursively(
+                        const file:File of (
+                        await Tools.walkDirectoryRecursively(
                             configuration.path.target.base, ():false => false,
-                            {encoding: configuration.encoding})
+                            {encoding: configuration.encoding}))
                     )
                         if (
-                            fileName.length > '.dll-manifest.json'.length &&
-                            fileName.endsWith('.dll-manifest.json') ||
-                            fileName.startsWith('npm-debug')
+                            file.name.length > '.dll-manifest.json'.length &&
+                            file.name.endsWith('.dll-manifest.json') ||
+                            file.name.startsWith('npm-debug')
                         )
                             await new Promise((
                                 resolve:Function, reject:Function
-                            ):void => fileSystem.unlink(path.resolve(
-                                configuration.path.target.base, fileName
-                            ), (error:?Error):void => error ? reject(
-                                error
-                            ) : resolve()))
+                            ):void => fileSystem.unlink(file.path, (
+                                error:?Error
+                            ):void => error ? reject(error) : resolve()))
                 } else
                     await new Promise((
                         resolve:Function, reject:Function
@@ -171,14 +167,15 @@ const main = async ():Promise<any> => {
                         configuration.path.target.base, {glob: false}, (
                             error:?Error
                         ):void => error ? reject(error) : resolve()))
-                try {
+                if (await Tools.isDirectory(
+                    configuration.path.apiDocumentation
+                ))
                     await new Promise((
                         resolve:Function, reject:Function
                     ):void => removeDirectoryRecursively(
                         configuration.path.apiDocumentation, {glob: false}, (
                             error:?Error
                         ):void => error ? reject(error) : resolve()))
-                } catch (error) {}
             }
             // endregion
             // region handle build
@@ -198,7 +195,7 @@ const main = async ():Promise<any> => {
                 process.argv[2]
             )) {
                 let tidiedUp:boolean = false
-                const tidyUp:Function = async ():Promise<void> => {
+                const tidyUp:Function = ():void => {
                     /*
                         Determines all none javaScript entities which have been
                         emitted as single javaScript module to remove.
@@ -210,13 +207,11 @@ const main = async ():Promise<any> => {
                         const chunkName:string in
                         configuration.injection.internal.normalized
                     )
-                        if (
-                            configuration.injection.internal.normalized
-                                .hasOwnProperty(chunkName)
+                        if (configuration.injection.internal.normalized
+                            .hasOwnProperty(chunkName)
                         )
-                            for (
-                                const moduleID:string of configuration
-                                    .injection.internal.normalized[chunkName]
+                            for (const moduleID:string of configuration
+                                .injection.internal.normalized[chunkName]
                             ) {
                                 const filePath:?string =
                                     Helper.determineModuleFilePath(
@@ -249,29 +244,23 @@ const main = async ():Promise<any> => {
                                                 configuration.files.compose
                                                     .javaScript
                                             ), {'[name]': chunkName})
-                                    if (configuration.build.types[
-                                        type
-                                    ].outputExtension === 'js' &&
-                                    await Tools.isFile(filePath))
-                                        await new Promise((
-                                            resolve:Function, reject:Function
-                                        ):void => fileSystem.chmod(
-                                            filePath, '755', (
-                                                error:?Error
-                                            ):void => error ? reject(
-                                                error
-                                            ) : resolve()))
+                                    /*
+                                        NOTE: Close handler have to be
+                                        synchronous.
+                                    */
+                                    if (
+                                        configuration.build.types[
+                                            type
+                                        ].outputExtension === 'js' &&
+                                        Tools.isFileSync(filePath)
+                                    )
+                                        fileSystem.chmodSync(filePath, '755')
                                 }
                             }
                     for (const filePath:?string of configuration.path.tidyUp)
-                        if (filePath)
-                            try {
-                                await new Promise((
-                                    resolve:Function, reject:Function
-                                ):void => fileSystem.unlink(filePath, (
-                                    error:?Error
-                                ):void => error ? reject(error) : resolve()))
-                            } catch (error) {}
+                        if (filePath && Tools.isFileSync(filePath))
+                            // NOTE: Close handler have to be synchronous.
+                            fileSystem.unlinkSync(filePath)
                 }
                 closeEventHandlers.push(tidyUp)
                 /*
@@ -446,8 +435,8 @@ const main = async ():Promise<any> => {
             process.on(closeEventName, closeHandler)
         if (require.main === module && (
             configuration.givenCommandLineArguments.length < 3 ||
-            !possibleArguments.includes(configuration
-                .givenCommandLineArguments[2])
+            !possibleArguments.includes(
+                configuration.givenCommandLineArguments[2])
         ))
             console.info(
                 `Give one of "${possibleArguments.join('", "')}" as command ` +
