@@ -21,7 +21,7 @@ import Tools from 'clientnode'
 import type {File, PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
-import {sync as removeDirectoryRecursively} from 'rimraf'
+import removeDirectoryRecursively from 'rimraf'
 // NOTE: Only needed for debugging this file.
 try {
     require('source-map-support/register')
@@ -60,11 +60,13 @@ const main = async ():Promise<any> => {
             )
                 configuration.givenCommandLineArguments.pop()
             let count:number = 0
-            let filePath:string = `${configuration.path.context}.` +
-                `dynamicConfiguration-${count}.json`
+            let filePath:string = path.resolve(
+                configuration.path.context,
+                `.dynamicConfiguration-${count}.json`)
             while (true) {
-                filePath = `${configuration.path.context}.` +
-                    `dynamicConfiguration-${count}.json`
+                filePath = path.resolve(
+                    configuration.path.context,
+                    `.dynamicConfiguration-${count}.json`)
                 if (!(await Tools.isFile(filePath)))
                     break
                 count += 1
@@ -76,7 +78,6 @@ const main = async ():Promise<any> => {
             const additionalArguments:Array<string> = process.argv.splice(3)
             // / region register exit handler to tidy up
             closeEventHandlers.push((error:?Error):void => {
-                console.log('A')
                 // NOTE: Close handler have to be synchronous.
                 if (Tools.isFileSync(filePath))
                     fileSystem.unlinkSync(filePath)
