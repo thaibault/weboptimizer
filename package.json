@@ -432,6 +432,9 @@
                   "compiler": {
                     "__evaluate__": "self.module.preprocessor.ejs.options.compiler"
                   },
+                  "compress": {
+                    "__evaluate__": "self.module.preprocessor.ejs.options.compress"
+                  },
                   "context": {
                     "__evaluate__": "self.path.context"
                   },
@@ -708,6 +711,14 @@
                 "compileDebug": false,
                 "debug": false
               },
+              "compress": {
+                "html": {
+                  "__evaluate__": "self.module.optimizer.htmlMinifier"
+                },
+                "javaScript": {
+                  "__evaluate__": "self.module.optimizer.babili"
+                }
+              },
               "context": {
                 "__evaluate__": "self.path.context"
               },
@@ -736,6 +747,9 @@
             "options": {
               "compiler": {
                 "__evaluate__": "self.module.preprocessor.ejs.options.compiler"
+              },
+              "compress": {
+                "__evaluate__": "self.module.preprocessor.ejs.options.compress"
               },
               "context": {
                 "__evaluate__": "self.path.context"
