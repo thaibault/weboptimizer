@@ -14,8 +14,10 @@
     endregion
 */
 // region imports
+import type {DomNode} from 'clientnode'
 import Tools from 'clientnode'
 import type {File, PlainObject} from 'clientnode'
+import * as dom from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -53,6 +55,151 @@ export default class Helper {
     }
     // endregion
     // region string
+    /**
+     * In places each matching cascading style sheet or javaScript file
+     * reference.
+     * @param content - Markup content to process.
+     * @param cascadingStyleSheetPattern - Pattern to match cascading style
+     * sheet asset references again.
+     * @param javaScriptPattern - Pattern to match javaScript asset references
+     * again.
+     * @param basePath - Base path to use as prefix for file references.
+     * @param cascadingStyleSheetChunkNameTemplate - Cascading style sheet
+     * chunk name template to use for asset matching.
+     * @param javaScriptChunkNameTemplate - JavaScript chunk name template to
+     * use for asset matching.
+     * @param assets - Mapping of asset file paths to their content.
+     * @returns Given an transformed markup.
+     */
+    static inPlaceCSSAndJavaScriptAssetReferences(
+        content:string,
+        cascadingStyleSheetPattern:?{[key:string]:'body'|'head'|'in'},
+        javaScriptPattern:?{[key:string]:'body'|'head'|'in'}, basePath:string,
+        cascadingStyleSheetChunkNameTemplate:string,
+        javaScriptChunkNameTemplate:string, assets:{[key:string]:Object}
+    ):Promise<{content:string;filePathsToRemove:Array<string>;}> {
+        /*
+            NOTE: We have to translate template delimiter to html compatible
+            sequences and translate it back later to avoid unexpected escape
+            sequences in resulting html.
+        */
+        return new Promise((
+            resolve:Function, reject:Function
+        ):void => dom.env(content.replace(/<%/g, '##+#+#+##').replace(
+            /%>/g, '##-#-#-##'
+        ), (error:?Error, window:Object):void => {
+            if (error)
+                return reject(error)
+            const filePathsToRemove:Array<string> = []
+            if (cascadingStyleSheetPattern)
+                for (const pattern:string in cascadingStyleSheetPattern) {
+                    if (!cascadingStyleSheetPattern.hasOwnProperty(pattern))
+                        continue
+                    let selector:string = '[href*=".css"]'
+                    if (pattern !== '*')
+                        selector = '[href="' + path.relative(
+                            basePath, Helper.renderFilePathTemplate(
+                                cascadingStyleSheetChunkNameTemplate, {
+                                    '[contenthash]': '',
+                                    '[id]': pattern,
+                                    '[name]': pattern
+                                }
+                            )) + '"]'
+                    const domNodes:Array<DomNode> =
+                        window.document.querySelectorAll(`link${selector}`)
+                    if (domNodes.length)
+                        for (const domNode:DomNode of domNodes) {
+                            const inPlaceDomNode:DomNode =
+                                window.document.createElement('style')
+                            const path:string = domNode.attributes.href.value
+                                .replace(/&.*/g, '')
+                            inPlaceDomNode.textContent = assets[path].source()
+                            if (cascadingStyleSheetPattern[pattern] === 'body')
+                                window.document.body.appendChild(
+                                    inPlaceDomNode)
+                            else if (cascadingStyleSheetPattern[
+                                pattern
+                            ] === 'in')
+                                domNode.parentNode.insertBefore(
+                                    inPlaceDomNode, domNode)
+                            else if (cascadingStyleSheetPattern[
+                                pattern
+                            ] === 'head')
+                                window.document.head.appendChild(
+                                    inPlaceDomNode)
+                            domNode.parentNode.removeChild(domNode)
+                            /*
+                                NOTE: This doesn't prevent webpack from
+                                creating this file if present in another chunk
+                                so removing it (and a potential source map
+                                file) later in the "done" hook.
+                            */
+                            filePathsToRemove.push(Helper.stripLoader(path))
+                            delete assets[path]
+                        }
+                    else
+                        console.warn(
+                            'No referenced cascading style sheet file in ' +
+                            'resulting markup found with selector: link' +
+                            selector)
+                }
+            if (javaScriptPattern)
+                for (const pattern:string in javaScriptPattern) {
+                    if (!javaScriptPattern.hasOwnProperty(pattern))
+                        continue
+                    let selector:string = '[href*=".js"]'
+                    if (pattern !== '*')
+                        selector = '[src^="' + path.relative(
+                            basePath, Helper.renderFilePathTemplate(
+                                javaScriptChunkNameTemplate, {
+                                    '[hash]': '',
+                                    '[id]': pattern,
+                                    '[name]': pattern
+                                }
+                            ) + '"]')
+                    const domNodes:Array<DomNode> =
+                        window.document.querySelectorAll(`script${selector}`)
+                    if (domNodes.length)
+                        for (const domNode:DomNode of domNodes) {
+                            const inPlaceDomNode:DomNode =
+                                window.document.createElement('script')
+                            const path:string = domNode.attributes.src.value
+                                .replace(/&.*/g, '')
+                            inPlaceDomNode.textContent = assets[path].source()
+                            if (javaScriptPattern[pattern] === 'body')
+                                window.document.body.appendChild(
+                                    inPlaceDomNode)
+                            else if (javaScriptPattern[pattern] === 'in')
+                                domNode.parentNode.insertBefore(
+                                    inPlaceDomNode, domNode)
+                            else if (javaScriptPattern[pattern] === 'head')
+                                window.document.head.appendChild(
+                                    inPlaceDomNode)
+                            domNode.parentNode.removeChild(domNode)
+                            /*
+                                NOTE: This doesn't prevent webpack from
+                                creating this file if present in another chunk
+                                so removing it (and a potential source map
+                                file) later in the "done" hook.
+                            */
+                            filePathsToRemove.push(Helper.stripLoader(path))
+                            delete assets[path]
+                        }
+                    else
+                        console.warn(
+                            'No referenced javaScript file in resulting ' +
+                            `markup found with selector: script${selector}`)
+                }
+            resolve({
+                content: content.replace(
+                    /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
+                ) + window.document.documentElement.outerHTML.replace(
+                    /##\+#\+#\+##/g, '<%'
+                ).replace(/##-#-#-##/g, '%>'),
+                filePathsToRemove
+            })
+        }))
+    }
     /**
      * Strips loader informations form given module request including loader
      * prefix and query parameter.
