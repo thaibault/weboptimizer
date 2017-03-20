@@ -410,8 +410,21 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
 // // endregion
 // // region apply final dom/javaScript modifications/fixes
 pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
-    'compilation', (compilation:Object):void => compilation.plugin(
-        'html-webpack-plugin-after-html-processing', async (
+    'compilation', (compilation:Object):void => {
+        compilation.plugin('html-webpack-plugin-alter-asset-tags', (
+            htmlPluginData:PlainObject, callback:ProcedureFunction
+        ):void => {
+            console.log(htmlPluginData)
+            /*
+            for (const assetRequest:string in compilation.assets)
+                if (/^\.__dummy__(\..*)?$/.test(path.basename(assetRequest))) {
+                    delete compilation.assets[assetRequest]
+                    continue
+                }
+            */
+            callback(null, htmlPluginData)
+        })
+        compilation.plugin('html-webpack-plugin-after-html-processing', (
             htmlPluginData:PlainObject, callback:ProcedureFunction
         ):Window => dom.env(htmlPluginData.html.replace(
             /<%/g, '##+#+#+##'
@@ -446,67 +459,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
             ) + window.document.documentElement.outerHTML.replace(
                 /##\+#\+#\+##/g, '<%'
             ).replace(/##-#-#-##/g, '%>')
-            callback(null, htmlPluginData)
-        })))})
-if (configuration.exportFormat.external.startsWith('umd'))
-    pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
-        'emit', (compilation:Object, callback:ProcedureFunction):void => {
-            const bundleName:string = (
-                typeof libraryName === 'string'
-            ) ? libraryName : libraryName[0]
-            /*
-                NOTE: The umd module export doesn't handle cases where the
-                package name doesn't match exported library name. This post
-                processing fixes this issue.
-            */
-            for (const assetRequest:string in compilation.assets)
-                if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                    configuration.build.types.javaScript.outputExtension
-                )) {
-                    let source:string =
-                        compilation.assets[assetRequest].source()
-                    if (typeof source === 'string') {
-                        for (
-                            const replacement:string in
-                            configuration.injection.external.aliases
-                        )
-                            if (configuration.injection.external.aliases
-                                .hasOwnProperty(replacement)
-                            )
-                                source = source.replace(new RegExp(
-                                    '(require\\()"' +
-                                    Tools.stringEscapeRegularExpressions(
-                                        configuration.injection.external
-                                            .aliases[replacement]
-                                    ) + '"(\\))', 'g'
-                                ), `$1'${replacement}'$2`).replace(new RegExp(
-                                    '(define\\("' +
-                                    Tools.stringEscapeRegularExpressions(
-                                        bundleName
-                                    ) + '", \\[.*)"' +
-                                    Tools.stringEscapeRegularExpressions(
-                                        configuration.injection.external
-                                            .aliases[replacement]
-                                    ) + '"(.*\\], factory\\);)'
-                                ), `$1'${replacement}'$2`)
-                        source = source.replace(new RegExp(
-                            '(root\\[)"' +
-                            Tools.stringEscapeRegularExpressions(bundleName) +
-                            '"(\\] = )'
-                        ), `$1'` + Tools.stringConvertToValidVariableName(
-                            bundleName
-                        ) + `'$2`)
-                        compilation.assets[assetRequest] =
-                            new WebpackRawSource(source)
-                    }
-                }
-            callback()
-        })})
-pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
-    'compilation', (compilation:Object):void => compilation.plugin(
-        'html-webpack-plugin-after-html-processing', (
-            htmlPluginData:PlainObject, callback:ProcedureFunction
-        ):void => {
+            //  region post compilation
             for (
                 const htmlFileSpecification:PlainObject of
                 configuration.files.html
@@ -534,8 +487,66 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                                 }}))(htmlPluginData.html)
                     break
                 }
+            // endregion
             callback(null, htmlPluginData)
-        }))})
+        }))
+    })})
+/*
+    NOTE: The umd module export doesn't handle cases where the package name
+    doesn't match exported library name. This post processing fixes this issue.
+*/
+if (configuration.exportFormat.external.startsWith('umd'))
+    pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
+        'emit', (compilation:Object, callback:ProcedureFunction):void => {
+            const bundleName:string = (
+                typeof libraryName === 'string'
+            ) ? libraryName : libraryName[0]
+            for (const assetRequest:string in compilation.assets)
+                if (compilation.assets.hasOwnProperty(
+                    assetRequest
+                ) && assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
+                    configuration.build.types.javaScript.outputExtension
+                )) {
+                    let source:string =
+                        compilation.assets[assetRequest].source()
+                    if (typeof source === 'string') {
+                        for (
+                            const replacement:string in
+                            configuration.injection.external.aliases
+                        )
+                            if (configuration.injection.external.aliases
+                                .hasOwnProperty(replacement)
+                            )
+                                source = source.replace(new RegExp(
+                                    '(require\\()"' +
+                                    Tools.stringEscapeRegularExpressions(
+                                        configuration.injection.external
+                                            .aliases[replacement]
+                                    ) + '"(\\))', 'g'
+                                ), `$1'${replacement}'$2`).replace(
+                                    new RegExp('(define\\("' +
+                                        Tools.stringEscapeRegularExpressions(
+                                            bundleName
+                                        ) + '", \\[.*)"' +
+                                        Tools.stringEscapeRegularExpressions(
+                                            configuration.injection.external
+                                                .aliases[replacement]
+                                        ) + '"(.*\\], factory\\);)'
+                                    ), `$1'${replacement}'$2`)
+                        source = source.replace(new RegExp(
+                            '(root\\[)"' +
+                            Tools.stringEscapeRegularExpressions(
+                                bundleName
+                            ) + '"(\\] = )'
+                        ), `$1'` + Tools.stringConvertToValidVariableName(
+                            bundleName
+                        ) + `'$2`)
+                        compilation.assets[assetRequest] =
+                            new WebpackRawSource(source)
+                    }
+                }
+            callback()
+        })})
 // // endregion
 // // region add automatic image compression
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
