@@ -250,7 +250,6 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     resolve:Function, reject:Function
                 ):void => fileSystem.readdir(
                     configuration.path.target.asset[type],
-                    // IgnoreTypeCheck
                     configuration.encoding,
                     (error:?Error, files:Array<string>):void => {
                         if (error)
@@ -414,18 +413,27 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
         compilation.plugin('html-webpack-plugin-alter-asset-tags', (
             htmlPluginData:PlainObject, callback:ProcedureFunction
         ):void => {
-            console.log()
-            console.log()
-            console.log(htmlPluginData)
-            console.log()
-            console.log()
-            /*
-            for (const assetRequest:string in compilation.assets)
-                if (/^\.__dummy__(\..*)?$/.test(path.basename(assetRequest))) {
-                    delete compilation.assets[assetRequest]
-                    continue
+            for (const tags:Array<PlainObject> of [
+                htmlPluginData.body, htmlPluginData.head
+            ]) {
+                let index:number = 0
+                for (const tag:PlainObject of tags) {
+                    if (/^\.__dummy__(\..*)?$/.test(path.basename(
+                        tag.attributes.src
+                    )))
+                        tags.splice(index, 1)
+                    index += 1
                 }
-            */
+            }
+            const assets:Array<string> = JSON.parse(
+                htmlPluginData.plugin.assetJson)
+            let index:number = 0
+            for (const assetRequest:string of assets) {
+                if (/^\.__dummy__(\..*)?$/.test(path.basename(assetRequest)))
+                    assets.splice(index, 1)
+                index += 1
+            }
+            htmlPluginData.plugin.assetJson = JSON.stringify(assets)
             callback(null, htmlPluginData)
         })
         compilation.plugin('html-webpack-plugin-after-html-processing', (
