@@ -414,7 +414,11 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
         compilation.plugin('html-webpack-plugin-alter-asset-tags', (
             htmlPluginData:PlainObject, callback:ProcedureFunction
         ):void => {
+            console.log()
+            console.log()
             console.log(htmlPluginData)
+            console.log()
+            console.log()
             /*
             for (const assetRequest:string in compilation.assets)
                 if (/^\.__dummy__(\..*)?$/.test(path.basename(assetRequest))) {
