@@ -539,6 +539,7 @@
           "node_modules"
         ],
         "html": {
+          "additional": [],
           "exclude": null,
           "loader": "html",
           "options": {
@@ -551,6 +552,7 @@
         },
         "optimizer": {
           "data": {
+            "additional": [],
             "exclude": null,
             "loader": "url",
             "options": {
@@ -564,6 +566,7 @@
           },
           "font": {
             "eot": {
+              "additional": [],
               "exclude": null,
               "loader": "url",
               "options": {
@@ -576,6 +579,7 @@
               }
             },
             "svg": {
+              "additional": [],
               "exclude": null,
               "loader": "url",
               "options": {
@@ -589,6 +593,7 @@
               }
             },
             "ttf": {
+              "additional": [],
               "exclude": null,
               "loader": "url",
               "options": {
@@ -602,6 +607,7 @@
               }
             },
             "woff": {
+              "additional": [],
               "exclude": null,
               "loader": "url",
               "options": {
@@ -699,6 +705,7 @@
         },
         "preprocessor": {
           "cascadingStyleSheet": {
+            "additional": [],
             "loader": "postcss",
             "options": {
               "map": {
@@ -707,6 +714,7 @@
             }
           },
           "ejs": {
+            "additional": [],
             "exclude": null,
             "loader": "ejs",
             "options": {
@@ -742,6 +750,7 @@
             }
           },
           "html": {
+            "additional": [],
             "exclude": {
               "__evaluate__": "self.module.preprocessor.ejs.exclude"
             },
@@ -771,6 +780,7 @@
             }
           },
           "javaScript": {
+            "additional": [],
             "exclude": null,
             "loader": "babel",
             "options": {
