@@ -250,7 +250,6 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     resolve:Function, reject:Function
                 ):void => fileSystem.readdir(
                     configuration.path.target.asset[type],
-                    // IgnoreTypeCheck
                     configuration.encoding,
                     (error:?Error, files:Array<string>):void => {
                         if (error)
@@ -410,8 +409,34 @@ if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
 // // endregion
 // // region apply final dom/javaScript modifications/fixes
 pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
-    'compilation', (compilation:Object):void => compilation.plugin(
-        'html-webpack-plugin-after-html-processing', async (
+    'compilation', (compilation:Object):void => {
+        compilation.plugin('html-webpack-plugin-alter-asset-tags', (
+            htmlPluginData:PlainObject, callback:ProcedureFunction
+        ):void => {
+            for (const tags:Array<PlainObject> of [
+                htmlPluginData.body, htmlPluginData.head
+            ]) {
+                let index:number = 0
+                for (const tag:PlainObject of tags) {
+                    if (/^\.__dummy__(\..*)?$/.test(path.basename(
+                        tag.attributes.src
+                    )))
+                        tags.splice(index, 1)
+                    index += 1
+                }
+            }
+            const assets:Array<string> = JSON.parse(
+                htmlPluginData.plugin.assetJson)
+            let index:number = 0
+            for (const assetRequest:string of assets) {
+                if (/^\.__dummy__(\..*)?$/.test(path.basename(assetRequest)))
+                    assets.splice(index, 1)
+                index += 1
+            }
+            htmlPluginData.plugin.assetJson = JSON.stringify(assets)
+            callback(null, htmlPluginData)
+        })
+        compilation.plugin('html-webpack-plugin-after-html-processing', (
             htmlPluginData:PlainObject, callback:ProcedureFunction
         ):Window => dom.env(htmlPluginData.html.replace(
             /<%/g, '##+#+#+##'
@@ -446,67 +471,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
             ) + window.document.documentElement.outerHTML.replace(
                 /##\+#\+#\+##/g, '<%'
             ).replace(/##-#-#-##/g, '%>')
-            callback(null, htmlPluginData)
-        })))})
-if (configuration.exportFormat.external.startsWith('umd'))
-    pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
-        'emit', (compilation:Object, callback:ProcedureFunction):void => {
-            const bundleName:string = (
-                typeof libraryName === 'string'
-            ) ? libraryName : libraryName[0]
-            /*
-                NOTE: The umd module export doesn't handle cases where the
-                package name doesn't match exported library name. This post
-                processing fixes this issue.
-            */
-            for (const assetRequest:string in compilation.assets)
-                if (assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                    configuration.build.types.javaScript.outputExtension
-                )) {
-                    let source:string =
-                        compilation.assets[assetRequest].source()
-                    if (typeof source === 'string') {
-                        for (
-                            const replacement:string in
-                            configuration.injection.external.aliases
-                        )
-                            if (configuration.injection.external.aliases
-                                .hasOwnProperty(replacement)
-                            )
-                                source = source.replace(new RegExp(
-                                    '(require\\()"' +
-                                    Tools.stringEscapeRegularExpressions(
-                                        configuration.injection.external
-                                            .aliases[replacement]
-                                    ) + '"(\\))', 'g'
-                                ), `$1'${replacement}'$2`).replace(new RegExp(
-                                    '(define\\("' +
-                                    Tools.stringEscapeRegularExpressions(
-                                        bundleName
-                                    ) + '", \\[.*)"' +
-                                    Tools.stringEscapeRegularExpressions(
-                                        configuration.injection.external
-                                            .aliases[replacement]
-                                    ) + '"(.*\\], factory\\);)'
-                                ), `$1'${replacement}'$2`)
-                        source = source.replace(new RegExp(
-                            '(root\\[)"' +
-                            Tools.stringEscapeRegularExpressions(bundleName) +
-                            '"(\\] = )'
-                        ), `$1'` + Tools.stringConvertToValidVariableName(
-                            bundleName
-                        ) + `'$2`)
-                        compilation.assets[assetRequest] =
-                            new WebpackRawSource(source)
-                    }
-                }
-            callback()
-        })})
-pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
-    'compilation', (compilation:Object):void => compilation.plugin(
-        'html-webpack-plugin-after-html-processing', (
-            htmlPluginData:PlainObject, callback:ProcedureFunction
-        ):void => {
+            //  region post compilation
             for (
                 const htmlFileSpecification:PlainObject of
                 configuration.files.html
@@ -534,8 +499,66 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                                 }}))(htmlPluginData.html)
                     break
                 }
+            // endregion
             callback(null, htmlPluginData)
-        }))})
+        }))
+    })})
+/*
+    NOTE: The umd module export doesn't handle cases where the package name
+    doesn't match exported library name. This post processing fixes this issue.
+*/
+if (configuration.exportFormat.external.startsWith('umd'))
+    pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
+        'emit', (compilation:Object, callback:ProcedureFunction):void => {
+            const bundleName:string = (
+                typeof libraryName === 'string'
+            ) ? libraryName : libraryName[0]
+            for (const assetRequest:string in compilation.assets)
+                if (compilation.assets.hasOwnProperty(
+                    assetRequest
+                ) && assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
+                    configuration.build.types.javaScript.outputExtension
+                )) {
+                    let source:string =
+                        compilation.assets[assetRequest].source()
+                    if (typeof source === 'string') {
+                        for (
+                            const replacement:string in
+                            configuration.injection.external.aliases
+                        )
+                            if (configuration.injection.external.aliases
+                                .hasOwnProperty(replacement)
+                            )
+                                source = source.replace(new RegExp(
+                                    '(require\\()"' +
+                                    Tools.stringEscapeRegularExpressions(
+                                        configuration.injection.external
+                                            .aliases[replacement]
+                                    ) + '"(\\))', 'g'
+                                ), `$1'${replacement}'$2`).replace(
+                                    new RegExp('(define\\("' +
+                                        Tools.stringEscapeRegularExpressions(
+                                            bundleName
+                                        ) + '", \\[.*)"' +
+                                        Tools.stringEscapeRegularExpressions(
+                                            configuration.injection.external
+                                                .aliases[replacement]
+                                        ) + '"(.*\\], factory\\);)'
+                                    ), `$1'${replacement}'$2`)
+                        source = source.replace(new RegExp(
+                            '(root\\[)"' +
+                            Tools.stringEscapeRegularExpressions(
+                                bundleName
+                            ) + '"(\\] = )'
+                        ), `$1'` + Tools.stringConvertToValidVariableName(
+                            bundleName
+                        ) + `'$2`)
+                        compilation.assets[assetRequest] =
+                            new WebpackRawSource(source)
+                    }
+                }
+            callback()
+        })})
 // // endregion
 // // region add automatic image compression
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
@@ -555,7 +578,23 @@ for (
 // // endregion
 // / endregion
 // / region loader helper
-const loader:Object = {
+const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
+    filePath = Helper.stripLoader(filePath)
+    return Helper.isFilePathInLocation(
+        filePath, configuration.path.ignore.concat(
+            configuration.module.directoryNames,
+            configuration.loader.directoryNames
+        ).map((filePath:string):string => path.resolve(
+            configuration.path.context, filePath)
+        ).filter((filePath:string):boolean =>
+            !configuration.path.context.startsWith(filePath)))
+}
+const loader:Object = {}
+const evaluate:Function = (code:string, filePath:string):any => (new Function(
+    'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
+    `return ${code}`
+))(configuration, filePath, loader, rejectFilePathInDependencies)
+Tools.extendObject(loader, {
     // Convert to compatible native web types.
     // region generic template
     ejs: {
@@ -581,7 +620,8 @@ const loader:Object = {
                 loader: configuration.module.preprocessor.ejs.loader,
                 options: configuration.module.preprocessor.ejs.options
             }
-        ]
+        ].concat(configuration.module.preprocessor.ejs.additional.map(
+            evaluate))
     },
     // endregion
     // region script
@@ -600,7 +640,8 @@ const loader:Object = {
                 .loader,
             options: configuration.module.preprocessor.javaScript
                 .options
-        }]
+        }].concat(configuration.module.preprocessor.javaScript.additional.map(
+            evaluate))
     },
     // endregion
     // region html template
@@ -643,7 +684,8 @@ const loader:Object = {
             ]), {
                 loader: configuration.module.preprocessor.html.loader,
                 options: configuration.module.preprocessor.html.options
-            })
+            }).concat(configuration.module.preprocessor.html.additional.map(
+                evaluate))
         },
         html: {
             exclude: (filePath:string):boolean => Helper.normalizePaths(
@@ -667,7 +709,7 @@ const loader:Object = {
                     loader: configuration.module.html.loader,
                     options: configuration.module.html.options
                 }
-            ]
+            ].concat(configuration.module.html.additional.map(evaluate))
         }
     },
     // endregion
@@ -682,7 +724,7 @@ const loader:Object = {
         include: Helper.normalizePaths([
             configuration.path.source.asset.cascadingStyleSheet
         ].concat(configuration.module.locations.directoryPaths)),
-        test: /\.css(?:\?.*)?$/i,
+        test: /\.s?css(?:\?.*)?$/i,
         use: [
             {
                 loader: configuration.module.style.loader,
@@ -730,7 +772,10 @@ const loader:Object = {
                     ]
                 },
                 configuration.module.preprocessor.cascadingStyleSheet.options)
-            }]
+            }
+        ].concat(
+            configuration.module.preprocessor.cascadingStyleSheet.additional
+                .map(evaluate))
     },
     // endregion
     // Optimize loaded assets.
@@ -746,7 +791,8 @@ const loader:Object = {
             use: [{
                 loader: configuration.module.optimizer.font.eot.loader,
                 options: configuration.module.optimizer.font.eot.options
-            }]
+            }].concat(configuration.module.optimizer.font.eot.additional.map(
+                evaluate))
         },
         svg: {
             exclude: (filePath:string):boolean => (
@@ -758,7 +804,8 @@ const loader:Object = {
             use: [{
                 loader: configuration.module.optimizer.font.svg.loader,
                 options: configuration.module.optimizer.font.svg.options
-            }]
+            }].concat(configuration.module.optimizer.font.svg.additional.map(
+                evaluate))
         },
         ttf: {
             exclude: (filePath:string):boolean => (
@@ -770,7 +817,8 @@ const loader:Object = {
             use: [{
                 loader: configuration.module.optimizer.font.ttf.loader,
                 options: configuration.module.optimizer.font.ttf.options
-            }]
+            }].concat(configuration.module.optimizer.font.ttf.additional.map(
+                evaluate))
         },
         woff: {
             exclude: (filePath:string):boolean => (
@@ -783,7 +831,8 @@ const loader:Object = {
             use: [{
                 loader: configuration.module.optimizer.font.woff.loader,
                 options: configuration.module.optimizer.font.woff.options
-            }]
+            }].concat(configuration.module.optimizer.font.woff.additional.map(
+                evaluate))
         }
     },
     // endregion
@@ -795,10 +844,11 @@ const loader:Object = {
             configuration.module.optimizer.image.exclude, filePath),
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
-        use: {
+        use: [{
             loader: configuration.module.optimizer.image.loader,
             options: configuration.module.optimizer.image.file
-        }
+        }].concat(configuration.module.optimizer.image.additional.map(
+            evaluate))
     },
     // endregion
     // region data
@@ -816,29 +866,14 @@ const loader:Object = {
         use: [{
             loader: configuration.module.optimizer.data.loader,
             options: configuration.module.optimizer.data.options
-        }]
+        }].concat(configuration.module.optimizer.data.additional.map(evaluate))
     }
     // endregion
-}
+})
 if (configuration.files.compose.cascadingStyleSheet) {
     loader.style.use.shift()
     loader.style.use = plugins.ExtractText.extract({use: loader.style.use})
 }
-const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
-    filePath = Helper.stripLoader(filePath)
-    return Helper.isFilePathInLocation(
-        filePath, configuration.path.ignore.concat(
-            configuration.module.directoryNames,
-            configuration.loader.directoryNames
-        ).map((filePath:string):string => path.resolve(
-            configuration.path.context, filePath)
-        ).filter((filePath:string):boolean =>
-            !configuration.path.context.startsWith(filePath)))
-}
-const evaluate:Function = (code:string, filePath:string):any => (new Function(
-    'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
-    `return ${code}`
-))(configuration, filePath, loader, rejectFilePathInDependencies)
 // / endregion
 // endregion
 // region configuration
