@@ -699,8 +699,10 @@
         },
         "preprocessor": {
           "cascadingStyleSheet": {
-            "loader": "postcss?sourceMap=inline",
-            "options": {}
+            "loader": "postcss",
+            "options": {
+              "map": {"inline": true}
+            }
           },
           "ejs": {
             "exclude": null,
@@ -1030,7 +1032,10 @@
         },
         "preprocessor": {
           "cascadingStyleSheet": {
-            "loader": "postcss?sourceMap"
+            "loader": "postcss",
+            "options": {
+              "map": false
+            }
           },
           "html": {
             "options": {
