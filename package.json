@@ -669,6 +669,7 @@
             "useShortDoctype": false
           },
           "image": {
+            "additional": [],
             "content": {
               "disable": {
                 "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? true : console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{disable:false}}}}}\" to enable it.`) || true"
