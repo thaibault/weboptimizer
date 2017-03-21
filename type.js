@@ -136,6 +136,7 @@ export type Extensions = {
     module:Array<string>;
 }
 export type LoaderConfiguration = {
+    additional:Array<string>;
     exclude:string;
     include:string;
     loader:string;
@@ -231,6 +232,7 @@ export type ResolvedConfiguration = {
             };
             htmlMinifier:PlainObject;
             image:{
+                additional:Array<string>;
                 content:PlainObject;
                 exclude:string;
                 file:PlainObject;
@@ -240,6 +242,7 @@ export type ResolvedConfiguration = {
         };
         preprocessor:{
             cascadingStyleSheet:{
+                additional:Array<string>;
                 loader:string;
                 options:Object;
             };

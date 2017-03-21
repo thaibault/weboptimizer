@@ -578,7 +578,23 @@ for (
 // // endregion
 // / endregion
 // / region loader helper
-const loader:Object = {
+const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
+    filePath = Helper.stripLoader(filePath)
+    return Helper.isFilePathInLocation(
+        filePath, configuration.path.ignore.concat(
+            configuration.module.directoryNames,
+            configuration.loader.directoryNames
+        ).map((filePath:string):string => path.resolve(
+            configuration.path.context, filePath)
+        ).filter((filePath:string):boolean =>
+            !configuration.path.context.startsWith(filePath)))
+}
+const loader:Object = {}
+const evaluate:Function = (code:string, filePath:string):any => (new Function(
+    'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
+    `return ${code}`
+))(configuration, filePath, loader, rejectFilePathInDependencies)
+Tools.extendObject(loader, {
     // Convert to compatible native web types.
     // region generic template
     ejs: {
@@ -604,7 +620,8 @@ const loader:Object = {
                 loader: configuration.module.preprocessor.ejs.loader,
                 options: configuration.module.preprocessor.ejs.options
             }
-        ]
+        ].concat(configuration.module.preprocessor.ejs.additional.map(
+            evaluate))
     },
     // endregion
     // region script
@@ -623,7 +640,8 @@ const loader:Object = {
                 .loader,
             options: configuration.module.preprocessor.javaScript
                 .options
-        }]
+        }].concat(configuration.module.preprocessor.javaScript.additional.map(
+            evaluate))
     },
     // endregion
     // region html template
@@ -666,7 +684,8 @@ const loader:Object = {
             ]), {
                 loader: configuration.module.preprocessor.html.loader,
                 options: configuration.module.preprocessor.html.options
-            })
+            }).concat(configuration.module.preprocessor.html.additional.map(
+                evaluate))
         },
         html: {
             exclude: (filePath:string):boolean => Helper.normalizePaths(
@@ -690,7 +709,7 @@ const loader:Object = {
                     loader: configuration.module.html.loader,
                     options: configuration.module.html.options
                 }
-            ]
+            ].concat(configuration.module.html.additional.map(evaluate))
         }
     },
     // endregion
@@ -705,7 +724,7 @@ const loader:Object = {
         include: Helper.normalizePaths([
             configuration.path.source.asset.cascadingStyleSheet
         ].concat(configuration.module.locations.directoryPaths)),
-        test: /\.css(?:\?.*)?$/i,
+        test: /\.s?css(?:\?.*)?$/i,
         use: [
             {
                 loader: configuration.module.style.loader,
@@ -753,7 +772,10 @@ const loader:Object = {
                     ]
                 },
                 configuration.module.preprocessor.cascadingStyleSheet.options)
-            }]
+            }
+        ].concat(
+            configuration.module.preprocessor.cascadingStyleSheet.additional
+                .map(evaluate))
     },
     // endregion
     // Optimize loaded assets.
@@ -769,7 +791,8 @@ const loader:Object = {
             use: [{
                 loader: configuration.module.optimizer.font.eot.loader,
                 options: configuration.module.optimizer.font.eot.options
-            }]
+            }].concat(configuration.module.optimizer.font.eot.additional.map(
+                evaluate))
         },
         svg: {
             exclude: (filePath:string):boolean => (
@@ -781,7 +804,8 @@ const loader:Object = {
             use: [{
                 loader: configuration.module.optimizer.font.svg.loader,
                 options: configuration.module.optimizer.font.svg.options
-            }]
+            }].concat(configuration.module.optimizer.font.svg.additional.map(
+                evaluate))
         },
         ttf: {
             exclude: (filePath:string):boolean => (
@@ -793,7 +817,8 @@ const loader:Object = {
             use: [{
                 loader: configuration.module.optimizer.font.ttf.loader,
                 options: configuration.module.optimizer.font.ttf.options
-            }]
+            }].concat(configuration.module.optimizer.font.ttf.additional.map(
+                evaluate))
         },
         woff: {
             exclude: (filePath:string):boolean => (
@@ -806,7 +831,8 @@ const loader:Object = {
             use: [{
                 loader: configuration.module.optimizer.font.woff.loader,
                 options: configuration.module.optimizer.font.woff.options
-            }]
+            }].concat(configuration.module.optimizer.font.woff.additional.map(
+                evaluate))
         }
     },
     // endregion
@@ -818,10 +844,11 @@ const loader:Object = {
             configuration.module.optimizer.image.exclude, filePath),
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
-        use: {
+        use: [{
             loader: configuration.module.optimizer.image.loader,
             options: configuration.module.optimizer.image.file
-        }
+        }].concat(configuration.module.optimizer.image.additional.map(
+            evaluate))
     },
     // endregion
     // region data
@@ -839,29 +866,14 @@ const loader:Object = {
         use: [{
             loader: configuration.module.optimizer.data.loader,
             options: configuration.module.optimizer.data.options
-        }]
+        }].concat(configuration.module.optimizer.data.additional.map(evaluate))
     }
     // endregion
-}
+})
 if (configuration.files.compose.cascadingStyleSheet) {
     loader.style.use.shift()
     loader.style.use = plugins.ExtractText.extract({use: loader.style.use})
 }
-const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
-    filePath = Helper.stripLoader(filePath)
-    return Helper.isFilePathInLocation(
-        filePath, configuration.path.ignore.concat(
-            configuration.module.directoryNames,
-            configuration.loader.directoryNames
-        ).map((filePath:string):string => path.resolve(
-            configuration.path.context, filePath)
-        ).filter((filePath:string):boolean =>
-            !configuration.path.context.startsWith(filePath)))
-}
-const evaluate:Function = (code:string, filePath:string):any => (new Function(
-    'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
-    `return ${code}`
-))(configuration, filePath, loader, rejectFilePathInDependencies)
 // / endregion
 // endregion
 // region configuration
