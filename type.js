@@ -232,6 +232,7 @@ export type ResolvedConfiguration = {
             };
             htmlMinifier:PlainObject;
             image:{
+                additional:Array<string>;
                 content:PlainObject;
                 exclude:string;
                 file:PlainObject;
