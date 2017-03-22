@@ -232,15 +232,12 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
             let promises:Array<Promise<void>> = []
             for (const path:string of filePathsToRemove)
                 if (await Tools.isFile(path))
-                    promises.push(new Promise((
-                        resolve:Function
-                    ):void => fileSystem.unlink(path, (
-                        error:?Error
-                    ):void => {
-                        if (error)
-                            console.error(error)
-                        resolve()
-                    })))
+                    promises.push(new Promise((resolve:Function):void =>
+                        fileSystem.unlink(path, (error:?Error):void => {
+                            if (error)
+                                console.error(error)
+                            resolve()
+                        })))
             await Promise.all(promises)
             promises = []
             for (const type:string of [

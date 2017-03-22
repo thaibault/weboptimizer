@@ -198,7 +198,7 @@ const main = async ():Promise<any> => {
                 const tidyUp:Function = ():void => {
                     /*
                         Determines all none javaScript entities which have been
-                        emitted as single javaScript module to remove.
+                        emitted as single module to remove.
                     */
                     if (tidiedUp)
                         return
@@ -280,8 +280,9 @@ const main = async ():Promise<any> => {
                     const childProcess:ChildProcess = spawnChildProcess(
                         configuration.commandLine.build.command,
                         commandLineArguments, childProcessOptions)
-                    const copyAdditionalFilesAndTidyUp:Function = async (
-                    ):Promise<void> => {
+                    const copyAdditionalFilesAndTidyUp:Function = (
+                        ...parameter:Array<any>
+                    ):void => {
                         for (
                             const filePath:string of
                             configuration.files.additionalPaths
@@ -290,22 +291,17 @@ const main = async ():Promise<any> => {
                                 configuration.path.source.base, filePath)
                             const targetPath:string = path.join(
                                 configuration.path.target.base, filePath)
-                            if (await Tools.isDirectory(sourcePath)) {
-                                if (await Tools.isDirectory(targetPath))
-                                    await new Promise((
-                                        resolve:Function, reject:Function
-                                    ):void => removeDirectoryRecursively(
-                                        targetPath, {glob: false}, (
-                                            error:?Error
-                                        ):void => error ? reject(
-                                            error
-                                        ) : resolve()))
-                                await Tools.copyDirectoryRecursive(
+                            // NOTE: Close handler have to be synchronous.
+                            if (Tools.isDirectorySync(sourcePath)) {
+                                if (Tools.isDirectorySync(targetPath))
+                                    removeDirectoryRecursively.sync(
+                                        targetPath, {glob: false})
+                                Tools.copyDirectoryRecursiveSync(
                                     sourcePath, targetPath)
-                            } else if (await Tools.isFile(sourcePath))
-                                await Tools.copyFile(sourcePath, targetPath)
+                            } else if (Tools.isFileSync(sourcePath))
+                                Tools.copyFileSync(sourcePath, targetPath)
                         }
-                        tidyUp()
+                        tidyUp(...parameter)
                     }
                     const closeHandler:Function = Tools.getProcessCloseHandler(
                         resolve, reject, null, (
