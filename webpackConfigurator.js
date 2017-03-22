@@ -416,7 +416,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                 let index:number = 0
                 for (const tag:PlainObject of tags) {
                     if (/^\.__dummy__(\..*)?$/.test(path.basename(
-                        tag.attributes.src
+                        tag.attributes.src || tag.attributes.href || ''
                     )))
                         tags.splice(index, 1)
                     index += 1
