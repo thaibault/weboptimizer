@@ -808,7 +808,7 @@
           "normal": {}
         },
         "skipParseRegularExpressions": {
-          "__evaluate__": "/\\/(?:module|global)\\.js(?:\\?.+|$)/"
+          "__evaluate__": "/\\/(?:webpack\\/buildin\\/module|webpack\\/buildin\\/global)\\.js(?:\\?.+|$)/"
         },
         "style": {
           "loader": "style",
