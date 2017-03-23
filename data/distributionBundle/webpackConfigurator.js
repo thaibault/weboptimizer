@@ -232,15 +232,12 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
             let promises:Array<Promise<void>> = []
             for (const path:string of filePathsToRemove)
                 if (await Tools.isFile(path))
-                    promises.push(new Promise((
-                        resolve:Function
-                    ):void => fileSystem.unlink(path, (
-                        error:?Error
-                    ):void => {
-                        if (error)
-                            console.error(error)
-                        resolve()
-                    })))
+                    promises.push(new Promise((resolve:Function):void =>
+                        fileSystem.unlink(path, (error:?Error):void => {
+                            if (error)
+                                console.error(error)
+                            resolve()
+                        })))
             await Promise.all(promises)
             promises = []
             for (const type:string of [
@@ -252,13 +249,17 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     configuration.path.target.asset[type],
                     configuration.encoding,
                     (error:?Error, files:Array<string>):void => {
-                        if (error)
+                        if (error) {
                             reject(error)
+                            return
+                        }
                         if (files.length === 0)
                             fileSystem.rmdir(
                                 configuration.path.target.asset[type], (
                                     error:?Error
                                 ):void => error ? reject(error) : resolve())
+                        else
+                            resolve()
                     })))
             await Promise.all(promises)
             callback()
@@ -419,7 +420,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                 let index:number = 0
                 for (const tag:PlainObject of tags) {
                     if (/^\.__dummy__(\..*)?$/.test(path.basename(
-                        tag.attributes.src
+                        tag.attributes.src || tag.attributes.href || ''
                     )))
                         tags.splice(index, 1)
                     index += 1
