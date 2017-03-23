@@ -249,13 +249,17 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     configuration.path.target.asset[type],
                     configuration.encoding,
                     (error:?Error, files:Array<string>):void => {
-                        if (error)
+                        if (error) {
                             reject(error)
+                            return
+                        }
                         if (files.length === 0)
                             fileSystem.rmdir(
                                 configuration.path.target.asset[type], (
                                     error:?Error
                                 ):void => error ? reject(error) : resolve())
+                        else
+                            resolve()
                     })))
             await Promise.all(promises)
             callback()
