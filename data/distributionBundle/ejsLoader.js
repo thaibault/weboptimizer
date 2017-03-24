@@ -141,9 +141,10 @@ module.exports = function(source:string):string {
                     removeStyleLinkTypeAttributes: true,
                     sortAttributes: true,
                     sortClassName: true,
-                    trimCustomFragments: false,
+                    // NOTE: Avoids whitespace around placeholder in tags.
+                    trimCustomFragments: true,
                     useShortDoctype: true
-                })) : content
+                }, query.compress.html)) : content
         let remainingSteps:number = compileSteps
         let result:TemplateFunction|string = template
         let isString:boolean = options.isString
