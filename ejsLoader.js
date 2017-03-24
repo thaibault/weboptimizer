@@ -141,7 +141,8 @@ module.exports = function(source:string):string {
                     removeStyleLinkTypeAttributes: true,
                     sortAttributes: true,
                     sortClassName: true,
-                    trimCustomFragments: false,
+                    // NOTE: Avoids whitespace around placeholder in tags.
+                    trimCustomFragments: true,
                     useShortDoctype: true
                 }, query.compress.html)) : content
         let remainingSteps:number = compileSteps
