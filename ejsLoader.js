@@ -143,7 +143,7 @@ module.exports = function(source:string):string {
                     sortClassName: true,
                     trimCustomFragments: false,
                     useShortDoctype: true
-                })) : content
+                }, query.compress.html)) : content
         let remainingSteps:number = compileSteps
         let result:TemplateFunction|string = template
         let isString:boolean = options.isString
