@@ -1,0 +1,490 @@
+/* !/usr/bin/env css
+-*- coding: utf-8 -*- */
+/* region header
+Copyright Torben Sickert 16.12.2012
+
+License
+-------
+
+This library written by Torben Sickert stand under a creative commons naming
+3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
+endregion */
+@import 'bootstrap';
+@import 'website-utilities/index.css';
+@import 'pygment-vim-like-highlighting';
+
+:root {
+    /* region constants */
+    /** region color */
+    --color1: #fff;
+    --color2: #fbfbfc;
+    --color3: #f7f7f9;
+    --color4: #ddd;
+    --color5: #cbcbcd;
+    --color6: #797979;
+    --color7: #333;
+    --color8: #212121;
+    --color9: black;
+    --color10: #0090ff;
+    --color11: #0069ba;
+    /** endregion */
+    /** region space */
+    --defaultSpace: 20px;
+    /** endregion */
+    /* endregion */
+    /* region custom properties */
+    --icon: {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        vertical-align: text-top;
+        overflow: hidden;
+        background-position: 0 0;
+        background-repeat: no-repeat;
+    }
+    /*
+        NOTE: We explicit inherit form ".icon" to prepare this class to be
+        super classes as well.
+    */
+    --icon-blacktocat: {
+        @apply --icon;
+
+        background-image: url('../image/blacktocat.png');
+        background-position: 0 0;
+        width: 30px;
+        height: 30px;
+    }
+
+    --icon-archiv: {
+        @apply --icon;
+
+        background-position: 0 0;
+        width: 82px;
+        height: 64px;
+    }
+
+    --icon-archiv-gray: {
+        @apply --icon-archiv;
+
+        background-image: url('../image/folderGray.png');
+    }
+
+    --icon-archiv-blue: {
+        @apply --icon-archiv;
+
+        background-image: url('../image/folderBlue.png');
+    }
+
+    --icon-download: {
+        @apply --icon;
+
+        background-image: url('../image/arrowDown.png');
+        background-position: 0 0;
+        width: 20px;
+        height: var(--defaultSpace);
+    }
+    /* endregion */
+}
+/* region style sheets */
+.documentation {
+    /* region global */
+    @apply --codehilite;
+    @apply --website;
+
+    color: var(--color7);
+    background: var(--color8);
+    line-height: 1.5;
+    /** region grid */
+    & .outer { width: 100%; }
+
+    & .inner {
+        position: relative;
+        padding: var(--defaultSpace) calc(var(--defaultSpace) / 2);
+        margin: 0 auto;
+    }
+    /** endregion */
+    /** region symbol */
+    & span {
+        &.arrow-left-home,
+        &.arrow-left-api {
+            margin-top: 10px;
+            float: left;
+        }
+
+        &.arrow-left-api {
+            margin-left: 10px;
+            margin-top: 38px;
+        }
+    }
+    /** endregion */
+    /** region headline */
+    & h1,
+    & h2,
+    & h3,
+    & h4,
+    & h5,
+    & h6 {
+        margin: 10px 0;
+        color: var(--color8);
+        letter-spacing: -1px;
+        font-family: var(--fontFamilyCondensed);
+        font-size: 2em;
+    }
+    & h1 { font-size: 4em; }
+    & h2 { font-size: 3em; }
+    /** endregion */
+    /** region link */
+    & a {
+        color: var(--color10);
+        text-shadow: none;
+        outline: none !important;
+        transition: color 0.5s ease, background-color 0.5s ease;
+
+        &:hover { color: var(--color11); }
+
+        &.api-link {
+            padding-top: 36px;
+            float: left;
+        }
+
+        &[href="#top"] {
+            position: fixed;
+            z-index: 4;
+            bottom: 30px;
+            right: 45px;
+        }
+
+        &[href^="#language-"] {
+            color: var(--color6);
+
+            &.current { color: var(--color7); }
+            &:hover { color: var(--color8); }
+        }
+    }
+    /** endregion */
+    /** region image */
+    /*** region generic */
+    & [class^="icon-"],
+    & [class*=" icon-"],
+    & .icon { @apply --icon; }
+
+    & .icon- {
+        &blacktocat { @apply: --icon-blacktocat; }
+        &download { @apply --icon-download; }
+        &gray-archiv { @apply --icon-archiv-gray; }
+        &blue-archiv { @apply --icon-archiv-blue; }
+    }
+    /*** endregion */
+    & i.icon- {
+        &github {
+            @apply --icon-blacktocat;
+
+            margin-bottom: -2px;
+            margin-top: -6px;
+            margin-left: 8px;
+        }
+
+        &download-arrow {
+            @apply --icon-download;
+
+            float: right;
+            margin-top: 39px;
+            margin-left: var(--defaultSpace);
+        }
+    }
+    /** endregion */
+    /* endregion */
+    /* region header */
+    & header {
+        background-image:
+            linear-gradient(
+                to bottom,
+                var(--color7),
+                var(--color8)
+            );
+        background-color: var(--color8);
+
+        & .inner {
+            padding: 50px 10px 30px;
+
+            & a.forkme-banner {
+                box-shadow: 0 0 10px var(--color9);
+                border-radius: 0 0 2px 2px;
+                display: block;
+                position: absolute;
+                top: 0;
+                right: 10px;
+                z-index: 10;
+                padding: 10px;
+                color: var(--color1);
+                background-color: var(--color10);
+                font-weight: 700;
+
+                &:hover { background-color: var(--color11); }
+            }
+
+            & h1.project-title,
+            & h2.project-tagline {
+                border: none;
+                color: var(--color1);
+                text-shadow: var(--color9) 0 0 10px;
+
+                & a {
+                    color: var(--color1);
+                    text-shadow: var(--color9) 0 0 10px;
+                }
+            }
+
+            & h2.project-tagline {
+                font-weight: 300;
+                background: none;
+                font-size: 2em;
+            }
+
+            & .header-links {
+                padding: 0;
+                right: 0;
+                position: absolute;
+                z-index: 10;
+                bottom: -40px;
+                height: 70px;
+
+                & a {
+                    &.api-link { margin-left: 10px; }
+
+                    &[href^="#language-"] {
+                        padding-right: 10px;
+                        padding-top: 35px;
+                        float: right;
+                    }
+                    /* region download buttons */
+                    &.zip-source-download,
+                    &.zip-distribution-bundle-download,
+                    &.tar-gz-source-download,
+                    &.zip-source-download:hover,
+                    &.zip-distribution-bundle-download:hover,
+                    &.tar-gz-source-download:hover {
+                        color: var(--color1);
+                        width: 90px;
+                        height: 70px;
+                    }
+
+                    &.zip-source-download,
+                    &.zip-distribution-bundle-download,
+                    &.tar-gz-source-download {
+                        @apply --icon-archiv-gray;
+
+                        font-size: 1.2em;
+                        text-align: center;
+                        padding-top: 29px;
+                        font-weight: bolder;
+                        display: block;
+                        float: right;
+                        overflow: hidden;
+                    }
+
+                    &.zip-source-download:hover,
+                    &.zip-distribution-bundle-download:hover,
+                    &.tar-gz-source-download:hover {
+                        @apply --icon-archiv-blue;
+                    }
+                    /* endregion */
+                }
+            }
+        }
+    }
+    /* endregion */
+    /* region content */
+    & section {
+        background-color: var(--color1);
+        overflow: auto;
+        word-wrap: break-word;
+        /* region content */
+        & .inner {
+            padding-top: 40px;
+
+            &.main-content {
+                /* region code blocks */
+                & .codehilite pre {
+                    border-radius: 0;
+                    border-color: var(--color4);
+                    background-color: var(--color2);
+                    margin: var(--defaultSpace) 0 0 0;
+                    /* Don't highlight syntax errors. */
+                    & .err { border: 0; }
+                }
+
+                & .table-responsive {
+                    border: 0;
+                    margin-bottom: 0;
+
+                    & .codehilitetable { width: 100%; }
+                }
+
+                & table {
+                    border-collapse: collapse;
+                    margin-top: var(--defaultSpace);
+                    text-align: left;
+
+                    & .linenos,
+                    & .code {
+                        border-color: var(--color4);
+                        padding: 0;
+
+                        & .linenodiv,
+                        & .codehilite {
+                            & pre {
+                                border-color: var(--color4);
+                                white-space: pre;
+                                margin: 0;
+                            }
+                        }
+
+                        & .linenodiv pre {
+                            border-radius: 0;
+                            padding: 10px 4px;
+                            text-align: right;
+                            color: var(--color5);
+                            background-color: var(--color3);
+                        }
+
+                        & .codehilite pre {
+                            padding: 10px;
+                            overflow: auto;
+                            background-color: var(--color2);
+                            border-left: 0;
+                            /* Don't highlight syntax errors. */
+                            & .err { border: 0; }
+                        }
+                    }
+                }
+                & p { margin: var(--defaultSpace) 0 0 0; }
+                /* endregion */
+                & .show-example-wrapper {
+                    border: 1px solid var(--color4);
+                    border-top: 0;
+                    background-color: var(--color2);
+                    padding: var(--defaultSpace);
+                    padding-top: calc(var(--defaultSpace) / 2);
+
+                    & h3 {
+                        font-family: var(--fontFamily);
+                        font-size: 0.9em;
+                        font-weight: bold;
+                        color: var(--color5);
+                        letter-spacing: 1px;
+                        margin-bottom: calc(var(--defaultSpace) / 2);
+                        margin-top: 0;
+                    }
+                    & p { margin: 0; }
+                }
+            }
+        }
+        /* endregion */
+        /* region about this website */
+        & .about-this-website {
+            & p { margin-bottom: 45px; }
+
+            & a[href="#home"] {
+                float: left;
+                margin-top: 8px;
+                margin-left: 10px;
+            }
+        }
+        /* endregion */
+    }
+    /* endregion */
+    /* region footer */
+    & footer .inner {
+        width: 100%;
+        text-align: center;
+        padding-left: 0;
+        padding-right: 0;
+
+        & p { color: var(--color3); }
+        & a:hover { color: var(--color11); }
+    }
+    /* endregion */
+    /* region responsive */
+    /** region extra extra extra small */
+    & a[href="#top"] { visibility: hidden; }
+
+    & header .header-links {
+        width: 100%;
+
+        & .arrow-left-api { margin-left: 10px; }
+
+        & .arrow-left-api,
+        & .api-link span,
+        & .icon-download-arrow { display: none; }
+    }
+    /** endregion */
+    /** region extra extra small */
+    @media (--extra-extra-small) {
+        & header .header-links {
+            & .arrow-left-api,
+            & .icon-download-arrow { display: initial; }
+        }
+        /** region extra small */
+        @media (--extra-small) {
+            & header .header-links .api-link span { display: initial; }
+
+            @media (--small) {
+                /* region small */
+                /** region headline */
+                & h2 {
+                    padding-bottom: 10px;
+                    border-bottom: 1px dashed var(--color4);
+                }
+                /** endregion */
+
+                & .inner { width: 715px; }
+
+                & header .header-links {
+                    width: 706px;
+
+                    & .arrow-left-api { margin-left: 0; }
+                }
+
+                & section .inner.main-content {
+                    & pre { font-size: 0.9em; }
+
+                    & .codehilite pre { width: 695px; }
+
+                    & table {
+                        & .linenos .linenodiv pre { width: 42px; }
+
+                        & .linenos,
+                        & .code {
+                            & .linenodiv pre { padding: 10px 7px 10px 1px; }
+                        }
+
+                        & .code .codehilite pre { width: 653px; }
+                    }
+
+                    & .show-example-wrapper { width: 100%; }
+                }
+
+                & a[href="#top"] {
+                    visibility: visible;
+                    position: fixed;
+                    z-index: 4;
+                    bottom: 30px;
+                    right: 5px;
+                }
+                /* endregion */
+                /* region medium */
+                @media (--medium) { & a[href="#top"] { right: 45px; } }
+                /* endregion */
+            }
+        }
+        /** endregion */
+    }
+    /** endregion */
+    /* endregion */
+}
+/* endregion */
+/* region vim modline
+vim: set tabstop=4 shiftwidth=4 expandtab:
+vim: foldmethod=marker foldmarker=region,endregion:
+endregion */
