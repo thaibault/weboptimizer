@@ -299,14 +299,15 @@
             "__evaluate__": "self.path.source.base"
           },
           "historyApiFallback": true,
+          "host": "localhost",
           "hot": {
             "__evaluate__": "self.debug"
           },
+          "port": 8080,
           "stats": {
             "colors": true
           },
-          "host": "localhost",
-          "port": 8080
+          "watchContentBase": true
         },
         "tool": false
       },
