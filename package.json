@@ -296,7 +296,7 @@
         "openBrowser": null,
         "server": {
           "contentBase": {
-            "__evaluate__": "self.path.source.base"
+            "__evaluate__": "self.path.target.base"
           },
           "historyApiFallback": true,
           "host": "localhost",
