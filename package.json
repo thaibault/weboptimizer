@@ -299,7 +299,7 @@
             "__evaluate__": "self.path.target.base"
           },
           "historyApiFallback": true,
-          "host": "0.0.0.0",
+          "host": "localhost",
           "hot": {
             "__evaluate__": "self.debug"
           },
