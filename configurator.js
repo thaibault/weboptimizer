@@ -186,7 +186,7 @@ if (Tools.isDirectorySync(configuration.path.target.base))
 const parameterDescription:Array<string> = [
     'currentPath', 'fileSystem', 'Helper', 'path', 'require', 'Tools',
     'webOptimizerPath', 'now', 'nowUTCTimestamp']
-const date:Date = new Date()
+const now:Date = new Date()
 const nowUTCTimestamp:number = Date.UTC(
     now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
     now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
