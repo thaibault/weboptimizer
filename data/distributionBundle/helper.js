@@ -16,8 +16,8 @@
 // region imports
 import type {DomNode} from 'clientnode'
 import Tools from 'clientnode'
-import type {File, PlainObject} from 'clientnode'
-import * as dom from 'jsdom'
+import type {File, PlainObject, Window} from 'clientnode'
+import {JSDOM as DOM} from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
 // NOTE: Only needed for debugging this file.
@@ -85,11 +85,15 @@ export default class Helper {
         */
         return new Promise((
             resolve:Function, reject:Function
-        ):void => dom.env(content.replace(/<%/g, '##+#+#+##').replace(
-            /%>/g, '##-#-#-##'
-        ), (error:?Error, window:Object):void => {
-            if (error)
+        ):void => {
+            let window:Window
+            try {
+                window = (new DOM(content.replace(/<%/g, '##+#+#+##').replace(
+                    /%>/g, '##-#-#-##'
+                ))).window
+            } catch (error) {
                 return reject(error)
+            }
             const filePathsToRemove:Array<string> = []
             if (cascadingStyleSheetPattern)
                 for (const pattern:string in cascadingStyleSheetPattern) {
@@ -198,7 +202,7 @@ export default class Helper {
                 ).replace(/##-#-#-##/g, '%>'),
                 filePathsToRemove
             })
-        }))
+        })
     }
     /**
      * Strips loader informations form given module request including loader

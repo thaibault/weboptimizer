@@ -185,10 +185,16 @@ if (Tools.isDirectorySync(configuration.path.target.base))
 // / region define dynamic resolve parameter
 const parameterDescription:Array<string> = [
     'currentPath', 'fileSystem', 'Helper', 'path', 'require', 'Tools',
-    'webOptimizerPath']
+    'webOptimizerPath', 'now', 'nowUTCTimestamp']
+const now:Date = new Date()
+const nowUTCTimestamp:number = Date.UTC(
+    now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+    now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
+    now.getUTCMilliseconds())
 const parameter:Array<any> = [
     /* eslint-disable no-eval */
-    process.cwd(), fileSystem, Helper, path, eval('require'), Tools, __dirname]
+    process.cwd(), fileSystem, Helper, path, eval('require'), Tools, __dirname,
+    now, nowUTCTimestamp]
     /* eslint-enable no-eval */
 // / endregion
 // / region build absolute paths
