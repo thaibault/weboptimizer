@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import type {DomNode, Window} from 'clientnode'
+import type {Window} from 'clientnode'
 import type {BrowserAPI} from './type'
 // endregion
 // region declaration
@@ -31,8 +31,8 @@ let browserAPI:BrowserAPI
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
     const path:Object = require('path')
-    const {JSDOM:Object, VirtualConsole} = require('jsdom')
-    const DOM:Object = JSDOM
+    const {JSDOM, VirtualConsole} = require('jsdom')
+    const DOM:typeof Object = JSDOM
     const virtualConsole:Object = new VirtualConsole()
     for (const name:string of [
         'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
@@ -86,7 +86,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // endregion
 } else {
     browserAPI = {
-        debug: false, domContentLoaded: false, metaDOM: null, window,
+        debug: false, domContentLoaded: false, DOM: null, window,
         windowLoaded: false}
     window.document.addEventListener('DOMContentLoaded', ():void => {
         browserAPI.domContentLoaded = true

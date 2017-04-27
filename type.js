@@ -21,7 +21,7 @@ import type {PlainObject, ProcedureFunction, Window} from 'clientnode'
 export type BrowserAPI = {
     debug:boolean;
     domContentLoaded:boolean;
-    metaDOM:?Object;
+    DOM:?Object;
     window:Window;
     windowLoaded:boolean;
 }
