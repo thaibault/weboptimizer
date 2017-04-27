@@ -49,12 +49,12 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             console.error(error.stack, error.detail)
     })
     const render:Function = (template:string):Window => {
-        let window:Window = new DOM(template, {
+        let window:Window = (new DOM(template, {
             resources: 'usable',
             runScripts: 'dangerously',
             url: 'http://localhost',
             virtualConsole
-        })
+        })).window
         browserAPI = {
             debug: false, domContentLoaded: false, DOM, window,
             windowLoaded: false}
