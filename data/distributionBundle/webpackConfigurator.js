@@ -17,7 +17,7 @@
 import BabiliPlugin from 'babili-webpack-plugin'
 import Tools from 'clientnode'
 import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
-import * as dom from 'jsdom'
+import {JSDOM as DOM} from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
 import postcssCSSnext from 'postcss-cssnext'
@@ -439,11 +439,15 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
         })
         compilation.plugin('html-webpack-plugin-after-html-processing', (
             htmlPluginData:PlainObject, callback:ProcedureFunction
-        ):Window => dom.env(htmlPluginData.html.replace(
-            /<%/g, '##+#+#+##'
-        ).replace(/%>/g, '##-#-#-##'), (error:?Error, window:Window):void => {
-            if (error)
+        ):Window => {
+            let window:Window
+            try {
+                window = (new DOM(htmlPluginData.html.replace(
+                    /<%/g, '##+#+#+##'
+                ).replace(/%>/g, '##-#-#-##'))).window
+            } catch (error) {
                 return callback(error, htmlPluginData)
+            }
             const linkables:{[key:string]:string} = {
                 script: 'src', link: 'href'}
             for (const tagName:string in linkables)
@@ -502,7 +506,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                 }
             // endregion
             callback(null, htmlPluginData)
-        }))
+        })
     })})
 /*
     NOTE: The umd module export doesn't handle cases where the package name

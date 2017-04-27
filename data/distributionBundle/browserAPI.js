@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import type {DomNode, Window} from 'clientnode'
+import type {Window} from 'clientnode'
 import type {BrowserAPI} from './type'
 // endregion
 // region declaration
@@ -31,10 +31,14 @@ let browserAPI:BrowserAPI
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
     const path:Object = require('path')
-    const metaDOM:Object = require('jsdom')
-    const virtualConsole:Object = metaDOM.createVirtualConsole().sendTo(
-        console, {omitJsdomErrors: true})
-    virtualConsole.on('jsdomError', (error:Error):void => {
+    const {JSDOM, VirtualConsole} = require('jsdom')
+    const DOM:typeof Object = JSDOM
+    const virtualConsole:Object = new VirtualConsole()
+    for (const name:string of [
+        'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
+    ])
+        virtualConsole.on(name, console[name].bind(console))
+    virtualConsole.on('error', (error:Error):void => {
         if (!browserAPI.debug && [
             'XMLHttpRequest', 'resource loading'
         // IgnoreTypeCheck
@@ -44,73 +48,28 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             // IgnoreTypeCheck
             console.error(error.stack, error.detail)
     })
-    const render:Function = (template:string):void => metaDOM.env({
-        created: (error:?Error, window:Window):void => {
-            browserAPI = {
-                debug: false, domContentLoaded: false, metaDOM, window,
-                windowLoaded: false}
-            window.document.addEventListener('DOMContentLoaded', ():void => {
-                browserAPI.domContentLoaded = true
-            })
-            if (error)
-                throw error
-            else
-                for (const callback:Function of onCreatedListener)
-                    callback(browserAPI, false)
-        },
-        features: {
-            FetchExternalResources: [
-                'script', 'frame', 'iframe', 'link', 'img'
-            ],
-            ProcessExternalResources: ['script'],
-            SkipExternalResources: false
-        },
-        html: template,
-        onload: ():void => {
+    const render:Function = (template:string):Window => {
+        let window:Window = (new DOM(template, {
+            resources: 'usable',
+            runScripts: 'dangerously',
+            url: 'http://localhost',
+            virtualConsole
+        })).window
+        browserAPI = {
+            debug: false, domContentLoaded: false, DOM, window,
+            windowLoaded: false}
+        window.addEventListener('load', ():void => {
+            // NOTE: Maybe we have miss the "DOMContentLoaded" event.
             browserAPI.domContentLoaded = true
             browserAPI.windowLoaded = true
-        },
-        resourceLoader: (
-            resource:{
-                element:DomNode;
-                url:{
-                    hostname:string;
-                    host:string;
-                    port:?string;
-                    protocol:string;
-                    href:string;
-                    path:string;
-                    pathname:string;
-                };
-                cookie:string;
-                baseUrl:string;
-                defaultFetch:(callback:(
-                    error:?Error, body:string
-                ) => void) => void
-            }, callback:(error:?Error, content:any) => void
-        ):void => {
-            if (resource.url.hostname === 'localhost') {
-                resource.url.host = resource.url.hostname = ''
-                resource.url.port = null
-                resource.url.protocol = 'file:'
-                resource.url.href = resource.url.href.replace(
-                    /^[a-zA-Z]+:\/\/localhost(?::[0-9]+)?/,
-                    `file://${process.cwd()}`)
-                resource.url.path = resource.url.pathname = path.join(
-                    process.cwd(), resource.url.path)
-            }
-            if (browserAPI.debug)
-                console.info(`Load resource "${resource.url.href}".`)
-            return resource.defaultFetch((
-                error:?Error, ...additionalParameter:Array<any>
-            ):void => {
-                if (!error)
-                    callback(error, ...additionalParameter)
-            })
-        },
-        url: 'http://localhost',
-        virtualConsole
-    })
+        })
+        window.document.addEventListener('DOMContentLoaded', ():void => {
+            browserAPI.domContentLoaded = true
+        })
+        for (const callback:Function of onCreatedListener)
+            callback(browserAPI, false)
+        return window
+    }
     if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
         const filePath:string = path.join(__dirname, 'index.html.ejs')
         require('fs').readFile(filePath, {encoding: 'utf-8'}, (
@@ -127,7 +86,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // endregion
 } else {
     browserAPI = {
-        debug: false, domContentLoaded: false, metaDOM: null, window,
+        debug: false, domContentLoaded: false, DOM: null, window,
         windowLoaded: false}
     window.document.addEventListener('DOMContentLoaded', ():void => {
         browserAPI.domContentLoaded = true
