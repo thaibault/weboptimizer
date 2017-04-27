@@ -262,7 +262,9 @@
               "__evaluate__": "self.debug ? '--inline' : ''"
             },
             "--host",
-            "0.0.0.0",
+            {
+              "__evaluate__": "self.development.server.host"
+            },
             "--port",
             {
               "__evaluate__": "self.development.server.port"
@@ -299,7 +301,7 @@
             "__evaluate__": "self.path.target.base"
           },
           "historyApiFallback": true,
-          "host": "localhost",
+          "host": "0.0.0.0",
           "hot": {
             "__evaluate__": "self.debug"
           },
