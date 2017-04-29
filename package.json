@@ -536,7 +536,7 @@
         "cascadingStyleSheet": {
           "exclude": null,
           "loader": "css",
-          "options": {}
+          "options": {"url": false}
         },
         "directoryNames": [
           "node_modules"
