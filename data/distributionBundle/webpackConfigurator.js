@@ -757,7 +757,7 @@ Tools.extendObject(loader, {
                             "node_modules" folder.
                         */
                         postcssFontPath({checkPath: false}),
-                        postcssURL({filter: '', maxSize: 0}),
+                        postcssURL({url: 'rebase'}),
                         postcssSprites({
                             filterBy: ():Promise<null> => new Promise((
                                 resolve:Function, reject:Function
