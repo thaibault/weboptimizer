@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.316",
+  "version": "1.0.317",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "http://torben.website/webOptimizer",
@@ -536,7 +536,9 @@
         "cascadingStyleSheet": {
           "exclude": null,
           "loader": "css",
-          "options": {"url": false}
+          "options": {
+            "url": false
+          }
         },
         "directoryNames": [
           "node_modules"
