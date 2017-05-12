@@ -239,9 +239,19 @@
                 "__evaluate__": "`'${self.path.apiDocumentation}'`"
               },
               "--ignore-pattern",
-              {
-                "__evaluate__": "`'**/node_modules/*'`"
-              },
+              "'**/.git/*'",
+              "--ignore-pattern",
+              "'**/.config/*'",
+              "--ignore-pattern",
+              "'**/.npm/*'",
+              "--ignore-pattern",
+              "'**/log/*'",
+              "--ignore-pattern",
+              "'**/node_modules/*'",
+              "--ignore-pattern",
+              "'**/backup/*'",
+              "--ignore-pattern",
+              "'**/plugins/*'",
               "'**/*.js'"
             ],
             "command": "eslint",
