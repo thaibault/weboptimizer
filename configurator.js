@@ -115,10 +115,10 @@ if (typeof configuration.library === 'object')
 if (
     'library' in specificConfiguration &&
     specificConfiguration.library === true || (
-        'library' in specificConfiguration &&
-        specificConfiguration.library === undefined ||
-        !('library' in specificConfiguration)
-    ) && configuration.library
+            'library' in specificConfiguration &&
+            specificConfiguration.library === undefined ||
+            !('library' in specificConfiguration)
+        ) && configuration.library
 )
     configuration = Tools.extendObject(true, Tools.modifyObject(
         configuration, libraryConfiguration
@@ -150,15 +150,15 @@ if (filePath) {
             throw error
     })
 }
+// // region apply use case specific configuration
 if (runtimeInformation.givenCommandLineArguments.length > 2)
-    // region apply use case specific configuration
-    for (const type:string of ['document', 'test', 'testInBrowser'])
+    for (const type:string of ['document', 'test', 'test:browser'])
         if (runtimeInformation.givenCommandLineArguments[2] === type)
             Tools.extendObject(true, Tools.modifyObject(
                 configuration, configuration[type]
             ), configuration[type])
-    // endregion
-for (const type:string of ['document', 'test', 'testInBrowser'])
+// // endregion
+for (const type:string of ['document', 'test', 'test:Browser'])
     delete configuration[type]
 // / endregion
 Tools.extendObject(true, Tools.modifyObject(Tools.modifyObject(
@@ -191,11 +191,11 @@ const nowUTCTimestamp:number = Date.UTC(
     now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
     now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
     now.getUTCMilliseconds())
+/* eslint-disable no-eval */
 const parameter:Array<any> = [
-    /* eslint-disable no-eval */
     process.cwd(), fileSystem, Helper, path, eval('require'), Tools, __dirname,
     now, nowUTCTimestamp]
-    /* eslint-enable no-eval */
+/* eslint-enable no-eval */
 // / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
@@ -232,12 +232,11 @@ for (const key:string in configuration.path)
                     typeof configuration.path[key][subKey][
                         subSubKey
                     ] === 'string')
-                        configuration.path[key][subKey][
-                            subSubKey
-                        ] = path.resolve(
-                            configuration.path[key][subKey].base,
-                            configuration.path[key][subKey][subSubKey]
-                        ) + '/'
+                        configuration.path[key][subKey][subSubKey] =
+                            path.resolve(
+                                configuration.path[key][subKey].base,
+                                configuration.path[key][subKey][subSubKey]
+                            ) + '/'
             }
     }
 // / endregion
@@ -304,18 +303,16 @@ resolvedConfiguration.injection.internal = {
         ).filter((filePath:string):boolean =>
             !resolvedConfiguration.path.context.startsWith(filePath)))}
 resolvedConfiguration.needed = {javaScript: configuration.debug && [
-    'serve', 'testInBrowser'
+    'serve', 'test:browser'
 ].includes(resolvedConfiguration.givenCommandLineArguments[2])}
-for (
-    const chunkName:string in
-    resolvedConfiguration.injection.internal.normalized
+for (const chunkName:string in resolvedConfiguration.injection.internal
+    .normalized
 )
     if (resolvedConfiguration.injection.internal.normalized.hasOwnProperty(
         chunkName
     ))
-        for (
-            const moduleID:string of
-            resolvedConfiguration.injection.internal.normalized[chunkName]
+        for (const moduleID:string of resolvedConfiguration.injection.internal
+            .normalized[chunkName]
         ) {
             const filePath:?string = Helper.determineModuleFilePath(
                 moduleID, resolvedConfiguration.module.aliases,
@@ -350,9 +347,8 @@ for (
 // NOTE: This alias couldn't be set in the "package.json" file since this would
 // result in an endless loop.
 resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader = ''
-for (
-    const loader:PlainObject of
-    resolvedConfiguration.files.defaultHTML.template.use
+for (const loader:PlainObject of resolvedConfiguration.files.defaultHTML
+    .template.use
 ) {
     if (
         resolvedConfiguration.loader.aliases

@@ -104,7 +104,7 @@ for (const source:string in configuration.module.replacements.normal)
 // // endregion
 // // region generate html file
 let htmlAvailable:boolean = false
-if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
+if (configuration.givenCommandLineArguments[2] !== 'build:dll')
     for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
         if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
             pluginInstances.push(new plugins.HTML(Tools.extendObject(
@@ -121,7 +121,7 @@ if (htmlAvailable && configuration.favicon && Tools.isFileSync(
 // // endregion
 // // region provide offline functionality
 if (htmlAvailable && configuration.offline) {
-    if (!['serve', 'testInBrowser'].includes(
+    if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
     )) {
         if (configuration.inPlace.cascadingStyleSheet && Object.keys(
@@ -144,7 +144,7 @@ if (htmlAvailable && configuration.offline) {
 // // endregion
 // // region opens browser automatically
 if (configuration.development.openBrowser && (htmlAvailable && [
-    'serve', 'testInBrowser'
+    'serve', 'test:browser'
 ].includes(configuration.givenCommandLineArguments[2])))
     pluginInstances.push(new plugins.OpenBrowser(
         configuration.development.openBrowser))
@@ -189,7 +189,7 @@ pluginInstances.push({apply: (compiler:Object):void => {
 }})
 // /// endregion
 // /// region in-place configured assets in the main html file
-if (htmlAvailable && !['serve', 'testInBrowser'].includes(
+if (htmlAvailable && !['serve', 'test:browser'].includes(
     configuration.givenCommandLineArguments[2]
 ))
     pluginInstances.push({apply: (compiler:Object):void => {
@@ -247,7 +247,9 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
                     resolve:Function, reject:Function
                 ):void => fileSystem.readdir(
                     configuration.path.target.asset[type],
+                    // IgnoreTypeCheck
                     configuration.encoding,
+                    // IgnoreTypeCheck
                     (error:?Error, files:Array<string>):void => {
                         if (error) {
                             reject(error)
@@ -267,7 +269,7 @@ if (htmlAvailable && !['serve', 'testInBrowser'].includes(
     }})
 // /// endregion
 // /// region remove chunks if a corresponding dll package exists
-if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
+if (configuration.givenCommandLineArguments[2] !== 'build:dll')
     for (const chunkName:string in configuration.injection.internal.normalized)
         if (configuration.injection.internal.normalized.hasOwnProperty(
             chunkName
@@ -295,7 +297,7 @@ if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
         }
 // /// endregion
 // /// region generate common chunks
-if (configuration.givenCommandLineArguments[2] !== 'buildDLL')
+if (configuration.givenCommandLineArguments[2] !== 'build:dll')
     for (const chunkName:string of configuration.injection.commonChunkIDs)
         if (configuration.injection.internal.normalized.hasOwnProperty(
             chunkName
@@ -387,7 +389,7 @@ if (configuration.injection.external.modules === '__implicit__')
     }
 // /// endregion
 // /// region build dll packages
-if (configuration.givenCommandLineArguments[2] === 'buildDLL') {
+if (configuration.givenCommandLineArguments[2] === 'build:dll') {
     let dllChunkIDExists:boolean = false
     for (const chunkName:string in configuration.injection.internal.normalized)
         if (configuration.injection.internal.normalized.hasOwnProperty(
@@ -579,6 +581,7 @@ for (
     pluginInstances.push(new webpack.ContextReplacementPlugin(
         ...contextReplacement.map((value:string):any => (new Function(
             'configuration', '__dirname', '__filename', `return ${value}`
+        // IgnoreTypeCheck
         ))(configuration, __dirname, __filename))))
 // // endregion
 // / endregion
@@ -598,6 +601,7 @@ const loader:Object = {}
 const evaluate:Function = (code:string, filePath:string):any => (new Function(
     'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
     `return ${code}`
+// IgnoreTypeCheck
 ))(configuration, filePath, loader, rejectFilePathInDependencies)
 Tools.extendObject(loader, {
     // Convert to compatible native web types.
@@ -919,7 +923,7 @@ const webpackConfiguration:WebpackConfiguration = {
         hashFunction: configuration.hashAlgorithm,
         library: libraryName,
         libraryTarget: (
-            configuration.givenCommandLineArguments[2] === 'buildDLL'
+            configuration.givenCommandLineArguments[2] === 'build:dll'
         ) ? 'var' : configuration.exportFormat.self,
         path: configuration.path.target.base,
         publicPath: configuration.path.target.public,
