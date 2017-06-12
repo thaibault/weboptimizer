@@ -1256,7 +1256,11 @@
       ],
       "space-before-function-paren": [
         "error",
-        "always"
+        {
+          "anonymous": "never",
+          "asyncArrow": "always",
+          "named": "never"
+        }
       ],
       "spaced-comment": [
         "error",
