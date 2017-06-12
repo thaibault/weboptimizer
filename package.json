@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.321",
+  "version": "1.0.322",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "http://torben.website/webOptimizer",
@@ -1254,7 +1254,10 @@
         "error",
         "never"
       ],
-      "space-before-function-paren": ["error", "always"],
+      "space-before-function-paren": [
+        "error",
+        "always"
+      ],
       "spaced-comment": [
         "error",
         "always",
