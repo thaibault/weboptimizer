@@ -109,20 +109,20 @@ compositions are listed below:
     "scripts": {
         ...
         "build": "webOptimizer build",
-        "buildDLL": "webOptimizer buildDLL",
-        "buildDebugWithDLL": "webOptimizer buildDLL -debug && webOptimizer build -debug",
-        "buildWithStats": "webOptimizer build --profile --json >/tmp/stat.json && echo 'Results successfully written to \"/tmp/stat.json\".'",
+        "build:dll": "webOptimizer build:dll",
+        "build:dll:debug": "webOptimizer build:dll -debug && webOptimizer build -debug",
+        "build:stats": "webOptimizer build --profile --json >/tmp/stat.json && echo 'Results successfully written to \"/tmp/stat.json\".'",
         "clear": "webOptimizer clear",
         "document": "webOptimizer document",
-        "lint": "webOptimizer typeCheck && webOptimizer lint",
+        "lint": "webOptimizer check:type && webOptimizer lint",
         "postinstall": "webOptimizer build",
         "preinstall": "webOptimizer preinstall",
         "serve": "webOptimizer serve",
         "start": "npm run serve",
         "test": "webOptimizer test",
-        "testInBrowser": "webOptimizer testInBrowser",
+        "test:browser": "webOptimizer test:browser",
         "watch": "webOptimizer build --watch",
-        "watchDLL": "webOptimizer buildDLL --watch"
+        "watch:dll": "webOptimizer build:dll --watch"
         ...
     },
     ...

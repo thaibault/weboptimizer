@@ -43,8 +43,8 @@ const main = async ():Promise<any> => {
         const childProcesses:Array<ChildProcess> = []
         const processPromises:Array<Promise<any>> = []
         const possibleArguments:Array<string> = [
-            'build', 'buildDLL', 'clear', 'document', 'lint', 'preinstall',
-            'serve', 'test', 'testInBrowser', 'typeCheck']
+            'build', 'build:dll', 'clear', 'document', 'lint', 'preinstall',
+            'serve', 'test', 'test:browser', 'check:type']
         const closeEventHandlers:Array<Function> = []
         if (configuration.givenCommandLineArguments.length > 2) {
             // region temporary save dynamically given configurations
@@ -94,7 +94,7 @@ const main = async ():Promise<any> => {
                 during preinstall phase.
             */
             if (![
-                'build', 'preinstall', 'serve', 'test', 'testInBrowser'
+                'build', 'preinstall', 'serve', 'test', 'test:browser'
             ].includes(configuration.givenCommandLineArguments[2]) &&
             possibleArguments.includes(
                 configuration.givenCommandLineArguments[2]
@@ -320,7 +320,7 @@ const main = async ():Promise<any> => {
                 // Perform all file specific preprocessing stuff.
                 const testModuleFilePaths:Array<string> =
                     Helper.determineModuleLocations(
-                        configuration.testInBrowser.injection.internal,
+                        configuration['test:browser'].injection.internal,
                         configuration.module.aliases,
                         configuration.module.replacements.normal,
                         configuration.extensions, configuration.path.context,
@@ -413,9 +413,9 @@ const main = async ():Promise<any> => {
             )) {
                 await Promise.all(processPromises)
                 handleTask(configuration.givenCommandLineArguments[2])
-            } else if (['lint', 'testInBrowser', 'typeCheck', 'serve'].includes(
-                configuration.givenCommandLineArguments[2]
-            ))
+            } else if ([
+                'lint', 'test:browser', 'check:type', 'serve'
+            ].includes(configuration.givenCommandLineArguments[2]))
                 handleTask(configuration.givenCommandLineArguments[2])
             // / endregion
             // endregion

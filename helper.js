@@ -578,9 +578,7 @@ export default class Helper {
             Helper.resolveModulesInFolders(
                 Helper.normalizeInternalInjection(internalInjection),
                 aliases, moduleReplacements, extensions, context,
-                referencePath, pathsToIgnore, relativeModuleFilePaths,
-                packageEntryFileNames, packageMainPropertyNames,
-                packageAliasPropertyNames)
+                referencePath, pathsToIgnore)
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
