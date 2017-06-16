@@ -577,8 +577,8 @@ export default class Helper {
         const normalizedInternalInjection:NormalizedInternalInjection =
             Helper.resolveModulesInFolders(
                 Helper.normalizeInternalInjection(internalInjection),
-                aliases, moduleReplacements, extensions, context,
-                referencePath, pathsToIgnore)
+                aliases, moduleReplacements, context, referencePath,
+                pathsToIgnore)
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
@@ -607,7 +607,6 @@ export default class Helper {
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
      * account.
-     * @param extensions - List of file and module extensions.
      * @param context - File path to determine relative to.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
@@ -616,15 +615,7 @@ export default class Helper {
     static resolveModulesInFolders(
         normalizedInternalInjection:NormalizedInternalInjection,
         aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
-        extensions:Extensions = {
-            file: {
-                external: ['.js'],
-                internal: [
-                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
-                ]
-            }, module: []
-        }, context:string = './', referencePath:string = '',
+        context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):NormalizedInternalInjection {
         if (referencePath.startsWith('/'))
