@@ -713,9 +713,7 @@
             },
             "loader": "url"
           },
-          "babili": {
-            "comments": false
-          }
+          "babili": {}
         },
         "preprocessor": {
           "cascadingStyleSheet": {

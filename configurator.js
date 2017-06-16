@@ -292,7 +292,6 @@ resolvedConfiguration.injection.internal = {
         Helper.normalizeInternalInjection(internalInjection),
         resolvedConfiguration.module.aliases,
         resolvedConfiguration.module.replacements.normal,
-        resolvedConfiguration.extensions,
         resolvedConfiguration.path.context,
         resolvedConfiguration.path.source.asset.base,
         resolvedConfiguration.path.ignore.concat(
