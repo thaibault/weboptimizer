@@ -191,7 +191,7 @@ const main = async ():Promise<any> => {
                     ).filter((filePath:string):boolean =>
                         !configuration.path.context.startsWith(filePath)),
                     configuration.package.main.fileNames)
-            if (['build', 'buildDLL', 'document', 'test'].includes(
+            if (['build', 'build:dll', 'document', 'test'].includes(
                 process.argv[2]
             )) {
                 let tidiedUp:boolean = false
