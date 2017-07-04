@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.325",
+  "version": "1.0.326",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "http://torben.website/webOptimizer",
@@ -308,8 +308,12 @@
         "openBrowser": null,
         "server": {
           "contentBase": [
-            {"__evaluate__": "self.path.target.base"},
-            {"__evaluate__": "self.path.source.base"}
+            {
+              "__evaluate__": "self.path.target.base"
+            },
+            {
+              "__evaluate__": "self.path.source.base"
+            }
           ],
           "historyApiFallback": true,
           "host": "0.0.0.0",
