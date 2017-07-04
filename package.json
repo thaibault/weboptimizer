@@ -321,6 +321,9 @@
             "__evaluate__": "self.debug"
           },
           "port": 8080,
+          "publicPath": {
+            "__evaluate__": "self.path.target.public"
+          },
           "stats": {
             "colors": true
           },
