@@ -307,9 +307,10 @@
       "development": {
         "openBrowser": null,
         "server": {
-          "contentBase": {
-            "__evaluate__": "self.path.target.base"
-          },
+          "contentBase": [
+            {"__evaluate__": "self.path.target.base"},
+            {"__evaluate__": "self.path.source.base"}
+          ],
           "historyApiFallback": true,
           "host": "0.0.0.0",
           "hot": {
