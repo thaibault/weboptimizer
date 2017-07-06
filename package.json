@@ -152,7 +152,7 @@
         },
         "definitions": {
           "UTC_BUILD_TIMESTAMP": {
-            "__execute__": "const now:Date = new Date(); return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds())"
+            "__execute__": "nowUTCTimestamp"
           },
           "CONTEXT_TYPE": {
             "__evaluate__": "`'${self.contextType}'`"
@@ -316,6 +316,9 @@
             },
             {
               "__evaluate__": "self.path.source.base"
+            },
+            {
+              "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames)"
             }
           ],
           "historyApiFallback": true,
