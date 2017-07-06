@@ -151,6 +151,9 @@
           }
         },
         "definitions": {
+          "UTC_BUILD_TIMESTAMP": {
+            "__execute__": "nowUTCTimestamp"
+          },
           "CONTEXT_TYPE": {
             "__evaluate__": "`'${self.contextType}'`"
           },
@@ -313,6 +316,9 @@
             },
             {
               "__evaluate__": "self.path.source.base"
+            },
+            {
+              "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames[0])"
             }
           ],
           "historyApiFallback": true,
