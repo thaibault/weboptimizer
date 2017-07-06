@@ -318,7 +318,7 @@
               "__evaluate__": "self.path.source.base"
             },
             {
-              "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames)"
+              "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames[0])"
             }
           ],
           "historyApiFallback": true,
