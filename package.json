@@ -151,6 +151,9 @@
           }
         },
         "definitions": {
+          "UTC_BUILD_TIMESTAMP": {
+            "__execute__": "const now:Date = new Date(); return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds())"
+          },
           "CONTEXT_TYPE": {
             "__evaluate__": "`'${self.contextType}'`"
           },
