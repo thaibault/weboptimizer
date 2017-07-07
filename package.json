@@ -315,9 +315,6 @@
               "__evaluate__": "self.path.target.base"
             },
             {
-              "__evaluate__": "self.path.source.base"
-            },
-            {
               "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames[0])"
             }
           ],
