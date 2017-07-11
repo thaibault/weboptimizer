@@ -38,7 +38,10 @@
   ],
   "main": "index.compiled.js",
   "bin": {
-    "webOptimizer": "index.compiled.js"
+    "eslint": "./node_modules/.bin/eslint",
+    "webOptimizer": "index.compiled.js",
+    "webpack": "./node_modules/.bin/webpack",
+    "webpack-dev-server": "./node_modules/.bin/webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -546,7 +549,9 @@
         },
         "directoryNames": [
           "node_modules",
-          "node_modules/weboptimizer/node_modules"
+          {
+            "__evaluate__": "path.resolve(webOptimizerPath, 'node_modules')"
+          }
         ]
       },
       "module": {
@@ -562,7 +567,9 @@
         },
         "directoryNames": [
           "node_modules",
-          "node_modules/weboptimizer/node_modules"
+          {
+            "__evaluate__": "path.resolve(webOptimizerPath, 'node_modules')"
+          }
         ],
         "html": {
           "additional": [],
