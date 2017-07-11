@@ -432,10 +432,8 @@ registerTest(function():void {
     })
     this.test('getAutoChunk', (assert:Object):void => assert.deepEqual(
         Helper.getAutoChunk(Helper.resolveBuildConfigurationFilePaths(
-            buildConfiguration, './', ['.git', 'node_modules']), [
-                '.git', 'node_modules'
-            ], './'
-        ), {}))
+            buildConfiguration, './', ['.git', 'node_modules']
+        ), ['.git', 'node_modules'], './'), {}))
     this.test('determineModuleFilePath', (assert:Object):void => {
         for (const test:Array<any> of [
             [[''], null],

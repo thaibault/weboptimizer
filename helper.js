@@ -418,10 +418,12 @@ export default class Helper {
             extensions.file.external.includes(path.extname(filePath)) ||
             !filePath && extensions.file.external.includes('')
         ) && !(inPlaceDynamicLibrary && request.includes('!')) && (
-            !filePath && inPlaceDynamicLibrary || filePath && (
-            !filePath.startsWith(context) || Helper.isFilePathInLocation(
-                filePath, externalModuleLocations))
-        ))
+                !filePath && inPlaceDynamicLibrary || filePath && (
+                    !filePath.startsWith(context) ||
+                    Helper.isFilePathInLocation(
+                        filePath, externalModuleLocations))
+            )
+        )
             return Helper.applyContext(
                 resolvedRequest, requestContext, referencePath, aliases,
                 moduleReplacements, relativeModuleFilePaths)
@@ -451,12 +453,11 @@ export default class Helper {
         if (!result)
             for (const type:string of ['source', 'target'])
                 for (const assetType:string in paths[type].asset)
-                    if (paths[type].asset.hasOwnProperty(
-                        assetType
-                    ) && assetType !== 'base' &&
-                    paths[type].asset[assetType] && filePath.startsWith(
-                        paths[type].asset[assetType]
-                    ))
+                    if (
+                        paths[type].asset.hasOwnProperty(assetType) &&
+                        assetType !== 'base' && paths[type].asset[assetType] &&
+                        filePath.startsWith(paths[type].asset[assetType])
+                    )
                         return assetType
         return result
     }
@@ -490,11 +491,13 @@ export default class Helper {
                             return false
                     }
                 ))
-                    if (file.stat.isFile() && path.extname(
-                        file.path
-                    ).substring(1) === newItem.extension && !(
-                        new RegExp(newItem.filePathPattern)
-                    ).test(file.path))
+                    if (
+                        file.stat.isFile() &&
+                        path.extname(file.path).substring(
+                            1
+                        ) === newItem.extension &&
+                        !(new RegExp(newItem.filePathPattern)).test(file.path)
+                    )
                         newItem.filePaths.push(file.path)
                 newItem.filePaths.sort((
                     firstFilePath:string, secondFilePath:string
@@ -650,11 +653,12 @@ export default class Helper {
                                     './' + path.relative(
                                         referencePath, path.resolve(
                                             resolvedPath, file.path)))
-                    } else if (moduleID.startsWith(
-                        './'
-                    ) && !moduleID.startsWith('./' + path.relative(
-                        context, referencePath
-                    )))
+                    } else if (
+                        moduleID.startsWith('./') &&
+                        !moduleID.startsWith('./' + path.relative(
+                            context, referencePath
+                        ))
+                    )
                         normalizedInternalInjection[chunkName][index] =
                             `./${path.relative(context, resolvedPath)}`
                     index += 1
@@ -919,13 +923,14 @@ export default class Helper {
                                         const propertyName:string of
                                         packageMainPropertyNames
                                     )
-                                        if (localConfiguration.hasOwnProperty(
-                                            propertyName
-                                        ) && typeof localConfiguration[
-                                            propertyName
-                                        ] === 'string' && localConfiguration[
-                                            propertyName
-                                        ]) {
+                                        if (
+                                            localConfiguration.hasOwnProperty(
+                                                propertyName
+                                            ) && typeof localConfiguration[
+                                                propertyName
+                                            ] === 'string' &&
+                                            localConfiguration[propertyName]
+                                        ) {
                                             fileName = localConfiguration[
                                                 propertyName]
                                             break
@@ -934,11 +939,14 @@ export default class Helper {
                                         const propertyName:string of
                                         packageAliasPropertyNames
                                     )
-                                        if (localConfiguration.hasOwnProperty(
-                                            propertyName
-                                        ) && typeof localConfiguration[
-                                            propertyName
-                                        ] === 'object') {
+                                        if (
+                                            localConfiguration.hasOwnProperty(
+                                                propertyName
+                                            ) &&
+                                            typeof localConfiguration[
+                                                propertyName
+                                            ] === 'object'
+                                        ) {
                                             packageAliases =
                                                 localConfiguration[
                                                     propertyName]
