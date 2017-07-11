@@ -113,10 +113,10 @@ if (typeof configuration.library === 'object')
 if (
     'library' in specificConfiguration &&
     specificConfiguration.library === true || (
-            'library' in specificConfiguration &&
-            specificConfiguration.library === undefined ||
-            !('library' in specificConfiguration)
-        ) && configuration.library
+        'library' in specificConfiguration &&
+        specificConfiguration.library === undefined ||
+        !('library' in specificConfiguration)
+    ) && configuration.library
 )
     configuration = Tools.extendObject(true, Tools.modifyObject(
         configuration, libraryConfiguration

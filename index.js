@@ -146,9 +146,11 @@ const main = async ():Promise<any> => {
                         })
                     for (
                         const file:File of (
-                        await Tools.walkDirectoryRecursively(
-                            configuration.path.target.base, ():false => false,
-                            {encoding: configuration.encoding}))
+                            await Tools.walkDirectoryRecursively(
+                                configuration.path.target.base,
+                                ():false => false,
+                                configuration.encoding
+                            ))
                     )
                         if (
                             file.name.length > '.dll-manifest.json'.length &&

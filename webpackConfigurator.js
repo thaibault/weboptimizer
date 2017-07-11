@@ -16,7 +16,9 @@
 // region imports
 import BabiliPlugin from 'babili-webpack-plugin'
 import Tools from 'clientnode'
+/* eslint-disable no-unused-vars */
 import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
+/* eslint-enable no-unused-vars */
 import {JSDOM as DOM} from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
@@ -245,10 +247,13 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
             ])
                 promises.push(new Promise((
                     resolve:Function, reject:Function
-                ):void => fileSystem.readdir(
+                /*
+                    NOTE: Workaround since flow misses the three parameter
+                    "readdir" signature.
+                */
+                ):void => (fileSystem.readdir:Function)(
                     configuration.path.target.asset[type],
                     configuration.encoding,
-                    // IgnoreTypeCheck
                     (error:?Error, files:Array<string>):void => {
                         if (error) {
                             reject(error)
@@ -475,8 +480,8 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
             htmlPluginData.html = htmlPluginData.html.replace(
                 /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
             ) + window.document.documentElement.outerHTML.replace(
-                /##\+#\+#\+##/g, '<%'
-            ).replace(/##-#-#-##/g, '%>')
+                    /##\+#\+#\+##/g, '<%'
+                ).replace(/##-#-#-##/g, '%>')
             //  region post compilation
             for (
                 const htmlFileSpecification:PlainObject of
@@ -490,12 +495,14 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                         const loaderConfiguration:PlainObject of
                         htmlFileSpecification.template.use
                     )
-                        if (loaderConfiguration.hasOwnProperty(
-                            'options'
-                        ) && loaderConfiguration.options.hasOwnProperty(
-                            'compileSteps'
-                        ) && typeof loaderConfiguration.options.compileSteps
-                        === 'number')
+                        if (
+                            loaderConfiguration.hasOwnProperty('options') &&
+                            loaderConfiguration.options.hasOwnProperty(
+                                'compileSteps'
+                            ) &&
+                            typeof loaderConfiguration.options.compileSteps
+                                === 'number'
+                        )
                             htmlPluginData.html = ejsLoader.bind(
                                 Tools.extendObject(true, {}, {
                                     options: loaderConfiguration.options
@@ -520,11 +527,12 @@ if (configuration.exportFormat.external.startsWith('umd'))
                 typeof libraryName === 'string'
             ) ? libraryName : libraryName[0]
             for (const assetRequest:string in compilation.assets)
-                if (compilation.assets.hasOwnProperty(
-                    assetRequest
-                ) && assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                    configuration.build.types.javaScript.outputExtension
-                )) {
+                if (
+                    compilation.assets.hasOwnProperty(assetRequest) &&
+                    assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
+                        configuration.build.types.javaScript.outputExtension
+                    )
+                ) {
                     let source:string =
                         compilation.assets[assetRequest].source()
                     if (typeof source === 'string') {
@@ -611,10 +619,10 @@ Tools.extendObject(loader, {
                 configuration.files.defaultHTML
             ).map((htmlConfiguration:HTMLConfiguration):string =>
                 htmlConfiguration.template.filePath)
-        ).includes(filePath) || ((
-            configuration.module.preprocessor.ejs.exclude === null
-        ) ? false : evaluate(
-            configuration.module.preprocessor.ejs.exclude, filePath)),
+        ).includes(filePath) ||
+            ((configuration.module.preprocessor.ejs.exclude === null) ? false :
+                evaluate(
+                    configuration.module.preprocessor.ejs.exclude, filePath)),
         include: Helper.normalizePaths([
             configuration.path.source.base
         ].concat(configuration.module.locations.directoryPaths)),
@@ -636,9 +644,10 @@ Tools.extendObject(loader, {
     script: {
         exclude: (filePath:string):boolean => (
             configuration.module.preprocessor.javaScript.exclude === null
-        ) ? rejectFilePathInDependencies(filePath) : evaluate(
-            configuration.module.preprocessor.javaScript.exclude,
-            filePath),
+        ) ? rejectFilePathInDependencies(filePath) :
+            evaluate(
+                configuration.module.preprocessor.javaScript.exclude, filePath
+            ),
         include: Helper.normalizePaths([
             configuration.path.source.asset.javaScript
         ].concat(configuration.module.locations.directoryPaths)),
@@ -667,10 +676,11 @@ Tools.extendObject(loader, {
                     configuration.files.defaultHTML
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
                     htmlConfiguration.template.filePath)
-            ).includes(filePath) || ((
-                configuration.module.preprocessor.html.exclude === null
-            ) ? false : evaluate(
-                configuration.module.preprocessor.html.exclude, filePath)),
+            ).includes(filePath) ||
+                ((configuration.module.preprocessor.html.exclude === null) ?
+                    false : evaluate(
+                        configuration.module.preprocessor.html.exclude,
+                        filePath)),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
             use: [
@@ -683,13 +693,15 @@ Tools.extendObject(loader, {
                 ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)}
             ].concat((Boolean(
                 configuration.module.preprocessor.html.options.compileSteps % 2
-            ) ? [] : [
-                {loader: 'extract'},
-                {
-                    loader: configuration.module.html.loader,
-                    options: configuration.module.html.options
-                }
-            ]), {
+            ) ? [] :
+                [
+                    {loader: 'extract'},
+                    {
+                        loader: configuration.module.html.loader,
+                        options: configuration.module.html.options
+                    }
+                ]
+            ), {
                 loader: configuration.module.preprocessor.html.loader,
                 options: configuration.module.preprocessor.html.options
             }).concat(configuration.module.preprocessor.html.additional.map(
@@ -701,10 +713,9 @@ Tools.extendObject(loader, {
                     configuration.files.defaultHTML
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
                     htmlConfiguration.template.filePath)
-            ).includes(filePath) || ((
-                configuration.module.html.exclude === null
-            ) ? true : evaluate(
-                configuration.module.html.exclude, filePath)),
+            ).includes(filePath) ||
+                ((configuration.module.html.exclude === null) ? true :
+                    evaluate(configuration.module.html.exclude, filePath)),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
             use: [
@@ -726,9 +737,9 @@ Tools.extendObject(loader, {
     style: {
         exclude: (filePath:string):boolean => (
             configuration.module.cascadingStyleSheet.exclude === null
-        ) ? rejectFilePathInDependencies(filePath) : evaluate(
-            configuration.module.cascadingStyleSheet.exclude, filePath
-        ),
+        ) ? rejectFilePathInDependencies(filePath) :
+            evaluate(
+                configuration.module.cascadingStyleSheet.exclude, filePath),
         include: Helper.normalizePaths([
             configuration.path.source.asset.cascadingStyleSheet
         ].concat(configuration.module.locations.directoryPaths)),
@@ -766,7 +777,7 @@ Tools.extendObject(loader, {
                                 resolve:Function, reject:Function
                             ):Promise<null> => (
                                 configuration.files.compose.image ? resolve :
-                                    reject
+                                reject
                             )()),
                             hooks: {onSaveSpritesheet: (image:Object):string =>
                                 path.join(image.spritePath, path.relative(
@@ -792,8 +803,9 @@ Tools.extendObject(loader, {
         eot: {
             exclude: (filePath:string):boolean => (
                 configuration.module.optimizer.font.eot.exclude === null
-            ) ? false : evaluate(
-                configuration.module.optimizer.font.eot.exclude, filePath),
+            ) ? false :
+                evaluate(
+                    configuration.module.optimizer.font.eot.exclude, filePath),
             include: configuration.path.base,
             test: /\.eot(?:\?.*)?$/i,
             use: [{
@@ -805,8 +817,9 @@ Tools.extendObject(loader, {
         svg: {
             exclude: (filePath:string):boolean => (
                 configuration.module.optimizer.font.svg.exclude === null
-            ) ? false : evaluate(
-                configuration.module.optimizer.font.svg.exclude, filePath),
+            ) ? false :
+                evaluate(
+                    configuration.module.optimizer.font.svg.exclude, filePath),
             include: configuration.path.base,
             test: /\.svg(?:\?.*)?$/i,
             use: [{
@@ -818,8 +831,9 @@ Tools.extendObject(loader, {
         ttf: {
             exclude: (filePath:string):boolean => (
                 configuration.module.optimizer.font.ttf.exclude === null
-            ) ? false : evaluate(
-                configuration.module.optimizer.font.ttf.exclude, filePath),
+            ) ? false :
+                evaluate(
+                    configuration.module.optimizer.font.ttf.exclude, filePath),
             include: configuration.path.base,
             test: /\.ttf(?:\?.*)?$/i,
             use: [{
@@ -831,9 +845,10 @@ Tools.extendObject(loader, {
         woff: {
             exclude: (filePath:string):boolean => (
                 configuration.module.optimizer.font.woff.exclude === null
-            ) ? false : evaluate(
-                configuration.module.optimizer.font.woff.exclude, filePath
-            ),
+            ) ? false :
+                evaluate(
+                    configuration.module.optimizer.font.woff.exclude, filePath
+                ),
             include: configuration.path.base,
             test: /\.woff2?(?:\?.*)?$/i,
             use: [{
@@ -848,8 +863,8 @@ Tools.extendObject(loader, {
     image: {
         exclude: (filePath:string):boolean => (
             configuration.module.optimizer.image.exclude === null
-        ) ? rejectFilePathInDependencies(filePath) : evaluate(
-            configuration.module.optimizer.image.exclude, filePath),
+        ) ? rejectFilePathInDependencies(filePath) :
+            evaluate(configuration.module.optimizer.image.exclude, filePath),
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
         use: [{
@@ -866,9 +881,9 @@ Tools.extendObject(loader, {
                 path.extname(Helper.stripLoader(filePath))
             ) || ((
                 configuration.module.optimizer.data.exclude === null
-            ) ? rejectFilePathInDependencies(filePath) : evaluate(
-                configuration.module.optimizer.data.exclude, filePath)
-            ),
+            ) ? rejectFilePathInDependencies(filePath) :
+                evaluate(
+                    configuration.module.optimizer.data.exclude, filePath)),
         include: configuration.path.source.asset.data,
         test: /.+/,
         use: [{

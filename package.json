@@ -69,7 +69,7 @@
     "babel-preset-stage-0": "latest",
     "babel-runtime": "latest",
     "babili-webpack-plugin": "latest",
-    "clientnode": "^1.0.216",
+    "clientnode": "^1.0.217",
     "css-loader": "latest",
     "ejs": "latest",
     "exports-loader": "latest",
@@ -1241,7 +1241,11 @@
       ],
       "indent": [
         "error",
-        4
+        4,
+        {
+          "flatTernaryExpressions": true,
+          "VariableDeclarator": 0
+        }
       ],
       "max-nested-callbacks": [
         "error",
