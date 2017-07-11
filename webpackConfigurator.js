@@ -247,7 +247,6 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                     resolve:Function, reject:Function
                 ):void => fileSystem.readdir(
                     configuration.path.target.asset[type],
-                    // IgnoreTypeCheck
                     configuration.encoding,
                     // IgnoreTypeCheck
                     (error:?Error, files:Array<string>):void => {
