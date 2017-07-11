@@ -119,6 +119,7 @@
     "eslint-config-google": "latest",
     "eslint-plugin-flowtype": "latest",
     "eslint-plugin-jsdoc": "latest",
+    "flow-bin": "latest",
     "source-map-support": "latest",
     "webpack": "latest",
     "webpack-dev-server": "latest"

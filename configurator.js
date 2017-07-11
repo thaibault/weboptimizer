@@ -281,9 +281,7 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore)
-const internalInjection:InternalInjection =
-    // IgnoreTypeCheck
-    resolvedConfiguration.injection.internal
+const internalInjection:any = resolvedConfiguration.injection.internal
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
     normalized: Helper.resolveModulesInFolders(
