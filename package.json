@@ -38,10 +38,7 @@
   ],
   "main": "index.compiled.js",
   "bin": {
-    "eslint": "node_modules/.bin/eslint",
     "webOptimizer": "index.compiled.js",
-    "webpack": "node_modules/.bin/webpack",
-    "webpack-dev-server": "node_modules/.bin/webpack-dev-server"
   },
   "repository": {
     "type": "git",
