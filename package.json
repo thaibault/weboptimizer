@@ -38,7 +38,7 @@
   ],
   "main": "index.compiled.js",
   "bin": {
-    "webOptimizer": "index.compiled.js",
+    "webOptimizer": "index.compiled.js"
   },
   "repository": {
     "type": "git",
