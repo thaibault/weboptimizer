@@ -70,7 +70,7 @@
     "babel-preset-stage-0": "latest",
     "babel-runtime": "latest",
     "babili-webpack-plugin": "latest",
-    "clientnode": "^1.0.213",
+    "clientnode": "^1.0.215",
     "css-loader": "latest",
     "ejs": "latest",
     "eslint-config-google": "latest",
@@ -109,12 +109,14 @@
     "flow-bin": "latest",
     "jsdoc": "latest",
     "stylelint": "latest",
-    "webpack": ">=2.2.0",
+    "webpack": "latest",
     "webpack-dev-server": "latest"
   },
   "devDependencies": {
     "documentation-website": "latest",
-    "source-map-support": "latest"
+    "source-map-support": "latest",
+    "webpack": "latest",
+    "webpack-dev-server": "latest"
   },
   "configuration": {
     "default": {
