@@ -545,7 +545,8 @@
           ]
         },
         "directoryNames": [
-          "node_modules"
+          "node_modules",
+          "node_modules/weboptimizer/node_modules"
         ]
       },
       "module": {
@@ -560,7 +561,8 @@
           "options": {}
         },
         "directoryNames": [
-          "node_modules"
+          "node_modules",
+          "node_modules/weboptimizer/node_modules"
         ],
         "html": {
           "additional": [],
