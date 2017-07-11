@@ -58,7 +58,6 @@
     "add-asset-html-webpack-plugin": "latest",
     "babel-cli": "latest",
     "babel-core": "latest",
-    "babel-eslint": "latest",
     "babel-loader": "latest",
     "babel-plugin-transform-flow-strip-types": "latest",
     "babel-plugin-transform-runtime": "latest",
@@ -73,9 +72,6 @@
     "clientnode": "^1.0.215",
     "css-loader": "latest",
     "ejs": "latest",
-    "eslint-config-google": "latest",
-    "eslint-plugin-flowtype": "latest",
-    "eslint-plugin-jsdoc": "latest",
     "exports-loader": "latest",
     "extract-loader": "latest",
     "extract-text-webpack-plugin": "latest",
@@ -105,7 +101,11 @@
     "webpack-sources": "latest"
   },
   "peerDependencies": {
+    "babel-eslint": "latest",
     "eslint": "latest",
+    "eslint-config-google": "latest",
+    "eslint-plugin-flowtype": "latest",
+    "eslint-plugin-jsdoc": "latest",
     "flow-bin": "latest",
     "jsdoc": "latest",
     "stylelint": "latest",
@@ -113,7 +113,12 @@
     "webpack-dev-server": "latest"
   },
   "devDependencies": {
+    "babel-eslint": "latest",
     "documentation-website": "latest",
+    "eslint": "latest",
+    "eslint-config-google": "latest",
+    "eslint-plugin-flowtype": "latest",
+    "eslint-plugin-jsdoc": "latest",
     "source-map-support": "latest",
     "webpack": "latest",
     "webpack-dev-server": "latest"
