@@ -120,6 +120,7 @@
     "eslint-plugin-flowtype": "latest",
     "eslint-plugin-jsdoc": "latest",
     "flow-bin": "latest",
+    "jsdoc": "latest",
     "source-map-support": "latest",
     "webpack": "latest",
     "webpack-dev-server": "latest"
