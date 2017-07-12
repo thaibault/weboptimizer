@@ -1232,6 +1232,12 @@
         "always"
       ],
       "block-scoped-var": 0,
+      "camelcase": [
+        "error",
+        {
+          "properties": "always"
+        }
+      ],
       "comma-dangle": [
         "error",
         "never"
