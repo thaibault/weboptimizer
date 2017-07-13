@@ -57,7 +57,6 @@
   "dependencies": {
     "add-asset-html-webpack-plugin": "^2.0.1",
     "babel-core": "^6.25.0",
-    "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-runtime": "^6.23.0",
@@ -101,6 +100,7 @@
     "webpack-sources": "^1.0.1"
   },
   "peerDependencies": {
+    "babel-eslint": "^7.2.3",
     "eslint": "^4.2.0",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.35.0",
@@ -113,6 +113,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
     "documentation-website": "^1.0.61",
     "eslint": "^4.2.0",
     "eslint-config-google": "^0.9.1",
