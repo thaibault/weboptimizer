@@ -188,7 +188,8 @@ const now:Date = new Date()
 const nowUTCTimestamp:number = Date.UTC(
     now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
     now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
-    now.getUTCMilliseconds())
+    now.getUTCMilliseconds()
+) / 1000
 /* eslint-disable no-eval */
 const parameter:Array<any> = [
     process.cwd(), fileSystem, Helper, path, eval('require'), Tools, __dirname,

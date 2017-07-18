@@ -1,0 +1,516 @@
+/* !/usr/bin/env css
+-*- coding: utf-8 -*- */
+/* region header
+Copyright Torben Sickert 16.12.2012
+
+License
+-------
+
+This library written by Torben Sickert stand under a creative commons naming
+3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
+endregion */
+:root {
+    /* region constants */
+    /** region extra small dimension **/
+    @custom-media --extra-extra-small (min-width: 360px);
+    @custom-media --extra-small (min-width: 500px);
+    /** endregion */
+    /** region bootstrap default */
+    @custom-media --small (min-width: 768px);
+    @custom-media --medium (min-width: 992px);
+    @custom-media --large (min-width: 1200px);
+    /** endregion */
+    /** region color */
+    --backgroundColor: #fff;
+    --disabledColor: #eee;
+    --fontColor: #555;
+    --borderColor: #ccc;
+    /** endregion */
+    /** region font */
+    --fontFamily: 'Open Sans', open-sans, sans-serif;
+    --fontFamilyCondensed: 'Open Sans Condensed', open-sans-condensed, sans-serif;
+    /** endregion */
+    /* endregion */
+}
+/* region font */
+/** region open sans */
+/*** region light */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/Light/OpenSans-Light';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 300;
+    font-style: normal;
+}
+/*** endregion */
+/*** region light italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/LightItalic/OpenSans-LightItalic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 300;
+    font-style: italic;
+}
+/*** endregion */
+/*** region regular */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/Regular/OpenSans-Regular';
+    /* stylelint-enable property-no-unknown */
+    font-weight: normal;
+    font-style: normal;
+}
+/*** endregion */
+/*** region italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/Italic/OpenSans-Italic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: normal;
+    font-style: italic;
+}
+/*** endregion */
+/*** region semibold */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/Semibold/OpenSans-Semibold';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 600;
+    font-style: normal;
+}
+/*** endregion */
+/*** region semibold italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/SemiboldItalic/OpenSans-SemiboldItalic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 600;
+    font-style: italic;
+}
+/*** endregion */
+/*** region bold */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/Bold/OpenSans-Bold';
+    /* stylelint-enable property-no-unknown */
+    font-weight: bold;
+    font-style: normal;
+}
+/*** endregion */
+/*** region bold italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/BoldItalic/OpenSans-BoldItalic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: bold;
+    font-style: italic;
+}
+/*** endregion */
+/*** region extrabold */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/ExtraBold/OpenSans-ExtraBold';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 800;
+    font-style: normal;
+}
+/*** endregion */
+/*** region extrabold italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/ExtraBoldItalic/OpenSans-ExtraBoldItalic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 800;
+    font-style: italic;
+}
+/*** endregion */
+/** endregion */
+/** region open sans condensed */
+/*** region bold */
+@font-face {
+    font-family: open-sans-condensed;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans-condensed/CondensedBold/OpenSans-CondBold-webfont';
+    /* stylelint-enable property-no-unknown */
+    font-weight: bold;
+    font-style: normal;
+}
+/*** endregion */
+/*** region open sans light */
+@font-face {
+    font-family: open-sans-condensed;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans-condensed/CondensedLight/OpenSans-CondLight-webfont';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 300;
+    font-style: normal;
+}
+/*** endregion */
+/*** region open sans italic */
+@font-face {
+    font-family: open-sans-condensed;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans-condensed/CondensedLightItalic/OpenSans-CondLightItalic-webfont';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 300;
+    font-style: italic;
+}
+/*** endregion */
+/** endregion */
+/** region glyphicons halflings */
+@font-face {
+    font-family: 'Glyphicons Halflings';
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/glyphicons-halflings/glyphicons-halflings-regular';
+    /* stylelint-enable property-no-unknown */
+}
+/** endregion */
+/** region glyphicons social regular */
+@font-face {
+    font-family: 'Glyphicons Social Regular';
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/glyphicons-halflings/glyphicons-halflings-social-regular';
+    /* stylelint-enable property-no-unknown */
+}
+/** endregion */
+/* endregion */
+:root {
+    --website: {
+        /* region bootstrap fixes */
+        & .nested-labels() {
+            /*
+                This fix allows label nested non checkbox input fields to avoid
+                referencing inputs via ids.
+            */
+            & form label:not([for]) {
+                margin: 0;
+                margin-bottom: -4px;
+                width: 100%;
+
+                &.vertical-nested-label:not(.website-sr-only) {
+                    & textarea,
+                    & select,
+                    & input:not([type="checkbox"]) {
+                        margin-top: 5px;
+                    }
+                }
+
+                & textarea,
+                & select,
+                & input:not([type="checkbox"]) {
+                    font-weight: normal;
+                    line-height: 1;
+                }
+            }
+        }
+
+        @media (--extra-extra-small) {
+            /* Allows smartphone widths in grid system. */
+            & .col-xxs- {
+                &1,
+                &2,
+                &3,
+                &4,
+                &5,
+                &6,
+                &7,
+                &8,
+                &9,
+                &10,
+                &11,
+                &12 {
+                    float: left;
+                    position: relative;
+                    min-height: 1px;
+                    padding-right: 15px;
+                    padding-left: 15px;
+                }
+                &1 { width: percentage((1 / 12)); }
+                &2 { width: percentage((2 / 12)); }
+                &3 { width: percentage((3 / 12)); }
+                &4 { width: percentage((4 / 12)); }
+                &5 { width: percentage((5 / 12)); }
+                &6 { width: percentage((6 / 12)); }
+                &7 { width: percentage((7 / 12)); }
+                &8 { width: percentage((8 / 12)); }
+                &9 { width: percentage((9 / 12)); }
+                &10 { width: percentage((10 / 12)); }
+                &11 { width: percentage((11 / 12)); }
+                &12 { width: percentage((12 / 12)); }
+            }
+        }
+        /* endregion */
+        margin: 0;
+        font-family: var(--fontFamily);
+        font-size: 14px;
+        /* stylelint-disable selector-type-no-unknown */
+        & langreplacement { display: none; }
+        /* stylelint-enable selector-type-no-unknown */
+        /* region generic dom nodes */
+        /** region headline */
+        & h1,
+        & h2,
+        & h3,
+        & h4,
+        & h5,
+        & h6,
+        & .h1,
+        & .h2,
+        & .h3,
+        & .h4,
+        & .h5,
+        & .h6 {
+            font-family: var(--fontFamily);
+        }
+
+        & h1,
+        & h2 {
+            font-family: var(--fontFamilyCondensed);
+            font-weight: normal;
+            font-size: 3em;
+        }
+        & h2 { font-size: 2em; }
+        /** endregion */
+        /** region link */
+        & a,
+        & a:hover,
+        & a:focus,
+        & a:visited {
+            outline: none;
+            text-decoration: none;
+        }
+        /** endregion */
+        /* endregion */
+        /* region generic classes */
+        /* Disables and hides a scrolling and scrollbar. */
+        & .tools-disable-scrolling {
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+        & .website-action { cursor: pointer; }
+        /* Overlay the whole page till everything is loaded completely. */
+        & div.website-window-loading-cover {
+            background-color: var(--backgroundColor);
+            /* always cover full viewport */
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            z-index: 1002 !important;
+            /* Positioning the loading spinner in center in the loading overlay. */
+            & > div {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+            }
+        }
+        /** region glyphicon-social */
+        & .glyphicon-social {
+            color: #1d1d1b;
+            display: inline-block;
+            padding-left: 30px;
+            position: relative;
+            text-decoration: none;
+            vertical-align: middle;
+            zoom: 1;
+
+            &::before {
+                /* Edited to enable hover effects.
+                color: #1d1d1b;
+                */
+                display: inline-block;
+                font: 24px/1em 'Glyphicons Social Regular';
+                font-style: normal;
+                font-weight: normal;
+                left: 0;
+                margin: 0 5px 0 0;
+                position: absolute;
+                text-transform: none;
+                top: 0;
+                zoom: 1;
+            }
+            &-white::before { color: #fff; }
+            &-pinterest::before { content: "\E001"; }
+            &-dropbox::before { content: "\E002"; }
+            &-google_plus::before { content: "\E003"; }
+            &-jolicloud::before { content: "\E004"; }
+            &-yahoo::before { content: "\E005"; }
+            &-blogger::before { content: "\E006"; }
+            &-picasa::before { content: "\E007"; }
+            &-amazon::before { content: "\E008"; }
+            &-tumblr::before { content: "\E009"; }
+            &-wordpress::before { content: "\E010"; }
+            &-instapaper::before { content: "\E011"; }
+            &-evernote::before { content: "\E012"; }
+            &-xing::before { content: "\E013"; }
+            &-zootool::before { content: "\E014"; }
+            &-dribbble::before { content: "\E015"; }
+            &-deviantart::before { content: "\E016"; }
+            &-read_it_later::before { content: "\E017"; }
+            &-linked_in::before { content: "\E018"; }
+            &-forrst::before { content: "\E019"; }
+            &-pinboard::before { content: "\E020"; }
+            &-behance::before { content: "\E021"; }
+            &-github::before { content: "\E022"; }
+            &-youtube::before { content: "\E023"; }
+            &-skitch::before { content: "\E024"; }
+            &-foursquare::before { content: "\E025"; }
+            &-quora::before { content: "\E026"; }
+            &-badoo::before { content: "\E027"; }
+            &-spotify::before { content: "\E028"; }
+            &-stumbleupon::before { content: "\E029"; }
+            &-readability::before { content: "\E030"; }
+            &-facebook::before { content: "\E031"; }
+            &-twitter::before { content: "\E032"; }
+            &-instagram::before { content: "\E033"; }
+            &-posterous_spaces::before { content: "\E034"; }
+            &-vimeo::before { content: "\E035"; }
+            &-flickr::before { content: "\E036"; }
+            &-last_fm::before { content: "\E037"; }
+            &-rss::before { content: "\E038"; }
+            &-skype::before { content: "\E039"; }
+            &-e-mail::before { content: "\E040"; }
+            &-vine::before { content: "\E041"; }
+            &-myspace::before { content: "\E042"; }
+            &-goodreads::before { content: "\E043"; }
+            &-apple::before { content: "\F8FF"; }
+            &-windows::before { content: "\E045"; }
+            &-yelp::before { content: "\E046"; }
+            &-playstation::before { content: "\E047"; }
+            &-xbox::before { content: "\E048"; }
+            &-android::before { content: "\E049"; }
+            &-ios::before { content: "\E050"; }
+        }
+        /** endregion */
+        /** region form */
+        /*** region styled select */
+        /*
+            Enables bootstraps form element combinations with this provided
+            wrapper.
+        */
+        & .input-group .select-styled-wrapper {
+            &:not(:first-child):not(:last-child) .form-control {
+                border-radius: 0;
+            }
+
+            &:last-child .form-control {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+        }
+
+        & .select-styled-wrapper {
+            position: relative;
+
+            & > .select-styled-arrow {
+                position: absolute;
+                top: 3px;
+                right: 15px;
+                pointer-events: none;
+
+                & span {
+                    vertical-align: bottom;
+                    font-size: 10px;
+                }
+            }
+
+            & > select {
+                position: initial !important;
+                padding-left: 7px !important;
+                padding-right: 25px !important;
+                /* hide default down arrow in webkit */
+                -webkit-appearance: none;
+                /* hide arrow in firefox */
+                @-moz-document url-prefix() { -moz-appearance: none; }
+                /* hide default down arrow in IE10 */
+                &::-ms-expand { display: none; }
+            }
+        }
+        /*** endregion */
+        /*** region styled checkbox */
+        & .form-horizontal .checkbox,
+        & .checkbox {
+            padding-top: 3px;
+            margin-top: 2px;
+
+            & label {
+                padding-left: 40px;
+
+                & .checkbox-styled-wrapper {
+                    position: absolute;
+                    margin-top: -2px;
+                    margin-left: -40px;
+
+                    & > input[type="checkbox"] {
+                        display: none;
+
+                        &:checked ~ span.checkbox-styled > span {
+                            &.checkbox-styled-checked {
+                                opacity: 1;
+                            }
+                        }
+
+                        &:disabled ~ span.checkbox-styled {
+                            background-color: var(--disabledColor);
+                        }
+                    }
+
+                    & > span.checkbox-styled {
+                        cursor: pointer;
+                        float: right;
+                        width: 25px;
+                        height: 25px;
+                        border-radius: 4px;
+                        border: 2px solid var(--borderColor);
+                        padding: 0;
+
+                        & > span.checkbox-styled-checked {
+                            transform: rotate(-45deg);
+                            opacity: 0;
+                            position: absolute;
+                            width: 13px;
+                            height: 8px;
+                            background: transparent;
+                            top: 5px;
+                            left: 4px;
+                            border: 3px solid var(--fontColor);
+                            border-top: none;
+                            border-right: none;
+                        }
+                    }
+                }
+            }
+        }
+        & form:not(.form-horizontal) & .checkbox { margin-bottom: 20px; }
+        /*** endregion */
+        /** endregion */
+        /* endregion */
+    }
+
+    & .javascript .tools {
+        /* Initially show javaScript dependent dom nodes. */
+        &-visible-on-javascript-enabled { display: initial !important; }
+        /* Initially show javaScript dependent dom nodes. */
+        &-hidden-on-javascript-enabled { display: none !important; }
+    }
+
+    & .no-javascript .tools {
+        /* Initially show none javaScript dependent dom nodes. */
+        &-visible-on-javascript-disabled { display: initial !important; }
+        /* Initially show none javaScript dependent dom nodes. */
+        &-hidden-on-javascript-disabled { display: none !important; }
+    }
+}
+/* region vim modline
+vim: set tabstop=4 shiftwidth=4 expandtab:
+vim: foldmethod=marker foldmarker=region,endregion:
+endregion */
