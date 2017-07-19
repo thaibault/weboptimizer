@@ -117,6 +117,8 @@ export default class Helper {
                                 window.document.createElement('style')
                             const path:string = domNode.attributes.href.value
                                 .replace(/&.*/g, '')
+                            if (!assets.hasOwnProperty(path))
+                                continue
                             inPlaceDomNode.textContent = assets[path].source()
                             if (cascadingStyleSheetPattern[pattern] === 'body')
                                 window.document.body.appendChild(
@@ -169,6 +171,8 @@ export default class Helper {
                                 window.document.createElement('script')
                             const path:string = domNode.attributes.src.value
                                 .replace(/&.*/g, '')
+                            if (!assets.hasOwnProperty(path))
+                                continue
                             inPlaceDomNode.textContent = assets[path].source()
                             if (javaScriptPattern[pattern] === 'body')
                                 window.document.body.appendChild(
