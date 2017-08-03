@@ -105,7 +105,7 @@
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.35.0",
     "eslint-plugin-jsdoc": "^3.1.1",
-    "flow-bin": "^0.50.0",
+    "flow-bin": "^0.51.0",
     "jsdoc": "^3.5.3",
     "stylelint": "^7.13.0",
     "webpack": "^3.3.0",
@@ -584,11 +584,7 @@
           "exclude": null,
           "loader": "html",
           "options": {
-            "attrs": [
-              "img:src",
-              "link:href"
-            ],
-            "minimize": true
+            "__evaluate__": "Tools.extendObject({}, self.module.optimizer.htmlMinifier, {attrs: ['img:src', 'link:href'], minimize: true})"
           }
         },
         "optimizer": {
@@ -1066,6 +1062,10 @@
       "module": {
         "html": {
           "options": {
+            "attrs": [
+              "img:src",
+              "link:href"
+            ],
             "minimize": false
           }
         },
