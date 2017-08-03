@@ -584,11 +584,7 @@
           "exclude": null,
           "loader": "html",
           "options": {
-            "attrs": [
-              "img:src",
-              "link:href"
-            ],
-            "minimize": true
+            "__evaluate__": "Tools.extendObject({}, self.module.optimizer.htmlMinifier, {attrs: ['img:src', 'link:href'], minimize: true})"
           }
         },
         "optimizer": {
@@ -1066,6 +1062,10 @@
       "module": {
         "html": {
           "options": {
+            "attrs": [
+              "img:src",
+              "link:href"
+            ],
             "minimize": false
           }
         },
