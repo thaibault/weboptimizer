@@ -972,6 +972,7 @@ const webpackConfiguration:WebpackConfiguration = {
             loader.data
         ])
     },
+    node: configuration.nodeEnvironment,
     plugins: pluginInstances
 }
 if (!Array.isArray(

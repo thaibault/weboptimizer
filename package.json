@@ -853,6 +853,17 @@
           }
         }
       },
+      "nodeEnvironment": {
+        "console": false,
+        "fs": "empty",
+        "global": true,
+        "path": "empty",
+        "process": true,
+        "__filename": "mock",
+        "__dirname": "mock",
+        "Buffer": true,
+        "setImmediate": true
+      },
       "offline": {
         "AppCache": {
           "directory": ""

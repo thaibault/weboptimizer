@@ -104,6 +104,7 @@ export type DefaultConfiguration = {
     document:Object;
     encoding:string;
     library:boolean;
+    node:{[key:string]:boolean|'empty'|'mock'};
     path:Path;
     test:Object;
     'test:browser':Object
@@ -264,6 +265,7 @@ export type ResolvedConfiguration = {
     };
     name:string;
     needed:{[key:string]:boolean};
+    node:{[key:string]:boolean|'empty'|'mock'};
     offline:PlainObject;
     package:{
         aliasPropertyNames:Array<string>;
