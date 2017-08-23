@@ -180,22 +180,6 @@ if (Tools.isDirectorySync(configuration.path.target.base))
             configuration.dllManifestFilePaths.push(path.resolve(
                 configuration.path.target.base, fileName))
 // / endregion
-// / region define dynamic resolve parameter
-const parameterDescription:Array<string> = [
-    'currentPath', 'fileSystem', 'Helper', 'path', 'require', 'Tools',
-    'webOptimizerPath', 'now', 'nowUTCTimestamp']
-const now:Date = new Date()
-const nowUTCTimestamp:number = Date.UTC(
-    now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-    now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
-    now.getUTCMilliseconds()
-) / 1000
-/* eslint-disable no-eval */
-const parameter:Array<any> = [
-    process.cwd(), fileSystem, Helper, path, eval('require'), Tools, __dirname,
-    now, nowUTCTimestamp]
-/* eslint-enable no-eval */
-// / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
     configuration.path.context, configuration.path.base)
@@ -239,10 +223,25 @@ for (const key:string in configuration.path)
             }
     }
 // / endregion
+const now:Date = new Date()
 const resolvedConfiguration:ResolvedConfiguration =
-    Tools.resolveDynamicDataStructure(
-        configuration, parameterDescription, parameter)
-// endregion
+    Tools.evaluateDynamicDataStructure(configuration, {
+        currentPath: process.cwd(),
+        fileSystem,
+        Helper,
+        path,
+        /* eslint-disable no-eval */
+        require: eval('require'),
+        /* eslint-enable no-eval */
+        Tools,
+        webOptimizerPath: __dirname,
+        now,
+        nowUTCTimestamp: Date.UTC(
+            now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+            now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
+            now.getUTCMilliseconds()
+        ) / 1000
+    })
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.
@@ -348,7 +347,7 @@ for (const loader:PlainObject of resolvedConfiguration.files.defaultHTML
 ) {
     if (
         resolvedConfiguration.loader.aliases
-        .webOptimizerDefaultTemplateFileLoader
+            .webOptimizerDefaultTemplateFileLoader
     )
         resolvedConfiguration.loader.aliases
             .webOptimizerDefaultTemplateFileLoader += '!'
