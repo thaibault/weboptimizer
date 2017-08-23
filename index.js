@@ -32,6 +32,7 @@ import Helper from './helper.compiled'
 import type {ResolvedBuildConfiguration} from './type'
 // endregion
 // NOTE: Specifies number of allowed threads to spawn.
+// IgnoreTypeCheck
 process.env.UV_THREADPOOL_SIZE = 128
 const main = async ():Promise<any> => {
     try {
