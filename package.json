@@ -163,7 +163,7 @@
         },
         "definitions": {
           "UTC_BUILD_TIMESTAMP": {
-            "__execute__": "nowUTCTimestamp"
+            "__evaluate__": "nowUTCTimestamp"
           },
           "CONTEXT_TYPE": {
             "__evaluate__": "`'${self.contextType}'`"
