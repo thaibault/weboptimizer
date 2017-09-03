@@ -236,7 +236,7 @@ const resolvedConfiguration:ResolvedConfiguration =
         Tools,
         webOptimizerPath: __dirname,
         now,
-        nowUTCTimestamp: Tools.nowUTCTimestamp(now)
+        nowUTCTimestamp: Tools.numberGetUTCTimestamp(now)
     })
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
