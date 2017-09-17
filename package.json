@@ -868,6 +868,7 @@
         "AppCache": {
           "directory": ""
         },
+        "autoUpdate": true,
         "caches": {
           "main": [
             "index.html",
