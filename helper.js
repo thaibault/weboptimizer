@@ -226,8 +226,8 @@ export default class Helper {
         return moduleIDWithoutLoader.includes(
             '?'
         ) ? moduleIDWithoutLoader.substring(0, moduleIDWithoutLoader.indexOf(
-            '?'
-        )) : moduleIDWithoutLoader
+                '?'
+            )) : moduleIDWithoutLoader
     }
     // endregion
     // region array
