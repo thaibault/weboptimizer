@@ -26,8 +26,13 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, Extensions, Injection, InternalInjection,
-    NormalizedInternalInjection, Path, ResolvedBuildConfiguration,
+    BuildConfiguration,
+    Extensions,
+    Injection,
+    InternalInjection,
+    NormalizedInternalInjection,
+    Path,
+    ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem
 } from './type'
 // endregion
@@ -221,8 +226,8 @@ export default class Helper {
         return moduleIDWithoutLoader.includes(
             '?'
         ) ? moduleIDWithoutLoader.substring(0, moduleIDWithoutLoader.indexOf(
-            '?'
-        )) : moduleIDWithoutLoader
+                '?'
+            )) : moduleIDWithoutLoader
     }
     // endregion
     // region array

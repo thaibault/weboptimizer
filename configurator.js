@@ -27,12 +27,15 @@ import Helper from './helper.compiled'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
 // variable named "metaConfiguration".
 import {configuration as givenMetaConfiguration} from './package'
-/* eslint-disable no-unused-vars */
 import type {
-    DefaultConfiguration, HTMLConfiguration, InternalInjection,
-    MetaConfiguration, ResolvedConfiguration
+    DefaultConfiguration,
+    /* eslint-disable no-unused-vars */
+    HTMLConfiguration,
+    InternalInjection,
+    /* eslint-enable no-unused-vars */
+    MetaConfiguration,
+    ResolvedConfiguration
 } from './type'
-/* eslint-enable no-unused-vars */
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 /*
     To assume to go two folder up from this file until there is no
