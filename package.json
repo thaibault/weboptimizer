@@ -866,12 +866,12 @@
       },
       "offline": {
         "AppCache": {
-          "directory": ""
+          "directory": "./"
         },
         "autoUpdate": true,
         "caches": {
           "main": [
-            "index.html",
+            ":externals:",
             ":rest:"
           ]
         },
@@ -884,6 +884,9 @@
         "externals": [
           "index.html"
         ],
+        "minify": {
+          "__evaluate__": "!self.debug"
+        },
         "publicPath": "/",
         "relativePaths": false,
         "ServiceWorker": {
