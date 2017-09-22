@@ -125,22 +125,20 @@ if (htmlAvailable && configuration.favicon && Tools.isFileSync(
 if (htmlAvailable && configuration.offline) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
-    )) {
-        if (configuration.inPlace.cascadingStyleSheet && Object.keys(
-            configuration.inPlace.cascadingStyleSheet
-        ).length)
-            configuration.offline.excludes.push(path.relative(
-                configuration.path.target.base,
-                configuration.path.target.asset.cascadingStyleSheet
-            ) + `*.css?${configuration.hashAlgorithm}=*`)
-        if (configuration.inPlace.javaScript && Object.keys(
-            configuration.inPlace.javaScript
-        ).length)
-            configuration.offline.excludes.push(path.relative(
-                configuration.path.target.base,
-                configuration.path.target.asset.javaScript
-            ) + `*.js?${configuration.hashAlgorithm}=*`)
-    }
+    ))
+        for (const type:PlainObject of [
+            ['cascadingStyleSheet', 'css'],
+            ['javaScript', 'js']
+        ])
+            if (configuration.inPlace[type[0]]) {
+                const matches:Array<string> = Object.keys(
+                    configuration.inPlace[type[0]])
+                for (const name:string of matches)
+                    configuration.offline.excludes.push(path.relative(
+                        configuration.path.target.base,
+                        configuration.path.target.asset[type[0]]
+                    ) + `${name}.${type[1]}?${configuration.hashAlgorithm}=*`)
+            }
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
 // // endregion
@@ -975,9 +973,10 @@ const webpackConfiguration:WebpackConfiguration = {
     node: configuration.nodeEnvironment,
     plugins: pluginInstances
 }
-if (!Array.isArray(
-    configuration.module.skipParseRegularExpressions
-) || configuration.module.skipParseRegularExpressions.length)
+if (
+    !Array.isArray(configuration.module.skipParseRegularExpressions) ||
+    configuration.module.skipParseRegularExpressions.length
+)
     webpackConfiguration.module.noParse =
         configuration.module.skipParseRegularExpressions
 if (configuration.showConfiguration) {

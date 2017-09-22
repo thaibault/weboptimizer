@@ -173,6 +173,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         configuration, 'configuration')
 if (Tools.isPlainObject(result))
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
+// endregion
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
 if (Tools.isDirectorySync(configuration.path.target.base))
