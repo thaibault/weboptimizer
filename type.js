@@ -239,7 +239,7 @@ export type ResolvedConfiguration = {
                 file:PlainObject;
                 loader:string;
             };
-            babili:PlainObject
+            babelMinify:PlainObject
         };
         preprocessor:{
             cascadingStyleSheet:{

@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import BabiliPlugin from 'babili-webpack-plugin'
+import BabelMinifyPlugin from 'babili-webpack-plugin'
 import Tools from 'clientnode'
 /* eslint-disable no-unused-vars */
 import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
@@ -159,9 +159,9 @@ if (configuration.module.provide)
 // // endregion
 // // region modules/assets
 // /// region perform javaScript minification/optimisation
-if (configuration.module.optimizer.babili)
-    pluginInstances.push(new BabiliPlugin(
-        configuration.module.optimizer.babili))
+if (configuration.module.optimizer.babelMinify)
+    pluginInstances.push(new BabelMinifyPlugin(
+        configuration.module.optimizer.babelMinify))
 // /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {

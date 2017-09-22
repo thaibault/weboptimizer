@@ -15,7 +15,7 @@
 */
 // region imports
 import {transform as babelTransform} from 'babel-core'
-import babiliPreset from 'babel-preset-babili'
+import babelMinifyPreset from 'babel-preset-minify'
 import transformWith from 'babel-plugin-transform-with'
 import Tools from 'clientnode'
 import * as ejs from 'ejs'
@@ -183,7 +183,7 @@ module.exports = function(source:string):string {
                     minified: Boolean(query.compress.javaScript),
                     plugins: [transformWith],
                     presets: query.compress.javaScript ? [[
-                        babiliPreset, query.compress.javaScript
+                        babelMinifyPreset, query.compress.javaScript
                     ]] : [],
                     sourceMaps: false,
                     sourceType: 'script'
