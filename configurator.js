@@ -227,7 +227,7 @@ for (const key:string in configuration.path)
             }
     }
 // / endregion
-const now:Date = new Date()
+const now:Date = Date.now()
 const resolvedConfiguration:ResolvedConfiguration =
     Tools.evaluateDynamicDataStructure(configuration, {
         currentPath: process.cwd(),
