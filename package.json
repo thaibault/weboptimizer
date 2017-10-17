@@ -114,7 +114,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.0.1",
-    "documentation-website": "^1.0.69",
+    "documentation-website": "^1.0.70",
     "eslint": "^4.9.0",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.36.0",
