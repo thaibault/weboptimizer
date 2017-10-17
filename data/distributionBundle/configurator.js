@@ -27,12 +27,15 @@ import Helper from './helper.compiled'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
 // variable named "metaConfiguration".
 import {configuration as givenMetaConfiguration} from './package'
-/* eslint-disable no-unused-vars */
 import type {
-    DefaultConfiguration, HTMLConfiguration, InternalInjection,
-    MetaConfiguration, ResolvedConfiguration
+    DefaultConfiguration,
+    /* eslint-disable no-unused-vars */
+    HTMLConfiguration,
+    InternalInjection,
+    /* eslint-enable no-unused-vars */
+    MetaConfiguration,
+    ResolvedConfiguration
 } from './type'
-/* eslint-enable no-unused-vars */
 let metaConfiguration:MetaConfiguration = givenMetaConfiguration
 /*
     To assume to go two folder up from this file until there is no
@@ -92,9 +95,7 @@ specificConfiguration.name = name
 let debug:boolean = metaConfiguration.default.debug
 if (specificConfiguration.debug !== undefined)
     debug = specificConfiguration.debug
-if (process.env.npm_config_production)
-    debug = false
-else if (process.env.npm_config_debug)
+else if (process.env.npm_config_dev === 'true')
     debug = true
 metaConfiguration.default.path.context += '/'
 // Merges final default configuration object depending on given target
@@ -150,15 +151,15 @@ if (filePath) {
             throw error
     })
 }
+// // region apply use case specific configuration
 if (runtimeInformation.givenCommandLineArguments.length > 2)
-    // region apply use case specific configuration
-    for (const type:string of ['document', 'test', 'testInBrowser'])
+    for (const type:string of ['document', 'test', 'test:browser'])
         if (runtimeInformation.givenCommandLineArguments[2] === type)
             Tools.extendObject(true, Tools.modifyObject(
                 configuration, configuration[type]
             ), configuration[type])
-    // endregion
-for (const type:string of ['document', 'test', 'testInBrowser'])
+// // endregion
+for (const type:string of ['document', 'test', 'test:Browser'])
     delete configuration[type]
 // / endregion
 Tools.extendObject(true, Tools.modifyObject(Tools.modifyObject(
@@ -172,6 +173,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         configuration, 'configuration')
 if (Tools.isPlainObject(result))
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
+// endregion
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
 if (Tools.isDirectorySync(configuration.path.target.base))
@@ -181,21 +183,6 @@ if (Tools.isDirectorySync(configuration.path.target.base))
         if (fileName.match(/^.*\.dll-manifest\.json$/))
             configuration.dllManifestFilePaths.push(path.resolve(
                 configuration.path.target.base, fileName))
-// / endregion
-// / region define dynamic resolve parameter
-const parameterDescription:Array<string> = [
-    'currentPath', 'fileSystem', 'Helper', 'path', 'require', 'Tools',
-    'webOptimizerPath', 'now', 'nowUTCTimestamp']
-const now:Date = new Date()
-const nowUTCTimestamp:number = Date.UTC(
-    now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-    now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
-    now.getUTCMilliseconds())
-const parameter:Array<any> = [
-    /* eslint-disable no-eval */
-    process.cwd(), fileSystem, Helper, path, eval('require'), Tools, __dirname,
-    now, nowUTCTimestamp]
-    /* eslint-enable no-eval */
 // / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
@@ -232,19 +219,29 @@ for (const key:string in configuration.path)
                     typeof configuration.path[key][subKey][
                         subSubKey
                     ] === 'string')
-                        configuration.path[key][subKey][
-                            subSubKey
-                        ] = path.resolve(
-                            configuration.path[key][subKey].base,
-                            configuration.path[key][subKey][subSubKey]
-                        ) + '/'
+                        configuration.path[key][subKey][subSubKey] =
+                            path.resolve(
+                                configuration.path[key][subKey].base,
+                                configuration.path[key][subKey][subSubKey]
+                            ) + '/'
             }
     }
 // / endregion
+const now:Date = new Date()
 const resolvedConfiguration:ResolvedConfiguration =
-    Tools.resolveDynamicDataStructure(
-        configuration, parameterDescription, parameter)
-// endregion
+    Tools.evaluateDynamicDataStructure(configuration, {
+        currentPath: process.cwd(),
+        fileSystem,
+        Helper,
+        path,
+        /* eslint-disable no-eval */
+        require: eval('require'),
+        /* eslint-enable no-eval */
+        Tools,
+        webOptimizerPath: __dirname,
+        now,
+        nowUTCTimestamp: Tools.numberGetUTCTimestamp(now)
+    })
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.
@@ -284,16 +281,13 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore)
-const internalInjection:InternalInjection =
-    // IgnoreTypeCheck
-    resolvedConfiguration.injection.internal
+const internalInjection:any = resolvedConfiguration.injection.internal
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
     normalized: Helper.resolveModulesInFolders(
         Helper.normalizeInternalInjection(internalInjection),
         resolvedConfiguration.module.aliases,
         resolvedConfiguration.module.replacements.normal,
-        resolvedConfiguration.extensions,
         resolvedConfiguration.path.context,
         resolvedConfiguration.path.source.asset.base,
         resolvedConfiguration.path.ignore.concat(
@@ -304,18 +298,16 @@ resolvedConfiguration.injection.internal = {
         ).filter((filePath:string):boolean =>
             !resolvedConfiguration.path.context.startsWith(filePath)))}
 resolvedConfiguration.needed = {javaScript: configuration.debug && [
-    'serve', 'testInBrowser'
+    'serve', 'test:browser'
 ].includes(resolvedConfiguration.givenCommandLineArguments[2])}
-for (
-    const chunkName:string in
-    resolvedConfiguration.injection.internal.normalized
+for (const chunkName:string in resolvedConfiguration.injection.internal
+    .normalized
 )
     if (resolvedConfiguration.injection.internal.normalized.hasOwnProperty(
         chunkName
     ))
-        for (
-            const moduleID:string of
-            resolvedConfiguration.injection.internal.normalized[chunkName]
+        for (const moduleID:string of resolvedConfiguration.injection.internal
+            .normalized[chunkName]
         ) {
             const filePath:?string = Helper.determineModuleFilePath(
                 moduleID, resolvedConfiguration.module.aliases,
@@ -350,13 +342,12 @@ for (
 // NOTE: This alias couldn't be set in the "package.json" file since this would
 // result in an endless loop.
 resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader = ''
-for (
-    const loader:PlainObject of
-    resolvedConfiguration.files.defaultHTML.template.use
+for (const loader:PlainObject of resolvedConfiguration.files.defaultHTML
+    .template.use
 ) {
     if (
         resolvedConfiguration.loader.aliases
-        .webOptimizerDefaultTemplateFileLoader
+            .webOptimizerDefaultTemplateFileLoader
     )
         resolvedConfiguration.loader.aliases
             .webOptimizerDefaultTemplateFileLoader += '!'

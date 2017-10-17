@@ -15,7 +15,7 @@
 */
 // region imports
 import {transform as babelTransform} from 'babel-core'
-import babiliPreset from 'babel-preset-babili'
+import babelMinifyPreset from 'babel-preset-minify'
 import transformWith from 'babel-plugin-transform-with'
 import Tools from 'clientnode'
 import * as ejs from 'ejs'
@@ -33,7 +33,9 @@ import Helper from './helper.compiled'
 // endregion
 // region types
 type TemplateFunction = (locals:Object) => string
-type CompileFunction = (template:string, options:Object) => TemplateFunction
+type CompileFunction = (
+    template:string, options:Object, compileSteps?:number
+) => TemplateFunction
 // endregion
 module.exports = function(source:string):string {
     if ('cachable' in this && this.cacheable)
@@ -72,8 +74,7 @@ module.exports = function(source:string):string {
             request:string, nestedLocals:Object = {}
         ):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
-            const queryMatch:?Array<string> = request.match(
-                /^[^?]+\?(.+)$/, '$1')
+            const queryMatch:?Array<string> = request.match(/^[^?]+\?(.+)$/)
             if (queryMatch) {
                 const evaluationFunction = (
                     request:string, template:string, source:string,
@@ -182,7 +183,7 @@ module.exports = function(source:string):string {
                     minified: Boolean(query.compress.javaScript),
                     plugins: [transformWith],
                     presets: query.compress.javaScript ? [[
-                        babiliPreset, query.compress.javaScript
+                        babelMinifyPreset, query.compress.javaScript
                     ]] : [],
                     sourceMaps: false,
                     sourceType: 'script'

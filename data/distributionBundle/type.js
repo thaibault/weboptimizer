@@ -104,9 +104,10 @@ export type DefaultConfiguration = {
     document:Object;
     encoding:string;
     library:boolean;
+    nodeEnvironment:{[key:string]:boolean|'empty'|'mock'};
     path:Path;
     test:Object;
-    testInBrowser:Object
+    'test:browser':Object
 }
 export type ExportFormat = 'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
 export type HTMLConfiguration = {
@@ -161,8 +162,8 @@ export type ResolvedConfiguration = {
         lint:Command;
         serve:Command;
         test:Command;
-        testInBrowser:Command;
-        typeCheck:Command;
+        'test:browser':Command;
+        'check:type':Command;
     };
     contextType:string;
     debug:boolean;
@@ -238,7 +239,7 @@ export type ResolvedConfiguration = {
                 file:PlainObject;
                 loader:string;
             };
-            babili:PlainObject
+            babelMinify:PlainObject
         };
         preprocessor:{
             cascadingStyleSheet:{
@@ -264,6 +265,7 @@ export type ResolvedConfiguration = {
     };
     name:string;
     needed:{[key:string]:boolean};
+    nodeEnvironment:{[key:string]:boolean|'empty'|'mock'};
     offline:PlainObject;
     package:{
         aliasPropertyNames:Array<string>;
@@ -282,7 +284,7 @@ export type ResolvedConfiguration = {
     targetTechnology:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
     /* eslint-enable max-len */
     test:PlainObject;
-    testInBrowser:PlainObject
+    'test:browser':PlainObject
 }
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
 export type WebpackConfiguration = {

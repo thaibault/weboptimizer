@@ -26,8 +26,13 @@ try {
 } catch (error) {}
 
 import type {
-    BuildConfiguration, Extensions, Injection, InternalInjection,
-    NormalizedInternalInjection, Path, ResolvedBuildConfiguration,
+    BuildConfiguration,
+    Extensions,
+    Injection,
+    InternalInjection,
+    NormalizedInternalInjection,
+    Path,
+    ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem
 } from './type'
 // endregion
@@ -117,6 +122,8 @@ export default class Helper {
                                 window.document.createElement('style')
                             const path:string = domNode.attributes.href.value
                                 .replace(/&.*/g, '')
+                            if (!assets.hasOwnProperty(path))
+                                continue
                             inPlaceDomNode.textContent = assets[path].source()
                             if (cascadingStyleSheetPattern[pattern] === 'body')
                                 window.document.body.appendChild(
@@ -169,6 +176,8 @@ export default class Helper {
                                 window.document.createElement('script')
                             const path:string = domNode.attributes.src.value
                                 .replace(/&.*/g, '')
+                            if (!assets.hasOwnProperty(path))
+                                continue
                             inPlaceDomNode.textContent = assets[path].source()
                             if (javaScriptPattern[pattern] === 'body')
                                 window.document.body.appendChild(
@@ -217,8 +226,8 @@ export default class Helper {
         return moduleIDWithoutLoader.includes(
             '?'
         ) ? moduleIDWithoutLoader.substring(0, moduleIDWithoutLoader.indexOf(
-            '?'
-        )) : moduleIDWithoutLoader
+                '?'
+            )) : moduleIDWithoutLoader
     }
     // endregion
     // region array
@@ -418,10 +427,12 @@ export default class Helper {
             extensions.file.external.includes(path.extname(filePath)) ||
             !filePath && extensions.file.external.includes('')
         ) && !(inPlaceDynamicLibrary && request.includes('!')) && (
-            !filePath && inPlaceDynamicLibrary || filePath && (
-            !filePath.startsWith(context) || Helper.isFilePathInLocation(
-                filePath, externalModuleLocations))
-        ))
+                !filePath && inPlaceDynamicLibrary || filePath && (
+                    !filePath.startsWith(context) ||
+                    Helper.isFilePathInLocation(
+                        filePath, externalModuleLocations))
+            )
+        )
             return Helper.applyContext(
                 resolvedRequest, requestContext, referencePath, aliases,
                 moduleReplacements, relativeModuleFilePaths)
@@ -451,12 +462,11 @@ export default class Helper {
         if (!result)
             for (const type:string of ['source', 'target'])
                 for (const assetType:string in paths[type].asset)
-                    if (paths[type].asset.hasOwnProperty(
-                        assetType
-                    ) && assetType !== 'base' &&
-                    paths[type].asset[assetType] && filePath.startsWith(
-                        paths[type].asset[assetType]
-                    ))
+                    if (
+                        paths[type].asset.hasOwnProperty(assetType) &&
+                        assetType !== 'base' && paths[type].asset[assetType] &&
+                        filePath.startsWith(paths[type].asset[assetType])
+                    )
                         return assetType
         return result
     }
@@ -490,11 +500,13 @@ export default class Helper {
                             return false
                     }
                 ))
-                    if (file.stat.isFile() && path.extname(
-                        file.path
-                    ).substring(1) === newItem.extension && !(
-                        new RegExp(newItem.filePathPattern)
-                    ).test(file.path))
+                    if (
+                        file.stat.isFile() &&
+                        path.extname(file.path).substring(
+                            1
+                        ) === newItem.extension &&
+                        !(new RegExp(newItem.filePathPattern)).test(file.path)
+                    )
                         newItem.filePaths.push(file.path)
                 newItem.filePaths.sort((
                     firstFilePath:string, secondFilePath:string
@@ -577,10 +589,8 @@ export default class Helper {
         const normalizedInternalInjection:NormalizedInternalInjection =
             Helper.resolveModulesInFolders(
                 Helper.normalizeInternalInjection(internalInjection),
-                aliases, moduleReplacements, extensions, context,
-                referencePath, pathsToIgnore, relativeModuleFilePaths,
-                packageEntryFileNames, packageMainPropertyNames,
-                packageAliasPropertyNames)
+                aliases, moduleReplacements, context, referencePath,
+                pathsToIgnore)
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
@@ -609,7 +619,6 @@ export default class Helper {
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
      * account.
-     * @param extensions - List of file and module extensions.
      * @param context - File path to determine relative to.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
@@ -618,15 +627,7 @@ export default class Helper {
     static resolveModulesInFolders(
         normalizedInternalInjection:NormalizedInternalInjection,
         aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
-        extensions:Extensions = {
-            file: {
-                external: ['.js'],
-                internal: [
-                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
-                ]
-            }, module: []
-        }, context:string = './', referencePath:string = '',
+        context:string = './', referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):NormalizedInternalInjection {
         if (referencePath.startsWith('/'))
@@ -661,11 +662,12 @@ export default class Helper {
                                     './' + path.relative(
                                         referencePath, path.resolve(
                                             resolvedPath, file.path)))
-                    } else if (moduleID.startsWith(
-                        './'
-                    ) && !moduleID.startsWith('./' + path.relative(
-                        context, referencePath
-                    )))
+                    } else if (
+                        moduleID.startsWith('./') &&
+                        !moduleID.startsWith('./' + path.relative(
+                            context, referencePath
+                        ))
+                    )
                         normalizedInternalInjection[chunkName][index] =
                             `./${path.relative(context, resolvedPath)}`
                     index += 1
@@ -930,13 +932,14 @@ export default class Helper {
                                         const propertyName:string of
                                         packageMainPropertyNames
                                     )
-                                        if (localConfiguration.hasOwnProperty(
-                                            propertyName
-                                        ) && typeof localConfiguration[
-                                            propertyName
-                                        ] === 'string' && localConfiguration[
-                                            propertyName
-                                        ]) {
+                                        if (
+                                            localConfiguration.hasOwnProperty(
+                                                propertyName
+                                            ) && typeof localConfiguration[
+                                                propertyName
+                                            ] === 'string' &&
+                                            localConfiguration[propertyName]
+                                        ) {
                                             fileName = localConfiguration[
                                                 propertyName]
                                             break
@@ -945,11 +948,14 @@ export default class Helper {
                                         const propertyName:string of
                                         packageAliasPropertyNames
                                     )
-                                        if (localConfiguration.hasOwnProperty(
-                                            propertyName
-                                        ) && typeof localConfiguration[
-                                            propertyName
-                                        ] === 'object') {
+                                        if (
+                                            localConfiguration.hasOwnProperty(
+                                                propertyName
+                                            ) &&
+                                            typeof localConfiguration[
+                                                propertyName
+                                            ] === 'object'
+                                        ) {
                                             packageAliases =
                                                 localConfiguration[
                                                     propertyName]

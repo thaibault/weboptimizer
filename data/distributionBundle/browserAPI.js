@@ -18,9 +18,8 @@ import type {Window} from 'clientnode'
 import type {BrowserAPI} from './type'
 // endregion
 // region declaration
-// NOTE: Produces a babel error yet.
-// declare var NAME:string
-// declare var TARGET_TECHNOLOGY:string
+declare var NAME:string
+declare var TARGET_TECHNOLOGY:string
 declare var window:Window
 // endregion
 // region variables
@@ -32,7 +31,6 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
     const path:Object = require('path')
     const {JSDOM, VirtualConsole} = require('jsdom')
-    const DOM:typeof Object = JSDOM
     const virtualConsole:Object = new VirtualConsole()
     for (const name:string of [
         'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
@@ -49,14 +47,14 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             console.error(error.stack, error.detail)
     })
     const render:Function = (template:string):Window => {
-        let window:Window = (new DOM(template, {
+        let window:Window = (new JSDOM(template, {
             resources: 'usable',
             runScripts: 'dangerously',
             url: 'http://localhost',
             virtualConsole
         })).window
         browserAPI = {
-            debug: false, domContentLoaded: false, DOM, window,
+            debug: false, domContentLoaded: false, DOM: JSDOM, window,
             windowLoaded: false}
         window.addEventListener('load', ():void => {
             // NOTE: Maybe we have miss the "DOMContentLoaded" event.
