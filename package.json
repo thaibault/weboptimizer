@@ -861,7 +861,7 @@
         "process": true,
         "__filename": "mock",
         "__dirname": "mock",
-        "Buffer": false,
+        "Buffer": true,
         "setImmediate": true
       },
       "offline": {
