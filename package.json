@@ -68,7 +68,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
     "babili-webpack-plugin": "^0.1.2",
-    "clientnode": "^1.0.263",
+    "clientnode": "^1.0.264",
     "css-loader": "^0.28.7",
     "ejs": "^2.5.7",
     "exports-loader": "^0.6.4",
@@ -100,16 +100,16 @@
     "webpack-sources": "^1.0.1"
   },
   "peerDependencies": {
-    "babel-eslint": "^8.0.1",
-    "eslint": "^4.8.0",
-    "eslint-config-google": "^0.9.1",
-    "eslint-plugin-flowtype": "^2.36.0",
-    "eslint-plugin-jsdoc": "^3.1.1",
-    "flow-bin": "^0.57.2",
-    "jsdoc": "^3.5.3",
-    "stylelint": "^7.13.0",
-    "webpack": "^3.3.0",
-    "webpack-dev-server": "^2.5.1"
+    "babel-eslint": "*",
+    "eslint": "*",
+    "eslint-config-google": "*",
+    "eslint-plugin-flowtype": "*",
+    "eslint-plugin-jsdoc": "*",
+    "flow-bin": "*",
+    "jsdoc": "*",
+    "stylelint": "*",
+    "webpack": "*",
+    "webpack-dev-server": "*"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
