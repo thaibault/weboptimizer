@@ -61,10 +61,8 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-plugin-transform-with": "^1.0.0",
-    "babel-preset-es2017": "^6.24.1",
-    "babel-preset-es2017-node7": "^0.5.2",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-minify": "^0.2.0",
-    "babel-preset-modern-browsers": "^9.0.2",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
     "babili-webpack-plugin": "^0.1.2",
@@ -828,7 +826,7 @@
                 "__evaluate__": "!self.debug"
               },
               "presets": {
-                "__evaluate__": "(self.targetTechnology === 'node' ? ['es2017-node7'] : [['modern-browsers', {loose: true}], 'es2017']).concat('stage-0').concat((self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : 'minify')"
+                "__evaluate__": "(self.targetTechnology === 'node' ? [['env', {targets: {node: 'current'}}]] : [['env', {loose: true, targets: {browsers: ['last 2 versions']}}]]).concat('stage-0').concat((self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : 'minify')"
               },
               "plugins": [
                 "transform-flow-strip-types",
