@@ -826,7 +826,7 @@
                 "__evaluate__": "!self.debug"
               },
               "presets": {
-                "__evaluate__": "(self.targetTechnology === 'node' ? [['env', {targets: {node: 'current'}}]] : [['env', {loose: true, targets: {browsers: ['last 2 versions']}}]]).concat('stage-0').concat((self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : 'minify')"
+                "__evaluate__": "(self.targetTechnology === 'node' ? [['env', {loose: true, targets: {node: 'current'}}]] : [['env', {loose: true, targets: {browsers: ['last 2 versions']}}]]).concat('stage-0').concat((self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : 'minify')"
               },
               "plugins": [
                 "transform-flow-strip-types",
