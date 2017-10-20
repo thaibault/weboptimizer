@@ -825,13 +825,13 @@
               "minified": {
                 "__evaluate__": "!self.debug"
               },
-              "presets": {
-                "__evaluate__": "[['env', {loose: true, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: 'last 2 versions', node: 'current'}}]].concat('stage-0').concat((self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : 'minify')"
-              },
               "plugins": [
                 "transform-flow-strip-types",
                 "transform-runtime"
-              ]
+              ],
+              "presets": {
+                "__evaluate__": "[['env', {loose: true, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: 'last 2 versions', node: 'current'}}]].concat('stage-0').concat((self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : 'minify')"
+              }
             }
           }
         },

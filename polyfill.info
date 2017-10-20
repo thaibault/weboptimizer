@@ -1,0 +1,65 @@
+babel (ohne polyfill oder Helper-Runtime)
+-----------------------------------------
+
+Alle Helper werden im Code inline eingefügt.
+
++ Keine Abhängikeiten
++ Keine Verschmutzung des globalen Scopes
+- Redundanter Code
+
+transform-runtime (Paket: babel-plugin-transform-runtime)
+---------------------------------------------------------
+
+biegt alle Polyfill-Helper zum Paket "babel-runtime" um.
+
++ Weniger Code-Redundanz
+- Code hat "babel-runtime" Abhängigkeit
+
+babel-polyfill
+--------------
+
+modifiziert die globale Umgebung
+
++ ermöglicht "foobar".includes('foo')
+- Verändert den globale Scope
+
+Best Practice (für beste Performance)
+-------------------------------------
+
+### Bibliothek
+
+#### Maximale Performance
+
+Hier sollte "transform-runtime" genutzt werden und eine Abhängigkeit zu
+"babel-runtime" und ggf. zu "babel-polyfill" kommuniziert werden (um das
+Optimierungspotential für Anwendungen nicht zu verschenken):
+
+package.json:
+
+...
+"devDependencies": {"babel-polyfill": "..."}
+...
+"dependencies": {"babel-runtime": "..."}
+...
+
+Für lokale Tests muss "babel-runtime" und zusätzlich "babel-polyfill"
+eingefügt werden.
+
+#### Maximale Kompatibilität
+
+Hier sollte auf "transform-runtime" verzichtet werden, um keine transitiven
+Abhängigkeiten zu erzeugen. Eingriffe in den globale Scope werden nicht
+vorgenommen.
+
+### Applikation
+
+Hier sollte "transform-runtime" genutzt werden und "babel-runtime" sowie
+"babel-polyfill" eingebaut werden:
+
+package.json:
+
+...
+"devDepenedencies": {"babel-polyfill": "...", "babel-runtime": "..."}
+...
+
+
