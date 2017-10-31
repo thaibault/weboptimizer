@@ -1352,9 +1352,8 @@
         "error",
         "always",
         {
-          "annotateUndefined": "always",
           "excludeMatching": [
-            "^constructor("
+            "constructor"
           ]
         }
       ],
