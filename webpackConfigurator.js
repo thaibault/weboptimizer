@@ -897,22 +897,22 @@ if (configuration.files.compose.cascadingStyleSheet) {
 }
 // / endregion
 // endregion
-// TODO
+/* TODO
 pluginInstances.push(new (require('@ngtools/webpack').AotPlugin)({
     entryModule: '/home/torben/cloud/data/repository/public/angularGeneric/index.js#Module',
     skipCodeGeneration: false,
-    sourceMap: true,
+    sourceMap: configuration.debug,
     tsConfigPath: '/home/torben/cloud/data/repository/public/angularGeneric/aheadOfTimeCompilation.json',
     typeChecking: false,
     compilerOptions: {
-        allowJs: true,
+        allowJs: false,
         allowSyntheticDefaultImports: false,
         allowUnreachableCode: true,
         allowUnusedLabels: true,
         alwaysStrict: false,
         charset: 'utf8',
         checkJs: false,
-        declaration: false,
+        declaration: true,
         diagnostics: false,
         disableSizeLimit: true,
         downlevelIteration: true,
@@ -929,7 +929,7 @@ pluginInstances.push(new (require('@ngtools/webpack').AotPlugin)({
         module: 'ESNEXT',
         moduleResolution: 'node',
         newLine: 'lf',
-        neEmitOnError: false,
+        noEmitOnError: false,
         noImplicitAny: false,
         noImplicitReturns: false,
         noImplicitThis: false,
@@ -949,6 +949,7 @@ pluginInstances.push(new (require('@ngtools/webpack').AotPlugin)({
         typeRoots: ['/home/torben/cloud/data/repository/public/angularGeneric/node_modules/@types/']
     }
 }))
+*/
 // region configuration
 const webpackConfiguration:WebpackConfiguration = {
     bail: true,
