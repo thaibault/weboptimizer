@@ -943,7 +943,7 @@ pluginInstances.push(new (require('@ngtools/webpack').AotPlugin)({
         pretty: true,
         outDir: '/home/torben/cloud/data/repository/public/angularGeneric/aheadOfTime.compiled',
         sourceMap: configuration.debug,
-        strictNullChecks: true,
+        strictNullChecks: false,
         suppressImplicitAnyIndexErrors: false,
         target: 'esnext',
         typeRoots: ['/home/torben/cloud/data/repository/public/angularGeneric/node_modules/@types/']
