@@ -897,6 +897,58 @@ if (configuration.files.compose.cascadingStyleSheet) {
 }
 // / endregion
 // endregion
+// TODO
+pluginInstances.push(new (require('@ngtools/webpack').AotPlugin)({
+    entryModule: '/home/torben/cloud/data/repository/public/angularGeneric/index.js#Module',
+    skipCodeGeneration: false,
+    sourceMap: true,
+    tsConfigPath: '/home/torben/cloud/data/repository/public/angularGeneric/aheadOfTimeCompilation.json',
+    typeChecking: false,
+    compilerOptions: {
+        allowJs: true,
+        allowSyntheticDefaultImports: false,
+        allowUnreachableCode: true,
+        allowUnusedLabels: true,
+        alwaysStrict: false,
+        charset: 'utf8',
+        checkJs: false,
+        declaration: false,
+        diagnostics: false,
+        disableSizeLimit: true,
+        downlevelIteration: true,
+        emitBOM: false,
+        emitDecoratorMetadata: true,
+        experimentalDecorators: true,
+        forceConsistentCasingInFileNames: false,
+        importHelpers: false,
+        inlineSourceMap: configuration.debug,
+        inlineSources: false,
+        isolatedModules: false,
+        lib: ['esnext', 'dom'],
+        maxNodeModuleJsDepth: 0,
+        module: 'ESNEXT',
+        moduleResolution: 'node',
+        newLine: 'lf',
+        neEmitOnError: false,
+        noImplicitAny: false,
+        noImplicitReturns: false,
+        noImplicitThis: false,
+        noLib: false,
+        noResolve: false,
+        noStrictGenericChecks: false,
+        noUnusedLocals: false,
+        noUnusedParameters: false,
+        preserveConstEnums: false,
+        preserveSymlinks: false,
+        pretty: true,
+        outDir: '/home/torben/cloud/data/repository/public/angularGeneric/aheadOfTime.compiled',
+        sourceMap: configuration.debug,
+        strictNullChecks: true,
+        suppressImplicitAnyIndexErrors: false,
+        target: 'esnext',
+        typeRoots: ['/home/torben/cloud/data/repository/public/angularGeneric/node_modules/@types/']
+    }
+}))
 // region configuration
 const webpackConfiguration:WebpackConfiguration = {
     bail: true,
