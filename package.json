@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.398",
+  "version": "1.0.399",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "http://torben.website/webOptimizer",
@@ -1353,7 +1353,9 @@
         "always",
         {
           "annotateUndefined": "always",
-          "excludeMatching": ["^constructor("]
+          "excludeMatching": [
+            "^constructor("
+          ]
         }
       ],
       "flowtype/space-before-type-colon": [
