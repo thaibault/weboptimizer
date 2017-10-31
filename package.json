@@ -1352,7 +1352,8 @@
         "error",
         "always",
         {
-          "annotateUndefined": "always"
+          "annotateUndefined": "always",
+          "excludeMatching": ["^constructor("]
         }
       ],
       "flowtype/space-before-type-colon": [
