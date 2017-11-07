@@ -99,10 +99,14 @@ for (const ignorePattern:string of configuration.injection.ignorePattern)
 // // endregion
 // // region define modules to replace
 for (const source:string in configuration.module.replacements.normal)
-    if (configuration.module.replacements.normal.hasOwnProperty(source))
+    if (configuration.module.replacements.normal.hasOwnProperty(source)) {
+        const search:RegExp = new RegExp(source)
         pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
-            new RegExp(source),
-            configuration.module.replacements.normal[source]))
+            search, (resource:{request:string}):void => {
+                resource.request = resource.request.replace(
+                    search, configuration.module.replacements.normal[source])
+            }))
+    }
 // // endregion
 // // region generate html file
 let htmlAvailable:boolean = false
