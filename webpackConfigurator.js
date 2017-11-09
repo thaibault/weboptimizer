@@ -906,7 +906,7 @@ if (configuration.files.compose.cascadingStyleSheet) {
 // / endregion
 // endregion
 for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
-    pluginInstances.push(new (require(pluginConfiguration.name.module)[
+    pluginInstances.push(new (eval('require')(pluginConfiguration.name.module)[
         pluginConfiguration.name.initializer
     ])(...pluginConfiguration.parameter))
 // region configuration
