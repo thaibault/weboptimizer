@@ -45,7 +45,11 @@ plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
 import ejsLoader from './ejsLoader.compiled'
-import type {HTMLConfiguration, WebpackConfiguration} from './type'
+/* eslint-disable no-unused-vars */
+import type {
+    HTMLConfiguration, PluginConfiguration, WebpackConfiguration
+} from './type'
+/* eslint-enable no-unused-vars */
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 
@@ -901,59 +905,10 @@ if (configuration.files.compose.cascadingStyleSheet) {
 }
 // / endregion
 // endregion
-/* TODO
-pluginInstances.push(new (require('@ngtools/webpack').AotPlugin)({
-    entryModule: '/home/torben/cloud/data/repository/public/angularGeneric/index.js#Module',
-    skipCodeGeneration: false,
-    sourceMap: configuration.debug,
-    tsConfigPath: '/home/torben/cloud/data/repository/public/angularGeneric/aheadOfTimeCompilation.json',
-    typeChecking: false,
-    compilerOptions: {
-        allowJs: false,
-        allowSyntheticDefaultImports: false,
-        allowUnreachableCode: true,
-        allowUnusedLabels: true,
-        alwaysStrict: false,
-        charset: 'utf8',
-        checkJs: false,
-        declaration: true,
-        diagnostics: false,
-        disableSizeLimit: true,
-        downlevelIteration: true,
-        emitBOM: false,
-        emitDecoratorMetadata: true,
-        experimentalDecorators: true,
-        forceConsistentCasingInFileNames: false,
-        importHelpers: false,
-        inlineSourceMap: configuration.debug,
-        inlineSources: false,
-        isolatedModules: false,
-        lib: ['esnext', 'dom'],
-        maxNodeModuleJsDepth: 0,
-        module: 'ESNEXT',
-        moduleResolution: 'node',
-        newLine: 'lf',
-        noEmitOnError: false,
-        noImplicitAny: false,
-        noImplicitReturns: false,
-        noImplicitThis: false,
-        noLib: false,
-        noResolve: false,
-        noStrictGenericChecks: false,
-        noUnusedLocals: false,
-        noUnusedParameters: false,
-        preserveConstEnums: false,
-        preserveSymlinks: false,
-        pretty: true,
-        outDir: '/home/torben/cloud/data/repository/public/angularGeneric/aheadOfTime.compiled',
-        sourceMap: configuration.debug,
-        strictNullChecks: false,
-        suppressImplicitAnyIndexErrors: false,
-        target: 'esnext',
-        typeRoots: ['/home/torben/cloud/data/repository/public/angularGeneric/node_modules/@types/']
-    }
-}))
-*/
+for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
+    pluginInstances.push(new (require(pluginConfiguration.name.module)[
+        pluginConfiguration.name.initializer
+    ])(...pluginConfiguration.parameter))
 // region configuration
 const webpackConfiguration:WebpackConfiguration = {
     bail: true,
