@@ -97,6 +97,13 @@ export type Path = {
     };
     tidyUp:Array<string>
 }
+export type PluginConfiguration = {
+    name:{
+        initializer:string;
+        module:string;
+    };
+    parameter:Array<any>;
+}
 export type DefaultConfiguration = {
     contextType:string;
     debug:boolean;
@@ -106,6 +113,7 @@ export type DefaultConfiguration = {
     library:boolean;
     nodeEnvironment:{[key:string]:boolean|'empty'|'mock'};
     path:Path;
+    plugins:Array<PluginConfiguration>;
     test:Object;
     'test:browser':Object
 }
@@ -278,6 +286,7 @@ export type ResolvedConfiguration = {
     performanceHints:{
         hints:false|string;
     };
+    plugins:Array<PluginConfiguration>;
     showConfiguration:boolean;
     stylelint:PlainObject;
     /* eslint-disable max-len */
