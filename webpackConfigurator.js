@@ -511,7 +511,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                         )
                             htmlPluginData.html = ejsLoader.bind(
                                 Tools.extendObject(true, {}, {
-                                    options: loaderConfiguration.options
+                                    options: loaderConfiguration.options || {}
                                 }, {options: {
                                     compileSteps: htmlFileSpecification
                                         .template.postCompileSteps
@@ -635,12 +635,14 @@ Tools.extendObject(loader, {
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: [
             {loader: 'file?name=[path][name]' + (Boolean(
-                configuration.module.preprocessor.ejs.options.compileSteps % 2
+                (configuration.module.preprocessor.ejs.options || {
+                    compileSteps: 2
+                }).compileSteps % 2
             ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`},
             {loader: 'extract'},
             {
                 loader: configuration.module.preprocessor.ejs.loader,
-                options: configuration.module.preprocessor.ejs.options
+                options: configuration.module.preprocessor.ejs.options || {}
             }
         ].concat(configuration.module.preprocessor.ejs.additional.map(
             evaluate))
@@ -662,7 +664,7 @@ Tools.extendObject(loader, {
             loader: configuration.module.preprocessor.javaScript
                 .loader,
             options: configuration.module.preprocessor.javaScript
-                .options
+                .options || {}
         }].concat(configuration.module.preprocessor.javaScript.additional.map(
             evaluate))
     },
@@ -694,22 +696,26 @@ Tools.extendObject(loader, {
                     configuration.path.target.asset.base,
                     configuration.path.target.asset.template
                 ), '[name]' + (Boolean(
-                    configuration.module.preprocessor.html.options.compileSteps
-                    % 2
+                    (configuration.module.preprocessor.html.options || {
+                        compileSteps: 2
+                    }).compileSteps % 2
                 ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)}
-            ].concat((Boolean(
-                configuration.module.preprocessor.html.options.compileSteps % 2
+            ].concat((Boolean((
+                configuration.module.preprocessor.html.options || {
+                    compileSteps: 2
+                }
+            ).compileSteps % 2
             ) ? [] :
                 [
                     {loader: 'extract'},
                     {
                         loader: configuration.module.html.loader,
-                        options: configuration.module.html.options
+                        options: configuration.module.html.options || {}
                     }
                 ]
             ), {
                 loader: configuration.module.preprocessor.html.loader,
-                options: configuration.module.preprocessor.html.options
+                options: configuration.module.preprocessor.html.options || {}
             }).concat(configuration.module.preprocessor.html.additional.map(
                 evaluate))
         },
@@ -732,7 +738,7 @@ Tools.extendObject(loader, {
                 {loader: 'extract'},
                 {
                     loader: configuration.module.html.loader,
-                    options: configuration.module.html.options
+                    options: configuration.module.html.options || {}
                 }
             ].concat(configuration.module.html.additional.map(evaluate))
         }
@@ -753,11 +759,11 @@ Tools.extendObject(loader, {
         use: [
             {
                 loader: configuration.module.style.loader,
-                options: configuration.module.style.options
+                options: configuration.module.style.options || {}
             },
             {
                 loader: configuration.module.cascadingStyleSheet.loader,
-                options: configuration.module.cascadingStyleSheet.options
+                options: configuration.module.cascadingStyleSheet.options || {}
             },
             {
                 loader: configuration.module.preprocessor.cascadingStyleSheet
@@ -796,7 +802,8 @@ Tools.extendObject(loader, {
                         })
                     ]
                 },
-                configuration.module.preprocessor.cascadingStyleSheet.options)
+                configuration.module.preprocessor.cascadingStyleSheet
+                    .options || {})
             }
         ].concat(
             configuration.module.preprocessor.cascadingStyleSheet.additional
@@ -816,7 +823,7 @@ Tools.extendObject(loader, {
             test: /\.eot(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.eot.loader,
-                options: configuration.module.optimizer.font.eot.options
+                options: configuration.module.optimizer.font.eot.options || {}
             }].concat(configuration.module.optimizer.font.eot.additional.map(
                 evaluate))
         },
@@ -830,7 +837,7 @@ Tools.extendObject(loader, {
             test: /\.svg(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.svg.loader,
-                options: configuration.module.optimizer.font.svg.options
+                options: configuration.module.optimizer.font.svg.options || {}
             }].concat(configuration.module.optimizer.font.svg.additional.map(
                 evaluate))
         },
@@ -844,7 +851,7 @@ Tools.extendObject(loader, {
             test: /\.ttf(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.ttf.loader,
-                options: configuration.module.optimizer.font.ttf.options
+                options: configuration.module.optimizer.font.ttf.options || {}
             }].concat(configuration.module.optimizer.font.ttf.additional.map(
                 evaluate))
         },
@@ -859,7 +866,7 @@ Tools.extendObject(loader, {
             test: /\.woff2?(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.woff.loader,
-                options: configuration.module.optimizer.font.woff.options
+                options: configuration.module.optimizer.font.woff.options || {}
             }].concat(configuration.module.optimizer.font.woff.additional.map(
                 evaluate))
         }
@@ -875,7 +882,7 @@ Tools.extendObject(loader, {
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
         use: [{
             loader: configuration.module.optimizer.image.loader,
-            options: configuration.module.optimizer.image.file
+            options: configuration.module.optimizer.image.file || {}
         }].concat(configuration.module.optimizer.image.additional.map(
             evaluate))
     },
@@ -894,7 +901,7 @@ Tools.extendObject(loader, {
         test: /.+/,
         use: [{
             loader: configuration.module.optimizer.data.loader,
-            options: configuration.module.optimizer.data.options
+            options: configuration.module.optimizer.data.options || {}
         }].concat(configuration.module.optimizer.data.additional.map(evaluate))
     }
     // endregion
