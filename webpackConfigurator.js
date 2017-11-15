@@ -704,8 +704,7 @@ Tools.extendObject(loader, {
                 configuration.module.preprocessor.html.options || {
                     compileSteps: 2
                 }
-            ).compileSteps % 2
-            ) ? [] :
+            ).compileSteps % 2) ? [] :
                 [
                     {loader: 'extract'},
                     {
@@ -917,7 +916,7 @@ for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
         pluginConfiguration.name.initializer
     ])(...pluginConfiguration.parameter))
 // region configuration
-const webpackConfiguration:WebpackConfiguration = {
+export const webpackConfiguration:WebpackConfiguration = {
     bail: true,
     cache: configuration.cache.main,
     context: configuration.path.context,
