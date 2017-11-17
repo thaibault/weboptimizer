@@ -119,6 +119,7 @@
     "eslint-plugin-jsdoc": "^3.2.0",
     "flow-bin": "^0.59.0",
     "jsdoc": "^3.5.3",
+    "qunit": "^2.4.1",
     "source-map-support": "^0.5.0",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3"
