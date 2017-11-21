@@ -14,7 +14,6 @@
     endregion
 */
 // region imports
-import BabelMinifyPlugin from 'babili-webpack-plugin'
 import Tools from 'clientnode'
 /* eslint-disable no-unused-vars */
 import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
@@ -36,6 +35,7 @@ import webpack from 'webpack'
 const plugins = require('webpack-load-plugins')()
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 
+plugins.BabelMinify = plugins.babelMinify
 plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
 plugins.AddAssetHTMLPlugin = require('add-asset-html-webpack-plugin')
@@ -168,8 +168,11 @@ if (configuration.module.provide)
 // // region modules/assets
 // /// region perform javaScript minification/optimisation
 if (configuration.module.optimizer.babelMinify)
-    pluginInstances.push(new BabelMinifyPlugin(
-        configuration.module.optimizer.babelMinify))
+    pluginInstances.push(Object.keys(
+        configuration.module.optimizer.babelMinify
+    ).length ?
+        new plugins.BabelMinify(configuration.module.optimizer.babelMinify) :
+        new plugins.BabelMinify())
 // /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
