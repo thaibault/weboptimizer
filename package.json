@@ -65,7 +65,7 @@
     "babel-preset-minify": "^0.2.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
-    "babili-webpack-plugin": "^0.1.2",
+    "babel-minify-webpack-plugin": "^0.2.0",
     "clientnode": "^1.0.281",
     "css-loader": "^0.28.7",
     "ejs": "^2.5.7",
