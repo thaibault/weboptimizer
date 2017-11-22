@@ -554,26 +554,26 @@ if (configuration.exportFormat.external.startsWith('umd'))
                                 .hasOwnProperty(replacement)
                             )
                                 source = source.replace(new RegExp(
-                                    '(require\\()"' +
+                                    '(require\\()["\']' +
                                     Tools.stringEscapeRegularExpressions(
                                         configuration.injection.external
                                             .aliases[replacement]
-                                    ) + '"(\\))', 'g'
+                                    ) + '["\'](\\))', 'g'
                                 ), `$1'${replacement}'$2`).replace(
-                                    new RegExp('(define\\("' +
+                                    new RegExp('(define\\(["\']' +
                                         Tools.stringEscapeRegularExpressions(
                                             bundleName
-                                        ) + '", \\[.*)"' +
+                                        ) + '["\'], \\[.*)["\']' +
                                         Tools.stringEscapeRegularExpressions(
                                             configuration.injection.external
                                                 .aliases[replacement]
-                                        ) + '"(.*\\], factory\\);)'
+                                        ) + '["\'](.*\\], factory\\);)'
                                     ), `$1'${replacement}'$2`)
                         source = source.replace(new RegExp(
-                            '(root\\[)"' +
+                            '(root\\[)["\']' +
                             Tools.stringEscapeRegularExpressions(
                                 bundleName
-                            ) + '"(\\] = )'
+                            ) + '["\'](\\] = )'
                         ), `$1'` + Tools.stringConvertToValidVariableName(
                             bundleName
                         ) + `'$2`)
