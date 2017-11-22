@@ -96,7 +96,14 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     })
 }
 // endregion
-export default (callback:Function, clear:boolean = true):any => {
+/**
+ * Provides a generic browser api in node or web contexts.
+ * @param callback - Function to be called when environment is ready.
+ * @param clear - Indicates whether a potential existign window object should
+ * be replaced or not.
+ * @returns Determined environment.
+ */
+export function createBrowserAPI(callback:Function, clear:boolean = true):any {
     // region initialize global context
     /*
         NOTE: We have to define window globally before anything is loaded to
@@ -122,6 +129,7 @@ export default (callback:Function, clear:boolean = true):any => {
         browserAPI, true
     ) : onCreatedListener.push(wrappedCallback)
 }
+export default createBrowserAPI
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

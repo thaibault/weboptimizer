@@ -14,7 +14,6 @@
     endregion
 */
 // region imports
-import BabelMinifyPlugin from 'babili-webpack-plugin'
 import Tools from 'clientnode'
 /* eslint-disable no-unused-vars */
 import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
@@ -36,6 +35,7 @@ import webpack from 'webpack'
 const plugins = require('webpack-load-plugins')()
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 
+plugins.BabelMinify = plugins.babelMinify
 plugins.HTML = plugins.html
 plugins.ExtractText = plugins.extractText
 plugins.AddAssetHTMLPlugin = require('add-asset-html-webpack-plugin')
@@ -45,7 +45,11 @@ plugins.Imagemin = require('imagemin-webpack-plugin').default
 plugins.Offline = require('offline-plugin')
 
 import ejsLoader from './ejsLoader.compiled'
-import type {HTMLConfiguration, WebpackConfiguration} from './type'
+/* eslint-disable no-unused-vars */
+import type {
+    HTMLConfiguration, PluginConfiguration, WebpackConfiguration
+} from './type'
+/* eslint-enable no-unused-vars */
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 
@@ -99,10 +103,14 @@ for (const ignorePattern:string of configuration.injection.ignorePattern)
 // // endregion
 // // region define modules to replace
 for (const source:string in configuration.module.replacements.normal)
-    if (configuration.module.replacements.normal.hasOwnProperty(source))
+    if (configuration.module.replacements.normal.hasOwnProperty(source)) {
+        const search:RegExp = new RegExp(source)
         pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
-            new RegExp(source),
-            configuration.module.replacements.normal[source]))
+            search, (resource:{request:string}):void => {
+                resource.request = resource.request.replace(
+                    search, configuration.module.replacements.normal[source])
+            }))
+    }
 // // endregion
 // // region generate html file
 let htmlAvailable:boolean = false
@@ -159,9 +167,13 @@ if (configuration.module.provide)
 // // endregion
 // // region modules/assets
 // /// region perform javaScript minification/optimisation
-if (configuration.module.optimizer.babelMinify)
-    pluginInstances.push(new BabelMinifyPlugin(
-        configuration.module.optimizer.babelMinify))
+if (configuration.module.optimizer.babelMinify.bundle)
+    pluginInstances.push(Object.keys(
+        configuration.module.optimizer.babelMinify.bundle
+    ).length ?
+        new plugins.BabelMinify(
+            configuration.module.optimizer.babelMinify.bundle
+        ) : new plugins.BabelMinify())
 // /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
@@ -503,7 +515,7 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                         )
                             htmlPluginData.html = ejsLoader.bind(
                                 Tools.extendObject(true, {}, {
-                                    options: loaderConfiguration.options
+                                    options: loaderConfiguration.options || {}
                                 }, {options: {
                                     compileSteps: htmlFileSpecification
                                         .template.postCompileSteps
@@ -528,8 +540,7 @@ if (configuration.exportFormat.external.startsWith('umd'))
                 if (
                     compilation.assets.hasOwnProperty(assetRequest) &&
                     assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                        configuration.build.types.javaScript.outputExtension
-                    )
+                        configuration.build.types.javaScript.outputExtension)
                 ) {
                     let source:string =
                         compilation.assets[assetRequest].source()
@@ -542,26 +553,26 @@ if (configuration.exportFormat.external.startsWith('umd'))
                                 .hasOwnProperty(replacement)
                             )
                                 source = source.replace(new RegExp(
-                                    '(require\\()"' +
+                                    '(require\\()["\']' +
                                     Tools.stringEscapeRegularExpressions(
                                         configuration.injection.external
                                             .aliases[replacement]
-                                    ) + '"(\\))', 'g'
+                                    ) + '["\'](\\))', 'g'
                                 ), `$1'${replacement}'$2`).replace(
-                                    new RegExp('(define\\("' +
+                                    new RegExp('(define\\(["\']' +
                                         Tools.stringEscapeRegularExpressions(
                                             bundleName
-                                        ) + '", \\[.*)"' +
+                                        ) + '["\'], \\[.*)["\']' +
                                         Tools.stringEscapeRegularExpressions(
                                             configuration.injection.external
                                                 .aliases[replacement]
-                                        ) + '"(.*\\], factory\\);)'
+                                        ) + '["\'](.*\\], factory\\);)'
                                     ), `$1'${replacement}'$2`)
                         source = source.replace(new RegExp(
-                            '(root\\[)"' +
+                            '(root\\[)["\']' +
                             Tools.stringEscapeRegularExpressions(
                                 bundleName
-                            ) + '"(\\] = )'
+                            ) + '["\'](\\] = )'
                         ), `$1'` + Tools.stringConvertToValidVariableName(
                             bundleName
                         ) + `'$2`)
@@ -627,12 +638,14 @@ Tools.extendObject(loader, {
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: [
             {loader: 'file?name=[path][name]' + (Boolean(
-                configuration.module.preprocessor.ejs.options.compileSteps % 2
+                (configuration.module.preprocessor.ejs.options || {
+                    compileSteps: 2
+                }).compileSteps % 2
             ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`},
             {loader: 'extract'},
             {
                 loader: configuration.module.preprocessor.ejs.loader,
-                options: configuration.module.preprocessor.ejs.options
+                options: configuration.module.preprocessor.ejs.options || {}
             }
         ].concat(configuration.module.preprocessor.ejs.additional.map(
             evaluate))
@@ -651,10 +664,8 @@ Tools.extendObject(loader, {
         ].concat(configuration.module.locations.directoryPaths)),
         test: /\.js(?:\?.*)?$/i,
         use: [{
-            loader: configuration.module.preprocessor.javaScript
-                .loader,
-            options: configuration.module.preprocessor.javaScript
-                .options
+            loader: configuration.module.preprocessor.javaScript.loader,
+            options: configuration.module.preprocessor.javaScript.options || {}
         }].concat(configuration.module.preprocessor.javaScript.additional.map(
             evaluate))
     },
@@ -686,22 +697,25 @@ Tools.extendObject(loader, {
                     configuration.path.target.asset.base,
                     configuration.path.target.asset.template
                 ), '[name]' + (Boolean(
-                    configuration.module.preprocessor.html.options.compileSteps
-                    % 2
+                    (configuration.module.preprocessor.html.options || {
+                        compileSteps: 2
+                    }).compileSteps % 2
                 ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)}
-            ].concat((Boolean(
-                configuration.module.preprocessor.html.options.compileSteps % 2
-            ) ? [] :
+            ].concat((Boolean((
+                configuration.module.preprocessor.html.options || {
+                    compileSteps: 2
+                }
+            ).compileSteps % 2) ? [] :
                 [
                     {loader: 'extract'},
                     {
                         loader: configuration.module.html.loader,
-                        options: configuration.module.html.options
+                        options: configuration.module.html.options || {}
                     }
                 ]
             ), {
                 loader: configuration.module.preprocessor.html.loader,
-                options: configuration.module.preprocessor.html.options
+                options: configuration.module.preprocessor.html.options || {}
             }).concat(configuration.module.preprocessor.html.additional.map(
                 evaluate))
         },
@@ -724,7 +738,7 @@ Tools.extendObject(loader, {
                 {loader: 'extract'},
                 {
                     loader: configuration.module.html.loader,
-                    options: configuration.module.html.options
+                    options: configuration.module.html.options || {}
                 }
             ].concat(configuration.module.html.additional.map(evaluate))
         }
@@ -745,11 +759,11 @@ Tools.extendObject(loader, {
         use: [
             {
                 loader: configuration.module.style.loader,
-                options: configuration.module.style.options
+                options: configuration.module.style.options || {}
             },
             {
                 loader: configuration.module.cascadingStyleSheet.loader,
-                options: configuration.module.cascadingStyleSheet.options
+                options: configuration.module.cascadingStyleSheet.options || {}
             },
             {
                 loader: configuration.module.preprocessor.cascadingStyleSheet
@@ -788,7 +802,8 @@ Tools.extendObject(loader, {
                         })
                     ]
                 },
-                configuration.module.preprocessor.cascadingStyleSheet.options)
+                configuration.module.preprocessor.cascadingStyleSheet
+                    .options || {})
             }
         ].concat(
             configuration.module.preprocessor.cascadingStyleSheet.additional
@@ -808,7 +823,7 @@ Tools.extendObject(loader, {
             test: /\.eot(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.eot.loader,
-                options: configuration.module.optimizer.font.eot.options
+                options: configuration.module.optimizer.font.eot.options || {}
             }].concat(configuration.module.optimizer.font.eot.additional.map(
                 evaluate))
         },
@@ -822,7 +837,7 @@ Tools.extendObject(loader, {
             test: /\.svg(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.svg.loader,
-                options: configuration.module.optimizer.font.svg.options
+                options: configuration.module.optimizer.font.svg.options || {}
             }].concat(configuration.module.optimizer.font.svg.additional.map(
                 evaluate))
         },
@@ -836,7 +851,7 @@ Tools.extendObject(loader, {
             test: /\.ttf(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.ttf.loader,
-                options: configuration.module.optimizer.font.ttf.options
+                options: configuration.module.optimizer.font.ttf.options || {}
             }].concat(configuration.module.optimizer.font.ttf.additional.map(
                 evaluate))
         },
@@ -851,7 +866,7 @@ Tools.extendObject(loader, {
             test: /\.woff2?(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.woff.loader,
-                options: configuration.module.optimizer.font.woff.options
+                options: configuration.module.optimizer.font.woff.options || {}
             }].concat(configuration.module.optimizer.font.woff.additional.map(
                 evaluate))
         }
@@ -867,7 +882,7 @@ Tools.extendObject(loader, {
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
         use: [{
             loader: configuration.module.optimizer.image.loader,
-            options: configuration.module.optimizer.image.file
+            options: configuration.module.optimizer.image.file || {}
         }].concat(configuration.module.optimizer.image.additional.map(
             evaluate))
     },
@@ -886,7 +901,7 @@ Tools.extendObject(loader, {
         test: /.+/,
         use: [{
             loader: configuration.module.optimizer.data.loader,
-            options: configuration.module.optimizer.data.options
+            options: configuration.module.optimizer.data.options || {}
         }].concat(configuration.module.optimizer.data.additional.map(evaluate))
     }
     // endregion
@@ -897,8 +912,12 @@ if (configuration.files.compose.cascadingStyleSheet) {
 }
 // / endregion
 // endregion
+for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
+    pluginInstances.push(new (eval('require')(pluginConfiguration.name.module)[
+        pluginConfiguration.name.initializer
+    ])(...pluginConfiguration.parameter))
 // region configuration
-const webpackConfiguration:WebpackConfiguration = {
+export const webpackConfiguration:WebpackConfiguration = {
     bail: true,
     cache: configuration.cache.main,
     context: configuration.path.context,

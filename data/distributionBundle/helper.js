@@ -40,7 +40,7 @@ import type {
 /**
  * Provides a class of static methods with generic use cases.
  */
-export default class Helper {
+export class Helper {
     // region boolean
     /**
      * Determines whether given file path is within given list of file
@@ -1019,6 +1019,7 @@ export default class Helper {
         return moduleID
     }
 }
+export default Helper
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
