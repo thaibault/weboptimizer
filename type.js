@@ -247,7 +247,10 @@ export type ResolvedConfiguration = {
                 file:PlainObject;
                 loader:string;
             };
-            babelMinify:PlainObject
+            babelMinify:{
+                bundle:?PlainObject;
+                module:?PlainObject
+            };
         };
         preprocessor:{
             cascadingStyleSheet:{
