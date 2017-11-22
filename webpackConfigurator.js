@@ -664,10 +664,8 @@ Tools.extendObject(loader, {
         ].concat(configuration.module.locations.directoryPaths)),
         test: /\.js(?:\?.*)?$/i,
         use: [{
-            loader: configuration.module.preprocessor.javaScript
-                .loader,
-            options: configuration.module.preprocessor.javaScript
-                .options || {}
+            loader: configuration.module.preprocessor.javaScript.loader,
+            options: configuration.module.preprocessor.javaScript.options || {}
         }].concat(configuration.module.preprocessor.javaScript.additional.map(
             evaluate))
     },
