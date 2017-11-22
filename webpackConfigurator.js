@@ -167,12 +167,13 @@ if (configuration.module.provide)
 // // endregion
 // // region modules/assets
 // /// region perform javaScript minification/optimisation
-if (configuration.module.optimizer.babelMinify)
+if (configuration.module.optimizer.babelMinify.bundle)
     pluginInstances.push(Object.keys(
-        configuration.module.optimizer.babelMinify
+        configuration.module.optimizer.babelMinify.bundle
     ).length ?
-        new plugins.BabelMinify(configuration.module.optimizer.babelMinify) :
-        new plugins.BabelMinify())
+        new plugins.BabelMinify(
+            configuration.module.optimizer.babelMinify.bundle
+        ) : new plugins.BabelMinify())
 // /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
