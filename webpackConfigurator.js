@@ -540,8 +540,7 @@ if (configuration.exportFormat.external.startsWith('umd'))
                 if (
                     compilation.assets.hasOwnProperty(assetRequest) &&
                     assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                        configuration.build.types.javaScript.outputExtension
-                    )
+                        configuration.build.types.javaScript.outputExtension)
                 ) {
                     let source:string =
                         compilation.assets[assetRequest].source()
