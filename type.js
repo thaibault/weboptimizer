@@ -248,8 +248,11 @@ export type ResolvedConfiguration = {
                 loader:string;
             };
             babelMinify:{
-                bundle:?PlainObject;
-                module:?PlainObject
+                bundle:?{
+                    plugin:?PlainObject;
+                    transform:?PlainObject;
+                };
+                module:?PlainObject;
             };
         };
         preprocessor:{
