@@ -743,8 +743,15 @@
           },
           "babelMinify": {
             "bundle": {
-              "mangle": {
-                "topLevel": true
+              "plugin": {
+                "test": {
+                  "__evaluate__": "/^(?:(?:.*[^.]html\\.|[^h]tml\\.|[^t]ml\\.|[^m]l\\.|[^l]\\.|[^\\.])|.{1,5})\\.js(?:$|\\?)/i"
+                }
+              },
+              "transform": {
+                "mangle": {
+                  "topLevel": true
+                }
               }
             },
             "module": {}
