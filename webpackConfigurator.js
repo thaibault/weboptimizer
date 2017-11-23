@@ -172,7 +172,8 @@ if (configuration.module.optimizer.babelMinify.bundle)
         configuration.module.optimizer.babelMinify.bundle
     ).length ?
         new plugins.BabelMinify(
-            configuration.module.optimizer.babelMinify.bundle
+            configuration.module.optimizer.babelMinify.bundle.transform || {},
+            configuration.module.optimizer.babelMinify.bundle.plugin || {},
         ) : new plugins.BabelMinify())
 // /// endregion
 // /// region apply module pattern
