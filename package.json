@@ -742,7 +742,11 @@
             "loader": "url"
           },
           "babelMinify": {
-            "bundle": {},
+            "bundle": {
+              "mangle": {
+                "topLevel": true
+              }
+            },
             "module": {}
           }
         },
