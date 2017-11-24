@@ -167,7 +167,10 @@ if (configuration.module.provide)
 // // endregion
 // // region modules/assets
 // /// region perform javaScript minification/optimisation
-if (configuration.module.optimizer.babelMinify.bundle)
+if (
+    configuration.module.optimizer.babelMinify &&
+    configuration.module.optimizer.babelMinify.bundle
+)
     pluginInstances.push(Object.keys(
         configuration.module.optimizer.babelMinify.bundle
     ).length ?
