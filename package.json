@@ -179,6 +179,7 @@
           "OFFLINE": {
             "__evaluate__": "Boolean(self.offline)"
           },
+          "PRERENDER": false,
           "SELF_EXPORT_FORMAT": {
             "__evaluate__": "`'${self.exportFormat.self}'`"
           },
