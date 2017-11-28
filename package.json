@@ -746,7 +746,9 @@
             "bundle": {
               "transform": {
                 "mangle": {
-                  "topLevel": true
+                  "topLevel": {
+                    "__evaluate__": "!self.library"
+                  }
                 }
               }
             },
