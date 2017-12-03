@@ -127,7 +127,7 @@ const main = async ():Promise<any> => {
                                 if (new RegExp(configuration.build.types[
                                     type
                                 ].filePathPattern).test(file.path)) {
-                                    if (file.stat.isDirectory()) {
+                                    if (file.stats.isDirectory()) {
                                         await new Promise((
                                             resolve:Function, reject:Function
                                         ):void => removeDirectoryRecursively(
