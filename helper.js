@@ -501,6 +501,7 @@ export class Helper {
                     }
                 ))
                     if (
+                        file.stats &&
                         file.stats.isFile() &&
                         path.extname(file.path).substring(
                             1
@@ -657,7 +658,7 @@ export class Helper {
                                     return false
                             })
                         )
-                            if (file.stats.isFile())
+                            if (file.stats && file.stats.isFile())
                                 normalizedInternalInjection[chunkName].push(
                                     './' + path.relative(
                                         referencePath, path.resolve(
