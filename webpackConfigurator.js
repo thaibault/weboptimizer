@@ -606,7 +606,7 @@ for (
 // // endregion
 // / endregion
 // / region loader helper
-const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
+const isFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
     return Helper.isFilePathInLocation(
         filePath, configuration.path.ignore.concat(
@@ -618,11 +618,16 @@ const rejectFilePathInDependencies:Function = (filePath:string):boolean => {
             !configuration.path.context.startsWith(filePath)))
 }
 const loader:Object = {}
+const scope:Object = {
+    configuration,
+    loader,
+    isFilePathInDependencies
+}
 const evaluate:Function = (code:string, filePath:string):any => (new Function(
-    'configuration', 'filePath', 'loader', 'rejectFilePathInDependencies',
-    `return ${code}`
+    // IgnoreTypeCheck
+    'filePath', ...Object.keys(scope), `return ${code}`
 // IgnoreTypeCheck
-))(configuration, filePath, loader, rejectFilePathInDependencies)
+))(filePath, ...Object.values(scope))
 Tools.extendObject(loader, {
     // Convert to compatible native web types.
     // region generic template
@@ -659,7 +664,7 @@ Tools.extendObject(loader, {
     script: {
         exclude: (filePath:string):boolean => (
             configuration.module.preprocessor.javaScript.exclude === null
-        ) ? rejectFilePathInDependencies(filePath) :
+        ) ? isFilePathInDependencies(filePath) :
             evaluate(
                 configuration.module.preprocessor.javaScript.exclude, filePath
             ),
@@ -753,7 +758,7 @@ Tools.extendObject(loader, {
     style: {
         exclude: (filePath:string):boolean => (
             configuration.module.cascadingStyleSheet.exclude === null
-        ) ? rejectFilePathInDependencies(filePath) :
+        ) ? isFilePathInDependencies(filePath) :
             evaluate(
                 configuration.module.cascadingStyleSheet.exclude, filePath),
         include: Helper.normalizePaths([
@@ -880,7 +885,7 @@ Tools.extendObject(loader, {
     image: {
         exclude: (filePath:string):boolean => (
             configuration.module.optimizer.image.exclude === null
-        ) ? rejectFilePathInDependencies(filePath) :
+        ) ? isFilePathInDependencies(filePath) :
             evaluate(configuration.module.optimizer.image.exclude, filePath),
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
@@ -898,7 +903,7 @@ Tools.extendObject(loader, {
                 path.extname(Helper.stripLoader(filePath))
             ) || ((
                 configuration.module.optimizer.data.exclude === null
-            ) ? rejectFilePathInDependencies(filePath) :
+            ) ? isFilePathInDependencies(filePath) :
                 evaluate(
                     configuration.module.optimizer.data.exclude, filePath)),
         include: configuration.path.source.asset.data,
