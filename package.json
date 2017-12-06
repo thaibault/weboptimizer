@@ -845,8 +845,7 @@
               },
               "plugins": [
                 "transform-flow-strip-types",
-                "transform-runtime",
-                "transform-with"
+                "transform-runtime"
               ],
               "presets": {
                 "__evaluate__": "[['env', {loose: true, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: 'last 2 versions', node: 'current'}}]].concat('stage-0').concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
