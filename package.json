@@ -744,6 +744,11 @@
           },
           "babelMinify": {
             "bundle": {
+              "plugin": {
+                "parserOpts": {
+                  "strictMode": false
+                }
+              },
               "transform": {
                 "mangle": {
                   "topLevel": {
