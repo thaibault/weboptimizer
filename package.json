@@ -66,7 +66,7 @@
     "babel-preset-minify": "^0.2.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
-    "clientnode": "^1.0.302",
+    "clientnode": "^1.0.303",
     "css-loader": "^0.28.7",
     "ejs": "^2.5.7",
     "exports-loader": "^0.6.4",
@@ -81,7 +81,7 @@
     "imports-loader": "^0.7.1",
     "jsdom": "^11.5.1",
     "loader-utils": "^1.1.0",
-    "offline-plugin": "^4.8.4",
+    "offline-plugin": "^4.8.5",
     "open-browser-webpack-plugin": "0.0.5",
     "postcss-cssnext": "^3.0.2",
     "postcss-fontpath": "^1.0.0",
@@ -113,23 +113,23 @@
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.0.2",
     "documentation-website": "^1.0.77",
-    "eslint": "^4.12.0",
+    "eslint": "^4.13.1",
     "eslint-config-google": "^0.9.1",
-    "eslint-plugin-flowtype": "^2.36.0",
+    "eslint-plugin-flowtype": "^2.40.1",
     "eslint-plugin-jsdoc": "^3.2.0",
-    "flow-bin": "^0.60.0",
+    "flow-bin": "^0.61.0",
     "jsdoc": "^3.5.3",
     "qunit": "^2.4.1",
     "source-map-support": "^0.5.0",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.9.5"
+    "webpack-dev-server": "^2.9.7"
   },
   "configuration": {
     "default": {
       "assetPattern": {
         "javaScript": {
           "excludeFilePathRegularExpression": {
-            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\.html|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
+            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|preboot|.+\\.html|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
           "pattern": "'use strict';\n{1}"
         }
@@ -543,7 +543,8 @@
           "dynamic": true
         },
         "javaScript": {
-          "errorreporter": "head"
+          "errorreporter": "head",
+          "preboot": "head"
         },
         "otherMaximumFileSizeLimitInByte": 40960
       },
