@@ -11,7 +11,13 @@ This library written by Torben Sickert stand under a creative commons naming
 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
 endregion -->
 
-[![Build Status](https://travis-ci.org/thaibault/webOptimizer.svg?branch=master)](https://travis-ci.org/thaibault/webOptimizer)
+[![npm version](https://badge.fury.io/js/webOptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
+[![downloads](https://img.shields.io/npm/dy/webOptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
+[![build status](https://travis-ci.org/thaibault/webOptimizer.svg?branch=master)](https://travis-ci.org/thaibault/webOptimizer)
+[![dependencies](https://img.shields.io/david/thaibault/webOptimizer.svg)](https://david-dm.org/thaibault/webOptimizer)
+[![devDependencies](https://img.shields.io/david/dev/thaibault/webOptimizer.svg)](https://david-dm.org/thaibault/webOptimizer?type=dev)
+[![peerDependencies](https://img.shields.io/david/peer/thaibault/webOptimizer.svg)](https://david-dm.org/thaibault/webOptimizer?type=peer)
+[![documentation-website](https://img.shields.io/website-up-down-green-red/http/torben.website/webOptimizer.svg?label=documentation-website)](http://torben.website/webOptimizer)
 
 Use case
 --------
