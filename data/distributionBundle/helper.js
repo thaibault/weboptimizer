@@ -501,7 +501,8 @@ export class Helper {
                     }
                 ))
                     if (
-                        file.stat.isFile() &&
+                        file.stats &&
+                        file.stats.isFile() &&
                         path.extname(file.path).substring(
                             1
                         ) === newItem.extension &&
@@ -657,7 +658,7 @@ export class Helper {
                                     return false
                             })
                         )
-                            if (file.stat.isFile())
+                            if (file.stats && file.stats.isFile())
                                 normalizedInternalInjection[chunkName].push(
                                     './' + path.relative(
                                         referencePath, path.resolve(
