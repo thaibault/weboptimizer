@@ -192,9 +192,11 @@ module.exports = function(source:string):string {
             .replace(
                 /<\/?script +processing-workaround *(?:= *(?:" *"|' *') *)?>/g,
                 '')
-            .replace(
-                /<(\/)?script +processing(-+)-workaround *(?:= *(?:" *"|' *') *)?>/g,
-                '<$1script processing$2workaround>')
+            .replace(new RegExp(
+                '<(\/)?script +processing(-+)-workaround *(?:= *' +
+                `(?:" *"|' *') *)?>`,
+                'ig'
+            ), '<$1script processing$2workaround>')
         // IgnoreTypeCheck
         return result
     }
