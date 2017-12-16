@@ -189,9 +189,11 @@ module.exports = function(source:string):string {
                     sourceType: 'script'
                 }).code
         result = result
-            .replace(/<\/?script +processing-workaround *>/g, '')
             .replace(
-                /<(\/)?script +processing(-+)-workaround *>/g,
+                /<\/?script +processing-workaround *(?:= *(?:" *"|' *') *)?>/g,
+                '')
+            .replace(
+                /<(\/)?script +processing(-+)-workaround *(?:= *(?:" *"|' *') *)?>/g,
                 '<$1script processing$2workaround>')
         // IgnoreTypeCheck
         return result
