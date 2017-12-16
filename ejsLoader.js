@@ -54,7 +54,8 @@ module.exports = function(source:string):string {
                         '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico',
                         '.html', '.json', '.eot', '.ttf', '.woff'
                     ]
-                }, module: []
+                },
+                module: []
             },
             module: {
                 aliases: {},
@@ -189,14 +190,15 @@ module.exports = function(source:string):string {
                     sourceType: 'script'
                 }).code
         result = result
-            .replace(
-                /<\/?script +processing-workaround *(?:= *(?:" *"|' *') *)?>/g,
-                '')
             .replace(new RegExp(
-                '<(\/)?script +processing(-+)-workaround *(?:= *' +
-                `(?:" *"|' *') *)?>`,
+                `<script +processing-workaround *(?:= *(?:" *"|' *') *)?>` +
+                '([\\s\\S]*?)</ *script *>', 'ig'
+            ), '$1')
+            .replace(new RegExp(
+                `<script +processing(-+)-workaround *(?:= *(?:" *"|' *') *)?` +
+                '>([\\s\\S]*?)</ *script *>',
                 'ig'
-            ), '<$1script processing$2workaround>')
+            ), '<script processing$1workaround>$2</script>')
         // IgnoreTypeCheck
         return result
     }
