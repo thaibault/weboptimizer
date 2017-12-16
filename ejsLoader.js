@@ -188,6 +188,11 @@ module.exports = function(source:string):string {
                     sourceMaps: false,
                     sourceType: 'script'
                 }).code
+        result = result
+            .replace(/<\/?script +processing-workaround *>/g, '')
+            .replace(
+                /<(\/)?script +processing(-+)-workaround *>/g,
+                '<$1script processing$2workaround>')
         // IgnoreTypeCheck
         return result
     }
