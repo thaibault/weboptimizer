@@ -95,7 +95,8 @@ export type Path = {
         manifest:string;
         public:string;
     };
-    tidyUp:Array<string>
+    tidyUp:Array<string>;
+    tidyUpOnClear:Array<string>;
 }
 export type PluginConfiguration = {
     name:{

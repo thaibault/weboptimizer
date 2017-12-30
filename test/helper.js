@@ -260,7 +260,8 @@ registerTest(function():void {
                 target: ''
             },
             ignore: [],
-            tidyUp: []
+            tidyUp: [],
+            tidyUpOnClear: []
         }
         for (const test:Array<any> of [
             [['./', buildConfiguration, paths], null],
