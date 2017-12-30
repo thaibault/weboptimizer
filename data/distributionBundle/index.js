@@ -184,6 +184,16 @@ const main = async ():Promise<any> => {
                         configuration.path.apiDocumentation, {glob: false}, (
                             error:?Error
                         ):void => error ? reject(error) : resolve()))
+                for (
+                    const filePath:?string of configuration.path.tidyUpOnClear
+                )
+                    if (filePath)
+                        if (Tools.isFileSync(filePath))
+                            // NOTE: Close handler have to be synchronous.
+                            fileSystem.unlinkSync(filePath)
+                        else if (Tools.isDirectorySync(filePath))
+                            removeDirectoryRecursively.sync(
+                                filePath, {glob: false})
             }
             // endregion
             // region handle build
@@ -266,9 +276,13 @@ const main = async ():Promise<any> => {
                                 }
                             }
                     for (const filePath:?string of configuration.path.tidyUp)
-                        if (filePath && Tools.isFileSync(filePath))
-                            // NOTE: Close handler have to be synchronous.
-                            fileSystem.unlinkSync(filePath)
+                        if (filePath)
+                            if (Tools.isFileSync(filePath))
+                                // NOTE: Close handler have to be synchronous.
+                                fileSystem.unlinkSync(filePath)
+                            else if (Tools.isDirectorySync(filePath))
+                                removeDirectoryRecursively.sync(
+                                    filePath, {glob: false})
                 }
                 closeEventHandlers.push(tidyUp)
                 /*
