@@ -266,9 +266,13 @@ const main = async ():Promise<any> => {
                                 }
                             }
                     for (const filePath:?string of configuration.path.tidyUp)
-                        if (filePath && Tools.isFileSync(filePath))
-                            // NOTE: Close handler have to be synchronous.
-                            fileSystem.unlinkSync(filePath)
+                        if (filePath)
+                            if (Tools.isFileSync(filePath))
+                                // NOTE: Close handler have to be synchronous.
+                                fileSystem.unlinkSync(filePath)
+                            else if (Tools.isDirectorySync(filePath))
+                                removeDirectoryRecursively.sync(
+                                    filePath, {glob: false})
                 }
                 closeEventHandlers.push(tidyUp)
                 /*
