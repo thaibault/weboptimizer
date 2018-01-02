@@ -892,15 +892,9 @@
       },
       "offline": {
         "AppCache": {
-          "directory": "./"
+          "output": "./"
         },
         "autoUpdate": true,
-        "caches": {
-          "main": [
-            ":externals:",
-            ":rest:"
-          ]
-        },
         "excludes": [
           {
             "__evaluate__": "`**/*.map?${self.hashAlgorithm}=*`"
