@@ -79,23 +79,33 @@ export class Helper {
     static inPlaceCSSAndJavaScriptAssetReferences(
         content:string,
         cascadingStyleSheetPattern:?{[key:string]:'body'|'head'|'in'},
-        javaScriptPattern:?{[key:string]:'body'|'head'|'in'}, basePath:string,
+        javaScriptPattern:?{[key:string]:'body'|'head'|'in'},
+        basePath:string,
         cascadingStyleSheetChunkNameTemplate:string,
-        javaScriptChunkNameTemplate:string, assets:{[key:string]:Object}
+        javaScriptChunkNameTemplate:string,
+        assets:{[key:string]:Object}
     ):Promise<{content:string;filePathsToRemove:Array<string>;}> {
         /*
             NOTE: We have to translate template delimiter to html compatible
             sequences and translate it back later to avoid unexpected escape
             sequences in resulting html.
         */
-        return new Promise((
-            resolve:Function, reject:Function
-        ):void => {
+        return new Promise((resolve:Function, reject:Function):void => {
             let window:Window
             try {
-                window = (new DOM(content.replace(/<%/g, '##+#+#+##').replace(
-                    /%>/g, '##-#-#-##'
-                ))).window
+                /*
+                    NOTE: We have to prevent creating native "style" dom nodes
+                    to prevent jsdom from parsing the entire cascading style
+                    sheet. Which is error prune and very resource intensive.
+                */
+                window = (new DOM(
+                    content
+                        .replace(/<%/g, '##+#+#+##')
+                        .replace(/%>/g, '##-#-#-##')
+                        .replace(
+                            /(<style)/g,
+                            '$1-weboptimizer-postcss-workaround')
+                )).window
             } catch (error) {
                 return reject(error)
             }
@@ -118,8 +128,15 @@ export class Helper {
                         window.document.querySelectorAll(`link${selector}`)
                     if (domNodes.length)
                         for (const domNode:DomNode of domNodes) {
+                            /*
+                                NOTE: We have to prevent creating native
+                                "style" dom nodes to prevent jsdom from parsing
+                                the entire cascading style sheet. Which is
+                                error prune and very resource intensive.
+                            */
                             const inPlaceDomNode:DomNode =
-                                window.document.createElement('style')
+                                window.document.createElement(
+                                    'style-weboptimizer-postcss-workaround')
                             const path:string = domNode.attributes.href.value
                                 .replace(/&.*/g, '')
                             if (!assets.hasOwnProperty(path))
@@ -138,6 +155,12 @@ export class Helper {
                             ] === 'head')
                                 window.document.head.appendChild(
                                     inPlaceDomNode)
+                            else
+                                console.warn(
+                                    'Given markup location "' +
+                                    `${cascadingStyleSheetPattern[pattern]}"` +
+                                    ' to in-place source referenced by "' +
+                                    `${pattern}" is not specified.`)
                             domNode.parentNode.removeChild(domNode)
                             /*
                                 NOTE: This doesn't prevent webpack from
@@ -204,11 +227,14 @@ export class Helper {
                             `markup found with selector: script${selector}`)
                 }
             resolve({
-                content: content.replace(
-                    /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
-                ) + window.document.documentElement.outerHTML.replace(
-                    /##\+#\+#\+##/g, '<%'
-                ).replace(/##-#-#-##/g, '%>'),
+                content: content
+                    .replace(
+                        /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
+                    ) + window.document.documentElement.outerHTML
+                    .replace(/##\+#\+#\+##/g, '<%')
+                    .replace(/##-#-#-##/g, '%>')
+                    .replace(
+                        /(<style)-weboptimizer-postcss-workaround/g, '$1'),
                 filePathsToRemove
             })
         })

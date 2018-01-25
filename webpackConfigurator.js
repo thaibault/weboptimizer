@@ -462,9 +462,19 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
         ):Window => {
             let window:Window
             try {
-                window = (new DOM(htmlPluginData.html.replace(
-                    /<%/g, '##+#+#+##'
-                ).replace(/%>/g, '##-#-#-##'))).window
+                window = (new DOM(
+                    htmlPluginData.html
+                        .replace(/<%/g, '##+#+#+##')
+                        .replace(/%>/g, '##-#-#-##')
+                        /*
+                            NOTE: We have to prevent creating native "style"
+                            dom nodes to prevent jsdom from parsing the entire
+                            cascading style sheet. Which is error prune and
+                            very resource intensive.
+                        */
+                        .replace(
+                            /(<style)/g, '$1-weboptimizer-postcss-workaround')
+                )).window
             } catch (error) {
                 return callback(error, htmlPluginData)
             }
@@ -491,12 +501,14 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                                 `(\\?${configuration.hashAlgorithm}=` +
                                 '[^&]+).*$'
                             ), '$1'))
-            htmlPluginData.html = htmlPluginData.html.replace(
-                /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
-            ) + window.document.documentElement.outerHTML.replace(
-                    /##\+#\+#\+##/g, '<%'
-                ).replace(/##-#-#-##/g, '%>')
-            //  region post compilation
+            htmlPluginData.html = htmlPluginData.html
+                .replace(
+                    /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
+                ) + window.document.documentElement.outerHTML
+                    .replace(/##\+#\+#\+##/g, '<%')
+                    .replace(/##-#-#-##/g, '%>')
+                    .replace(/(<style)-weboptimizer-postcss-workaround/g, '$1')
+            // region post compilation
             for (
                 const htmlFileSpecification:PlainObject of
                 configuration.files.html
