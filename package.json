@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "1.0.471",
+  "version": "1.0.472",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "http://torben.website/webOptimizer",
