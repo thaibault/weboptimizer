@@ -103,7 +103,7 @@ export class Helper {
                         .replace(/<%/g, '##+#+#+##')
                         .replace(/%>/g, '##-#-#-##')
                         .replace(
-                            /(<style)/g,
+                            /(<\/?style)/g,
                             '$1-weboptimizer-postcss-workaround')
                 )).window
             } catch (error) {
@@ -234,7 +234,7 @@ export class Helper {
                     .replace(/##\+#\+#\+##/g, '<%')
                     .replace(/##-#-#-##/g, '%>')
                     .replace(
-                        /(<style)-weboptimizer-postcss-workaround/g, '$1'),
+                        /(<\/?style)-weboptimizer-postcss-workaround/g, '$1'),
                 filePathsToRemove
             })
         })
