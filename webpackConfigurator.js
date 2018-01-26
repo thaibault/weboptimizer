@@ -473,7 +473,8 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                             very resource intensive.
                         */
                         .replace(
-                            /(<style)/g, '$1-weboptimizer-postcss-workaround')
+                            /(<\/?style)/g,
+                            '$1-weboptimizer-postcss-workaround')
                 )).window
             } catch (error) {
                 return callback(error, htmlPluginData)
@@ -507,7 +508,8 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                 ) + window.document.documentElement.outerHTML
                     .replace(/##\+#\+#\+##/g, '<%')
                     .replace(/##-#-#-##/g, '%>')
-                    .replace(/(<style)-weboptimizer-postcss-workaround/g, '$1')
+                    .replace(
+                        /(<\/?style)-weboptimizer-postcss-workaround/g, '$1')
             // region post compilation
             for (
                 const htmlFileSpecification:PlainObject of
