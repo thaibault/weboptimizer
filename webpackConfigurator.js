@@ -212,9 +212,9 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
         const filePathsToRemove:Array<string> = []
         compiler.plugin('compilation', (compilation:Object):void =>
             compilation.plugin(
-                'html-webpack-plugin-after-html-processing', async (
+                'html-webpack-plugin-after-html-processing', (
                     htmlPluginData:PlainObject, callback:ProcedureFunction
-                ):Promise<void> => {
+                ):void => {
                     if (
                         configuration.inPlace.cascadingStyleSheet &&
                         Object.keys(
@@ -225,16 +225,15 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                         try {
                             const result:{
                                 content:string, filePathsToRemove:Array<string>
-                            } = await
-                                Helper.inPlaceCSSAndJavaScriptAssetReferences(
-                                    htmlPluginData.html,
-                                    configuration.inPlace.cascadingStyleSheet,
-                                    configuration.inPlace.javaScript,
-                                    configuration.path.target.base,
-                                    configuration.files.compose
-                                        .cascadingStyleSheet,
-                                    configuration.files.compose.javaScript,
-                                    compilation.assets)
+                            } = Helper.inPlaceCSSAndJavaScriptAssetReferences(
+                                htmlPluginData.html,
+                                configuration.inPlace.cascadingStyleSheet,
+                                configuration.inPlace.javaScript,
+                                configuration.path.target.base,
+                                configuration.files.compose
+                                    .cascadingStyleSheet,
+                                configuration.files.compose.javaScript,
+                                compilation.assets)
                             htmlPluginData.html = result.content
                             filePathsToRemove.concat(result.filePathsToRemove)
                         } catch (error) {
@@ -256,9 +255,7 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                         })))
             await Promise.all(promises)
             promises = []
-            for (const type:string of [
-                'javaScript', 'cascadingStyleSheet'
-            ])
+            for (const type:string of ['javaScript', 'cascadingStyleSheet'])
                 promises.push(new Promise((
                     resolve:Function, reject:Function
                 /*
@@ -428,7 +425,7 @@ if (configuration.givenCommandLineArguments[2] === 'build:dll') {
 }
 // /// endregion
 // // endregion
-// // region apply final dom/javaScript modifications/fixes
+// // region apply final dom/javaScript/cascadingStyleSheet modifications/fixes
 pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
     'compilation', (compilation:Object):void => {
         compilation.plugin('html-webpack-plugin-alter-asset-tags', (
@@ -460,27 +457,41 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
         compilation.plugin('html-webpack-plugin-after-html-processing', (
             htmlPluginData:PlainObject, callback:ProcedureFunction
         ):Window => {
+            /*
+                NOTE: We have to prevent creating native "style" dom nodes to
+                prevent jsdom from parsing the entire cascading style sheet.
+                Which is error prune and very resource intensive.
+            */
+            const styleContents:Array<string> = []
+            htmlPluginData.html = htmlPluginData.html.replace(
+                /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, (
+                    match:string,
+                    startTag:string,
+                    content:string,
+                    endTag:string
+                ):string => {
+                    styleContents.push(content)
+                    return `${startTag}${endTag}`
+                })
             let window:Window
             try {
+                /*
+                    NOTE: We have to translate template delimiter to html
+                    compatible sequences and translate it back later to avoid
+                    unexpected escape sequences in resulting html.
+                */
                 window = (new DOM(
                     htmlPluginData.html
                         .replace(/<%/g, '##+#+#+##')
                         .replace(/%>/g, '##-#-#-##')
-                        /*
-                            NOTE: We have to prevent creating native "style"
-                            dom nodes to prevent jsdom from parsing the entire
-                            cascading style sheet. Which is error prune and
-                            very resource intensive.
-                        */
-                        .replace(
-                            /(<\/?style)/g,
-                            '$1-weboptimizer-postcss-workaround')
                 )).window
             } catch (error) {
                 return callback(error, htmlPluginData)
             }
             const linkables:{[key:string]:string} = {
-                script: 'src', link: 'href'}
+                link: 'href',
+                script: 'src'
+            }
             for (const tagName:string in linkables)
                 if (linkables.hasOwnProperty(tagName))
                     for (
@@ -502,14 +513,18 @@ pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
                                 `(\\?${configuration.hashAlgorithm}=` +
                                 '[^&]+).*$'
                             ), '$1'))
+            // NOTE: We have to restore template delimiter and style contents.
             htmlPluginData.html = htmlPluginData.html
                 .replace(
                     /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
                 ) + window.document.documentElement.outerHTML
                     .replace(/##\+#\+#\+##/g, '<%')
                     .replace(/##-#-#-##/g, '%>')
-                    .replace(
-                        /(<\/?style)-weboptimizer-postcss-workaround/g, '$1')
+                    .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
+                        match:string,
+                        startTag:string,
+                        endTag:string
+                    ):string => `${startTag}${styleContents.shift()}${endTag}`)
             // region post compilation
             for (
                 const htmlFileSpecification:PlainObject of

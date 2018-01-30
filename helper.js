@@ -84,160 +84,166 @@ export class Helper {
         cascadingStyleSheetChunkNameTemplate:string,
         javaScriptChunkNameTemplate:string,
         assets:{[key:string]:Object}
-    ):Promise<{content:string;filePathsToRemove:Array<string>;}> {
+    ):{
+        content:string;
+        filePathsToRemove:Array<string>;
+    } {
+        /*
+            NOTE: We have to prevent creating native "style" dom nodes to
+            prevent jsdom from parsing the entire cascading style sheet. Which
+            is error prune and very resource intensive.
+        */
+        const styleContents:Array<string> = []
+        content = content.replace(
+            /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, (
+                match:string,
+                startTag:string,
+                content:string,
+                endTag:string
+            ):string => {
+                styleContents.push(content)
+                return `${startTag}${endTag}`
+            })
         /*
             NOTE: We have to translate template delimiter to html compatible
             sequences and translate it back later to avoid unexpected escape
             sequences in resulting html.
         */
-        return new Promise((resolve:Function, reject:Function):void => {
-            let window:Window
-            try {
-                /*
-                    NOTE: We have to prevent creating native "style" dom nodes
-                    to prevent jsdom from parsing the entire cascading style
-                    sheet. Which is error prune and very resource intensive.
-                */
-                window = (new DOM(
-                    content
-                        .replace(/<%/g, '##+#+#+##')
-                        .replace(/%>/g, '##-#-#-##')
-                        .replace(
-                            /(<\/?style)/g,
-                            '$1-weboptimizer-postcss-workaround')
-                )).window
-            } catch (error) {
-                return reject(error)
+        const window:Window = (new DOM(
+            content
+                .replace(/<%/g, '##+#+#+##')
+                .replace(/%>/g, '##-#-#-##')
+        )).window
+        const inPlaceStyleContents:Array<string> = []
+        const filePathsToRemove:Array<string> = []
+        if (cascadingStyleSheetPattern)
+            for (const pattern:string in cascadingStyleSheetPattern) {
+                if (!cascadingStyleSheetPattern.hasOwnProperty(pattern))
+                    continue
+                let selector:string = '[href*=".css"]'
+                if (pattern !== '*')
+                    selector = '[href="' + path.relative(
+                        basePath, Helper.renderFilePathTemplate(
+                            cascadingStyleSheetChunkNameTemplate, {
+                                '[contenthash]': '',
+                                '[id]': pattern,
+                                '[name]': pattern
+                            }
+                        )) + '"]'
+                const domNodes:Array<DomNode> =
+                    window.document.querySelectorAll(`link${selector}`)
+                if (domNodes.length)
+                    for (const domNode:DomNode of domNodes) {
+                        const path:string =
+                            domNode.attributes.href.value.replace(/&.*/g, '')
+                        if (!assets.hasOwnProperty(path))
+                            continue
+                        const inPlaceDomNode:DomNode =
+                            window.document.createElement('style')
+                        inPlaceDomNode.setAttribute(
+                            'weboptimizerinplace', 'true')
+                        inPlaceStyleContents.push(assets[path].source())
+                        if (cascadingStyleSheetPattern[pattern] === 'body')
+                            window.document.body.appendChild(inPlaceDomNode)
+                        else if (
+                            cascadingStyleSheetPattern[pattern] === 'in'
+                        )
+                            domNode.parentNode.insertBefore(
+                                inPlaceDomNode, domNode)
+                        else if (
+                            cascadingStyleSheetPattern[pattern] === 'head'
+                        )
+                            window.document.head.appendChild(inPlaceDomNode)
+                        else
+                            console.warn(
+                                'Given markup location "' +
+                                `${cascadingStyleSheetPattern[pattern]}" to ` +
+                                `in-place source referenced by "${pattern}" ` +
+                                'is not specified.')
+                        domNode.parentNode.removeChild(domNode)
+                        /*
+                            NOTE: This doesn't prevent webpack from creating
+                            this file if present in another chunk so removing
+                            it (and a potential source map file) later in the
+                            "done" hook.
+                        */
+                        filePathsToRemove.push(Helper.stripLoader(path))
+                        delete assets[path]
+                    }
+                else
+                    console.warn(
+                        'No referenced cascading style sheet file in ' +
+                        `resulting markup found with selector: link${selector}`
+                    )
             }
-            const filePathsToRemove:Array<string> = []
-            if (cascadingStyleSheetPattern)
-                for (const pattern:string in cascadingStyleSheetPattern) {
-                    if (!cascadingStyleSheetPattern.hasOwnProperty(pattern))
-                        continue
-                    let selector:string = '[href*=".css"]'
-                    if (pattern !== '*')
-                        selector = '[href="' + path.relative(
-                            basePath, Helper.renderFilePathTemplate(
-                                cascadingStyleSheetChunkNameTemplate, {
-                                    '[contenthash]': '',
-                                    '[id]': pattern,
-                                    '[name]': pattern
-                                }
-                            )) + '"]'
-                    const domNodes:Array<DomNode> =
-                        window.document.querySelectorAll(`link${selector}`)
-                    if (domNodes.length)
-                        for (const domNode:DomNode of domNodes) {
-                            /*
-                                NOTE: We have to prevent creating native
-                                "style" dom nodes to prevent jsdom from parsing
-                                the entire cascading style sheet. Which is
-                                error prune and very resource intensive.
-                            */
-                            const inPlaceDomNode:DomNode =
-                                window.document.createElement(
-                                    'style-weboptimizer-postcss-workaround')
-                            const path:string = domNode.attributes.href.value
-                                .replace(/&.*/g, '')
-                            if (!assets.hasOwnProperty(path))
-                                continue
-                            inPlaceDomNode.textContent = assets[path].source()
-                            if (cascadingStyleSheetPattern[pattern] === 'body')
-                                window.document.body.appendChild(
-                                    inPlaceDomNode)
-                            else if (cascadingStyleSheetPattern[
-                                pattern
-                            ] === 'in')
-                                domNode.parentNode.insertBefore(
-                                    inPlaceDomNode, domNode)
-                            else if (cascadingStyleSheetPattern[
-                                pattern
-                            ] === 'head')
-                                window.document.head.appendChild(
-                                    inPlaceDomNode)
-                            else
-                                console.warn(
-                                    'Given markup location "' +
-                                    `${cascadingStyleSheetPattern[pattern]}"` +
-                                    ' to in-place source referenced by "' +
-                                    `${pattern}" is not specified.`)
-                            domNode.parentNode.removeChild(domNode)
-                            /*
-                                NOTE: This doesn't prevent webpack from
-                                creating this file if present in another chunk
-                                so removing it (and a potential source map
-                                file) later in the "done" hook.
-                            */
-                            filePathsToRemove.push(Helper.stripLoader(path))
-                            delete assets[path]
-                        }
-                    else
-                        console.warn(
-                            'No referenced cascading style sheet file in ' +
-                            'resulting markup found with selector: link' +
-                            selector)
-                }
-            if (javaScriptPattern)
-                for (const pattern:string in javaScriptPattern) {
-                    if (!javaScriptPattern.hasOwnProperty(pattern))
-                        continue
-                    let selector:string = '[href*=".js"]'
-                    if (pattern !== '*')
-                        selector = '[src^="' + path.relative(
-                            basePath, Helper.renderFilePathTemplate(
-                                javaScriptChunkNameTemplate, {
-                                    '[hash]': '',
-                                    '[id]': pattern,
-                                    '[name]': pattern
-                                }
-                            ) + '"]')
-                    const domNodes:Array<DomNode> =
-                        window.document.querySelectorAll(`script${selector}`)
-                    if (domNodes.length)
-                        for (const domNode:DomNode of domNodes) {
-                            const inPlaceDomNode:DomNode =
-                                window.document.createElement('script')
-                            const path:string = domNode.attributes.src.value
-                                .replace(/&.*/g, '')
-                            if (!assets.hasOwnProperty(path))
-                                continue
-                            inPlaceDomNode.textContent = assets[path].source()
-                            if (javaScriptPattern[pattern] === 'body')
-                                window.document.body.appendChild(
-                                    inPlaceDomNode)
-                            else if (javaScriptPattern[pattern] === 'in')
-                                domNode.parentNode.insertBefore(
-                                    inPlaceDomNode, domNode)
-                            else if (javaScriptPattern[pattern] === 'head')
-                                window.document.head.appendChild(
-                                    inPlaceDomNode)
-                            domNode.parentNode.removeChild(domNode)
-                            /*
-                                NOTE: This doesn't prevent webpack from
-                                creating this file if present in another chunk
-                                so removing it (and a potential source map
-                                file) later in the "done" hook.
-                            */
-                            filePathsToRemove.push(Helper.stripLoader(path))
-                            delete assets[path]
-                        }
-                    else
-                        console.warn(
-                            'No referenced javaScript file in resulting ' +
-                            `markup found with selector: script${selector}`)
-                }
-            resolve({
-                content: content
-                    .replace(
-                        /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
-                    ) + window.document.documentElement.outerHTML
-                    .replace(/##\+#\+#\+##/g, '<%')
-                    .replace(/##-#-#-##/g, '%>')
-                    .replace(
-                        /(<\/?style)-weboptimizer-postcss-workaround/g, '$1'),
-                filePathsToRemove
-            })
-        })
+        if (javaScriptPattern)
+            for (const pattern:string in javaScriptPattern) {
+                if (!javaScriptPattern.hasOwnProperty(pattern))
+                    continue
+                let selector:string = '[href*=".js"]'
+                if (pattern !== '*')
+                    selector = '[src^="' + path.relative(
+                        basePath, Helper.renderFilePathTemplate(
+                            javaScriptChunkNameTemplate, {
+                                '[hash]': '',
+                                '[id]': pattern,
+                                '[name]': pattern
+                            }
+                        ) + '"]')
+                const domNodes:Array<DomNode> =
+                    window.document.querySelectorAll(`script${selector}`)
+                if (domNodes.length)
+                    for (const domNode:DomNode of domNodes) {
+                        const inPlaceDomNode:DomNode =
+                            window.document.createElement('script')
+                        const path:string = domNode.attributes.src.value
+                            .replace(/&.*/g, '')
+                        if (!assets.hasOwnProperty(path))
+                            continue
+                        inPlaceDomNode.textContent = assets[path].source()
+                        if (javaScriptPattern[pattern] === 'body')
+                            window.document.body.appendChild(inPlaceDomNode)
+                        else if (javaScriptPattern[pattern] === 'in')
+                            domNode.parentNode.insertBefore(
+                                inPlaceDomNode, domNode)
+                        else if (javaScriptPattern[pattern] === 'head')
+                            window.document.head.appendChild(inPlaceDomNode)
+                        domNode.parentNode.removeChild(domNode)
+                        /*
+                            NOTE: This doesn't prevent webpack from creating
+                            this file if present in another chunk so removing
+                            it (and a potential source map file) later in the
+                            "done" hook.
+                        */
+                        filePathsToRemove.push(Helper.stripLoader(path))
+                        delete assets[path]
+                    }
+                else
+                    console.warn(
+                        'No referenced javaScript file in resulting markup ' +
+                        `found with selector: script${selector}`)
+            }
+        // NOTE: We have to restore template delimiter and style contents.
+        return {
+            content: content
+                .replace(
+                    /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
+                ) + window.document.documentElement.outerHTML
+                .replace(/##\+#\+#\+##/g, '<%')
+                .replace(/##-#-#-##/g, '%>')
+                .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
+                    match:string,
+                    startTag:string,
+                    endTag:string
+                ):string => {
+                    if (startTag.includes(' weboptimizerinplace="true"'))
+                        return startTag.replace(
+                            ' weboptimizerinplace="true"', ''
+                        ) + `${inPlaceStyleContents.shift()}${endTag}`
+                    return `${startTag}${styleContents.shift()}${endTag}`
+                }),
+            filePathsToRemove
+        }
     }
     /**
      * Strips loader informations form given module request including loader
