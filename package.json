@@ -874,6 +874,7 @@
         "style": {
           "loader": "style",
           "options": {
+            "hmr": true,
             "insertAt": "top",
             "singleton": true
           }
