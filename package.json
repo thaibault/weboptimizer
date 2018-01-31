@@ -115,7 +115,7 @@
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.2.1",
     "coveralls": "^3.0.0",
-    "documentation-website": "^1.0.93",
+    "documentation-website": "^1.0.94",
     "eslint": "^4.14.0",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.42.0",
