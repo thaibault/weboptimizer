@@ -929,7 +929,7 @@
             "index"
           ],
           "propertyNames": {
-            "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : []).concat(['module', 'main'])"
+            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('esnext', 'es2017', 'es7', 'es2015', 'module').concat(self.targetTechnology === 'web' ? 'browser' : []).concat('main')"
           }
         }
       },
