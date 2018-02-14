@@ -116,141 +116,116 @@ export class Helper {
         )).window
         const inPlaceStyleContents:Array<string> = []
         const filePathsToRemove:Array<string> = []
-        if (cascadingStyleSheetPattern)
-            for (const pattern:string in cascadingStyleSheetPattern) {
-                if (!cascadingStyleSheetPattern.hasOwnProperty(pattern))
-                    continue
-                let selector:string = '[href*=".css"]'
-                if (pattern !== '*')
-                    selector = '[href="' + path.relative(
-                        basePath, Helper.renderFilePathTemplate(
-                            cascadingStyleSheetChunkNameTemplate, {
-                                '[contenthash]': '',
-                                '[id]': pattern,
-                                '[name]': pattern
-                            }
-                        )) + '"]'
-                const domNodes:Array<DomNode> =
-                    window.document.querySelectorAll(`link${selector}`)
-                if (domNodes.length)
-                    for (const domNode:DomNode of domNodes) {
-                        const path:string =
-                            domNode.attributes.href.value.replace(/&.*/g, '')
-                        if (!assets.hasOwnProperty(path))
-                            continue
-                        const inPlaceDomNode:DomNode =
-                            window.document.createElement('style')
-                        inPlaceDomNode.setAttribute(
-                            'weboptimizerinplace', 'true')
-                        inPlaceStyleContents.push(assets[path].source())
-                        if (cascadingStyleSheetPattern[pattern] === 'body')
-                            window.document.body.appendChild(inPlaceDomNode)
-                        else if (
-                            cascadingStyleSheetPattern[pattern] === 'in'
-                        )
-                            domNode.parentNode.insertBefore(
-                                inPlaceDomNode, domNode)
-                        else if (
-                            cascadingStyleSheetPattern[pattern] === 'head'
-                        )
-                            window.document.head.appendChild(inPlaceDomNode)
-                        else
-                            console.warn(
-                                'Given markup location "' +
-                                `${cascadingStyleSheetPattern[pattern]}" to ` +
-                                `in-place source referenced by "${pattern}" ` +
-                                'is not specified.')
-                        domNode.parentNode.removeChild(domNode)
-                        /*
-                            NOTE: This doesn't prevent webpack from creating
-                            this file if present in another chunk so removing
-                            it (and a potential source map file) later in the
-                            "done" hook.
-                        */
-                        filePathsToRemove.push(Helper.stripLoader(path))
-                        delete assets[path]
-                    }
-                else
-                    console.warn(
-                        'No referenced cascading style sheet file in ' +
-                        `resulting markup found with selector: link${selector}`
-                    )
+        for (const assetType:PlainObject of [
+            {
+                attributeName: 'href',
+                hash: 'contenthash',
+                linkTagName: 'link',
+                pattern: cascadingStyleSheetPattern,
+                selector: '[href*=".css"]',
+                tagName: 'style',
+                template: cascadingStyleSheetChunkNameTemplate
+            },
+            {
+                attributeName: 'src',
+                hash: 'hash',
+                linkTagName: 'script',
+                pattern: javaScriptPattern,
+                selector: '[href*=".js"]',
+                tagName: 'script',
+                template: javaScriptChunkNameTemplate
             }
-        if (javaScriptPattern)
-            for (const pattern:string in javaScriptPattern) {
-                if (!javaScriptPattern.hasOwnProperty(pattern))
-                    continue
-                let selector:string = '[href*=".js"]'
-                if (pattern !== '*')
-                    selector = '[src^="' + path.relative(
-                        basePath, Helper.renderFilePathTemplate(
-                            javaScriptChunkNameTemplate, {
-                                '[hash]': '',
-                                '[id]': pattern,
-                                '[name]': pattern
-                            }
-                        ) + '"]')
-                const domNodes:Array<DomNode> =
-                    window.document.querySelectorAll(`script${selector}`)
-                if (domNodes.length)
-                    for (const domNode:DomNode of domNodes) {
-                        const inPlaceDomNode:DomNode =
-                            window.document.createElement('script')
-                        const path:string = domNode.attributes.src.value
-                            .replace(/&.*/g, '')
-                        if (!assets.hasOwnProperty(path))
-                            continue
-                        inPlaceDomNode.textContent = assets[path].source()
-                        if (javaScriptPattern[pattern] === 'body')
-                            window.document.body.appendChild(inPlaceDomNode)
-                        else if (javaScriptPattern[pattern] === 'in')
-                            domNode.parentNode.insertBefore(
-                                inPlaceDomNode, domNode)
-                        else if (javaScriptPattern[pattern] === 'head')
-                            window.document.head.appendChild(inPlaceDomNode)
-                        else {
-                            regularExpressionPattern:string =
-                                '(after|before|in):(.+)'
-                            const match:Array<string> =
-                                new RegExp(regularExpressionPattern).exec(
-                                    javaScriptPattern[pattern])
-                            if (!match)
-                                throw new Error(
-                                    'Given in place specification "' +
-                                    `${javaScriptPattern[pattern]}" for ` +
-                                    'javascript does not satisfy the ' +
-                                    'specified pattern "' +
-                                    `${regularExpressionPattern}".`)
-                            const domNode:DomNode =
-                                window.document.querySelector(match[2])
-                            if (!domNode)
-                                throw new Error(
-                                    `Specified dom node "${match[2]}" could ` +
-                                    `not be found to in place "${pattern}".`)
-                            if (match[1] === 'in')
-                                domNode.appendChild(inPlaceDomNode)
-                            else if (match[1] === 'before')
+        ])
+            if (assetType.pattern)
+                for (const pattern:string in assetType.pattern) {
+                    if (!assetType.pattern.hasOwnProperty(pattern))
+                        continue
+                    let selector:string = assetType.selector
+                    if (pattern !== '*')
+                        selector = `[${assetType.attributeName}="` +
+                            path.relative(
+                                basePath, Helper.renderFilePathTemplate(
+                                    assetType.template, {
+                                        [`[${assetType.hash}]`]: '',
+                                        '[id]': pattern,
+                                        '[name]': pattern
+                                    }
+                                )) + '"]'
+                    const domNodes:Array<DomNode> =
+                        window.document.querySelectorAll(
+                            `${assetType.linkTagName}${selector}`)
+                    if (domNodes.length)
+                        for (const domNode:DomNode of domNodes) {
+                            const path:string = domNode.attributes[
+                                assetType.attributeName
+                            ].value.replace(/&.*/g, '')
+                            if (!assets.hasOwnProperty(path))
+                                continue
+                            const inPlaceDomNode:DomNode =
+                                window.document.createElement(
+                                    assetType.tagName)
+                            if (assetType.tagName === 'style') {
+                                inPlaceDomNode.setAttribute(
+                                    'weboptimizerinplace', 'true')
+                                inPlaceStyleContents.push(
+                                    assets[path].source())
+                            } else
+                                inPlaceDomNode.textContent =
+                                    assets[path].source()
+                            if (assetType.pattern[pattern] === 'body')
+                                window.document.body.appendChild(
+                                    inPlaceDomNode)
+                            else if (assetType.pattern[pattern] === 'in')
                                 domNode.parentNode.insertBefore(
                                     inPlaceDomNode, domNode)
-                            else
-                                domNode.parentNode.insertAfter(
-                                    inPlaceDomNode, domNode)
+                            else if (assetType.pattern[pattern] === 'head')
+                                window.document.head.appendChild(
+                                    inPlaceDomNode)
+                            else {
+                                const regularExpressionPattern:string =
+                                    '(after|before|in):(.+)'
+                                const match:Array<string> =
+                                    new RegExp(regularExpressionPattern).exec(
+                                        assetType.pattern[pattern])
+                                if (!match)
+                                    throw new Error(
+                                        'Given in place specification "' +
+                                        `${assetType.pattern[pattern]}" for ` +
+                                        `${assetType.tagName} does not ` +
+                                        'satisfy the specified pattern "' +
+                                        `${regularExpressionPattern}".`)
+                                const domNode:DomNode =
+                                    window.document.querySelector(match[2])
+                                if (!domNode)
+                                    throw new Error(
+                                        `Specified dom node "${match[2]}" ` +
+                                        'could not be found to in place "' +
+                                        `${pattern}".`)
+                                if (match[1] === 'in')
+                                    domNode.appendChild(inPlaceDomNode)
+                                else if (match[1] === 'before')
+                                    domNode.parentNode.insertBefore(
+                                        inPlaceDomNode, domNode)
+                                else
+                                    domNode.parentNode.insertAfter(
+                                        inPlaceDomNode, domNode)
+                            }
+                            domNode.parentNode.removeChild(domNode)
+                            /*
+                                NOTE: This doesn't prevent webpack from
+                                creating this file if present in another chunk
+                                so removing it (and a potential source map
+                                file) later in the "done" hook.
+                            */
+                            filePathsToRemove.push(Helper.stripLoader(path))
+                            delete assets[path]
                         }
-                        domNode.parentNode.removeChild(domNode)
-                        /*
-                            NOTE: This doesn't prevent webpack from creating
-                            this file if present in another chunk so removing
-                            it (and a potential source map file) later in the
-                            "done" hook.
-                        */
-                        filePathsToRemove.push(Helper.stripLoader(path))
-                        delete assets[path]
-                    }
-                else
-                    console.warn(
-                        'No referenced javaScript file in resulting markup ' +
-                        `found with selector: script${selector}`)
-            }
+                    else
+                        console.warn(
+                            `No referenced ${assetType.tagName} file in ` +
+                            'resulting markup found with selector: "' +
+                            `${assetType.linkTagName}${assetType.selector}"`)
+                }
         // NOTE: We have to restore template delimiter and style contents.
         return {
             content: content

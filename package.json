@@ -547,8 +547,7 @@
           "dynamic": true
         },
         "javaScript": {
-          "errorreporter": "head",
-          "preboot": "after:application, [application]"
+          "errorreporter": "head"
         },
         "otherMaximumFileSizeLimitInByte": 40960
       },
