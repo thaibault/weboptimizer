@@ -115,7 +115,7 @@
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.2.1",
     "coveralls": "^3.0.0",
-    "documentation-website": "^1.0.96",
+    "documentation-website": "^1.0.97",
     "eslint": "^4.17.0",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.43.0",
@@ -548,7 +548,7 @@
         },
         "javaScript": {
           "errorreporter": "head",
-          "preboot": "head"
+          "preboot": "after:application, [application]"
         },
         "otherMaximumFileSizeLimitInByte": 40960
       },

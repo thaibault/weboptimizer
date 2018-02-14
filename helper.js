@@ -78,8 +78,8 @@ export class Helper {
      */
     static inPlaceCSSAndJavaScriptAssetReferences(
         content:string,
-        cascadingStyleSheetPattern:?{[key:string]:'body'|'head'|'in'},
-        javaScriptPattern:?{[key:string]:'body'|'head'|'in'},
+        cascadingStyleSheetPattern:?{[key:string]:'body'|'head'|'in'|string},
+        javaScriptPattern:?{[key:string]:'body'|'head'|'in'|string},
         basePath:string,
         cascadingStyleSheetChunkNameTemplate:string,
         javaScriptChunkNameTemplate:string,
@@ -208,6 +208,34 @@ export class Helper {
                                 inPlaceDomNode, domNode)
                         else if (javaScriptPattern[pattern] === 'head')
                             window.document.head.appendChild(inPlaceDomNode)
+                        else {
+                            regularExpressionPattern:string =
+                                '(after|before|in):(.+)'
+                            const match:Array<string> =
+                                new RegExp(regularExpressionPattern).exec(
+                                    javaScriptPattern[pattern])
+                            if (!match)
+                                throw new Error(
+                                    'Given in place specification "' +
+                                    `${javaScriptPattern[pattern]}" for ` +
+                                    'javascript does not satisfy the ' +
+                                    'specified pattern "' +
+                                    `${regularExpressionPattern}".`)
+                            const domNode:DomNode =
+                                window.document.querySelector(match[2])
+                            if (!domNode)
+                                throw new Error(
+                                    `Specified dom node "${match[2]}" could ` +
+                                    `not be found to in place "${pattern}".`)
+                            if (match[1] === 'in')
+                                domNode.appendChild(inPlaceDomNode)
+                            else if (match[1] === 'before')
+                                domNode.parentNode.insertBefore(
+                                    inPlaceDomNode, domNode)
+                            else
+                                domNode.parentNode.insertAfter(
+                                    inPlaceDomNode, domNode)
+                        }
                         domNode.parentNode.removeChild(domNode)
                         /*
                             NOTE: This doesn't prevent webpack from creating
