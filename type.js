@@ -207,12 +207,12 @@ export type ResolvedConfiguration = {
     hashAlgorithm:string;
     injection:PlainObject;
     inPlace:{
-        cascadingStyleSheet:{[key:string]:'body'|'head'|'in'};
+        cascadingStyleSheet:{[key:string]:'body'|'head'|'in'|string};
         externalLibrary:{
             normal:boolean;
             dynamic:boolean;
         };
-        javaScript:{[key:string]:'body'|'head'|'in'};
+        javaScript:{[key:string]:'body'|'head'|'in'|string};
         otherMaximumFileSizeLimitInByte:number;
     };
     library:boolean;
