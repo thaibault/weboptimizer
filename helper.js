@@ -427,6 +427,8 @@ export class Helper {
             resolvedRequest, {}, {}, extensions, context, requestContext,
             pathsToIgnore, relativeModuleFilePaths, packageEntryFileNames,
             packageMainPropertyNames, packageAliasPropertyNames, encoding)
+        if (Tools.isAnyMatching(resolvedRequest, excludePattern))
+            return null
         /*
             NOTE: We mark dependencies as external if there file couldn't be
             resolved or are specified to be external explicitly.
@@ -437,8 +439,6 @@ export class Helper {
             return Helper.applyContext(
                 resolvedRequest, requestContext, referencePath,
                 aliases, moduleReplacements, relativeModuleFilePaths)
-        if (Tools.isAnyMatching(resolvedRequest, excludePattern))
-            return null
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[

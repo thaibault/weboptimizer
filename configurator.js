@@ -217,8 +217,9 @@ for (const key:string in configuration.path)
                         subSubKey
                     ) && subSubKey !== 'base' &&
                     typeof configuration.path[key][subKey][
-                        subSubKey
-                    ] === 'string')
+                            subSubKey
+                        ] === 'string'
+                    )
                         configuration.path[key][subKey][subSubKey] =
                             path.resolve(
                                 configuration.path[key][subKey].base,
