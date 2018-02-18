@@ -522,7 +522,7 @@
             "pattern": {
               "exclude": [
                 {
-                  "__evaluate__": "^\\."
+                  "__evaluate__": "/^\\./"
                 },
                 {
                   "__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"
