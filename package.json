@@ -94,7 +94,7 @@
     "rimraf": "^2.6.2",
     "script-loader": "^0.7.2",
     "style-loader": "^0.20.2",
-    "stylelint-config-standard": "^18.0.0",
+    "stylelint-config-standard": "^18.1.0",
     "url-loader": "^0.6.2",
     "webpack-load-plugins": "^0.1.2",
     "webpack-sources": "^1.1.0"
@@ -115,7 +115,7 @@
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.2.1",
     "coveralls": "^3.0.0",
-    "documentation-website": "^1.0.97",
+    "documentation-website": "^1.0.98",
     "eslint": "^4.18.0",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.43.0",
@@ -521,6 +521,9 @@
           "implicit": {
             "pattern": {
               "exclude": [
+                {
+                  "__evaluate__": "^\\."
+                },
                 {
                   "__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"
                 },
