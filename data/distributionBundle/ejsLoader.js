@@ -89,7 +89,7 @@ module.exports = function(source:string):string {
                     true, nestedLocals, evaluationFunction(
                         request, template, source, compile, locals))
             }
-            let nestedOptions:Object = Tools.copyLimitedRecursively(options)
+            let nestedOptions:Object = Tools.copy(options)
             delete nestedOptions.client
             nestedOptions = Tools.extendObject(
                 true, {encoding: configuration.encoding}, nestedOptions,
