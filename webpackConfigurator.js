@@ -18,6 +18,7 @@ import Tools from 'clientnode'
 /* eslint-disable no-unused-vars */
 import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
 /* eslint-enable no-unused-vars */
+import postcssCSSnano from 'cssnano'
 import {JSDOM as DOM} from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
@@ -838,7 +839,9 @@ Tools.extendObject(loader, {
                                 .cascadingStyleSheet,
                             spritePath: configuration.path.source.asset.image
                         })
-                    ]
+                    ].concat(
+                        configuration.module.optimizer.cssnano ?
+                            postcssCSSnano() : [])
                 },
                 configuration.module.preprocessor.cascadingStyleSheet
                     .options || {})
