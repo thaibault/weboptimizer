@@ -217,8 +217,9 @@ for (const key:string in configuration.path)
                         subSubKey
                     ) && subSubKey !== 'base' &&
                     typeof configuration.path[key][subKey][
-                        subSubKey
-                    ] === 'string')
+                            subSubKey
+                        ] === 'string'
+                    )
                         configuration.path[key][subKey][subSubKey] =
                             path.resolve(
                                 configuration.path[key][subKey].base,
@@ -233,6 +234,15 @@ export const resolvedConfiguration:ResolvedConfiguration =
         currentPath: process.cwd(),
         fileSystem,
         Helper,
+        // IgnoreTypeCheck
+        isDLLUseful: 2 < configuration.givenCommandLineArguments.length && (
+            ['build:dll', 'watch:dll'].includes(
+                // IgnoreTypeCheck
+                configuration.givenCommandLineArguments[2]) ||
+            configuration.dllManifestFilePaths.length &&
+            ['build', 'serve', 'test:browser'].includes(
+                // IgnoreTypeCheck
+                configuration.givenCommandLineArguments[2])),
         path,
         /* eslint-disable no-eval */
         require: eval('require'),

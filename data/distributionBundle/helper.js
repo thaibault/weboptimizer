@@ -78,66 +78,138 @@ export class Helper {
      */
     static inPlaceCSSAndJavaScriptAssetReferences(
         content:string,
-        cascadingStyleSheetPattern:?{[key:string]:'body'|'head'|'in'},
-        javaScriptPattern:?{[key:string]:'body'|'head'|'in'}, basePath:string,
+        cascadingStyleSheetPattern:?{[key:string]:'body'|'head'|'in'|string},
+        javaScriptPattern:?{[key:string]:'body'|'head'|'in'|string},
+        basePath:string,
         cascadingStyleSheetChunkNameTemplate:string,
-        javaScriptChunkNameTemplate:string, assets:{[key:string]:Object}
-    ):Promise<{content:string;filePathsToRemove:Array<string>;}> {
+        javaScriptChunkNameTemplate:string,
+        assets:{[key:string]:Object}
+    ):{
+        content:string;
+        filePathsToRemove:Array<string>;
+    } {
+        /*
+            NOTE: We have to prevent creating native "style" dom nodes to
+            prevent jsdom from parsing the entire cascading style sheet. Which
+            is error prune and very resource intensive.
+        */
+        const styleContents:Array<string> = []
+        content = content.replace(
+            /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, (
+                match:string,
+                startTag:string,
+                content:string,
+                endTag:string
+            ):string => {
+                styleContents.push(content)
+                return `${startTag}${endTag}`
+            })
         /*
             NOTE: We have to translate template delimiter to html compatible
             sequences and translate it back later to avoid unexpected escape
             sequences in resulting html.
         */
-        return new Promise((
-            resolve:Function, reject:Function
-        ):void => {
-            let window:Window
-            try {
-                window = (new DOM(content.replace(/<%/g, '##+#+#+##').replace(
-                    /%>/g, '##-#-#-##'
-                ))).window
-            } catch (error) {
-                return reject(error)
+        const window:Window = (new DOM(
+            content
+                .replace(/<%/g, '##+#+#+##')
+                .replace(/%>/g, '##-#-#-##')
+        )).window
+        const inPlaceStyleContents:Array<string> = []
+        const filePathsToRemove:Array<string> = []
+        for (const assetType:PlainObject of [
+            {
+                attributeName: 'href',
+                hash: 'contenthash',
+                linkTagName: 'link',
+                pattern: cascadingStyleSheetPattern,
+                selector: '[href*=".css"]',
+                tagName: 'style',
+                template: cascadingStyleSheetChunkNameTemplate
+            },
+            {
+                attributeName: 'src',
+                hash: 'hash',
+                linkTagName: 'script',
+                pattern: javaScriptPattern,
+                selector: '[href*=".js"]',
+                tagName: 'script',
+                template: javaScriptChunkNameTemplate
             }
-            const filePathsToRemove:Array<string> = []
-            if (cascadingStyleSheetPattern)
-                for (const pattern:string in cascadingStyleSheetPattern) {
-                    if (!cascadingStyleSheetPattern.hasOwnProperty(pattern))
+        ])
+            if (assetType.pattern)
+                for (const pattern:string in assetType.pattern) {
+                    if (!assetType.pattern.hasOwnProperty(pattern))
                         continue
-                    let selector:string = '[href*=".css"]'
+                    let selector:string = assetType.selector
                     if (pattern !== '*')
-                        selector = '[href="' + path.relative(
-                            basePath, Helper.renderFilePathTemplate(
-                                cascadingStyleSheetChunkNameTemplate, {
-                                    '[contenthash]': '',
-                                    '[id]': pattern,
-                                    '[name]': pattern
-                                }
-                            )) + '"]'
+                        selector = `[${assetType.attributeName}="` +
+                            path.relative(
+                                basePath, Helper.renderFilePathTemplate(
+                                    assetType.template, {
+                                        [`[${assetType.hash}]`]: '',
+                                        '[id]': pattern,
+                                        '[name]': pattern
+                                    }
+                                )) + '"]'
                     const domNodes:Array<DomNode> =
-                        window.document.querySelectorAll(`link${selector}`)
+                        window.document.querySelectorAll(
+                            `${assetType.linkTagName}${selector}`)
                     if (domNodes.length)
                         for (const domNode:DomNode of domNodes) {
-                            const inPlaceDomNode:DomNode =
-                                window.document.createElement('style')
-                            const path:string = domNode.attributes.href.value
-                                .replace(/&.*/g, '')
+                            const path:string = domNode.attributes[
+                                assetType.attributeName
+                            ].value.replace(/&.*/g, '')
                             if (!assets.hasOwnProperty(path))
                                 continue
-                            inPlaceDomNode.textContent = assets[path].source()
-                            if (cascadingStyleSheetPattern[pattern] === 'body')
+                            const inPlaceDomNode:DomNode =
+                                window.document.createElement(
+                                    assetType.tagName)
+                            if (assetType.tagName === 'style') {
+                                inPlaceDomNode.setAttribute(
+                                    'weboptimizerinplace', 'true')
+                                inPlaceStyleContents.push(
+                                    assets[path].source())
+                            } else
+                                inPlaceDomNode.textContent =
+                                    assets[path].source()
+                            if (assetType.pattern[pattern] === 'body')
                                 window.document.body.appendChild(
                                     inPlaceDomNode)
-                            else if (cascadingStyleSheetPattern[
-                                pattern
-                            ] === 'in')
+                            else if (assetType.pattern[pattern] === 'in')
                                 domNode.parentNode.insertBefore(
                                     inPlaceDomNode, domNode)
-                            else if (cascadingStyleSheetPattern[
-                                pattern
-                            ] === 'head')
+                            else if (assetType.pattern[pattern] === 'head')
                                 window.document.head.appendChild(
                                     inPlaceDomNode)
+                            else {
+                                const regularExpressionPattern:string =
+                                    '(after|before|in):(.+)'
+                                const match:Array<string> =
+                                    new RegExp(regularExpressionPattern).exec(
+                                        assetType.pattern[pattern])
+                                if (!match)
+                                    throw new Error(
+                                        'Given in place specification "' +
+                                        `${assetType.pattern[pattern]}" for ` +
+                                        `${assetType.tagName} does not ` +
+                                        'satisfy the specified pattern "' +
+                                        `${regularExpressionPattern}".`)
+                                const domNode:DomNode =
+                                    window.document.querySelector(match[2])
+                                if (!domNode)
+                                    throw new Error(
+                                        `Specified dom node "${match[2]}" ` +
+                                        'could not be found to in place "' +
+                                        `${pattern}".`)
+                                if (match[1] === 'in')
+                                    domNode.appendChild(inPlaceDomNode)
+                                else if (match[1] === 'before')
+                                    domNode.parentNode.insertBefore(
+                                        inPlaceDomNode, domNode)
+                                else
+                                    domNode.parentNode.insertAfter(
+                                        inPlaceDomNode, domNode)
+                            }
                             domNode.parentNode.removeChild(domNode)
                             /*
                                 NOTE: This doesn't prevent webpack from
@@ -150,68 +222,31 @@ export class Helper {
                         }
                     else
                         console.warn(
-                            'No referenced cascading style sheet file in ' +
-                            'resulting markup found with selector: link' +
-                            selector)
+                            `No referenced ${assetType.tagName} file in ` +
+                            'resulting markup found with selector: "' +
+                            `${assetType.linkTagName}${assetType.selector}"`)
                 }
-            if (javaScriptPattern)
-                for (const pattern:string in javaScriptPattern) {
-                    if (!javaScriptPattern.hasOwnProperty(pattern))
-                        continue
-                    let selector:string = '[href*=".js"]'
-                    if (pattern !== '*')
-                        selector = '[src^="' + path.relative(
-                            basePath, Helper.renderFilePathTemplate(
-                                javaScriptChunkNameTemplate, {
-                                    '[hash]': '',
-                                    '[id]': pattern,
-                                    '[name]': pattern
-                                }
-                            ) + '"]')
-                    const domNodes:Array<DomNode> =
-                        window.document.querySelectorAll(`script${selector}`)
-                    if (domNodes.length)
-                        for (const domNode:DomNode of domNodes) {
-                            const inPlaceDomNode:DomNode =
-                                window.document.createElement('script')
-                            const path:string = domNode.attributes.src.value
-                                .replace(/&.*/g, '')
-                            if (!assets.hasOwnProperty(path))
-                                continue
-                            inPlaceDomNode.textContent = assets[path].source()
-                            if (javaScriptPattern[pattern] === 'body')
-                                window.document.body.appendChild(
-                                    inPlaceDomNode)
-                            else if (javaScriptPattern[pattern] === 'in')
-                                domNode.parentNode.insertBefore(
-                                    inPlaceDomNode, domNode)
-                            else if (javaScriptPattern[pattern] === 'head')
-                                window.document.head.appendChild(
-                                    inPlaceDomNode)
-                            domNode.parentNode.removeChild(domNode)
-                            /*
-                                NOTE: This doesn't prevent webpack from
-                                creating this file if present in another chunk
-                                so removing it (and a potential source map
-                                file) later in the "done" hook.
-                            */
-                            filePathsToRemove.push(Helper.stripLoader(path))
-                            delete assets[path]
-                        }
-                    else
-                        console.warn(
-                            'No referenced javaScript file in resulting ' +
-                            `markup found with selector: script${selector}`)
-                }
-            resolve({
-                content: content.replace(
+        // NOTE: We have to restore template delimiter and style contents.
+        return {
+            content: content
+                .replace(
                     /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
-                ) + window.document.documentElement.outerHTML.replace(
-                    /##\+#\+#\+##/g, '<%'
-                ).replace(/##-#-#-##/g, '%>'),
-                filePathsToRemove
-            })
-        })
+                ) + window.document.documentElement.outerHTML
+                .replace(/##\+#\+#\+##/g, '<%')
+                .replace(/##-#-#-##/g, '%>')
+                .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
+                    match:string,
+                    startTag:string,
+                    endTag:string
+                ):string => {
+                    if (startTag.includes(' weboptimizerinplace="true"'))
+                        return startTag.replace(
+                            ' weboptimizerinplace="true"', ''
+                        ) + `${inPlaceStyleContents.shift()}${endTag}`
+                    return `${startTag}${styleContents.shift()}${endTag}`
+                }),
+            filePathsToRemove
+        }
     }
     /**
      * Strips loader informations form given module request including loader
@@ -392,6 +427,8 @@ export class Helper {
             resolvedRequest, {}, {}, extensions, context, requestContext,
             pathsToIgnore, relativeModuleFilePaths, packageEntryFileNames,
             packageMainPropertyNames, packageAliasPropertyNames, encoding)
+        if (Tools.isAnyMatching(resolvedRequest, excludePattern))
+            return null
         /*
             NOTE: We mark dependencies as external if there file couldn't be
             resolved or are specified to be external explicitly.
@@ -402,8 +439,6 @@ export class Helper {
             return Helper.applyContext(
                 resolvedRequest, requestContext, referencePath,
                 aliases, moduleReplacements, relativeModuleFilePaths)
-        if (Tools.isAnyMatching(resolvedRequest, excludePattern))
-            return null
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
