@@ -173,9 +173,11 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         configuration, 'configuration')
 if (typeof result === 'object' && result !== null) {
     if (result.hasOwnProperty('__reference__')) {
-        Tools.extendObject(
-            true, configuration, configuration[result.__reference__])
+        const referenceNames:Array<string> = [].concat(result.__reference__)
         delete result.__reference__
+        for (const name:string of referenceNames)
+            Tools.extendObject(
+                true, configuration, configuration[result[name]])
         Tools.extendObject(true, configuration, result)
     }
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
