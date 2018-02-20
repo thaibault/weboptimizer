@@ -171,8 +171,15 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         runtimeInformation.givenCommandLineArguments[runtimeInformation
             .givenCommandLineArguments.length - 1],
         configuration, 'configuration')
-if (Tools.isPlainObject(result))
+if (typeof result === 'object' && result !== null) {
+    if (result.hasOwnProperty('__reference__')) {
+        Tools.extendObject(
+            true, configuration, configuration[result.__reference__])
+        delete result.__reference__
+        Tools.extendObject(true, configuration, result)
+    }
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
+}
 // endregion
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
