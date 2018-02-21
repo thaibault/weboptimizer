@@ -621,12 +621,7 @@
             "module": {}
           },
           "cssnano": {
-            "preset": [
-              "default",
-              {
-                "autoprefixer": false
-              }
-            ]
+            "autoprefixer": false
           },
           "data": {
             "additional": [],
