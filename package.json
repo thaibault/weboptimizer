@@ -68,7 +68,7 @@
     "babel-preset-minify": "^0.3.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
-    "clientnode": "^1.0.345",
+    "clientnode": "^1.0.346",
     "css-loader": "^0.28.7",
     "ejs": "^2.5.7",
     "exports-loader": "^0.7.0",
