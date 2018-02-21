@@ -142,7 +142,7 @@ export class Helper {
                         continue
                     let selector:string = assetType.selector
                     if (pattern !== '*')
-                        selector = `[${assetType.attributeName}="` +
+                        selector = `[${assetType.attributeName}^="` +
                             path.relative(
                                 basePath, Helper.renderFilePathTemplate(
                                     assetType.template, {
