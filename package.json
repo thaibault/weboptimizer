@@ -621,7 +621,10 @@
             "module": {}
           },
           "cssnano": {
-            "autoprefixer": false
+            "autoprefixer": false,
+            "discardUnused": {
+              "__evaluate__": "!self.library"
+            }
           },
           "data": {
             "additional": [],
