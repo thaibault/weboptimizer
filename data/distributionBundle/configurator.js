@@ -171,8 +171,15 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         runtimeInformation.givenCommandLineArguments[runtimeInformation
             .givenCommandLineArguments.length - 1],
         configuration, 'configuration')
-if (Tools.isPlainObject(result))
+if (typeof result === 'object' && result !== null) {
+    if (result.hasOwnProperty('__reference__')) {
+        const referenceNames:Array<string> = [].concat(result.__reference__)
+        delete result.__reference__
+        for (const name:string of referenceNames)
+            Tools.extendObject(true, result, configuration[name])
+    }
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
+}
 // endregion
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
