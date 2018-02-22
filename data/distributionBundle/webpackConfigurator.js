@@ -841,7 +841,9 @@ Tools.extendObject(loader, {
                         })
                     ].concat(
                         configuration.module.optimizer.cssnano ?
-                            postcssCSSnano() : [])
+                            postcssCSSnano(
+                                configuration.module.optimizer.cssnano
+                            ) : [])
                 },
                 configuration.module.preprocessor.cascadingStyleSheet
                     .options || {})
