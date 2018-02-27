@@ -110,6 +110,7 @@
     "jsdoc": "*",
     "stylelint": "*",
     "webpack": "*",
+    "webpack-cli": "*",
     "webpack-dev-server": "*"
   },
   "devDependencies": {
@@ -128,6 +129,7 @@
     "qunit": "^2.5.0",
     "source-map-support": "^0.5.3",
     "webpack": "^4.0.1",
+    "webpack-cli": "^2.0.9",
     "webpack-dev-server": "^3.0.0"
   },
   "configuration": {
