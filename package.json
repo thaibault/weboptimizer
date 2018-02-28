@@ -118,7 +118,7 @@
     "babel-eslint": "^8.2.2",
     "coveralls": "^3.0.0",
     "cssnano": "^3.10.0",
-    "documentation-website": "^1.0.106",
+    "documentation-website": "^1.0.107",
     "eslint": "^4.18.1",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.46.1",
@@ -126,11 +126,11 @@
     "flow-bin": "^0.66.0",
     "jsdoc": "^3.5.3",
     "nyc": "^11.5.0",
-    "qunit": "^2.5.0",
+    "qunit": "^2.5.1",
     "source-map-support": "^0.5.3",
     "webpack": "^4.0.1",
     "webpack-cli": "^2.0.9",
-    "webpack-dev-server": "^3.0.0"
+    "webpack-dev-server": "^3.1.0"
   },
   "configuration": {
     "default": {
