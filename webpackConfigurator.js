@@ -427,139 +427,148 @@ if (configuration.givenCommandLineArguments[2] === 'build:dll') {
 // /// endregion
 // // endregion
 // // region apply final dom/javaScript/cascadingStyleSheet modifications/fixes
-pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
-    'compilation', (compilation:Object):void => {
-        compilation.plugin('html-webpack-plugin-alter-asset-tags', (
-            htmlPluginData:PlainObject, callback:ProcedureFunction
-        ):void => {
-            for (const tags:Array<PlainObject> of [
-                htmlPluginData.body, htmlPluginData.head
-            ]) {
+if (htmlAvailable)
+    pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
+        'compilation', (compilation:Object):void => {
+            compilation.plugin('html-webpack-plugin-alter-asset-tags', (
+                htmlPluginData:PlainObject, callback:ProcedureFunction
+            ):void => {
+                for (const tags:Array<PlainObject> of [
+                    htmlPluginData.body, htmlPluginData.head
+                ]) {
+                    let index:number = 0
+                    for (const tag:PlainObject of tags) {
+                        if (/^\.__dummy__(\..*)?$/.test(path.basename(
+                            tag.attributes.src || tag.attributes.href || ''
+                        )))
+                            tags.splice(index, 1)
+                        index += 1
+                    }
+                }
+                const assets:Array<string> = JSON.parse(
+                    htmlPluginData.plugin.assetJson)
                 let index:number = 0
-                for (const tag:PlainObject of tags) {
+                for (const assetRequest:string of assets) {
                     if (/^\.__dummy__(\..*)?$/.test(path.basename(
-                        tag.attributes.src || tag.attributes.href || ''
+                        assetRequest
                     )))
-                        tags.splice(index, 1)
+                        assets.splice(index, 1)
                     index += 1
                 }
-            }
-            const assets:Array<string> = JSON.parse(
-                htmlPluginData.plugin.assetJson)
-            let index:number = 0
-            for (const assetRequest:string of assets) {
-                if (/^\.__dummy__(\..*)?$/.test(path.basename(assetRequest)))
-                    assets.splice(index, 1)
-                index += 1
-            }
-            htmlPluginData.plugin.assetJson = JSON.stringify(assets)
-            callback(null, htmlPluginData)
-        })
-        compilation.plugin('html-webpack-plugin-after-html-processing', (
-            htmlPluginData:PlainObject, callback:ProcedureFunction
-        ):Window => {
-            /*
-                NOTE: We have to prevent creating native "style" dom nodes to
-                prevent jsdom from parsing the entire cascading style sheet.
-                Which is error prune and very resource intensive.
-            */
-            const styleContents:Array<string> = []
-            htmlPluginData.html = htmlPluginData.html.replace(
-                /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, (
-                    match:string,
-                    startTag:string,
-                    content:string,
-                    endTag:string
-                ):string => {
-                    styleContents.push(content)
-                    return `${startTag}${endTag}`
-                })
-            let window:Window
-            try {
+                htmlPluginData.plugin.assetJson = JSON.stringify(assets)
+                callback(null, htmlPluginData)
+            })
+            compilation.plugin('html-webpack-plugin-after-html-processing', (
+                htmlPluginData:PlainObject, callback:ProcedureFunction
+            ):Window => {
                 /*
-                    NOTE: We have to translate template delimiter to html
-                    compatible sequences and translate it back later to avoid
-                    unexpected escape sequences in resulting html.
+                    NOTE: We have to prevent creating native "style" dom nodes
+                    to prevent jsdom from parsing the entire cascading style
+                    sheet. Which is error prune and very resource intensive.
                 */
-                window = (new DOM(
-                    htmlPluginData.html
-                        .replace(/<%/g, '##+#+#+##')
-                        .replace(/%>/g, '##-#-#-##')
-                )).window
-            } catch (error) {
-                return callback(error, htmlPluginData)
-            }
-            const linkables:{[key:string]:string} = {
-                link: 'href',
-                script: 'src'
-            }
-            for (const tagName:string in linkables)
-                if (linkables.hasOwnProperty(tagName))
-                    for (
-                        const domNode:DomNode of
-                        window.document.querySelectorAll(
-                            `${tagName}[${linkables[tagName]}*="?` +
-                            `${configuration.hashAlgorithm}="]`)
-                    )
-                        /*
-                            NOTE: Removing symbols after a "&" in hash string
-                            is necessary to match the generated request strings
-                            in offline plugin.
-                        */
-                        domNode.setAttribute(
-                            linkables[tagName],
-                            domNode.getAttribute(
-                                linkables[tagName]
-                            ).replace(new RegExp(
-                                `(\\?${configuration.hashAlgorithm}=` +
-                                '[^&]+).*$'
-                            ), '$1'))
-            // NOTE: We have to restore template delimiter and style contents.
-            htmlPluginData.html = htmlPluginData.html
-                .replace(
-                    /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
-                ) + window.document.documentElement.outerHTML
-                    .replace(/##\+#\+#\+##/g, '<%')
-                    .replace(/##-#-#-##/g, '%>')
-                    .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
+                const styleContents:Array<string> = []
+                htmlPluginData.html = htmlPluginData.html.replace(
+                    /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, (
                         match:string,
                         startTag:string,
+                        content:string,
                         endTag:string
-                    ):string => `${startTag}${styleContents.shift()}${endTag}`)
-            // region post compilation
-            for (
-                const htmlFileSpecification:PlainObject of
-                configuration.files.html
-            )
-                if (
-                    htmlFileSpecification.filename ===
-                    htmlPluginData.plugin.options.filename
-                ) {
-                    for (
-                        const loaderConfiguration:PlainObject of
-                        htmlFileSpecification.template.use
-                    )
-                        if (
-                            loaderConfiguration.hasOwnProperty('options') &&
-                            loaderConfiguration.options.hasOwnProperty(
-                                'compileSteps'
-                            ) &&
-                            typeof loaderConfiguration.options.compileSteps
-                                === 'number'
-                        )
-                            htmlPluginData.html = ejsLoader.bind(
-                                Tools.extendObject(true, {}, {
-                                    options: loaderConfiguration.options || {}
-                                }, {options: {
-                                    compileSteps: htmlFileSpecification
-                                        .template.postCompileSteps
-                                }}))(htmlPluginData.html)
-                    break
+                    ):string => {
+                        styleContents.push(content)
+                        return `${startTag}${endTag}`
+                    })
+                let window:Window
+                try {
+                    /*
+                        NOTE: We have to translate template delimiter to html
+                        compatible sequences and translate it back later to
+                        avoid unexpected escape sequences in resulting html.
+                    */
+                    window = (new DOM(
+                        htmlPluginData.html
+                            .replace(/<%/g, '##+#+#+##')
+                            .replace(/%>/g, '##-#-#-##')
+                    )).window
+                } catch (error) {
+                    return callback(error, htmlPluginData)
                 }
-            // endregion
-            callback(null, htmlPluginData)
-        })
-    })})
+                const linkables:{[key:string]:string} = {
+                    link: 'href',
+                    script: 'src'
+                }
+                for (const tagName:string in linkables)
+                    if (linkables.hasOwnProperty(tagName))
+                        for (
+                            const domNode:DomNode of
+                            window.document.querySelectorAll(
+                                `${tagName}[${linkables[tagName]}*="?` +
+                                `${configuration.hashAlgorithm}="]`)
+                        )
+                            /*
+                                NOTE: Removing symbols after a "&" in hash
+                                string is necessary to match the generated
+                                request strings in offline plugin.
+                            */
+                            domNode.setAttribute(
+                                linkables[tagName],
+                                domNode.getAttribute(
+                                    linkables[tagName]
+                                ).replace(new RegExp(
+                                    `(\\?${configuration.hashAlgorithm}=` +
+                                    '[^&]+).*$'
+                                ), '$1'))
+                /*
+                    NOTE: We have to restore template delimiter and style
+                    contents.
+                */
+                htmlPluginData.html = htmlPluginData.html
+                    .replace(
+                        /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
+                    ) + window.document.documentElement.outerHTML
+                        .replace(/##\+#\+#\+##/g, '<%')
+                        .replace(/##-#-#-##/g, '%>')
+                        .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
+                            match:string,
+                            startTag:string,
+                            endTag:string
+                        ):string =>
+                            `${startTag}${styleContents.shift()}${endTag}`)
+                // region post compilation
+                for (
+                    const htmlFileSpecification:PlainObject of
+                    configuration.files.html
+                )
+                    if (
+                        htmlFileSpecification.filename ===
+                        htmlPluginData.plugin.options.filename
+                    ) {
+                        for (
+                            const loaderConfiguration:PlainObject of
+                            htmlFileSpecification.template.use
+                        )
+                            if (
+                                loaderConfiguration.hasOwnProperty(
+                                    'options') &&
+                                loaderConfiguration.options.hasOwnProperty(
+                                    'compileSteps'
+                                ) &&
+                                typeof loaderConfiguration.options.compileSteps
+                                    === 'number'
+                            )
+                                htmlPluginData.html = ejsLoader.bind(
+                                    Tools.extendObject(true, {}, {
+                                        options: loaderConfiguration.options ||
+                                            {}
+                                    }, {options: {
+                                        compileSteps: htmlFileSpecification
+                                            .template.postCompileSteps
+                                    }}))(htmlPluginData.html)
+                        break
+                    }
+                // endregion
+                callback(null, htmlPluginData)
+            })
+        })})
 /*
     NOTE: The umd module export doesn't handle cases where the package name
     doesn't match exported library name. This post processing fixes this issue.
