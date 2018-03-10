@@ -29,7 +29,7 @@ registerTest(function():void {
         addDependency: ():void => {},
         options: {},
         query: '',
-        debug: true,
+        debug: false,
         loaders: [],
         loaderIndex: 0
     }
@@ -54,7 +54,6 @@ registerTest(function():void {
         assert.strictEqual(
             ejsLoader.call(complexContext, '<a></a>'), '<a></a>')
         complexContext.options.compileSteps = 1
-        console.log(ejsLoader.call(complexContext, '<a></a>'))
         assert.ok(ejsLoader.call(complexContext, '<a></a>').startsWith(
             `'use strict';\nmodule.exports=`))
         complexContext.options.compileSteps = 2
