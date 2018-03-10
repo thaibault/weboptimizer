@@ -139,7 +139,7 @@
           "excludeFilePathRegularExpression": {
             "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|preboot|.+\\.html|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
-          "pattern": "'use strict';\n{1}"
+          "pattern": "'use strict';var window=typeof window==='undefined'?typeof global==='undefined'?{}:global:window;{1}"
         }
       },
       "build": {
@@ -1032,7 +1032,7 @@
       "test": {
         "assetPattern": {
           "javaScript": {
-            "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';\n{1}"
+            "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';{1}"
           }
         },
         "exportFormat": {
