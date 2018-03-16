@@ -123,6 +123,7 @@ export type HTMLConfiguration = {
     filename:string;
     template:{
         filePath:string;
+        options:PlainObject;
         request:string|String;
         use:Array<{loader:string;options:Object}>;
     };
@@ -233,6 +234,7 @@ export type ResolvedConfiguration = {
         html:LoaderConfiguration;
         locations:{filePaths:Array<string>;directoryPaths:Array<string>};
         optimizer:{
+            cssnano:PlainObject;
             data:LoaderConfiguration;
             font:{
                 eot:LoaderConfiguration;

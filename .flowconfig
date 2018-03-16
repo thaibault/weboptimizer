@@ -3,6 +3,9 @@
 .*/\.git
 .*/_.*\.js
 .+\.compiled(\..+)?
+.*/broken.json
+.*/test([/.]|$)
+.*/\.nyc_output/.*\.json$
 
 # temporary excludes
 .*/documentation-website/.*
