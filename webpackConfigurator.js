@@ -525,14 +525,14 @@ if (htmlAvailable)
                     .replace(
                         /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
                     ) + window.document.documentElement.outerHTML
-                        .replace(/##\+#\+#\+##/g, '<%')
-                        .replace(/##-#-#-##/g, '%>')
-                        .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
-                            match:string,
-                            startTag:string,
-                            endTag:string
-                        ):string =>
-                            `${startTag}${styleContents.shift()}${endTag}`)
+                    .replace(/##\+#\+#\+##/g, '<%')
+                    .replace(/##-#-#-##/g, '%>')
+                    .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
+                        match:string,
+                        startTag:string,
+                        endTag:string
+                    ):string =>
+                        `${startTag}${styleContents.shift()}${endTag}`)
                 // region post compilation
                 for (
                     const htmlFileSpecification:PlainObject of
@@ -677,7 +677,8 @@ Tools.extendObject(loader, {
             ).map((htmlConfiguration:HTMLConfiguration):string =>
                 htmlConfiguration.template.filePath)
         ).includes(filePath) ||
-            ((configuration.module.preprocessor.ejs.exclude === null) ? false :
+            ((configuration.module.preprocessor.ejs.exclude === null) ?
+                false :
                 evaluate(
                     configuration.module.preprocessor.ejs.exclude, filePath)),
         include: Helper.normalizePaths([
@@ -753,7 +754,8 @@ Tools.extendObject(loader, {
                 configuration.module.preprocessor.html.options || {
                     compileSteps: 2
                 }
-            ).compileSteps % 2) ? [] :
+            ).compileSteps % 2) ?
+                [] :
                 [
                     {loader: 'extract'},
                     {
@@ -774,7 +776,8 @@ Tools.extendObject(loader, {
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
                     htmlConfiguration.template.filePath)
             ).includes(filePath) ||
-                ((configuration.module.html.exclude === null) ? true :
+                ((configuration.module.html.exclude === null) ?
+                    true :
                     evaluate(configuration.module.html.exclude, filePath)),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,

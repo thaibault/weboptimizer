@@ -462,12 +462,11 @@ export class Helper {
             extensions.file.external.includes(path.extname(filePath)) ||
             !filePath && extensions.file.external.includes('')
         ) && !(inPlaceDynamicLibrary && request.includes('!')) && (
-                !filePath && inPlaceDynamicLibrary || filePath && (
-                    !filePath.startsWith(context) ||
-                    Helper.isFilePathInLocation(
-                        filePath, externalModuleLocations))
-            )
-        )
+            !filePath && inPlaceDynamicLibrary || filePath && (
+                !filePath.startsWith(context) ||
+                Helper.isFilePathInLocation(
+                    filePath, externalModuleLocations))
+        ))
             return Helper.applyContext(
                 resolvedRequest, requestContext, referencePath, aliases,
                 moduleReplacements, relativeModuleFilePaths)
