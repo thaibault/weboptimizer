@@ -38,7 +38,7 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 
 plugins.BabelMinify = plugins.babelMinify
 plugins.HTML = plugins.html
-plugins.ExtractText = plugins.extractText
+plugins.MiniCSSExtract = require('mini-css-extract-plugin')
 plugins.AddAssetHTMLPlugin = require('add-asset-html-webpack-plugin')
 plugins.OpenBrowser = plugins.openBrowser
 plugins.Favicon = require('favicons-webpack-plugin')
@@ -336,8 +336,9 @@ if (!configuration.needed.javaScript)
 // /// endregion
 // /// region extract cascading style sheets
 if (configuration.files.compose.cascadingStyleSheet)
-    pluginInstances.push(new plugins.ExtractText({
-        allChunks: true, filename: path.relative(
+    pluginInstances.push(new plugins.MiniCSSExtract({
+        chunks: '[name].css',
+        filename: path.relative(
             configuration.path.target.base,
             configuration.files.compose.cascadingStyleSheet)
     }))
@@ -961,10 +962,8 @@ Tools.extendObject(loader, {
     }
     // endregion
 })
-if (configuration.files.compose.cascadingStyleSheet) {
-    loader.style.use.shift()
-    loader.style.use = plugins.ExtractText.extract({use: loader.style.use})
-}
+if (configuration.files.compose.cascadingStyleSheet)
+    loader.style.use.unshift(plugins.MiniCSSExtract.loader)
 // / endregion
 // endregion
 for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
