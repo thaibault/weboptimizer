@@ -962,8 +962,14 @@ Tools.extendObject(loader, {
     }
     // endregion
 })
-if (configuration.files.compose.cascadingStyleSheet)
+if (configuration.files.compose.cascadingStyleSheet) {
+    /*
+        NOTE: We have to remove the client side javascript hmr style loader
+        first.
+    */
+    loader.style.use.shift()
     loader.style.use.unshift(plugins.MiniCSSExtract.loader)
+}
 // / endregion
 // endregion
 for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
