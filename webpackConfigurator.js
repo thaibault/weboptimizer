@@ -1003,7 +1003,7 @@ export const webpackConfiguration:WebpackConfiguration = {
     performance: configuration.performanceHints,
     target: configuration.targetTechnology,
     // endregion
-    mode: self.debug ? 'development' : 'production',
+    mode: configuration.debug ? 'development' : 'production',
     module: {
         rules: configuration.module.additional.map((
             loaderConfiguration:PlainObject
