@@ -139,7 +139,7 @@
           "excludeFilePathRegularExpression": {
             "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|preboot|.+\\.html|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
-          "pattern": "'use strict';var window=typeof window==='undefined'?typeof global==='undefined'?{}:global:window;{1}"
+          "pattern": "'use strict';if(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}"
         }
       },
       "build": {
