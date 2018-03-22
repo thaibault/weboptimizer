@@ -38,7 +38,7 @@ registerTest(function():void {
     this.test('loader', (assert:Object):void => {
         assert.strictEqual(ejsLoader.call(context, '<a></a>'), '<a></a>')
         const complexContext = Tools.extendObject(true, {}, context, {
-            cacheable: ():void => {}, options: {
+            cacheable: ():void => {}, query: {
                 locals: {test: 'hans'},
                 compiler: {pretty: true}
             }
@@ -50,16 +50,16 @@ registerTest(function():void {
             complexContext,
             `<a></a><%- include('<a>test</a>?{options: {isString: true}}') %>`
         ), '<a></a><a>test</a>')
-        complexContext.options.compileSteps = 0
+        complexContext.query.compileSteps = 0
         assert.strictEqual(
             ejsLoader.call(complexContext, '<a></a>'), '<a></a>')
-        complexContext.options.compileSteps = 1
+        complexContext.query.compileSteps = 1
         assert.ok(ejsLoader.call(complexContext, '<a></a>').startsWith(
             `'use strict';\nmodule.exports=`))
-        complexContext.options.compileSteps = 2
+        complexContext.query.compileSteps = 2
         assert.strictEqual(
             ejsLoader.call(complexContext, '<a></a>'), '<a></a>')
-        complexContext.options.compileSteps = 3
+        complexContext.query.compileSteps = 3
         assert.ok(ejsLoader.call(complexContext, '<a></a>').startsWith(
             `'use strict';\nmodule.exports=`))
     })
