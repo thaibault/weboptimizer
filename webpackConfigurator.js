@@ -386,16 +386,16 @@ if (configuration.injection.external.modules === '__implicit__')
 // /// endregion
 // /// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'build:dll') {
-    let dllChunkIDExists:boolean = false
+    let dllChunkExists:boolean = false
     for (const chunkName:string in configuration.injection.internal.normalized)
         if (configuration.injection.internal.normalized.hasOwnProperty(
             chunkName
         ))
-            if (configuration.injection.dllChunkIDs.includes(chunkName))
-                dllChunkIDExists = true
+            if (configuration.injection.dllChunkNames.includes(chunkName))
+                dllChunkExists = true
             else
                 delete configuration.injection.internal.normalized[chunkName]
-    if (dllChunkIDExists) {
+    if (dllChunkExists) {
         libraryName = '[name]DLLPackage'
         pluginInstances.push(new webpack.DllPlugin({
             path: `${configuration.path.target.base}/[name].dll-manifest.json`,
@@ -1035,7 +1035,14 @@ export const webpackConfiguration:WebpackConfiguration = {
     node: configuration.nodeEnvironment,
     // region common chunks
     optimization: {
-        splitChunks: Tools.extendObject(
+        splitChunks: configuration.givenCommandLineArguments[
+            2
+        ] === 'build:dll' ? {
+            cacheGroups: {
+                default: false,
+                vendors: false
+            }
+        } : Tools.extendObject(
             true, {chunks: 'all'}, configuration.injection.chunks)
     },
     // endregion

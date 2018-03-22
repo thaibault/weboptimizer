@@ -342,16 +342,18 @@ registerTest(function():void {
             [
                 [
                     {
-                        internal: [], external: [], commonChunkIDs: [],
-                        dllChunkIDs: []
+                        chunks: [],
+                        dllChunkNames: [],
+                        external: [],
+                        internal: []
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
                     ), [], {}, {}, [], './', '', ['.git', 'node_modules']
                 ],
                 {
-                    commonChunkIDs: [],
-                    dllChunkIDs: [],
+                    chunks: [],
+                    dllChunkNames: [],
                     external: [],
                     internal: []
                 }
@@ -359,8 +361,8 @@ registerTest(function():void {
             [
                 [
                     {
-                        commonChunkIDs: [],
-                        dllChunkIDs: [],
+                        chunks: [],
+                        dllChunkNames: [],
                         external: [],
                         internal: 'a.js'
                     },
@@ -369,15 +371,16 @@ registerTest(function():void {
                     ), [], {}, {}, [], './', '', ['.git', 'node_modules']
                 ],
                 {
-                    internal: 'a.js', external: [], commonChunkIDs: [],
-                    dllChunkIDs: []
+                    chunks: [],
+                    dllChunkNames: [],
+                    internal: 'a.js', external: []
                 }
             ],
             [
                 [
                     {
-                        commonChunkIDs: [],
-                        dllChunkIDs: [],
+                        chunks: [],
+                        dllChunkNames: [],
                         external: [],
                         internal: ['a']
                     },
@@ -386,8 +389,8 @@ registerTest(function():void {
                     ), [], {}, {}, [], './', '', ['.git', 'node_modules']
                 ],
                 {
-                    commonChunkIDs: [],
-                    dllChunkIDs: [],
+                    chunks: [],
+                    dllChunkNames: [],
                     external: [],
                     internal: ['a']
                 }
@@ -395,8 +398,8 @@ registerTest(function():void {
             [
                 [
                     {
-                        commonChunkIDs: [],
-                        dllChunkIDs: [],
+                        chunks: [],
+                        dllChunkNames: [],
                         external: [],
                         internal: '__auto__'
                     },
@@ -405,8 +408,8 @@ registerTest(function():void {
                     ), [], {}, {}, [], './', '', ['.git', 'node_modules']
                 ],
                 {
-                    commonChunkIDs: [],
-                    dllChunkIDs: [],
+                    chunks: [],
+                    dllChunkNames: [],
                     external: [],
                     internal: {}
                 }
@@ -414,8 +417,8 @@ registerTest(function():void {
             [
                 [
                     {
-                        commonChunkIDs: [],
-                        dllChunkIDs: [],
+                        chunks: [],
+                        dllChunkNames: [],
                         external: [],
                         internal: {index: '__auto__'}
                     },
@@ -424,8 +427,10 @@ registerTest(function():void {
                     ), [], {}, {}, [], './', '', ['.git', 'node_modules']
                 ],
                 {
-                    internal: {index: []}, external: [], commonChunkIDs: [],
-                    dllChunkIDs: []
+                    chunks: [],
+                    external: [],
+                    internal: {index: []},
+                    dllChunkNames: []
                 }
             ]
         ])

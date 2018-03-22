@@ -35,8 +35,8 @@ export type InternalInjection =
 export type NormalizedInternalInjection = {[key:string]:Array<string>}
 export type Injection = {
     autoExclude:Array<string>;
-    commonChunkIDs:Array<string>;
-    dllChunkIDs:Array<string>;
+    chunks:PlainObject;
+    dllChunkNames:Array<string>;
     external:{
         aliases:PlainObject;
         implicit:{
