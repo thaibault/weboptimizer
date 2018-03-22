@@ -68,7 +68,7 @@
     "babel-preset-minify": "^0.3.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
-    "clientnode": "^3.0.15",
+    "clientnode": "^3.0.16",
     "css-loader": "^0.28.11",
     "ejs": "^2.5.7",
     "exports-loader": "^0.7.0",
@@ -118,8 +118,8 @@
     "babel-eslint": "^8.2.2",
     "coveralls": "^3.0.0",
     "cssnano": "^3.10.0",
-    "documentation-website": "^1.0.116",
-    "eslint": "^4.19.0",
+    "documentation-website": "^1.0.118",
+    "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.46.1",
     "eslint-plugin-jsdoc": "^3.5.0",
@@ -516,9 +516,7 @@
         "autoExclude": [
           "./test"
         ],
-        "commonChunkIDs": [
-          "vendor"
-        ],
+        "chunks": {},
         "dllChunkIDs": [
           "vendor",
           "developmentHelper"

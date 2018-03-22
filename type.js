@@ -341,7 +341,6 @@ export type WebpackConfiguration = {
         libraryTarget:string;
         path:string;
         publicPath:string;
-        pathinfo:boolean;
         umdNamedDefine:boolean;
     },
     target:string;
