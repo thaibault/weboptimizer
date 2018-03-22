@@ -62,9 +62,7 @@ module.exports = function(source:string):string {
                 replacements: {}
             },
             compileSteps: 2
-        }, this.options || {}, 'query' in this ? loaderUtils.getOptions(
-            this
-        ) || {} : {}),
+        }, 'query' in this ? loaderUtils.getOptions(this) || {} : {}),
         /#%%%#/g, '!')
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler,
