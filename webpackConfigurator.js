@@ -93,11 +93,8 @@ else {
 // / endregion
 // / region plugins
 const pluginInstances:Array<Object> = [
-    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(true)
 ]
-if (configuration.debug)
-    pluginInstances.push(new webpack.NamedModulesPlugin())
 // // region define modules to ignore
 for (const ignorePattern:string of configuration.injection.ignorePattern)
     pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
@@ -311,23 +308,6 @@ if (configuration.givenCommandLineArguments[2] !== 'build:dll')
                         manifestFilePath)}))
             }
         }
-// /// endregion
-// /// region generate common chunks
-if (configuration.givenCommandLineArguments[2] !== 'build:dll')
-    for (const chunkName:string of configuration.injection.commonChunkIDs)
-        if (configuration.injection.internal.normalized.hasOwnProperty(
-            chunkName
-        ))
-            pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
-                async: false,
-                children: false,
-                filename: path.relative(
-                    configuration.path.target.base,
-                    configuration.files.compose.javaScript),
-                minChunks: Infinity,
-                name: chunkName,
-                minSize: 0
-            }))
 // /// endregion
 // /// region mark empty javaScript modules as dummy
 if (!configuration.needed.javaScript)
@@ -1018,7 +998,6 @@ export const webpackConfiguration:WebpackConfiguration = {
         ) ? 'var' : configuration.exportFormat.self,
         path: configuration.path.target.base,
         publicPath: configuration.path.target.public,
-        pathinfo: configuration.debug,
         umdNamedDefine: true
     },
     performance: configuration.performanceHints,
@@ -1050,6 +1029,12 @@ export const webpackConfiguration:WebpackConfiguration = {
         ])
     },
     node: configuration.nodeEnvironment,
+    // region common chunks
+    optimization: {
+        splitChunks: Tools.extendObject(
+            true, {chunks: 'all'}, configuration.injection.chunks)
+    },
+    // endregion
     plugins: pluginInstances
 }
 if (
