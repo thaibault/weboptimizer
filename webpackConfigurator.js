@@ -239,7 +239,7 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                         }
                     callback(null, data)
                 }))
-        compiler.hooks['after-emit'].tapAsync(
+        compiler.hooks.afterEmit.tapAsync(
             'removeInPlaceHTMLAssetFiles', async (
                 data:Object, callback:ProcedureFunction
             ):Promise<void> => {

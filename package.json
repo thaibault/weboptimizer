@@ -917,13 +917,11 @@
         "externals": [
           "index.html"
         ],
-        "minify": {
-          "__evaluate__": "!self.debug"
-        },
         "publicPath": "/",
         "relativePaths": false,
         "ServiceWorker": {
           "events": true,
+          "minify": false,
           "navigateFallbackURL": null,
           "output": {
             "__evaluate__": "path.relative(self.path.target.base, path.resolve(self.path.target.asset.javaScript, 'serviceWorker.js'))"
