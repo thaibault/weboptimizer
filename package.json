@@ -602,7 +602,7 @@
           "exclude": null,
           "loader": "html",
           "options": {
-            "__evaluate__": "Tools.extendObject({}, self.module.optimizer.htmlMinifier || {}, {attrs: ['img:src', 'link:href'], minimize: true})"
+            "__evaluate__": "Tools.extendObject({}, self.module.optimizer.htmlMinifier || {}, {attrs: ['img:src', 'link:href'], minimize: self.module.optimizer.htmlMinifier})"
           }
         },
         "optimizer": {
