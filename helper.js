@@ -119,7 +119,7 @@ export class Helper {
         for (const assetType:PlainObject of [
             {
                 attributeName: 'href',
-                hash: 'contenthash',
+                hash: 'hash',
                 linkTagName: 'link',
                 pattern: cascadingStyleSheetPattern,
                 selector: '[href*=".css"]',
