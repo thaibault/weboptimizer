@@ -17,17 +17,12 @@ registerTest(function():void {
     //  region mockup
     const context:{
         addDependency:() => void;
-        options:{ejs?:{
-            locals?:Object;
-            compiler?:Object
-        }};
         query:string;
         debug:boolean;
         loaders:Array<Object>;
         loaderIndex:number
     } = {
         addDependency: ():void => {},
-        options: {},
         query: '',
         debug: false,
         loaders: [],
