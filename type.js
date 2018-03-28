@@ -242,7 +242,7 @@ export type ResolvedConfiguration = {
                 ttf:LoaderConfiguration;
                 woff:LoaderConfiguration;
             };
-            htmlMinifier:PlainObject;
+            htmlMinifier:?PlainObject;
             image:{
                 additional:Array<string>;
                 content:PlainObject;

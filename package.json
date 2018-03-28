@@ -454,12 +454,11 @@
         },
         "defaultHTML": {
           "chunksSortMode": "auto",
-          "debug": false,
           "filename": "index.html",
           "hash": true,
           "inject": "body",
           "minify": {
-            "__evaluate__": "self.module.optimizer.htmlMinifier"
+            "__evaluate__": "self.module.optimizer.htmlMinifier ? self.module.optimizer.htmlMinifier : false"
           },
           "template": {
             "filePath": {
@@ -603,7 +602,7 @@
           "exclude": null,
           "loader": "html",
           "options": {
-            "__evaluate__": "Tools.extendObject({}, self.module.optimizer.htmlMinifier, {attrs: ['img:src', 'link:href'], minimize: true})"
+            "__evaluate__": "Tools.extendObject({}, self.module.optimizer.htmlMinifier || {}, {attrs: ['img:src', 'link:href'], minimize: true})"
           }
         },
         "optimizer": {
@@ -1095,9 +1094,6 @@
           "javaScript": {
             "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name].js')}?${self.hashAlgorithm}=[hash]`"
           }
-        },
-        "defaultHTML": {
-          "debug": true
         }
       },
       "inPlace": {
@@ -1121,16 +1117,7 @@
             "module": null
           },
           "cssnano": null,
-          "htmlMinifier": {
-            "collapseWhitespace": false,
-            "removeComments": false,
-            "removeCommentsFromCDATA": false,
-            "removeCDATASectionsFromCDATA": false,
-            "collapseInlineTagWhitespace": false,
-            "collapseBooleanAttributes": false,
-            "removeScriptTypeAttributes": false,
-            "removeStyleLinkTypeAttributes": false
-          }
+          "htmlMinifier": null
         },
         "preprocessor": {
           "cascadingStyleSheet": {
