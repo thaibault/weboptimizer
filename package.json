@@ -1100,16 +1100,6 @@
           "debug": true
         }
       },
-      "injection": {
-        "internal": {
-          "developmentHelper": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && (['build:dll', 'watch:dll'].includes(self.givenCommandLineArguments[2]) || self.dllManifestFilePaths.length && ['serve', 'test:browser'].includes(self.givenCommandLineArguments[2])) ? [`webpack-dev-server/client?http${self.development.server.cert ? 's' : ''}://0.0.0.0:${self.development.server.port}`] : []"
-          },
-          "vendor": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && (self.givenCommandLineArguments[2] === 'serve' ? ['babel-polyfill'] : []).concat(['build:dll', 'test:browser', 'watch:dll'].includes(self.givenCommandLineArguments[2]) ? ['babel-polyfill', 'weboptimizer/browserAPI'] : []) || []"
-          }
-        }
-      },
       "inPlace": {
         "cascadingStyleSheet": null,
         "javaScript": null,
