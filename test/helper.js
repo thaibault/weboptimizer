@@ -5,10 +5,6 @@
 // region imports
 import path from 'path'
 import registerTest from 'clientnode/test.compiled'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 
 import type {BuildConfiguration, Path} from '../type'
 import Helper from '../helper.compiled'

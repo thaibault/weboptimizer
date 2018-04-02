@@ -20,10 +20,6 @@ import type {File, PlainObject, Window} from 'clientnode'
 import {JSDOM as DOM} from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 
 import type {
     BuildConfiguration,

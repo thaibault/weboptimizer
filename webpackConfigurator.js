@@ -27,10 +27,6 @@ import postcssFontPath from 'postcss-fontpath'
 import postcssImport from 'postcss-import'
 import postcssSprites from 'postcss-sprites'
 import postcssURL from 'postcss-url'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 import util from 'util'
 import webpack from 'webpack'
 const plugins = require('webpack-load-plugins')()

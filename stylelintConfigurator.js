@@ -14,11 +14,6 @@
     endregion
 */
 // region imports
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
-
 import configuration from './configurator.compiled'
 // endregion
 module.exports = configuration.stylelint

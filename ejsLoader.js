@@ -23,10 +23,6 @@ import * as fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import * as loaderUtils from 'loader-utils'
 import path from 'path'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'

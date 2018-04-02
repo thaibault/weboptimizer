@@ -4,10 +4,6 @@
 'use strict'
 // region imports
 import registerTest from 'clientnode/test.compiled'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 // endregion
 registerTest(function():void {
     this.module('stylelintConfigurator')

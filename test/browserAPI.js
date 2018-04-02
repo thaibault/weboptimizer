@@ -5,10 +5,6 @@
 // region imports
 import Tools from 'clientnode'
 import registerTest from 'clientnode/test.compiled'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 
 import browserAPI from '../browserAPI.compiled'
 import type {BrowserAPI} from '../type'
