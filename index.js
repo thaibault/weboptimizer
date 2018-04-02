@@ -22,10 +22,6 @@ import type {File, PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
 import removeDirectoryRecursively from 'rimraf'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
