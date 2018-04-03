@@ -461,6 +461,7 @@ if (htmlAvailable)
                         styleContents.push(content)
                         return `${startTag}${endTag}`
                     })
+                let dom:DOM
                 let window:Window
                 try {
                     /*
@@ -468,14 +469,14 @@ if (htmlAvailable)
                         compatible sequences and translate it back later to
                         avoid unexpected escape sequences in resulting html.
                     */
-                    window = (new DOM(
+                    dom = new DOM(
                         data.html
                             .replace(/<%/g, '##+#+#+##')
-                            .replace(/%>/g, '##-#-#-##')
-                    )).window
+                            .replace(/%>/g, '##-#-#-##'))
                 } catch (error) {
                     return callback(error, data)
                 }
+                window = dom.window
                 const linkables:{[key:string]:string} = {
                     link: 'href',
                     script: 'src'
@@ -505,10 +506,7 @@ if (htmlAvailable)
                     NOTE: We have to restore template delimiter and style
                     contents.
                 */
-                data.html = data.html
-                    .replace(
-                        /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
-                    ) + window.document.documentElement.outerHTML
+                data.html = dom.serialize()
                     .replace(/##\+#\+#\+##/g, '<%')
                     .replace(/##-#-#-##/g, '%>')
                     .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
