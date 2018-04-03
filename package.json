@@ -514,7 +514,9 @@
         "autoExclude": [
           "./test"
         ],
-        "chunks": {},
+        "chunks": {
+          "__evaluate__": "self.library ? {cacheGroups: {default: false, vendors: false}} : {}"
+        },
         "dllChunkNames": [
           "vendor",
           "developmentHelper"

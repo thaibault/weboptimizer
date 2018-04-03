@@ -1039,9 +1039,12 @@ export const webpackConfiguration:WebpackConfiguration = {
     node: configuration.nodeEnvironment,
     // region common chunks
     optimization: {
-        splitChunks: (['build:dll', 'test'].includes(
-            configuration.givenCommandLineArguments[2]
-        ) || configuration.targetTechnology !== 'web') ? {
+        splitChunks: (
+            configuration.targetTechnology !== 'web' ||
+            ['build:dll', 'test'].includes(
+                configuration.givenCommandLineArguments[2]
+            )
+        ) ? {
             cacheGroups: {
                 default: false,
                 vendors: false
