@@ -1044,13 +1044,14 @@ export const webpackConfiguration:WebpackConfiguration = {
             ['build:dll', 'test'].includes(
                 configuration.givenCommandLineArguments[2]
             )
-        ) ? {
-            cacheGroups: {
-                default: false,
-                vendors: false
-            }
-        } : Tools.extendObject(
-            true, {chunks: 'all'}, configuration.injection.chunks)
+        ) ?
+            {
+                cacheGroups: {
+                    default: false,
+                    vendors: false
+                }
+            } : Tools.extendObject(
+                true, {chunks: 'all'}, configuration.injection.chunks)
     },
     // endregion
     plugins: pluginInstances
