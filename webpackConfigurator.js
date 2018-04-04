@@ -1054,11 +1054,10 @@ export const webpackConfiguration:WebpackConfiguration = {
                     cacheGroups: {
                         vendors: {
                             chunks: (module:Object):boolean => {
-                                for (
-                                    const name:string of
+                                for (const name:string of Object.keys(
                                     configuration.inPlace.javaScript
-                                )
-                                    if (name === module.name)
+                                ))
+                                    if (name === '*' || name === module.name)
                                         return false
                                 return true
                             },
