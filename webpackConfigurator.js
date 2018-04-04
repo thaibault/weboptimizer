@@ -1049,7 +1049,24 @@ export const webpackConfiguration:WebpackConfiguration = {
                     vendors: false
                 }
             } : Tools.extendObject(
-                true, {chunks: 'all'}, configuration.injection.chunks)
+                true, {
+                    chunks: 'all',
+                    cacheGroups: {
+                        vendors: {
+                            chunks: (module:Object):boolean => {
+                                for (
+                                    const name:string of
+                                    configuration.inPlace.javaScript
+                                )
+                                    if (name === module.name)
+                                        return false
+                                return true
+                            },
+                            priority: -10,
+                            test: /[\\/]node_modules[\\/]/
+                        }
+                    }
+                }, configuration.injection.chunks)
     },
     // endregion
     plugins: pluginInstances
