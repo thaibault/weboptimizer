@@ -1035,8 +1035,9 @@ export const webpackConfiguration:WebpackConfiguration = {
         ])
     },
     node: configuration.nodeEnvironment,
-    // region common chunks
     optimization: {
+        minimize: configuration.module.optimizer.minify,
+        // region common chunks
         splitChunks: (
             configuration.targetTechnology !== 'web' ||
             ['build:dll', 'test'].includes(
@@ -1074,8 +1075,8 @@ export const webpackConfiguration:WebpackConfiguration = {
                         }
                     }
                 }, configuration.injection.chunks)
+        // endregion
     },
-    // endregion
     plugins: pluginInstances
 }
 if (
