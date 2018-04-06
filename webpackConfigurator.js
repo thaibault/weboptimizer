@@ -1036,7 +1036,7 @@ export const webpackConfiguration:WebpackConfiguration = {
     },
     node: configuration.nodeEnvironment,
     optimization: {
-        minimize: configuration.module.optimizer.minify,
+        minimize: configuration.module.optimizer.uglify,
         // region common chunks
         splitChunks: (
             !configuration.injection.chunks ||
@@ -1072,6 +1072,7 @@ export const webpackConfiguration:WebpackConfiguration = {
                                 return true
                             },
                             priority: -10,
+                            reuseExistingChunk: true,
                             test: /[\\/]node_modules[\\/]/
                         }
                     }

@@ -234,6 +234,13 @@ export type ResolvedConfiguration = {
         html:LoaderConfiguration;
         locations:{filePaths:Array<string>;directoryPaths:Array<string>};
         optimizer:{
+            babelMinify:?{
+                bundle:?{
+                    plugin:?PlainObject;
+                    transform:?PlainObject;
+                };
+                module:?PlainObject;
+            };
             cssnano:PlainObject;
             data:LoaderConfiguration;
             font:{
@@ -250,13 +257,7 @@ export type ResolvedConfiguration = {
                 file:PlainObject;
                 loader:string;
             };
-            babelMinify:?{
-                bundle:?{
-                    plugin:?PlainObject;
-                    transform:?PlainObject;
-                };
-                module:?PlainObject;
-            };
+            uglify:any;
         };
         preprocessor:{
             cascadingStyleSheet:{
