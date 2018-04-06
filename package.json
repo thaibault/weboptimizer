@@ -514,9 +514,7 @@
         "autoExclude": [
           "./test"
         ],
-        "chunks": {
-          "__evaluate__": "self.library ? {cacheGroups: {default: false, vendors: false}} : {}"
-        },
+        "chunks": {},
         "dllChunkNames": [
           "vendor",
           "developmentHelper"
@@ -771,7 +769,7 @@
             },
             "loader": "url"
           },
-          "minify": false
+          "uglify": false
         },
         "preprocessor": {
           "cascadingStyleSheet": {
@@ -1186,7 +1184,13 @@
       "injection": {
         "autoExclude": [
           "test"
-        ]
+        ],
+        "chunks": {
+          "cacheGroups": {
+            "default": false,
+            "vendors": false
+          }
+        }
       },
       "inPlace": {
         "externalLibrary": {
