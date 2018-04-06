@@ -1039,6 +1039,7 @@ export const webpackConfiguration:WebpackConfiguration = {
         minimize: configuration.module.optimizer.minify,
         // region common chunks
         splitChunks: (
+            !configuration.injection.chunks ||
             configuration.targetTechnology !== 'web' ||
             ['build:dll', 'test'].includes(
                 configuration.givenCommandLineArguments[2]
