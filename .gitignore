@@ -82,12 +82,12 @@ nosetests.xml
 .ropeproject
 .viminfo
 
-# PHPStorm and other IDE Files
-*.idea
-*.project
-*.pydevproject
-*.settings
-*.externalToolBuilders
+# JetBrain's idea, PHPStorm and other IDE Files
+.externalToolBuilders
+**/.idea/workspace.xml
+.project
+.pydevproject
+.settings
 
 # Gedit autosave backups.
 *~
@@ -111,6 +111,10 @@ node_modules/
 .config
 .npm-debug.log
 npm-debug.log
+
+# Java
+.jrebel/
+.java/
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:
