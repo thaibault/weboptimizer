@@ -27,10 +27,6 @@ import postcssFontPath from 'postcss-fontpath'
 import postcssImport from 'postcss-import'
 import postcssSprites from 'postcss-sprites'
 import postcssURL from 'postcss-url'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 import util from 'util'
 import webpack from 'webpack'
 const plugins = require('webpack-load-plugins')()
@@ -38,7 +34,7 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 
 plugins.BabelMinify = plugins.babelMinify
 plugins.HTML = plugins.html
-plugins.ExtractText = plugins.extractText
+plugins.MiniCSSExtract = require('mini-css-extract-plugin')
 plugins.AddAssetHTMLPlugin = require('add-asset-html-webpack-plugin')
 plugins.OpenBrowser = plugins.openBrowser
 plugins.Favicon = require('favicons-webpack-plugin')
@@ -93,11 +89,8 @@ else {
 // / endregion
 // / region plugins
 const pluginInstances:Array<Object> = [
-    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(true)
 ]
-if (configuration.debug)
-    pluginInstances.push(new webpack.NamedModulesPlugin())
 // // region define modules to ignore
 for (const ignorePattern:string of configuration.injection.ignorePattern)
     pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
@@ -182,8 +175,8 @@ if (
 // /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
-    compiler.plugin('emit', (
-        compilation:Object, callback:ProcedureFunction
+    compiler.hooks.emit.tap('applyModulePattern', (
+        compilation:Object
     ):void => {
         for (const request:string in compilation.assets)
             if (compilation.assets.hasOwnProperty(request)) {
@@ -201,7 +194,6 @@ pluginInstances.push({apply: (compiler:Object):void => {
                                 /\{1\}/g, source.replace(/\$/g, '$$$')))
                 }
             }
-        callback()
     })
 }})
 // /// endregion
@@ -211,11 +203,12 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
 ))
     pluginInstances.push({apply: (compiler:Object):void => {
         const filePathsToRemove:Array<string> = []
-        compiler.plugin('compilation', (compilation:Object):void =>
-            compilation.plugin(
-                'html-webpack-plugin-after-html-processing', (
-                    htmlPluginData:PlainObject, callback:ProcedureFunction
-                ):void => {
+        compiler.hooks.compilation.tap('inPlaceHTMLAssets', (
+            compilation:Object
+        ):void =>
+            compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
+                'inPlaceHTMLAssets',
+                (data:PlainObject, callback:ProcedureFunction):void => {
                     if (
                         configuration.inPlace.cascadingStyleSheet &&
                         Object.keys(
@@ -227,7 +220,7 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                             const result:{
                                 content:string, filePathsToRemove:Array<string>
                             } = Helper.inPlaceCSSAndJavaScriptAssetReferences(
-                                htmlPluginData.html,
+                                data.html,
                                 configuration.inPlace.cascadingStyleSheet,
                                 configuration.inPlace.javaScript,
                                 configuration.path.target.base,
@@ -235,53 +228,57 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                                     .cascadingStyleSheet,
                                 configuration.files.compose.javaScript,
                                 compilation.assets)
-                            htmlPluginData.html = result.content
+                            data.html = result.content
                             filePathsToRemove.concat(result.filePathsToRemove)
                         } catch (error) {
-                            return callback(error, htmlPluginData)
+                            return callback(error, data)
                         }
-                    callback(null, htmlPluginData)
+                    callback(null, data)
                 }))
-        compiler.plugin('after-emit', async (
-            compilation:Object, callback:ProcedureFunction
-        ):Promise<void> => {
-            let promises:Array<Promise<void>> = []
-            for (const path:string of filePathsToRemove)
-                if (await Tools.isFile(path))
-                    promises.push(new Promise((resolve:Function):void =>
-                        fileSystem.unlink(path, (error:?Error):void => {
-                            if (error)
-                                console.error(error)
-                            resolve()
+        compiler.hooks.afterEmit.tapAsync(
+            'removeInPlaceHTMLAssetFiles', async (
+                data:Object, callback:ProcedureFunction
+            ):Promise<void> => {
+                let promises:Array<Promise<void>> = []
+                for (const path:string of filePathsToRemove)
+                    if (await Tools.isFile(path))
+                        promises.push(new Promise((resolve:Function):void =>
+                            fileSystem.unlink(path, (error:?Error):void => {
+                                if (error)
+                                    console.error(error)
+                                resolve()
+                            })))
+                await Promise.all(promises)
+                promises = []
+                for (
+                    const type:string of ['javaScript', 'cascadingStyleSheet']
+                )
+                    promises.push(new Promise((
+                        resolve:Function, reject:Function
+                    /*
+                        NOTE: Workaround since flow misses the three parameter
+                        "readdir" signature.
+                    */
+                    ):void => (fileSystem.readdir:Function)(
+                        configuration.path.target.asset[type],
+                        configuration.encoding,
+                        (error:?Error, files:Array<string>):void => {
+                            if (error) {
+                                reject(error)
+                                return
+                            }
+                            if (files.length === 0)
+                                fileSystem.rmdir(
+                                    configuration.path.target.asset[type], (
+                                        error:?Error
+                                    ):void => error ? reject(error) : resolve()
+                                )
+                            else
+                                resolve()
                         })))
-            await Promise.all(promises)
-            promises = []
-            for (const type:string of ['javaScript', 'cascadingStyleSheet'])
-                promises.push(new Promise((
-                    resolve:Function, reject:Function
-                /*
-                    NOTE: Workaround since flow misses the three parameter
-                    "readdir" signature.
-                */
-                ):void => (fileSystem.readdir:Function)(
-                    configuration.path.target.asset[type],
-                    configuration.encoding,
-                    (error:?Error, files:Array<string>):void => {
-                        if (error) {
-                            reject(error)
-                            return
-                        }
-                        if (files.length === 0)
-                            fileSystem.rmdir(
-                                configuration.path.target.asset[type], (
-                                    error:?Error
-                                ):void => error ? reject(error) : resolve())
-                        else
-                            resolve()
-                    })))
-            await Promise.all(promises)
-            callback()
-        })
+                await Promise.all(promises)
+                callback()
+            })
     }})
 // /// endregion
 // /// region remove chunks if a corresponding dll package exists
@@ -312,23 +309,6 @@ if (configuration.givenCommandLineArguments[2] !== 'build:dll')
             }
         }
 // /// endregion
-// /// region generate common chunks
-if (configuration.givenCommandLineArguments[2] !== 'build:dll')
-    for (const chunkName:string of configuration.injection.commonChunkIDs)
-        if (configuration.injection.internal.normalized.hasOwnProperty(
-            chunkName
-        ))
-            pluginInstances.push(new webpack.optimize.CommonsChunkPlugin({
-                async: false,
-                children: false,
-                filename: path.relative(
-                    configuration.path.target.base,
-                    configuration.files.compose.javaScript),
-                minChunks: Infinity,
-                name: chunkName,
-                minSize: 0
-            }))
-// /// endregion
 // /// region mark empty javaScript modules as dummy
 if (!configuration.needed.javaScript)
     configuration.files.compose.javaScript = path.resolve(
@@ -336,8 +316,9 @@ if (!configuration.needed.javaScript)
 // /// endregion
 // /// region extract cascading style sheets
 if (configuration.files.compose.cascadingStyleSheet)
-    pluginInstances.push(new plugins.ExtractText({
-        allChunks: true, filename: path.relative(
+    pluginInstances.push(new plugins.MiniCSSExtract({
+        chunks: '[name].css',
+        filename: path.relative(
             configuration.path.target.base,
             configuration.files.compose.cascadingStyleSheet)
     }))
@@ -406,16 +387,16 @@ if (configuration.injection.external.modules === '__implicit__')
 // /// endregion
 // /// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'build:dll') {
-    let dllChunkIDExists:boolean = false
+    let dllChunkExists:boolean = false
     for (const chunkName:string in configuration.injection.internal.normalized)
         if (configuration.injection.internal.normalized.hasOwnProperty(
             chunkName
         ))
-            if (configuration.injection.dllChunkIDs.includes(chunkName))
-                dllChunkIDExists = true
+            if (configuration.injection.dllChunkNames.includes(chunkName))
+                dllChunkExists = true
             else
                 delete configuration.injection.internal.normalized[chunkName]
-    if (dllChunkIDExists) {
+    if (dllChunkExists) {
         libraryName = '[name]DLLPackage'
         pluginInstances.push(new webpack.DllPlugin({
             path: `${configuration.path.target.base}/[name].dll-manifest.json`,
@@ -427,195 +408,209 @@ if (configuration.givenCommandLineArguments[2] === 'build:dll') {
 // /// endregion
 // // endregion
 // // region apply final dom/javaScript/cascadingStyleSheet modifications/fixes
-pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
-    'compilation', (compilation:Object):void => {
-        compilation.plugin('html-webpack-plugin-alter-asset-tags', (
-            htmlPluginData:PlainObject, callback:ProcedureFunction
-        ):void => {
-            for (const tags:Array<PlainObject> of [
-                htmlPluginData.body, htmlPluginData.head
-            ]) {
+if (htmlAvailable)
+    pluginInstances.push({apply: (
+        compiler:Object
+    ):void => compiler.hooks.compilation.tap('compilation', (
+        compilation:Object
+    ):void => {
+        compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(
+            'removeDummyHTMLTags',
+            (data:PlainObject, callback:ProcedureFunction):void => {
+                for (const tags:Array<PlainObject> of [
+                    data.body, data.head
+                ]) {
+                    let index:number = 0
+                    for (const tag:PlainObject of tags) {
+                        if (/^\.__dummy__(\..*)?$/.test(path.basename(
+                            tag.attributes.src || tag.attributes.href || ''
+                        )))
+                            tags.splice(index, 1)
+                        index += 1
+                    }
+                }
+                const assets:Array<string> = JSON.parse(
+                    data.plugin.assetJson)
                 let index:number = 0
-                for (const tag:PlainObject of tags) {
+                for (const assetRequest:string of assets) {
                     if (/^\.__dummy__(\..*)?$/.test(path.basename(
-                        tag.attributes.src || tag.attributes.href || ''
+                        assetRequest
                     )))
-                        tags.splice(index, 1)
+                        assets.splice(index, 1)
                     index += 1
                 }
-            }
-            const assets:Array<string> = JSON.parse(
-                htmlPluginData.plugin.assetJson)
-            let index:number = 0
-            for (const assetRequest:string of assets) {
-                if (/^\.__dummy__(\..*)?$/.test(path.basename(assetRequest)))
-                    assets.splice(index, 1)
-                index += 1
-            }
-            htmlPluginData.plugin.assetJson = JSON.stringify(assets)
-            callback(null, htmlPluginData)
-        })
-        compilation.plugin('html-webpack-plugin-after-html-processing', (
-            htmlPluginData:PlainObject, callback:ProcedureFunction
-        ):Window => {
-            /*
-                NOTE: We have to prevent creating native "style" dom nodes to
-                prevent jsdom from parsing the entire cascading style sheet.
-                Which is error prune and very resource intensive.
-            */
-            const styleContents:Array<string> = []
-            htmlPluginData.html = htmlPluginData.html.replace(
-                /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, (
-                    match:string,
-                    startTag:string,
-                    content:string,
-                    endTag:string
-                ):string => {
-                    styleContents.push(content)
-                    return `${startTag}${endTag}`
-                })
-            let window:Window
-            try {
+                data.plugin.assetJson = JSON.stringify(assets)
+                callback(null, data)
+            })
+        compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
+            'postProcessHTML',
+            (data:PlainObject, callback:ProcedureFunction):void => {
                 /*
-                    NOTE: We have to translate template delimiter to html
-                    compatible sequences and translate it back later to avoid
-                    unexpected escape sequences in resulting html.
+                    NOTE: We have to prevent creating native "style" dom nodes
+                    to prevent jsdom from parsing the entire cascading style
+                    sheet. Which is error prune and very resource intensive.
                 */
-                window = (new DOM(
-                    htmlPluginData.html
-                        .replace(/<%/g, '##+#+#+##')
-                        .replace(/%>/g, '##-#-#-##')
-                )).window
-            } catch (error) {
-                return callback(error, htmlPluginData)
-            }
-            const linkables:{[key:string]:string} = {
-                link: 'href',
-                script: 'src'
-            }
-            for (const tagName:string in linkables)
-                if (linkables.hasOwnProperty(tagName))
-                    for (
-                        const domNode:DomNode of
-                        window.document.querySelectorAll(
-                            `${tagName}[${linkables[tagName]}*="?` +
-                            `${configuration.hashAlgorithm}="]`)
-                    )
-                        /*
-                            NOTE: Removing symbols after a "&" in hash string
-                            is necessary to match the generated request strings
-                            in offline plugin.
-                        */
-                        domNode.setAttribute(
-                            linkables[tagName],
-                            domNode.getAttribute(
-                                linkables[tagName]
-                            ).replace(new RegExp(
-                                `(\\?${configuration.hashAlgorithm}=` +
-                                '[^&]+).*$'
-                            ), '$1'))
-            // NOTE: We have to restore template delimiter and style contents.
-            htmlPluginData.html = htmlPluginData.html
-                .replace(
-                    /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
-                ) + window.document.documentElement.outerHTML
+                const styleContents:Array<string> = []
+                data.html = data.html.replace(
+                    /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, (
+                        match:string,
+                        startTag:string,
+                        content:string,
+                        endTag:string
+                    ):string => {
+                        styleContents.push(content)
+                        return `${startTag}${endTag}`
+                    })
+                let dom:DOM
+                let window:Window
+                try {
+                    /*
+                        NOTE: We have to translate template delimiter to html
+                        compatible sequences and translate it back later to
+                        avoid unexpected escape sequences in resulting html.
+                    */
+                    dom = new DOM(
+                        data.html
+                            .replace(/<%/g, '##+#+#+##')
+                            .replace(/%>/g, '##-#-#-##'))
+                } catch (error) {
+                    return callback(error, data)
+                }
+                window = dom.window
+                const linkables:{[key:string]:string} = {
+                    link: 'href',
+                    script: 'src'
+                }
+                for (const tagName:string in linkables)
+                    if (linkables.hasOwnProperty(tagName))
+                        for (
+                            const domNode:DomNode of
+                            window.document.querySelectorAll(
+                                `${tagName}[${linkables[tagName]}*="?` +
+                                `${configuration.hashAlgorithm}="]`)
+                        )
+                            /*
+                                NOTE: Removing symbols after a "&" in hash
+                                string is necessary to match the generated
+                                request strings in offline plugin.
+                            */
+                            domNode.setAttribute(
+                                linkables[tagName],
+                                domNode.getAttribute(
+                                    linkables[tagName]
+                                ).replace(new RegExp(
+                                    `(\\?${configuration.hashAlgorithm}=` +
+                                    '[^&]+).*$'
+                                ), '$1'))
+                /*
+                    NOTE: We have to restore template delimiter and style
+                    contents.
+                */
+                data.html = dom.serialize()
                     .replace(/##\+#\+#\+##/g, '<%')
                     .replace(/##-#-#-##/g, '%>')
                     .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
                         match:string,
                         startTag:string,
                         endTag:string
-                    ):string => `${startTag}${styleContents.shift()}${endTag}`)
-            // region post compilation
-            for (
-                const htmlFileSpecification:PlainObject of
-                configuration.files.html
-            )
-                if (
-                    htmlFileSpecification.filename ===
-                    htmlPluginData.plugin.options.filename
-                ) {
-                    for (
-                        const loaderConfiguration:PlainObject of
-                        htmlFileSpecification.template.use
-                    )
-                        if (
-                            loaderConfiguration.hasOwnProperty('options') &&
-                            loaderConfiguration.options.hasOwnProperty(
-                                'compileSteps'
-                            ) &&
-                            typeof loaderConfiguration.options.compileSteps
-                                === 'number'
+                    ):string =>
+                        `${startTag}${styleContents.shift()}${endTag}`)
+                // region post compilation
+                for (
+                    const htmlFileSpecification:PlainObject of
+                    configuration.files.html
+                )
+                    if (
+                        htmlFileSpecification.filename ===
+                        data.plugin.options.filename
+                    ) {
+                        for (
+                            const loaderConfiguration:PlainObject of
+                            htmlFileSpecification.template.use
                         )
-                            htmlPluginData.html = ejsLoader.bind(
-                                Tools.extendObject(true, {}, {
-                                    options: loaderConfiguration.options || {}
-                                }, {options: {
-                                    compileSteps: htmlFileSpecification
-                                        .template.postCompileSteps
-                                }}))(htmlPluginData.html)
-                    break
-                }
-            // endregion
-            callback(null, htmlPluginData)
-        })
+                            if (
+                                loaderConfiguration.hasOwnProperty(
+                                    'options') &&
+                                loaderConfiguration.options.hasOwnProperty(
+                                    'compileSteps'
+                                ) &&
+                                typeof loaderConfiguration.options.compileSteps
+                                    === 'number'
+                            )
+                                data.html = ejsLoader.bind(
+                                    Tools.extendObject(true, {}, {
+                                        options:
+                                            loaderConfiguration.options || {}
+                                    }, {options: {
+                                        compileSteps: htmlFileSpecification
+                                            .template.postCompileSteps
+                                    }}))(data.html)
+                        break
+                    }
+                // endregion
+                callback(null, data)
+            }
+        )
     })})
 /*
     NOTE: The umd module export doesn't handle cases where the package name
     doesn't match exported library name. This post processing fixes this issue.
 */
 if (configuration.exportFormat.external.startsWith('umd'))
-    pluginInstances.push({apply: (compiler:Object):void => compiler.plugin(
-        'emit', (compilation:Object, callback:ProcedureFunction):void => {
-            const bundleName:string = (
-                typeof libraryName === 'string'
-            ) ? libraryName : libraryName[0]
-            for (const assetRequest:string in compilation.assets)
-                if (
-                    compilation.assets.hasOwnProperty(assetRequest) &&
-                    assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                        configuration.build.types.javaScript.outputExtension)
-                ) {
-                    let source:string =
-                        compilation.assets[assetRequest].source()
-                    if (typeof source === 'string') {
-                        for (
-                            const replacement:string in
+    pluginInstances.push({apply: (
+        compiler:Object
+    ):void => compiler.hooks.emit.tapAsync('fixLibraryNameExports', (
+        compilation:Object, callback:ProcedureFunction
+    ):void => {
+        const bundleName:string = (
+            typeof libraryName === 'string'
+        ) ? libraryName : libraryName[0]
+        for (const assetRequest:string in compilation.assets)
+            if (
+                compilation.assets.hasOwnProperty(assetRequest) &&
+                assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
+                    configuration.build.types.javaScript.outputExtension)
+            ) {
+                let source:string = compilation.assets[assetRequest].source()
+                if (typeof source === 'string') {
+                    for (
+                        const replacement:string in
+                        configuration.injection.external.aliases
+                    )
+                        if (
                             configuration.injection.external.aliases
-                        )
-                            if (configuration.injection.external.aliases
                                 .hasOwnProperty(replacement)
-                            )
-                                source = source.replace(new RegExp(
-                                    '(require\\()["\']' +
+                        )
+                            source = source.replace(new RegExp(
+                                '(require\\()["\']' +
+                                Tools.stringEscapeRegularExpressions(
+                                    configuration.injection.external
+                                        .aliases[replacement]
+                                ) + '["\'](\\))', 'g'
+                            ), `$1'${replacement}'$2`).replace(
+                                new RegExp('(define\\(["\']' +
+                                    Tools.stringEscapeRegularExpressions(
+                                        bundleName
+                                    ) + '["\'], \\[.*)["\']' +
                                     Tools.stringEscapeRegularExpressions(
                                         configuration.injection.external
                                             .aliases[replacement]
-                                    ) + '["\'](\\))', 'g'
-                                ), `$1'${replacement}'$2`).replace(
-                                    new RegExp('(define\\(["\']' +
-                                        Tools.stringEscapeRegularExpressions(
-                                            bundleName
-                                        ) + '["\'], \\[.*)["\']' +
-                                        Tools.stringEscapeRegularExpressions(
-                                            configuration.injection.external
-                                                .aliases[replacement]
-                                        ) + '["\'](.*\\], factory\\);)'
-                                    ), `$1'${replacement}'$2`)
-                        source = source.replace(new RegExp(
-                            '(root\\[)["\']' +
-                            Tools.stringEscapeRegularExpressions(
-                                bundleName
-                            ) + '["\'](\\] = )'
-                        ), `$1'` + Tools.stringConvertToValidVariableName(
+                                    ) + '["\'](.*\\], factory\\);)'
+                                ), `$1'${replacement}'$2`)
+                    source = source.replace(new RegExp(
+                        '(root\\[)["\']' +
+                        Tools.stringEscapeRegularExpressions(
                             bundleName
-                        ) + `'$2`)
-                        compilation.assets[assetRequest] =
-                            new WebpackRawSource(source)
-                    }
+                        ) + '["\'](\\] = )'
+                    ), `$1'` + Tools.stringConvertToValidVariableName(
+                        bundleName
+                    ) + `'$2`)
+                    compilation.assets[assetRequest] = new WebpackRawSource(
+                        source)
                 }
-            callback()
-        })})
+            }
+        callback()
+    })})
 // // endregion
 // // region add automatic image compression
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
@@ -668,7 +663,8 @@ Tools.extendObject(loader, {
             ).map((htmlConfiguration:HTMLConfiguration):string =>
                 htmlConfiguration.template.filePath)
         ).includes(filePath) ||
-            ((configuration.module.preprocessor.ejs.exclude === null) ? false :
+            ((configuration.module.preprocessor.ejs.exclude === null) ?
+                false :
                 evaluate(
                     configuration.module.preprocessor.ejs.exclude, filePath)),
         include: Helper.normalizePaths([
@@ -744,7 +740,8 @@ Tools.extendObject(loader, {
                 configuration.module.preprocessor.html.options || {
                     compileSteps: 2
                 }
-            ).compileSteps % 2) ? [] :
+            ).compileSteps % 2) ?
+                [] :
                 [
                     {loader: 'extract'},
                     {
@@ -765,7 +762,8 @@ Tools.extendObject(loader, {
                 ).map((htmlConfiguration:HTMLConfiguration):string =>
                     htmlConfiguration.template.filePath)
             ).includes(filePath) ||
-                ((configuration.module.html.exclude === null) ? true :
+                ((configuration.module.html.exclude === null) ?
+                    true :
                     evaluate(configuration.module.html.exclude, filePath)),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
@@ -950,8 +948,12 @@ Tools.extendObject(loader, {
     // endregion
 })
 if (configuration.files.compose.cascadingStyleSheet) {
+    /*
+        NOTE: We have to remove the client side javascript hmr style loader
+        first.
+    */
     loader.style.use.shift()
-    loader.style.use = plugins.ExtractText.extract({use: loader.style.use})
+    loader.style.use.unshift(plugins.MiniCSSExtract.loader)
 }
 // / endregion
 // endregion
@@ -1001,12 +1003,12 @@ export const webpackConfiguration:WebpackConfiguration = {
         ) ? 'var' : configuration.exportFormat.self,
         path: configuration.path.target.base,
         publicPath: configuration.path.target.public,
-        pathinfo: configuration.debug,
         umdNamedDefine: true
     },
     performance: configuration.performanceHints,
     target: configuration.targetTechnology,
     // endregion
+    mode: configuration.debug ? 'development' : 'production',
     module: {
         rules: configuration.module.additional.map((
             loaderConfiguration:PlainObject
@@ -1033,6 +1035,50 @@ export const webpackConfiguration:WebpackConfiguration = {
         ])
     },
     node: configuration.nodeEnvironment,
+    optimization: {
+        minimize: configuration.module.optimizer.uglify,
+        // region common chunks
+        splitChunks: (
+            !configuration.injection.chunks ||
+            configuration.targetTechnology !== 'web' ||
+            ['build:dll', 'test'].includes(
+                configuration.givenCommandLineArguments[2]
+            )
+        ) ?
+            {
+                cacheGroups: {
+                    default: false,
+                    vendors: false
+                }
+            } : Tools.extendObject(
+                true, {
+                    chunks: 'all',
+                    cacheGroups: {
+                        vendors: {
+                            chunks: (module:Object):boolean => {
+                                if (
+                                    typeof configuration.inPlace.javaScript ===
+                                        'object' &&
+                                    configuration.inPlace.javaScript !== null
+                                )
+                                    for (const name:string of Object.keys(
+                                        configuration.inPlace.javaScript
+                                    ))
+                                        if (
+                                            name === '*' ||
+                                            name === module.name
+                                        )
+                                            return false
+                                return true
+                            },
+                            priority: -10,
+                            reuseExistingChunk: true,
+                            test: /[\\/]node_modules[\\/]/
+                        }
+                    }
+                }, configuration.injection.chunks)
+        // endregion
+    },
     plugins: pluginInstances
 }
 if (

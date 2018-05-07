@@ -23,10 +23,6 @@ import * as fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import * as loaderUtils from 'loader-utils'
 import path from 'path'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
@@ -41,31 +37,36 @@ module.exports = function(source:string):string {
     if ('cachable' in this && this.cacheable)
         this.cacheable()
     const query:Object = Tools.convertSubstringInPlainObject(
-        Tools.extendObject(true, {
-            compress: {
-                html: {},
-                javaScript: {}
-            },
-            context: './',
-            extensions: {
-                file: {
-                    external: ['.js'],
-                    internal: [
-                        '.js', '.css', '.svg', '.png', '.jpg', '.gif', '.ico',
-                        '.html', '.json', '.eot', '.ttf', '.woff'
-                    ]
+        Tools.extendObject(
+            true,
+            {
+                compress: {
+                    html: {},
+                    javaScript: {}
                 },
-                module: []
+                context: './',
+                extensions: {
+                    file: {
+                        external: ['.js'],
+                        internal: [
+                            '.js', '.json',
+                            '.css',
+                            '.svg', '.png', '.jpg', '.gif', '.ico',
+                            '.html',
+                            '.eot', '.ttf', '.woff'
+                        ]
+                    },
+                    module: []
+                },
+                module: {
+                    aliases: {},
+                    replacements: {}
+                },
+                compileSteps: 2
             },
-            module: {
-                aliases: {},
-                replacements: {}
-            },
-            compileSteps: 2
-        }, this.options || {}, 'query' in this ? loaderUtils.getOptions(
-            this
-        ) || {} : {}),
-        /#%%%#/g, '!')
+            this.options || {},
+            'query' in this ? loaderUtils.getOptions(this) || {} : {}
+        ), /#%%%#/g, '!')
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler,
         compileSteps:number = 2

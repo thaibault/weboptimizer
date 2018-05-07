@@ -18,10 +18,6 @@ import Tools from 'clientnode'
 import type {PlainObject} from 'clientnode'
 import * as fileSystem from 'fs'
 import path from 'path'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 
 import Helper from './helper.compiled'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
@@ -224,9 +220,8 @@ for (const key:string in configuration.path)
                         subSubKey
                     ) && subSubKey !== 'base' &&
                     typeof configuration.path[key][subKey][
-                            subSubKey
-                        ] === 'string'
-                    )
+                        subSubKey
+                    ] === 'string')
                         configuration.path[key][subKey][subSubKey] =
                             path.resolve(
                                 configuration.path[key][subKey].base,
