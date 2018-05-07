@@ -20,10 +20,6 @@ import type {File, PlainObject, Window} from 'clientnode'
 import {JSDOM as DOM} from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
-// NOTE: Only needed for debugging this file.
-try {
-    require('source-map-support/register')
-} catch (error) {}
 
 import type {
     BuildConfiguration,
@@ -119,7 +115,7 @@ export class Helper {
         for (const assetType:PlainObject of [
             {
                 attributeName: 'href',
-                hash: 'contenthash',
+                hash: 'hash',
                 linkTagName: 'link',
                 pattern: cascadingStyleSheetPattern,
                 selector: '[href*=".css"]',
@@ -462,12 +458,11 @@ export class Helper {
             extensions.file.external.includes(path.extname(filePath)) ||
             !filePath && extensions.file.external.includes('')
         ) && !(inPlaceDynamicLibrary && request.includes('!')) && (
-                !filePath && inPlaceDynamicLibrary || filePath && (
-                    !filePath.startsWith(context) ||
-                    Helper.isFilePathInLocation(
-                        filePath, externalModuleLocations))
-            )
-        )
+            !filePath && inPlaceDynamicLibrary || filePath && (
+                !filePath.startsWith(context) ||
+                Helper.isFilePathInLocation(
+                    filePath, externalModuleLocations))
+        ))
             return Helper.applyContext(
                 resolvedRequest, requestContext, referencePath, aliases,
                 moduleReplacements, relativeModuleFilePaths)

@@ -35,8 +35,8 @@ export type InternalInjection =
 export type NormalizedInternalInjection = {[key:string]:Array<string>}
 export type Injection = {
     autoExclude:Array<string>;
-    commonChunkIDs:Array<string>;
-    dllChunkIDs:Array<string>;
+    chunks:PlainObject;
+    dllChunkNames:Array<string>;
     external:{
         aliases:PlainObject;
         implicit:{
@@ -123,6 +123,7 @@ export type HTMLConfiguration = {
     filename:string;
     template:{
         filePath:string;
+        options:PlainObject;
         request:string|String;
         use:Array<{loader:string;options:Object}>;
     };
@@ -233,21 +234,6 @@ export type ResolvedConfiguration = {
         html:LoaderConfiguration;
         locations:{filePaths:Array<string>;directoryPaths:Array<string>};
         optimizer:{
-            data:LoaderConfiguration;
-            font:{
-                eot:LoaderConfiguration;
-                svg:LoaderConfiguration;
-                ttf:LoaderConfiguration;
-                woff:LoaderConfiguration;
-            };
-            htmlMinifier:PlainObject;
-            image:{
-                additional:Array<string>;
-                content:PlainObject;
-                exclude:string;
-                file:PlainObject;
-                loader:string;
-            };
             babelMinify:?{
                 bundle:?{
                     plugin:?PlainObject;
@@ -255,6 +241,23 @@ export type ResolvedConfiguration = {
                 };
                 module:?PlainObject;
             };
+            cssnano:PlainObject;
+            data:LoaderConfiguration;
+            font:{
+                eot:LoaderConfiguration;
+                svg:LoaderConfiguration;
+                ttf:LoaderConfiguration;
+                woff:LoaderConfiguration;
+            };
+            htmlMinifier:?PlainObject;
+            image:{
+                additional:Array<string>;
+                content:PlainObject;
+                exclude:string;
+                file:PlainObject;
+                loader:string;
+            };
+            uglify:any;
         };
         preprocessor:{
             cascadingStyleSheet:{
@@ -339,7 +342,6 @@ export type WebpackConfiguration = {
         libraryTarget:string;
         path:string;
         publicPath:string;
-        pathinfo:boolean;
         umdNamedDefine:boolean;
     },
     target:string;
