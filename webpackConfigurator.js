@@ -962,125 +962,130 @@ for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
         pluginConfiguration.name.initializer
     ])(...pluginConfiguration.parameter))
 // region configuration
-export const webpackConfiguration:WebpackConfiguration = {
-    bail: true,
-    cache: configuration.cache.main,
-    context: configuration.path.context,
-    devtool: configuration.development.tool,
-    devServer: configuration.development.server,
-    // region input
-    entry: configuration.injection.internal.normalized,
-    externals: configuration.injection.external.modules,
-    resolve: {
-        alias: configuration.module.aliases,
-        aliasFields: configuration.package.aliasPropertyNames,
-        extensions: configuration.extensions.file.internal,
-        mainFields: configuration.package.main.propertyNames,
-        mainFiles: configuration.package.main.fileNames,
-        moduleExtensions: configuration.extensions.module,
-        modules: Helper.normalizePaths(configuration.module.directoryNames),
-        unsafeCache: configuration.cache.unsafe
-    },
-    resolveLoader: {
-        alias: configuration.loader.aliases,
-        aliasFields: configuration.package.aliasPropertyNames,
-        extensions: configuration.loader.extensions.file,
-        mainFields: configuration.package.main.propertyNames,
-        mainFiles: configuration.package.main.fileNames,
-        moduleExtensions: configuration.loader.extensions.module,
-        modules: configuration.loader.directoryNames
-    },
-    // endregion
-    // region output
-    output: {
-        filename: path.relative(
-            configuration.path.target.base,
-            configuration.files.compose.javaScript),
-        hashFunction: configuration.hashAlgorithm,
-        library: libraryName,
-        libraryTarget: (
-            configuration.givenCommandLineArguments[2] === 'build:dll'
-        ) ? 'var' : configuration.exportFormat.self,
-        path: configuration.path.target.base,
-        publicPath: configuration.path.target.public,
-        umdNamedDefine: true
-    },
-    performance: configuration.performanceHints,
-    target: configuration.targetTechnology,
-    // endregion
-    mode: configuration.debug ? 'development' : 'production',
-    module: {
-        rules: configuration.module.additional.map((
-            loaderConfiguration:PlainObject
-        ):PlainObject => {
-            return {
-                exclude: (filePath:string):boolean => evaluate(
-                    loaderConfiguration.exclude || 'false', filePath),
-                include: loaderConfiguration.include && evaluate(
-                    loaderConfiguration.include, configuration.path.context
-                ) || configuration.path.source.base,
-                test: new RegExp(evaluate(
-                    loaderConfiguration.test, configuration.path.context)),
-                use: evaluate(loaderConfiguration.use)
-            }
-        }).concat([
-            loader.ejs,
-            loader.script,
-            loader.html.main, loader.html.ejs, loader.html.html,
-            loader.style,
-            loader.font.eot, loader.font.svg, loader.font.ttf,
-            loader.font.woff,
-            loader.image,
-            loader.data
-        ])
-    },
-    node: configuration.nodeEnvironment,
-    optimization: {
-        minimize: configuration.module.optimizer.uglify,
-        // region common chunks
-        splitChunks: (
-            !configuration.injection.chunks ||
-            configuration.targetTechnology !== 'web' ||
-            ['build:dll', 'test'].includes(
-                configuration.givenCommandLineArguments[2]
-            )
-        ) ?
-            {
-                cacheGroups: {
-                    default: false,
-                    vendors: false
-                }
-            } : Tools.extendObject(
-                true, {
-                    chunks: 'all',
-                    cacheGroups: {
-                        vendors: {
-                            chunks: (module:Object):boolean => {
-                                if (
-                                    typeof configuration.inPlace.javaScript ===
-                                        'object' &&
-                                    configuration.inPlace.javaScript !== null
-                                )
-                                    for (const name:string of Object.keys(
-                                        configuration.inPlace.javaScript
-                                    ))
-                                        if (
-                                            name === '*' ||
-                                            name === module.name
-                                        )
-                                            return false
-                                return true
-                            },
-                            priority: -10,
-                            reuseExistingChunk: true,
-                            test: /[\\/]node_modules[\\/]/
-                        }
-                    }
-                }, configuration.injection.chunks)
+export const webpackConfiguration:WebpackConfiguration = Tools.extendObject(
+    true, {
+        bail: true,
+        cache: configuration.cache.main,
+        context: configuration.path.context,
+        devtool: configuration.development.tool,
+        devServer: configuration.development.server,
+        // region input
+        entry: configuration.injection.internal.normalized,
+        externals: configuration.injection.external.modules,
+        resolve: {
+            alias: configuration.module.aliases,
+            aliasFields: configuration.package.aliasPropertyNames,
+            extensions: configuration.extensions.file.internal,
+            mainFields: configuration.package.main.propertyNames,
+            mainFiles: configuration.package.main.fileNames,
+            moduleExtensions: configuration.extensions.module,
+            modules: Helper.normalizePaths(
+                configuration.module.directoryNames),
+            symlinks: false,
+            unsafeCache: configuration.cache.unsafe
+        },
+        resolveLoader: {
+            alias: configuration.loader.aliases,
+            aliasFields: configuration.package.aliasPropertyNames,
+            extensions: configuration.loader.extensions.file,
+            mainFields: configuration.package.main.propertyNames,
+            mainFiles: configuration.package.main.fileNames,
+            moduleExtensions: configuration.loader.extensions.module,
+            modules: configuration.loader.directoryNames,
+            symlinks: false
+        },
         // endregion
-    },
-    plugins: pluginInstances
-}
+        // region output
+        output: {
+            filename: path.relative(
+                configuration.path.target.base,
+                configuration.files.compose.javaScript),
+            hashFunction: configuration.hashAlgorithm,
+            library: libraryName,
+            libraryTarget: (
+                configuration.givenCommandLineArguments[2] === 'build:dll'
+            ) ? 'var' : configuration.exportFormat.self,
+            path: configuration.path.target.base,
+            publicPath: configuration.path.target.public,
+            umdNamedDefine: true
+        },
+        performance: configuration.performanceHints,
+        target: configuration.targetTechnology,
+        // endregion
+        mode: configuration.debug ? 'development' : 'production',
+        module: {
+            rules: configuration.module.additional.map((
+                loaderConfiguration:PlainObject
+            ):PlainObject => {
+                return {
+                    exclude: (filePath:string):boolean => evaluate(
+                        loaderConfiguration.exclude || 'false', filePath),
+                    include: loaderConfiguration.include && evaluate(
+                        loaderConfiguration.include, configuration.path.context
+                    ) || configuration.path.source.base,
+                    test: new RegExp(evaluate(
+                        loaderConfiguration.test, configuration.path.context)),
+                    use: evaluate(loaderConfiguration.use)
+                }
+            }).concat([
+                loader.ejs,
+                loader.script,
+                loader.html.main, loader.html.ejs, loader.html.html,
+                loader.style,
+                loader.font.eot, loader.font.svg, loader.font.ttf,
+                loader.font.woff,
+                loader.image,
+                loader.data
+            ])
+        },
+        node: configuration.nodeEnvironment,
+        optimization: {
+            minimize: configuration.module.optimizer.uglify,
+            // region common chunks
+            splitChunks: (
+                !configuration.injection.chunks ||
+                configuration.targetTechnology !== 'web' ||
+                ['build:dll', 'test'].includes(
+                    configuration.givenCommandLineArguments[2]
+                )
+            ) ?
+                {
+                    cacheGroups: {
+                        default: false,
+                        vendors: false
+                    }
+                } : Tools.extendObject(
+                    true, {
+                        chunks: 'all',
+                        cacheGroups: {
+                            vendors: {
+                                chunks: (module:Object):boolean => {
+                                    if (
+                                        typeof configuration.inPlace.javaScript
+                                            === 'object' &&
+                                        configuration.inPlace.javaScript !==
+                                            null
+                                    )
+                                        for (const name:string of Object.keys(
+                                            configuration.inPlace.javaScript
+                                        ))
+                                            if (
+                                                name === '*' ||
+                                                name === module.name
+                                            )
+                                                return false
+                                    return true
+                                },
+                                priority: -10,
+                                reuseExistingChunk: true,
+                                test: /[\\/]node_modules[\\/]/
+                            }
+                        }
+                    }, configuration.injection.chunks)
+            // endregion
+        },
+        plugins: pluginInstances
+    }, configuration.webpack)
 if (
     !Array.isArray(configuration.module.skipParseRegularExpressions) ||
     configuration.module.skipParseRegularExpressions.length
