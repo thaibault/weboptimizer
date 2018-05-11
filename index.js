@@ -372,7 +372,7 @@ const main = async ():Promise<any> => {
                             console.info(`Running "${command}"`)
                             processPromises.push(new Promise((
                                 resolve:Function, reject:Function
-                            ):void => Tools.handleChildProcess(
+                            ):ChildProcess => Tools.handleChildProcess(
                                 execChildProcess(
                                     command, childProcessOptions, (
                                         error:?Error
