@@ -303,7 +303,8 @@ export type ResolvedConfiguration = {
     targetTechnology:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer';
     /* eslint-enable max-len */
     test:PlainObject;
-    'test:browser':PlainObject
+    'test:browser':PlainObject;
+    webpack:WebpackConfiguration;
 }
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
 export type WebpackConfiguration = {

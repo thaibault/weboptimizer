@@ -1070,7 +1070,8 @@
           }
         },
         "offline": null
-      }
+      },
+      "webpack": {}
     },
     "debug": {
       "debug": true,
