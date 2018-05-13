@@ -52,7 +52,7 @@
     "prepare": "npm run build",
     "report:coverage": "nyc report --reporter=text-lcov | coveralls",
     "test": "npm run test:plain && nyc test/index.compiled.js",
-    "test:plain": "npm run clear && command='babel --plugins transform-flow-strip-types,transform-runtime --presets env,stage-0 --source-maps inline --source-root ../ --out-file' && $command ejsLoader.compiled.js ejsLoader.js && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.js *.json *.ejs node_modules/weboptimizer/ && chmod +x test/* && ls node_modules/weboptimizer && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command test/ejsLoader.compiled.js test/ejsLoader.js && chmod +x test/* && test/ejsLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command index.compiled.js index.js && $command test/index.compiled.js test/index.js && chmod +x test/* && test/index.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js",
+    "test:plain": "npm run clear && command='babel --plugins transform-flow-strip-types,transform-runtime --presets env,stage-0 --source-maps inline --source-root ../ --out-file' && $command ejsLoader.compiled.js ejsLoader.js && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.js *.json *.ejs node_modules/weboptimizer/ && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command test/ejsLoader.compiled.js test/ejsLoader.js && chmod +x test/* && test/ejsLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command index.compiled.js index.js && $command test/index.compiled.js test/index.js && chmod +x test/* && test/index.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js",
     "update": "npm version patch && npm publish",
     "update:documentation": "documentationWebsite --log-level info"
   },
@@ -68,7 +68,7 @@
     "babel-preset-minify": "^0.4.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
-    "clientnode": "^3.0.60",
+    "clientnode": "^3.0.61",
     "css-loader": "^0.28.11",
     "ejs": "^2.6.1",
     "exports-loader": "^0.7.0",
@@ -118,7 +118,7 @@
     "babel-eslint": "^8.2.3",
     "coveralls": "^3.0.1",
     "cssnano": "^3.10.0",
-    "documentation-website": "^1.0.133",
+    "documentation-website": "^1.0.134",
     "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.46.3",
@@ -930,7 +930,7 @@
             "index"
           ],
           "propertyNames": {
-            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('esnext', 'es2015', 'module').concat(self.targetTechnology === 'web' ? 'browser' : []).concat('main')"
+            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesnext', 'esnext', 'fes2015', es2015', 'module').concat(self.targetTechnology === 'web' ? 'browser' : []).concat('main')"
           }
         }
       },
