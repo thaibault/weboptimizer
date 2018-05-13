@@ -930,7 +930,7 @@
             "index"
           ],
           "propertyNames": {
-            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesnext', 'esnext', 'fes2015', es2015', 'module').concat(self.targetTechnology === 'web' ? 'browser' : []).concat('main')"
+            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesnext', 'esnext', 'fes2015', 'es2015', 'module').concat(self.targetTechnology === 'web' ? 'browser' : []).concat('main')"
           }
         }
       },
