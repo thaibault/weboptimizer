@@ -45,7 +45,7 @@
     "url": "https://github.com/thaibault/webOptimizer.git"
   },
   "scripts": {
-    "build": "command='babel --plugins transform-flow-strip-types,transform-runtime --presets env,stage-0 --source-maps inline --out-file' && babel --plugins transform-flow-strip-types,transform-runtime --presets env,stage-0 --source-maps inline --out-file browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command ejsLoader.compiled.js ejsLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command index.compiled.js index.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && chmod +x index.compiled.js",
+    "build": "command='babel --plugins transform-flow-strip-types,transform-runtime --presets env,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command ejsLoader.compiled.js ejsLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command index.compiled.js index.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && chmod +x index.compiled.js",
     "clear": "rimraf *.compiled.*; rimraf *.compiled; rimraf test/*.compiled.*; rimraf apiDocumentation; rimraf *.html; rimraf node_modules/weboptimizer; rimraf .nyc_output || true",
     "document": "npm run build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
     "lint": "flow --color always --strip-root; eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
