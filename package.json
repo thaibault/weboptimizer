@@ -82,7 +82,7 @@
     "imports-loader": "^0.8.0",
     "jsdom": "^11.11.0",
     "loader-utils": "^1.1.0",
-    "mini-css-extract-plugin": "^0.4.0",
+    "mini-css-extract-plugin": "^0.4.1",
     "offline-plugin": "^5.0.5",
     "open-browser-webpack-plugin": "0.0.5",
     "postcss-cssnext": "^3.0.2",
@@ -116,7 +116,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.2.5",
-    "coveralls": "^3.0.1",
+    "coveralls": "^3.0.2",
     "cssnano": "^3.10.0",
     "documentation-website": "^1.0.134",
     "eslint": "^5.0.1",
@@ -127,7 +127,7 @@
     "jsdoc": "*",
     "nyc": "^12.0.2",
     "qunit": "^2.6.1",
-    "webpack": "^4.12.2",
+    "webpack": "^4.14.0",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4"
   },
