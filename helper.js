@@ -180,10 +180,13 @@ export class Helper {
                             else {
                                 const regularExpressionPattern:string =
                                     '(after|before|in):(.+)'
-                                const match:Array<string> =
+                                const testMatch:?Array<string> =
                                     new RegExp(regularExpressionPattern).exec(
                                         assetType.pattern[pattern])
-                                if (!match)
+                                let match:Array<string>
+                                if (testMatch)
+                                    match = testMatch
+                                else
                                     throw new Error(
                                         'Given in place specification "' +
                                         `${assetType.pattern[pattern]}" for ` +
