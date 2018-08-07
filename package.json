@@ -612,6 +612,8 @@
                 }
               },
               "transform": {
+                "removeConsole": true,
+                "removeDebugger": true,
                 "mangle": {
                   "topLevel": {
                     "__evaluate__": "!self.library"
