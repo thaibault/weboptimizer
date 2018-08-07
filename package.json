@@ -96,7 +96,6 @@
     "style-loader": "^0.21.0",
     "stylelint-config-standard": "^18.2.0",
     "url-loader": "^1.0.1",
-    "webpack-load-plugins": "^0.1.2",
     "webpack-sources": "^1.1.0"
   },
   "peerDependencies": {
