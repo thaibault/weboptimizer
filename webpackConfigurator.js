@@ -18,28 +18,54 @@ import Tools from 'clientnode'
 /* eslint-disable no-unused-vars */
 import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
 /* eslint-enable no-unused-vars */
-import postcssCSSnano from 'cssnano'
+/* eslint-disable no-var */
+try {
+    var postcssCSSnano:Function = require('cssnano')
+} catch (error) {}
+/* eslint-enable no-var */
 import {JSDOM as DOM} from 'jsdom'
 import * as fileSystem from 'fs'
 import path from 'path'
-import postcssCSSnext from 'postcss-cssnext'
-import postcssFontPath from 'postcss-fontpath'
-import postcssImport from 'postcss-import'
-import postcssSprites from 'postcss-sprites'
-import postcssURL from 'postcss-url'
+/* eslint-disable no-var */
+try {
+    var postcssCSSnext:Function = require('postcss-cssnext')
+} catch (error) {}
+try {
+    var postcssFontPath:Function = require('postcss-fontpath')
+} catch (error) {}
+try {
+    var postcssImport:Function = require('postcss-import')
+} catch (error) {}
+try {
+    var postcssSprites:Function = require('postcss-sprites')
+} catch (error) {}
+try {
+    var postcssURL:Function = require('postcss-url')
+} catch (error) {}
+/* eslint-enable no-var */
 import util from 'util'
 import webpack from 'webpack'
-const plugins = require('webpack-load-plugins')()
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 
-plugins.BabelMinify = plugins.babelMinify
-plugins.HTML = plugins.html
-plugins.MiniCSSExtract = require('mini-css-extract-plugin')
-plugins.AddAssetHTMLPlugin = require('add-asset-html-webpack-plugin')
-plugins.OpenBrowser = plugins.openBrowser
-plugins.Favicon = require('favicons-webpack-plugin')
-plugins.Imagemin = require('imagemin-webpack-plugin').default
-plugins.Offline = require('offline-plugin')
+const pluginNameResourceMapping:{[key:string]:string} = {
+    BabelMinify: 'babel-minify-webpack-plugin',
+    HTML: 'html-webpack-plugin',
+    MiniCSSExtract: 'mini-css-extract-plugin',
+    AddAssetHTMLPlugin: 'add-asset-html-webpack-plugin',
+    OpenBrowser: 'open-browser-webpack-plugin',
+    Favicon: 'favicons-webpack-plugin',
+    Imagemin: 'imagemin-webpack-plugin',
+    Offline: 'offline-plugin'
+}
+const plugins:Object = {}
+for (const name:string in pluginNameResourceMapping)
+    if (pluginNameResourceMapping.hasOwnProperty(name))
+        try {
+            // IgnoreTypeCheck
+            plugins[name] = require(pluginNameResourceMapping[name])
+        } catch (error) {}
+if (plugins.Imagemin)
+    plugins.Imagemin = plugins.Imagemin.default
 
 import ejsLoader from './ejsLoader.compiled'
 /* eslint-disable no-unused-vars */
