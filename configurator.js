@@ -136,9 +136,7 @@ while (true) {
     filePath = newFilePath
     count += 1
 }
-let runtimeInformation:PlainObject = {
-    givenCommandLineArguments: process.argv
-}
+let runtimeInformation:PlainObject = {givenCommandLineArguments: process.argv}
 if (filePath) {
     runtimeInformation = JSON.parse(fileSystem.readFileSync(filePath, {
         encoding: (configuration.encoding:string)}))
@@ -176,6 +174,8 @@ if (typeof result === 'object' && result !== null) {
     }
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
 }
+// Removing comments (default key name to delete is "#").
+configuration = Tools.removeKeys(configuration)
 // endregion
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []

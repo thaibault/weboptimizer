@@ -135,7 +135,8 @@
       "assetPattern": {
         "javaScript": {
           "excludeFilePathRegularExpression": {
-            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|preboot|.+\\.html|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
+            "#": "Only ensure globals for exported modules.",
+            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\.html|preboot|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
           "pattern": "'use strict';if(typeof module!=='undefined'&&typeof require!=='undefined'&&module!==require.main&&'paths'in module&&typeof __dirname!=='undefined')module.paths=require.main.paths.concat(module.paths.filter((path)=>require.main.paths.includes(path)));if(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}"
         }
@@ -148,6 +149,7 @@
             },
             "outputExtension": "js",
             "preinstall": {
+              "#": "Create dummy file before building to let build artefacts created on install correctly be set their needed executable bits.",
               "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.compiled.\\${buildConfiguration.outputExtension}'`"
             }
           },
@@ -199,6 +201,7 @@
         "unsafe": true
       },
       "commandLine": {
+        "#": "Configures how to trigger corresponding project livecycle tasks from the command line.",
         "build": {
           "arguments": [
             "--bail",
@@ -342,6 +345,7 @@
           "historyApiFallback": true,
           "host": "0.0.0.0",
           "hot": {
+            "#": "Indicates whether to activate the developments hot module replacement feature.",
             "__evaluate__": "self.debug"
           },
           "port": 8080,
@@ -546,12 +550,13 @@
         }
       },
       "inPlace": {
+        "#": "Indicates whether to include the corresponding artefacts into build target artefact or reference them to dynamically include them during runtime.",
         "cascadingStyleSheet": {
           "*": "in"
         },
         "externalLibrary": {
-          "normal": true,
-          "dynamic": true
+          "dynamic": true,
+          "normal": true
         },
         "javaScript": {
           "errorreporter": "head"
@@ -600,6 +605,7 @@
           "exclude": null,
           "loader": "html",
           "options": {
+            "#": "Configure to resolve artefacts referenced by image or link tags.",
             "__evaluate__": "Tools.extendObject({}, self.module.optimizer.htmlMinifier || {}, {attrs: ['img:src', 'link:href'], minimize: self.module.optimizer.htmlMinifier})"
           }
         },
@@ -616,6 +622,7 @@
                 "removeDebugger": true,
                 "mangle": {
                   "topLevel": {
+                    "#": "Indicates to not mangle scope names from the entry (main) scope in libraries.",
                     "__evaluate__": "!self.library"
                   }
                 }
@@ -627,6 +634,7 @@
             }
           },
           "cssnano": {
+            "#": "The autoprefixer has to be disabled in this context since it would remove all needed vendor prefixes from the preceding processing (every prefix should be needed here).",
             "autoprefixer": false,
             "discardUnused": {
               "__evaluate__": "!self.library"
@@ -748,13 +756,13 @@
                 "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? true : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{disable:false}}}}}\" to enable it.`) || true"
               },
               "gifsicle": {
-                "optimizationLevel": 3,
+                "colors": 256,
                 "interlanced": false,
-                "colors": 256
+                "optimizationLevel": 3
               },
               "jpegtran": {
-                "progressive": true,
-                "arithmetic": true
+                "arithmetic": true,
+                "progressive": true
               },
               "optipng": {
                 "optimizationLevel": 7
@@ -871,8 +879,11 @@
             }
           }
         },
-        "provide": {},
+        "provide": {
+          "#": "Defines resources which should be mapped to given variables without referencing them explicitly."
+        },
         "replacements": {
+          "#": "Defines referenced resources or contexts to be replaced.",
           "context": [],
           "normal": {}
         },
@@ -880,6 +891,7 @@
           "__evaluate__": "/(?:^|\\/)(?:(?:babel-polyfill\\/dist\\/polyfill)|(?:jquery\\/dist\\/jquery))(?:\\.min)?\\.js(?:\\?.+|$)/"
         },
         "style": {
+          "#": "Includes referenced (hot module replaced) css files in-place into the html header to dynamically migrate them on changes without browser refresh.",
           "loader": "style",
           "options": {
             "hmr": true,
@@ -889,6 +901,7 @@
         }
       },
       "nodeEnvironment": {
+        "#": "Indicates which node environment variables should be included in built artefacts.",
         "console": false,
         "fs": "empty",
         "global": true,
