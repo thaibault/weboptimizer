@@ -138,7 +138,7 @@
             "#": "Only ensure globals for exported modules.",
             "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\.html|preboot|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
-          "pattern": "'use strict';if(typeof module!=='undefined'&&typeof require!=='undefined'&&module!==require.main&&'paths'in module&&typeof __dirname!=='undefined')module.paths=require.main.paths.concat(module.paths.filter((path)=>require.main.paths.includes(path)));if(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}"
+          "pattern": "'use strict';if(typeof module!=='undefined'&&typeof require!=='undefined'&&'main'in require&&module!==require.main&&'paths'in module&&typeof __dirname!=='undefined')module.paths=require.main.paths.concat(module.paths.filter((path)=>require.main.paths.includes(path)));if(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}"
         }
       },
       "build": {
