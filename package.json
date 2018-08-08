@@ -68,7 +68,7 @@
     "babel-preset-minify": "^0.4.3",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
-    "clientnode": "^3.0.66",
+    "clientnode": "^3.0.72",
     "css-loader": "^1.0.0",
     "ejs": "^2.6.1",
     "exports-loader": "^0.7.0",
@@ -93,7 +93,7 @@
     "postcss-url": "^7.3.2",
     "rimraf": "^2.6.2",
     "script-loader": "^0.7.2",
-    "style-loader": "^0.22.0",
+    "style-loader": "^0.22.1",
     "stylelint-config-standard": "^18.2.0",
     "url-loader": "^1.0.1",
     "webpack-sources": "^1.1.0"
@@ -138,7 +138,8 @@
             "#": "Only ensure globals for exported modules.",
             "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\.html|preboot|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
-          "pattern": "'use strict';if(typeof module!=='undefined'&&typeof eval('require')!=='undefined'&&'main'in eval('require')&&module!==eval('require.main')&&'paths'in module&&'paths'in eval('require.main')&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter((path)=>eval('require.main.paths').includes(path)));if(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}"
+          "#": "We have to wrap \"require\" into an eval call to avoid other pre-processing scripts to replace this statement here.",
+          "pattern": "'use strict';if(typeof module!=='undefined'&&eval('typeof require')!=='undefined'&&'main'in eval('require')&&module!==eval('require.main')&&'paths'in module&&'paths'in eval('require.main')&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter((path)=>eval('require.main.paths').includes(path)));if(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}"
         }
       },
       "build": {
@@ -1034,7 +1035,8 @@
       "test": {
         "assetPattern": {
           "javaScript": {
-            "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';if(typeof module!=='undefined'&&typeof eval('require')!=='undefined'&&module!==eval('require.main')&&'paths'in module&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter((path)=>eval('require.main.paths').includes(path)));{1}"
+            "#": "We have to wrap \"require\" into an eval call to avoid other pre-processing scripts to replace this statement here.",
+            "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';if(typeof module!=='undefined'&&eval('typeof require')!=='undefined'&&module!==eval('require.main')&&'paths'in module&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter((path)=>eval('require.main.paths').includes(path)));{1}"
           }
         },
         "exportFormat": {
