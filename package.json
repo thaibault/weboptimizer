@@ -1058,6 +1058,20 @@
           },
           "html": []
         },
+        "module": {
+          "optimizer": {
+            "babelMinify": {
+              "bundle": {
+                "transform": {
+                  "removeConsole": false
+                }
+              },
+              "module": {
+                "removeConsole": false
+              }
+            }
+          }
+        },
         "targetTechnology": "node"
       },
       "test:browser": {
