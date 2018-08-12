@@ -28,7 +28,7 @@ import * as fileSystem from 'fs'
 import path from 'path'
 /* eslint-disable no-var */
 try {
-    var postcssCSSnext:Function = require('postcss-cssnext')
+    var postcssPresetENV:Function = require('postcss-preset-env')
 } catch (error) {}
 try {
     var postcssFontPath:Function = require('postcss-fontpath')
@@ -838,7 +838,7 @@ Tools.extendObject(loader, {
                             addDependencyTo: webpack,
                             root: configuration.path.context
                         }),
-                        postcssCSSnext({browsers: '> 0%'}),
+                        postcssPresetENV({browsers: '> 0%'}),
                         /*
                             NOTE: Checking path doesn't work if fonts are
                             referenced in libraries provided in another
