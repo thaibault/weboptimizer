@@ -288,7 +288,8 @@ export class Helper {
      * @returns Processed file path.
      */
     static renderFilePathTemplate(
-        filePathTemplate:string, informations:{[key:string]:string} = {
+        filePathTemplate:string,
+        informations:{[key:string]:string} = {
             '[name]': '.__dummy__', '[id]': '.__dummy__',
             '[hash]': '.__dummy__'
         }
@@ -310,21 +311,24 @@ export class Helper {
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
      * account.
-     * @param relativeModuleFilePaths - List of relative file path to search
-     * for modules in.
+     * @param relativeModuleLocations - List of relative directory paths to
+     * search for modules in.
      * @returns A new resolved request.
      */
     static applyContext(
-        request:string, context:string = './', referencePath:string = './',
-        aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
-        relativeModuleFilePaths:Array<string> = ['node_modules']
+        request:string,
+        context:string = './',
+        referencePath:string = './',
+        aliases:PlainObject = {},
+        moduleReplacements:PlainObject = {},
+        relativeModuleLocations:Array<string> = ['node_modules']
     ):string {
         referencePath = path.resolve(referencePath)
         if (request.startsWith('./') && path.resolve(
             context
         ) !== referencePath) {
             request = path.resolve(context, request)
-            for (const modulePath:string of relativeModuleFilePaths) {
+            for (const modulePath:string of relativeModuleLocations) {
                 const pathPrefix:string = path.resolve(
                     referencePath, modulePath)
                 if (request.startsWith(pathPrefix)) {
@@ -365,7 +369,7 @@ export class Helper {
      * account.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
-     * @param relativeModuleFilePaths - List of relative file path to search
+     * @param relativeModuleLocations - List of relative file path to search
      * for modules in.
      * @param packageEntryFileNames - List of package entry file names to
      * search for. The magic name "__package__" will search for an appreciate
@@ -387,20 +391,37 @@ export class Helper {
      * external one.
      */
     static determineExternalRequest(
-        request:string, context:string = './', requestContext:string = './',
+        request:string,
+        context:string = './',
+        requestContext:string = './',
         normalizedInternalInjection:NormalizedInternalInjection = {},
         externalModuleLocations:Array<string> = ['node_modules'],
-        aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
+        aliases:PlainObject = {},
+        moduleReplacements:PlainObject = {},
         extensions:Extensions = {
             file: {
                 external: ['.js'],
                 internal: [
-                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
-                ]
-            }, module: []
-        }, referencePath:string = './', pathsToIgnore:Array<string> = ['.git'],
-        relativeModuleFilePaths:Array<string> = ['node_modules'],
+                    'js',
+                    'json',
+                    'css',
+                    'eot',
+                    'gif',
+                    'html',
+                    'ico',
+                    'jpg',
+                    'png',
+                    'ejs',
+                    'svg',
+                    'ttf',
+                    'woff', '.woff2'
+                ].map((suffix:string):string => `.${suffix}`)
+            },
+            module: []
+        },
+        referencePath:string = './',
+        pathsToIgnore:Array<string> = ['.git'],
+        relativeModuleLocations:Array<string> = ['node_modules'],
         packageEntryFileNames:Array<string> = ['index', 'main'],
         packageMainPropertyNames:Array<string> = ['main', 'module'],
         packageAliasPropertyNames:Array<string> = [],
@@ -423,9 +444,19 @@ export class Helper {
             since we pass an already resolved request.
         */
         let filePath:?string = Helper.determineModuleFilePath(
-            resolvedRequest, {}, {}, extensions, context, requestContext,
-            pathsToIgnore, relativeModuleFilePaths, packageEntryFileNames,
-            packageMainPropertyNames, packageAliasPropertyNames, encoding)
+            resolvedRequest,
+            {},
+            {},
+            extensions,
+            context,
+            requestContext,
+            pathsToIgnore,
+            relativeModuleLocations,
+            packageEntryFileNames,
+            packageMainPropertyNames,
+            packageAliasPropertyNames,
+            encoding
+        )
         if (Tools.isAnyMatching(resolvedRequest, excludePattern))
             return null
         /*
@@ -436,18 +467,30 @@ export class Helper {
             resolvedRequest, includePattern
         ))
             return Helper.applyContext(
-                resolvedRequest, requestContext, referencePath,
-                aliases, moduleReplacements, relativeModuleFilePaths)
+                resolvedRequest,
+                requestContext,
+                referencePath,
+                aliases,
+                moduleReplacements,
+                relativeModuleLocations
+            )
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
                     chunkName
                 ])
                     if (Helper.determineModuleFilePath(
-                        moduleID, aliases, moduleReplacements, extensions,
-                        context, requestContext, pathsToIgnore,
-                        relativeModuleFilePaths, packageEntryFileNames,
-                        packageMainPropertyNames, packageAliasPropertyNames,
+                        moduleID,
+                        aliases,
+                        moduleReplacements,
+                        extensions,
+                        context,
+                        requestContext,
+                        pathsToIgnore,
+                        relativeModuleLocations,
+                        packageEntryFileNames,
+                        packageMainPropertyNames,
+                        packageAliasPropertyNames,
                         encoding
                     ) === filePath)
                         return null
@@ -467,8 +510,13 @@ export class Helper {
                     filePath, externalModuleLocations))
         ))
             return Helper.applyContext(
-                resolvedRequest, requestContext, referencePath, aliases,
-                moduleReplacements, relativeModuleFilePaths)
+                resolvedRequest,
+                requestContext,
+                referencePath,
+                aliases,
+                moduleReplacements,
+                relativeModuleLocations
+            )
         return null
     }
     /**
@@ -515,7 +563,8 @@ export class Helper {
      * @returns Converted build configuration.
      */
     static resolveBuildConfigurationFilePaths(
-        configuration:BuildConfiguration, entryPath:string = './',
+        configuration:BuildConfiguration,
+        entryPath:string = './',
         pathsToIgnore:Array<string> = ['.git'],
         mainFileBasenames:Array<string> = ['index', 'main']
     ):ResolvedBuildConfiguration {
@@ -586,7 +635,7 @@ export class Helper {
      * @param context - File path to resolve relative to.
      * @param referencePath - Path to search for local modules.
      * @param pathsToIgnore - Paths which marks location to ignore.
-     * @param relativeModuleFilePaths - List of relative file path to search
+     * @param relativeModuleLocations - List of relative file path to search
      * for modules in.
      * @param packageEntryFileNames - List of package entry file names to
      * search for. The magic name "__package__" will search for an appreciate
@@ -600,20 +649,37 @@ export class Helper {
      * corresponding list of paths.
      */
     static determineModuleLocations(
-        internalInjection:InternalInjection, aliases:PlainObject = {},
-        moduleReplacements:PlainObject = {}, extensions:Extensions = {
+        internalInjection:InternalInjection,
+        aliases:PlainObject = {},
+        moduleReplacements:PlainObject = {},
+        extensions:Extensions = {
             file: {
                 external: ['.js'],
                 internal: [
-                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
-                ]
-            }, module: []
-        }, context:string = './', referencePath:string = '',
+                    'js',
+                    'json',
+                    'css',
+                    'eot',
+                    'gif',
+                    'html',
+                    'ico',
+                    'jpg',
+                    'png',
+                    'ejs',
+                    'svg',
+                    'ttf',
+                    'woff', '.woff2'
+                ].map((suffix:string):string => `.${suffix}`)
+            },
+            module: []
+        },
+        context:string = './',
+        referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
-        relativeModuleFilePaths:Array<string> = ['', 'node_modules', '../'],
+        relativeModuleLocations:Array<string> = ['node_modules'],
         packageEntryFileNames:Array<string> = [
-            '__package__', '', 'index', 'main'],
+            '__package__', '', 'index', 'main'
+        ],
         packageMainPropertyNames:Array<string> = ['main', 'module'],
         packageAliasPropertyNames:Array<string> = [],
         encoding:string = 'utf-8'
@@ -623,19 +689,31 @@ export class Helper {
         const normalizedInternalInjection:NormalizedInternalInjection =
             Helper.resolveModulesInFolders(
                 Helper.normalizeInternalInjection(internalInjection),
-                aliases, moduleReplacements, context, referencePath,
-                pathsToIgnore)
+                aliases,
+                moduleReplacements,
+                context,
+                referencePath,
+                pathsToIgnore
+            )
         for (const chunkName:string in normalizedInternalInjection)
             if (normalizedInternalInjection.hasOwnProperty(chunkName))
                 for (const moduleID:string of normalizedInternalInjection[
                     chunkName
                 ]) {
                     const filePath:?string = Helper.determineModuleFilePath(
-                        moduleID, aliases, moduleReplacements, extensions,
-                        context, referencePath, pathsToIgnore,
-                        relativeModuleFilePaths, packageEntryFileNames,
-                        packageMainPropertyNames, packageAliasPropertyNames,
-                        encoding)
+                        moduleID,
+                        aliases,
+                        moduleReplacements,
+                        extensions,
+                        context,
+                        referencePath,
+                        pathsToIgnore,
+                        relativeModuleLocations,
+                        packageEntryFileNames,
+                        packageMainPropertyNames,
+                        packageAliasPropertyNames,
+                        encoding
+                    )
                     if (filePath) {
                         filePaths.push(filePath)
                         const directoryPath:string = path.dirname(filePath)
@@ -660,8 +738,10 @@ export class Helper {
      */
     static resolveModulesInFolders(
         normalizedInternalInjection:NormalizedInternalInjection,
-        aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
-        context:string = './', referencePath:string = '',
+        aliases:PlainObject = {},
+        moduleReplacements:PlainObject = {},
+        context:string = './',
+        referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):NormalizedInternalInjection {
         if (referencePath.startsWith('/'))
@@ -771,24 +851,44 @@ export class Helper {
         givenInjection:Injection,
         buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:InternalInjection,
-        aliases:PlainObject = {}, moduleReplacements:PlainObject = {},
+        aliases:PlainObject = {},
+        moduleReplacements:PlainObject = {},
         extensions:Extensions = {
             file: {
                 external: ['.js'],
                 internal: [
-                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
-                ]
-            }, module: []
-        }, context:string = './', referencePath:string = '',
+                    'js',
+                    'json',
+                    'css',
+                    'eot',
+                    'gif',
+                    'html',
+                    'ico',
+                    'jpg',
+                    'png',
+                    'ejs',
+                    'svg',
+                    'ttf',
+                    'woff', '.woff2'
+                ].map((suffix:string):string => `.${suffix}`)
+            },
+            module: []
+        },
+        context:string = './',
+        referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):Injection {
         const injection:Injection = Tools.extendObject(
             true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
-                modulesToExclude, aliases, moduleReplacements, extensions,
-                context, referencePath, pathsToIgnore
+                modulesToExclude,
+                aliases,
+                moduleReplacements,
+                extensions,
+                context,
+                referencePath,
+                pathsToIgnore
             ).filePaths
         for (const type:string of ['internal', 'external'])
             /* eslint-disable curly */
@@ -889,7 +989,7 @@ export class Helper {
      * @param context - File path to determine relative to.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
-     * @param relativeModuleFilePaths - List of relative file path to search
+     * @param relativeModuleLocations - List of relative file path to search
      * for modules in.
      * @param packageEntryFileNames - List of package entry file names to
      * search for. The magic name "__package__" will search for an appreciate
@@ -903,18 +1003,34 @@ export class Helper {
      * wasn't necessary.
      */
     static determineModuleFilePath(
-        moduleID:string, aliases:PlainObject = {},
-        moduleReplacements:PlainObject = {}, extensions:Extensions = {
+        moduleID:string,
+        aliases:PlainObject = {},
+        moduleReplacements:PlainObject = {},
+        extensions:Extensions = {
             file: {
                 external: ['.js'],
                 internal: [
-                    '.js', '.json', '.css', '.eot', '.gif', '.html', '.ico',
-                    '.jpg', '.png', '.ejs', '.svg', '.ttf', '.woff', '.woff2'
-                ]
-            }, module: []
-        }, context:string = './', referencePath:string = '',
+                    'js',
+                    'json',
+                    'css',
+                    'eot',
+                    'gif',
+                    'html',
+                    'ico',
+                    'jpg',
+                    'png',
+                    'ejs',
+                    'svg',
+                    'ttf',
+                    'woff', '.woff2'
+                ].map((suffix:string):string => `.${suffix}`)
+            },
+            module: []
+        },
+        context:string = './',
+        referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git'],
-        relativeModuleFilePaths:Array<string> = ['node_modules'],
+        relativeModuleLocations:Array<string> = ['node_modules'],
         packageEntryFileNames:Array<string> = ['index'],
         packageMainPropertyNames:Array<string> = ['main'],
         packageAliasPropertyNames:Array<string> = [],
@@ -928,16 +1044,28 @@ export class Helper {
         let moduleFilePath:string = moduleID
         if (moduleFilePath.startsWith('./'))
             moduleFilePath = path.join(referencePath, moduleFilePath)
-        for (const moduleLocation:string of [referencePath].concat(
-            relativeModuleFilePaths.map((filePath:string):string =>
+        const moduleLocations = [referencePath].concat(
+            relativeModuleLocations.map((filePath:string):string =>
                 path.resolve(context, filePath))
+        )
+        let parts = context.split('/')
+        parts.splice(-1, 1)
+        while (parts.length > 0) {
+            for (const relativePath:string of relativeModuleLocations)
+                moduleLocations.push(path.join(
+                    '/', parts.join('/'), relativePath))
+            parts.splice(-1, 1)
+        }
+        for (const moduleLocation:string of [referencePath].concat(
+            moduleLocations
         ))
             for (let fileName:string of ['', '__package__'].concat(
                 packageEntryFileNames
             ))
-                for (const moduleExtension:string of extensions.module.concat([
-                    ''
-                ]))
+                for (
+                    const moduleExtension:string of
+                    extensions.module.concat([''])
+                )
                     for (const fileExtension:string of [''].concat(
                         extensions.file.internal
                     )) {
@@ -950,9 +1078,7 @@ export class Helper {
                                 moduleLocation, moduleFilePath)
                         let packageAliases:PlainObject = {}
                         if (fileName === '__package__') {
-                            if (Tools.isDirectorySync(
-                                currentModuleFilePath
-                            )) {
+                            if (Tools.isDirectorySync(currentModuleFilePath)) {
                                 const pathToPackageJSON:string = path.resolve(
                                     currentModuleFilePath, 'package.json')
                                 if (Tools.isFileSync(pathToPackageJSON)) {
@@ -969,7 +1095,8 @@ export class Helper {
                                         if (
                                             localConfiguration.hasOwnProperty(
                                                 propertyName
-                                            ) && typeof localConfiguration[
+                                            ) &&
+                                            typeof localConfiguration[
                                                 propertyName
                                             ] === 'string' &&
                                             localConfiguration[propertyName]

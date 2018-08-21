@@ -68,7 +68,7 @@
     "babel-preset-minify": "^0.4.3",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
-    "clientnode": "^3.0.84",
+    "clientnode": "^3.0.85",
     "css-loader": "^1.0.0",
     "ejs": "^2.6.1",
     "exports-loader": "^0.7.0",
@@ -117,7 +117,7 @@
     "babel-eslint": "^8.2.6",
     "coveralls": "^3.0.2",
     "cssnano": "^4.0.5",
-    "documentation-website": "^1.0.136",
+    "documentation-website": "^1.0.137",
     "eslint": "^5.4.0",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-flowtype": "^2.50.0",
@@ -132,7 +132,7 @@
     "postcss-sprites": "^4.2.1",
     "postcss-url": "^8.0.0",
     "qunit": "^2.6.2",
-    "webpack": "^4.16.5",
+    "webpack": "^4.17.0",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.5"
   },
@@ -584,10 +584,7 @@
           ]
         },
         "directoryNames": [
-          "node_modules",
-          {
-            "__evaluate__": "path.resolve(webOptimizerPath, 'node_modules')"
-          }
+          "node_modules"
         ]
       },
       "module": {
@@ -602,10 +599,7 @@
           "options": {}
         },
         "directoryNames": [
-          "node_modules",
-          {
-            "__evaluate__": "path.resolve(webOptimizerPath, 'node_modules')"
-          }
+          "node_modules"
         ],
         "html": {
           "additional": [],
