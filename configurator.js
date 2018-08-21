@@ -272,10 +272,13 @@ resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.injection.internal,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.module.replacements.normal,
-    resolvedConfiguration.extensions, resolvedConfiguration.path.context,
-    resolvedConfiguration.path.source.asset.base)
+    resolvedConfiguration.extensions,
+    resolvedConfiguration.path.context,
+    resolvedConfiguration.path.source.asset.base
+)
 resolvedConfiguration.injection = Helper.resolveInjection(
-    resolvedConfiguration.injection, Helper.resolveBuildConfigurationFilePaths(
+    resolvedConfiguration.injection,
+    Helper.resolveBuildConfigurationFilePaths(
         resolvedConfiguration.build.types,
         resolvedConfiguration.path.source.asset.base,
         Helper.normalizePaths(resolvedConfiguration.path.ignore.concat(
@@ -286,7 +289,8 @@ resolvedConfiguration.injection = Helper.resolveInjection(
         ).filter((filePath:string):boolean =>
             !resolvedConfiguration.path.context.startsWith(filePath))),
         resolvedConfiguration.package.main.fileNames
-    ), resolvedConfiguration.injection.autoExclude,
+    ),
+    resolvedConfiguration.injection.autoExclude,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.module.replacements.normal,
     resolvedConfiguration.extensions,
@@ -308,10 +312,15 @@ resolvedConfiguration.injection.internal = {
         ).map((filePath:string):string => path.resolve(
             resolvedConfiguration.path.context, filePath)
         ).filter((filePath:string):boolean =>
-            !resolvedConfiguration.path.context.startsWith(filePath)))}
-resolvedConfiguration.needed = {javaScript: configuration.debug && [
-    'serve', 'test:browser'
-].includes(resolvedConfiguration.givenCommandLineArguments[2])}
+            !resolvedConfiguration.path.context.startsWith(filePath)
+        )
+    )
+}
+resolvedConfiguration.needed = {
+    javaScript: configuration.debug && ['serve', 'test:browser'].includes(
+        resolvedConfiguration.givenCommandLineArguments[2]
+    )
+}
 for (const chunkName:string in resolvedConfiguration.injection.internal
     .normalized
 )
