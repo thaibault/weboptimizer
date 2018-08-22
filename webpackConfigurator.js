@@ -144,13 +144,16 @@ if (configuration.givenCommandLineArguments[2] !== 'build:dll')
         }
 // // endregion
 // // region generate favicons
-if (htmlAvailable && configuration.favicon && Tools.isFileSync(
-    configuration.favicon.logo
-))
+if (
+    htmlAvailable &&
+    configuration.favicon &&
+    plugins.Favicon &&
+    Tools.isFileSync(configuration.favicon.logo)
+)
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
 // // endregion
 // // region provide offline functionality
-if (htmlAvailable && configuration.offline) {
+if (htmlAvailable && configuration.offline && plugins.Offline) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
     ))
@@ -341,7 +344,7 @@ if (!configuration.needed.javaScript)
         configuration.path.target.asset.javaScript, '.__dummy__.compiled.js')
 // /// endregion
 // /// region extract cascading style sheets
-if (configuration.files.compose.cascadingStyleSheet)
+if (configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract)
     pluginInstances.push(new plugins.MiniCSSExtract({
         chunks: '[name].css',
         filename: path.relative(
@@ -640,8 +643,9 @@ if (configuration.exportFormat.external.startsWith('umd'))
 // // region add automatic image compression
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
 // ran through.
-pluginInstances.push(new plugins.Imagemin(
-    configuration.module.optimizer.image.content))
+if (plugins.Imagemin)
+    pluginInstances.push(new plugins.Imagemin(
+        configuration.module.optimizer.image.content))
 // // endregion
 // // region context replacements
 for (
@@ -967,7 +971,10 @@ Tools.extendObject(loader, {
     }
     // endregion
 })
-if (configuration.files.compose.cascadingStyleSheet) {
+if (
+    configuration.files.compose.cascadingStyleSheet &&
+    plugins.MiniCSSExtract
+) {
     /*
         NOTE: We have to remove the client side javascript hmr style loader
         first.
