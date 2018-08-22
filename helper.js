@@ -360,8 +360,8 @@ export class Helper {
      * @param requestContext - Context of given request to resolve relative to.
      * @param normalizedInternalInjection - Mapping of chunk names to modules
      * which should be injected.
-     * @param externalModuleLocations - Array if paths where external modules
-     * take place.
+     * @param relativeExternalModuleLocations - Array of paths where external
+     * modules take place.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
      * account.
@@ -395,7 +395,7 @@ export class Helper {
         context:string = './',
         requestContext:string = './',
         normalizedInternalInjection:NormalizedInternalInjection = {},
-        externalModuleLocations:Array<string> = ['node_modules'],
+        relativeExternalModuleLocations:Array<string> = ['node_modules'],
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:Extensions = {
@@ -494,6 +494,15 @@ export class Helper {
                         encoding
                     ) === filePath)
                         return null
+        let parts = context.split('/')
+        // parts.splice(-1, 1)
+        const externalModuleLocations = []
+        while (parts.length > 0) {
+            for (const relativePath:string of relativeExternalModuleLocations)
+                externalModuleLocations.push(path.join(
+                    '/', parts.join('/'), relativePath))
+            parts.splice(-1, 1)
+        }
         /*
             NOTE: We mark dependencies as external if they does not contain a
             loader in their request and aren't part of the current main package
