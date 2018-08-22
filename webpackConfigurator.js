@@ -885,7 +885,6 @@ Tools.extendObject(loader, {
             ) ? false :
                 evaluate(
                     configuration.module.optimizer.font.eot.exclude, filePath),
-            include: configuration.path.base,
             test: /\.eot(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.eot.loader,
@@ -899,7 +898,6 @@ Tools.extendObject(loader, {
             ) ? false :
                 evaluate(
                     configuration.module.optimizer.font.svg.exclude, filePath),
-            include: configuration.path.base,
             test: /\.svg(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.svg.loader,
@@ -913,7 +911,6 @@ Tools.extendObject(loader, {
             ) ? false :
                 evaluate(
                     configuration.module.optimizer.font.ttf.exclude, filePath),
-            include: configuration.path.base,
             test: /\.ttf(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.ttf.loader,
@@ -928,7 +925,6 @@ Tools.extendObject(loader, {
                 evaluate(
                     configuration.module.optimizer.font.woff.exclude, filePath
                 ),
-            include: configuration.path.base,
             test: /\.woff2?(?:\?.*)?$/i,
             use: [{
                 loader: configuration.module.optimizer.font.woff.loader,
@@ -963,7 +959,6 @@ Tools.extendObject(loader, {
             ) ? isFilePathInDependencies(filePath) :
                 evaluate(
                     configuration.module.optimizer.data.exclude, filePath)),
-        include: configuration.path.source.asset.data,
         test: /.+/,
         use: [{
             loader: configuration.module.optimizer.data.loader,
