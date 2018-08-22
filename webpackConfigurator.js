@@ -354,7 +354,7 @@ if (configuration.injection.external.modules === '__implicit__')
     /*
         We only want to process modules from local context in library mode,
         since a concrete project using this library should combine all assets
-        (and deduplicate them) for optimal bundling results. NOTE: Only native
+        (and de-duplicate them) for optimal bundling results. NOTE: Only native
         javaScript and json modules will be marked as external dependency.
     */
     configuration.injection.external.modules = (
@@ -375,18 +375,16 @@ if (configuration.injection.external.modules === '__implicit__')
                 break
             }
         let resolvedRequest:?string = Helper.determineExternalRequest(
-            request, configuration.path.context, context,
+            request,
+            configuration.path.context,
+            context,
             configuration.injection.internal.normalized,
-            configuration.path.ignore.concat(
-                configuration.module.directoryNames,
-                configuration.loader.directoryNames
-            ).map((filePath:string):string => path.resolve(
-                configuration.path.context, filePath
-            )).filter((filePath:string):boolean =>
-                !configuration.path.context.startsWith(filePath)
-            ), configuration.module.aliases,
-            configuration.module.replacements.normal, configuration.extensions,
-            configuration.path.source.asset.base, configuration.path.ignore,
+            configuration.module.directoryNames,
+            configuration.module.aliases,
+            configuration.module.replacements.normal,
+            configuration.extensions,
+            configuration.path.source.asset.base,
+            configuration.path.ignore,
             configuration.module.directoryNames,
             configuration.package.main.fileNames,
             configuration.package.main.propertyNames,
@@ -395,7 +393,8 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.injection.external.implicit.pattern.exclude,
             configuration.inPlace.externalLibrary.normal,
             configuration.inPlace.externalLibrary.dynamic,
-            configuration.encoding)
+            configuration.encoding
+        )
         if (resolvedRequest) {
             if (['var', 'umd'].includes(
                 configuration.exportFormat.external
