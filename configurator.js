@@ -91,8 +91,13 @@ specificConfiguration.name = name
 let debug:boolean = metaConfiguration.default.debug
 if (specificConfiguration.debug !== undefined)
     debug = specificConfiguration.debug
-else if (process.env.npm_config_dev === 'true')
+else if (
+    process.env.npm_config_dev === 'true' ||
+    ['debug', 'dev', 'development'].includes(process.env.NODE_ENV)
+)
     debug = true
+if (debug)
+    process.env.NODE_ENV = 'development'
 metaConfiguration.default.path.context += '/'
 // Merges final default configuration object depending on given target
 // environment.
