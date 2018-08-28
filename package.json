@@ -898,7 +898,7 @@
           "normal": {}
         },
         "skipParseRegularExpressions": {
-          "__evaluate__": "/(?:^|\\/)(?:(?:babel-polyfill\\/dist\\/polyfill)|(?:jquery\\/dist\\/jquery))(?:\\.min)?\\.js(?:\\?.+|$)/"
+          "__evaluate__": "/(?:^|\\/)(?:(?:@babel\\/polyfill\\/dist\\/polyfill)|(?:jquery\\/dist\\/jquery))(?:\\.min)?\\.js(?:\\?.+|$)/"
         },
         "style": {
           "#": "Includes referenced (hot module replaced) css files in-place into the html header to dynamically migrate them on changes without browser refresh.",
