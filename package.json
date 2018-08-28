@@ -45,29 +45,28 @@
     "url": "https://github.com/thaibault/webOptimizer.git"
   },
   "scripts": {
-    "build": "command='babel --plugins transform-flow-strip-types,transform-runtime --presets env,stage-0 --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command ejsLoader.compiled.js ejsLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command index.compiled.js index.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && chmod +x index.compiled.js",
+    "build": "command='babel --plugins @babel/plugin-transform-flow-strip-types,@babel/plugin-transform-runtime --presets @babel/preset-env --source-maps inline --out-file' && $command browserAPI.compiled.js browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && $command ejsLoader.compiled.js ejsLoader.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command index.compiled.js index.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && chmod +x index.compiled.js",
     "clear": "rimraf *.compiled.*; rimraf *.compiled; rimraf test/*.compiled.*; rimraf apiDocumentation; rimraf *.html; rimraf node_modules/weboptimizer; rimraf .nyc_output || true",
     "document": "yarn build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
     "lint": "flow --color always --strip-root; eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
     "prepare": "yarn build",
     "report:coverage": "nyc report --reporter=text-lcov | coveralls",
     "test": "yarn test:plain && nyc test/index.compiled.js",
-    "test:plain": "yarn clear && command='babel --plugins transform-flow-strip-types,transform-runtime --presets env,stage-0 --source-maps inline --source-root ../ --out-file' && $command ejsLoader.compiled.js ejsLoader.js && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.js *.json *.ejs node_modules/weboptimizer/ && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command test/ejsLoader.compiled.js test/ejsLoader.js && chmod +x test/* && test/ejsLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command index.compiled.js index.js && $command test/index.compiled.js test/index.js && chmod +x test/* && test/index.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js",
+    "test:plain": "yarn clear && command='babel --plugins @babel/plugin-transform-flow-strip-types,@babel/plugin-transform-runtime --presets @babel/preset-env --source-maps inline --source-root ../ --out-file' && $command ejsLoader.compiled.js ejsLoader.js && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.js *.json *.ejs node_modules/weboptimizer/ && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command test/ejsLoader.compiled.js test/ejsLoader.js && chmod +x test/* && test/ejsLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command index.compiled.js index.js && $command test/index.compiled.js test/index.js && chmod +x test/* && test/index.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js",
     "update": "yarn version --patch && yarn publish",
     "update:documentation": "documentationWebsite --log-level info"
   },
   "dependencies": {
     "add-asset-html-webpack-plugin": "^2.1.3",
-    "babel-core": "^6.26.3",
+    "@babel/core": "^7.0.0",
     "babel-loader": "^8.0.0",
     "babel-minify-webpack-plugin": "^0.3.1",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
+    "@babel/plugin-transform-flow-strip-types": "^6.22.0",
+    "@babel/plugin-transform-runtime": "^6.23.0",
     "babel-plugin-transform-with": "^1.0.0",
-    "babel-preset-env": "^1.6.1",
+    "@babel/preset-env": "^1.6.1",
     "babel-preset-minify": "^0.4.3",
-    "babel-preset-stage-0": "^6.24.1",
-    "babel-runtime": "^6.26.0",
+    "@babel/runtime": "^6.26.0",
     "clientnode": "^3.0.89",
     "ejs": "^2.6.1",
     "exports-loader": "^0.7.0",
@@ -113,7 +112,7 @@
     "webpack-dev-server": "*"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
+    "@babel/cli": "^6.24.1",
     "babel-eslint": "^9.0.0",
     "coveralls": "^3.0.2",
     "css-loader": "^1.0.0",
@@ -883,7 +882,7 @@
                 "transform-runtime"
               ],
               "presets": {
-                "__evaluate__": "[['env', {loose: true, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: 'last 2 versions', node: 'current'}}]].concat('stage-0').concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
+                "__evaluate__": "[['env', {loose: true, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: 'last 2 versions', node: 'current'}}]].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             }
           }
