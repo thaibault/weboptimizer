@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "@babel/core": "*",
+    "@babel/plugin-proposal-class-properties": "*",
     "@babel/plugin-transform-flow-strip-types": "*",
     "@babel/plugin-transform-runtime": "*",
     "@babel/preset-env": "*",
@@ -113,7 +114,6 @@
   },
   "devDependencies": {
     "@babel/cli": "*",
-    "@babel/plugin-proposal-class-properties": "*",
     "babel-eslint": "*",
     "coveralls": "*",
     "css-loader": "*",
