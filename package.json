@@ -156,7 +156,7 @@
           "pattern": "'use strict';if(typeof module!=='undefined'&&eval('typeof require')!=='undefined'&&'main'in eval('require')&&module!==eval('require.main')&&'paths'in module&&'paths'in eval('require.main')&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter((path)=>eval('require.main.paths').includes(path)));if(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}"
         }
       },
-      "build": {
+      "buildContext": {
         "types": {
           "default": {
             "filePathPattern": {

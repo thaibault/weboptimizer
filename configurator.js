@@ -85,7 +85,7 @@ const name:string = specificConfiguration.name
 specificConfiguration = specificConfiguration.webOptimizer || {}
 specificConfiguration.name = name
 // endregion
-// region loading default configuration
+// region determine debug mode
 // NOTE: Given node command line arguments results in "npm_config_*"
 // environment variables.
 let debug:boolean = metaConfiguration.default.debug
@@ -98,6 +98,8 @@ else if (
     debug = true
 if (debug)
     process.env.NODE_ENV = 'development'
+// endregion
+// region loading default configuration
 metaConfiguration.default.path.context += '/'
 // Merges final default configuration object depending on given target
 // environment.
@@ -120,16 +122,14 @@ if (
         'library' in specificConfiguration &&
         specificConfiguration.library === undefined ||
         !('library' in specificConfiguration)
-    ) && configuration.library
+    ) &&
+    configuration.library
 )
     configuration = Tools.extendObject(true, Tools.modifyObject(
         configuration, libraryConfiguration
     ), libraryConfiguration)
 // endregion
-/*
-    region merging and evaluating default, test, document, specific and dynamic
-    settings
-*/
+// region merging and evaluating task specific and dynamic configurations
 // / region load additional dynamically given configuration
 let count:number = 0
 let filePath:?string = null
@@ -150,16 +150,31 @@ if (filePath) {
             throw error
     })
 }
+const taskTypes:Array<string> = [
+    'build', 'debug', 'document', 'serve', 'test', 'test:browser']
 // // region apply use case specific configuration
 if (runtimeInformation.givenCommandLineArguments.length > 2)
-    for (const type:string of ['document', 'test', 'test:browser'])
-        if (runtimeInformation.givenCommandLineArguments[2] === type)
-            Tools.extendObject(true, Tools.modifyObject(
-                configuration, configuration[type]
-            ), configuration[type])
+    for (const type:string of taskTypes)
+        if (runtimeInformation.givenCommandLineArguments[2] === type) {
+            for (const configurationTarget:PlainObject of [
+                configuration, specificConfiguration
+            ])
+                if (typeof configurationTarget[type] === 'object')
+                    Tools.extendObject(true, Tools.modifyObject(
+                        configurationTarget, configurationTarget[type]
+                    ), configurationTarget[type])
+            break
+        }
 // // endregion
-for (const type:string of ['document', 'test', 'test:Browser'])
-    delete configuration[type]
+for (const type:string of taskTypes)
+    for (const configurationTarget:PlainObject of [
+        configuration, specificConfiguration
+    ])
+        if (
+            configurationTarget.hasOwnProperty(type) &&
+            typeof configurationTarget[type] === 'object'
+        )
+            delete configurationTarget[type]
 // / endregion
 Tools.extendObject(true, Tools.modifyObject(Tools.modifyObject(
     configuration, specificConfiguration
@@ -197,7 +212,8 @@ configuration.path.base = path.resolve(
     configuration.path.context, configuration.path.base)
 for (const key:string in configuration.path)
     if (
-        configuration.path.hasOwnProperty(key) && key !== 'base' &&
+        configuration.path.hasOwnProperty(key) &&
+        key !== 'base' &&
         typeof configuration.path[key] === 'string'
     )
         configuration.path[key] = path.resolve(
@@ -221,12 +237,15 @@ for (const key:string in configuration.path)
                     configuration.path[key].base,
                     configuration.path[key][subKey].base)
                 for (const subSubKey:string in configuration.path[key][subKey])
-                    if (configuration.path[key][subKey].hasOwnProperty(
-                        subSubKey
-                    ) && subSubKey !== 'base' &&
-                    typeof configuration.path[key][subKey][
-                        subSubKey
-                    ] === 'string')
+                    if (
+                        configuration.path[key][subKey].hasOwnProperty(
+                            subSubKey
+                        ) &&
+                        subSubKey !== 'base' &&
+                        typeof configuration.path[key][subKey][
+                            subSubKey
+                        ] === 'string'
+                    )
                         configuration.path[key][subKey][subSubKey] =
                             path.resolve(
                                 configuration.path[key][subKey].base,
@@ -263,14 +282,19 @@ export const resolvedConfiguration:ResolvedConfiguration =
 // Apply default file level build configurations to all file type specific
 // ones.
 const defaultConfiguration:PlainObject =
-    resolvedConfiguration.build.types.default
-delete resolvedConfiguration.build.types.default
-for (const type:string in resolvedConfiguration.build.types)
-    if (resolvedConfiguration.build.types.hasOwnProperty(type))
-        resolvedConfiguration.build.types[type] = Tools.extendObject(true, {
-        }, defaultConfiguration, Tools.extendObject(
-            true, {extension: type}, resolvedConfiguration.build.types[type],
-            {type}))
+    resolvedConfiguration.buildContext.types.default
+delete resolvedConfiguration.buildContext.types.default
+for (const type:string in resolvedConfiguration.buildContext.types)
+    if (resolvedConfiguration.buildContext.types.hasOwnProperty(type))
+        resolvedConfiguration.buildContext.types[type] = Tools.extendObject(
+            true,
+            {},
+            defaultConfiguration,
+            Tools.extendObject(
+                true,
+                {extension: type},
+                resolvedConfiguration.buildContext.types[type],
+                {type}))
 // endregion
 // region resolve module location and determine which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(
@@ -284,7 +308,7 @@ resolvedConfiguration.module.locations = Helper.determineModuleLocations(
 resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.injection,
     Helper.resolveBuildConfigurationFilePaths(
-        resolvedConfiguration.build.types,
+        resolvedConfiguration.buildContext.types,
         resolvedConfiguration.path.source.asset.base,
         Helper.normalizePaths(resolvedConfiguration.path.ignore.concat(
             resolvedConfiguration.module.directoryNames,
@@ -355,7 +379,8 @@ for (const chunkName:string in resolvedConfiguration.injection.internal
             let type:?string
             if (filePath)
                 type = Helper.determineAssetType(
-                    filePath, resolvedConfiguration.build.types,
+                    filePath,
+                    resolvedConfiguration.buildContext.types,
                     resolvedConfiguration.path)
             else
                 throw new Error(

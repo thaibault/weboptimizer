@@ -118,11 +118,14 @@ const main = async ():Promise<any> => {
                             ))
                                 return false
                             for (
-                                const type:string in configuration.build.types
+                                const type:string in
+                                configuration.buildContext.types
                             )
-                                if (new RegExp(configuration.build.types[
-                                    type
-                                ].filePathPattern).test(file.path)) {
+                                if (new RegExp(
+                                    configuration.buildContext.types[
+                                        type
+                                    ].filePathPattern
+                                ).test(file.path)) {
                                     if (
                                         file.stats &&
                                         file.stats.isDirectory()
@@ -195,7 +198,7 @@ const main = async ():Promise<any> => {
             // region handle build
             const buildConfigurations:ResolvedBuildConfiguration =
                 Helper.resolveBuildConfigurationFilePaths(
-                    configuration.build.types,
+                    configuration.buildContext.types,
                     configuration.path.source.asset.base,
                     configuration.path.ignore.concat(
                         configuration.module.directoryNames,
@@ -246,11 +249,12 @@ const main = async ():Promise<any> => {
                                 let type:?string
                                 if (filePath)
                                     type = Helper.determineAssetType(
-                                        filePath, configuration.build.types,
+                                        filePath,
+                                        configuration.buildContext.types,
                                         configuration.path)
                                 if (
                                     typeof type === 'string' &&
-                                    configuration.build.types[type]
+                                    configuration.buildContext.types[type]
                                 ) {
                                     const filePath:string =
                                         Helper.renderFilePathTemplate(
@@ -263,7 +267,7 @@ const main = async ():Promise<any> => {
                                         synchronous.
                                     */
                                     if (
-                                        configuration.build.types[
+                                        configuration.buildContext.types[
                                             type
                                         ].outputExtension === 'js' &&
                                         Tools.isFileSync(filePath)

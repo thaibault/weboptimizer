@@ -20,6 +20,7 @@ import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
 /* eslint-enable no-unused-vars */
 /* eslint-disable no-var */
 try {
+    // IgnoreTypeCheck
     var postcssCSSnano:Function = require('cssnano')
 } catch (error) {}
 /* eslint-enable no-var */
@@ -28,18 +29,23 @@ import * as fileSystem from 'fs'
 import path from 'path'
 /* eslint-disable no-var */
 try {
+    // IgnoreTypeCheck
     var postcssPresetENV:Function = require('postcss-preset-env')
 } catch (error) {}
 try {
+    // IgnoreTypeCheck
     var postcssFontPath:Function = require('postcss-fontpath')
 } catch (error) {}
 try {
+    // IgnoreTypeCheck
     var postcssImport:Function = require('postcss-import')
 } catch (error) {}
 try {
+    // IgnoreTypeCheck
     var postcssSprites:Function = require('postcss-sprites')
 } catch (error) {}
 try {
+    // IgnoreTypeCheck
     var postcssURL:Function = require('postcss-url')
 } catch (error) {}
 /* eslint-enable no-var */
@@ -181,9 +187,9 @@ if (configuration.development.openBrowser && (htmlAvailable && [
         configuration.development.openBrowser))
 // // endregion
 // // region provide build environment
-if (configuration.build.definitions)
+if (configuration.buildContext.definitions)
     pluginInstances.push(new webpack.DefinePlugin(
-        configuration.build.definitions))
+        configuration.buildContext.definitions))
 if (configuration.module.provide)
     pluginInstances.push(new webpack.ProvidePlugin(
         configuration.module.provide))
@@ -211,7 +217,9 @@ pluginInstances.push({apply: (compiler:Object):void => {
             if (compilation.assets.hasOwnProperty(request)) {
                 const filePath:string = request.replace(/\?[^?]+$/, '')
                 const type:?string = Helper.determineAssetType(
-                    filePath, configuration.build.types, configuration.path)
+                    filePath,
+                    configuration.buildContext.types,
+                    configuration.path)
                 if (type && configuration.assetPattern[type] && !(new RegExp(
                     configuration.assetPattern[type]
                         .excludeFilePathRegularExpression
@@ -597,7 +605,8 @@ if (configuration.exportFormat.external.startsWith('umd'))
             if (
                 compilation.assets.hasOwnProperty(assetRequest) &&
                 assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                    configuration.build.types.javaScript.outputExtension)
+                    configuration.buildContext.types.javaScript.outputExtension
+                )
             ) {
                 let source:string = compilation.assets[assetRequest].source()
                 if (typeof source === 'string') {
