@@ -89,7 +89,7 @@ specificConfiguration.name = name
 // NOTE: Given node command line arguments results in "npm_config_*"
 // environment variables.
 let debug:boolean = metaConfiguration.default.debug
-if (specificConfiguration.debug !== undefined)
+if (typeof specificConfiguration.debug === 'boolean')
     debug = specificConfiguration.debug
 else if (
     process.env.npm_config_dev === 'true' ||
@@ -150,9 +150,9 @@ if (filePath) {
             throw error
     })
 }
+// // region apply task type specific configuration
 const taskTypes:Array<string> = [
     'build', 'debug', 'document', 'serve', 'test', 'test:browser']
-// // region apply use case specific configuration
 if (runtimeInformation.givenCommandLineArguments.length > 2)
     for (const type:string of taskTypes)
         if (runtimeInformation.givenCommandLineArguments[2] === type) {
