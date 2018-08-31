@@ -158,7 +158,7 @@ export type ResolvedConfiguration = {
         excludeFilePathRegularExpression:string;
         pattern:string
     }};
-    build:{
+    buildContext:{
         definitions:PlainObject;
         types:PlainObject;
     };
