@@ -98,9 +98,6 @@ else if (
     debug = true
 if (debug)
     process.env.NODE_ENV = 'development'
-console.log()
-console.log('DEBUG: ', debug)
-console.log()
 metaConfiguration.default.path.context += '/'
 // Merges final default configuration object depending on given target
 // environment.
