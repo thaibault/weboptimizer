@@ -152,7 +152,7 @@
             "#": "Only ensure globals for exported modules.",
             "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\.html|preboot|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
-          "#": "We have to wrap \"require\" into an eval call to avoid other pre-processing scripts to replace this statement here.",
+          "#": "We have to ensure, that the highest resolvable dependency inside this project will be used in node environments to ensure one instance of each dependent artefact for linked projects. We have to wrap \"require\" into an eval call to avoid other pre-processing scripts to replace this statement here.",
           "pattern": "'use strict';if(typeof module!=='undefined'&&eval('typeof require')!=='undefined'&&'main'in eval('require')&&module!==eval('require.main')&&'paths'in module&&'paths'in eval('require.main')&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter((path)=>eval('require.main.paths').includes(path)));if(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}"
         }
       },
@@ -1044,8 +1044,10 @@
       "test": {
         "assetPattern": {
           "javaScript": {
-            "#": "We have to wrap \"require\" into an eval call to avoid other pre-processing scripts to replace this statement here.",
-            "pattern": "#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n'use strict';if(typeof module!=='undefined'&&eval('typeof require')!=='undefined'&&module!==eval('require.main')&&'paths'in module&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter((path)=>eval('require.main.paths').includes(path)));{1}"
+            "pattern": {
+              "#": "This is how we can make our test artefact executable.",
+              "__evaluate__": "`#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n${self.assetPattern.javaScript.pattern}`"
+            }
           }
         },
         "exportFormat": {
