@@ -155,7 +155,11 @@ const taskTypes:Array<string> = [
     'build', 'debug', 'document', 'serve', 'test', 'test:browser']
 if (runtimeInformation.givenCommandLineArguments.length > 2)
     for (const type:string of taskTypes)
-        if (runtimeInformation.givenCommandLineArguments[2] === type) {
+        if (
+            runtimeInformation.givenCommandLineArguments[2] === type ||
+            debug &&
+            type == 'debug'
+        )
             for (const configurationTarget:PlainObject of [
                 configuration, specificConfiguration
             ])
@@ -163,8 +167,6 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
                     Tools.extendObject(true, Tools.modifyObject(
                         configurationTarget, configurationTarget[type]
                     ), configurationTarget[type])
-            break
-        }
 // // endregion
 for (const type:string of taskTypes)
     for (const configurationTarget:PlainObject of [
