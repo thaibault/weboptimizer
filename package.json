@@ -153,7 +153,7 @@
             "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\.html|preboot|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && self.inPlace.externalLibrary.normal ? '|index' : ''})(?:\\.compiled)?\\.js$`"
           },
           "pattern": {
-            "__evaluate__": "`${self.generic.assetPattern.javaScript.pattern}(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}`"
+            "__evaluate__": "`${self.generic.assetPattern.javaScript.pattern}if(typeof window==='undefined')var window=typeof global==='undefined'?{}:global;{1}`"
           }
         }
       },
