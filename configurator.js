@@ -150,7 +150,8 @@ if (filePath) {
             throw error
     })
 }
-// // region apply task type specific configuration
+// // region task specific configuration
+// /// region apply task type specific configuration
 const taskTypes:Array<string> = [
     'build', 'debug', 'document', 'serve', 'test', 'test:browser']
 if (runtimeInformation.givenCommandLineArguments.length > 2)
@@ -167,7 +168,8 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
                     Tools.extendObject(true, Tools.modifyObject(
                         configurationTarget, configurationTarget[type]
                     ), configurationTarget[type])
-// // endregion
+// /// endregion
+// /// region clear task type specific configurations
 for (const type:string of taskTypes)
     for (const configurationTarget:PlainObject of [
         configuration, specificConfiguration
@@ -177,6 +179,8 @@ for (const type:string of taskTypes)
             typeof configurationTarget[type] === 'object'
         )
             delete configurationTarget[type]
+// /// endregion
+// // endregion
 // / endregion
 Tools.extendObject(true, Tools.modifyObject(Tools.modifyObject(
     configuration, specificConfiguration
