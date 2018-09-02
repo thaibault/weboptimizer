@@ -7,15 +7,15 @@ Alle Helper werden im Code inline eingefügt.
 + Keine Verschmutzung des globalen Scopes
 - Redundanter Code
 
-transform-runtime (Paket: babel-plugin-transform-runtime)
+@babel/plugin-transform-runtime
 ---------------------------------------------------------
 
-biegt alle Polyfill-Helper zum Paket "babel-runtime" um.
+biegt alle Polyfill-Helper zum Paket "@babel/runtime" um.
 
 + Weniger Code-Redundanz
 - Code hat "babel-runtime" Abhängigkeit
 
-babel-polyfill
+@babel/polyfill
 --------------
 
 modifiziert die globale Umgebung
@@ -30,34 +30,34 @@ Best Practice (für beste Performance)
 
 #### Maximale Performance
 
-Hier sollte "transform-runtime" genutzt werden und eine Abhängigkeit zu
-"babel-runtime" und ggf. zu "babel-polyfill" kommuniziert werden (um das
-Optimierungspotential für Anwendungen nicht zu verschenken):
+Hier sollte "@babel/plugin-transform-runtime" genutzt werden und eine
+Abhängigkeit zu "@babel/runtime" und ggf. zu "@babel/polyfill" kommuniziert
+werden (um das Optimierungspotential für Anwendungen nicht zu verschenken):
 
 package.json:
 
 ...
-"devDependencies": {"babel-polyfill": "..."}
+"devDependencies": {"@babel/polyfill": "..."}
 ...
 "dependencies": {"babel-runtime": "..."}
 ...
 
-Für lokale Tests muss "babel-runtime" und zusätzlich "babel-polyfill"
+Für lokale Tests muss "babel-runtime" und zusätzlich "@babel/polyfill"
 eingefügt werden.
 
 #### Maximale Kompatibilität
 
-Hier sollte auf "transform-runtime" verzichtet werden, um keine transitiven
-Abhängigkeiten zu erzeugen. Eingriffe in den globale Scope werden nicht
-vorgenommen.
+Hier sollte auf "@babel/plugin-transform-runtime" verzichtet werden, um keine
+transitiven Abhängigkeiten zu erzeugen. Eingriffe in den globale Scope werden
+nicht vorgenommen.
 
 ### Applikation
 
-Hier sollte "transform-runtime" genutzt werden und "babel-runtime" sowie
-"babel-polyfill" eingebaut werden:
+Hier sollte "@babel/plugin-transform-runtime" genutzt werden und
+"@babel/runtime" sowie "@babel/polyfill" eingebaut werden:
 
 package.json:
 
 ...
-"devDepenedencies": {"babel-polyfill": "...", "babel-runtime": "..."}
+"devDepenedencies": {"@babel/polyfill": "...", "babel-runtime": "..."}
 ...
