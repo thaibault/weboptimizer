@@ -197,6 +197,7 @@ if (typeof result === 'object' && result !== null) {
         delete result.__reference__
         for (const name:string of referenceNames) {
             Tools.extendObject(true, result, configuration[name])
+            delete configuration[name]
             delete result[name]
         }
     }
