@@ -195,8 +195,10 @@ if (typeof result === 'object' && result !== null) {
     if (result.hasOwnProperty('__reference__')) {
         const referenceNames:Array<string> = [].concat(result.__reference__)
         delete result.__reference__
-        for (const name:string of referenceNames)
+        for (const name:string of referenceNames) {
             Tools.extendObject(true, result, configuration[name])
+            delete result[name]
+        }
     }
     Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
 }
