@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.253",
+  "version": "2.0.254",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "https://torben.website/webOptimizer",
@@ -535,7 +535,10 @@
             "pattern": "'use strict';if(typeof module!=='undefined'&&eval('typeof require')!=='undefined'&&'main'in eval('require')&&module!==eval('require.main')&&'paths'in module&&'paths'in eval('require.main')&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter(function(path){return eval('require.main.paths').includes(path)}));"
           }
         },
-        "supportedBrowsers": ["last 2 versions", "> 5%"]
+        "supportedBrowsers": [
+          "last 2 versions",
+          "> 5%"
+        ]
       },
       "hashAlgorithm": "md5",
       "injection": {
