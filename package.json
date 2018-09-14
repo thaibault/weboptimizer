@@ -605,7 +605,10 @@
         ]
       },
       "module": {
-        "additional": [],
+        "additional": {
+          "post": [],
+          "pre": []
+        },
         "aliases": {
           "weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled",
           "weboptimizer/helper$": "weboptimizer/helper.compiled"
@@ -619,7 +622,10 @@
           "node_modules"
         ],
         "html": {
-          "additional": [],
+          "additional": {
+            "post": [],
+            "pre": []
+          },
           "exclude": null,
           "loader": "html",
           "options": {
@@ -659,7 +665,10 @@
             }
           },
           "data": {
-            "additional": [],
+            "additional": {
+              "post": [],
+              "pre": []
+            },
             "exclude": null,
             "loader": "url",
             "options": {
@@ -673,7 +682,10 @@
           },
           "font": {
             "eot": {
-              "additional": [],
+              "additional": {
+                "post": [],
+                "pre": []
+              },
               "exclude": null,
               "loader": "url",
               "options": {
@@ -686,7 +698,10 @@
               }
             },
             "svg": {
-              "additional": [],
+              "additional": {
+                "post": [],
+                "pre": []
+              },
               "exclude": null,
               "loader": "url",
               "options": {
@@ -700,7 +715,10 @@
               }
             },
             "ttf": {
-              "additional": [],
+              "additional": {
+                "post": [],
+                "pre": []
+              },
               "exclude": null,
               "loader": "url",
               "options": {
@@ -714,7 +732,10 @@
               }
             },
             "woff": {
-              "additional": [],
+              "additional": {
+                "post": [],
+                "pre": []
+              },
               "exclude": null,
               "loader": "url",
               "options": {
@@ -768,7 +789,10 @@
             "useShortDoctype": false
           },
           "image": {
-            "additional": [],
+            "additional": {
+              "post": [],
+              "pre": []
+            },
             "content": {
               "disable": {
                 "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? true : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{disable:false}}}}}\" to enable it.`) || true"
@@ -803,14 +827,20 @@
         },
         "preprocessor": {
           "cascadingStyleSheet": {
-            "additional": [],
+            "additional": {
+              "post": [],
+              "pre": []
+            },
             "loader": "postcss",
             "options": {
               "sourceMap": "inline"
             }
           },
           "ejs": {
-            "additional": [],
+            "additional": {
+              "post": [],
+              "pre": []
+            },
             "exclude": null,
             "loader": "ejs",
             "options": {
@@ -846,7 +876,10 @@
             }
           },
           "html": {
-            "additional": [],
+            "additional": {
+              "post": [],
+              "pre": []
+            },
             "exclude": {
               "__evaluate__": "self.module.preprocessor.ejs.exclude"
             },
@@ -876,7 +909,10 @@
             }
           },
           "javaScript": {
-            "additional": [],
+            "additional": {
+              "post": [],
+              "pre": []
+            },
             "exclude": null,
             "loader": "babel",
             "options": {
