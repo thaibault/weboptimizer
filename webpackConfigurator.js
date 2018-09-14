@@ -883,7 +883,9 @@ Tools.extendObject(loader, {
                             configuration.module.preprocessor
                                 .cascadingStyleSheet.additional
                                 .plugins.pre.map(evaluate),
-                            postcssPresetENV({browsers: '> 0%'}),
+                            postcssPresetENV(
+                                configuration.module.preprocessor
+                                    .cascadingStyleSheet.postcssPresetEnv),
                             /*
                                 NOTE: Checking path doesn't work if fonts are
                                 referenced in libraries provided in another

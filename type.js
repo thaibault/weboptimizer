@@ -272,6 +272,7 @@ export type ResolvedConfiguration = {
                 };
                 loader:string;
                 options:Object;
+                postcssPresetEnv:Object;
             };
             ejs:LoaderConfiguration;
             html:LoaderConfiguration;
