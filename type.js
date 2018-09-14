@@ -265,7 +265,11 @@ export type ResolvedConfiguration = {
         };
         preprocessor:{
             cascadingStyleSheet:{
-                additional:Additional;
+                additional:{
+                    plugins:Additional;
+                    post:Array<string>;
+                    pre:Array<string>;
+                };
                 loader:string;
                 options:Object;
             };
