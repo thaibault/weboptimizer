@@ -2076,8 +2076,8 @@ cli-width@^2.0.0:
   resolved "https://registry.yarnpkg.com/cli-width/-/cli-width-2.2.0.tgz#ff19ede8a9a5e579324147b0c11f0fbcbabed639"
 
 clientnode@*:
-  version "3.0.113"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.113.tgz#cee6f046d698123211c247c7a3f5d212d51b846e"
+  version "3.0.114"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.114.tgz#09a732a61d4578ca1fb294643c4f86f95b243179"
   dependencies:
     colors "*"
 
