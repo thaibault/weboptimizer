@@ -2076,8 +2076,8 @@ cli-width@^2.0.0:
   resolved "https://registry.yarnpkg.com/cli-width/-/cli-width-2.2.0.tgz#ff19ede8a9a5e579324147b0c11f0fbcbabed639"
 
 clientnode@*:
-  version "3.0.112"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.112.tgz#e4316dca85e2061b84ed7f65401e6e4d6879944b"
+  version "3.0.113"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.113.tgz#cee6f046d698123211c247c7a3f5d212d51b846e"
   dependencies:
     colors "*"
 
@@ -9335,8 +9335,8 @@ webpack-sources@*, webpack-sources@^1.0.1, webpack-sources@^1.1.0, webpack-sourc
     source-map "~0.6.1"
 
 webpack@*:
-  version "4.18.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.18.1.tgz#029042c815443fce23424de1548d9317cfca148a"
+  version "4.19.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.19.0.tgz#252296c8af2d21c0994911007defdb3913a7bc66"
   dependencies:
     "@webassemblyjs/ast" "1.7.6"
     "@webassemblyjs/helper-module-context" "1.7.6"
