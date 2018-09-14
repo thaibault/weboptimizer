@@ -680,6 +680,20 @@ const isFilePathInDependencies:Function = (filePath:string):boolean => {
         ).filter((filePath:string):boolean =>
             !configuration.path.context.startsWith(filePath)))
 }
+const generateLoader:Function = (
+    loaderConfiguration:PlainObject
+):PlainObject => ({
+    exclude: (filePath:string):boolean => evaluate(
+        loaderConfiguration.exclude || 'false', filePath),
+    include:
+        loaderConfiguration.include &&
+        evaluate(
+            loaderConfiguration.include, configuration.path.context) ||
+        configuration.path.source.base,
+    test: new RegExp(evaluate(
+        loaderConfiguration.test, configuration.path.context)),
+    use: evaluate(loaderConfiguration.use)
+})
 const loader:Object = {}
 const scope:Object = {
     configuration,
@@ -709,7 +723,9 @@ Tools.extendObject(loader, {
             configuration.path.source.base
         ].concat(configuration.module.locations.directoryPaths)),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
-        use: [
+        use: configuration.module.preprocessor.ejs.additional.pre.map(
+            evaluate
+        ).concat(
             {loader: 'file?name=[path][name]' + (Boolean(
                 (configuration.module.preprocessor.ejs.options || {
                     compileSteps: 2
@@ -719,9 +735,9 @@ Tools.extendObject(loader, {
             {
                 loader: configuration.module.preprocessor.ejs.loader,
                 options: configuration.module.preprocessor.ejs.options || {}
-            }
-        ].concat(configuration.module.preprocessor.ejs.additional.map(
-            evaluate))
+            },
+            configuration.module.preprocessor.ejs.additional.post.map(
+                evaluate))
     },
     // endregion
     // region script
@@ -736,11 +752,16 @@ Tools.extendObject(loader, {
             configuration.path.source.asset.javaScript
         ].concat(configuration.module.locations.directoryPaths)),
         test: /\.js(?:\?.*)?$/i,
-        use: [{
-            loader: configuration.module.preprocessor.javaScript.loader,
-            options: configuration.module.preprocessor.javaScript.options || {}
-        }].concat(configuration.module.preprocessor.javaScript.additional.map(
-            evaluate))
+        use: configuration.module.preprocessor.javaScript.additional.pre.map(
+            evaluate
+        ).concat(
+            {
+                loader: configuration.module.preprocessor.javaScript.loader,
+                options:
+                    configuration.module.preprocessor.javaScript.options || {}
+            },
+            configuration.module.preprocessor.javaScript.additional.post.map(
+                evaluate))
     },
     // endregion
     // region html template
@@ -765,33 +786,37 @@ Tools.extendObject(loader, {
                         filePath)),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
-            use: [
-                {loader: 'file?name=' + path.join(path.relative(
-                    configuration.path.target.asset.base,
-                    configuration.path.target.asset.template
-                ), '[name]' + (Boolean(
-                    (configuration.module.preprocessor.html.options || {
+            use: configuration.module.preprocessor.html.additional.pre.map(
+                evaluate
+            ).concat(
+                {
+                    loader: 'file?name=' + path.join(path.relative(
+                        configuration.path.target.asset.base,
+                        configuration.path.target.asset.template
+                    ), '[name]' + (Boolean(
+                        (configuration.module.preprocessor.html.options || {
+                            compileSteps: 2
+                        }).compileSteps % 2
+                    ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)
+                },
+                (Boolean((
+                    configuration.module.preprocessor.html.options || {
                         compileSteps: 2
-                    }).compileSteps % 2
-                ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)}
-            ].concat((Boolean((
-                configuration.module.preprocessor.html.options || {
-                    compileSteps: 2
-                }
-            ).compileSteps % 2) ?
-                [] :
-                [
+                    }
+                ).compileSteps % 2) ? [] : [
                     {loader: 'extract'},
                     {
                         loader: configuration.module.html.loader,
                         options: configuration.module.html.options || {}
                     }
-                ]
-            ), {
-                loader: configuration.module.preprocessor.html.loader,
-                options: configuration.module.preprocessor.html.options || {}
-            }).concat(configuration.module.preprocessor.html.additional.map(
-                evaluate))
+                ]),
+                {
+                    loader: configuration.module.preprocessor.html.loader,
+                    options: configuration.module.preprocessor.html.options ||
+                        {}
+                },
+                configuration.module.preprocessor.html.additional.post.map(
+                    evaluate))
         },
         html: {
             exclude: (filePath:string):boolean => Helper.normalizePaths(
@@ -805,7 +830,7 @@ Tools.extendObject(loader, {
                     evaluate(configuration.module.html.exclude, filePath)),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
-            use: [
+            use: configuration.module.html.additional.pre.concat(
                 {loader: 'file?name=' + path.join(path.relative(
                     configuration.path.target.base,
                     configuration.path.target.asset.template
@@ -814,8 +839,8 @@ Tools.extendObject(loader, {
                 {
                     loader: configuration.module.html.loader,
                     options: configuration.module.html.options || {}
-                }
-            ].concat(configuration.module.html.additional.map(evaluate))
+                },
+                configuration.module.html.additional.post.map(evaluate))
         }
     },
     // endregion
@@ -831,62 +856,76 @@ Tools.extendObject(loader, {
             configuration.path.source.asset.cascadingStyleSheet
         ].concat(configuration.module.locations.directoryPaths)),
         test: /\.s?css(?:\?.*)?$/i,
-        use: [
-            {
-                loader: configuration.module.style.loader,
-                options: configuration.module.style.options || {}
-            },
-            {
-                loader: configuration.module.cascadingStyleSheet.loader,
-                options: configuration.module.cascadingStyleSheet.options || {}
-            },
-            {
-                loader: configuration.module.preprocessor.cascadingStyleSheet
-                    .loader,
-                options: Tools.extendObject(true, {
-                    ident: 'postcss',
-                    plugins: ():Array<Object> => [
-                        postcssImport({
-                            addDependencyTo: webpack,
-                            root: configuration.path.context
-                        }),
-                        postcssPresetENV({browsers: '> 0%'}),
-                        /*
-                            NOTE: Checking path doesn't work if fonts are
-                            referenced in libraries provided in another
-                            location than the project itself like the
-                            "node_modules" folder.
-                        */
-                        postcssFontPath({checkPath: false}),
-                        postcssURL({url: 'rebase'}),
-                        postcssSprites({
-                            filterBy: ():Promise<null> => new Promise((
-                                resolve:Function, reject:Function
-                            ):Promise<null> => (
-                                configuration.files.compose.image ? resolve :
-                                reject
-                            )()),
-                            hooks: {onSaveSpritesheet: (image:Object):string =>
-                                path.join(image.spritePath, path.relative(
-                                    configuration.path.target.asset.image,
-                                    configuration.files.compose.image))
-                            },
-                            stylesheetPath: configuration.path.source.asset
-                                .cascadingStyleSheet,
-                            spritePath: configuration.path.source.asset.image
-                        })
-                    ].concat(
-                        configuration.module.optimizer.cssnano ?
-                            postcssCSSnano(
-                                configuration.module.optimizer.cssnano
-                            ) : [])
-                },
-                configuration.module.preprocessor.cascadingStyleSheet
-                    .options || {})
-            }
-        ].concat(
+        use:
             configuration.module.preprocessor.cascadingStyleSheet.additional
-                .map(evaluate))
+                .pre.concat(
+                    {
+                        loader: configuration.module.style.loader,
+                        options: configuration.module.style.options || {}
+                    },
+                    {
+                        loader:
+                            configuration.module.cascadingStyleSheet.loader,
+                        options:
+                            configuration.module.cascadingStyleSheet.options ||
+                                {}
+                    },
+                    {
+                        loader:
+                            configuration.module.preprocessor
+                                .cascadingStyleSheet.loader,
+                        options: Tools.extendObject(true, {
+                            ident: 'postcss',
+                            plugins: ():Array<Object> => [
+                                postcssImport({
+                                    addDependencyTo: webpack,
+                                    root: configuration.path.context
+                                }),
+                                postcssPresetENV({browsers: '> 0%'}),
+                                /*
+                                    NOTE: Checking path doesn't work if fonts
+                                    are referenced in libraries provided in
+                                    another location than the project itself
+                                    like the "node_modules" folder.
+                                */
+                                postcssFontPath({checkPath: false}),
+                                postcssURL({url: 'rebase'}),
+                                postcssSprites({
+                                    filterBy: ():Promise<null> => new Promise((
+                                        resolve:Function, reject:Function
+                                    ):Promise<null> => (
+                                        configuration.files.compose.image ?
+                                            resolve :
+                                            reject
+                                    )()),
+                                    hooks: {
+                                        onSaveSpritesheet: (
+                                            image:Object
+                                        ):string => path.join(
+                                            image.spritePath,
+                                            path.relative(
+                                                configuration.path.target.asset
+                                                    .image,
+                                                configuration.files.compose
+                                                    .image))
+                                    },
+                                    stylesheetPath:
+                                        configuration.path.source.asset
+                                            .cascadingStyleSheet,
+                                    spritePath:
+                                        configuration.path.source.asset.image
+                                })
+                            ].concat(
+                                configuration.module.optimizer.cssnano ?
+                                    postcssCSSnano(
+                                        configuration.module.optimizer.cssnano
+                                    ) : [])
+                        },
+                        configuration.module.preprocessor.cascadingStyleSheet
+                            .options || {})
+                    },
+                    configuration.module.preprocessor.cascadingStyleSheet
+                        .additional.post.map(evaluate))
     },
     // endregion
     // Optimize loaded assets.
@@ -899,11 +938,16 @@ Tools.extendObject(loader, {
                 evaluate(
                     configuration.module.optimizer.font.eot.exclude, filePath),
             test: /\.eot(?:\?.*)?$/i,
-            use: [{
-                loader: configuration.module.optimizer.font.eot.loader,
-                options: configuration.module.optimizer.font.eot.options || {}
-            }].concat(configuration.module.optimizer.font.eot.additional.map(
-                evaluate))
+            use: configuration.module.optimizer.font.eot.additional.pre.map(
+                evaluate
+            ).concat(
+                {
+                    loader: configuration.module.optimizer.font.eot.loader,
+                    options: configuration.module.optimizer.font.eot.options ||
+                        {}
+                },
+                configuration.module.optimizer.font.eot.additional.post.map(
+                    evaluate))
         },
         svg: {
             exclude: (filePath:string):boolean => (
@@ -912,11 +956,16 @@ Tools.extendObject(loader, {
                 evaluate(
                     configuration.module.optimizer.font.svg.exclude, filePath),
             test: /\.svg(?:\?.*)?$/i,
-            use: [{
-                loader: configuration.module.optimizer.font.svg.loader,
-                options: configuration.module.optimizer.font.svg.options || {}
-            }].concat(configuration.module.optimizer.font.svg.additional.map(
-                evaluate))
+            use: configuration.module.optimizer.font.svg.additional.pre.map(
+                evaluate
+            ).concat(
+                {
+                    loader: configuration.module.optimizer.font.svg.loader,
+                    options: configuration.module.optimizer.font.svg.options ||
+                        {}
+                },
+                configuration.module.optimizer.font.svg.additional.post.map(
+                    evaluate))
         },
         ttf: {
             exclude: (filePath:string):boolean => (
@@ -925,11 +974,16 @@ Tools.extendObject(loader, {
                 evaluate(
                     configuration.module.optimizer.font.ttf.exclude, filePath),
             test: /\.ttf(?:\?.*)?$/i,
-            use: [{
-                loader: configuration.module.optimizer.font.ttf.loader,
-                options: configuration.module.optimizer.font.ttf.options || {}
-            }].concat(configuration.module.optimizer.font.ttf.additional.map(
-                evaluate))
+            use: configuration.module.optimizer.font.ttf.additional.pre.map(
+                evaluate
+            ).concat(
+                {
+                    loader: configuration.module.optimizer.font.ttf.loader,
+                    options: configuration.module.optimizer.font.ttf.options ||
+                        {}
+                },
+                configuration.module.optimizer.font.ttf.additional.post.map(
+                    evaluate))
         },
         woff: {
             exclude: (filePath:string):boolean => (
@@ -939,11 +993,16 @@ Tools.extendObject(loader, {
                     configuration.module.optimizer.font.woff.exclude, filePath
                 ),
             test: /\.woff2?(?:\?.*)?$/i,
-            use: [{
-                loader: configuration.module.optimizer.font.woff.loader,
-                options: configuration.module.optimizer.font.woff.options || {}
-            }].concat(configuration.module.optimizer.font.woff.additional.map(
-                evaluate))
+            use: configuration.module.optimizer.font.woff.additional.pre.map(
+                evaluate
+            ).concat(
+                {
+                    loader: configuration.module.optimizer.font.woff.loader,
+                    options:
+                        configuration.module.optimizer.font.woff.options || {}
+                },
+                configuration.module.optimizer.font.woff.additional.post.map(
+                    evaluate))
         }
     },
     // endregion
@@ -955,11 +1014,14 @@ Tools.extendObject(loader, {
             evaluate(configuration.module.optimizer.image.exclude, filePath),
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
-        use: [{
-            loader: configuration.module.optimizer.image.loader,
-            options: configuration.module.optimizer.image.file || {}
-        }].concat(configuration.module.optimizer.image.additional.map(
-            evaluate))
+        use: configuration.module.optimizer.image.additional.pre.map(
+            evaluate
+        ).concat(
+            {
+                loader: configuration.module.optimizer.image.loader,
+                options: configuration.module.optimizer.image.file || {}
+            },
+            configuration.module.optimizer.image.additional.post.map(evaluate))
     },
     // endregion
     // region data
@@ -973,10 +1035,14 @@ Tools.extendObject(loader, {
                 evaluate(
                     configuration.module.optimizer.data.exclude, filePath)),
         test: /.+/,
-        use: [{
-            loader: configuration.module.optimizer.data.loader,
-            options: configuration.module.optimizer.data.options || {}
-        }].concat(configuration.module.optimizer.data.additional.map(evaluate))
+        use: configuration.module.optimizer.data.additional.pre.map(
+            evaluate
+        ).concat(
+            {
+                loader: configuration.module.optimizer.data.loader,
+                options: configuration.module.optimizer.data.options || {}
+            },
+            configuration.module.optimizer.data.additional.post.map(evaluate))
     }
     // endregion
 })
@@ -1050,20 +1116,9 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extendObject(
         // endregion
         mode: configuration.debug ? 'development' : 'production',
         module: {
-            rules: configuration.module.additional.map((
-                loaderConfiguration:PlainObject
-            ):PlainObject => {
-                return {
-                    exclude: (filePath:string):boolean => evaluate(
-                        loaderConfiguration.exclude || 'false', filePath),
-                    include: loaderConfiguration.include && evaluate(
-                        loaderConfiguration.include, configuration.path.context
-                    ) || configuration.path.source.base,
-                    test: new RegExp(evaluate(
-                        loaderConfiguration.test, configuration.path.context)),
-                    use: evaluate(loaderConfiguration.use)
-                }
-            }).concat([
+            rules: configuration.module.additional.pre.map(
+                generateLoader
+            ).concat(
                 loader.ejs,
                 loader.script,
                 loader.html.main, loader.html.ejs, loader.html.html,
@@ -1071,8 +1126,9 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extendObject(
                 loader.font.eot, loader.font.svg, loader.font.ttf,
                 loader.font.woff,
                 loader.image,
-                loader.data
-            ])
+                loader.data,
+                configuration.module.additional.post.map(generateLoader)
+            )
         },
         node: configuration.nodeEnvironment,
         optimization: {

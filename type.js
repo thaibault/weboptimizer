@@ -58,6 +58,10 @@ export type Injection = {
 }
 // / endregion
 // / region configuration
+export type Additional = {
+    post:Array<string>;
+    pre:Array<string>;
+}
 export type AssetPath = {
     base:string;
     cascadingStyleSheet:string;
@@ -147,7 +151,7 @@ export type Extensions = {
     module:Array<string>;
 }
 export type LoaderConfiguration = {
-    additional:Array<string>;
+    additional:Additional;
     exclude:string;
     include:string;
     loader:string;
@@ -227,7 +231,7 @@ export type ResolvedConfiguration = {
         };
     };
     module:{
-        additional:Array<PlainObject>;
+        additional:Additional;
         aliases:PlainObject;
         cascadingStyleSheet:LoaderConfiguration;
         directoryNames:Array<string>;
@@ -251,7 +255,7 @@ export type ResolvedConfiguration = {
             };
             htmlMinifier:?PlainObject;
             image:{
-                additional:Array<string>;
+                additional:Additional;
                 content:PlainObject;
                 exclude:string;
                 file:PlainObject;
@@ -261,7 +265,7 @@ export type ResolvedConfiguration = {
         };
         preprocessor:{
             cascadingStyleSheet:{
-                additional:Array<string>;
+                additional:Additional;
                 loader:string;
                 options:Object;
             };
