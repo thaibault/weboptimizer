@@ -809,9 +809,11 @@ export class Helper {
         internalInjection:InternalInjection
     ):NormalizedInternalInjection {
         let result:NormalizedInternalInjection = {}
-        if (internalInjection instanceof Object && Tools.isPlainObject(
-            internalInjection
-        )) {
+        if (Array.isArray(internalInjection))
+            result = {index: internalInjection}
+        else if (typeof internalInjection === 'string')
+            result = {index: [internalInjection]}
+        else if (Tools.isPlainObject(internalInjection)) {
             let hasContent:boolean = false
             const chunkNamesToDelete:Array<string> = []
             for (const chunkName:string in internalInjection)
@@ -831,10 +833,7 @@ export class Helper {
                     delete result[chunkName]
             else
                 result = {index: []}
-        } else if (typeof internalInjection === 'string')
-            result = {index: [internalInjection]}
-        else if (Array.isArray(internalInjection))
-            result = {index: internalInjection}
+        }
         return result
     }
     /**
