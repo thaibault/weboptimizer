@@ -141,7 +141,7 @@ for (const source:string in configuration.module.replacements.normal)
 // // region generate html file
 let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'build:dll')
-    for (let htmlConfiguration:HTMLConfiguration of configuration.files.html)
+    for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
         if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
             pluginInstances.push(new plugins.HTML(Tools.extendObject(
                 {}, htmlConfiguration, {
@@ -498,7 +498,6 @@ if (htmlAvailable)
                         return `${startTag}${endTag}`
                     })
                 let dom:DOM
-                let window:Window
                 try {
                     /*
                         NOTE: We have to translate template delimiter to html
@@ -512,7 +511,6 @@ if (htmlAvailable)
                 } catch (error) {
                     return callback(error, data)
                 }
-                window = dom.window
                 const linkables:{[key:string]:string} = {
                     link: 'href',
                     script: 'src'
@@ -521,7 +519,7 @@ if (htmlAvailable)
                     if (linkables.hasOwnProperty(tagName))
                         for (
                             const domNode:DomNode of
-                            window.document.querySelectorAll(
+                            dom.window.document.querySelectorAll(
                                 `${tagName}[${linkables[tagName]}*="?` +
                                 `${configuration.hashAlgorithm}="]`)
                         )

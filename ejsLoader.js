@@ -150,7 +150,7 @@ module.exports = function(source:string):string {
                 }, query.compress.html)) : content
         let remainingSteps:number = compileSteps
         let result:TemplateFunction|string = template
-        let isString:boolean = options.isString
+        const isString:boolean = options.isString
         delete options.isString
         while (remainingSteps > 0) {
             if (typeof result === 'string') {

@@ -435,7 +435,7 @@ export class Helper {
         requestContext = path.resolve(requestContext)
         referencePath = path.resolve(referencePath)
         // NOTE: We apply alias on externals additionally.
-        let resolvedRequest:string = Helper.applyModuleReplacements(
+        const resolvedRequest:string = Helper.applyModuleReplacements(
             Helper.applyAliases(request.substring(
                 request.lastIndexOf('!') + 1
             ), aliases), moduleReplacements)
@@ -443,7 +443,7 @@ export class Helper {
             NOTE: Aliases and module replacements doesn't have to be forwarded
             since we pass an already resolved request.
         */
-        let filePath:?string = Helper.determineModuleFilePath(
+        const filePath:?string = Helper.determineModuleFilePath(
             resolvedRequest,
             {},
             {},
@@ -494,7 +494,7 @@ export class Helper {
                         encoding
                     ) === filePath)
                         return null
-        let parts = context.split('/')
+        const parts = context.split('/')
         // parts.splice(-1, 1)
         const externalModuleLocations = []
         while (parts.length > 0) {
@@ -1056,7 +1056,7 @@ export class Helper {
             relativeModuleLocations.map((filePath:string):string =>
                 path.resolve(context, filePath))
         )
-        let parts = context.split('/')
+        const parts = context.split('/')
         parts.splice(-1, 1)
         while (parts.length > 0) {
             for (const relativePath:string of relativeModuleLocations)
