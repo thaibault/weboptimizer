@@ -47,7 +47,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             console.error(error.stack, error.detail)
     })
     const render:Function = (template:string):Window => {
-        let window:Window = (new JSDOM(template, {
+        const window:Window = (new JSDOM(template, {
             resources: 'usable',
             runScripts: 'dangerously',
             url: 'http://localhost',

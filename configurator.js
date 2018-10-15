@@ -32,7 +32,7 @@ import type {
     MetaConfiguration,
     ResolvedConfiguration
 } from './type'
-let metaConfiguration:MetaConfiguration = givenMetaConfiguration
+const metaConfiguration:MetaConfiguration = givenMetaConfiguration
 /*
     To assume to go two folder up from this file until there is no
     "node_modules" parent folder is usually resilient again dealing with
@@ -424,7 +424,8 @@ resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath$ =
     configurations.
 */
 for (
-    let htmlConfiguration:HTMLConfiguration of resolvedConfiguration.files.html
+    const htmlConfiguration:HTMLConfiguration of
+    resolvedConfiguration.files.html
 ) {
     Tools.extendObject(
         true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)

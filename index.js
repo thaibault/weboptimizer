@@ -48,8 +48,10 @@ const main = async ():Promise<any> => {
         if (configuration.givenCommandLineArguments.length > 2) {
             // region temporary save dynamically given configurations
             // NOTE: We need a copy of given arguments array.
-            let dynamicConfiguration:PlainObject = {givenCommandLineArguments:
-                configuration.givenCommandLineArguments.slice()}
+            const dynamicConfiguration:PlainObject = {
+                givenCommandLineArguments:
+                    configuration.givenCommandLineArguments.slice()
+            }
             if (
                 configuration.givenCommandLineArguments.length > 3 &&
                 Tools.stringParseEncodedObject(
