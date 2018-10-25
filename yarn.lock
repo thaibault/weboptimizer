@@ -1976,8 +1976,8 @@ cli-width@^2.0.0:
   resolved "https://registry.yarnpkg.com/cli-width/-/cli-width-2.2.0.tgz#ff19ede8a9a5e579324147b0c11f0fbcbabed639"
 
 clientnode@*:
-  version "3.0.134"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.134.tgz#bb88aaa7eb9e4a30123d147ba4a9a1f819cf8afd"
+  version "3.0.135"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.135.tgz#c2abb6adb10cdbb252502e68a0161b0e4c3edf6e"
   dependencies:
     colors "*"
 
@@ -4142,9 +4142,13 @@ hasha@^2.2.0:
     is-stream "^1.0.1"
     pinkie-promise "^2.0.0"
 
-he@1.1.1, he@1.1.x:
+he@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/he/-/he-1.1.1.tgz#93410fd21b009735151f8868c2f271f3427e23fd"
+
+he@1.2.x:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
 
 hex-color-regex@^1.1.0:
   version "1.1.0"
@@ -4217,13 +4221,13 @@ html-loader@*:
     object-assign "^4.1.1"
 
 html-minifier@*, html-minifier@^3.2.3, html-minifier@^3.5.8:
-  version "3.5.20"
-  resolved "https://registry.yarnpkg.com/html-minifier/-/html-minifier-3.5.20.tgz#7b19fd3caa0cb79f7cde5ee5c3abdf8ecaa6bb14"
+  version "3.5.21"
+  resolved "https://registry.yarnpkg.com/html-minifier/-/html-minifier-3.5.21.tgz#d0040e054730e354db008463593194015212d20c"
   dependencies:
     camel-case "3.0.x"
     clean-css "4.2.x"
     commander "2.17.x"
-    he "1.1.x"
+    he "1.2.x"
     param-case "2.1.x"
     relateurl "0.2.x"
     uglify-js "3.4.x"
