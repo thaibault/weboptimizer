@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.290",
+  "version": "2.0.291",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "https://torben.website/webOptimizer",
@@ -53,7 +53,7 @@
     "report:coverage": "nyc report --reporter=text-lcov | coveralls",
     "test": "yarn test:plain && nyc test/index.compiled.js",
     "test:plain": "yarn clear && command='babel --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-flow-strip-types,@babel/plugin-transform-runtime --presets @babel/preset-env --source-maps inline --source-root ../ --out-file' && $command ejsLoader.compiled.js ejsLoader.js && $command browserAPI.compiled.js browserAPI.js && $command test/browserAPI.compiled.js test/browserAPI.js && $command configurator.compiled.js configurator.js && $command helper.compiled.js helper.js && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.js *.json *.ejs node_modules/weboptimizer/ && chmod +x test/* && test/browserAPI.compiled.js && $command test/configurator.compiled.js test/configurator.js && chmod +x test/* && test/configurator.compiled.js && $command test/helper.compiled.js test/helper.js && chmod +x test/* && test/helper.compiled.js && $command test/ejsLoader.compiled.js test/ejsLoader.js && chmod +x test/* && test/ejsLoader.compiled.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && chmod +x test/* && test/stylelintConfigurator.compiled.js && $command index.compiled.js index.js && $command test/index.compiled.js test/index.js && chmod +x test/* && test/index.compiled.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js && chmod +x test/* && test/webpackConfigurator.compiled.js",
-    "update": "yarn version --patch && yarn --non-interactive publish",
+    "update": "yarn version --patch && yarn --new-version --non-interactive publish",
     "update:documentation": "documentationWebsite --log-level info"
   },
   "dependencies": {
