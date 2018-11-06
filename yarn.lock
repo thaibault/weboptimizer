@@ -2277,9 +2277,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.147"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.147.tgz#3e43bda770736f6d9a5e836ab29343761e6d3e05"
-  integrity sha512-/1yEKMYnOVJkQbnQ07qGRbvm+31OmWkKK2ML8W2pX9b4NaWsW62ToT5/EzdZzum+uNdyn10RbXHckHbAaKtNeg==
+  version "3.0.149"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.149.tgz#61020a52503af1498eb67a99b818521d4b348c5f"
+  integrity sha512-FT1cZnqy3YrdYLNpysrw2WcNFp52HUFSI1hL7JlP4CaeWEDjBj1Ptb5vO0YfDxKqKJFK7/NTE6ADkTtht/ysDQ==
   dependencies:
     colors "*"
 
@@ -5164,9 +5164,9 @@ internal-ip@^3.0.1:
     ipaddr.js "^1.5.2"
 
 internationalisation@*:
-  version "1.0.133"
-  resolved "https://registry.yarnpkg.com/internationalisation/-/internationalisation-1.0.133.tgz#e4bc345c09ed2feed7f27b4d9db25ade754d2948"
-  integrity sha512-Bg3Lxt55BOyFD9SFamjK0fRlw98Xfr78F3eW1isKq9ZGf+1UZsJfvKMV7xZW10jRjmliK3H5TYAiUqM4yFsqHw==
+  version "1.0.135"
+  resolved "https://registry.yarnpkg.com/internationalisation/-/internationalisation-1.0.135.tgz#6e39c02d8d68d5f6af431171d4fe3a4965b40eef"
+  integrity sha512-mZSc6zRqg6nunD49YzXmgXjkAWOqDv7bm0Fn86mY5Tu6ZM3Io0NVbd+zFj5wW6JJn/cNnEwjxgR/aQ1UJeCOlw==
 
 interpret@^1.1.0:
   version "1.1.0"
