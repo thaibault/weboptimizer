@@ -2262,9 +2262,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.150"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.150.tgz#1a7e779eaebb03f79029d5e818164d05db3d05fe"
-  integrity sha512-bH7D6T/YO8sm+rGyg0Ok9Y+jLWKhlAoqrRvjrx5dLL+aQn1J0Z1t9Cu78PC7tuNR18p1/ndR6sHQbGfJscSIsQ==
+  version "3.0.152"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.152.tgz#f2e56bd3aefaaca71a271e1bb3cdfc003ff4cb9d"
+  integrity sha512-iPHgkJKA81TsKubPLBdf3+x9XKXECLlGtktxaTIOgYhAcTOaxLERqF45iMnQo82aBmKqmGcPjTkh6nVy433Iww==
   dependencies:
     colors "*"
 
