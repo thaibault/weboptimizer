@@ -773,6 +773,7 @@
             "minifyCSS": true,
             "minifyURLs": false,
             "preserveLineBreaks": false,
+            "#": "NOTE: Needed for attribute nested quotes whoch should be escaped.",
             "preventAttributesEscaping": true,
             "processScripts": [],
             "processConditionalComments": false,
