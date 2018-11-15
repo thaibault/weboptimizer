@@ -543,7 +543,7 @@
       "hashAlgorithm": "md5",
       "injection": {
         "autoExclude": [
-          "./test"
+          "./test", "./dummy"
         ],
         "chunks": {},
         "dllChunkNames": [
