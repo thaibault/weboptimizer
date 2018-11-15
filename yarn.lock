@@ -3266,9 +3266,9 @@ doctrine@^2.1.0:
     esutils "^2.0.2"
 
 documentation-website@*:
-  version "1.0.175"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.175.tgz#9d3e0c746602df20760216d72efc1f79771f0284"
-  integrity sha512-J+2GJbIcrCRhlSIVXkbE1VjwQIj4wqbx277mlnLlRBAuZ+P/zxTlmyCZ1+tp67ML6HaFS15TgTl/0NRm7bb1Fg==
+  version "1.0.176"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.176.tgz#2d755e6b1cf56358a6cba51ae7e0f59e292b9e9b"
+  integrity sha512-fTGIT4qs6KetbK3JpakDF6rVBRhT5W/u09hk3f+JsAS+B43YkUa+F2NO+66zHZrWDKxCpA6/v5Y++lbEE/3JhA==
   dependencies:
     boostnode "*"
     bootstrap "^3.3.7"
