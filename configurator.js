@@ -118,7 +118,8 @@ if (typeof configuration.library === 'object')
     ), configuration.library)
 if (
     'library' in specificConfiguration &&
-    specificConfiguration.library === true || (
+    specificConfiguration.library === true ||
+    (
         'library' in specificConfiguration &&
         specificConfiguration.library === undefined ||
         !('library' in specificConfiguration)
