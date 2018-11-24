@@ -606,7 +606,9 @@
           ]
         },
         "directoryNames": [
-          "node_modules"
+          "node_modules",
+          "../node_modules",
+          "../node_modules"
         ]
       },
       "module": {
@@ -624,7 +626,9 @@
           "options": {}
         },
         "directoryNames": [
-          "node_modules"
+          "node_modules",
+          "../node_modules",
+          "../node_modules"
         ],
         "html": {
           "additional": {
