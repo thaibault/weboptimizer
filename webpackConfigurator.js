@@ -890,7 +890,13 @@ Tools.extendObject(loader, {
                                 location than the project itself like the
                                 "node_modules" folder.
                             */
-                            postcssFontPath({checkPath: false}),
+                            postcssFontPath({
+                                checkPath: false,
+                                formats: [
+                                    {type: 'woff', ext: 'woff'},
+                                    {type: 'woff2', ext: 'woff2'}
+                                ]
+                            }),
                             postcssURL({url: 'rebase'}),
                             postcssSprites({
                                 filterBy: ():Promise<null> =>
