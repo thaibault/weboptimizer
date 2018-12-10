@@ -893,8 +893,8 @@ Tools.extendObject(loader, {
                             postcssFontPath({
                                 checkPath: false,
                                 formats: [
-                                    {type: 'woff', ext: 'woff'},
-                                    {type: 'woff2', ext: 'woff2'}
+                                    {type: 'woff2', ext: 'woff2'},
+                                    {type: 'woff', ext: 'woff'}
                                 ]
                             }),
                             postcssURL({url: 'rebase'}),
