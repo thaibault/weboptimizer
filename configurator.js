@@ -148,7 +148,7 @@ if (filePath) {
         encoding: (configuration.encoding:string)}))
     fileSystem.unlink(filePath, (error:?Error):void => {
         if (error)
-            throw error
+            throw Error(error)
     })
 }
 // // region task specific configuration

@@ -83,7 +83,7 @@ const main = async ():Promise<any> => {
                 if (Tools.isFileSync(filePath))
                     fileSystem.unlinkSync(filePath)
                 if (error)
-                    throw error
+                    throw Error(error)
             })
             // / endregion
             // endregion
@@ -472,15 +472,13 @@ const main = async ():Promise<any> => {
         // endregion
     } catch (error) {
         if (configuration.debug)
-            throw error
+            throw Error(error)
         else
             console.error(error)
     }
 }
 if (require.main === module)
-    main().catch((error:Error):void => {
-        throw error
-    })
+    main()
 export default main
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
