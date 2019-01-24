@@ -30,7 +30,11 @@ import type {ResolvedBuildConfiguration} from './type'
 // NOTE: Specifies number of allowed threads to spawn.
 // IgnoreTypeCheck
 process.env.UV_THREADPOOL_SIZE = 128
-const main = async ():Promise<any> => {
+/**
+ * Main entry point.
+ * @returns Noting.
+ */
+const main = async ():Promise<void> => {
     try {
         // region controller
         const childProcessOptions:Object = {
@@ -83,6 +87,7 @@ const main = async ():Promise<any> => {
                 if (Tools.isFileSync(filePath))
                     fileSystem.unlinkSync(filePath)
                 if (error)
+                    // IgnoreTypeCheck
                     throw Error(error)
             })
             // / endregion
