@@ -106,16 +106,20 @@ metaConfiguration.default.path.context += '/'
 const libraryConfiguration:PlainObject = metaConfiguration.library
 let configuration:DefaultConfiguration
 if (debug)
-    configuration = Tools.extendObject(true, Tools.modifyObject(
-        metaConfiguration.default, metaConfiguration.debug
-    ), metaConfiguration.debug)
+    configuration = Tools.extend(
+        true,
+        Tools.modifyObject(metaConfiguration.default, metaConfiguration.debug),
+        metaConfiguration.debug
+    )
 else
     configuration = metaConfiguration.default
 configuration.debug = debug
 if (typeof configuration.library === 'object')
-    Tools.extendObject(true, Tools.modifyObject(
-        libraryConfiguration, configuration.library
-    ), configuration.library)
+    Tools.extend(
+        true,
+        Tools.modifyObject(libraryConfiguration, configuration.library),
+        configuration.library
+    )
 if (
     'library' in specificConfiguration &&
     specificConfiguration.library === true ||
@@ -126,9 +130,10 @@ if (
     ) &&
     configuration.library
 )
-    configuration = Tools.extendObject(true, Tools.modifyObject(
-        configuration, libraryConfiguration
-    ), libraryConfiguration)
+    configuration = Tools.extend(
+        true, Tools.modifyObject(configuration, libraryConfiguration),
+        libraryConfiguration
+    )
 // endregion
 // region merging and evaluating task specific and dynamic configurations
 // / region load additional dynamically given configuration
@@ -166,9 +171,12 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
                 configuration, specificConfiguration
             ])
                 if (typeof configurationTarget[type] === 'object')
-                    Tools.extendObject(true, Tools.modifyObject(
-                        configurationTarget, configurationTarget[type]
-                    ), configurationTarget[type])
+                    Tools.extend(
+                        true,
+                        Tools.modifyObject(
+                            configurationTarget, configurationTarget[type]),
+                        configurationTarget[type]
+                    )
 // /// endregion
 // /// region clear task type specific configurations
 for (const type:string of taskTypes)
@@ -183,9 +191,14 @@ for (const type:string of taskTypes)
 // /// endregion
 // // endregion
 // / endregion
-Tools.extendObject(true, Tools.modifyObject(Tools.modifyObject(
-    configuration, specificConfiguration
-), runtimeInformation), specificConfiguration, runtimeInformation)
+Tools.extend(
+    true,
+    Tools.modifyObject(
+        Tools.modifyObject(configuration, specificConfiguration),
+        runtimeInformation),
+    specificConfiguration,
+    runtimeInformation
+)
 let result:?PlainObject = null
 if (runtimeInformation.givenCommandLineArguments.length > 3)
     result = Tools.stringParseEncodedObject(
@@ -197,9 +210,9 @@ if (typeof result === 'object' && result !== null) {
         const referenceNames:Array<string> = [].concat(result.__reference__)
         delete result.__reference__
         for (const name:string of referenceNames)
-            Tools.extendObject(true, result, configuration[name])
+            Tools.extend(true, result, configuration[name])
     }
-    Tools.extendObject(true, Tools.modifyObject(configuration, result), result)
+    Tools.extend(true, Tools.modifyObject(configuration, result), result)
 }
 // Removing comments (default key name to delete is "#").
 configuration = Tools.removeKeys(configuration)
@@ -293,15 +306,17 @@ const defaultConfiguration:PlainObject =
 delete resolvedConfiguration.buildContext.types.default
 for (const type:string in resolvedConfiguration.buildContext.types)
     if (resolvedConfiguration.buildContext.types.hasOwnProperty(type))
-        resolvedConfiguration.buildContext.types[type] = Tools.extendObject(
+        resolvedConfiguration.buildContext.types[type] = Tools.extend(
             true,
             {},
             defaultConfiguration,
-            Tools.extendObject(
+            Tools.extend(
                 true,
                 {extension: type},
                 resolvedConfiguration.buildContext.types[type],
-                {type}))
+                {type}
+            )
+        )
 // endregion
 // region resolve module location and determine which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(
@@ -428,7 +443,7 @@ for (
     const htmlConfiguration:HTMLConfiguration of
     resolvedConfiguration.files.html
 ) {
-    Tools.extendObject(
+    Tools.extend(
         true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)
     htmlConfiguration.template.request = htmlConfiguration.template.filePath
     if (

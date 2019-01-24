@@ -89,7 +89,7 @@ import htmlLoaderModuleBackup from 'html-loader'
 require.cache[require.resolve('html-loader')].exports = function(
     ...parameter:Array<any>
 ):any {
-    Tools.extendObject(true, this.options, module, this.options)
+    Tools.extend(true, this.options, module, this.options)
     return htmlLoaderModuleBackup.call(this, ...parameter)
 }
 // Monkey-Patch loader-utils to define which url is a local request.
@@ -143,9 +143,11 @@ let htmlAvailable:boolean = false
 if (configuration.givenCommandLineArguments[2] !== 'build:dll')
     for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
         if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
-            pluginInstances.push(new plugins.HTML(Tools.extendObject(
-                {}, htmlConfiguration, {
-                    template: htmlConfiguration.template.request})))
+            pluginInstances.push(new plugins.HTML(Tools.extend(
+                {},
+                htmlConfiguration,
+                {template: htmlConfiguration.template.request}
+            )))
             htmlAvailable = true
         }
 // // endregion
@@ -572,13 +574,18 @@ if (htmlAvailable)
                                     === 'number'
                             )
                                 data.html = ejsLoader.bind(
-                                    Tools.extendObject(true, {}, {
-                                        options:
+                                    Tools.extend(
+                                        true,
+                                        {},
+                                        {options:
                                             loaderConfiguration.options || {}
-                                    }, {options: {
-                                        compileSteps: htmlFileSpecification
-                                            .template.postCompileSteps
-                                    }}))(data.html)
+                                        },
+                                        {options: {
+                                            compileSteps: htmlFileSpecification
+                                                .template.postCompileSteps
+                                        }}
+                                    )
+                                )(data.html)
                         break
                     }
                 // endregion
@@ -704,7 +711,7 @@ const evaluate:Function = (code:string, filePath:string):any => (new Function(
     'filePath', ...Object.keys(scope), `return ${code}`
 // IgnoreTypeCheck
 ))(filePath, ...Object.values(scope))
-Tools.extendObject(loader, {
+Tools.extend(loader, {
     // Convert to compatible native web types.
     // region generic template
     ejs: {
@@ -870,7 +877,7 @@ Tools.extendObject(loader, {
                     loader:
                         configuration.module.preprocessor.cascadingStyleSheet
                             .loader,
-                    options: Tools.extendObject(true, {
+                    options: Tools.extend(true, {
                         ident: 'postcss',
                         plugins: ():Array<Object> => [
                             postcssImport({
@@ -1073,8 +1080,9 @@ for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
         pluginConfiguration.name.initializer
     ])(...pluginConfiguration.parameter))
 // region configuration
-export const webpackConfiguration:WebpackConfiguration = Tools.extendObject(
-    true, {
+export const webpackConfiguration:WebpackConfiguration = Tools.extend(
+    true,
+    {
         bail: true,
         cache: configuration.cache.main,
         context: configuration.path.context,
@@ -1155,8 +1163,9 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extendObject(
                         default: false,
                         vendors: false
                     }
-                } : Tools.extendObject(
-                    true, {
+                } : Tools.extend(
+                    true,
+                    {
                         chunks: 'all',
                         cacheGroups: {
                             vendors: {
