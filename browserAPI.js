@@ -74,7 +74,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             error:?Error, content:string
         ):void => {
             if (error)
-                throw error
+                throw Error(error)
             render(require('./ejsLoader.compiled').bind({filename: filePath})(
                 content))
         })

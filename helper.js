@@ -581,8 +581,7 @@ export class Helper {
         for (const type:string in configuration)
             if (configuration.hasOwnProperty(type)) {
                 const newItem:ResolvedBuildConfigurationItem =
-                    Tools.extendObject(true, {filePaths: []}, configuration[
-                        type])
+                    Tools.extend(true, {filePaths: []}, configuration[type])
                 for (const file:File of Tools.walkDirectoryRecursivelySync(
                     entryPath, (file:File):?false => {
                         if (Helper.isFilePathInLocation(
@@ -886,8 +885,7 @@ export class Helper {
         referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
     ):Injection {
-        const injection:Injection = Tools.extendObject(
-            true, {}, givenInjection)
+        const injection:Injection = Tools.extend(true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
                 modulesToExclude,

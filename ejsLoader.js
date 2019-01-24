@@ -37,7 +37,7 @@ module.exports = function(source:string):string {
     if ('cachable' in this && this.cacheable)
         this.cacheable()
     const query:Object = Tools.convertSubstringInPlainObject(
-        Tools.extendObject(
+        Tools.extend(
             true,
             {
                 compress: {
@@ -71,7 +71,7 @@ module.exports = function(source:string):string {
         template:string, options:Object = query.compiler,
         compileSteps:number = 2
     ):TemplateFunction => (locals:Object = {}):string => {
-        options = Tools.extendObject(true, {filename: template}, options)
+        options = Tools.extend(true, {filename: template}, options)
         const require:Function = (
             request:string, nestedLocals:Object = {}
         ):string => {
@@ -86,13 +86,15 @@ module.exports = function(source:string):string {
                     'request', 'template', 'source', 'compile', 'locals',
                     `return ${queryMatch[1]}`
                 )(request, template, source, compile, locals)
-                nestedLocals = Tools.extendObject(
-                    true, nestedLocals, evaluationFunction(
+                nestedLocals = Tools.extend(
+                    true,
+                    nestedLocals,
+                    evaluationFunction(
                         request, template, source, compile, locals))
             }
             let nestedOptions:Object = Tools.copy(options)
             delete nestedOptions.client
-            nestedOptions = Tools.extendObject(
+            nestedOptions = Tools.extend(
                 true, {encoding: configuration.encoding}, nestedOptions,
                 nestedLocals.options || {})
             if (nestedOptions.isString)
@@ -126,8 +128,9 @@ module.exports = function(source:string):string {
                 `Given template file "${template}" couldn't be resolved.`)
         }
         const compressHTML:Function = (content:string):string =>
-            query.compress.html ? minifyHTML(content, Tools.extendObject(
-                true, {
+            query.compress.html ? minifyHTML(content, Tools.extend(
+                true,
+                {
                     caseSensitive: true,
                     collapseInlineTagWhitespace: true,
                     collapseWhitespace: true,
@@ -147,7 +150,9 @@ module.exports = function(source:string):string {
                     // NOTE: Avoids whitespace around placeholder in tags.
                     trimCustomFragments: true,
                     useShortDoctype: true
-                }, query.compress.html)) : content
+                },
+                query.compress.html
+            )) : content
         let remainingSteps:number = compileSteps
         let result:TemplateFunction|string = template
         const isString:boolean = options.isString
@@ -169,9 +174,11 @@ module.exports = function(source:string):string {
                     result = ejs.compile(result, options)
                 }
             } else
-                result = compressHTML(result(Tools.extendObject(true, {
-                    configuration, Helper, include: require, require, Tools
-                }, locals)))
+                result = compressHTML(result(Tools.extend(
+                    true,
+                    {configuration, Helper, include: require, require, Tools},
+                    locals
+                )))
             remainingSteps -= 1
         }
         if (Boolean(compileSteps % 2))
