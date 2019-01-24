@@ -153,6 +153,7 @@ if (filePath) {
         encoding: (configuration.encoding:string)}))
     fileSystem.unlink(filePath, (error:?Error):void => {
         if (error)
+            // IgnoreTypeCheck
             throw Error(error)
     })
 }

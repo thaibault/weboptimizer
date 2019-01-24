@@ -70,14 +70,18 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     }
     if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
         const filePath:string = path.join(__dirname, 'index.html.ejs')
-        require('fs').readFile(filePath, {encoding: 'utf-8'}, (
-            error:?Error, content:string
-        ):void => {
-            if (error)
-                throw Error(error)
-            render(require('./ejsLoader.compiled').bind({filename: filePath})(
-                content))
-        })
+        require('fs').readFile(
+            filePath,
+            {encoding: 'utf-8'},
+            (error:?Error, content:string):void => {
+                if (error)
+                    // IgnoreTypeCheck
+                    throw Error(error)
+                render(require('./ejsLoader.compiled').bind(
+                    {filename: filePath}
+                )(content))
+            }
+        )
     } else
         // IgnoreTypeCheck
         render(require('webOptimizerDefaultTemplateFilePath'))
