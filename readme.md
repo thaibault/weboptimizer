@@ -7,7 +7,7 @@ License
 -------
 
 This library written by Torben Sickert stand under a creative commons naming
-3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
+3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 endregion -->
 
 Project status
@@ -20,7 +20,7 @@ Project status
 [![dependencies](https://img.shields.io/david/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer)
 [![development dependencies](https://img.shields.io/david/dev/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=dev)
 [![peer dependencies](https://img.shields.io/david/peer/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=peer)
-[![documentation website](https://img.shields.io/website-up-down-green-red/http/torben.website/webOptimizer.svg?label=documentation-website)](http://torben.website/webOptimizer)
+[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/webOptimizer.svg?label=documentation-website)](https://torben.website/webOptimizer)> regionendregion
 
 Use case
 --------
@@ -298,7 +298,7 @@ placeholder) you can encode your javaScript expression as base64 code:
 
     npm run build 'e21vZHVsZTp7cHJlcHJvY2Vzc29yOntwdWc6e2xvY2Fsczp7bmFtZTonaMOkbnMnfX19fX0='
 
-There is a static tool [clientnode](http://torben.website/clientNode) and
+There is a static tool [clientnode](https://torben.website/clientNode) and
 helper instance provided to each evaluation or execution context within the
 package.json (see the API-Documentation, link above, for more details):
 
