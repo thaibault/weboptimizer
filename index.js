@@ -4,6 +4,8 @@
 'use strict'
 /* !
     region header
+    [Project page](https://torben.website/webOptimizer)
+
     Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
 
     License
@@ -88,8 +90,7 @@ const main = async ():Promise<void> => {
                 if (Tools.isFileSync(filePath))
                     fileSystem.unlinkSync(filePath)
                 if (error)
-                    // IgnoreTypeCheck
-                    throw Error(error)
+                    throw error
             })
             // / endregion
             // endregion
@@ -478,7 +479,7 @@ const main = async ():Promise<void> => {
         // endregion
     } catch (error) {
         if (configuration.debug)
-            throw Error(error)
+            throw error
         else
             console.error(error)
     }
