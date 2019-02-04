@@ -76,8 +76,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             {encoding: 'utf-8'},
             (error:?Error, content:string):void => {
                 if (error)
-                    // IgnoreTypeCheck
-                    throw Error(error)
+                    throw error
                 render(require('./ejsLoader.compiled').bind(
                     {filename: filePath}
                 )(content))

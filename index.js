@@ -90,8 +90,7 @@ const main = async ():Promise<void> => {
                 if (Tools.isFileSync(filePath))
                     fileSystem.unlinkSync(filePath)
                 if (error)
-                    // IgnoreTypeCheck
-                    throw Error(error)
+                    throw error
             })
             // / endregion
             // endregion
@@ -480,7 +479,7 @@ const main = async ():Promise<void> => {
         // endregion
     } catch (error) {
         if (configuration.debug)
-            throw Error(error)
+            throw error
         else
             console.error(error)
     }
