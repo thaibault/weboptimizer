@@ -917,8 +917,10 @@ export class Helper {
                         const modules:{
                             [key:string]:string
                         } = Helper.getAutoChunk(
-                            buildConfigurations, moduleFilePathsToExclude,
-                            referencePath)
+                            buildConfigurations,
+                            moduleFilePathsToExclude,
+                            referencePath
+                        )
                         for (const subChunkName:string in modules)
                             if (modules.hasOwnProperty(subChunkName))
                                 injection[type][chunkName].push(
@@ -946,7 +948,8 @@ export class Helper {
      */
     static getAutoChunk(
         buildConfigurations:ResolvedBuildConfiguration,
-        moduleFilePathsToExclude:Array<string>, context:string
+        moduleFilePathsToExclude:Array<string>,
+        context:string
     ):{[key:string]:string} {
         const result:{[key:string]:string} = {}
         const injectedModuleIDs:{[key:string]:Array<string>} = {}

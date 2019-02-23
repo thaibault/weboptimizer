@@ -348,7 +348,8 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.extensions,
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
-    resolvedConfiguration.path.ignore)
+    resolvedConfiguration.path.ignore
+)
 const internalInjection:any = resolvedConfiguration.injection.internal
 resolvedConfiguration.injection.internal = {
     given: resolvedConfiguration.injection.internal,
