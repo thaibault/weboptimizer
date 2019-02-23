@@ -464,9 +464,10 @@ export class Helper {
             NOTE: We mark dependencies as external if there file couldn't be
             resolved or are specified to be external explicitly.
         */
-        if (!(filePath || inPlaceNormalLibrary) || Tools.isAnyMatching(
-            resolvedRequest, includePattern
-        ))
+        if (
+            !(filePath || inPlaceNormalLibrary) ||
+            Tools.isAnyMatching(resolvedRequest, includePattern)
+        )
             return Helper.applyContext(
                 resolvedRequest,
                 requestContext,
@@ -509,16 +510,26 @@ export class Helper {
             loader in their request and aren't part of the current main package
             or have a file extension other than javaScript aware.
         */
-        if (!inPlaceNormalLibrary && (
-            extensions.file.external.length === 0 || filePath &&
-            extensions.file.external.includes(path.extname(filePath)) ||
-            !filePath && extensions.file.external.includes('')
-        ) && !(inPlaceDynamicLibrary && request.includes('!')) && (
-            !filePath && inPlaceDynamicLibrary || filePath && (
-                !filePath.startsWith(context) ||
-                Helper.isFilePathInLocation(
-                    filePath, externalModuleLocations))
-        ))
+        if (
+            !inPlaceNormalLibrary &&
+            (
+                extensions.file.external.length === 0 ||
+                filePath &&
+                extensions.file.external.includes(path.extname(filePath)) ||
+                !filePath && extensions.file.external.includes('')
+            ) &&
+            !(inPlaceDynamicLibrary && request.includes('!')) &&
+            (
+                !filePath &&
+                inPlaceDynamicLibrary ||
+                filePath &&
+                (
+                    !filePath.startsWith(context) ||
+                    Helper.isFilePathInLocation(
+                        filePath, externalModuleLocations)
+                )
+            )
+        )
             return Helper.applyContext(
                 resolvedRequest,
                 requestContext,
