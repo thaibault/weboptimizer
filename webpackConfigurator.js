@@ -1192,7 +1192,9 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
                                 test: /[\\/]node_modules[\\/]/
                             }
                         }
-                    }, configuration.injection.chunks)
+                    },
+                    configuration.injection.chunks
+                )
             // endregion
         },
         plugins: pluginInstances
