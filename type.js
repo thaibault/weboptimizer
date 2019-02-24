@@ -32,7 +32,7 @@ export type ExternalInjection = string|((
     context:string, request:string, callback:ProcedureFunction
 ) => void)|RegExp|Array<ExternalInjection>
 export type EntryInjection =
-    string|Array<string>|{[key:string]:string|Array<string>}
+    Function|string|Array<string>|{[key:string]:string|Array<string>}
 export type NormalizedEntryInjection = {[key:string]:Array<string>}
 export type Injection = {
     autoExclude:Array<string>;
