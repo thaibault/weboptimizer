@@ -28,7 +28,6 @@ import type {
     DefaultConfiguration,
     /* eslint-disable no-unused-vars */
     HTMLConfiguration,
-    InternalInjection,
     /* eslint-enable no-unused-vars */
     MetaConfiguration,
     ResolvedConfiguration
@@ -321,7 +320,7 @@ for (const type:string in resolvedConfiguration.buildContext.types)
 // endregion
 // region resolve module location and determine which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(
-    resolvedConfiguration.injection.internal,
+    resolvedConfiguration.injection.entry,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.module.replacements.normal,
     resolvedConfiguration.extensions,
@@ -350,11 +349,11 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore
 )
-const internalInjection:any = resolvedConfiguration.injection.internal
-resolvedConfiguration.injection.internal = {
-    given: resolvedConfiguration.injection.internal,
+const entryInjection:any = resolvedConfiguration.injection.entry
+resolvedConfiguration.injection.entry = {
+    given: resolvedConfiguration.injection.entry,
     normalized: Helper.resolveModulesInFolders(
-        Helper.normalizeInternalInjection(internalInjection),
+        Helper.normalizeEntryInjection(entryInjection),
         resolvedConfiguration.module.aliases,
         resolvedConfiguration.module.replacements.normal,
         resolvedConfiguration.path.context,
@@ -374,13 +373,13 @@ resolvedConfiguration.needed = {
         resolvedConfiguration.givenCommandLineArguments[2]
     )
 }
-for (const chunkName:string in resolvedConfiguration.injection.internal
+for (const chunkName:string in resolvedConfiguration.injection.entry
     .normalized
 )
-    if (resolvedConfiguration.injection.internal.normalized.hasOwnProperty(
+    if (resolvedConfiguration.injection.entry.normalized.hasOwnProperty(
         chunkName
     ))
-        for (const moduleID:string of resolvedConfiguration.injection.internal
+        for (const moduleID:string of resolvedConfiguration.injection.entry
             .normalized[chunkName]
         ) {
             const filePath:?string = Helper.determineModuleFilePath(

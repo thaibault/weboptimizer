@@ -112,7 +112,7 @@ require.cache[require.resolve('loader-utils')].exports.isUrlRequest = (
 let libraryName:string
 if ('libraryName' in configuration && configuration.libraryName)
     libraryName = configuration.libraryName
-else if (Object.keys(configuration.injection.internal.normalized).length > 1)
+else if (Object.keys(configuration.injection.entry.normalized).length > 1)
     libraryName = '[name]'
 else {
     libraryName = configuration.name
@@ -323,8 +323,8 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
 // /// endregion
 // /// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'build:dll')
-    for (const chunkName:string in configuration.injection.internal.normalized)
-        if (configuration.injection.internal.normalized.hasOwnProperty(
+    for (const chunkName:string in configuration.injection.entry.normalized)
+        if (configuration.injection.entry.normalized.hasOwnProperty(
             chunkName
         )) {
             const manifestFilePath:string =
@@ -333,7 +333,7 @@ if (configuration.givenCommandLineArguments[2] !== 'build:dll')
             if (configuration.dllManifestFilePaths.includes(
                 manifestFilePath
             )) {
-                delete configuration.injection.internal.normalized[chunkName]
+                delete configuration.injection.entry.normalized[chunkName]
                 const filePath:string = Helper.renderFilePathTemplate(
                     Helper.stripLoader(
                         configuration.files.compose.javaScript
@@ -392,7 +392,7 @@ if (configuration.injection.external.modules === '__implicit__')
             request,
             configuration.path.context,
             context,
-            configuration.injection.internal.normalized,
+            configuration.injection.entry.normalized,
             configuration.module.directoryNames,
             configuration.module.aliases,
             configuration.module.replacements.normal,
@@ -410,9 +410,10 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.encoding
         )
         if (resolvedRequest) {
-            if (['var', 'umd'].includes(
-                configuration.exportFormat.external
-            ) && request in configuration.injection.external.aliases)
+            if (
+                ['var', 'umd'].includes(configuration.exportFormat.external) &&
+                request in configuration.injection.external.aliases
+            )
                 resolvedRequest = configuration.injection.external.aliases[
                     request]
             if (configuration.exportFormat.external === 'var')
@@ -427,14 +428,14 @@ if (configuration.injection.external.modules === '__implicit__')
 // /// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'build:dll') {
     let dllChunkExists:boolean = false
-    for (const chunkName:string in configuration.injection.internal.normalized)
-        if (configuration.injection.internal.normalized.hasOwnProperty(
+    for (const chunkName:string in configuration.injection.entry.normalized)
+        if (configuration.injection.entry.normalized.hasOwnProperty(
             chunkName
         ))
             if (configuration.injection.dllChunkNames.includes(chunkName))
                 dllChunkExists = true
             else
-                delete configuration.injection.internal.normalized[chunkName]
+                delete configuration.injection.entry.normalized[chunkName]
     if (dllChunkExists) {
         libraryName = '[name]DLLPackage'
         pluginInstances.push(new webpack.DllPlugin({
@@ -1090,7 +1091,7 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
         devtool: configuration.development.tool,
         devServer: configuration.development.server,
         // region input
-        entry: configuration.injection.internal.normalized,
+        entry: configuration.injection.entry.normalized,
         externals: configuration.injection.external.modules,
         resolve: {
             alias: configuration.module.aliases,

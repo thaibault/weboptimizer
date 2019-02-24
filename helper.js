@@ -26,8 +26,8 @@ import type {
     BuildConfiguration,
     Extensions,
     Injection,
-    InternalInjection,
-    NormalizedInternalInjection,
+    EntryInjection,
+    NormalizedEntryInjection,
     Path,
     ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem
@@ -359,7 +359,7 @@ export class Helper {
      * @param request - Request to determine.
      * @param context - Context of current project.
      * @param requestContext - Context of given request to resolve relative to.
-     * @param normalizedInternalInjection - Mapping of chunk names to modules
+     * @param normalizedEntryInjection - Mapping of chunk names to modules
      * which should be injected.
      * @param relativeExternalModuleLocations - Array of paths where external
      * modules take place.
@@ -395,7 +395,7 @@ export class Helper {
         request:string,
         context:string = './',
         requestContext:string = './',
-        normalizedInternalInjection:NormalizedInternalInjection = {},
+        normalizedEntryInjection:NormalizedEntryInjection = {},
         relativeExternalModuleLocations:Array<string> = ['node_modules'],
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
@@ -476,9 +476,9 @@ export class Helper {
                 moduleReplacements,
                 relativeModuleLocations
             )
-        for (const chunkName:string in normalizedInternalInjection)
-            if (normalizedInternalInjection.hasOwnProperty(chunkName))
-                for (const moduleID:string of normalizedInternalInjection[
+        for (const chunkName:string in normalizedEntryInjection)
+            if (normalizedEntryInjection.hasOwnProperty(chunkName))
+                for (const moduleID:string of normalizedEntryInjection[
                     chunkName
                 ])
                     if (Helper.determineModuleFilePath(
@@ -646,7 +646,7 @@ export class Helper {
     /**
      * Determines all file and directory paths related to given internal
      * modules as array.
-     * @param internalInjection - List of module ids or module file paths.
+     * @param entryInjection - List of module ids or module file paths.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of module replacements to take into
      * account.
@@ -669,7 +669,7 @@ export class Helper {
      * corresponding list of paths.
      */
     static determineModuleLocations(
-        internalInjection:InternalInjection,
+        entryInjection:EntryInjection,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:Extensions = {
@@ -706,18 +706,18 @@ export class Helper {
     ):{filePaths:Array<string>;directoryPaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
-        const normalizedInternalInjection:NormalizedInternalInjection =
+        const normalizedEntryInjection:NormalizedEntryInjection =
             Helper.resolveModulesInFolders(
-                Helper.normalizeInternalInjection(internalInjection),
+                Helper.normalizeEntryInjection(entryInjection),
                 aliases,
                 moduleReplacements,
                 context,
                 referencePath,
                 pathsToIgnore
             )
-        for (const chunkName:string in normalizedInternalInjection)
-            if (normalizedInternalInjection.hasOwnProperty(chunkName))
-                for (const moduleID:string of normalizedInternalInjection[
+        for (const chunkName:string in normalizedEntryInjection)
+            if (normalizedEntryInjection.hasOwnProperty(chunkName))
+                for (const moduleID:string of normalizedEntryInjection[
                     chunkName
                 ]) {
                     const filePath:?string = Helper.determineModuleFilePath(
@@ -746,8 +746,8 @@ export class Helper {
     /**
      * Determines a list of concrete file paths for given module id pointing to
      * a folder which isn't a package.
-     * @param normalizedInternalInjection - Injection data structure of
-     * modules with folder references to resolve.
+     * @param normalizedEntryInjection - Injection data structure of modules
+     * with folder references to resolve.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
      * account.
@@ -757,19 +757,19 @@ export class Helper {
      * @returns Given injections with resolved folder pointing modules.
      */
     static resolveModulesInFolders(
-        normalizedInternalInjection:NormalizedInternalInjection,
+        normalizedEntryInjection:NormalizedEntryInjection,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         context:string = './',
         referencePath:string = '',
         pathsToIgnore:Array<string> = ['.git']
-    ):NormalizedInternalInjection {
+    ):NormalizedEntryInjection {
         if (referencePath.startsWith('/'))
             referencePath = path.relative(context, referencePath)
-        for (const chunkName:string in normalizedInternalInjection)
-            if (normalizedInternalInjection.hasOwnProperty(chunkName)) {
+        for (const chunkName:string in normalizedEntryInjection)
+            if (normalizedEntryInjection.hasOwnProperty(chunkName)) {
                 let index:number = 0
-                for (let moduleID:string of normalizedInternalInjection[
+                for (let moduleID:string of normalizedEntryInjection[
                     chunkName
                 ]) {
                     moduleID = Helper.applyModuleReplacements(
@@ -779,7 +779,7 @@ export class Helper {
                     const resolvedPath:string = path.resolve(
                         referencePath, moduleID)
                     if (Tools.isDirectorySync(resolvedPath)) {
-                        normalizedInternalInjection[chunkName].splice(index, 1)
+                        normalizedEntryInjection[chunkName].splice(index, 1)
                         for (
                             const file:File of
                             Tools.walkDirectoryRecursivelySync(resolvedPath, (
@@ -792,7 +792,7 @@ export class Helper {
                             })
                         )
                             if (file.stats && file.stats.isFile())
-                                normalizedInternalInjection[chunkName].push(
+                                normalizedEntryInjection[chunkName].push(
                                     './' + path.relative(
                                         referencePath, path.resolve(
                                             resolvedPath, file.path)))
@@ -802,42 +802,42 @@ export class Helper {
                             context, referencePath
                         ))
                     )
-                        normalizedInternalInjection[chunkName][index] =
+                        normalizedEntryInjection[chunkName][index] =
                             `./${path.relative(context, resolvedPath)}`
                     index += 1
                 }
             }
-        return normalizedInternalInjection
+        return normalizedEntryInjection
     }
     /**
      * Every injection definition type can be represented as plain object
      * (mapping from chunk name to array of module ids). This method converts
      * each representation into the normalized plain object notation.
-     * @param internalInjection - Given internal injection to normalize.
-     * @returns Normalized representation of given internal injection.
+     * @param entryInjection - Given entry injection to normalize.
+     * @returns Normalized representation of given entry injection.
      */
-    static normalizeInternalInjection(
-        internalInjection:InternalInjection
-    ):NormalizedInternalInjection {
-        let result:NormalizedInternalInjection = {}
-        if (Array.isArray(internalInjection))
-            result = {index: internalInjection}
-        else if (typeof internalInjection === 'string')
-            result = {index: [internalInjection]}
-        else if (Tools.isPlainObject(internalInjection)) {
+    static normalizeEntryInjection(
+        entryInjection:EntryInjection
+    ):NormalizedEntryInjection {
+        let result:NormalizedEntryInjection = {}
+        if (Array.isArray(entryInjection))
+            result = {index: entryInjection}
+        else if (typeof entryInjection === 'string')
+            result = {index: [entryInjection]}
+        else if (Tools.isPlainObject(entryInjection)) {
             let hasContent:boolean = false
             const chunkNamesToDelete:Array<string> = []
-            for (const chunkName:string in internalInjection)
-                if (internalInjection.hasOwnProperty(chunkName))
-                    if (Array.isArray(internalInjection[chunkName]))
-                        if (internalInjection[chunkName].length > 0) {
+            for (const chunkName:string in entryInjection)
+                if (entryInjection.hasOwnProperty(chunkName))
+                    if (Array.isArray(entryInjection[chunkName]))
+                        if (entryInjection[chunkName].length > 0) {
                             hasContent = true
-                            result[chunkName] = internalInjection[chunkName]
+                            result[chunkName] = entryInjection[chunkName]
                         } else
                             chunkNamesToDelete.push(chunkName)
                     else {
                         hasContent = true
-                        result[chunkName] = [internalInjection[chunkName]]
+                        result[chunkName] = [entryInjection[chunkName]]
                     }
             if (hasContent)
                 for (const chunkName:string of chunkNamesToDelete)
@@ -850,7 +850,7 @@ export class Helper {
     /**
      * Determines all concrete file paths for given injection which are marked
      * with the "__auto__" indicator.
-     * @param givenInjection - Given internal and external injection to take
+     * @param givenInjection - Given entry and external injection to take
      * into account.
      * @param buildConfigurations - Resolved build configuration.
      * @param modulesToExclude - A list of modules to exclude (specified by
@@ -869,7 +869,7 @@ export class Helper {
     static resolveInjection(
         givenInjection:Injection,
         buildConfigurations:ResolvedBuildConfiguration,
-        modulesToExclude:InternalInjection,
+        modulesToExclude:EntryInjection,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:Extensions = {
@@ -908,7 +908,7 @@ export class Helper {
                 referencePath,
                 pathsToIgnore
             ).filePaths
-        for (const type:string of ['internal', 'external'])
+        for (const type:string of ['entry', 'external'])
             /* eslint-disable curly */
             if (typeof injection[type] === 'object') {
                 for (const chunkName:string in injection[type])

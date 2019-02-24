@@ -231,13 +231,13 @@ const main = async ():Promise<void> => {
                     tidiedUp = true
                     for (
                         const chunkName:string in
-                        configuration.injection.internal.normalized
+                        configuration.injection.entry.normalized
                     )
-                        if (configuration.injection.internal.normalized
+                        if (configuration.injection.entry.normalized
                             .hasOwnProperty(chunkName)
                         )
                             for (const moduleID:string of configuration
-                                .injection.internal.normalized[chunkName]
+                                .injection.entry.normalized[chunkName]
                             ) {
                                 const filePath:?string =
                                     Helper.determineModuleFilePath(
@@ -351,7 +351,7 @@ const main = async ():Promise<void> => {
                 // Perform all file specific preprocessing stuff.
                 const testModuleFilePaths:Array<string> =
                     Helper.determineModuleLocations(
-                        configuration['test:browser'].injection.internal,
+                        configuration['test:browser'].injection.entry,
                         configuration.module.aliases,
                         configuration.module.replacements.normal,
                         configuration.extensions, configuration.path.context,

@@ -31,13 +31,17 @@ export type BrowserAPI = {
 export type ExternalInjection = string|((
     context:string, request:string, callback:ProcedureFunction
 ) => void)|RegExp|Array<ExternalInjection>
-export type InternalInjection =
+export type EntryInjection =
     string|Array<string>|{[key:string]:string|Array<string>}
-export type NormalizedInternalInjection = {[key:string]:Array<string>}
+export type NormalizedEntryInjection = {[key:string]:Array<string>}
 export type Injection = {
     autoExclude:Array<string>;
     chunks:PlainObject;
     dllChunkNames:Array<string>;
+    entry:{
+        given:EntryInjection;
+        normalized:NormalizedEntryInjection
+    };
     external:{
         aliases:PlainObject;
         implicit:{
@@ -52,10 +56,6 @@ export type Injection = {
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
     implicitExternalIncludePattern:Array<RegExp|string>;
-    internal:{
-        given:InternalInjection;
-        normalized:NormalizedInternalInjection
-    };
 }
 // / endregion
 // / region configuration

@@ -319,7 +319,7 @@ registerTest(function():void {
         assert.ok(Helper.resolveModulesInFolders({a: [__dirname]}).a.includes(
             './test/helper.js'))
     })
-    this.test('normalizeInternalInjection', (assert:Object):void => {
+    this.test('normalizeEntryInjection', (assert:Object):void => {
         for (const test:Array<any> of [
             [[], {index: []}],
             [{}, {index: []}],
@@ -330,8 +330,7 @@ registerTest(function():void {
             [{a: ['example'], b: []}, {a: ['example']}],
             [{a: [], b: []}, {index: []}]
         ])
-            assert.deepEqual(
-                Helper.normalizeInternalInjection(test[0]), test[1])
+            assert.deepEqual(Helper.normalizeEntryInjection(test[0]), test[1])
     })
     this.test('resolveInjection', (assert:Object):void => {
         for (const test:Array<any> of [
@@ -340,8 +339,8 @@ registerTest(function():void {
                     {
                         chunks: [],
                         dllChunkNames: [],
-                        external: [],
-                        internal: []
+                        entry: [],
+                        external: []
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
@@ -350,8 +349,8 @@ registerTest(function():void {
                 {
                     chunks: [],
                     dllChunkNames: [],
-                    external: [],
-                    internal: []
+                    entry: [],
+                    external: []
                 }
             ],
             [
@@ -359,8 +358,8 @@ registerTest(function():void {
                     {
                         chunks: [],
                         dllChunkNames: [],
-                        external: [],
-                        internal: 'a.js'
+                        entry: 'a.js',
+                        external: []
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
@@ -369,7 +368,8 @@ registerTest(function():void {
                 {
                     chunks: [],
                     dllChunkNames: [],
-                    internal: 'a.js', external: []
+                    entry: 'a.js',
+                    external: []
                 }
             ],
             [
@@ -377,8 +377,8 @@ registerTest(function():void {
                     {
                         chunks: [],
                         dllChunkNames: [],
-                        external: [],
-                        internal: ['a']
+                        entry: ['a'],
+                        external: []
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
@@ -387,8 +387,8 @@ registerTest(function():void {
                 {
                     chunks: [],
                     dllChunkNames: [],
-                    external: [],
-                    internal: ['a']
+                    entry: ['a'],
+                    external: []
                 }
             ],
             [
@@ -396,8 +396,8 @@ registerTest(function():void {
                     {
                         chunks: [],
                         dllChunkNames: [],
-                        external: [],
-                        internal: '__auto__'
+                        entry: '__auto__',
+                        external: []
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
@@ -406,8 +406,8 @@ registerTest(function():void {
                 {
                     chunks: [],
                     dllChunkNames: [],
-                    external: [],
-                    internal: {}
+                    entry: {},
+                    external: []
                 }
             ],
             [
@@ -415,8 +415,8 @@ registerTest(function():void {
                     {
                         chunks: [],
                         dllChunkNames: [],
-                        external: [],
-                        internal: {index: '__auto__'}
+                        entry: {index: '__auto__'},
+                        external: []
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
@@ -425,7 +425,7 @@ registerTest(function():void {
                 {
                     chunks: [],
                     external: [],
-                    internal: {index: []},
+                    entry: {index: []},
                     dllChunkNames: []
                 }
             ]
