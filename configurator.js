@@ -281,14 +281,18 @@ export const resolvedConfiguration:ResolvedConfiguration =
         fileSystem,
         Helper,
         // IgnoreTypeCheck
-        isDLLUseful: 2 < configuration.givenCommandLineArguments.length && (
-            ['build:dll', 'watch:dll'].includes(
-                // IgnoreTypeCheck
-                configuration.givenCommandLineArguments[2]) ||
-            configuration.dllManifestFilePaths.length &&
-            ['build', 'serve', 'test:browser'].includes(
-                // IgnoreTypeCheck
-                configuration.givenCommandLineArguments[2])),
+        isDLLUseful:
+            2 < configuration.givenCommandLineArguments.length &&
+            (
+                ['build:dll', 'watch:dll'].includes(
+                    // IgnoreTypeCheck
+                    configuration.givenCommandLineArguments[2]) ||
+                configuration.dllManifestFilePaths.length &&
+                ['build', 'serve', 'test:browser'].includes(
+                    // IgnoreTypeCheck
+                    configuration.givenCommandLineArguments[2]
+                )
+            ),
         path,
         /* eslint-disable no-eval */
         require: eval('require'),
