@@ -551,6 +551,9 @@
           "vendor",
           "developmentHelper"
         ],
+        "entry": {
+          "index": "__auto__"
+        },
         "external": {
           "aliases": {
             "jquery": "jQuery"
@@ -573,10 +576,7 @@
           },
           "modules": "__implicit__"
         },
-        "ignorePattern": [],
-        "internal": {
-          "index": "__auto__"
-        }
+        "ignorePattern": []
       },
       "inPlace": {
         "#": "Indicates whether to include the corresponding artefacts into build target artefact or reference them to dynamically include them during runtime.",
@@ -1341,14 +1341,14 @@
       },
       "test": {
         "injection": {
-          "internal": {
+          "entry": {
             "index": "./test"
           }
         }
       },
       "test:browser": {
         "injection": {
-          "internal": {
+          "entry": {
             "index": "./test"
           }
         }
