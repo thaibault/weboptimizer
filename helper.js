@@ -516,7 +516,8 @@ export class Helper {
                 extensions.file.external.length === 0 ||
                 filePath &&
                 extensions.file.external.includes(path.extname(filePath)) ||
-                !filePath && extensions.file.external.includes('')
+                !filePath &&
+                extensions.file.external.includes('')
             ) &&
             !(inPlaceDynamicLibrary && request.includes('!')) &&
             (
@@ -820,6 +821,9 @@ export class Helper {
         entryInjection:EntryInjection
     ):NormalizedEntryInjection {
         let result:NormalizedEntryInjection = {}
+        if (Tools.isFunction(entryInjection))
+            // IgnoreTypeCheck
+            entryInjection = entryInjection()
         if (Array.isArray(entryInjection))
             result = {index: entryInjection}
         else if (typeof entryInjection === 'string')
