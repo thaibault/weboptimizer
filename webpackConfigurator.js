@@ -417,9 +417,6 @@ if (configuration.injection.external.modules === '__implicit__')
             ))
                 resolvedRequest = configuration.injection.external.aliases[
                     request]
-            console.log()
-            console.log('JAU', resolvedRequest)
-            console.log()
             return callback(
                 null,
                 {
