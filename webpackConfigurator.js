@@ -116,7 +116,9 @@ else if (Object.keys(configuration.injection.entry.normalized).length > 1)
     libraryName = '[name]'
 else {
     libraryName = configuration.name
-    if (configuration.exportFormat.self === 'var')
+    if (['assign', 'global', 'this', 'var', 'window'].includes(
+        configuration.exportFormat.self
+    ))
         libraryName = Tools.stringConvertToValidVariableName(libraryName)
 }
 // / endregion
@@ -410,17 +412,25 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.encoding
         )
         if (resolvedRequest) {
-            if (
-                ['var', 'umd'].includes(configuration.exportFormat.external) &&
-                request in configuration.injection.external.aliases
-            )
+            if (configuration.injection.external.aliases.hasOwnProperty(
+                request
+            ))
                 resolvedRequest = configuration.injection.external.aliases[
                     request]
-            if (configuration.exportFormat.external === 'var')
-                resolvedRequest = Tools.stringConvertToValidVariableName(
-                    resolvedRequest, '0-9a-zA-Z_$\\.')
+            console.log()
+            console.log('JAU', resolvedRequest)
+            console.log()
             return callback(
-                null, resolvedRequest, configuration.exportFormat.external)
+                null,
+                {
+                    amd: resolvedRequest,
+                    commonjs: resolvedRequest,
+                    commonjs2: resolvedRequest,
+                    root: Tools.stringConvertToValidVariableName(
+                        request, '0-9a-zA-Z_$')
+                },
+                configuration.exportFormat.external
+            )
         }
         return callback()
     }
@@ -594,66 +604,6 @@ if (htmlAvailable)
                 callback(null, data)
             }
         )
-    })})
-/*
-    NOTE: The umd module export doesn't handle cases where the package name
-    doesn't match exported library name. This post processing fixes this issue.
-*/
-if (configuration.exportFormat.external.startsWith('umd'))
-    pluginInstances.push({apply: (
-        compiler:Object
-    ):void => compiler.hooks.emit.tapAsync('fixLibraryNameExports', (
-        compilation:Object, callback:ProcedureFunction
-    ):void => {
-        const bundleName:string = (
-            typeof libraryName === 'string'
-        ) ? libraryName : libraryName[0]
-        for (const assetRequest:string in compilation.assets)
-            if (
-                compilation.assets.hasOwnProperty(assetRequest) &&
-                assetRequest.replace(/([^?]+)\?.*$/, '$1').endsWith(
-                    configuration.buildContext.types.javaScript.outputExtension
-                )
-            ) {
-                let source:string = compilation.assets[assetRequest].source()
-                if (typeof source === 'string') {
-                    for (
-                        const replacement:string in
-                        configuration.injection.external.aliases
-                    )
-                        if (
-                            configuration.injection.external.aliases
-                                .hasOwnProperty(replacement)
-                        )
-                            source = source.replace(new RegExp(
-                                '(require\\()["\']' +
-                                Tools.stringEscapeRegularExpressions(
-                                    configuration.injection.external
-                                        .aliases[replacement]
-                                ) + '["\'](\\))', 'g'
-                            ), `$1'${replacement}'$2`).replace(
-                                new RegExp('(define\\(["\']' +
-                                    Tools.stringEscapeRegularExpressions(
-                                        bundleName
-                                    ) + '["\'], \\[.*)["\']' +
-                                    Tools.stringEscapeRegularExpressions(
-                                        configuration.injection.external
-                                            .aliases[replacement]
-                                    ) + '["\'](.*\\], factory\\);)'
-                                ), `$1'${replacement}'$2`)
-                    source = source.replace(new RegExp(
-                        '(root\\[)["\']' +
-                        Tools.stringEscapeRegularExpressions(
-                            bundleName
-                        ) + '["\'](\\] = )'
-                    ), `$1'` + Tools.stringConvertToValidVariableName(
-                        bundleName
-                    ) + `'$2`)
-                    compilation.assets[assetRequest] = new WebpackRawSource(
-                        source)
-                }
-            }
-        callback()
     })})
 // // endregion
 // // region add automatic image compression
