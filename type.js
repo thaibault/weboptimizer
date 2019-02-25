@@ -123,7 +123,9 @@ export type DefaultConfiguration = {
     test:Object;
     'test:browser':Object
 }
-export type ExportFormat = 'var'|'this'|'commonjs'|'commonjs2'|'amd'|'umd';
+/* eslint-disable max-len */
+export type ExportFormat = 'amd'|'amd-require'|'assign'|'global'|'jsonp'|'var'|'this'|'commonjs'|'commonjs2'|'umd';
+/* eslint-enable max-len */
 export type HTMLConfiguration = {
     filename:string;
     template:{
