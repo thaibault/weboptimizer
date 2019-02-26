@@ -168,7 +168,7 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
     ))
-        for (const type:PlainObject of [
+        for (const type:Array<string> of [
             ['cascadingStyleSheet', 'css'],
             ['javaScript', 'js']
         ])
@@ -390,7 +390,7 @@ if (configuration.injection.external.modules === '__implicit__')
                     request = request.substring(1)
                 break
             }
-        let resolvedRequest:?string = Helper.determineExternalRequest(
+        const resolvedRequest:?string = Helper.determineExternalRequest(
             request,
             configuration.path.context,
             context,
@@ -412,21 +412,51 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.encoding
         )
         if (resolvedRequest) {
+            const result:PlainObject = {
+                amd: request,
+                commonjs: request,
+                commonjs2: request,
+                root: Tools.stringConvertToValidVariableName(
+                    request, '0-9a-zA-Z_$')
+            }
             if (configuration.injection.external.aliases.hasOwnProperty(
                 request
             ))
-                resolvedRequest = configuration.injection.external.aliases[
-                    request]
+                if (
+                    typeof configuration.injection.external.aliases[
+                        request
+                    ] === 'function'
+                ) {
+                    for (const key:string in transformMapping)
+                        if (transformMapping.hasOwnProperty(key)) {
+                            transformMapping[key] =
+                                configuration.injection.external.aliases[
+                                    request
+                                ](resolvedRequest, key)
+                            if (key === 'root')
+                                transformMapping[key] =
+                                    Tools.stringConvertToValidVariableName(
+                                        transformMapping[key], '0-9a-zA-Z_$')
+                        }
+                } else if (
+                    configuration.injection.external.aliases[
+                        request
+                    ] !== null &&
+                    typeof configuration.injection.external.aliases[
+                        request
+                    ] === 'object'
+                )
+                    Tools.extend(
+                        result,
+                        configuration.injection.external.aliases[request])
+            const exportFormat:string = (
+                configuration.exportFormat.external ||
+                configuration.exportFormat.self
+            )
             return callback(
                 null,
-                {
-                    amd: resolvedRequest,
-                    commonjs: resolvedRequest,
-                    commonjs2: resolvedRequest,
-                    root: Tools.stringConvertToValidVariableName(
-                        request, '0-9a-zA-Z_$')
-                },
-                configuration.exportFormat.external
+                exportFormat === 'umd' ? result : result[exportFormat],
+                exportFormat
             )
         }
         return callback()
