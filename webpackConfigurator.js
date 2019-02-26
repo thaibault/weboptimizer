@@ -415,14 +415,11 @@ if (configuration.injection.external.modules === '__implicit__')
         if (resolvedRequest) {
             const keys:Array<string> = [
                 'amd', 'commonjs', 'commonjs2', 'root']
-            const result:PlainObject = {
-                default: request,
-                root: Tools.stringConvertToValidVariableName(
-                    request, '0-9a-zA-Z_$')
-            }
+            let result:PlainObject|string = request
             if (configuration.injection.external.aliases.hasOwnProperty(
                 request
             )) {
+                result = {default: request}
                 if (
                     typeof configuration.injection.external.aliases[
                         request
@@ -456,7 +453,9 @@ if (configuration.injection.external.modules === '__implicit__')
                         if (!result.hasOwnProperty(key))
                             result[key] = result.default
                 if (result.hasOwnProperty('root'))
+                    // IgnoreTypeCheck
                     result.root = Tools.stringConvertToValidVariableName(
+                        // IgnoreTypeCheck
                         result.root, '0-9a-zA-Z_$')
             }
             const exportFormat:string = (
@@ -465,7 +464,8 @@ if (configuration.injection.external.modules === '__implicit__')
             )
             return callback(
                 null,
-                exportFormat === 'umd' ? result : result[exportFormat],
+                exportFormat === 'umd' || typeof result === 'string' ?
+                    result : result[exportFormat],
                 exportFormat
             )
         }
