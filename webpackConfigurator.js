@@ -454,10 +454,9 @@ if (configuration.injection.external.modules === '__implicit__')
                     Tools.extend(
                         result,
                         configuration.injection.external.aliases[request])
-                if (transformMapping.hasOwnProperty('root'))
-                    transformMapping.root =
-                        Tools.stringConvertToValidVariableName(
-                            transformMapping.root, '0-9a-zA-Z_$')
+                if (result.hasOwnProperty('root'))
+                    result.root = Tools.stringConvertToValidVariableName(
+                        result.root, '0-9a-zA-Z_$')
             }
             const exportFormat:string = (
                 configuration.exportFormat.external ||
