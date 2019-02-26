@@ -421,23 +421,28 @@ if (configuration.injection.external.modules === '__implicit__')
             }
             if (configuration.injection.external.aliases.hasOwnProperty(
                 request
-            ))
+            )) {
                 if (
+                    typeof configuration.injection.external.aliases[
+                        request
+                    ] === 'string'
+                ) {
+                    for (const key:string in result)
+                        if (result.hasOwnProperty(key))
+                            result[key] =
+                                configuration.injection.external.aliases[
+                                    request]
+                } else if (
                     typeof configuration.injection.external.aliases[
                         request
                     ] === 'function'
                 ) {
-                    for (const key:string in transformMapping)
-                        if (transformMapping.hasOwnProperty(key)) {
-                            transformMapping[key] =
+                    for (const key:string in result)
+                        if (result.hasOwnProperty(key))
+                            result[key] =
                                 configuration.injection.external.aliases[
                                     request
                                 ](resolvedRequest, key)
-                            if (key === 'root')
-                                transformMapping[key] =
-                                    Tools.stringConvertToValidVariableName(
-                                        transformMapping[key], '0-9a-zA-Z_$')
-                        }
                 } else if (
                     configuration.injection.external.aliases[
                         request
@@ -449,6 +454,11 @@ if (configuration.injection.external.modules === '__implicit__')
                     Tools.extend(
                         result,
                         configuration.injection.external.aliases[request])
+                if (transformMapping.hasOwnProperty('root'))
+                    transformMapping.root =
+                        Tools.stringConvertToValidVariableName(
+                            transformMapping.root, '0-9a-zA-Z_$')
+            }
             const exportFormat:string = (
                 configuration.exportFormat.external ||
                 configuration.exportFormat.self
