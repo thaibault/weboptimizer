@@ -2297,9 +2297,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.239"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.239.tgz#3941fbd398d67c2cab4e0e26f48b09839029f32d"
-  integrity sha512-O6+aRt9lJSu4u1747F5phPfzi0JyJa2VL/fnQIr/qL+1rGTMvRNzDEmxhswfRkZZyOGcouCOdkR9mq3lZ0Ijtw==
+  version "3.0.241"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.241.tgz#54549e70cc213a05da28cd134ef3ab1daba04a0c"
+  integrity sha512-HIY77De2JrjXLwFzV1JWsP1D18GazzJcp6WGXc8lU9g2y2l70IlaUbgHRrWZioeFU/SEMAVYv3jg/biScBHymg==
   dependencies:
     colors "*"
 
@@ -5564,9 +5564,9 @@ js-tokens@^3.0.2:
   integrity sha1-mGbfOVECEw449/mWvOtlRDIJwls=
 
 js-yaml@^3.11.0, js-yaml@^3.12.0, js-yaml@^3.9.0:
-  version "3.12.1"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.12.1.tgz#295c8632a18a23e054cf5c9d3cecafe678167600"
-  integrity sha512-um46hB9wNOKlwkHgiuyEVAybXBjwFUV0Z/RaHJblRd9DXltue9FTYvzCr9ErQrK9Adz5MU4gHWVaNUfdmrC8qA==
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.12.2.tgz#ef1d067c5a9d9cb65bd72f285b5d8105c77f14fc"
+  integrity sha512-QHn/Lh/7HhZ/Twc7vJYQTkjuCa0kaCcDcjK5Zlk2rvnUpy7DxMJ23+Jc2dcyvltwQVg1nygAVlB2oRDFHoRS5Q==
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
