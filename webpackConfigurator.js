@@ -250,12 +250,13 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
         ):void =>
             compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
                 'inPlaceHTMLAssets',
-                (data:PlainObject, callback:ProcedureFunction):void => {
+                (data:PlainObject, callback:Function):void => {
                     if (
                         configuration.inPlace.cascadingStyleSheet &&
                         Object.keys(
                             configuration.inPlace.cascadingStyleSheet
-                        ).length || configuration.inPlace.javaScript &&
+                        ).length ||
+                        configuration.inPlace.javaScript &&
                         Object.keys(configuration.inPlace.javaScript).length
                     )
                         try {
@@ -374,7 +375,7 @@ if (configuration.injection.external.modules === '__implicit__')
         javaScript and json modules will be marked as external dependency.
     */
     configuration.injection.external.modules = (
-        context:string, request:string, callback:ProcedureFunction
+        context:string, request:string, callback:Function
     ):void => {
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
@@ -412,10 +413,10 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.encoding
         )
         if (resolvedRequest) {
+            const keys:Array<string> = [
+                'amd', 'commonjs', 'commonjs2', 'root']
             const result:PlainObject = {
-                amd: request,
-                commonjs: request,
-                commonjs2: request,
+                default: request,
                 root: Tools.stringConvertToValidVariableName(
                     request, '0-9a-zA-Z_$')
             }
@@ -426,24 +427,20 @@ if (configuration.injection.external.modules === '__implicit__')
                     typeof configuration.injection.external.aliases[
                         request
                     ] === 'string'
-                ) {
-                    for (const key:string in result)
-                        if (result.hasOwnProperty(key))
-                            result[key] =
-                                configuration.injection.external.aliases[
-                                    request]
-                } else if (
+                )
+                    for (const key:string of keys)
+                        result[key] =
+                            configuration.injection.external.aliases[request]
+                else if (
                     typeof configuration.injection.external.aliases[
                         request
                     ] === 'function'
-                ) {
-                    for (const key:string in result)
-                        if (result.hasOwnProperty(key))
-                            result[key] =
-                                configuration.injection.external.aliases[
-                                    request
-                                ](resolvedRequest, key)
-                } else if (
+                )
+                    for (const key:string of keys)
+                        result[key] =
+                            configuration.injection.external.aliases[request](
+                                resolvedRequest, key)
+                else if (
                     configuration.injection.external.aliases[
                         request
                     ] !== null &&
@@ -454,6 +451,10 @@ if (configuration.injection.external.modules === '__implicit__')
                     Tools.extend(
                         result,
                         configuration.injection.external.aliases[request])
+                if (result.hasOwnProperty('default'))
+                    for (const key:string of keys)
+                        if (!result.hasOwnProperty(key))
+                            result[key] = result.default
                 if (result.hasOwnProperty('root'))
                     result.root = Tools.stringConvertToValidVariableName(
                         result.root, '0-9a-zA-Z_$')
@@ -502,7 +503,7 @@ if (htmlAvailable)
     ):void => {
         compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(
             'removeDummyHTMLTags',
-            (data:PlainObject, callback:ProcedureFunction):void => {
+            (data:PlainObject, callback:Function):void => {
                 for (const tags:Array<PlainObject> of [
                     data.body, data.head
                 ]) {
@@ -530,7 +531,7 @@ if (htmlAvailable)
             })
         compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
             'postProcessHTML',
-            (data:PlainObject, callback:ProcedureFunction):void => {
+            (data:PlainObject, callback:Function):void => {
                 /*
                     NOTE: We have to prevent creating native "style" dom nodes
                     to prevent jsdom from parsing the entire cascading style
