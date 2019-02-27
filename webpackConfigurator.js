@@ -415,7 +415,7 @@ if (configuration.injection.external.modules === '__implicit__')
         if (resolvedRequest) {
             const keys:Array<string> = [
                 'amd', 'commonjs', 'commonjs2', 'root']
-            let result:PlainObject|string = request
+            let result:PlainObject|string = resolvedRequest
             if (configuration.injection.external.aliases.hasOwnProperty(
                 request
             )) {
