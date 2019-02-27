@@ -603,7 +603,8 @@
         },
         "extensions": {
           "file": [
-            ".compiled.js"
+            ".compiled.js",
+            ".js"
           ],
           "module": [
             "-loader"
