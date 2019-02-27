@@ -532,7 +532,7 @@
         "assetPattern": {
           "javaScript": {
             "#": "We have to ensure, that the highest resolvable dependency inside this project will be used in node environments to ensure one instance of each dependent artefact for linked projects. We have to wrap \"require\" into an eval call to avoid other pre-processing scripts to replace this statement here.",
-            "pattern": "'use strict';if(typeof module!=='undefined'&&eval('typeof require')!=='undefined'&&'main'in eval('require')&&module!==eval('require.main')&&'paths'in module&&'paths'in eval('require.main')&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter(function(path){return eval('require.main.paths').includes(path)}));"
+            "pattern": "'use strict';if(typeof module!=='undefined'&&eval('typeof require')!=='undefined'&&'main'in eval('require')&&eval('typeof require.main')!=='undefined'&&module!==eval('require.main')&&'paths'in module&&'paths'in eval('require.main')&&typeof __dirname!=='undefined')module.paths=eval('require.main.paths').concat(module.paths.filter(function(path){return eval('require.main.paths').includes(path)}));"
           }
         },
         "supportedBrowsers": [
