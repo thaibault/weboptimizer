@@ -327,7 +327,10 @@ resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.injection.entry,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.module.replacements.normal,
-    resolvedConfiguration.extensions,
+    {
+        file: resolvedConfiguration.extensions.file.internal,
+        module: resolvedConfiguration.extensions.module
+    },
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base
 )
@@ -387,9 +390,13 @@ for (const chunkName:string in resolvedConfiguration.injection.entry
             .normalized[chunkName]
         ) {
             const filePath:?string = Helper.determineModuleFilePath(
-                moduleID, resolvedConfiguration.module.aliases,
+                moduleID,
+                resolvedConfiguration.module.aliases,
                 resolvedConfiguration.module.replacements.normal,
-                resolvedConfiguration.extensions,
+                {
+                    file: resolvedConfiguration.extensions.file.internal,
+                    module: resolvedConfiguration.extensions.module
+                },
                 resolvedConfiguration.path.context,
                 /*
                     NOTE: We doesn't use
@@ -402,7 +409,8 @@ for (const chunkName:string in resolvedConfiguration.injection.entry
                 resolvedConfiguration.package.main.fileNames,
                 resolvedConfiguration.package.main.propertyNames,
                 resolvedConfiguration.package.aliasPropertyNames,
-                resolvedConfiguration.encoding)
+                resolvedConfiguration.encoding
+            )
             let type:?string
             if (filePath)
                 type = Helper.determineAssetType(

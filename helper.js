@@ -448,7 +448,7 @@ export class Helper {
             resolvedRequest,
             {},
             {},
-            extensions,
+            {file: extensions.file.external, module: extensions.module},
             context,
             requestContext,
             pathsToIgnore,
@@ -485,7 +485,10 @@ export class Helper {
                         moduleID,
                         aliases,
                         moduleReplacements,
-                        extensions,
+                        {
+                            file: extensions.file.internal,
+                            module: extensions.module
+                        },
                         context,
                         requestContext,
                         pathsToIgnore,
@@ -673,25 +676,22 @@ export class Helper {
         entryInjection:EntryInjection,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
-        extensions:Extensions = {
-            file: {
-                external: ['.compiled.js', '.js', '.json'],
-                internal: [
-                    'js',
-                    'json',
-                    'css',
-                    'eot',
-                    'gif',
-                    'html',
-                    'ico',
-                    'jpg',
-                    'png',
-                    'ejs',
-                    'svg',
-                    'ttf',
-                    'woff', '.woff2'
-                ].map((suffix:string):string => `.${suffix}`)
-            },
+        extensions:PlainObject = {
+            file: [
+                'js',
+                'json',
+                'css',
+                'eot',
+                'gif',
+                'html',
+                'ico',
+                'jpg',
+                'png',
+                'ejs',
+                'svg',
+                'ttf',
+                'woff', '.woff2'
+            ].map((suffix:string):string => `.${suffix}`),
             module: []
         },
         context:string = './',
@@ -907,7 +907,7 @@ export class Helper {
                 modulesToExclude,
                 aliases,
                 moduleReplacements,
-                extensions,
+                {file: extensions.file.internal, module: extensions.module},
                 context,
                 referencePath,
                 pathsToIgnore
@@ -1031,25 +1031,22 @@ export class Helper {
         moduleID:string,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
-        extensions:Extensions = {
-            file: {
-                external: ['.compiled.js', '.js', '.json'],
-                internal: [
-                    'js',
-                    'json',
-                    'css',
-                    'eot',
-                    'gif',
-                    'html',
-                    'ico',
-                    'jpg',
-                    'png',
-                    'ejs',
-                    'svg',
-                    'ttf',
-                    'woff', '.woff2'
-                ].map((suffix:string):string => `.${suffix}`)
-            },
+        extensions:PlainObject = {
+            file: [
+                'js',
+                'json',
+                'css',
+                'eot',
+                'gif',
+                'html',
+                'ico',
+                'jpg',
+                'png',
+                'ejs',
+                'svg',
+                'ttf',
+                'woff', '.woff2'
+            ].map((suffix:string):string => `.${suffix}`),
             module: []
         },
         context:string = './',
@@ -1092,7 +1089,7 @@ export class Helper {
                     extensions.module.concat([''])
                 )
                     for (const fileExtension:string of [''].concat(
-                        extensions.file.internal
+                        extensions.file
                     )) {
                         let currentModuleFilePath:string
                         if (moduleFilePath.startsWith('/'))
