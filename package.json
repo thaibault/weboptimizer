@@ -545,8 +545,10 @@
       "hashAlgorithm": "md5",
       "injection": {
         "autoExclude": [
+          "#: NOTE: We have to add \"test.js\" here additionally to be able to grab \"test.compiled.js\" and \"test.js\" at the same time.",
           "./dummy",
-          "./test"
+          "./test",
+          "./test.js"
         ],
         "chunks": {},
         "dllChunkNames": [
@@ -1304,8 +1306,10 @@
       },
       "injection": {
         "autoExclude": [
+          "#: NOTE: We have to add \"test.js\" here additionally to be able to grab \"test.compiled.js\" and \"test.js\" at the same time.",
           "dummy",
-          "test"
+          "test",
+          "test.compiled"
         ],
         "chunks": {
           "cacheGroups": {

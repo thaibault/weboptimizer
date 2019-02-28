@@ -294,19 +294,29 @@ registerTest(function():void {
             [{}, {filePaths: [], directoryPaths: []}],
             ['example', {filePaths: [], directoryPaths: []}],
             [
-                'helper', {
-                    filePaths: [path.resolve(__dirname, '../helper.js')],
-                    directoryPaths: [path.resolve(__dirname, '../')]}
+                'helper',
+                {
+                    filePaths: [
+                        path.resolve(__dirname, '../helper.compiled.js')],
+                    directoryPaths: [path.resolve(__dirname, '../')]
+                }
             ],
             [{example: 'example'}, {filePaths: [], directoryPaths: []}],
-            [{example: 'helper'}, {
-                filePaths: [path.resolve(__dirname, '../helper.js')],
-                directoryPaths: [path.resolve(__dirname, '../')]}
+            [
+                {example: 'helper'},
+                {
+                    filePaths: [
+                        path.resolve(__dirname, '../helper.compiled.js')],
+                    directoryPaths: [path.resolve(__dirname, '../')]
+                }
             ],
-            [{helper: ['helper.js']}, {
-                filePaths: [path.resolve(__dirname, '../', 'helper.js')],
-                directoryPaths: [path.resolve(__dirname, '../')]
-            }]
+            [
+                {helper: ['helper.js']},
+                {
+                    filePaths: [path.resolve(__dirname, '../', 'helper.js')],
+                    directoryPaths: [path.resolve(__dirname, '../')]
+                }
+            ]
         ])
             assert.deepEqual(Helper.determineModuleLocations(test[0]), test[1])
     })

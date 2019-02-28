@@ -677,9 +677,9 @@ export class Helper {
             file: {
                 external: ['.js'],
                 internal: [
-                    'js',
+                    'compiled.js', 'js',
                     'json',
-                    'css',
+                    'compiled.css', 'css',
                     'eot',
                     'gif',
                     'html',
@@ -880,9 +880,9 @@ export class Helper {
             file: {
                 external: ['.js'],
                 internal: [
-                    'js',
+                    'compiled.js', 'js',
                     'json',
-                    'css',
+                    'compiled.css', 'css',
                     'eot',
                     'gif',
                     'html',
