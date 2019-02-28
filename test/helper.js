@@ -305,8 +305,7 @@ registerTest(function():void {
             [
                 {example: 'helper'},
                 {
-                    filePaths: [
-                        path.resolve(__dirname, '../helper.js')],
+                    filePaths: [path.resolve(__dirname, '../helper.js')],
                     directoryPaths: [path.resolve(__dirname, '../')]
                 }
             ],
@@ -354,7 +353,14 @@ registerTest(function():void {
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
-                    ), [], {}, {}, [], './', '', ['.git', 'node_modules']
+                    ),
+                    [],
+                    {},
+                    {},
+                    {file: {external: [], internal: []}, module: []},
+                    './',
+                    '',
+                    ['.git', 'node_modules']
                 ],
                 {
                     chunks: [],
@@ -373,7 +379,14 @@ registerTest(function():void {
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
-                    ), [], {}, {}, [], './', '', ['.git', 'node_modules']
+                    ),
+                    [],
+                    {},
+                    {},
+                    {file: {external: [], internal: []}, module: []},
+                    './',
+                    '',
+                    ['.git', 'node_modules']
                 ],
                 {
                     chunks: [],
@@ -392,7 +405,14 @@ registerTest(function():void {
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
-                    ), [], {}, {}, [], './', '', ['.git', 'node_modules']
+                    ),
+                    [],
+                    {},
+                    {},
+                    {file: {external: [], internal: []}, module: []},
+                    './',
+                    '',
+                    ['.git', 'node_modules']
                 ],
                 {
                     chunks: [],
@@ -411,7 +431,14 @@ registerTest(function():void {
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
-                    ), [], {}, {}, [], './', '', ['.git', 'node_modules']
+                    ),
+                    [],
+                    {},
+                    {},
+                    {file: {external: [], internal: []}, module: []},
+                    './',
+                    '',
+                    ['.git', 'node_modules']
                 ],
                 {
                     chunks: [],
@@ -430,7 +457,14 @@ registerTest(function():void {
                     },
                     Helper.resolveBuildConfigurationFilePaths(
                         buildConfiguration, './', ['.git', 'node_modules']
-                    ), [], {}, {}, [], './', '', ['.git', 'node_modules']
+                    ),
+                    [],
+                    {},
+                    {},
+                    {file: {external: [], internal: []}, module: []},
+                    './',
+                    '',
+                    ['.git', 'node_modules']
                 ],
                 {
                     chunks: [],
@@ -451,19 +485,20 @@ registerTest(function():void {
             [[''], null],
             [['a', {}, {}, {file: [], module: []}, './', '', []], null],
             [['a', {a: 'b'}, {}, {file: [], module: []}, './', '', []], null],
-            [['bba', {a: 'b'}, {}, {file: [], module: []}, './', '', []], null],
+            [
+                ['bba', {a: 'b'}, {}, {file: [], module: []}, './', '', []],
+                null
+            ],
             [['helper'], 'helper.js'],
             [['helper', {}, {}, {file: [], module: []}, './', '', []], null],
-            [[
-                './helper', {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []}, '',
-                'a', []], null
+            [
+                ['./helper', {}, {}, {file: ['.js'], module: []}, '', 'a', []],
+                null
             ],
-            [[
-                'helper', {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', './'
-            ], 'helper.js']
+            [
+                ['helper', {}, {}, {file: ['.js'], module: []}, './', './'],
+                'helper.js'
+            ]
         ]) {
             let result:?string = Helper.determineModuleFilePath(...test[0])
             if (result)

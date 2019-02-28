@@ -244,7 +244,12 @@ const main = async ():Promise<void> => {
                                         moduleID, configuration.module.aliases,
                                         configuration.module.replacements
                                             .normal,
-                                        configuration.extensions,
+                                        {
+                                            file: configuration.extensions.file
+                                                .internal,
+                                            module: configuration.extensions
+                                                .module
+                                        },
                                         configuration.path.context,
                                         configuration.path.source.asset.base,
                                         configuration.path.ignore,
@@ -354,7 +359,11 @@ const main = async ():Promise<void> => {
                         configuration['test:browser'].injection.entry,
                         configuration.module.aliases,
                         configuration.module.replacements.normal,
-                        configuration.extensions, configuration.path.context,
+                        {
+                            file: configuration.extensions.file.internal,
+                            module: configuration.extensions.module
+                        },
+                        configuration.path.context,
                         configuration.path.source.asset.base,
                         configuration.path.ignore
                     ).filePaths

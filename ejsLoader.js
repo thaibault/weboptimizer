@@ -47,16 +47,13 @@ module.exports = function(source:string):string {
                 },
                 context: './',
                 extensions: {
-                    file: {
-                        external: ['.js'],
-                        internal: [
-                            '.js', '.json',
-                            '.css',
-                            '.svg', '.png', '.jpg', '.gif', '.ico',
-                            '.html',
-                            '.eot', '.ttf', '.woff'
-                        ]
-                    },
+                    file: [
+                        '.js', '.json',
+                        '.css',
+                        '.svg', '.png', '.jpg', '.gif', '.ico',
+                        '.html',
+                        '.eot', '.ttf', '.woff', '.woff2'
+                    ],
                     module: []
                 },
                 module: {
@@ -67,7 +64,10 @@ module.exports = function(source:string):string {
             },
             this.options || {},
             'query' in this ? loaderUtils.getOptions(this) || {} : {}
-        ), /#%%%#/g, '!')
+        ),
+        /#%%%#/g,
+        '!'
+    )
     const compile:CompileFunction = (
         template:string, options:Object = query.compiler,
         compileSteps:number = 2
@@ -84,7 +84,11 @@ module.exports = function(source:string):string {
                     compile:CompileFunction, locals:Object
                 // IgnoreTypeCheck
                 ):Object => new Function(
-                    'request', 'template', 'source', 'compile', 'locals',
+                    'request',
+                    'template',
+                    'source',
+                    'compile',
+                    'locals',
                     `return ${queryMatch[1]}`
                 )(request, template, source, compile, locals)
                 nestedLocals = Tools.extend(
@@ -102,15 +106,19 @@ module.exports = function(source:string):string {
                 return compile(template, nestedOptions)(nestedLocals)
             const templateFilePath:?string =
                 Helper.determineModuleFilePath(
-                    template, query.module.aliases,
-                    query.module.replacements, query.extensions,
-                    query.context, configuration.path.source.asset.base,
+                    template,
+                    query.module.aliases,
+                    query.module.replacements,
+                    query.extensions,
+                    query.context,
+                    configuration.path.source.asset.base,
                     configuration.path.ignore,
                     configuration.module.directoryNames,
                     configuration.package.main.fileNames,
                     configuration.package.main.propertyNames,
                     configuration.package.aliasPropertyNames,
-                    configuration.encoding)
+                    configuration.encoding
+                )
             if (templateFilePath) {
                 if ('query' in this)
                     this.addDependency(templateFilePath)
