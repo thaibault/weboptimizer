@@ -401,7 +401,7 @@ export class Helper {
         moduleReplacements:PlainObject = {},
         extensions:Extensions = {
             file: {
-                external: ['.js'],
+                external: ['.compiled.js', '.js'],
                 internal: [
                     'js',
                     'json',
@@ -675,11 +675,11 @@ export class Helper {
         moduleReplacements:PlainObject = {},
         extensions:Extensions = {
             file: {
-                external: ['.js'],
+                external: ['compiled.js', '.js'],
                 internal: [
-                    'compiled.js', 'js',
+                    'js',
                     'json',
-                    'compiled.css', 'css',
+                    'css',
                     'eot',
                     'gif',
                     'html',
@@ -878,11 +878,11 @@ export class Helper {
         moduleReplacements:PlainObject = {},
         extensions:Extensions = {
             file: {
-                external: ['.js'],
+                external: ['compiled.js', '.js'],
                 internal: [
-                    'compiled.js', 'js',
+                    'js',
                     'json',
-                    'compiled.css', 'css',
+                    'css',
                     'eot',
                     'gif',
                     'html',
@@ -1033,7 +1033,7 @@ export class Helper {
         moduleReplacements:PlainObject = {},
         extensions:Extensions = {
             file: {
-                external: ['.js'],
+                external: ['.compiled.js', '.js'],
                 internal: [
                     'js',
                     'json',

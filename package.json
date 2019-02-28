@@ -399,10 +399,8 @@
       "extensions": {
         "file": {
           "internal": [
-            ".compiled.js",
             ".js",
             ".json",
-            ".compiled.css",
             ".css",
             ".eot",
             ".gif",
@@ -418,7 +416,7 @@
             ".ejs"
           ],
           "external": {
-            "__evaluate__": "self.targetTechnology === 'node' ? ['.compiled.js', '.js', '.json'] : self.extensions.file.internal"
+            "__evaluate__": "['.compiled.js'].concat(self.targetTechnology === 'node' ? ['.js', '.json'] : self.extensions.file.internal)"
           }
         },
         "module": []
