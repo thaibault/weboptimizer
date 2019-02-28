@@ -297,7 +297,7 @@ registerTest(function():void {
                 'helper',
                 {
                     filePaths: [
-                        path.resolve(__dirname, '../helper.compiled.js')],
+                        path.resolve(__dirname, '../helper.js')],
                     directoryPaths: [path.resolve(__dirname, '../')]
                 }
             ],
@@ -306,7 +306,7 @@ registerTest(function():void {
                 {example: 'helper'},
                 {
                     filePaths: [
-                        path.resolve(__dirname, '../helper.compiled.js')],
+                        path.resolve(__dirname, '../helper.js')],
                     directoryPaths: [path.resolve(__dirname, '../')]
                 }
             ],
