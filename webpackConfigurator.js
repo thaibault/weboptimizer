@@ -426,10 +426,14 @@ if (configuration.injection.external.modules === '__implicit__')
                     pattern.startsWith('^')
                 ) {
                     const regularExpression:RegExp = new RegExp(pattern)
-                    if (regularExpression.test(request)) {
+                    if (regularExpression.test(resolvedRequest)) {
                         let match:boolean = false
-                        let target:string =
+                        const targetConfiguration:PlainObject =
                             configuration.injection.external.aliases[pattern]
+                        const replacementRegularExpression:RegExp = new RegExp(
+                            Object.keys(targetConfiguration)[0])
+                        let target:string = targetConfiguration[
+                            replacementRegularExpression]
                         if (target.startsWith('?')) {
                             target = target.substring(1)
                             const aliasedRequest:string =
@@ -440,10 +444,7 @@ if (configuration.injection.external.modules === '__implicit__')
                             match = true
                         if (match) {
                             request = request.replace(
-                                regularExpression,
-                                configuration.injection.external.aliases[
-                                    pattern]
-                            )
+                                replacementRegularExpression, target)
                             break
                         }
                     }

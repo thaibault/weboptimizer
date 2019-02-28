@@ -561,7 +561,12 @@
             "jquery": {
               "root": "jQuery"
             },
-            "^(.+)$": "?$1.compiled.js"
+            "^.+/node_modules/.+(?:\\.css)?$": {
+                "^(.+)(?:\\.css)?$": "?$1.compiled.css"
+            },
+            "^.+/node_modules/.+(?:\\.js)?$": {
+                "^(.+)(?:\\.js)?$": "?$1.compiled.js"
+            }
           },
           "implicit": {
             "pattern": {
