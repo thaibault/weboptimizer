@@ -412,7 +412,6 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.inPlace.externalLibrary.dynamic,
             configuration.encoding
         )
-        console.log('A', request, resolvedRequest)
         if (resolvedRequest) {
             const keys:Array<string> = [
                 'amd', 'commonjs', 'commonjs2', 'root']
