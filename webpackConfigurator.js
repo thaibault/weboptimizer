@@ -374,9 +374,9 @@ if (configuration.injection.external.modules === '__implicit__')
         (and de-duplicate them) for optimal bundling results. NOTE: Only native
         javaScript and json modules will be marked as external dependency.
     */
-    configuration.injection.external.modules = (
+    configuration.injection.external.modules = async (
         context:string, request:string, callback:Function
-    ):void => {
+    ):Promise<void> => {
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
@@ -415,10 +415,45 @@ if (configuration.injection.external.modules === '__implicit__')
         if (resolvedRequest) {
             const keys:Array<string> = [
                 'amd', 'commonjs', 'commonjs2', 'root']
+            // region pattern based aliasing
+            for (
+                const pattern:string in configuration.injection.external
+                    .aliases
+            )
+                if (
+                    configuration.injection.external.aliases
+                        .hasOwnProperty(pattern) &&
+                    pattern.startsWith('^')
+                ) {
+                    const regularExpression:RegExp = new RegExp(pattern)
+                    if (regularExpression.test(request)) {
+                        let match:boolean = false
+                        let target:string =
+                            configuration.injection.external.aliases[pattern]
+                        if (target.startsWith('?')) {
+                            target = target.substring(1)
+                            const aliasedRequest:string =
+                                resolvedRequest.replace(
+                                    regularExpression, target)
+                            match = await Tools.isFile(aliasedRequest)
+                        } else
+                            match = true
+                        if (match) {
+                            request = request.replace(
+                                regularExpression,
+                                configuration.injection.external.aliases[
+                                    pattern]
+                            )
+                            break
+                        }
+                    }
+                }
+            // endregion
             let result:PlainObject|string = resolvedRequest
             if (configuration.injection.external.aliases.hasOwnProperty(
                 request
             )) {
+                // region normal alias replacement
                 result = {default: request}
                 if (
                     typeof configuration.injection.external.aliases[
@@ -436,7 +471,7 @@ if (configuration.injection.external.modules === '__implicit__')
                     for (const key:string of keys)
                         result[key] =
                             configuration.injection.external.aliases[request](
-                                resolvedRequest, key)
+                                request, key)
                 else if (
                     configuration.injection.external.aliases[
                         request
@@ -452,12 +487,13 @@ if (configuration.injection.external.modules === '__implicit__')
                     for (const key:string of keys)
                         if (!result.hasOwnProperty(key))
                             result[key] = result.default
-                if (result.hasOwnProperty('root'))
-                    // IgnoreTypeCheck
-                    result.root = Tools.stringConvertToValidVariableName(
-                        // IgnoreTypeCheck
-                        result.root, '0-9a-zA-Z_$')
+                // endregion
             }
+            if (result.hasOwnProperty('root'))
+                // IgnoreTypeCheck
+                result.root = Tools.stringConvertToValidVariableName(
+                    // IgnoreTypeCheck
+                    result.root, '0-9a-zA-Z_$')
             const exportFormat:string = (
                 configuration.exportFormat.external ||
                 configuration.exportFormat.self
