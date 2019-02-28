@@ -391,6 +391,60 @@ if (configuration.injection.external.modules === '__implicit__')
                     request = request.substring(1)
                 break
             }
+        // TODO test
+        // region pattern based aliasing
+        for (const pattern:string in configuration.injection.external.aliases)
+            if (
+                configuration.injection.external.aliases.hasOwnProperty(
+                    pattern) &&
+                pattern.startsWith('^')
+            ) {
+                const regularExpression:RegExp = new RegExp(pattern)
+                if (regularExpression.test(request)) {
+                    let match:boolean = false
+                    const targetConfiguration:PlainObject =
+                        configuration.injection.external.aliases[pattern]
+                    const replacementRegularExpression:RegExp = new RegExp(
+                        Object.keys(targetConfiguration)[0])
+                    let target:string = targetConfiguration[
+                        replacementRegularExpression]
+                    if (target.startsWith('?')) {
+                        target = target.substring(1)
+                        const aliasedRequest:string = request.replace(
+                            regularExpression, target)
+                        match = Boolean(Helper.determineModuleFilePath(
+                            aliasedRequest,
+                            {},
+                            {},
+                            {
+                                file: configuration.extensions.file.external,
+                                module: configuration.extensions.module
+                            },
+                            configuration.path.context,
+                            context,
+                            configuration.path.ignore,
+                            configuration.module.directoryNames,
+                            configuration.package.main.fileNames,
+                            configuration.package.main.propertyNames,
+                            configuration.package.aliasPropertyNames,
+                            configuration.injection.external.implicit.pattern
+                                .include,
+                            configuration.injection.external.implicit.pattern
+                                .exclude,
+                            configuration.inPlace.externalLibrary.normal,
+                            configuration.inPlace.externalLibrary.dynamic,
+                            configuration.encoding
+                        ))
+                    } else
+                        match = true
+                    if (match) {
+                        request = request.replace(
+                            replacementRegularExpression, target)
+                        break
+                    }
+                }
+            }
+        // endregion
         const resolvedRequest:?string = Helper.determineExternalRequest(
             request,
             configuration.path.context,
@@ -415,41 +469,6 @@ if (configuration.injection.external.modules === '__implicit__')
         if (resolvedRequest) {
             const keys:Array<string> = [
                 'amd', 'commonjs', 'commonjs2', 'root']
-            // region pattern based aliasing
-            for (
-                const pattern:string in configuration.injection.external
-                    .aliases
-            )
-                if (
-                    configuration.injection.external.aliases
-                        .hasOwnProperty(pattern) &&
-                    pattern.startsWith('^')
-                ) {
-                    const regularExpression:RegExp = new RegExp(pattern)
-                    if (regularExpression.test(resolvedRequest)) {
-                        let match:boolean = false
-                        const targetConfiguration:PlainObject =
-                            configuration.injection.external.aliases[pattern]
-                        const replacementRegularExpression:RegExp = new RegExp(
-                            Object.keys(targetConfiguration)[0])
-                        let target:string = targetConfiguration[
-                            replacementRegularExpression]
-                        if (target.startsWith('?')) {
-                            target = target.substring(1)
-                            const aliasedRequest:string =
-                                resolvedRequest.replace(
-                                    regularExpression, target)
-                            match = await Tools.isFile(aliasedRequest)
-                        } else
-                            match = true
-                        if (match) {
-                            request = request.replace(
-                                replacementRegularExpression, target)
-                            break
-                        }
-                    }
-                }
-            // endregion
             let result:PlainObject|string = resolvedRequest
             if (configuration.injection.external.aliases.hasOwnProperty(
                 request
