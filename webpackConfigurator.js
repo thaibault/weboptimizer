@@ -380,65 +380,83 @@ if (configuration.injection.external.modules === '__implicit__')
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
-        for (
-            const filePath:string of
-            configuration.module.directoryNames.concat(
-                configuration.loader.directoryNames)
-        )
+        for (const filePath:string of configuration.module.directoryNames)
             if (request.startsWith(filePath)) {
                 request = request.substring(filePath.length)
                 if (request.startsWith('/'))
                     request = request.substring(1)
                 break
             }
-        // TODO test
         // region pattern based aliasing
-        for (const pattern:string in configuration.injection.external.aliases)
-            if (
-                configuration.injection.external.aliases.hasOwnProperty(
-                    pattern) &&
-                pattern.startsWith('^')
-            ) {
-                const regularExpression:RegExp = new RegExp(pattern)
-                if (regularExpression.test(request)) {
-                    let match:boolean = false
-                    const targetConfiguration:PlainObject =
-                        configuration.injection.external.aliases[pattern]
-                    const replacementRegularExpression:RegExp = new RegExp(
-                        Object.keys(targetConfiguration)[0])
-                    let target:string = targetConfiguration[
-                        Object.keys(targetConfiguration)[0]
-                    ]
-                    if (target.startsWith('?')) {
-                        target = target.substring(1)
-                        const aliasedRequest:string = request.replace(
-                            regularExpression, target)
-                        match = Boolean(Helper.determineModuleFilePath(
-                            aliasedRequest,
-                            {},
-                            {},
-                            {
-                                file: configuration.extensions.file.external,
-                                module: configuration.extensions.module
-                            },
-                            configuration.path.context,
-                            context,
-                            configuration.path.ignore,
-                            configuration.module.directoryNames,
-                            configuration.package.main.fileNames,
-                            configuration.package.main.propertyNames,
-                            configuration.package.aliasPropertyNames,
-                            configuration.encoding
-                        ))
-                    } else
-                        match = true
-                    if (match) {
-                        request = request.replace(
-                            replacementRegularExpression, target)
-                        break
+        const filePath:string = Helper.determineModuleFilePath(
+            request,
+            {},
+            {},
+            {
+                file: configuration.extensions.file.external,
+                module: configuration.extensions.module
+            },
+            configuration.path.context,
+            context,
+            configuration.path.ignore,
+            configuration.module.directoryNames,
+            configuration.package.main.fileNames,
+            configuration.package.main.propertyNames,
+            configuration.package.aliasPropertyNames,
+            configuration.encoding
+        )
+        if (filePath)
+            for (
+                const pattern:string in configuration.injection.external
+                    .aliases
+            )
+                if (
+                    configuration.injection.external.aliases.hasOwnProperty(
+                        pattern) &&
+                    pattern.startsWith('^')
+                ) {
+                    const regularExpression:RegExp = new RegExp(pattern)
+                    if (regularExpression.test(filePath)) {
+                        let match:boolean = false
+                        const targetConfiguration:PlainObject =
+                            configuration.injection.external.aliases[pattern]
+                        const replacementRegularExpression:RegExp = new RegExp(
+                            Object.keys(targetConfiguration)[0])
+                        let target:string = targetConfiguration[
+                            Object.keys(targetConfiguration)[0]
+                        ]
+                        if (target.startsWith('?')) {
+                            target = target.substring(1)
+                            const aliasedRequest:string = request.replace(
+                                replacementRegularExpression, target)
+                            if (aliasedRequest !== request)
+                                match = Boolean(Helper.determineModuleFilePath(
+                                    aliasedRequest,
+                                    {},
+                                    {},
+                                    {
+                                        file: configuration.extensions.file
+                                            .external,
+                                        module: configuration.extensions.module
+                                    },
+                                    configuration.path.context,
+                                    context,
+                                    configuration.path.ignore,
+                                    configuration.module.directoryNames,
+                                    configuration.package.main.fileNames,
+                                    configuration.package.main.propertyNames,
+                                    configuration.package.aliasPropertyNames,
+                                    configuration.encoding
+                                ))
+                        } else
+                            match = true
+                        if (match) {
+                            request = request.replace(
+                                replacementRegularExpression, target)
+                            break
+                        }
                     }
                 }
-            }
         // endregion
         const resolvedRequest:?string = Helper.determineExternalRequest(
             request,
