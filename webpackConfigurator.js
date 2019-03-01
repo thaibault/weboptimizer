@@ -407,7 +407,8 @@ if (configuration.injection.external.modules === '__implicit__')
                     const replacementRegularExpression:RegExp = new RegExp(
                         Object.keys(targetConfiguration)[0])
                     let target:string = targetConfiguration[
-                        replacementRegularExpression]
+                        Object.keys(targetConfiguration)[0]
+                    ]
                     if (target.startsWith('?')) {
                         target = target.substring(1)
                         const aliasedRequest:string = request.replace(
