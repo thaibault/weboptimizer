@@ -325,9 +325,10 @@ export class Helper {
         relativeModuleLocations:Array<string> = ['node_modules']
     ):string {
         referencePath = path.resolve(referencePath)
-        if (request.startsWith('./') && path.resolve(
-            context
-        ) !== referencePath) {
+        if (
+            request.startsWith('./') &&
+            path.resolve(context) !== referencePath
+        ) {
             request = path.resolve(context, request)
             for (const modulePath:string of relativeModuleLocations) {
                 const pathPrefix:string = path.resolve(
@@ -336,19 +337,26 @@ export class Helper {
                     request = request.substring(pathPrefix.length)
                     if (request.startsWith('/'))
                         request = request.substring(1)
-                    return Helper.applyModuleReplacements(Helper.applyAliases(
-                        request.substring(request.lastIndexOf('!') + 1),
-                        aliases
-                    ), moduleReplacements)
+                    return Helper.applyModuleReplacements(
+                        Helper.applyAliases(
+                            request.substring(request.lastIndexOf('!') + 1),
+                            aliases
+                        ),
+                        moduleReplacements
+                    )
                 }
             }
             if (request.startsWith(referencePath)) {
                 request = request.substring(referencePath.length)
                 if (request.startsWith('/'))
                     request = request.substring(1)
-                return Helper.applyModuleReplacements(Helper.applyAliases(
-                    request.substring(request.lastIndexOf('!') + 1), aliases
-                ), moduleReplacements)
+                return Helper.applyModuleReplacements(
+                    Helper.applyAliases(
+                        request.substring(request.lastIndexOf('!') + 1),
+                        aliases
+                    ),
+                    moduleReplacements
+                )
             }
         }
         return request
@@ -437,9 +445,12 @@ export class Helper {
         referencePath = path.resolve(referencePath)
         // NOTE: We apply alias on externals additionally.
         const resolvedRequest:string = Helper.applyModuleReplacements(
-            Helper.applyAliases(request.substring(
-                request.lastIndexOf('!') + 1
-            ), aliases), moduleReplacements)
+            Helper.applyAliases(
+                request.substring(request.lastIndexOf('!') + 1), aliases),
+            moduleReplacements
+        )
+        if (Tools.isAnyMatching(resolvedRequest, excludePattern))
+            return null
         /*
             NOTE: Aliases and module replacements doesn't have to be forwarded
             since we pass an already resolved request.
@@ -458,8 +469,6 @@ export class Helper {
             packageAliasPropertyNames,
             encoding
         )
-        if (Tools.isAnyMatching(resolvedRequest, excludePattern))
-            return null
         /*
             NOTE: We mark dependencies as external if there file couldn't be
             resolved or are specified to be external explicitly.
@@ -500,7 +509,6 @@ export class Helper {
                     ) === filePath)
                         return null
         const parts = context.split('/')
-        // parts.splice(-1, 1)
         const externalModuleLocations = []
         while (parts.length > 0) {
             for (const relativePath:string of relativeExternalModuleLocations)
@@ -1058,9 +1066,9 @@ export class Helper {
         packageAliasPropertyNames:Array<string> = [],
         encoding:string = 'utf-8'
     ):?string {
-        moduleID = Helper.applyModuleReplacements(Helper.applyAliases(
-            Helper.stripLoader(moduleID), aliases
-        ), moduleReplacements)
+        moduleID = Helper.applyModuleReplacements(
+            Helper.applyAliases(Helper.stripLoader(moduleID), aliases),
+            moduleReplacements)
         if (!moduleID)
             return null
         let moduleFilePath:string = moduleID
