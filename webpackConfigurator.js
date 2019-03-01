@@ -427,12 +427,6 @@ if (configuration.injection.external.modules === '__implicit__')
                             configuration.package.main.fileNames,
                             configuration.package.main.propertyNames,
                             configuration.package.aliasPropertyNames,
-                            configuration.injection.external.implicit.pattern
-                                .include,
-                            configuration.injection.external.implicit.pattern
-                                .exclude,
-                            configuration.inPlace.externalLibrary.normal,
-                            configuration.inPlace.externalLibrary.dynamic,
                             configuration.encoding
                         ))
                     } else
