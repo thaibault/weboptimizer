@@ -79,10 +79,8 @@ const main = async ():Promise<void> => {
                     break
                 count += 1
             }
-            await new Promise((resolve:Function, reject:Function):void =>
-                fileSystem.writeFile(filePath, JSON.stringify(
-                    dynamicConfiguration
-                ), (error:?Error):void => error ? reject(error) : resolve()))
+            await fileSystem.promises.writeFile(
+                filePath, JSON.stringify(dynamicConfiguration))
             const additionalArguments:Array<string> = process.argv.splice(3)
             // / region register exit handler to tidy up
             closeEventHandlers.push((error:?Error):void => {
@@ -149,12 +147,7 @@ const main = async ():Promise<void> => {
                                             ) : resolve()))
                                         return false
                                     }
-                                    await new Promise((
-                                        resolve:Function, reject:Function
-                                    ):void => fileSystem.unlink(file.path, (
-                                        error:?Error
-                                    ):void => error ? reject(error) : resolve(
-                                    )))
+                                    await fileSystem.promises.unlink(file.path)
                                     break
                                 }
                         })
@@ -171,11 +164,7 @@ const main = async ():Promise<void> => {
                             file.name.endsWith('.dll-manifest.json') ||
                             file.name.startsWith('npm-debug')
                         )
-                            await new Promise((
-                                resolve:Function, reject:Function
-                            ):void => fileSystem.unlink(file.path, (
-                                error:?Error
-                            ):void => error ? reject(error) : resolve()))
+                            await fileSystem.promises.unlink(file.path)
                 } else
                     await new Promise((
                         resolve:Function, reject:Function

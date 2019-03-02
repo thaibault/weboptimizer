@@ -285,40 +285,22 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                 let promises:Array<Promise<void>> = []
                 for (const path:string of filePathsToRemove)
                     if (await Tools.isFile(path))
-                        promises.push(new Promise((resolve:Function):void =>
-                            fileSystem.unlink(path, (error:?Error):void => {
-                                if (error)
-                                    console.error(error)
-                                resolve()
-                            })))
+                        promises.push(fileSystem.promises.unlink(path).catch(
+                            console.error
+                        ))
                 await Promise.all(promises)
                 promises = []
                 for (
                     const type:string of ['javaScript', 'cascadingStyleSheet']
                 )
-                    promises.push(new Promise((
-                        resolve:Function, reject:Function
-                    /*
-                        NOTE: Workaround since flow misses the three parameter
-                        "readdir" signature.
-                    */
-                    ):void => (fileSystem.readdir:Function)(
+                    promises.push(fileSystem.promises.readdir(
                         configuration.path.target.asset[type],
-                        configuration.encoding,
-                        (error:?Error, files:Array<string>):void => {
-                            if (error) {
-                                reject(error)
-                                return
-                            }
-                            if (files.length === 0)
-                                fileSystem.rmdir(
-                                    configuration.path.target.asset[type], (
-                                        error:?Error
-                                    ):void => error ? reject(error) : resolve()
-                                )
-                            else
-                                resolve()
-                        })))
+                        {encoding: configuration.encoding}
+                    ).then(async (files:Array<string>):Promise<void> => {
+                        if (files.length === 0)
+                            await fileSystem.promises.rmdir(
+                                configuration.path.target.asset[type])
+                    }))
                 await Promise.all(promises)
                 callback()
             })
