@@ -276,32 +276,35 @@ for (const key:string in configuration.path)
 // / endregion
 const now:Date = new Date()
 export const resolvedConfiguration:ResolvedConfiguration =
-    Tools.evaluateDynamicDataStructure(configuration, {
-        currentPath: process.cwd(),
-        fileSystem,
-        Helper,
-        // IgnoreTypeCheck
-        isDLLUseful:
-            2 < configuration.givenCommandLineArguments.length &&
-            (
-                ['build:dll', 'watch:dll'].includes(
-                    // IgnoreTypeCheck
-                    configuration.givenCommandLineArguments[2]) ||
-                configuration.dllManifestFilePaths.length &&
-                ['build', 'serve', 'test:browser'].includes(
-                    // IgnoreTypeCheck
-                    configuration.givenCommandLineArguments[2]
-                )
-            ),
-        path,
-        /* eslint-disable no-eval */
-        require: eval('require'),
-        /* eslint-enable no-eval */
-        Tools,
-        webOptimizerPath: __dirname,
-        now,
-        nowUTCTimestamp: Tools.numberGetUTCTimestamp(now)
-    })
+    Tools.evaluateDynamicDataStructure(
+        configuration,
+        {
+            currentPath: process.cwd(),
+            fileSystem,
+            Helper,
+            // IgnoreTypeCheck
+            isDLLUseful:
+                2 < configuration.givenCommandLineArguments.length &&
+                (
+                    ['build:dll', 'watch:dll'].includes(
+                        // IgnoreTypeCheck
+                        configuration.givenCommandLineArguments[2]) ||
+                    configuration.dllManifestFilePaths.length &&
+                    ['build', 'serve', 'test:browser'].includes(
+                        // IgnoreTypeCheck
+                        configuration.givenCommandLineArguments[2]
+                    )
+                ),
+            path,
+            /* eslint-disable no-eval */
+            require: eval('require'),
+            /* eslint-enable no-eval */
+            Tools,
+            webOptimizerPath: __dirname,
+            now,
+            nowUTCTimestamp: Tools.numberGetUTCTimestamp(now)
+        }
+    )
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.
