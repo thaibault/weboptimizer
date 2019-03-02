@@ -17,7 +17,7 @@
 // region imports
 import Tools from 'clientnode'
 import type {PlainObject} from 'clientnode'
-import * as fileSystem from 'fs'
+import fileSystem from 'fs'
 import path from 'path'
 
 import Helper from './helper.compiled'

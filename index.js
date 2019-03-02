@@ -22,7 +22,7 @@ import {
 } from 'child_process'
 import Tools from 'clientnode'
 import type {File, PlainObject} from 'clientnode'
-import * as fileSystem from 'fs'
+import fileSystem from 'fs'
 import path from 'path'
 import removeDirectoryRecursively from 'rimraf'
 
