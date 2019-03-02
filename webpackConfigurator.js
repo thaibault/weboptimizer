@@ -388,7 +388,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 break
             }
         // region pattern based aliasing
-        const filePath:string = Helper.determineModuleFilePath(
+        const filePath:?string = Helper.determineModuleFilePath(
             request,
             {},
             {},
