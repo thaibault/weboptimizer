@@ -2297,9 +2297,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.257"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.257.tgz#b31887fbcc31d12b91d610e09221394c6f5ba8c0"
-  integrity sha512-4aiOafDFmQ09ZAEFftlWS/U/oXRyC4VawzgPYPADcVqQEhdJ/ok9djFe2Gsk7LM7yYG945/QMF+0sny7Ne45Gw==
+  version "3.0.258"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.258.tgz#c9197ae26ca75f2f1bd660651c37f72c6905edb2"
+  integrity sha512-CQsHNHtJ/y8zFUwOLb+hu6n40gJa6uaHEAdItdAE3mrUjHnhdJp6hxRA8eoJiW7T+nWozeHgQowFqHtRiP5+BQ==
   dependencies:
     colors "*"
 
@@ -6673,9 +6673,9 @@ node-pre-gyp@^0.10.0:
     tar "^4"
 
 node-releases@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.8.tgz#32a63fff63c5e51b7e0f540ac95947d220fc6862"
-  integrity sha512-gQm+K9mGCiT/NXHy+V/ZZS1N/LOaGGqRAAJJs3X9Ah1g+CIbRcBgNyoNYQ+SEtcyAtB9KqDruu+fF7nWjsqRaA==
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.9.tgz#70d0985ec4bf7de9f08fc481f5dae111889ca482"
+  integrity sha512-oic3GT4OtbWWKfRolz5Syw0Xus0KRFxeorLNj0s93ofX6PWyuzKjsiGxsCtWktBwwmTF6DdRRf2KreGqeOk5KA==
   dependencies:
     semver "^5.3.0"
 

@@ -629,6 +629,7 @@
           "pre": []
         },
         "aliases": {
+          "clientnode/test$": "clientnode/test.compiled",
           "weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled",
           "weboptimizer/helper$": "weboptimizer/helper.compiled"
         },

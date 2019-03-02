@@ -387,6 +387,7 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.package.aliasPropertyNames,
             configuration.encoding
         )
+        console.log('A', request)
         if (filePath)
             for (
                 const pattern:string in configuration.injection.external
@@ -439,6 +440,7 @@ if (configuration.injection.external.modules === '__implicit__')
                         }
                     }
                 }
+        console.log('B')
         // endregion
         const resolvedRequest:?string = Helper.determineExternalRequest(
             request,
@@ -461,6 +463,7 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.inPlace.externalLibrary.dynamic,
             configuration.encoding
         )
+        console.log('C', resolvedRequest)
         if (resolvedRequest) {
             const keys:Array<string> = [
                 'amd', 'commonjs', 'commonjs2', 'root']
