@@ -629,7 +629,9 @@
           "pre": []
         },
         "aliases": {
-          "clientnode/test$": "clientnode/test.compiled",
+          "clientnode/test$": {
+            "__evaluate__": "self.targetTechnology === 'node' ? 'clientnode/test.compiled' : 'clientnode/test'"
+          },
           "weboptimizer/browserAPI$": "weboptimizer/browserAPI.compiled",
           "weboptimizer/helper$": "weboptimizer/helper.compiled"
         },
@@ -945,7 +947,7 @@
               "post": [],
               "pre": []
             },
-            "exclude": null,
+            "exclude": "!filePath.endsWith('/clientnode/test.js') && isFilePathInDependencies(filePath)",
             "loader": "babel",
             "options": {
               "cacheDirectory": true,

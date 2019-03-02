@@ -717,7 +717,8 @@ for (
 const isFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
     return Helper.isFilePathInLocation(
-        filePath, configuration.path.ignore.concat(
+        filePath,
+        configuration.path.ignore.concat(
             configuration.module.directoryNames,
             configuration.loader.directoryNames
         ).map((filePath:string):string => path.resolve(
@@ -788,12 +789,8 @@ Tools.extend(loader, {
     // endregion
     // region script
     script: {
-        exclude: (filePath:string):boolean => (
-            configuration.module.preprocessor.javaScript.exclude === null
-        ) ? isFilePathInDependencies(filePath) :
-            evaluate(
-                configuration.module.preprocessor.javaScript.exclude, filePath
-            ),
+        exclude: (filePath:string):boolean => evaluate(
+            configuration.module.preprocessor.javaScript.exclude, filePath),
         include: Helper.normalizePaths([
             configuration.path.source.asset.javaScript
         ].concat(configuration.module.locations.directoryPaths)),
