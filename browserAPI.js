@@ -55,8 +55,12 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             virtualConsole
         })).window
         browserAPI = {
-            debug: false, domContentLoaded: false, DOM: JSDOM, window,
-            windowLoaded: false}
+            debug: false,
+            domContentLoaded: false,
+            DOM: JSDOM,
+            window,
+            windowLoaded: false
+        }
         window.addEventListener('load', ():void => {
             // NOTE: Maybe we have miss the "DOMContentLoaded" event.
             browserAPI.domContentLoaded = true
