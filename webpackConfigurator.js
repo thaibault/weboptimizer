@@ -26,7 +26,7 @@ try {
 } catch (error) {}
 /* eslint-enable no-var */
 import {JSDOM as DOM} from 'jsdom'
-import * as fileSystem from 'fs'
+import fileSystem from 'fs'
 import path from 'path'
 /* eslint-disable no-var */
 try {

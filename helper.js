@@ -19,7 +19,7 @@ import type {DomNode} from 'clientnode'
 import Tools from 'clientnode'
 import type {File, PlainObject, Window} from 'clientnode'
 import {JSDOM as DOM} from 'jsdom'
-import * as fileSystem from 'fs'
+import fileSystem from 'fs'
 import path from 'path'
 
 import type {
