@@ -119,7 +119,8 @@ export function createBrowserAPI(callback:Function, clear:boolean = true):any {
     */
     const wrappedCallback:Function = (...parameter:Array<any>):any => {
         if (
-            clear && typeof global !== 'undefined' &&
+            clear &&
+            typeof global !== 'undefined' &&
             global !== browserAPI.window
         )
             global.window = browserAPI.window
@@ -130,7 +131,7 @@ export function createBrowserAPI(callback:Function, clear:boolean = true):any {
         typeof TARGET_TECHNOLOGY === 'undefined' ||
         TARGET_TECHNOLOGY === 'node'
     )
-        return (browserAPI) ? wrappedCallback(
+        return browserAPI ? wrappedCallback(
             browserAPI, true
         ) : onCreatedListener.push(wrappedCallback)
     return (browserAPI.domContentLoaded) ? wrappedCallback(
