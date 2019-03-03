@@ -461,7 +461,7 @@
         ],
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "self.debug || self.targetTechnology === 'node' ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[hash]`"
           },
           "image": {
             "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
@@ -574,6 +574,7 @@
                 {
                   "__evaluate__": "/^\\./"
                 },
+                "#: Usually we need to pre-process these artefacts against target technology specific environment.",
                 {
                   "__evaluate__": "/^weboptimizer\\/browserAPI(?:\\.compiled)?(?:\\.js)?$/"
                 },
@@ -629,6 +630,7 @@
           "pre": []
         },
         "aliases": {
+          "#": "Target specific environment parameter are pre compiled for node environments. Others (like browser) needs pre-processing.",
           "clientnode/test$": {
             "__evaluate__": "self.targetTechnology === 'node' ? 'clientnode/test.compiled' : 'clientnode/test'"
           },
