@@ -513,7 +513,6 @@ if (configuration.injection.external.modules === '__implicit__')
                 configuration.exportFormat.external ||
                 configuration.exportFormat.self
             )
-            console.log('A', result)
             return callback(
                 null,
                 exportFormat === 'umd' || typeof result === 'string' ?
