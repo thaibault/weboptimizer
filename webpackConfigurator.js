@@ -506,9 +506,9 @@ if (configuration.injection.external.modules === '__implicit__')
             }
             if (result.hasOwnProperty('root'))
                 // IgnoreTypeCheck
-                result.root = Tools.stringConvertToValidVariableName(
-                    // IgnoreTypeCheck
-                    result.root, '0-9a-zA-Z_$')
+                result.root = [].concat(result.root).map((
+                    name:string
+                ):string => Tools.stringConvertToValidVariableName(name))
             const exportFormat:string = (
                 configuration.exportFormat.external ||
                 configuration.exportFormat.self
@@ -516,7 +516,8 @@ if (configuration.injection.external.modules === '__implicit__')
             return callback(
                 null,
                 exportFormat === 'umd' || typeof result === 'string' ?
-                    result : result[exportFormat],
+                    result :
+                    result[exportFormat],
                 exportFormat
             )
         }
