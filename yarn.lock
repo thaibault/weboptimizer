@@ -1862,9 +1862,9 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
 boostnode@*:
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/boostnode/-/boostnode-1.0.15.tgz#01f8c3ec1cfd224b17a78b6d7aba35fdf2f4e29f"
-  integrity sha512-dgrn6kdsN6NLq7KvmzPLYJOR7x3Tw0z3U+EwPv/JBmm7poFzs2FgEwzgbZKigAyDFxinri6cd4P2Z5nlKKv3xw==
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/boostnode/-/boostnode-1.0.16.tgz#b410783c2b65a623ab852c1689d9de170e198614"
+  integrity sha512-Ki9JM++hACoU/YV4VfS4T2AaWWrHPyKQu19ugt6BVuf06mXxD71c0vgjZ28a0OUUoT/rn24rVwwLy2GMSgYJOQ==
 
 bootstrap@^3.3.7:
   version "3.4.1"
@@ -2147,9 +2147,9 @@ camelcase@^4.1.0:
   integrity sha1-1UVjW+HjPFQmScaRc+Xeas+uNN0=
 
 camelcase@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.0.0.tgz#03295527d58bd3cd4aa75363f35b2e8d97be2f42"
-  integrity sha512-faqwZqnWxbxn+F1d399ygeamQNy3lPp/H9H6rNrqYh4FSVCtcY+3cub1MxA8o9mDd55mM8Aghuu/kuyYA6VTsA==
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.1.0.tgz#29e83b9cfaf7ad478f401a187ae089cf83c257ea"
+  integrity sha512-WP9f9OBL/TAbwOFBJL79FoS9UKUmnp82RWnhlwTgrAJeMq7lytHhe0Jzc6/P7Zq0+2oviXJuPlvkZalWUug9gg==
 
 caniuse-api@^3.0.0:
   version "3.0.0"
@@ -2316,9 +2316,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.264"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.264.tgz#1a8f534b0238111c1474a081907e3c38a410b456"
-  integrity sha512-wQh3RdfgdTwlILwuwBqX1ZnM/Bii0elV4i7IHdT5LmSwiSGD6PYkGUVVyYphpfm2TIy6HZdWtSM3NxJqdUHKhg==
+  version "3.0.265"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.265.tgz#6ed5b725449bdbe275d3f01d3105dc7a1761b546"
+  integrity sha512-pcgIOlvG2C9MUifiQPUOw1H0PLYCdcZCN+Da/QVMfAWmSs70QOtqtSYKh4pRrOsrzZ+nCSDUyIMMAgf0EH8yCw==
   dependencies:
     colors "*"
 
@@ -3306,9 +3306,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation-website@*:
-  version "1.0.217"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.217.tgz#5dc3eb85dc9f8e3cb4daf1a44b73a0218b15375c"
-  integrity sha512-//LwYWhCznOMNosxhkJ5wes/BHU7Gb58W0edyqnVcbpyIQ+nZoSM8nfPI/2D+KCCno8kHCzkCVGahhezOHPBVg==
+  version "1.0.218"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.218.tgz#3d73a69be2aaaae81a334ada3eae5315c11a3586"
+  integrity sha512-ZXOJa4E1yiHvinR1FgAlk5GOYq+rh1vB/l213KTnfdWRPXG5bygj2YmIYvcUuFflwnq4MV0ZnKM/qDGf8MvwSA==
   dependencies:
     boostnode "*"
     bootstrap "^3.3.7"
@@ -5057,9 +5057,9 @@ internal-ip@^4.2.0:
     ipaddr.js "^1.9.0"
 
 internationalisation@*:
-  version "1.0.179"
-  resolved "https://registry.yarnpkg.com/internationalisation/-/internationalisation-1.0.179.tgz#313ba1c48a9b3cf5020b3a32d999db432910140b"
-  integrity sha512-rEUYWC4bajLFqpQesjaphZzOY8V5u2kP38804HrpDFYcIpayI+jye+lxwF2YdrrUdWkbeFK9w/tDxxK0mhw4+Q==
+  version "1.0.180"
+  resolved "https://registry.yarnpkg.com/internationalisation/-/internationalisation-1.0.180.tgz#3bcf9fc8d4b1f9c45943401560cfce067b25f6e7"
+  integrity sha512-zK19aQTEl4KQ2/ce+9qIz5B9QAHeDTc5+hEXltef+RwX4I8EkaSOD9waUhsu37h19vmUVXAqzr+psc5VfqD98Q==
 
 interpret@^1.1.0:
   version "1.2.0"
@@ -10633,9 +10633,9 @@ webpack@*:
     webpack-sources "^1.3.0"
 
 website-utilities@*:
-  version "1.0.199"
-  resolved "https://registry.yarnpkg.com/website-utilities/-/website-utilities-1.0.199.tgz#c5389d51dcfbc8d65ef2966793ba034791cb7846"
-  integrity sha512-Z2oq8hODKaOihvBl7OxC/oSbq7vOFmuqkpAmPdeqfWnFH2sRUYx9DWZlin2vVm8BTcpQw+FRSC788EOcGhi9/g==
+  version "1.0.200"
+  resolved "https://registry.yarnpkg.com/website-utilities/-/website-utilities-1.0.200.tgz#cc907f6b28443c2c964e046633fab98e5b0fda92"
+  integrity sha512-ORcdM3AmBR7+/6wV3opkgsa0OmUhaM4WRfstYqHzP0dzN/cafeNkC09rdvIpcCv9Z8Et2kIqDUyTyfXeXb4fiQ==
   dependencies:
     clientnode "*"
     internationalisation "*"
