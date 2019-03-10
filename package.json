@@ -550,8 +550,8 @@
         ],
         "chunks": {},
         "dllChunkNames": [
-          "vendor",
-          "developmentHelper"
+          "developmentHelper",
+          "vendor"
         ],
         "entry": {
           "index": "__auto__"
