@@ -1257,7 +1257,8 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
         },
         node: configuration.nodeEnvironment,
         optimization: {
-            minimize: configuration.module.optimizer.uglify,
+            minimize: configuration.module.optimizer.minimize,
+            minimizer: configuration.module.optimizer.minimizer,
             // region common chunks
             splitChunks: (
                 !configuration.injection.chunks ||

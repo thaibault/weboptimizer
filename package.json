@@ -108,6 +108,7 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
+    "terser-webpack-plugin": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*"
@@ -140,6 +141,7 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
+    "terser-webpack-plugin": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*"
@@ -849,7 +851,10 @@
             },
             "loader": "url"
           },
-          "uglify": false
+          "minimize": true,
+          "minimizer": {
+            "__evaluate__": "[new (require('terser-webpack-plugin'))({parallel: true})]"
+          }
         },
         "preprocessor": {
           "cascadingStyleSheet": {
@@ -1238,7 +1243,8 @@
             "module": null
           },
           "cssnano": null,
-          "htmlMinifier": null
+          "htmlMinifier": null,
+          "minimize": false
         },
         "preprocessor": {
           "cascadingStyleSheet": {
