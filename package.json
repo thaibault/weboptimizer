@@ -146,6 +146,7 @@
     "webpack-cli": "*",
     "webpack-dev-server": "*"
   },
+  "sideEffects": false,
   "configuration": {
     "default": {
       "assetPattern": {
