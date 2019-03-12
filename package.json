@@ -970,7 +970,8 @@
                 "@babel/plugin-transform-runtime"
               ],
               "presets": {
-                "__evaluate__": "[['@babel/preset-env', {loose: true, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}]].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
+                "#": "NOTE: We have to disable module export/import transforming to allow tree shaking by the final (minimizer).",
+                "__evaluate__": "[['@babel/preset-env', {loose: true, module: false, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}]].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             }
           }
