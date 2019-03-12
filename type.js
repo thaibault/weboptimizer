@@ -264,7 +264,8 @@ export type ResolvedConfiguration = {
                 file:PlainObject;
                 loader:string;
             };
-            uglify:any;
+            minimize:boolean;
+            minimizer:Array<Object>;
         };
         preprocessor:{
             cascadingStyleSheet:{
