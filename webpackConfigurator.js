@@ -741,6 +741,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                 }
                 const pathSuffix:string = targetPath.replace(
                     /(?:^|.*\/)node_modules\/(.+$)/, '$1')
+                let redundantRequest:?PlainObject = null
                 for (const pathPrefix:string of pathPrefixes) {
                     const alternateTargetPath:string = path.resolve(
                         pathPrefix, pathSuffix)
@@ -757,22 +758,24 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                                 `to "${alternateTargetPath}".`
                             )
                             resource[targetName] = alternateTargetPath
-                            break
+                            return
                         } else
-                            console.warn(
-                                'Including different versions of same ' +
-                                'package "' +
-                                `${packageDescriptor.configuration.name}". ` +
-                                `Module "${targetPath}" (version ` +
-                                `${packageDescriptor.configuration.version})` +
-                                ` has redundancies with "` +
-                                `${alternateTargetPath}" (version ` +
-                                alternatePackageDescriptor.configuration
-                                    .version +
-                                ').'
-                            )
+                            redundantRequest = {
+                                path: alternateTargetPath,
+                                version: alternatePackageDescriptor
+                                    .configuration.version
+                            }
                     }
                 }
+                if (redundantRequest)
+                    console.warn(
+                        'Including different versions of same package "' +
+                        `${packageDescriptor.configuration.name}". Module "` +
+                        `${targetPath}" (version ` +
+                        `${packageDescriptor.configuration.version}) has ` +
+                        `redundancies with "${redundantRequest.path}" (` +
+                        `version ${redundantRequest.version}).`
+                    )
             }
         }
     }
