@@ -210,8 +210,10 @@ if (
     ).length ?
         new plugins.BabelMinify(
             configuration.module.optimizer.babelMinify.bundle.transform || {},
-            configuration.module.optimizer.babelMinify.bundle.plugin || {},
-        ) : new plugins.BabelMinify())
+            configuration.module.optimizer.babelMinify.bundle.plugin || {}
+        ) :
+        new plugins.BabelMinify()
+    )
 // /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
@@ -225,10 +227,14 @@ pluginInstances.push({apply: (compiler:Object):void => {
                     filePath,
                     configuration.buildContext.types,
                     configuration.path)
-                if (type && configuration.assetPattern[type] && !(new RegExp(
-                    configuration.assetPattern[type]
-                        .excludeFilePathRegularExpression
-                )).test(filePath)) {
+                if (
+                    type &&
+                    configuration.assetPattern[type] &&
+                    !(new RegExp(
+                        configuration.assetPattern[type]
+                            .excludeFilePathRegularExpression
+                    )).test(filePath)
+                ) {
                     const source:?string = compilation.assets[request].source()
                     if (typeof source === 'string')
                         compilation.assets[request] = new WebpackRawSource(
@@ -712,6 +718,65 @@ for (
             'configuration', '__dirname', '__filename', `return ${value}`
         // IgnoreTypeCheck
         ))(configuration, __dirname, __filename))))
+// // endregion
+// // region consolidate duplicated module requests
+pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
+    /((?:^|\/)node_modules\/.+){2}/,
+    (resource:{request:string;resource:string;}):void => {
+        const targetName:string = resource.request ? 'request' : 'resource'
+        const targetPath:string = resource[targetName]
+        if (Tools.isFileSync(targetPath)) {
+            const packageDescriptor:?PlainObject =
+                Helper.getClosestPackageDescriptor(targetPath)
+            if (packageDescriptor) {
+                // IgnoreTypeCheck
+                const pathPrefixes:Array<string> = targetPath.match(
+                    /((?:^|.*?\/)node_modules\/)/g)
+                let index:number = 0
+                for (const pathPrefix:string of pathPrefixes) {
+                    if (index > 0)
+                        pathPrefixes[index] = path.resolve(
+                            pathPrefixes[index - 1], pathPrefix)
+                    index += 1
+                }
+                const pathSuffix:string = targetPath.replace(
+                    /(?:^|.*\/)node_modules\/(.+$)/, '$1')
+                for (const pathPrefix:string of pathPrefixes) {
+                    const alternateTargetPath:string = path.resolve(
+                        pathPrefix, pathSuffix)
+                    if (Tools.isFileSync(alternateTargetPath)) {
+                        const alternatePackageDescriptor:PlainObject =
+                            Helper.getClosestPackageDescriptor(
+                                alternateTargetPath)
+                        if (
+                            packageDescriptor.configuration.version ===
+                            alternatePackageDescriptor.configuration.version
+                        ) {
+                            console.info(
+                                `Consolidate module request "${targetPath}" ` +
+                                `to "${alternateTargetPath}".`
+                            )
+                            resource[targetName] = alternateTargetPath
+                            break
+                        } else
+                            console.warn(
+                                'Including different versions of same ' +
+                                'package "' +
+                                `${packageDescriptor.configuration.name}". ` +
+                                `Module "${targetPath}" (version ` +
+                                `${packageDescriptor.configuration.version})` +
+                                ` has redundancies with "` +
+                                `${alternateTargetPath}" (version ` +
+                                alternatePackageDescriptor.configuration
+                                    .version +
+                                ').'
+                            )
+                    }
+                }
+            }
+        }
+    }
+))
 // // endregion
 // / endregion
 // / region loader helper

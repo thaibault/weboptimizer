@@ -1209,6 +1209,47 @@ export class Helper {
                     new RegExp(replacement), replacements[replacement])
         return moduleID
     }
+    /**
+     * TODO
+     */
+    static findPackageDescriptorFilePath(
+        start:Array<string>|string
+    ):null|string {
+        if (typeof start === 'string') {
+            if (start[start.length - 1] !== path.sep)
+                start += path.sep
+            start = start.split(path.sep)
+        }
+        if (!start.length)
+            return null
+        start.pop()
+        const result:string = path.resolve(
+            start.join(path.sep), 'package.json')
+        try {
+            if (fileSystem.existsSync(result))
+                return result
+        } catch (error) {}
+        return Helper.findPackageDescriptorFilePath(start)
+    }
+    /**
+     * TODO
+     */
+    static getClosestPackageDescriptor(modulePath:string):null|PlainObject {
+        const filePath:null|string = Helper.findPackageDescriptorFilePath(
+            modulePath)
+        if (!filePath)
+            return null
+        let configuration:PlainObject
+            configuration = eval('require')(filePath)
+        /*
+            If the package.json does not have a name property, try again from
+            one level higher.
+        */
+        if (!configuration.name)
+            return Helper.getClosestPackageDescriptor(path.resolve(
+                path.dirname(filePath), '..'))
+        return {configuration, filePath}
+    }
 }
 export default Helper
 // endregion
