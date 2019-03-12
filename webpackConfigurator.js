@@ -732,6 +732,8 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                 // IgnoreTypeCheck
                 const pathPrefixes:Array<string> = targetPath.match(
                     /((?:^|.*?\/)node_modules\/)/g)
+                // Avoid finding the same artefact.
+                pathPrefixes.pop()
                 let index:number = 0
                 for (const pathPrefix:string of pathPrefixes) {
                     if (index > 0)
