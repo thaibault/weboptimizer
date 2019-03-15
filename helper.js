@@ -1210,10 +1210,14 @@ export class Helper {
         return moduleID
     }
     /**
-     * TODO
+     * Determines the nearest package configuration file from given file path.
+     * TODO test
+     * @param start - Reference location to search from.
+     * @param fileName - Package configuration file name.
+     * @returns Determined file path.
      */
     static findPackageDescriptorFilePath(
-        start:Array<string>|string
+        start:Array<string>|string, fileName:string = 'package.json'
     ):null|string {
         if (typeof start === 'string') {
             if (start[start.length - 1] !== path.sep)
@@ -1224,7 +1228,7 @@ export class Helper {
             return null
         start.pop()
         const result:string = path.resolve(
-            start.join(path.sep), 'package.json')
+            start.join(path.sep), fileName)
         try {
             if (fileSystem.existsSync(result))
                 return result
@@ -1232,15 +1236,23 @@ export class Helper {
         return Helper.findPackageDescriptorFilePath(start)
     }
     /**
-     * TODO
+     * Determines the nearest package configuration from given module file
+     * path.
+     * TODO test
+     * @param modulePath - Module path to take as reference location (leaf in
+     * tree).
+     * @param fileName - Package configuration file name.
+     * @returns A object containing found parsed configuration an their
+     * corresponding file path.
      */
-    static getClosestPackageDescriptor(modulePath:string):null|PlainObject {
+    static getClosestPackageDescriptor(
+        modulePath:string, fileName:string = 'package.json'
+    ):null|PlainObject {
         const filePath:null|string = Helper.findPackageDescriptorFilePath(
-            modulePath)
+            modulePath, fileName)
         if (!filePath)
             return null
-        let configuration:PlainObject
-            configuration = eval('require')(filePath)
+        const configuration:PlainObject = eval('require')(filePath)
         /*
             If the package.json does not have a name property, try again from
             one level higher.
