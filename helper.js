@@ -1172,6 +1172,9 @@ export class Helper {
                             currentModuleFilePath, pathsToIgnore
                         ))
                             continue
+                        console.log()
+                        console.log('TODO', currentModuleFilePath)
+                        console.log()
                         if (Tools.isFileSync(currentModuleFilePath))
                             return currentModuleFilePath
                     }

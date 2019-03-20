@@ -100,25 +100,27 @@ module.exports = function(source:string):string {
             let nestedOptions:Object = Tools.copy(options)
             delete nestedOptions.client
             nestedOptions = Tools.extend(
-                true, {encoding: configuration.encoding}, nestedOptions,
-                nestedLocals.options || {})
+                true,
+                {encoding: configuration.encoding},
+                nestedOptions,
+                nestedLocals.options || {}
+            )
             if (nestedOptions.isString)
                 return compile(template, nestedOptions)(nestedLocals)
-            const templateFilePath:?string =
-                Helper.determineModuleFilePath(
-                    template,
-                    query.module.aliases,
-                    query.module.replacements,
-                    query.extensions,
-                    query.context,
-                    configuration.path.source.asset.base,
-                    configuration.path.ignore,
-                    configuration.module.directoryNames,
-                    configuration.package.main.fileNames,
-                    configuration.package.main.propertyNames,
-                    configuration.package.aliasPropertyNames,
-                    configuration.encoding
-                )
+            const templateFilePath:?string = Helper.determineModuleFilePath(
+                template,
+                query.module.aliases,
+                query.module.replacements,
+                query.extensions,
+                query.context,
+                configuration.path.source.asset.base,
+                configuration.path.ignore,
+                configuration.module.directoryNames,
+                configuration.package.main.fileNames,
+                configuration.package.main.propertyNames,
+                configuration.package.aliasPropertyNames,
+                configuration.encoding
+            )
             if (templateFilePath) {
                 if ('query' in this)
                     this.addDependency(templateFilePath)
