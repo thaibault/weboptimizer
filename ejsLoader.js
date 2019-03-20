@@ -69,7 +69,8 @@ module.exports = function(source:string):string {
         '!'
     )
     const compile:CompileFunction = (
-        template:string, options:Object = query.compiler,
+        template:string,
+        options:Object = query.compiler,
         compileSteps:number = 2
     ):TemplateFunction => (locals:Object = {}):string => {
         options = Tools.extend(true, {filename: template}, options)
@@ -80,8 +81,10 @@ module.exports = function(source:string):string {
             const queryMatch:?Array<string> = request.match(/^[^?]+\?(.+)$/)
             if (queryMatch) {
                 const evaluationFunction = (
-                    request:string, template:string, source:string,
-                    compile:CompileFunction, locals:Object
+                    request:string,
+                    template:string, source:string,
+                    compile:CompileFunction,
+                    locals:Object
                 // IgnoreTypeCheck
                 ):Object => new Function(
                     'request',
@@ -111,7 +114,10 @@ module.exports = function(source:string):string {
                 template,
                 query.module.aliases,
                 query.module.replacements,
-                query.extensions,
+                {
+                    file: query.extensions.file.internal,
+                    module: query.extensions.module
+                },
                 query.context,
                 configuration.path.source.asset.base,
                 configuration.path.ignore,

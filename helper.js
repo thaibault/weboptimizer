@@ -1172,9 +1172,6 @@ export class Helper {
                             currentModuleFilePath, pathsToIgnore
                         ))
                             continue
-                        console.log()
-                        console.log('TODO', currentModuleFilePath)
-                        console.log()
                         if (Tools.isFileSync(currentModuleFilePath))
                             return currentModuleFilePath
                     }
@@ -1214,7 +1211,6 @@ export class Helper {
     }
     /**
      * Determines the nearest package configuration file from given file path.
-     * TODO test
      * @param start - Reference location to search from.
      * @param fileName - Package configuration file name.
      * @returns Determined file path.
@@ -1236,12 +1232,11 @@ export class Helper {
             if (fileSystem.existsSync(result))
                 return result
         } catch (error) {}
-        return Helper.findPackageDescriptorFilePath(start)
+        return Helper.findPackageDescriptorFilePath(start, fileName)
     }
     /**
      * Determines the nearest package configuration from given module file
      * path.
-     * TODO test
      * @param modulePath - Module path to take as reference location (leaf in
      * tree).
      * @param fileName - Package configuration file name.
@@ -1261,8 +1256,8 @@ export class Helper {
             one level higher.
         */
         if (!configuration.name)
-            return Helper.getClosestPackageDescriptor(path.resolve(
-                path.dirname(filePath), '..'))
+            return Helper.getClosestPackageDescriptor(
+                path.resolve(path.dirname(filePath), '..'), fileName)
         return {configuration, filePath}
     }
 }
