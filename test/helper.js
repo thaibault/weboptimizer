@@ -97,7 +97,7 @@ registerTest(function():void {
             assert.deepEqual(Helper.normalizePaths(test[0]), test[1])
     })
     // / endregion
-    // region file handler
+    // / region file handler
     this.test('renderFilePathTemplate', (assert:Object):void => {
         for (const test:Array<any> of [
             [[''], ''],
@@ -506,7 +506,7 @@ registerTest(function():void {
             assert.strictEqual(result, test[1])
         }
     })
-    // endregion
+    // / endregion
     this.test('applyAliases', (assert:Object):void => {
         for (const test:Array<any> of [
             ['', {}, ''],
@@ -533,6 +533,30 @@ registerTest(function():void {
         ])
             assert.strictEqual(
                 Helper.applyModuleReplacements(test[0], test[1]), test[2])
+    })
+    this.test('findPackageDescriptorFilePath', (assert:Object):void => {
+        for (const test:Array<any> of [
+            ['./', 'package.json'],
+            ['./', 'index.js'],
+            ['../', 'package.json'],
+            ['../', 'index.js']
+        ])
+            assert.strictEqual(
+                Helper.findPackageDescriptorFilePath(test[0], test[1]),
+                path.resolve(__dirname, '../', test[1])
+            )
+    })
+    this.test('getClosestPackageDescriptor', (assert:Object):void => {
+        for (const test:Array<any> of [
+            ['./', 'package.json'],
+            ['../', 'package.json']
+        ]) {
+            const filePath:string = path.resolve(__dirname, '../', test[1])
+            assert.deepEqual(
+                Helper.getClosestPackageDescriptor(test[0], test[1]),
+                {configuration: eval('require')(filePath), filePath}
+            )
+        }
     })
     // endregion
 }, ['plain'])
