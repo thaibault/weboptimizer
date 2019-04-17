@@ -2349,9 +2349,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.297"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.297.tgz#5b00585c54ecb0f90f93bccf9473c6f0aa55aadd"
-  integrity sha512-qm0YkhE2N8eSuGRhFnlnU2H+folawQCPVKeKeWPtaDBkpQ90AD39Yi5xfy8cycAWvIP/LM23focUoUv5kGoG4w==
+  version "3.0.298"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.298.tgz#9c7b77a0dda814128a2fb017b4b2de3a61d30ddd"
+  integrity sha512-9QUuEal5g6w/9OX7O66pwT70M/DhTC4hfdXk/CUo9HLt66nxEpZtYygR+Kv5vtDjxxyVtA4aYFUJRVpKi4merw==
   dependencies:
     colors "*"
 
@@ -4997,9 +4997,9 @@ ignore@^4.0.3, ignore@^4.0.6:
   integrity sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
 
 ignore@^5.0.6:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.1.0.tgz#a949efb645e5d67fd78e46f470bee6b8c5d862f9"
-  integrity sha512-dJEmMwloo0gq40chdtDmE4tMp67ZGwN7MFTgjNqWi2VHEi5Ya6JkuvPWasjcAIm7lg+2if8xxn5R199wspcplg==
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.1.1.tgz#2fc6b8f518aff48fef65a7f348ed85632448e4a5"
+  integrity sha512-DWjnQIFLenVrwyRCKZT+7a7/U4Cqgar4WG8V++K3hw+lrW1hc/SIwdiGmtxKCVACmHULTuGeBbHJmbwW7/sAvA==
 
 image-size@^0.4.0:
   version "0.4.0"
