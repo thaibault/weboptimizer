@@ -19,7 +19,7 @@ import {transform as babelTransform} from 'babel-core'
 import babelMinifyPreset from 'babel-preset-minify'
 import transformWith from 'babel-plugin-transform-with'
 import Tools from 'clientnode'
-import * as ejs from 'ejs'
+import ejs from 'ejs'
 import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import * as loaderUtils from 'loader-utils'
@@ -227,15 +227,19 @@ module.exports = function(source:string):string {
         // IgnoreTypeCheck
         return result
     }
-    return compile(source, {
-        client: Boolean(query.compileSteps % 2),
-        compileDebug: this.debug || false,
-        debug: this.debug || false,
-        filename: 'query' in this ? loaderUtils.getRemainingRequest(
-            this
-        ).replace(/^!/, '') : this.filename || null,
-        isString: true
-    }, query.compileSteps)(query.locals || {})
+    return compile(
+        source,
+        {
+            client: Boolean(query.compileSteps % 2),
+            compileDebug: this.debug || false,
+            debug: this.debug || false,
+            filename: 'query' in this ? loaderUtils.getRemainingRequest(
+                this
+            ).replace(/^!/, '') : this.filename || null,
+            isString: true
+        },
+        query.compileSteps
+    )(query.locals || {})
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
