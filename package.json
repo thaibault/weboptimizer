@@ -852,6 +852,7 @@
             },
             "loader": "url"
           },
+          "#": "NOTE: Results in the following error: \"index.js?md5=4d09121c92017d65ec82:80 ERROR TypeError: ws.get is not a function\"",
           "minimize": true,
           "minimizer": {
             "#": "HTML-Templates shouldn't be transformed via terser to avoid html webpack plugin throwing to not get markup as intermediate result.",
