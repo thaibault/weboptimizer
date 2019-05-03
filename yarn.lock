@@ -2354,9 +2354,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.302"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.302.tgz#ba7c7445acb31c3161f310ecc2dbf097dd8d6a74"
-  integrity sha512-5D3l5pZedJsWna7IbCeABuGklneTgiIHmv2loPxLBVNWNC6VcE2PJxNM0ZGWMtqCFjFls05vNw5mB8hjYsWCpg==
+  version "3.0.303"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.303.tgz#db0e16b5132ed4a5c687dc150875892b3db93a22"
+  integrity sha512-zUqYmpH3I8N9ZYz7Wabbzmlt5GzrJdVHcxRQnxP5c9UQoJZofkqDreG4g9l3cVtYRwLb5c6OZC/zF2AEP/wMbg==
   dependencies:
     colors "*"
 
@@ -7015,9 +7015,9 @@ obuf@^1.0.0, obuf@^1.1.2:
   integrity sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==
 
 offline-plugin@*:
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/offline-plugin/-/offline-plugin-5.0.6.tgz#7a7b244220cddb8a8cabecb172ec5c0be03e74b2"
-  integrity sha512-qvcDmeI30xmvSlmqjopAj7QCuM1MEzvmDyuMTN2saDReSay5nUqCpKysexH1KUNXv5H/TfmHd+rngNPkRFj3YA==
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/offline-plugin/-/offline-plugin-5.0.7.tgz#26936ad1a7699f4d67e0a095a258972a4ccf1788"
+  integrity sha512-ArMFt4QFjK0wg8B5+R/6tt65u6Dk+Pkx4PAcW5O7mgIF3ywMepaQqFOQgfZD4ybanuGwuJihxUwMRgkzd+YGYw==
   dependencies:
     deep-extend "^0.5.1"
     ejs "^2.3.4"
@@ -10902,9 +10902,9 @@ wordwrap@~1.0.0:
   integrity sha1-J1hIEIkUVqQXHI0CJkQa3pDLyus=
 
 worker-farm@^1.5.2:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/worker-farm/-/worker-farm-1.6.0.tgz#aecc405976fab5a95526180846f0dba288f3a4a0"
-  integrity sha512-6w+3tHbM87WnSWnENBUvA2pxJPLhQUg5LKwUQHq3r+XPhIM+Gh2R5ycbwPCyuGbNg+lPgdcnQUhuC02kJCvffQ==
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/worker-farm/-/worker-farm-1.7.0.tgz#26a94c5391bbca926152002f69b84a4bf772e5a8"
+  integrity sha512-rvw3QTZc8lAxyVrqcSGVm5yP/IJ2UcB3U0graE3LCFoZ0Yn2x4EoVSqJKdB/T5M+FLcRPjz4TDacRf3OCfNUzw==
   dependencies:
     errno "~0.1.7"
 
