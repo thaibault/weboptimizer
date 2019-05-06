@@ -2349,9 +2349,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.304"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.304.tgz#ea482ce0b968d4a4650eb9933268a542b6d76b4c"
-  integrity sha512-qLjc8rRUOokoBvmlhZaMs3qCLMAcljetnwmpqx2yxEHOBG9vWZu0/5bXMF6MGDlItURaEkJc7VB+rPLGlvUVoA==
+  version "3.0.305"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.305.tgz#0dcfffb11e41e36930aaf7ec7b41ae52a392fcc5"
+  integrity sha512-SN/4IuHfZ6kTirryjoAlsOP4VRwES5mlGnlPJ5d3KAuXW7TpZu6uK5WR1DuWeAf70w9J0iqktCOOGVP8eFuJoA==
   dependencies:
     colors "*"
 
@@ -5691,9 +5691,9 @@ jsbn@~0.1.0:
   integrity sha1-peZUwuWi3rXyAdls77yoDA7y9RM=
 
 jsdoc@*:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-3.6.0.tgz#a2753f3db8aa200516b17bed3823438fe4d79484"
-  integrity sha512-klRPzXUsbNSjXfzfzFMMYRMdYTn/0cjdysCGiiI8rCmm2KEtY5i9gmtC7Sn3jxTgxmeObetQAlepDoYarprzsQ==
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-3.6.1.tgz#f60276a1033feaf20191965605383f75d9166279"
+  integrity sha512-mMMsst31b8c7/Z6ewnO6ORIdVMwsobg1enX9b/2XAzW8mM3KuMANRWcMD1KMBq91IAUMOIhC5NsXu7xvNQrRyQ==
   dependencies:
     "@babel/parser" "^7.4.4"
     bluebird "^3.5.4"
@@ -11080,9 +11080,9 @@ yargs-parser@^11.1.1:
     decamelize "^1.2.0"
 
 yargs-parser@^13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-13.0.0.tgz#3fc44f3e76a8bdb1cc3602e860108602e5ccde8b"
-  integrity sha512-w2LXjoL8oRdRQN+hOyppuXs+V/fVAYtpcrRxZuF7Kt/Oc+Jr2uAcVntaUTNT6w5ihoWfFDpNY8CPx1QskxZ/pw==
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-13.1.0.tgz#7016b6dd03e28e1418a510e258be4bff5a31138f"
+  integrity sha512-Yq+32PrijHRri0vVKQEm+ys8mbqWjLiwQkMFNXEENutzLPP0bE4Lcd4iA3OQY5HF+GD3xXxf0MEHb8E4/SA3AA==
   dependencies:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
