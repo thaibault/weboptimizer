@@ -276,7 +276,8 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                                 configuration.files.compose
                                     .cascadingStyleSheet,
                                 configuration.files.compose.javaScript,
-                                compilation.assets)
+                                compilation.assets
+                            )
                             data.html = result.content
                             filePathsToRemove.concat(result.filePathsToRemove)
                         } catch (error) {
@@ -597,7 +598,8 @@ if (htmlAvailable)
                 */
                 const styleContents:Array<string> = []
                 data.html = data.html.replace(
-                    /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, (
+                    /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi,
+                    (
                         match:string,
                         startTag:string,
                         content:string,
@@ -616,7 +618,8 @@ if (htmlAvailable)
                     dom = new DOM(
                         data.html
                             .replace(/<%/g, '##+#+#+##')
-                            .replace(/%>/g, '##-#-#-##'))
+                            .replace(/%>/g, '##-#-#-##')
+                    )
                 } catch (error) {
                     return callback(error, data)
                 }
