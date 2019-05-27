@@ -376,6 +376,7 @@
           },
           "watchContentBase": true,
           "watchOptions": {
+            "#": "Webpack's default ignores \"node_modules\" folder.",
             "ignored": []
           }
         },
