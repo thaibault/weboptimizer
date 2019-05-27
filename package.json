@@ -374,7 +374,10 @@
           "stats": {
             "colors": true
           },
-          "watchContentBase": true
+          "watchContentBase": true,
+          "watchOptions": {
+            "ignored": []
+          }
         },
         "tool": false
       },
