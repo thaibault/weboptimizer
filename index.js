@@ -22,7 +22,8 @@ import {
 } from 'child_process'
 import Tools from 'clientnode'
 import type {File, PlainObject} from 'clientnode'
-import fileSystem from 'fs'
+import synchronousFileSystem from 'fs'
+import {promises as fileSystem} from 'fs'
 import path from 'path'
 import removeDirectoryRecursively from 'rimraf'
 
@@ -79,14 +80,14 @@ const main = async ():Promise<void> => {
                     break
                 count += 1
             }
-            await fileSystem.promises.writeFile(
+            await fileSystem.writeFile(
                 filePath, JSON.stringify(dynamicConfiguration))
             const additionalArguments:Array<string> = process.argv.splice(3)
             // / region register exit handler to tidy up
             closeEventHandlers.push((error:?Error):void => {
                 // NOTE: Close handler have to be synchronous.
                 if (Tools.isFileSync(filePath))
-                    fileSystem.unlinkSync(filePath)
+                    synchronousFileSystem.unlinkSync(filePath)
                 if (error)
                     throw error
             })
@@ -147,7 +148,7 @@ const main = async ():Promise<void> => {
                                             ) : resolve()))
                                         return false
                                     }
-                                    await fileSystem.promises.unlink(file.path)
+                                    await fileSystem.unlink(file.path)
                                     break
                                 }
                         })
@@ -164,7 +165,7 @@ const main = async ():Promise<void> => {
                             file.name.endsWith('.dll-manifest.json') ||
                             file.name.startsWith('npm-debug')
                         )
-                            await fileSystem.promises.unlink(file.path)
+                            await fileSystem.unlink(file.path)
                 } else
                     await new Promise((
                         resolve:Function, reject:Function
@@ -187,7 +188,7 @@ const main = async ():Promise<void> => {
                     if (filePath)
                         if (Tools.isFileSync(filePath))
                             // NOTE: Close handler have to be synchronous.
-                            fileSystem.unlinkSync(filePath)
+                            synchronousFileSystem.unlinkSync(filePath)
                         else if (Tools.isDirectorySync(filePath))
                             removeDirectoryRecursively.sync(
                                 filePath, {glob: false})
@@ -275,14 +276,15 @@ const main = async ():Promise<void> => {
                                         ].outputExtension === 'js' &&
                                         Tools.isFileSync(filePath)
                                     )
-                                        fileSystem.chmodSync(filePath, '755')
+                                        synchronousFileSystem.chmodSync(
+                                            filePath, '755')
                                 }
                             }
                     for (const filePath:?string of configuration.path.tidyUp)
                         if (filePath)
                             if (Tools.isFileSync(filePath))
                                 // NOTE: Close handler have to be synchronous.
-                                fileSystem.unlinkSync(filePath)
+                                synchronousFileSystem.unlinkSync(filePath)
                             else if (Tools.isDirectorySync(filePath))
                                 removeDirectoryRecursively.sync(
                                     filePath, {glob: false})

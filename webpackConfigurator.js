@@ -26,7 +26,7 @@ try {
 } catch (error) {}
 /* eslint-enable no-var */
 import {JSDOM as DOM} from 'jsdom'
-import fileSystem from 'fs'
+import {promises as fileSystem} from 'fs'
 import path from 'path'
 /* eslint-disable no-var */
 try {
@@ -292,7 +292,7 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                 let promises:Array<Promise<void>> = []
                 for (const path:string of filePathsToRemove)
                     if (await Tools.isFile(path))
-                        promises.push(fileSystem.promises.unlink(path).catch(
+                        promises.push(fileSystem.unlink(path).catch(
                             console.error
                         ))
                 await Promise.all(promises)
@@ -300,12 +300,12 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                 for (
                     const type:string of ['javaScript', 'cascadingStyleSheet']
                 )
-                    promises.push(fileSystem.promises.readdir(
+                    promises.push(fileSystem.readdir(
                         configuration.path.target.asset[type],
                         {encoding: configuration.encoding}
                     ).then(async (files:Array<string>):Promise<void> => {
                         if (files.length === 0)
-                            await fileSystem.promises.rmdir(
+                            await fileSystem.rmdir(
                                 configuration.path.target.asset[type])
                     }))
                 await Promise.all(promises)
