@@ -2355,9 +2355,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.324"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.324.tgz#9236747598fcd1c8d4956d0ca2d8c33672b8d48f"
-  integrity sha512-VVxXtgJJ0go+vzdu3Kypu72se2K8ab7Z0z4jiyeClm6ZgXAcXpJJkb20iK95SEZ1FXGmQ8SHO7v+w6ucTjw61A==
+  version "3.0.325"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.325.tgz#a6366a7ac122941a1b22c7dd5db141339b057778"
+  integrity sha512-85CpvtfHprcp3LPUBSYnb/o7ybvjGwTAi7abtv8lGEQlZFVpbupC6XiizrNaReNBsF4xjQV0tu11CeDQ2eGkbA==
   dependencies:
     colors "*"
 
@@ -9079,8 +9079,6 @@ rxjs@^6.4.0:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.2.tgz#2e35ce815cd46d84d02a209fb4e5921e051dbec7"
   integrity sha512-HUb7j3kvb7p7eCUHE3FqjoDsC1xfZQ4AHFWfTKSpZ+sAhhz5X1WX0ZuUqWbzB2QhSLp3DoLUG+hMdEDKqWo2Zg==
-  dependencies:
-    tslib "^1.9.0"
 
 safe-buffer@5.1.2, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
