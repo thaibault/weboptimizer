@@ -361,6 +361,7 @@
               "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames[0])"
             }
           ],
+          "disableHostCheck": true,
           "historyApiFallback": true,
           "host": "0.0.0.0",
           "hot": {
