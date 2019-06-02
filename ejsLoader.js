@@ -215,6 +215,7 @@ module.exports = function(source:string):string {
                     sourceType: 'script'
                 }).code
         result = result
+            // IgnoreTypeCheck
             .replace(new RegExp(
                 `<script +processing-workaround *(?:= *(?:" *"|' *') *)?>` +
                 '([\\s\\S]*?)</ *script *>', 'ig'
