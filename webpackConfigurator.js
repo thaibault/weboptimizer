@@ -872,10 +872,12 @@ Tools.extend(loader, {
         include: (filePath:string):boolean => {
             const result:any = evaluate(
                 configuration.module.preprocessor.javaScript.include, filePath)
-            if ([null, undefined].includes(result))
+            if ([null, undefined].includes(result)) {
                 for (const includePath:string of includingPaths)
                     if (filePath.startsWith(includePath))
                         return true
+                return false
+            }
             return Boolean(result)
         },
         test: /\.js(?:\?.*)?$/i,
