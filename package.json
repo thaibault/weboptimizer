@@ -963,6 +963,7 @@
               "pre": []
             },
             "exclude": "!filePath.endsWith('/clientnode/test.js') && isFilePathInDependencies(filePath)",
+            "include": "null",
             "loader": "babel",
             "options": {
               "cacheDirectory": true,
