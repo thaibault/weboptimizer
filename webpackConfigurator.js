@@ -880,7 +880,9 @@ Tools.extend(loader, {
             }
             return Boolean(result)
         },
-        test: /\.js(?:\?.*)?$/i,
+        test: new RegExp(
+            configuration.module.preprocessor.javaScript.regularExpression, 'i'
+        ),
         use: configuration.module.preprocessor.javaScript.additional.pre.map(
             evaluate
         ).concat(
