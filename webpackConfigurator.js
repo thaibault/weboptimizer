@@ -798,7 +798,9 @@ const isFilePathInDependencies:Function = (filePath:string):boolean => {
         ).map((filePath:string):string => path.resolve(
             configuration.path.context, filePath)
         ).filter((filePath:string):boolean =>
-            !configuration.path.context.startsWith(filePath)))
+            !configuration.path.context.startsWith(filePath)
+        )
+    )
 }
 const generateLoader:Function = (
     loaderConfiguration:PlainObject
