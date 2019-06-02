@@ -828,6 +828,9 @@ const evaluate:Function = (code:string, filePath:string):any => (new Function(
     'filePath', ...Object.keys(scope), `return ${code}`
 // IgnoreTypeCheck
 ))(filePath, ...Object.values(scope))
+const includingPaths:Array<string> = Helper.normalizePaths([
+    configuration.path.source.asset.javaScript
+].concat(configuration.module.locations.directoryPaths))
 Tools.extend(loader, {
     // Convert to compatible native web types.
     // region generic template
@@ -842,9 +845,7 @@ Tools.extend(loader, {
                 false :
                 evaluate(
                     configuration.module.preprocessor.ejs.exclude, filePath)),
-        include: Helper.normalizePaths([
-            configuration.path.source.base
-        ].concat(configuration.module.locations.directoryPaths)),
+        include: includingPaths,
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: configuration.module.preprocessor.ejs.additional.pre.map(
             evaluate
@@ -866,10 +867,17 @@ Tools.extend(loader, {
     // region script
     script: {
         exclude: (filePath:string):boolean => evaluate(
-            configuration.module.preprocessor.javaScript.exclude, filePath),
-        include: Helper.normalizePaths([
-            configuration.path.source.asset.javaScript
-        ].concat(configuration.module.locations.directoryPaths)),
+            configuration.module.preprocessor.javaScript.exclude, filePath
+        ),
+        include: (filePath:string):boolean => {
+            const result:any = evaluate(
+                configuration.module.preprocessor.javaScript.exclude, filePath)
+            if ([null, undefined].includes(result))
+                for (const includePath:string of includingPaths)
+                    if (filePath.startsWith(includePath))
+                        return true
+            return Boolean(result)
+        },
         test: /\.js(?:\?.*)?$/i,
         use: configuration.module.preprocessor.javaScript.additional.pre.map(
             evaluate
@@ -971,9 +979,7 @@ Tools.extend(loader, {
         ) ? isFilePathInDependencies(filePath) :
             evaluate(
                 configuration.module.cascadingStyleSheet.exclude, filePath),
-        include: Helper.normalizePaths([
-            configuration.path.source.asset.cascadingStyleSheet
-        ].concat(configuration.module.locations.directoryPaths)),
+        include: includingPaths,
         test: /\.s?css(?:\?.*)?$/i,
         use: configuration.module.preprocessor.cascadingStyleSheet.additional
             .pre.concat(
