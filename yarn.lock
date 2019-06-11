@@ -3680,12 +3680,12 @@ eslint-plugin-flowtype@*:
     lodash "^4.17.11"
 
 eslint-plugin-jsdoc@*:
-  version "7.2.3"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-7.2.3.tgz#04d21890cdadf33290f865b27f2f901f1321aa42"
-  integrity sha512-233HUc5ftIlmswaNmck++gkoW2iubcDDbM4KCzTHaawJFODuTNriDmZyKm8+7GgNnnwlkrE0mmD4TCzrdMTnsA==
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-8.0.1.tgz#8598ef4705da465d60d77c629fb22517e0e3a491"
+  integrity sha512-kzZHxDjTgNSdDpwULMqSBZr6wKaX+vvIrg/D+UppH8rd87bh+sPzs8PEJNjsQ94tx2TSQebc3P2cXcmkIVsyeA==
   dependencies:
     comment-parser "^0.5.4"
-    jsdoctypeparser "3.1.0"
+    jsdoctypeparser "4.0.0"
     lodash "^4.17.11"
 
 eslint-scope@3.7.1:
@@ -5710,10 +5710,10 @@ jsdoc@*:
     taffydb "2.6.2"
     underscore "~1.9.1"
 
-jsdoctypeparser@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/jsdoctypeparser/-/jsdoctypeparser-3.1.0.tgz#2f65f75165c4d9c632bb4fda13ed36b78321a43b"
-  integrity sha512-JNbkKpDFqbYjg+IU3FNo7qjX7Opy7CwjHywT32zgAcz/d4lX6Umn5jOHVETUdnNNgGrMk0nEx1gvP0F4M0hzlQ==
+jsdoctypeparser@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jsdoctypeparser/-/jsdoctypeparser-4.0.0.tgz#f25e212ff8b0e3e9ed76627554392787cd524128"
+  integrity sha512-Bh6AW8eJ1bVdofhYUuqgFOVo0FE9qII+a+Go+juEnAfaDS5lZAiIqBAFm9gDu80OqBcQ1UI3v/8cP+3D5IGVww==
 
 jsdom@*:
   version "15.1.1"
@@ -10750,9 +10750,9 @@ webidl-conversions@^4.0.2:
   integrity sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==
 
 webpack-cli@*:
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-3.3.3.tgz#8b7587dee369a838eb4722f6cfa711c779011e5f"
-  integrity sha512-/qBxTvsxZ7bIFQtSa08QRY5BZuiJb27cbJM/nzmgXg9NEaudP20D7BruKKIuWfABqWoMEJQcNYYq/OxxSbPHlg==
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-3.3.4.tgz#de27e281c48a897b8c219cb093e261d5f6afe44a"
+  integrity sha512-ubJGQEKMtBSpT+LiL5hXvn2GIOWiRWItR1DGUqJRhwRBeGhpRXjvF5f0erqdRJLErkfqS5/Ldkkedh4AL5Q1ZQ==
   dependencies:
     chalk "^2.4.1"
     cross-spawn "^6.0.5"
