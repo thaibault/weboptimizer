@@ -159,6 +159,7 @@ export type LoaderConfiguration = {
     include:string;
     loader:string;
     options:Object;
+    regularExpression:string;
 }
 export type ResolvedConfiguration = {
     assetPattern:{[key:string]:{

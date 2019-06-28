@@ -1509,7 +1509,7 @@
       "jsdoc/check-tag-names": "error",
       "jsdoc/newline-after-description": [
         "error",
-        "newer"
+        "never"
       ],
       "jsdoc/require-description-complete-sentence": "error",
       "jsdoc/require-hyphen-before-param-description": "error",
