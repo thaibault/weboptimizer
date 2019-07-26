@@ -2378,9 +2378,9 @@ cli-width@^2.0.0:
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
 clientnode@*:
-  version "3.0.353"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.353.tgz#8858c261c66fdc53e2c0898765d3c418dcd3dcf4"
-  integrity sha512-o220vdxv5lRwrzt0OrffoezEqaApsk2rpsZbjMTUgxcDqCLboROvKGhQcq3bTnS3rg32r4RPOqRPAxZmCrDCrA==
+  version "3.0.356"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.356.tgz#325bea81397f7f7bd7a87ba6d9ee5c9f5f2a1c2d"
+  integrity sha512-js0lJ76RAaKyT97jlKDe4ngzvdSPmzMa8fI6RSGcWh3z/0EXvT7VH2xgyFkrHwIftsdhUujG1P/ahEYGwJI5bA==
   dependencies:
     colors "*"
 
@@ -3504,9 +3504,9 @@ ejs@*, ejs@^2.3.4:
   integrity sha512-PcW2a0tyTuPHz3tWyYqtK6r1fZ3gp+3Sop8Ph+ZYN81Ob5rwmbHEzaqs10N3BEsaGTkh/ooniXK+WwszGlc2+Q==
 
 electron-to-chromium@^1.3.191:
-  version "1.3.200"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.200.tgz#78fb858b466269e8eb46d31a52562f00c865127f"
-  integrity sha512-PUurrpyDA74MuAjJRD+79ss5BqJlU3mdArRbuu4wO/dt6jc3Ic/6BDmFJxkdwbfq39cHf/XKm2vW98XSvut9Dg==
+  version "1.3.201"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.201.tgz#b516e941baf01a7cf8abd33af537a39e1e0096db"
+  integrity sha512-aCTPIfY1Jvuam5b6vuWRjt1F8i4kY7zX0Qtpu5SNd6l1zjuxU9fDNpbM4o6+oJsra+TMD2o7D20GnkSIgpTr9w==
 
 elliptic@^6.0.0:
   version "6.5.0"
@@ -4285,9 +4285,9 @@ flatten@^1.0.2:
   integrity sha1-2uRqnXj74lKSJYzB54CkHZXAN4I=
 
 flow-bin@*:
-  version "0.103.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.103.0.tgz#7aec510d85e1c1b0f2b912bb988337d70035cb0f"
-  integrity sha512-Y3yrnE5ICN1Kl/y10BwjA3JSuS+gt4jVPNyUNCZb0RqmkdssMrW8QNNysJYvhgAY/JBJH8Qv7NVUf11MiwfSlA==
+  version "0.104.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.104.0.tgz#ef5b3600dfd36abe191a87d19f66e481bad2e235"
+  integrity sha512-EZXRRmf7m7ET5Lcnwm/I/T8G3d427Bq34vmO3qIlRcPIYloGuVoqRCwjaeezLRDntHkdciagAKbhJ+NTbDjnkw==
 
 flush-write-stream@^1.0.0:
   version "1.1.1"
