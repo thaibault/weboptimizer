@@ -1001,9 +1001,8 @@
           "#": "Includes referenced (hot module replaced) css files in-place into the html header to dynamically migrate them on changes without browser refresh.",
           "loader": "style",
           "options": {
-            "hmr": true,
-            "insertAt": "top",
-            "singleton": true
+            "injectType": "singletonStyleTag",
+            "insert": "head"
           }
         }
       },
