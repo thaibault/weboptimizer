@@ -1203,6 +1203,11 @@ for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
         pluginConfiguration.name.initializer
     ])(...pluginConfiguration.parameter))
 // region configuration
+let customConfiguration:PlainObject = {}
+if (configuration.path.configuration && configuration.path.configuration.json)
+    try {
+        customConfiguration = require(configuration.path.configuration.json)
+    } catch (error) {}
 export const webpackConfiguration:WebpackConfiguration = Tools.extend(
     true,
     {
@@ -1322,7 +1327,8 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
         },
         plugins: pluginInstances
     },
-    configuration.webpack
+    configuration.webpack,
+    customConfiguration
 )
 if (
     !Array.isArray(configuration.module.skipParseRegularExpressions) ||
@@ -1334,12 +1340,16 @@ if (
     configuration.path.configuration &&
     configuration.path.configuration.javaScript
 ) {
-    const result:Object = require(configuration.path.configuration.javaScript)
-    if (result.hasOwnProperty('replaceWebOptimizer'))
-        // IgnoreTypeCheck
-        webpackConfiguration = webpackConfiguration.replaceWebOptimizer
-    else
-        Tools.extend(true, webpackConfiguration, result)
+    let result:Object
+    try {
+        result = require(configuration.path.configuration.javaScript)
+    } catch (error) {}
+    if (result)
+        if (result.hasOwnProperty('replaceWebOptimizer'))
+            // IgnoreTypeCheck
+            webpackConfiguration = webpackConfiguration.replaceWebOptimizer
+        else
+            Tools.extend(true, webpackConfiguration, result)
 }
 if (configuration.showConfiguration) {
     console.info(

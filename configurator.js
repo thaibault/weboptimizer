@@ -239,7 +239,10 @@ for (const key:string in configuration.path)
         configuration.path[key] = path.resolve(
             configuration.path.base, configuration.path[key]
         ) + '/'
-    else if (Tools.isPlainObject(configuration.path[key])) {
+    else if (
+        key !== 'configuration' &&
+        Tools.isPlainObject(configuration.path[key])
+    ) {
         configuration.path[key].base = path.resolve(
             configuration.path.base, configuration.path[key].base)
         for (const subKey:string in configuration.path[key])
