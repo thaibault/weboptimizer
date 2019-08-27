@@ -223,6 +223,9 @@ registerTest(function():void {
         const paths:Path = {
             apiDocumentation: '',
             base: '',
+            configuration: {
+                javaScript: null
+            },
             context: '',
             source: {
                 asset: {

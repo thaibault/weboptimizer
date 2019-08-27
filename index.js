@@ -50,8 +50,16 @@ const main = async ():Promise<void> => {
         const childProcesses:Array<ChildProcess> = []
         const processPromises:Array<Promise<any>> = []
         const possibleArguments:Array<string> = [
-            'build', 'build:dll', 'clear', 'document', 'lint', 'preinstall',
-            'serve', 'test', 'test:browser', 'check:type']
+            'build', 'build:dll',
+            'clear',
+            'document',
+            'lint',
+            'preinstall',
+            'serve',
+            'test',
+            'test:browser',
+            'check:type'
+        ]
         const closeEventHandlers:Array<Function> = []
         if (configuration.givenCommandLineArguments.length > 2) {
             // region temporary save dynamically given configurations
@@ -71,11 +79,13 @@ const main = async ():Promise<void> => {
             let count:number = 0
             let filePath:string = path.resolve(
                 configuration.path.context,
-                `.dynamicConfiguration-${count}.json`)
+                `.dynamicConfiguration-${count}.json`
+            )
             while (true) {
                 filePath = path.resolve(
                     configuration.path.context,
-                    `.dynamicConfiguration-${count}.json`)
+                    `.dynamicConfiguration-${count}.json`
+                )
                 if (!(await Tools.isFile(filePath)))
                     break
                 count += 1
@@ -98,17 +108,20 @@ const main = async ():Promise<void> => {
                 NOTE: Some tasks could depend on previously created dll
                 packages so a clean should not be performed in that case.
                 NOTE: If we have a dependency cycle we need to preserve files
-                during preinstall phase.
+                during pre-install phase.
             */
-            if (![
-                'build', 'preinstall', 'serve', 'test', 'test:browser'
-            ].includes(configuration.givenCommandLineArguments[2]) &&
-            possibleArguments.includes(
-                configuration.givenCommandLineArguments[2]
-            )) {
-                if (path.resolve(
-                    configuration.path.target.base
-                ) === path.resolve(configuration.path.context)) {
+            if (
+                ![
+                    'build', 'preinstall', 'serve', 'test', 'test:browser'
+                ].includes(configuration.givenCommandLineArguments[2]) &&
+                possibleArguments.includes(
+                    configuration.givenCommandLineArguments[2]
+                )
+            ) {
+                if (
+                    path.resolve(configuration.path.target.base) ===
+                    path.resolve(configuration.path.context)
+                ) {
                     // Removes all compiled files.
                     await Tools.walkDirectoryRecursively(
                         configuration.path.target.base, async (
@@ -173,9 +186,10 @@ const main = async ():Promise<void> => {
                         configuration.path.target.base, {glob: false}, (
                             error:?Error
                         ):void => error ? reject(error) : resolve()))
-                if (await Tools.isDirectory(
-                    configuration.path.apiDocumentation
-                ))
+                if (
+                    await Tools.isDirectory(
+                        configuration.path.apiDocumentation)
+                )
                     await new Promise((
                         resolve:Function, reject:Function
                     ):void => removeDirectoryRecursively(
@@ -468,7 +482,8 @@ const main = async ():Promise<void> => {
             console.info(
                 `Give one of "${possibleArguments.join('", "')}" as command ` +
                 'line argument. You can provide a json string as second ' +
-                'parameter to dynamically overwrite some configurations.\n')
+                'parameter to dynamically overwrite some configurations.\n'
+            )
         // endregion
         // region forward nested return codes
         try {

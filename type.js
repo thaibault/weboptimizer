@@ -88,6 +88,7 @@ export type Command = {
 export type Path = {
     apiDocumentation:string;
     base:string;
+    configuration?:?{javaScript?:?string};
     context:string;
     ignore:Array<string>;
     source:{
