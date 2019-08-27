@@ -193,7 +193,8 @@ export class Helper {
                                         `${assetType.pattern[pattern]}" for ` +
                                         `${assetType.tagName} does not ` +
                                         'satisfy the specified pattern "' +
-                                        `${regularExpressionPattern}".`)
+                                        `${regularExpressionPattern}".`
+                                    )
                                 const domNode:DomNode =
                                     window.document.querySelector(match[2])
                                 if (!domNode)
@@ -224,7 +225,8 @@ export class Helper {
                         console.warn(
                             `No referenced ${assetType.tagName} file in ` +
                             'resulting markup found with selector: "' +
-                            `${assetType.linkTagName}${assetType.selector}"`)
+                            `${assetType.linkTagName}${assetType.selector}"`
+                        )
                 }
         // NOTE: We have to restore template delimiter and style contents.
         return {
@@ -240,9 +242,11 @@ export class Helper {
                     endTag:string
                 ):string => {
                     if (startTag.includes(' weboptimizerinplace="true"'))
-                        return startTag.replace(
-                            ' weboptimizerinplace="true"', ''
-                        ) + `${inPlaceStyleContents.shift()}${endTag}`
+                        return (
+                            startTag.replace(
+                                ' weboptimizerinplace="true"', '') +
+                            `${inPlaceStyleContents.shift()}${endTag}`
+                        )
                     return `${startTag}${styleContents.shift()}${endTag}`
                 }),
             filePathsToRemove
@@ -291,16 +295,21 @@ export class Helper {
     static renderFilePathTemplate(
         filePathTemplate:string,
         informations:{[key:string]:string} = {
-            '[name]': '.__dummy__', '[id]': '.__dummy__',
-            '[hash]': '.__dummy__'
+            '[hash]': '.__dummy__',
+            '[id]': '.__dummy__',
+            '[name]': '.__dummy__'
         }
     ):string {
         let filePath:string = filePathTemplate
         for (const placeholderName:string in informations)
             if (informations.hasOwnProperty(placeholderName))
-                filePath = filePath.replace(new RegExp(
-                    Tools.stringEscapeRegularExpressions(placeholderName), 'g'
-                ), informations[placeholderName])
+                filePath = filePath.replace(
+                    new RegExp(
+                        Tools.stringEscapeRegularExpressions(placeholderName),
+                        'g'
+                    ),
+                    informations[placeholderName]
+                )
         return filePath
     }
     /**
@@ -567,9 +576,10 @@ export class Helper {
     ):?string {
         let result:?string = null
         for (const type:string in buildConfiguration)
-            if (path.extname(
-                filePath
-            ) === `.${buildConfiguration[type].extension}`) {
+            if (
+                path.extname(filePath) ===
+                `.${buildConfiguration[type].extension}`
+            ) {
                 result = type
                 break
             }
@@ -578,7 +588,8 @@ export class Helper {
                 for (const assetType:string in paths[type].asset)
                     if (
                         paths[type].asset.hasOwnProperty(assetType) &&
-                        assetType !== 'base' && paths[type].asset[assetType] &&
+                        assetType !== 'base' &&
+                        paths[type].asset[assetType] &&
                         filePath.startsWith(paths[type].asset[assetType])
                     )
                         return assetType
@@ -807,9 +818,9 @@ export class Helper {
                                             resolvedPath, file.path)))
                     } else if (
                         moduleID.startsWith('./') &&
-                        !moduleID.startsWith('./' + path.relative(
-                            context, referencePath
-                        ))
+                        !moduleID.startsWith(
+                            `./${path.relative(context, referencePath)}`
+                        )
                     )
                         normalizedEntryInjection[chunkName][index] =
                             `./${path.relative(context, resolvedPath)}`

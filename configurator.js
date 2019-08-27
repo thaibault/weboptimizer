@@ -419,7 +419,8 @@ for (const chunkName:string in resolvedConfiguration.injection.entry
                 type = Helper.determineAssetType(
                     filePath,
                     resolvedConfiguration.buildContext.types,
-                    resolvedConfiguration.path)
+                    resolvedConfiguration.path
+                )
             else
                 throw new Error(
                     `Given request "${moduleID}" couldn't be resolved.`)

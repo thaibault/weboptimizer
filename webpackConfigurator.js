@@ -1321,19 +1321,36 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
             // endregion
         },
         plugins: pluginInstances
-    }, configuration.webpack)
+    },
+    configuration.webpack
+)
 if (
     !Array.isArray(configuration.module.skipParseRegularExpressions) ||
     configuration.module.skipParseRegularExpressions.length
 )
     webpackConfiguration.module.noParse =
         configuration.module.skipParseRegularExpressions
+if (
+    configuration.path.configuration &&
+    configuration.path.configuration.javaScript
+) {
+    const result:Object = require(configuration.path.configuration.javaScript)
+    if (result.hasOwnProperty('replaceWebOptimizer'))
+        // IgnoreTypeCheck
+        webpackConfiguration = webpackConfiguration.replaceWebOptimizer
+    else
+        Tools.extend(true, webpackConfiguration, result)
+}
 if (configuration.showConfiguration) {
-    console.info('Using internal configuration:', util.inspect(configuration, {
-        depth: null}))
+    console.info(
+        'Using internal configuration:',
+        util.inspect(configuration, {depth: null})
+    )
     console.info('-----------------------------------------------------------')
-    console.info('Using webpack configuration:', util.inspect(
-        webpackConfiguration, {depth: null}))
+    console.info(
+        'Using webpack configuration:',
+        util.inspect(webpackConfiguration, {depth: null})
+    )
 }
 // endregion
 export default webpackConfiguration
