@@ -14,7 +14,7 @@ registerTest(function():void {
         (api:BrowserAPI):void => {
             this.module('browserAPI')
             // region tests
-            /*this.*/test('browserAPI', (assert:Object):void => {
+            /*TODO this.*/test('browserAPI', (assert:Object):void => {
                 browserAPI((api:BrowserAPI, alreadyCreated:boolean):void =>
                     assert.ok(alreadyCreated))
                 assert.notOk(api.debug)
