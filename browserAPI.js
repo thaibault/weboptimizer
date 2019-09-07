@@ -75,13 +75,18 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     }
     if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
         const filePath:string = path.join(__dirname, 'index.html.ejs')
+        /*
+            NOTE: We load dependencies now to avoid having file imports after
+            test runner has finished to isolate the environment.
+        */
+        const ejsLoader = require('./ejsLoader.compiled.js')
         require('fs').readFile(
             filePath,
             {encoding: 'utf-8'},
             (error:?Error, content:string):void => {
                 if (error)
                     throw error
-                render(require('./ejsLoader.compiled').bind(
+                render(ejsLoader.bind(
                     {filename: filePath}
                 )(content))
             }
@@ -92,8 +97,12 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // endregion
 } else {
     browserAPI = {
-        debug: false, domContentLoaded: false, DOM: null, window,
-        windowLoaded: false}
+        debug: false,
+        domContentLoaded: false,
+        DOM: null,
+        window,
+        windowLoaded: false
+    }
     window.document.addEventListener('DOMContentLoaded', ():void => {
         browserAPI.domContentLoaded = true
         for (const callback:Function of onCreatedListener)
@@ -106,37 +115,42 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
 // endregion
 /**
  * Provides a generic browser api in node or web contexts.
- * @param callback - Function to be called when environment is ready.
- * @param clear - Indicates whether a potential existign window object should
- * be replaced or not.
+ * @param replaceWindow - Indicates whether a potential existing window object
+ * should be replaced or not.
  * @returns Determined environment.
  */
-export function createBrowserAPI(callback:Function, clear:boolean = true):any {
-    // region initialize global context
+export const createBrowserAPI = async (
+    replaceWindow:boolean = true
+):Promise<Object> => {
+    let resolvePromise:Function
+    const promise:Promise<Object> = new Promise((resolve:Function):void => {
+        resolvePromise = resolve
+    })
     /*
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.
     */
-    const wrappedCallback:Function = (...parameter:Array<any>):any => {
+    const wrappedCallback:Function = (...parameter:Array<any>):void => {
         if (
-            clear &&
+            replaceWindow &&
             typeof global !== 'undefined' &&
             global !== browserAPI.window
         )
             global.window = browserAPI.window
-        return callback(...parameter)
+        resolvePromise(browserAPI)
     }
-    // endregion
     if (
         typeof TARGET_TECHNOLOGY === 'undefined' ||
         TARGET_TECHNOLOGY === 'node'
     )
-        return browserAPI ? wrappedCallback(
-            browserAPI, true
-        ) : onCreatedListener.push(wrappedCallback)
-    return (browserAPI.domContentLoaded) ? wrappedCallback(
-        browserAPI, true
-    ) : onCreatedListener.push(wrappedCallback)
+        browserAPI ?
+            wrappedCallback(browserAPI, true) :
+            onCreatedListener.push(wrappedCallback)
+    else
+        browserAPI.domContentLoaded ?
+            wrappedCallback(browserAPI, true) :
+            onCreatedListener.push(wrappedCallback)
+    return promise
 }
 export default createBrowserAPI
 // region vim modline
