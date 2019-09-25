@@ -1,0 +1,134 @@
+# -*- coding: utf-8 -*-
+
+# NOTE: Every entry has be sorted in given alphabetic order to avoid
+# duplicates!
+
+# Security related data should be saved.
+.encryptionPassword
+
+# Generated documentations
+apiDocumentation
+
+# Generated runtime bytecode files.
+*.ngfactory.ts
+*.py[cod]
+__pycache__
+
+# Runtime data
+.cache
+.config
+.local
+.node-gyp
+.node-xmlhttprequest-sync*
+.nyc_output
+.ssh
+backup
+cache/*
+!cache/.gitkeep
+database
+log
+!log/.gitkeep
+logs
+!logs/.gitkeep
+log.txt
+renderedData
+!renderedData/.gitkeep
+source/image/sprite.png
+*.cache
+*.log
+
+# Certification
+.pki
+
+# Temporary compile files
+.dynamicConfiguration-*.json
+build
+!/data/**/*
+dist
+*Bundle.*
+target
+*.compiled.*
+*.compiled
+*.dll-manifest.json
+
+# Profiling data.
+*.profile
+
+# Packages
+.installed.cfg
+.sass-cache
+.SRCINFO
+bin
+develop-eggs
+eggs
+lib
+lib64
+parts
+sdist
+var
+*.egg
+*.egg-info
+
+# Ignore docker nested bash generated files.
+.bash_history
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Vim temporary file
+.ropeproject
+.viminfo
+*.swp
+
+# JetBrain's idea, PHPStorm and other IDE Files
+.externalToolBuilders
+.project
+.pydevproject
+.settings
+**/.idea/workspace.xml
+
+# Gedit autosave backups.
+*~
+
+# Temporary fuse files
+.fuse_hidden*
+
+# Temporary windows files
+*Thumbs.db
+
+# Temporary git files
+.git-rewrite
+
+# NPM/yarn's runtime files
+.npm/
+.npm-debug.log
+.v8flags.*
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Java
+.java/
+.javacpp
+.jrebel/
+.m2/
+
+# Temporary downloading file artefact
+*.crdownload
+
+# Project specific
+# ...
+# region vim modline
+# vim: set tabstop=4 shiftwidth=4 expandtab:
+# vim: foldmethod=marker foldmarker=region,endregion:
+# endregion
