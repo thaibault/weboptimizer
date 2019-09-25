@@ -1,0 +1,489 @@
+/* !/usr/bin/env css
+-*- coding: utf-8 -*- */
+/* region header
+Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+License
+-------
+
+This library written by Torben Sickert stand under a creative commons naming
+3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
+endregion */
+/* region font */
+/** region open sans */
+/*** region light */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/light/open-sans-light';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 300;
+    font-style: normal;
+}
+/*** endregion */
+/*** region light italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/light-italic/open-sans-light-italic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 300;
+    font-style: italic;
+}
+/*** endregion */
+/*** region regular */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/regular/open-sans-regular';
+    /* stylelint-enable property-no-unknown */
+    font-weight: normal;
+    font-style: normal;
+}
+/*** endregion */
+/*** region italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/italic/open-sans-italic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: normal;
+    font-style: italic;
+}
+/*** endregion */
+/*** region semi-bold */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/semi-bold/open-sans-semi-bold';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 600;
+    font-style: normal;
+}
+/*** endregion */
+/*** region semi-bold italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/semi-bold-italic/open-sans-semi-bold-italic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 600;
+    font-style: italic;
+}
+/*** endregion */
+/*** region bold */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/bold/open-sans-bold';
+    /* stylelint-enable property-no-unknown */
+    font-weight: bold;
+    font-style: normal;
+}
+/*** endregion */
+/*** region bold italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/bold-italic/open-sans-bold-italic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: bold;
+    font-style: italic;
+}
+/*** endregion */
+/*** region extrabold */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/extra-bold/open-sans-extra-bold';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 800;
+    font-style: normal;
+}
+/*** endregion */
+/*** region extrabold italic */
+@font-face {
+    font-family: open-sans;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans/extra-bold-italic/open-sans-extra-bold-italic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 800;
+    font-style: italic;
+}
+/*** endregion */
+/** endregion */
+/** region open sans condensed */
+/*** region bold */
+@font-face {
+    font-family: open-sans-condensed;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans-condensed/condensed-bold/open-sans-condensed-bold';
+    /* stylelint-enable property-no-unknown */
+    font-weight: bold;
+    font-style: normal;
+}
+/*** endregion */
+/*** region open sans light */
+@font-face {
+    font-family: open-sans-condensed;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans-condensed/condensed-light/open-sans-condensed-light';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 300;
+    font-style: normal;
+}
+/*** endregion */
+/*** region open sans italic */
+@font-face {
+    font-family: open-sans-condensed;
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/open-sans-condensed/condensed-light-italic/open-sans-condensed-light-italic';
+    /* stylelint-enable property-no-unknown */
+    font-weight: 300;
+    font-style: italic;
+}
+/*** endregion */
+/** endregion */
+/** region glyphicons halflings */
+@font-face {
+    font-family: 'Glyphicons Halflings';
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/glyphicons-halflings/glyphicons-halflings-regular';
+    /* stylelint-enable property-no-unknown */
+}
+/** endregion */
+/** region glyphicons social regular */
+@font-face {
+    font-family: 'Glyphicons Social Regular';
+    /* stylelint-disable property-no-unknown */
+    font-path: 'font/glyphicons-halflings/glyphicons-halflings-social-regular';
+    /* stylelint-enable property-no-unknown */
+}
+/** endregion */
+/* endregion */
+:root {
+    /* region constants */
+    --default-space: 20px;
+    /** region dimensions */
+    --extra-extra-small-width: 360px;
+    --extra-small-width: 500px;
+    --small-width: 768px;
+    --medium-width: 992px;
+    --large-width: 1200px;
+    /*** region extra small dimension */
+    /*
+    @custom-media --extra-extra-small (min-width: var(--extra-extra-small-width));
+    @custom-media --extra-small (min-width: var(--extra-small-width));
+    */
+    @custom-media --extra-extra-small (min-width: 360px);
+    @custom-media --extra-small (min-width: 500px);
+    /*** endregion */
+    /*** region default media query dimensions */
+    /*
+    @custom-media --small (min-width: var(--small-width));
+    @custom-media --medium (min-width: var(--medium-width));
+    @custom-media --large (min-width: var(--large-width));
+    */
+    @custom-media --small (min-width: 768px);
+    @custom-media --medium (min-width: 992px);
+    @custom-media --large (min-width: 1200px);
+    /*** endregion */
+    /** endregion */
+    /** region color */
+    --background-color: #fff;
+    --disabled-color: #eee;
+    --font-color: #555;
+    --border-color: #ccc;
+    /** endregion */
+    /** region font */
+    --font-family: 'Open Sans', open-sans, sans-serif;
+    --font-family-condensed: 'Open Sans Condensed', open-sans-condensed, sans-serif;
+    /** endregion */
+    /* endregion */
+    /* stylelint-disable at-rule-no-unknown */
+    @define-mixin website-utilities {
+        margin: 0;
+        font-family: var(--font-family);
+        font-size: 14px;
+        /* stylelint-disable selector-type-no-unknown */
+        & langreplacement { display: none; }
+        /* stylelint-enable selector-type-no-unknown */
+        /* region generic dom nodes */
+        /** region headline */
+        & h1,
+        & h2,
+        & h3,
+        & h4,
+        & h5,
+        & h6,
+        & .h1,
+        & .h2,
+        & .h3,
+        & .h4,
+        & .h5,
+        & .h6 {
+            font-family: var(--font-family);
+        }
+
+        & h1,
+        & h2 {
+            font-family: var(--font-family-condensed);
+            font-weight: normal;
+            font-size: 3em;
+        }
+        & h2 { font-size: 2em; }
+        /** endregion */
+        /** region link */
+        & a,
+        & a:hover,
+        & a:focus,
+        & a:visited {
+            outline: none;
+            text-decoration: none;
+        }
+        /** endregion */
+        /* endregion */
+        /* region generic classes */
+        /* Disables and hides a scrolling and scrollbar. */
+        & .tools-disable-scrolling {
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+        & .website-utilities-action { cursor: pointer; }
+        /* Overlay the whole page till everything is loaded completely. */
+        & .website-utilities-window-loading-cover {
+            background-color: var(--background-color);
+            /* always cover full viewport */
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            z-index: 1002 !important;
+            /* Positioning the loading spinner in center in the loading overlay. */
+            & > div {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+            }
+        }
+        /** region glyphicon-social */
+        & .glyphicon-social {
+            color: #1d1d1b;
+            display: inline-block;
+            padding-left: 30px;
+            position: relative;
+            text-decoration: none;
+            vertical-align: middle;
+            zoom: 1;
+
+            &::before {
+                /* Edited to enable hover effects.
+                color: #1d1d1b;
+                */
+                display: inline-block;
+                font: 24px/1em 'Glyphicons Social Regular', sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                left: 0;
+                margin: 0 5px 0 0;
+                position: absolute;
+                text-transform: none;
+                top: 0;
+                zoom: 1;
+            }
+            &-white::before { color: #fff; }
+            &-pinterest::before { content: "\E001"; }
+            &-dropbox::before { content: "\E002"; }
+            &-google_plus::before { content: "\E003"; }
+            &-jolicloud::before { content: "\E004"; }
+            &-yahoo::before { content: "\E005"; }
+            &-blogger::before { content: "\E006"; }
+            &-picasa::before { content: "\E007"; }
+            &-amazon::before { content: "\E008"; }
+            &-tumblr::before { content: "\E009"; }
+            &-wordpress::before { content: "\E010"; }
+            &-instapaper::before { content: "\E011"; }
+            &-evernote::before { content: "\E012"; }
+            &-xing::before { content: "\E013"; }
+            &-zootool::before { content: "\E014"; }
+            &-dribbble::before { content: "\E015"; }
+            &-deviantart::before { content: "\E016"; }
+            &-read_it_later::before { content: "\E017"; }
+            &-linked_in::before { content: "\E018"; }
+            &-forrst::before { content: "\E019"; }
+            &-pinboard::before { content: "\E020"; }
+            &-behance::before { content: "\E021"; }
+            &-github::before { content: "\E022"; }
+            &-youtube::before { content: "\E023"; }
+            &-skitch::before { content: "\E024"; }
+            &-foursquare::before { content: "\E025"; }
+            &-quora::before { content: "\E026"; }
+            &-badoo::before { content: "\E027"; }
+            &-spotify::before { content: "\E028"; }
+            &-stumbleupon::before { content: "\E029"; }
+            &-readability::before { content: "\E030"; }
+            &-facebook::before { content: "\E031"; }
+            &-twitter::before { content: "\E032"; }
+            &-instagram::before { content: "\E033"; }
+            &-posterous_spaces::before { content: "\E034"; }
+            &-vimeo::before { content: "\E035"; }
+            &-flickr::before { content: "\E036"; }
+            &-last_fm::before { content: "\E037"; }
+            &-rss::before { content: "\E038"; }
+            &-skype::before { content: "\E039"; }
+            &-e-mail::before { content: "\E040"; }
+            &-vine::before { content: "\E041"; }
+            &-myspace::before { content: "\E042"; }
+            &-goodreads::before { content: "\E043"; }
+            &-apple::before { content: "\F8FF"; }
+            &-windows::before { content: "\E045"; }
+            &-yelp::before { content: "\E046"; }
+            &-playstation::before { content: "\E047"; }
+            &-xbox::before { content: "\E048"; }
+            &-android::before { content: "\E049"; }
+            &-ios::before { content: "\E050"; }
+        }
+        /** endregion */
+        /** region form */
+        /*** region styled select */
+        & .select-styled-wrapper {
+            position: relative;
+
+            & > .select-styled-arrow {
+                position: absolute;
+                top: 3px;
+                right: 15px;
+                pointer-events: none;
+
+                & span {
+                    vertical-align: bottom;
+                    font-size: 10px;
+                }
+            }
+
+            & > select {
+                position: initial !important;
+                padding-left: 7px !important;
+                padding-right: 25px !important;
+                /* hide default down arrow in webkit */
+                -webkit-appearance: none;
+                /* hide arrow in firefox */
+                @-moz-document url-prefix() { -moz-appearance: none; }
+                /* hide default down arrow in IE10 */
+                &::-ms-expand { display: none; }
+            }
+        }
+        /*** endregion */
+        /*** region styled checkbox */
+        & .checkbox,
+        & .form-horizontal .checkbox {
+            margin-top: 2px;
+            padding-top: 3px;
+
+            & label {
+                padding-left: 40px;
+
+                & .checkbox-styled-wrapper {
+                    margin-top: -2px;
+                    margin-left: -40px;
+                    position: absolute;
+
+                    & > .checkbox-styled {
+                        border-radius: 4px;
+                        border: 2px solid var(--border-color);
+                        cursor: pointer;
+                        float: right;
+                        height: 25px;
+                        padding: 0;
+                        width: 25px;
+
+                        & > .checkbox-styled-checked {
+                            background: transparent;
+                            border: 3px solid var(--font-color);
+                            border-top: none;
+                            border-right: none;
+                            height: 8px;
+                            left: 4px;
+                            opacity: 0;
+                            position: absolute;
+                            top: 5px;
+                            transform: rotate(-45deg);
+                            width: 13px;
+                        }
+                    }
+
+                    & > input[type="checkbox"] {
+                        display: none;
+
+                        &:checked ~ span.checkbox-styled > span {
+                            &.checkbox-styled-checked {
+                                opacity: 1;
+                            }
+                        }
+
+                        &:disabled ~ span.checkbox-styled {
+                            background-color: var(--disabled-color);
+                        }
+                    }
+                }
+            }
+        }
+        & form:not(.form-horizontal) .checkbox { margin-bottom: 20px; }
+        /*** endregion */
+        /** endregion */
+        /* endregion */
+    }
+    /* stylelint-enable at-rule-no-unknown */
+
+    & .javascript .tools {
+        /* Initially show javaScript dependent dom nodes. */
+        &-hidden-on-javascript-enabled { display: none !important; }
+        /* Initially show javaScript dependent dom nodes. */
+        &-visible-on-javascript-enabled { display: initial !important; }
+    }
+
+    & .no-javascript .tools {
+        /* Initially show none javaScript dependent dom nodes. */
+        &-hidden-on-javascript-disabled { display: none !important; }
+        /* Initially show none javaScript dependent dom nodes. */
+        &-visible-on-javascript-disabled { display: initial !important; }
+    }
+}
+/* region spinner animation */
+@keyframes spinner-line-fade-more {
+    0%,
+    100% {
+        opacity: 0;
+    }
+
+    1% {
+        opacity: 1;
+    }
+}
+
+@keyframes spinner-line-fade-quick {
+    0%,
+    39%,
+    100% {
+        opacity: 0.25;
+    }
+
+    40% {
+        opacity: 1;
+    }
+}
+
+@keyframes spinner-line-fade-default {
+    0%,
+    100% {
+        opacity: 0.22;
+    }
+
+    1% {
+        opacity: 1;
+    }
+}
+/* endregion */
+/* region vim modline
+vim: set tabstop=4 shiftwidth=4 expandtab:
+vim: foldmethod=marker foldmarker=region,endregion:
+endregion */

@@ -1,0 +1,256 @@
+<!doctype html>
+<%_ /*
+    region header
+    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+    License
+    =======
+
+    This library written by Torben Sickert stand under a creative commons
+    naming 3.0 unported license.
+    See https://creativecommons.org/licenses/by/3.0/deed.de
+    endregion
+*/
+let START_UP_ANIMATION_NUMBER = 0
+_%>
+<html class="no-javascript" lang="en">
+    <!--region head-->
+    <head>
+        <meta charset="utf-8">
+        <meta
+            name="description"
+            content="<%- TAGLINE.replace(/^(.+?)<!--.+-->$/, '$1').replace("'", "\\'") %>"
+        >
+        <meta name="author" content="Torben Sickert">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <%_ for (const metaTag of META_TAGS) { _%>
+            <meta <%_ for (const key in metaTag) { _%>
+                <%- key %>="<%- metaTag[key] %>"
+            <%_ } _%>>
+        <%_ } _%>
+        <title><%- NAME %></title>
+        <script>
+            window.document.documentElement.className =
+                window.document.documentElement.className.replace(
+                    /(^|\s)no-javascript(\s|$)/, '$1javascript$2');
+        </script>
+    </head>
+    <!--endregion-->
+    <!--region body-->
+    <body class="documentation no-javascript">
+        <script>
+            window.document.body.className =
+                window.document.body.className.replace(
+                    /(^|\s)no-javascript(\s|$)/, '$1javascript$2');
+        </script>
+        <div
+            class="tools-visible-on-javascript-enabled website-utilities-window-loading-cover"
+        ><div></div></div>
+        <!--region header-->
+        <header class="header-wrap"><div class="inner">
+            <%_ START_UP_ANIMATION_NUMBER += 1 _%>
+            <a
+                class="forkme-banner website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+                href="<%- SOURCE_URL %>"
+            >
+                View on GitHub
+                <!--deDE:GitHub-Projekt-->
+                <!--frFR:GitHub-Project-->
+                <i class="icon-github"></i>
+            </a>
+            <%_ START_UP_ANIMATION_NUMBER += 1 _%>
+            <h1
+                class="project-title website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+            ><a href="<%- URL %>"><%- NAME %></a>
+            <%_ START_UP_ANIMATION_NUMBER += 1 _%>
+            <h2
+                class="project-tagline website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+            >
+                <%- TAGLINE %>
+                <br />
+            </h2>
+            <div class="header-links">
+                <!--NOTE: This elements are shown in reverse order.-->
+                <%_
+                    let numberOfLanguageLinks = 0
+                    if (1 < LANGUAGES.length) {
+                        numberOfLanguageLinks = LANGUAGES.length
+                        START_UP_ANIMATION_NUMBER += numberOfLanguageLinks
+                    }
+                    if (API_DOCUMENTATION_PATH)
+                        START_UP_ANIMATION_NUMBER += 4
+                    else
+                        START_UP_ANIMATION_NUMBER += 2
+                    START_UP_ANIMATION_NUMBER += 1
+                _%>
+                <%_ if (
+                    DISTRIBUTION_BUNDLE_FILE_PATH &&
+                    typeof BUNDLE === 'undefined' ||
+                    BUNDLE === true
+                ) { _%>
+                    <a
+                        class="zip-source-download website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+                        href="https://github.com/thaibault/<%- NAME %>/zipball/master"
+                    >src.zip</a>
+                    <%_ START_UP_ANIMATION_NUMBER -= 1 _%>
+                    <a
+                        class="zip-distribution-bundle-download website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+                        href="<%- `${URL}/${DISTRIBUTION_BUNDLE_FILE_PATH}` %>"
+                    >app.zip</a>
+                <%_ } else { _%>
+                    <a
+                        class="zip-source-download website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+                        href="https://github.com/thaibault/<%- NAME %>/zipball/master"
+                    >.zip</a>
+                    <%_ START_UP_ANIMATION_NUMBER -= 1 _%>
+                    <a
+                        class="tar-gz-source-download website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+                        href="https://github.com/thaibault/<%- NAME %>/tarball/master"
+                    >.tar.gz</a>
+                <%_ }
+                START_UP_ANIMATION_NUMBER -= 1 _%>
+                <i
+                    class="icon-download-arrow website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+                ></i>
+                <%_
+                    if (numberOfLanguageLinks)
+                        for (const language of LANGUAGES) {
+                            START_UP_ANIMATION_NUMBER -= 1
+                _%>
+                            <a
+                                class="tools-hidden-on-javascript-disabled website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+                                href="#language-<%- language %>"
+                            ><%- language.slice(0, 2) %></a>
+                <%_      }
+                    if (API_DOCUMENTATION_PATH) {
+                        START_UP_ANIMATION_NUMBER -= 1
+                _%>
+                        <span
+                            class="arrow-left-api glyphicon glyphicon-arrow-left website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+                        ></span>
+                        <%_ START_UP_ANIMATION_NUMBER -= 1 _%>
+                        <a
+                            class="api-link website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+                            href="<%- URL %><%- API_DOCUMENTATION_PATH %>"
+                        >
+                            <langreplace>
+                                API <span>Documentation</span>
+                            </langreplace>
+                            <!--deDE:API<span>-Dokumentation</span>-->
+                            <!--frFR:<span>Documentation de l'</span>API-->
+                        </a>
+                <%_     START_UP_ANIMATION_NUMBER += 4 + numberOfLanguageLinks
+                    } else
+                        START_UP_ANIMATION_NUMBER += 2 + numberOfLanguageLinks
+                _%>
+            </div>
+        </div></header>
+        <!--endregion-->
+        <!--region sections-->
+        <section class="main-content-wrap">
+            <!--region main content-->
+            <div class="main-content inner">
+                <%_ if (CONTENT_FILE_PATH) { _%>
+                    <%- include(CONTENT_FILE_PATH) %>
+                <%_ } else if (CONTENT) {
+                    let content = CONTENT
+                    if (RENDER_CONTENT)
+                        content = compile(CONTENT)(locals)
+                    if (content)
+                _%>
+                        <%- content %>
+                <%_ } _%>
+            </div>
+            <!--endregion-->
+            <!--region about this website-->
+            <div class="about-this-website inner">
+                <h2 id="about-this-website">
+                    About this website
+                    <!--deDE:Impressum-->
+                    <!--frFR:Mentions légales-->
+                </h2>
+                <p>
+                    Provider of
+                    <!--deDE:Anbieter von-->
+                    <!--frFR:Fournisseur de-->
+                    <a href="https://torben.website/<%- NAME %>">
+                        https://torben.website/<%- NAME %>
+                    </a>
+                    :
+                    <br>
+                    Torben Sickert
+                    <br>
+                    Waldstraße 29
+                    <br>
+                    791194 Gundelfingen i.Br.
+                    <br>
+                    Phone:
+                    <!--deDE:Tel.:-->
+                    <!--frFR:Téléphone:-->
+                    <a href="tel:004917610248185">
+                        +49 (0) 176 <span>/</span> 10 248 185
+                    <br>
+                    Email:
+                    <!--deDE:E-Mail:-->
+                    <a href="mailto:info@torben.website">
+                        info@torben.website
+                    </a>
+                    <br>
+                    Website:
+                    <!--deDE:Webseite:-->
+                    <!--frFR:Site:-->
+                    <a href="https://torben.website">https://torben.website</a>
+                    <br>
+                    <span class="glyphicon glyphicon-arrow-left arrow-left-home tools-visible-on-javascript-enabled">
+                    <a
+                        class="tools-visible-on-javascript-enabled"
+                        href="#home"
+                    >
+                        home
+                        <!--deDE:Startseite-->
+                        <!--frFR:Maison-->
+                    </a>
+                </p>
+                <%- include('legal-notes') %>
+            </div>
+            <!--endregion-->
+        </section>
+        <!--endregion-->
+        <!--region footer-->
+        <footer class="footer-wrap"><div class="inner">
+            <%_ START_UP_ANIMATION_NUMBER += 1 _%>
+            <p
+                class="copyright website-start-up-animation-number-<%- START_UP_ANIMATION_NUMBER %>"
+            >
+                <%- NAME %> maintained by
+                <!--deDE:<%- NAME %> betrieben von-->
+                <!--frFR:<%- NAME %> exploité par-->
+                <%_ /*
+                    We need an explicit whitespace here preserve whitespaces
+                    after language switches.
+                */ _%>
+                <a href="https://torben.website"> thaibault</a>
+                &middot; &copy; 2013 Torben Sickert &middot;
+                <a href="#about-this-website">
+                    about this website
+                    <!--deDE:Impressum-->
+                    <!--frFR:Mentions légales-->
+                </a>
+            </p>
+        </div></footer>
+        <!--endregion-->
+        <a href="#top">top<!--deDE:nach oben--><!--frFR:ascendant--></a>
+        <%_ if (configuration.offline) { _%>
+            <noscript>
+                <iframe src="manifest.html" style="display: none"></iframe>
+            </noscript>
+        <%_ } _%>
+    </body>
+    <!--endregion-->
+</html>
+<%_ /*
+    region vim modline
+    vim: set tabstop=4 shiftwidth=4 expandtab:
+    vim: foldmethod=marker foldmarker=region,endregion:
+    endregion
+*/ _%>
