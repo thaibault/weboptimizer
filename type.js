@@ -19,7 +19,7 @@ import type {PlainObject, ProcedureFunction, Window} from 'clientnode'
 // endregion
 // region exports
 // / region generic
-export type BrowserAPI = {
+export type Browser = {
     debug:boolean;
     domContentLoaded:boolean;
     DOM:?Object;

@@ -16,7 +16,7 @@
 */
 // region imports
 import type {Window} from 'clientnode'
-import type {BrowserAPI} from './type'
+import type {Browser} from './type'
 // endregion
 // region declaration
 declare var NAME:string
@@ -25,7 +25,15 @@ declare var window:Window
 // endregion
 // region variables
 const onCreatedListener:Array<Function> = []
-let browserAPI:BrowserAPI
+export const browser:Browser = {
+    debug: false,
+    domContentLoaded: false,
+    DOM: null,
+    initialized: false,
+    instance: null,
+    window: null,
+    windowLoaded: false
+}
 // endregion
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
@@ -38,7 +46,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     ])
         virtualConsole.on(name, console[name].bind(console))
     virtualConsole.on('error', (error:Error):void => {
-        if (!browserAPI.debug && [
+        if (!browser.debug && [
             'XMLHttpRequest', 'resource loading'
         // IgnoreTypeCheck
         ].includes(error.type))
@@ -47,31 +55,33 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             // IgnoreTypeCheck
             console.error(error.stack, error.detail)
     })
-    const render:Function = (template:string):Window => {
-        const window:Window = (new JSDOM(template, {
+    const render:Function = (template:string):void => {
+        browser.DOM = JSDOM
+        browser.initialized = true
+        browser.instance = new JSDOM(template, {
+            beforeParse: (window:Window):void => {
+                browser.window = window
+                window.document.addEventListener(
+                    'DOMContentLoaded',
+                    ():void => {
+                        browser.domContentLoaded = true
+                    }
+                )
+                window.addEventListener('load', ():void => {
+                    /*
+                        NOTE: Maybe we have miss the "DOMContentLoaded" event
+                        caused by a race condition.
+                    */
+                    browser.domContentLoaded = browser.windowLoaded = true
+                })
+                for (const callback:Function of onCreatedListener)
+                    callback()
+            },
             resources: 'usable',
             runScripts: 'dangerously',
             url: 'http://localhost',
             virtualConsole
-        })).window
-        browserAPI = {
-            debug: false,
-            domContentLoaded: false,
-            DOM: JSDOM,
-            window,
-            windowLoaded: false
-        }
-        window.addEventListener('load', ():void => {
-            // NOTE: Maybe we have miss the "DOMContentLoaded" event.
-            browserAPI.domContentLoaded = true
-            browserAPI.windowLoaded = true
         })
-        window.document.addEventListener('DOMContentLoaded', ():void => {
-            browserAPI.domContentLoaded = true
-        })
-        for (const callback:Function of onCreatedListener)
-            callback(browserAPI, false)
-        return window
     }
     if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
         const filePath:string = path.join(__dirname, 'index.html.ejs')
@@ -86,30 +96,27 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             (error:?Error, content:string):void => {
                 if (error)
                     throw error
-                render(ejsLoader.bind(
-                    {filename: filePath}
-                )(content))
+                render(ejsLoader.bind({filename: filePath})(content))
             }
         )
     } else
         // IgnoreTypeCheck
-        render(require('webOptimizerDefaultTemplateFilePath'))
+        Tools.timeout(():void =>
+            render(require('webOptimizerDefaultTemplateFilePath'))
+        )
     // endregion
 } else {
-    browserAPI = {
-        debug: false,
-        domContentLoaded: false,
-        DOM: null,
-        window,
-        windowLoaded: false
-    }
+    browser.initialized = true
+    browser.window = window
     window.document.addEventListener('DOMContentLoaded', ():void => {
-        browserAPI.domContentLoaded = true
-        for (const callback:Function of onCreatedListener)
-            callback(browserAPI, false)
+        browser.domContentLoaded = true
     })
     window.addEventListener('load', ():void => {
-        browserAPI.windowLoaded = true
+        browser.windowLoaded = true
+    })
+    Tools.timeout(():void => {
+        for (const callback:Function of onCreatedListener)
+            callback()
     })
 }
 // endregion
@@ -119,40 +126,33 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
  * should be replaced or not.
  * @returns Determined environment.
  */
-export const createBrowserAPI = async (
+export const getInitializedBrowser = async (
     replaceWindow:boolean = true
-):Promise<Object> => {
+):Promise<Browser> => {
     let resolvePromise:Function
-    const promise:Promise<Object> = new Promise((resolve:Function):void => {
+    const promise:Promise<Browser> = new Promise((resolve:Function):void => {
         resolvePromise = resolve
     })
     /*
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.
     */
-    const wrappedCallback:Function = (...parameter:Array<any>):void => {
+    const wrappedCallback:Function = ():void => {
         if (
             replaceWindow &&
             typeof global !== 'undefined' &&
-            global !== browserAPI.window
+            global !== browser.window
         )
-            global.window = browserAPI.window
-        resolvePromise(browserAPI)
+            global.window = browser.window
+        resolvePromise(browser)
     }
-    if (
-        typeof TARGET_TECHNOLOGY === 'undefined' ||
-        TARGET_TECHNOLOGY === 'node'
-    )
-        browserAPI ?
-            wrappedCallback(browserAPI, true) :
-            onCreatedListener.push(wrappedCallback)
+    if (browser.initialized)
+        wrappedCallback()
     else
-        browserAPI.domContentLoaded ?
-            wrappedCallback(browserAPI, true) :
-            onCreatedListener.push(wrappedCallback)
+        onCreatedListener.push(wrappedCallback)
     return promise
 }
-export default createBrowserAPI
+export default getInitializedBrowser
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
