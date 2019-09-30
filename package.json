@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.549",
+  "version": "2.0.550",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "https://torben.website/webOptimizer",
@@ -129,6 +129,7 @@
     "eslint-plugin-jsdoc": "*",
     "favicons-webpack-plugin": "*",
     "flow-bin": "*",
+    "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
     "mkdirp": "*",
@@ -139,7 +140,6 @@
     "postcss-preset-env": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
-    "jest": "*",
     "shelljs": "*",
     "style-loader": "*",
     "stylelint": "*",
