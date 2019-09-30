@@ -262,11 +262,10 @@ export class Helper {
         moduleID = moduleID.toString()
         const moduleIDWithoutLoader:string = moduleID.substring(
             moduleID.lastIndexOf('!') + 1)
-        return moduleIDWithoutLoader.includes(
-            '?'
-        ) ? moduleIDWithoutLoader.substring(0, moduleIDWithoutLoader.indexOf(
-                '?'
-            )) : moduleIDWithoutLoader
+        return moduleIDWithoutLoader.includes('?') ?
+            moduleIDWithoutLoader.substring(
+                0, moduleIDWithoutLoader.indexOf('?')) :
+            moduleIDWithoutLoader
     }
     // endregion
     // region array
@@ -288,27 +287,29 @@ export class Helper {
     /**
      * Applies file path/name placeholder replacements with given bundle
      * associated informations.
-     * @param filePathTemplate - File path to process placeholder in.
-     * @param informations - Scope to use for processing.
+     * @param template - File path to process placeholder in.
+     * @param scope - Scope to use for processing.
      * @returns Processed file path.
      */
     static renderFilePathTemplate(
-        filePathTemplate:string,
-        informations:{[key:string]:string} = {
-            '[hash]': '.__dummy__',
-            '[id]': '.__dummy__',
-            '[name]': '.__dummy__'
-        }
+        template:string, scope:{[key:string]:string} = {}
     ):string {
-        let filePath:string = filePathTemplate
-        for (const placeholderName:string in informations)
-            if (informations.hasOwnProperty(placeholderName))
+        scope = Tools.extend(
+            {
+                '[hash]': '.__dummy__',
+                '[id]': '.__dummy__',
+                '[name]': '.__dummy__'
+            },
+            scope)
+        let filePath:string = template
+        for (const placeholderName:string in scope)
+            if (scope.hasOwnProperty(placeholderName))
                 filePath = filePath.replace(
                     new RegExp(
                         Tools.stringEscapeRegularExpressions(placeholderName),
                         'g'
                     ),
-                    informations[placeholderName]
+                    scope[placeholderName]
                 )
         return filePath
     }
@@ -448,7 +449,7 @@ export class Helper {
         inPlaceNormalLibrary:boolean = false,
         inPlaceDynamicLibrary:boolean = true,
         encoding:string = 'utf-8'
-    ):?string {
+    ):null|string {
         context = path.resolve(context)
         requestContext = path.resolve(requestContext)
         referencePath = path.resolve(referencePath)

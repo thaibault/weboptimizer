@@ -56,7 +56,7 @@ Features
     - Image **sprite** handling: Combine your images and never manage sprites
       by hand again.
     - Polymorphic **testing** on dom in browsers and/or node through
-      weboptimizer/browserAPI
+      weboptimizer/browser
     - **Linting** and **TypeChecking** with Flow on css and javaScript
     - Automatic **API-Documentation** generation for javaScript
     - Various pre configured and adaptable implemented concepts for building

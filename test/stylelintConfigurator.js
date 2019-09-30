@@ -2,16 +2,9 @@
 // @flow
 // -*- coding: utf-8 -*-
 'use strict'
-// region imports
-import registerTest from 'clientnode/test.compiled'
-// endregion
-registerTest(function():void {
-    this.module('stylelintConfigurator')
-    // region tests
-    this.test('stylelintConfigurator', (assert:Object):void => assert.ok(
-        require('../stylelintConfigurator.compiled')))
-    // endregion
-}, ['plain'])
+test('stylelintConfigurator', ():void =>
+    expect(require('../stylelintConfigurator.compiled')).toBeTruthy()
+)
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

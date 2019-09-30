@@ -4,221 +4,380 @@
 'use strict'
 // region imports
 import path from 'path'
-import registerTest from 'clientnode/test.compiled'
 
 import type {BuildConfiguration, Path} from '../type'
 import Helper from '../helper.compiled'
 // endregion
-registerTest(function():void {
-    this.module('helper')
-    // region mockup
-    const buildConfiguration:BuildConfiguration = {
-        other: {
-            extension: 'other',
-            filePathPattern: '',
-            outputExtension: 'other'
-        },
-        javaScript: {
-            extension: 'js',
-            filePathPattern: '',
-            outputExtension: 'js'
-        },
-        example: {
-            extension: 'example',
-            filePathPattern: '',
-            outputExtension: 'example'
-        }
+// region mockup
+const buildConfiguration:BuildConfiguration = {
+    other: {
+        extension: 'other',
+        filePathPattern: '',
+        outputExtension: 'other'
+    },
+    javaScript: {
+        extension: 'js',
+        filePathPattern: '',
+        outputExtension: 'js'
+    },
+    example: {
+        extension: 'example',
+        filePathPattern: '',
+        outputExtension: 'example'
     }
-    // endregion
+}
+// endregion
+describe('helper', ():void => {
     // region tests
     // / region boolean
-    this.test('isFilePathInLocation', (assert:Object):void => {
-        for (const test:Array<any> of [
-            ['./', ['./']], ['./', ['../']]
-        ])
-            assert.ok(Helper.isFilePathInLocation(...test))
-        for (const test:Array<any> of [['../', ['./']]])
-            assert.notOk(Helper.isFilePathInLocation(...test))
-    })
+    test.each([
+        ['./', ['./'], true],
+        ['./', ['../'], true],
+        ['../', ['./'], false]
+    ])(
+        ".isFilePathInLocation('%s', '%s', %p)",
+        (filePath:string, locationsToCheck:Array<string>, expected):void =>
+            expect(Helper.isFilePathInLocation(filePath, locationsToCheck))
+                .toStrictEqual(expected)
+    )
     // / endregion
     // / region string
-    this.test('inPlaceCSSAndJavaScriptAssetReferences', async (
-        assert:Object
-    ):Promise<void> => {
-        const done:Function = assert.async()
-        for (const test:Array<any> of [
-            [['', null, null, '', '', '', {}], {
+    test.each([
+        [
+            '',
+            null,
+            null,
+            '',
+            '',
+            '',
+            {},
+            {
                 content: '<html><head></head><body></body></html>',
                 filePathsToRemove: []
-            }],
-            [[
-                '<!doctype html><html><head></head><body></body></html>', null,
-                null, '', '', '', {}
-            ], {
+            }
+        ],
+        [
+            '<!doctype html><html><head></head><body></body></html>',
+            null,
+            null,
+            '',
+            '',
+            '',
+            {},
+            {
                 content:
                     '<!doctype html><html><head></head><body></body></html>',
                 filePathsToRemove: []
-            }]
-        ])
-            assert.deepEqual(
-                await Helper.inPlaceCSSAndJavaScriptAssetReferences(
-                    ...test[0]
-                ), test[1])
-        done()
-    })
-    this.test('stripLoader', (assert:Object):void => {
-        for (const test:Array<string> of [
-            ['', ''],
-            ['a', 'a'],
-            ['a!b', 'b'],
-            ['aa!b!c', 'c'],
-            ['aa!b!c', 'c'],
-            ['c?a', 'c'],
-            ['aa!b!c?a', 'c'],
-            ['aa!b!c?abb?', 'c'],
-            ['aa!b!c?abb?a', 'c'],
-            ['imports?$=library!moduleName', 'moduleName']
-        ])
-            assert.strictEqual(Helper.stripLoader(test[0]), test[1])
-    })
+            }
+        ]
+    ])(
+        `
+            .inPlaceCSSAndJavaScriptAssetReferences(
+                '%s', '%s', '%s', '%s', '%s', '%s', %p)
+        `,
+        (...parameter:Array<any>):Promise<void> => {
+            const expected:any = parameter.pop()
+            expect(Helper.inPlaceCSSAndJavaScriptAssetReferences(...parameter))
+                .toEqual(expected)
+        }
+    )
+    test.each([
+        ['', ''],
+        ['a', 'a'],
+        ['a!b', 'b'],
+        ['aa!b!c', 'c'],
+        ['aa!b!c', 'c'],
+        ['c?a', 'c'],
+        ['aa!b!c?a', 'c'],
+        ['aa!b!c?abb?', 'c'],
+        ['aa!b!c?abb?a', 'c'],
+        ['imports?$=library!moduleName', 'moduleName']
+    ])(
+        ".stripLoader('%s', '%s')",
+        (moduleID:string, expected:string):void =>
+            expect(Helper.stripLoader(moduleID)).toStrictEqual(expected)
+    )
     // / endregion
     // / region array
-    this.test('normalizePaths', (assert:Object):void => {
-        for (const test:Array<any> of [
-            [[], []],
-            [['a'], ['a']],
-            [['a/'], ['a']],
-            [['a/', 'a'], ['a']],
-            [['a/', 'a/'], ['a']],
-            [['a/', 'a/', 'b/'], ['a', 'b']],
-            [['a/', 'a/', 'b'], ['a', 'b']],
-            [['a/', 'a/', 'b', '', '.'], ['a', 'b', '.']]
-        ])
-            assert.deepEqual(Helper.normalizePaths(test[0]), test[1])
-    })
+    test.each([
+        [[], []],
+        [['a'], ['a']],
+        [['a/'], ['a']],
+        [['a/', 'a'], ['a']],
+        [['a/', 'a/'], ['a']],
+        [['a/', 'a/', 'b/'], ['a', 'b']],
+        [['a/', 'a/', 'b'], ['a', 'b']],
+        [['a/', 'a/', 'b', '', '.'], ['a', 'b', '.']]
+    ])(
+        ".normalizePaths(...parameter)",
+        (...parameter:Array<string>):void => {
+            const expected:string = parameter.pop()
+            expect(Helper.normalizePaths(...parameter)).toStrictEqual(expected)
+        }
+    )
     // / endregion
     // / region file handler
-    this.test('renderFilePathTemplate', (assert:Object):void => {
-        for (const test:Array<any> of [
-            [[''], ''],
-            [['a'], 'a'],
-            [['path'], 'path'],
-            [['a[name]b'], 'a.__dummy__b'],
-            [['a[name]b[name]'], 'a.__dummy__b.__dummy__'],
-            [['a[id]b[hash]'], 'a.__dummy__b.__dummy__'],
-            [['a[id]b[hash]', {'[id]': 1, '[hash]': 2}], 'a1b2'],
-            [['a[id]b[hash]', {}], 'a[id]b[hash]']
-        ])
-            assert.strictEqual(
-                Helper.renderFilePathTemplate(...test[0]), test[1])
+    test.each([
+        ['', {}, ''],
+        ['a', {}, 'a'],
+        ['path', {}, 'path'],
+        ['a[name]b', {}, 'a.__dummy__b'],
+        ['a[name]b[name]', {}, 'a.__dummy__b.__dummy__'],
+        ['a[id]b[hash]', {}, 'a.__dummy__b.__dummy__'],
+        ['a[id]b[hash]', {'[id]': 1, '[hash]': 2}, 'a1b2'],
+        ['a[id]b[hash]', {'[id]': '[id]', '[hash]': '[hash]'}, 'a[id]b[hash]']
+    ])(
+        ".renderFilePathTemplate('%s', %p)",
+        (template:string, scope:{[key:string]:string}, expected:string):void =>
+            expect(Helper.renderFilePathTemplate(template, scope))
+                .toStrictEqual(expected)
+    )
+    test.each([
+        ['', ''],
+        ['a', 'a'],
+        ['a', './', 'a'],
+        ['./a', './', './a'],
+        ['./a', './', './', './a'],
+        ['./a', './a', './', 'a/a'],
+        ['./a', './a', './a', './a'],
+        ['./a', './a', './a', {a: 'b'}, './a'],
+        ['./a', './a/a', './', {a: 'b'}, {}, ['a'], 'b/a']
+    ])(".applyContext(...parameter)", (...parameter:Array<any>):void => {
+        const expected:string = parameter.pop()
+        expect(Helper.applyContext(...parameter)).toStrictEqual(expected)
     })
-    this.test('applyContext', (assert:Object):void => {
-        for (const test:Array<any> of [
-            [[''], ''],
-            [['a'], 'a'],
-            [['a', './'], 'a'],
-            [['./a', './'], './a'],
-            [['./a', './', './'], './a'],
-            [['./a', './a', './'], 'a/a'],
-            [['./a', './a', './a'], './a'],
-            [['./a', './a', './a', {a: 'b'}], './a'],
-            [['./a', './a/a', './', {a: 'b'}, {}, ['a']], 'b/a']
-        ])
-            assert.strictEqual(Helper.applyContext(...test[0]), test[1])
-    })
-    this.test('determineExternalRequest', (assert:Object):void => {
-        for (const test:Array<any> of [
-            [[''], ''],
-            [['a'], 'a'],
-            [['path'], 'path'],
-            [['./helper'], null],
-            [['./helper', './'], null],
-            [['./helper', '../'], null],
-            [['./helper', './a'], './helper'],
-            [['./helper', './', './'], null],
-            [['./a', './', './node_modules/a'], 'a/a'],
-            [['a', './', './'], 'a'],
-            [['path', './', './', {}, []], 'path'],
-            [['path', './', './', {}, [], {path: './main.js'}], './main.js'],
-            [['path', './', './', {}, [], {path: 'main.js'}], 'main.js'],
-            [['path', './', './', {}, [], {path: './helper.js'}], null],
-            [['webpack'], 'webpack'],
-            [
-                ['a', './', './', {}, ['node_modules'], {a$: 'webpack'}],
-                'webpack'
-            ],
-            [['a', './', './', {a: ['webpack']}, ['node_modules'], {
-                a$: 'webpack'
-            }], null],
-            [[
-                'a', '../', './', {a: ['not_webpack']}, ['node_modules'],
-                {a$: 'webpack'}, {},
-                {file: {external: [], internal: []}, module: []}
-            ], 'webpack'],
-            [[
-                'a', '../', './', {a: ['webpack']}, ['node_modules'],
-                {a$: 'webpack'}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', ['./']
-            ], 'webpack'],
-            [[
-                'a', './', './', {a: ['webpack']}, ['node_modules'],
-                {a$: 'webpack'}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', ['.git']
-            ], null],
-            [[
-                'a', './', './', {a: ['webpack']}, ['node_modules'],
-                {a$: 'webpack'}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', ['.git'], [], [], [], [], ['webpack']
-            ], 'webpack'],
-            [[
-                'webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
-                []
-            ], 'webpack'],
-            [[
-                'webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
-                [], false
-            ], 'webpack'],
-            [[
-                'webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
-                [], true
-            ], null],
-            [[
-                'a!webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
-                [], false
-            ], null],
-            [[
-                'a!webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
-                [], false, true
-            ], null],
-            [[
-                'a!webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.js'], internal: ['.js']}, module: []},
-                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
-                [], false, false
-            ], 'webpack'],
-            [[
-                'a!webpack', './', '../', {}, ['node_modules'], {}, {},
-                {file: {external: ['.eot'], internal: ['.js']}, module: []},
-                './', ['.git'], ['node_modules'], ['main'], ['main'], [], [],
-                [], false, false
-            ], null]
-        ])
-            assert.strictEqual(
-                Helper.determineExternalRequest(...test[0]), test[1])
-    })
+    test.each([
+        ['', ''],
+        ['a', 'a'],
+        ['path', 'path'],
+        ['./helper', null],
+        ['./helper', './', null],
+        ['./helper', '../', null],
+        ['./helper', './a', './helper'],
+        ['./helper', './', './', null],
+        ['./a', './', './node_modules/a', 'a/a'],
+        ['a', './', './', 'a'],
+        ['path', './', './', {}, [], 'path'],
+        ['path', './', './', {}, [], {path: './main.js'}, './main.js'],
+        ['path', './', './', {}, [], {path: 'main.js'}, 'main.js'],
+        ['path', './', './', {}, [], {path: './helper.js'}, null],
+        ['webpack', 'webpack'],
+        ['a', './', './', {}, ['node_modules'], {a$: 'webpack'}, 'webpack'],
+        [
+            'a',
+            './',
+            './',
+            {a: ['webpack']},
+            ['node_modules'],
+            {a$: 'webpack'},
+            null
+        ],
+        [
+            'a',
+            '../',
+            './',
+            {a: ['not_webpack']},
+            ['node_modules'],
+            {a$: 'webpack'},
+            {},
+            {file: {external: [], internal: []}, module: []},
+            'webpack'
+        ],
+        [
+            'a',
+            '../',
+            './',
+            {a: ['webpack']},
+            ['node_modules'],
+            {a$: 'webpack'},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['./'],
+            'webpack'
+        ],
+        [
+            'a',
+            './',
+            './',
+            {a: ['webpack']},
+            ['node_modules'],
+            {a$: 'webpack'},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['.git'],
+            null
+        ],
+        [
+            'a',
+            './',
+            './',
+            {a: ['webpack']},
+            ['node_modules'],
+            {a$: 'webpack'},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['.git'],
+            [],
+            [],
+            [],
+            [],
+            ['webpack'],
+            'webpack'
+        ],
+        [
+            'webpack',
+            './',
+            '../',
+            {},
+            ['node_modules'],
+            {},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['.git'],
+            ['node_modules'],
+            ['main'],
+            ['main'],
+            [],
+            [],
+            [],
+            'webpack'
+        ],
+        [
+            'webpack',
+            './',
+            '../',
+            {},
+            ['node_modules'],
+            {},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['.git'],
+            ['node_modules'],
+            ['main'],
+            ['main'],
+            [],
+            [],
+            [],
+            false,
+            'webpack'
+        ],
+        [
+            'webpack',
+            './',
+            '../',
+            {},
+            ['node_modules'],
+            {},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['.git'],
+            ['node_modules'],
+            ['main'],
+            ['main'],
+            [],
+            [],
+            [],
+            true,
+            null
+        ],
+        [
+            'a!webpack',
+            './',
+            '../',
+            {},
+            ['node_modules'],
+            {},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['.git'],
+            ['node_modules'],
+            ['main'],
+            ['main'],
+            [],
+            [],
+            [],
+            false,
+            null
+        ],
+        [
+            'a!webpack',
+            './',
+            '../',
+            {},
+            ['node_modules'],
+            {},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['.git'],
+            ['node_modules'],
+            ['main'],
+            ['main'],
+            [],
+            [],
+            [],
+            false,
+            true,
+            null
+        ],
+        [
+            'a!webpack',
+            './',
+            '../',
+            {},
+            ['node_modules'],
+            {},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['.git'],
+            ['node_modules'],
+            ['main'],
+            ['main'],
+            [],
+            [],
+            [],
+            false,
+            false,
+            'webpack'
+        ],
+        [
+            'a!webpack',
+            './',
+            '../',
+            {},
+            ['node_modules'],
+            {},
+            {},
+            {file: {external: ['.eot'], internal: ['.js']}, module: []},
+            './',
+            ['.git'],
+            ['node_modules'],
+            ['main'],
+            ['main'],
+            [],
+            [],
+            [],
+            false,
+            false,
+            null
+        ]
+    ])(
+        ".determineExternalRequest(...parameter)",
+        (...parameter:Array<any>):void => {
+            const expected:null|string = parameter.pop()
+            expect(Helper.determineExternalRequest(...parameter))
+                .toStrictEqual(expected)
+        }
+    )
+    /*
     this.test('determineAssetType', (assert:Object):void => {
         const paths:Path = {
             apiDocumentation: '',
@@ -561,8 +720,9 @@ registerTest(function():void {
             )
         }
     })
+    */
     // endregion
-}, ['plain'])
+})
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
