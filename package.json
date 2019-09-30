@@ -99,6 +99,7 @@
     "favicons-webpack-plugin": "*",
     "flow-bin": "*",
     "imagemin-webpack-plugin": "*",
+    "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
     "offline-plugin": "*",
