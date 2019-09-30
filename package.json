@@ -593,9 +593,6 @@
                   "__evaluate__": "/^weboptimizer\\/browser(?:\\.compiled)?(?:\\.js)?$/"
                 },
                 {
-                  "__evaluate__": "/^clientnode\\/test(?:\\.compiled)?(?:\\.js)?$/"
-                },
-                {
                   "__evaluate__": "/(?:^|\\/)webpack(?:$|\\/)/"
                 }
               ],
@@ -644,10 +641,6 @@
           "pre": []
         },
         "aliases": {
-          "#": "Target specific environment parameter are pre compiled for node environments. Others (like browser) needs pre-processing.",
-          "clientnode/test$": {
-            "__evaluate__": "self.targetTechnology === 'node' ? 'clientnode/test.compiled' : 'clientnode/test'"
-          },
           "weboptimizer/browser$": "weboptimizer/browser.compiled",
           "weboptimizer/helper$": "weboptimizer/helper.compiled"
         },
@@ -968,7 +961,7 @@
               "post": [],
               "pre": []
             },
-            "exclude": "!filePath.endsWith('/clientnode/test.js') && isFilePathInDependencies(filePath)",
+            "exclude": "isFilePathInDependencies(filePath)",
             "include": "null",
             "loader": "babel",
             "options": {
