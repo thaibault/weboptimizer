@@ -377,58 +377,58 @@ describe('helper', ():void => {
                 .toStrictEqual(expected)
         }
     )
-    /*
-    this.test('determineAssetType', (assert:Object):void => {
-        const paths:Path = {
-            apiDocumentation: '',
-            base: '',
-            configuration: {
-                javaScript: null
-            },
-            context: '',
-            source: {
-                asset: {
-                    base: '',
-                    cascadingStyleSheet: '',
-                    data: '',
-                    font: '',
-                    image: '',
-                    javaScript: '',
-                    source: '',
-                    target: '',
-                    template: ''
-                },
-                base: ''
-            },
-            target: {
-                asset: {
-                    base: '',
-                    cascadingStyleSheet: '',
-                    data: '',
-                    font: '',
-                    image: '',
-                    javaScript: '',
-                    source: '',
-                    target: '',
-                    template: ''
-                },
+    test.each([['./', null], ['a.js', 'javaScript'], ['a.css', null]])(
+        ".determineAssetType('%s', %p, %p)",
+        (filePath:string, expected:null|string):void => {
+            const paths:Path = {
+                apiDocumentation: '',
                 base: '',
-                manifest: '',
-                public: '',
-                target: ''
-            },
-            ignore: [],
-            tidyUp: [],
-            tidyUpOnClear: []
+                configuration: {
+                    javaScript: null
+                },
+                context: '',
+                source: {
+                    asset: {
+                        base: '',
+                        cascadingStyleSheet: '',
+                        data: '',
+                        font: '',
+                        image: '',
+                        javaScript: '',
+                        source: '',
+                        target: '',
+                        template: ''
+                    },
+                    base: ''
+                },
+                target: {
+                    asset: {
+                        base: '',
+                        cascadingStyleSheet: '',
+                        data: '',
+                        font: '',
+                        image: '',
+                        javaScript: '',
+                        source: '',
+                        target: '',
+                        template: ''
+                    },
+                    base: '',
+                    manifest: '',
+                    public: '',
+                    target: ''
+                },
+                ignore: [],
+                tidyUp: [],
+                tidyUpOnClear: []
+            }
+            expect(
+                Helper.determineAssetType(filePath, buildConfiguration, paths)
+            ).toStrictEqual(expected)
         }
-        for (const test:Array<any> of [
-            [['./', buildConfiguration, paths], null],
-            [['a.js', buildConfiguration, paths], 'javaScript'],
-            [['a.css', buildConfiguration, paths], null]
-        ])
-            assert.strictEqual(Helper.determineAssetType(...test[0]), test[1])
-    })
-    this.test('resolveBuildConfigurationFilePaths', (assert:Object):void => {
+    )
+    // TODO
+    test('resolveBuildConfigurationFilePaths', ():void => {
         assert.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
         assert.deepEqual(Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', ['.git', 'node_modules']
@@ -451,6 +451,7 @@ describe('helper', ():void => {
             }
         ])
     })
+    /*
     this.test('determineModuleLocations', (assert:Object):void => {
         for (const test:Array<any> of [
             [{}, {filePaths: [], directoryPaths: []}],
