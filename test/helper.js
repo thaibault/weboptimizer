@@ -427,23 +427,24 @@ describe('helper', ():void => {
             ).toStrictEqual(expected)
         }
     )
-    // TODO
     test('resolveBuildConfigurationFilePaths', ():void => {
-        assert.deepEqual(Helper.resolveBuildConfigurationFilePaths({}), [])
-        assert.deepEqual(Helper.resolveBuildConfigurationFilePaths(
+        expect(Helper.resolveBuildConfigurationFilePaths({})).toEqual([])
+        expect(Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', ['.git', 'node_modules']
-        ), [
+        )).toEqual([
             {
                 extension: 'js',
                 filePathPattern: '',
                 filePaths: [],
                 outputExtension: 'js'
-            }, {
+            },
+            {
                 extension: 'example',
                 filePathPattern: '',
                 filePaths: [],
                 outputExtension: 'example'
-            }, {
+            },
+            {
                 extension: 'other',
                 filePathPattern: '',
                 filePaths: [],
@@ -451,59 +452,72 @@ describe('helper', ():void => {
             }
         ])
     })
+    test.each([
+        [{}, {filePaths: [], directoryPaths: []}],
+        ['example', {filePaths: [], directoryPaths: []}],
+        [
+            'helper',
+            {
+                filePaths: [
+                    path.resolve(__dirname, '../helper.js')],
+                directoryPaths: [path.resolve(__dirname, '../')]
+            }
+        ],
+        [{example: 'example'}, {filePaths: [], directoryPaths: []}],
+        [
+            {example: 'helper'},
+            {
+                filePaths: [path.resolve(__dirname, '../helper.js')],
+                directoryPaths: [path.resolve(__dirname, '../')]
+            }
+        ],
+        [
+            {helper: ['helper.js']},
+            {
+                filePaths: [path.resolve(__dirname, '../', 'helper.js')],
+                directoryPaths: [path.resolve(__dirname, '../')]
+            }
+        ]
+    ])(
+        '.determineModuleLocations(%p)',
+        (
+            entryInjection:EntryInjection,
+            expected:{filePaths:Array<string>;directoryPaths:Array<string>}
+        ):void =>
+            expect(Helper.determineModuleLocations(entryInjection))
+                .toEqual(expected)
+    )
+    test.each([[{}, {}], [{index: []}, {index: []}]])(
+        '.resolveModulesInFolders(%p)',
+        (
+            normalizedEntryInjection:NormalizedEntryInjection,
+            expected:NormalizedEntryInjection
+        ):void =>
+            expect(Helper.resolveModulesInFolders(normalizedEntryInjection))
+                .toEqual(expected)
+    )
+    test('resolveModulesInFolders', ():void =>
+        expect(Helper.resolveModulesInFolders({a: [__dirname]}).a)
+            .toContain('./test/helper.js')
+    )
+    test.each([
+        [[], {index: []}],
+        [{}, {index: []}],
+        ['example', {index: ['example']}],
+        [['example'], {index: ['example']}],
+        [{a: 'example'}, {a: ['example']}],
+        [{a: ['example']}, {a: ['example']}],
+        [{a: ['example'], b: []}, {a: ['example']}],
+        [{a: [], b: []}, {index: []}]
+    ])(
+        '.normalizeEntryInjection(%p)',
+        (
+            entryInjection:EntryInjection, expected:NormalizedEntryInjection
+        ):void =>
+            expect(Helper.normalizeEntryInjection(entryInjection))
+                .toEqual(expected)
+    )
     /*
-    this.test('determineModuleLocations', (assert:Object):void => {
-        for (const test:Array<any> of [
-            [{}, {filePaths: [], directoryPaths: []}],
-            ['example', {filePaths: [], directoryPaths: []}],
-            [
-                'helper',
-                {
-                    filePaths: [
-                        path.resolve(__dirname, '../helper.js')],
-                    directoryPaths: [path.resolve(__dirname, '../')]
-                }
-            ],
-            [{example: 'example'}, {filePaths: [], directoryPaths: []}],
-            [
-                {example: 'helper'},
-                {
-                    filePaths: [path.resolve(__dirname, '../helper.js')],
-                    directoryPaths: [path.resolve(__dirname, '../')]
-                }
-            ],
-            [
-                {helper: ['helper.js']},
-                {
-                    filePaths: [path.resolve(__dirname, '../', 'helper.js')],
-                    directoryPaths: [path.resolve(__dirname, '../')]
-                }
-            ]
-        ])
-            assert.deepEqual(Helper.determineModuleLocations(test[0]), test[1])
-    })
-    this.test('resolveModulesInFolders', (assert:Object):void => {
-        for (const test:Array<any> of [
-            [{}, {}],
-            [{index: []}, {index: []}]
-        ])
-            assert.deepEqual(Helper.resolveModulesInFolders(test[0]), test[1])
-        assert.ok(Helper.resolveModulesInFolders({a: [__dirname]}).a.includes(
-            './test/helper.js'))
-    })
-    this.test('normalizeEntryInjection', (assert:Object):void => {
-        for (const test:Array<any> of [
-            [[], {index: []}],
-            [{}, {index: []}],
-            ['example', {index: ['example']}],
-            [['example'], {index: ['example']}],
-            [{a: 'example'}, {a: ['example']}],
-            [{a: ['example']}, {a: ['example']}],
-            [{a: ['example'], b: []}, {a: ['example']}],
-            [{a: [], b: []}, {index: []}]
-        ])
-            assert.deepEqual(Helper.normalizeEntryInjection(test[0]), test[1])
-    })
     this.test('resolveInjection', (assert:Object):void => {
         for (const test:Array<any> of [
             [
@@ -697,31 +711,27 @@ describe('helper', ():void => {
             assert.strictEqual(
                 Helper.applyModuleReplacements(test[0], test[1]), test[2])
     })
-    this.test('findPackageDescriptorFilePath', (assert:Object):void => {
-        for (const test:Array<any> of [
-            ['./', 'package.json'],
-            ['./', 'index.js'],
-            ['../', 'package.json'],
-            ['../', 'index.js']
-        ])
-            assert.strictEqual(
-                Helper.findPackageDescriptorFilePath(test[0], test[1]),
-                path.resolve(__dirname, '../', test[1])
-            )
-    })
-    this.test('getClosestPackageDescriptor', (assert:Object):void => {
-        for (const test:Array<any> of [
-            ['./', 'package.json'],
-            ['../', 'package.json']
-        ]) {
-            const filePath:string = path.resolve(__dirname, '../', test[1])
-            assert.deepEqual(
-                Helper.getClosestPackageDescriptor(test[0], test[1]),
-                {configuration: eval('require')(filePath), filePath}
-            )
-        }
-    })
     */
+    test.each([
+        ['./', 'package.json'],
+        ['./', 'index.js'],
+        ['../', 'package.json'],
+        ['../', 'index.js']
+    ])(
+        ".findPackageDescriptorFilePath('%s', '%s')",
+        (start:string, fileName:string):void =>
+            expect(Helper.findPackageDescriptorFilePath(start, fileName))
+                .toStrictEqual(path.resolve(__dirname, '../', fileName))
+    )
+    test.each([['./'], ['../']])(
+        ".getClosestPackageDescriptor('%s')",
+        (modulePath:string):void => {
+            const filePath:string = path.resolve(
+                __dirname, '../', 'package.json')
+            expect(Helper.getClosestPackageDescriptor(modulePath, filePath))
+                .toEqual({configuration: eval('require')(filePath), filePath})
+        }
+    )
     // endregion
 })
 // region vim modline
