@@ -517,8 +517,8 @@ describe('helper', ():void => {
             expect(Helper.normalizeEntryInjection(entryInjection))
                 .toEqual(expected)
     )
-    /*
-    this.test('resolveInjection', (assert:Object):void => {
+    // TODO
+    test.each()('resolveInjection', (assert:Object):void => {
         for (const test:Array<any> of [
             [
                 [
@@ -653,6 +653,7 @@ describe('helper', ():void => {
         ])
             assert.deepEqual(Helper.resolveInjection(...test[0]), test[1])
     })
+    /*
     this.test('getAutoChunk', (assert:Object):void => assert.deepEqual(
         Helper.getAutoChunk(Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', ['.git', 'node_modules']
