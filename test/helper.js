@@ -517,144 +517,154 @@ describe('helper', ():void => {
             expect(Helper.normalizeEntryInjection(entryInjection))
                 .toEqual(expected)
     )
-    // TODO
-    test.each()('resolveInjection', (assert:Object):void => {
-        for (const test:Array<any> of [
-            [
-                [
-                    {
-                        chunks: [],
-                        dllChunkNames: [],
-                        entry: [],
-                        external: []
-                    },
-                    Helper.resolveBuildConfigurationFilePaths(
-                        buildConfiguration, './', ['.git', 'node_modules']
-                    ),
-                    [],
-                    {},
-                    {},
-                    {file: {external: [], internal: []}, module: []},
-                    './',
-                    '',
-                    ['.git', 'node_modules']
-                ],
-                {
-                    chunks: [],
-                    dllChunkNames: [],
-                    entry: [],
-                    external: []
-                }
-            ],
-            [
-                [
-                    {
-                        chunks: [],
-                        dllChunkNames: [],
-                        entry: 'a.js',
-                        external: []
-                    },
-                    Helper.resolveBuildConfigurationFilePaths(
-                        buildConfiguration, './', ['.git', 'node_modules']
-                    ),
-                    [],
-                    {},
-                    {},
-                    {file: {external: [], internal: []}, module: []},
-                    './',
-                    '',
-                    ['.git', 'node_modules']
-                ],
-                {
-                    chunks: [],
-                    dllChunkNames: [],
-                    entry: 'a.js',
-                    external: []
-                }
-            ],
-            [
-                [
-                    {
-                        chunks: [],
-                        dllChunkNames: [],
-                        entry: ['a'],
-                        external: []
-                    },
-                    Helper.resolveBuildConfigurationFilePaths(
-                        buildConfiguration, './', ['.git', 'node_modules']
-                    ),
-                    [],
-                    {},
-                    {},
-                    {file: {external: [], internal: []}, module: []},
-                    './',
-                    '',
-                    ['.git', 'node_modules']
-                ],
-                {
-                    chunks: [],
-                    dllChunkNames: [],
-                    entry: ['a'],
-                    external: []
-                }
-            ],
-            [
-                [
-                    {
-                        chunks: [],
-                        dllChunkNames: [],
-                        entry: '__auto__',
-                        external: []
-                    },
-                    Helper.resolveBuildConfigurationFilePaths(
-                        buildConfiguration, './', ['.git', 'node_modules']
-                    ),
-                    [],
-                    {},
-                    {},
-                    {file: {external: [], internal: []}, module: []},
-                    './',
-                    '',
-                    ['.git', 'node_modules']
-                ],
-                {
-                    chunks: [],
-                    dllChunkNames: [],
-                    entry: {},
-                    external: []
-                }
-            ],
-            [
-                [
-                    {
-                        chunks: [],
-                        dllChunkNames: [],
-                        entry: {index: '__auto__'},
-                        external: []
-                    },
-                    Helper.resolveBuildConfigurationFilePaths(
-                        buildConfiguration, './', ['.git', 'node_modules']
-                    ),
-                    [],
-                    {},
-                    {},
-                    {file: {external: [], internal: []}, module: []},
-                    './',
-                    '',
-                    ['.git', 'node_modules']
-                ],
-                {
-                    chunks: [],
-                    external: [],
-                    entry: {index: []},
-                    dllChunkNames: []
-                }
-            ]
-        ])
-            assert.deepEqual(Helper.resolveInjection(...test[0]), test[1])
-    })
+    test.each([
+        [
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: [],
+                external: []
+            },
+            Helper.resolveBuildConfigurationFilePaths(
+                buildConfiguration, './', ['.git', 'node_modules']
+            ),
+            [],
+            {},
+            {},
+            {file: {external: [], internal: []}, module: []},
+            './',
+            '',
+            ['.git', 'node_modules'],
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: [],
+                external: []
+            }
+        ],
+        [
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: 'a.js',
+                external: []
+            },
+            Helper.resolveBuildConfigurationFilePaths(
+                buildConfiguration, './', ['.git', 'node_modules']
+            ),
+            [],
+            {},
+            {},
+            {file: {external: [], internal: []}, module: []},
+            './',
+            '',
+            ['.git', 'node_modules'],
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: 'a.js',
+                external: []
+            }
+        ],
+        [
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: ['a'],
+                external: []
+            },
+            Helper.resolveBuildConfigurationFilePaths(
+                buildConfiguration, './', ['.git', 'node_modules']
+            ),
+            [],
+            {},
+            {},
+            {file: {external: [], internal: []}, module: []},
+            './',
+            '',
+            ['.git', 'node_modules'],
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: ['a'],
+                external: []
+            }
+        ],
+        [
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: '__auto__',
+                external: []
+            },
+            Helper.resolveBuildConfigurationFilePaths(
+                buildConfiguration, './', ['.git', 'node_modules']
+            ),
+            [],
+            {},
+            {},
+            {file: {external: [], internal: []}, module: []},
+            './',
+            '',
+            ['.git', 'node_modules'],
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: {},
+                external: []
+            }
+        ],
+        [
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: {index: '__auto__'},
+                external: []
+            },
+            Helper.resolveBuildConfigurationFilePaths(
+                buildConfiguration, './', ['.git', 'node_modules']
+            ),
+            [],
+            {},
+            {},
+            {file: {external: [], internal: []}, module: []},
+            './',
+            '',
+            ['.git', 'node_modules'],
+            {
+                chunks: [],
+                external: [],
+                entry: {index: []},
+                dllChunkNames: []
+            }
+        ]
+    ])(
+        '.resolveInjection(%p, %p, %p, %p, %p, %p, %s, %s, %p, %p)',
+        (
+            givenInjection:Injection,
+            buildConfigurations:ResolvedBuildConfiguration,
+            modulesToExclude:EntryInjection,
+            aliases:PlainObject,
+            moduleReplacements:PlainObject,
+            extensions:Extensions,
+            context:string,
+            referencePath:string,
+            pathsToIgnore:Array<string>,
+            expected:Injection
+        ):void => expect(Helper.resolveInjection(
+            givenInjection,
+            buildConfigurations,
+            modulesToExclude,
+            aliases,
+            moduleReplacements,
+            extensions,
+            context,
+            referencePath,
+            pathsToIgnore
+        )).toEqual(expected)
+    )
     /*
-    this.test('getAutoChunk', (assert:Object):void => assert.deepEqual(
+        this.test('getAutoChunk', (assert:Object):void => assert.deepEqual(
         Helper.getAutoChunk(Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', ['.git', 'node_modules']
         ), ['.git', 'node_modules'], './'), {}))
