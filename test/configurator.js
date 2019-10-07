@@ -2,6 +2,10 @@
 // @flow
 // -*- coding: utf-8 -*-
 'use strict'
+// region declarations
+declare var expect:Function
+declare var test:Function
+// endregion
 test('configurator', ():void =>
     expect(require('../configurator.compiled').default.name)
         .toStrictEqual('mockup')

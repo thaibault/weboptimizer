@@ -15,6 +15,7 @@
     endregion
 */
 // region imports
+import Tools from 'clientnode'
 import type {Window} from 'clientnode'
 import type {Browser} from './type'
 // endregion
@@ -100,8 +101,8 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             }
         )
     } else
-        // IgnoreTypeCheck
         Tools.timeout(():void =>
+            // IgnoreTypeCheck
             render(require('webOptimizerDefaultTemplateFilePath'))
         )
     // endregion

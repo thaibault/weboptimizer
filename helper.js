@@ -574,8 +574,8 @@ export class Helper {
      */
     static determineAssetType(
         filePath:string, buildConfiguration:BuildConfiguration, paths:Path
-    ):?string {
-        let result:?string = null
+    ):null|string {
+        let result:null|string = null
         for (const type:string in buildConfiguration)
             if (
                 path.extname(filePath) ===

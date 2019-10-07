@@ -7,6 +7,11 @@ import Tools from 'clientnode'
 
 import ejsLoader from '../ejsLoader.compiled'
 // endregion
+// region declarations
+declare var describe:Function
+declare var expect:Function
+declare var test:Function
+// endregion
 // region mockup
 const context:{
     addDependency:() => void;

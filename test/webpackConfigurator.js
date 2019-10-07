@@ -7,6 +7,10 @@ import webpack from 'webpack'
 
 import type {WebpackConfiguration} from '../type'
 // endregion
+// region declarations
+declare var expect:Function
+declare var test:Function
+// endregion
 test('webpackConfigurator', ():void => {
     const webpackConfiguration:WebpackConfiguration = require(
         '../webpackConfigurator.compiled'

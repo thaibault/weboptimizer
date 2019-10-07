@@ -23,6 +23,8 @@ export type Browser = {
     debug:boolean;
     domContentLoaded:boolean;
     DOM:?Object;
+    initialized:boolean;
+    instance:null|Object;
     window:Window;
     windowLoaded:boolean;
 }
