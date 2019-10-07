@@ -340,7 +340,7 @@
         },
         "test": {
           "command": {
-            "__evaluate__": "Helper.stripLoader(self.files.compose.javaScript)"
+            "__evaluate__": "`jest ${Helper.stripLoader(self.files.compose.javaScript)}`"
           }
         },
         "test:browser": {
