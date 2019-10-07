@@ -91,14 +91,13 @@ if (
     'cache' in require &&
     require.cache &&
     require.resolve('html-loader') in require.cache
-) {
+)
     require.cache[require.resolve('html-loader')].exports = function(
         ...parameter:Array<any>
     ):any {
         Tools.extend(true, this.options, module, this.options)
         return htmlLoaderModuleBackup.call(this, ...parameter)
     }
-}
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
 const loaderUtilsIsUrlRequestBackup:(url:string) => boolean =
@@ -691,8 +690,9 @@ if (htmlAvailable)
                                 loaderConfiguration.options.hasOwnProperty(
                                     'compileSteps'
                                 ) &&
-                                typeof loaderConfiguration.options.compileSteps
-                                    === 'number'
+                                typeof loaderConfiguration.options
+                                    .compileSteps ===
+                                'number'
                             )
                                 data.html = ejsLoader.bind(
                                     Tools.extend(
@@ -1311,8 +1311,9 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
                             vendors: {
                                 chunks: (module:Object):boolean => {
                                     if (
-                                        typeof configuration.inPlace.javaScript
-                                            === 'object' &&
+                                        typeof configuration.inPlace
+                                            .javaScript ===
+                                        'object' &&
                                         configuration.inPlace.javaScript !==
                                             null
                                     )
