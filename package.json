@@ -340,7 +340,7 @@
         },
         "test": {
           "command": {
-            "__evaluate__": "`jest ${Helper.stripLoader(self.files.compose.javaScript)}`"
+            "__evaluate__": "`jest '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`"
           }
         },
         "test:browser": {
@@ -1280,6 +1280,13 @@
       "offline": null
     },
     "library": {
+      "commandLine": {
+        "test": {
+          "command": {
+            "__evaluate__": "`jest --test-regex 'test.*\\\\.compiled\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`"
+          }
+        }
+      },
       "document": {
         "commandLine": {
           "document": {
