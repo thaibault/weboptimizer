@@ -645,7 +645,8 @@
         },
         "aliases": {
           "weboptimizer/browser$": "weboptimizer/browser.compiled",
-          "weboptimizer/helper$": "weboptimizer/helper.compiled"
+          "weboptimizer/helper$": "weboptimizer/helper.compiled",
+          "weboptimizer/jestEnvironmentBrowser": "weboptimizer/jestEnvironmentBrowser.compiled"
         },
         "cascadingStyleSheet": {
           "exclude": null,
