@@ -150,9 +150,6 @@
     "webpack-cli": "*",
     "webpack-dev-server": "*"
   },
-  "jest": {
-    "testRegex": "/test/.+\\.js$"
-  },
   "sideEffects": false,
   "configuration": {
     "default": {
@@ -340,7 +337,7 @@
         },
         "test": {
           "command": {
-            "__evaluate__": "`jest '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`"
+            "__evaluate__": "`jest --test-environment jsdom --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`"
           }
         },
         "test:browser": {
@@ -1283,7 +1280,7 @@
       "commandLine": {
         "test": {
           "command": {
-            "__evaluate__": "`jest --test-regex 'test.*\\\\.compiled\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`"
+            "__evaluate__": "`jest --test-environment node --test-regex 'test.*\\\\.compiled\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`"
           }
         }
       },
