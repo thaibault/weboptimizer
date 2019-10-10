@@ -336,8 +336,9 @@
           "command": "webpack-dev-server"
         },
         "test": {
+          "environments": ["node"],
           "command": {
-            "__evaluate__": "`jest --test-environment jsdom --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`"
+            "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --test-environment ${environment} --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
           }
         },
         "test:browser": {
@@ -1279,8 +1280,9 @@
     "library": {
       "commandLine": {
         "test": {
+          "environments": ["jsdom", "node"],
           "command": {
-            "__evaluate__": "`jest --test-environment node --test-regex 'test.*\\\\.compiled\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`"
+            "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --test-environment ${environment} --test-regex 'test.*\\\\.compiled\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
           }
         }
       },
