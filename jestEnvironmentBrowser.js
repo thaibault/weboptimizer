@@ -3,8 +3,7 @@ import {Config, Global} from '@jest/types'
 import {installCommonGlobals} from 'jest-util'
 import {ModuleMocker} from 'jest-mock'
 import {
-  JestFakeTimers as LegacyFakeTimers,
-  LolexFakeTimers,
+    JestFakeTimers as LegacyFakeTimers, LolexFakeTimers
 } from '@jest/fake-timers'
 import {EnvironmentContext, JestEnvironment} from '@jest/environment'
 import {JSDOM, VirtualConsole} from 'jsdom'
