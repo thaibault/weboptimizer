@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.555",
+  "version": "2.0.556",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "https://torben.website/webOptimizer",
@@ -336,7 +336,9 @@
           "command": "webpack-dev-server"
         },
         "test": {
-          "environments": ["node"],
+          "environments": [
+            "node"
+          ],
           "command": {
             "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --test-environment ${environment} --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
           }
@@ -1280,7 +1282,10 @@
     "library": {
       "commandLine": {
         "test": {
-          "environments": ["jsdom", "node"],
+          "environments": [
+            "jsdom",
+            "node"
+          ],
           "command": {
             "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --test-environment ${environment} --test-regex 'test.*\\\\.compiled\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
           }
