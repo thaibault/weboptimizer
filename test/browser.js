@@ -20,14 +20,18 @@ test('browser', async (done:Function):Promise<void> => {
     expect(browser.initialized).toStrictEqual(true)
     expect(browser.window).toHaveProperty('document')
     expect(browser.window.document).toHaveProperty('location')
-    browser.window.addEventListener('load', (event:Object):void => {
+    const onWindowLoaded:Function = (event:Object):void => {
         expect(event).toBeInstanceOf(Object)
         expect(browser.domContentLoaded).toStrictEqual(true)
         expect(browser.window.document.querySelector('body'))
             .toBeInstanceOf(Object)
         expect(browser.windowLoaded).toStrictEqual(true)
         done()
-    })
+    }
+    if (browser.windowLoaded)
+        onWindowLoaded({})
+    else
+        browser.window.addEventListener('load', onWindowsLoaded)
 })
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

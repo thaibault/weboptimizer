@@ -55,7 +55,7 @@
     "lint": "flow --color always --strip-root; eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
     "prepare": "yarn build",
     "report:coverage": "shx cat ./test/coverage/lcov.info | coveralls",
-    "test": "yarn build:test && jest test/browser.compiled test/configurator.compiled test/helper.compiled test/ejsLoader.compiled test/stylelintConfigurator.compiled test/index.compiled test/webpackConfigurator.compiled",
+    "test": "yarn build:test && jest --test-regex '/test/.+\\\\.js$' test/browser.compiled test/configurator.compiled test/helper.compiled test/ejsLoader.compiled test/stylelintConfigurator.compiled test/index.compiled test/webpackConfigurator.compiled",
     "test:watch": "yarn test --watch",
     "test:watch:all": "yarn test --watchAll",
     "update": "yarn version --patch && yarn publish",
