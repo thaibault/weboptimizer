@@ -293,6 +293,8 @@
               "--ignore-pattern",
               "'**/.git/*'",
               "--ignore-pattern",
+              "'**/.cache/*'",
+              "--ignore-pattern",
               "'**/.config/*'",
               "--ignore-pattern",
               "'**/.npm/*'",
@@ -1068,6 +1070,7 @@
           "javaScript": "./webpack.config.js"
         },
         "ignore": [
+          ".cache",
           ".git",
           {
             "__evaluate__": "self.path.apiDocumentation"
