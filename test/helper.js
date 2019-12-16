@@ -94,7 +94,7 @@ describe('helper', ():void => {
         (...parameter:Array<any>):void => {
             const expected:any = parameter.pop()
             expect(Helper.inPlaceCSSAndJavaScriptAssetReferences(...parameter))
-                .toEqual(expected)
+                .toStrictEqual(expected)
         }
     )
     test.each([
@@ -444,10 +444,10 @@ describe('helper', ():void => {
         }
     )
     test('resolveBuildConfigurationFilePaths', ():void => {
-        expect(Helper.resolveBuildConfigurationFilePaths({})).toEqual([])
+        expect(Helper.resolveBuildConfigurationFilePaths({})).toStrictEqual([])
         expect(Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', ['.git', 'node_modules']
-        )).toEqual([
+        )).toStrictEqual([
             {
                 extension: 'js',
                 filePathPattern: '',
@@ -501,7 +501,7 @@ describe('helper', ():void => {
             expected:{filePaths:Array<string>;directoryPaths:Array<string>}
         ):void =>
             expect(Helper.determineModuleLocations(entryInjection))
-                .toEqual(expected)
+                .toStrictEqual(expected)
     )
     test.each([[{}, {}], [{index: []}, {index: []}]])(
         '.resolveModulesInFolders(%p)',
@@ -510,7 +510,7 @@ describe('helper', ():void => {
             expected:NormalizedEntryInjection
         ):void =>
             expect(Helper.resolveModulesInFolders(normalizedEntryInjection))
-                .toEqual(expected)
+                .toStrictEqual(expected)
     )
     test('resolveModulesInFolders', ():void =>
         expect(Helper.resolveModulesInFolders({a: [__dirname]}).a)
@@ -531,7 +531,7 @@ describe('helper', ():void => {
             entryInjection:EntryInjection, expected:NormalizedEntryInjection
         ):void =>
             expect(Helper.normalizeEntryInjection(entryInjection))
-                .toEqual(expected)
+                .toStrictEqual(expected)
     )
     test.each([
         [
@@ -677,7 +677,7 @@ describe('helper', ():void => {
             context,
             referencePath,
             pathsToIgnore
-        )).toEqual(expected)
+        )).toStrictEqual(expected)
     )
     test('getAutoChunk', ():void =>
         expect(Helper.getAutoChunk(
@@ -686,7 +686,7 @@ describe('helper', ():void => {
             ),
             ['.git', 'node_modules'],
             './'
-        )).toEqual({})
+        )).toStrictEqual({})
     )
     test.each([
         ['', null],
@@ -782,7 +782,9 @@ describe('helper', ():void => {
             const filePath:string = path.resolve(
                 __dirname, '../', 'package.json')
             expect(Helper.getClosestPackageDescriptor(modulePath, filePath))
-                .toEqual({configuration: eval('require')(filePath), filePath})
+                .toStrictEqual(
+                    {configuration: eval('require')(filePath), filePath}
+                )
         }
     )
     // endregion
