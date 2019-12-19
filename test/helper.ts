@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import {PlainObject} from 'clientnode'
 import path from 'path'
-import type {PlainObject} from 'clientnode'
 
-import type {
+import {
     BuildConfiguration,
     EntryInjection,
     Extensions,
@@ -166,7 +165,7 @@ describe('helper', ():void => {
         ['', ''],
         ['a', 'a'],
         ['path', 'path'],
-        ['./helper', null],
+        ['./helper', null]/* TODO,
         ['./helper', './', null],
         ['./helper', '../', null],
         ['./helper', './a', './helper'],
@@ -384,7 +383,7 @@ describe('helper', ():void => {
             false,
             false,
             null
-        ]
+        ]*/
     ])(
         `.determineExternalRequest(...parameter)`,
         (...parameter:Array<any>):void => {
@@ -474,8 +473,7 @@ describe('helper', ():void => {
         [
             'helper',
             {
-                filePaths: [
-                    path.resolve(__dirname, '../helper.js')],
+                filePaths: [path.resolve(__dirname, '../helper.ts')],
                 directoryPaths: [path.resolve(__dirname, '../')]
             }
         ],
@@ -483,14 +481,14 @@ describe('helper', ():void => {
         [
             {example: 'helper'},
             {
-                filePaths: [path.resolve(__dirname, '../helper.js')],
+                filePaths: [path.resolve(__dirname, '../helper.ts')],
                 directoryPaths: [path.resolve(__dirname, '../')]
             }
         ],
         [
-            {helper: ['helper.js']},
+            {helper: ['helper.ts']},
             {
-                filePaths: [path.resolve(__dirname, '../', 'helper.js')],
+                filePaths: [path.resolve(__dirname, '../', 'helper.ts')],
                 directoryPaths: [path.resolve(__dirname, '../')]
             }
         ]

@@ -20,22 +20,22 @@
     "mock"
   ],
   "files": [
-    "browser.js",
+    "browser.ts",
     "browser.compiled.js",
-    "configurator.js",
+    "configurator.ts",
     "configurator.compiled.js",
-    "ejsLoader.js",
+    "ejsLoader.ts",
     "ejsLoader.compiled.js",
-    "helper.js",
+    "helper.ts",
     "helper.compiled.js",
-    "index.js",
+    "index.ts",
     "index.html.ejs",
-    "jestEnvironmentBrowser.js",
+    "jestEnvironmentBrowser.ts",
     "jestEnvironmentBrowser.compiled.js",
-    "stylelintConfigurator.js",
+    "stylelintConfigurator.ts",
     "stylelintConfigurator.compiled.js",
-    "type.js",
-    "webpackConfigurator.js",
+    "type.ts",
+    "webpackConfigurator.ts",
     "webpackConfigurator.compiled.js"
   ],
   "main": "index.compiled.js",
@@ -47,12 +47,14 @@
     "url": "https://github.com/thaibault/webOptimizer.git"
   },
   "scripts": {
-    "build": "command='babel --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-flow-strip-types,@babel/plugin-transform-runtime --presets @babel/preset-env --source-maps inline --out-file' && $command browser.compiled.js browser.js && $command configurator.compiled.js configurator.js && $command ejsLoader.compiled.js ejsLoader.js && $command helper.compiled.js helper.js && $command jestEnvironmentBrowser.compiled.js jestEnvironmentBrowser.js && $command stylelintConfigurator.compiled.js stylelintConfigurator.js && $command index.compiled.js index.js && $command webpackConfigurator.compiled.js webpackConfigurator.js && chmod +x index.compiled.js",
-    "build:test": "yarn clear && yarn build && command='babel --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-flow-strip-types,@babel/plugin-transform-runtime --presets @babel/preset-env --source-maps inline --source-root ../ --out-file' && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.js *.json *.ejs node_modules/weboptimizer/ && $command test/browser.compiled.js test/browser.js && $command test/configurator.compiled.js test/configurator.js && $command test/helper.compiled.js test/helper.js && $command test/ejsLoader.compiled.js test/ejsLoader.js && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.js && $command test/index.compiled.js test/index.js && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.js",
+    "build": "command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --out-file' && $command browser.compiled.js browser.ts && $command configurator.compiled.js configurator.ts && $command ejsLoader.compiled.js ejsLoader.ts && $command helper.compiled.js helper.ts && $command jestEnvironmentBrowser.compiled.js jestEnvironmentBrowser.ts && $command stylelintConfigurator.compiled.js stylelintConfigurator.ts && $command index.compiled.js index.ts && $command webpackConfigurator.compiled.js webpackConfigurator.ts && chmod +x index.compiled.js",
+    "build:test": "yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --source-root ../ --out-file' && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.ts *.js *.json *.ejs node_modules/weboptimizer/ && $command test/browser.compiled.js test/browser.ts && $command test/configurator.compiled.js test/configurator.ts && $command test/helper.compiled.js test/helper.ts && $command test/ejsLoader.compiled.js test/ejsLoader.ts && $command test/stylelintConfigurator.compiled.js test/stylelintConfigurator.ts && $command test/index.compiled.js test/index.ts && $command test/webpackConfigurator.compiled.js test/webpackConfigurator.ts",
     "clear": "rimraf apiDocumentation *.compiled.* *.compiled test/*.compiled.* *.html *.log node_modules/weboptimizer .nyc_output || true",
+    "check": "yarn check:types; yarn lint",
+    "check:types": "tsc",
     "collect:coverage": "jest --collect-coverage",
     "document": "yarn build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
-    "lint": "flow --color always --strip-root; eslint --ignore-pattern '*.compiled.*' '*.js' 'test/*.js' || true",
+    "lint": "eslint --ignore-pattern '*.compiled.*' '*.ts' 'test/*.ts' || true",
     "prepare": "yarn build",
     "report:coverage": "shx cat ./test/coverage/lcov.info | coveralls",
     "test": "yarn build:test && jest --test-regex '/test/.+\\\\.js$' test/browser.compiled test/configurator.compiled test/helper.compiled test/ejsLoader.compiled test/stylelintConfigurator.compiled test/index.compiled test/webpackConfigurator.compiled",
@@ -64,9 +66,9 @@
   "dependencies": {
     "@babel/core": "*",
     "@babel/plugin-proposal-class-properties": "*",
-    "@babel/plugin-transform-flow-strip-types": "*",
     "@babel/plugin-transform-runtime": "*",
     "@babel/preset-env": "*",
+    "@babel/preset-typescript": "*",
     "@babel/runtime": "*",
     "add-asset-html-webpack-plugin": "*",
     "babel-loader": "*",
@@ -87,19 +89,19 @@
     "open-browser-webpack-plugin": "*",
     "rimraf": "*",
     "script-loader": "*",
+    "typescript": "*",
     "url-loader": "*",
     "webpack-sources": "*"
   },
   "peerDependencies": {
+    "@typescript-eslint/eslint-plugin": "*",
     "babel-eslint": "*",
     "css-loader": "*",
     "cssnano": "*",
     "eslint": "*",
     "eslint-config-google": "*",
-    "eslint-plugin-flowtype": "*",
     "eslint-plugin-jsdoc": "*",
     "favicons-webpack-plugin": "*",
-    "flow-bin": "*",
     "imagemin-webpack-plugin": "*",
     "jest": "*",
     "jsdoc": "*",
@@ -120,6 +122,7 @@
     "webpack-dev-server": "*"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "*",
     "@babel/cli": "*",
     "babel-eslint": "*",
     "coveralls": "*",
@@ -128,10 +131,8 @@
     "documentation-website": "*",
     "eslint": "*",
     "eslint-config-google": "*",
-    "eslint-plugin-flowtype": "*",
     "eslint-plugin-jsdoc": "*",
     "favicons-webpack-plugin": "*",
-    "flow-bin": "*",
     "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
@@ -351,13 +352,8 @@
           "__evaluate__": "self.commandLine.serve"
         },
         "check:type": {
-          "arguments": [
-            "--color",
-            "always",
-            "--strip-root",
-            "--show-all-errors"
-          ],
-          "command": "flow"
+          "arguments": [],
+          "command": "tsc"
         }
       },
       "debug": false,
@@ -418,6 +414,7 @@
       "extensions": {
         "file": {
           "internal": [
+            ".ts",
             ".js",
             ".json",
             ".css",
@@ -980,12 +977,11 @@
               },
               "plugins": [
                 "@babel/plugin-proposal-class-properties",
-                "@babel/plugin-transform-flow-strip-types",
                 "@babel/plugin-transform-runtime"
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transforming to allow tree shaking by the final (minimizer).",
-                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}]].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
+                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}], '@babel/typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             },
             "regularExpression": "\\.js(?:\\?.*)?$"
@@ -1416,7 +1412,8 @@
   "eslintConfig": {
     "env": {
       "browser": true,
-      "node": true
+      "node": true,
+      "jest": true
     },
     "extends": "google",
     "parserOptions": {
@@ -1428,7 +1425,7 @@
     "parser": "babel-eslint",
     "plugins": [
       "jsdoc",
-      "flowtype"
+      "@typescript-eslint"
     ],
     "rules": {
       "arrow-parens": [
@@ -1537,35 +1534,7 @@
       "jsdoc/require-param-description": "error",
       "jsdoc/require-param-type": 0,
       "jsdoc/require-returns-description": "error",
-      "jsdoc/require-returns-type": 0,
-      "flowtype/require-parameter-type": "error",
-      "flowtype/require-return-type": [
-        "error",
-        "always",
-        {
-          "annotateUndefined": "always",
-          "excludeMatching": [
-            "constructor"
-          ]
-        }
-      ],
-      "flowtype/space-before-type-colon": [
-        "error",
-        "never"
-      ],
-      "flowtype/space-after-type-colon": [
-        "error",
-        "never"
-      ],
-      "flowtype/type-id-match": [
-        "error",
-        "^([$_]*[A-Z]+[a-z0-9]*)+$"
-      ]
-    },
-    "settings": {
-      "flowtype": {
-        "onlyFilesWithFlowAnnotation": false
-      }
+      "jsdoc/require-returns-type": 0
     }
   }
 }

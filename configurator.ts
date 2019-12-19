@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -15,8 +14,7 @@
     endregion
 */
 // region imports
-import Tools from 'clientnode'
-import type {PlainObject} from 'clientnode'
+import Tools, {PlainObject} from 'clientnode'
 import fileSystem from 'fs'
 import path from 'path'
 
@@ -24,7 +22,7 @@ import Helper from './helper.compiled'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
 // variable named "metaConfiguration".
 import {configuration as givenMetaConfiguration} from './package'
-import type {
+import {
     DefaultConfiguration,
     /* eslint-disable no-unused-vars */
     HTMLConfiguration,
@@ -138,7 +136,7 @@ if (
 // region merging and evaluating task specific and dynamic configurations
 // / region load additional dynamically given configuration
 let count:number = 0
-let filePath:?string = null
+let filePath:null|string = null
 while (true) {
     const newFilePath:string = configuration.path.context +
         `.dynamicConfiguration-${count}.json`
@@ -149,9 +147,10 @@ while (true) {
 }
 let runtimeInformation:PlainObject = {givenCommandLineArguments: process.argv}
 if (filePath) {
-    runtimeInformation = JSON.parse(fileSystem.readFileSync(filePath, {
-        encoding: (configuration.encoding:string)}))
-    fileSystem.unlink(filePath, (error:?Error):void => {
+    runtimeInformation = JSON.parse(fileSystem.readFileSync(
+        filePath, {encoding: configuration.encoding}
+    ))
+    fileSystem.unlink(filePath, (error:Error|null):void => {
         if (error)
             throw error
     })
@@ -199,7 +198,7 @@ Tools.extend(
     specificConfiguration,
     runtimeInformation
 )
-let result:?PlainObject = null
+let result:null|PlainObject = null
 if (runtimeInformation.givenCommandLineArguments.length > 3)
     result = Tools.stringParseEncodedObject(
         runtimeInformation.givenCommandLineArguments[runtimeInformation
@@ -285,16 +284,13 @@ export const resolvedConfiguration:ResolvedConfiguration =
             currentPath: process.cwd(),
             fileSystem,
             Helper,
-            // IgnoreTypeCheck
             isDLLUseful:
                 2 < configuration.givenCommandLineArguments.length &&
                 (
                     ['build:dll', 'watch:dll'].includes(
-                        // IgnoreTypeCheck
                         configuration.givenCommandLineArguments[2]) ||
                     configuration.dllManifestFilePaths.length &&
                     ['build', 'serve', 'test:browser'].includes(
-                        // IgnoreTypeCheck
                         configuration.givenCommandLineArguments[2]
                     )
                 ),
@@ -395,7 +391,7 @@ for (const chunkName:string in resolvedConfiguration.injection.entry
         for (const moduleID:string of resolvedConfiguration.injection.entry
             .normalized[chunkName]
         ) {
-            const filePath:?string = Helper.determineModuleFilePath(
+            const filePath:null|string = Helper.determineModuleFilePath(
                 moduleID,
                 resolvedConfiguration.module.aliases,
                 resolvedConfiguration.module.replacements.normal,
@@ -417,7 +413,7 @@ for (const chunkName:string in resolvedConfiguration.injection.entry
                 resolvedConfiguration.package.aliasPropertyNames,
                 resolvedConfiguration.encoding
             )
-            let type:?string
+            let type:null|string = null
             if (filePath)
                 type = Helper.determineAssetType(
                     filePath,
@@ -476,9 +472,8 @@ for (
             Tools.convertCircularObjectToJSON(
                 htmlConfiguration.template.options))
         requestString.replace = ((string:string):Function => (
-            _search:RegExp|string, _replacement:string|(
-                ...matches:Array<string>
-            ) => string
+            _search:RegExp|string,
+            _replacement:string|Function
         ):string => string)(htmlConfiguration.template.filePath)
         htmlConfiguration.template.request = requestString
     }

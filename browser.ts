@@ -1,5 +1,4 @@
 // #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -15,9 +14,8 @@
     endregion
 */
 // region imports
-import Tools from 'clientnode'
-import type {Window} from 'clientnode'
-import type {Browser} from './type'
+import Tools, {Window} from 'clientnode'
+import {Browser} from './type'
 // endregion
 // region declaration
 declare var NAME:string
@@ -41,19 +39,18 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
     const path:Object = require('path')
     const {JSDOM, VirtualConsole} = require('jsdom')
-    const virtualConsole:Object = new VirtualConsole()
-    for (const name:string of [
+    const virtualConsole = new VirtualConsole()
+    for (const name of [
         'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
     ])
         virtualConsole.on(name, console[name].bind(console))
     virtualConsole.on('error', (error:Error):void => {
-        if (!browser.debug && [
-            'XMLHttpRequest', 'resource loading'
-        // IgnoreTypeCheck
-        ].includes(error.type))
+        if (
+            !browser.debug &&
+            ['XMLHttpRequest', 'resource loading'].includes(error.type)
+        )
             console.warn(`Loading resource failed: ${error.toString()}.`)
         else
-            // IgnoreTypeCheck
             console.error(error.stack, error.detail)
     })
     const render:Function = (template:string):void => {
@@ -94,7 +91,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
         require('fs').readFile(
             filePath,
             {encoding: 'utf-8'},
-            (error:?Error, content:string):void => {
+            (error:Error|null, content:string):void => {
                 if (error)
                     throw error
                 render(ejsLoader.bind({filename: filePath})(content))
@@ -102,7 +99,6 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
         )
     } else
         Tools.timeout(():void =>
-            // IgnoreTypeCheck
             render(require('webOptimizerDefaultTemplateFilePath'))
         )
     // endregion

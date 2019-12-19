@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -15,7 +14,7 @@
     endregion
 */
 // region imports
-import type {PlainObject, ProcedureFunction, Window} from 'clientnode'
+import {PlainObject, ProcedureFunction, Window} from 'clientnode'
 // endregion
 // region exports
 // / region generic

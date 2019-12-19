@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
 import webpack from 'webpack'
 
-import type {WebpackConfiguration} from '../type'
+import {WebpackConfiguration} from '../type'
 // endregion
 // region declarations
 declare var expect:Function

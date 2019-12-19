@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
 import getInitializedBrowser, {browser} from '../browser.compiled'
-import type {Browser} from '../type'
+import {Browser} from '../type'
 // endregion
 // region declarations
 declare var expect:Function

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -78,14 +77,13 @@ module.exports = function(source:string):string {
             request:string, nestedLocals:Object = {}
         ):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
-            const queryMatch:?Array<string> = request.match(/^[^?]+\?(.+)$/)
+            const queryMatch:Array<string>|null = request.match(/^[^?]+\?(.+)$/)
             if (queryMatch) {
                 const evaluationFunction = (
                     request:string,
                     template:string, source:string,
                     compile:CompileFunction,
                     locals:Object
-                // IgnoreTypeCheck
                 ):Object => new Function(
                     'request',
                     'template',
@@ -110,7 +108,7 @@ module.exports = function(source:string):string {
             )
             if (nestedOptions.isString)
                 return compile(template, nestedOptions)(nestedLocals)
-            const templateFilePath:?string = Helper.determineModuleFilePath(
+            const templateFilePath:null|string = Helper.determineModuleFilePath(
                 template,
                 query.module.aliases,
                 query.module.replacements,
@@ -138,7 +136,6 @@ module.exports = function(source:string):string {
                 if (queryMatch || templateFilePath.endsWith('.ejs'))
                     return compile(templateFilePath, nestedOptions)(
                         nestedLocals)
-                // IgnoreTypeCheck
                 return fileSystem.readFileSync(templateFilePath, nestedOptions)
             }
             throw new Error(
@@ -176,7 +173,7 @@ module.exports = function(source:string):string {
         delete options.isString
         while (remainingSteps > 0) {
             if (typeof result === 'string') {
-                const filePath:?string = isString && options.filename || result
+                const filePath:string = isString && options.filename || result
                 if (filePath && path.extname(filePath) === '.js')
                     result = eval('require')(filePath)
                 else {
@@ -215,7 +212,6 @@ module.exports = function(source:string):string {
                     sourceType: 'script'
                 }).code
         result = result
-            // IgnoreTypeCheck
             .replace(new RegExp(
                 `<script +processing-workaround *(?:= *(?:" *"|' *') *)?>` +
                 '([\\s\\S]*?)</ *script *>', 'ig'
@@ -225,7 +221,6 @@ module.exports = function(source:string):string {
                 '>([\\s\\S]*?)</ *script *>',
                 'ig'
             ), '<script processing$1workaround>$2</script>')
-        // IgnoreTypeCheck
         return result
     }
     return compile(

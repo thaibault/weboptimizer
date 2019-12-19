@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -20,8 +19,7 @@
 import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
-import Tools from 'clientnode'
-import type {File, PlainObject} from 'clientnode'
+import Tools, {File, PlainObject} from 'clientnode'
 import synchronousFileSystem from 'fs'
 import {promises as fileSystem} from 'fs'
 import path from 'path'
@@ -29,14 +27,13 @@ import removeDirectoryRecursively from 'rimraf'
 
 import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
-import type {ResolvedBuildConfiguration} from './type'
+import {ResolvedBuildConfiguration} from './type'
 // endregion
 // NOTE: Specifies number of allowed threads to spawn.
-// IgnoreTypeCheck
 process.env.UV_THREADPOOL_SIZE = 128
 /**
  * Main entry point.
- * @returns Noting.
+ * @returns Nothing.
  */
 const main = async ():Promise<void> => {
     try {
@@ -94,7 +91,7 @@ const main = async ():Promise<void> => {
                 filePath, JSON.stringify(dynamicConfiguration))
             const additionalArguments:Array<string> = process.argv.splice(3)
             // / region register exit handler to tidy up
-            closeEventHandlers.push((error:?Error):void => {
+            closeEventHandlers.push((error:Error):void => {
                 // NOTE: Close handler have to be synchronous.
                 if (Tools.isFileSync(filePath))
                     synchronousFileSystem.unlinkSync(filePath)
@@ -124,9 +121,8 @@ const main = async ():Promise<void> => {
                 ) {
                     // Removes all compiled files.
                     await Tools.walkDirectoryRecursively(
-                        configuration.path.target.base, async (
-                            file:File
-                        ):Promise<?false> => {
+                        configuration.path.target.base,
+                        async (file:File):Promise<false|undefined> => {
                             if (Helper.isFilePathInLocation(
                                 file.path, configuration.path.ignore.concat(
                                     configuration.module.directoryNames,
@@ -154,17 +150,20 @@ const main = async ():Promise<void> => {
                                         await new Promise((
                                             resolve:Function, reject:Function
                                         ):void => removeDirectoryRecursively(
-                                            file.path, {glob: false}, (
-                                                error:?Error
-                                            ):void => error ? reject(
-                                                error
-                                            ) : resolve()))
+                                            file.path,
+                                            {glob: false},
+                                            (error:Error):void =>
+                                                error ?
+                                                    reject(error) :
+                                                    resolve()
+                                        ))
                                         return false
                                     }
                                     await fileSystem.unlink(file.path)
                                     break
                                 }
-                        })
+                        }
+                    )
                     for (
                         const file:File of (
                             await Tools.walkDirectoryRecursively(
@@ -183,22 +182,25 @@ const main = async ():Promise<void> => {
                     await new Promise((
                         resolve:Function, reject:Function
                     ):void => removeDirectoryRecursively(
-                        configuration.path.target.base, {glob: false}, (
-                            error:?Error
-                        ):void => error ? reject(error) : resolve()))
+                        configuration.path.target.base,
+                        {glob: false},
+                        (error:Error):void => error ? reject(error) : resolve()
+                    ))
                 if (
                     await Tools.isDirectory(
                         configuration.path.apiDocumentation)
                 )
                     await new Promise((
                         resolve:Function, reject:Function
-                    ):void => removeDirectoryRecursively(
-                        configuration.path.apiDocumentation, {glob: false}, (
-                            error:?Error
-                        ):void => error ? reject(error) : resolve()))
-                for (
-                    const filePath:?string of configuration.path.tidyUpOnClear
-                )
+                    ):void =>
+                        removeDirectoryRecursively(
+                            configuration.path.apiDocumentation,
+                                {glob: false},
+                                (error:Error):void =>
+                                    error ? reject(error) : resolve()
+                        )
+                    )
+                for (const filePath of configuration.path.tidyUpOnClear)
                     if (filePath)
                         if (Tools.isFileSync(filePath))
                             // NOTE: Close handler have to be synchronous.
@@ -216,10 +218,11 @@ const main = async ():Promise<void> => {
                     configuration.path.ignore.concat(
                         configuration.module.directoryNames,
                         configuration.loader.directoryNames
-                    ).map((filePath:string):string => path.resolve(
-                        configuration.path.context, filePath)
+                    ).map((filePath:string):string =>
+                        path.resolve(configuration.path.context, filePath)
                     ).filter((filePath:string):boolean =>
-                        !configuration.path.context.startsWith(filePath)),
+                        !configuration.path.context.startsWith(filePath)
+                    ),
                     configuration.package.main.fileNames)
             if (['build', 'build:dll', 'document', 'test'].includes(
                 process.argv[2]
@@ -240,10 +243,11 @@ const main = async ():Promise<void> => {
                         if (configuration.injection.entry.normalized
                             .hasOwnProperty(chunkName)
                         )
-                            for (const moduleID:string of configuration
-                                .injection.entry.normalized[chunkName]
+                            for (const moduleID:string of
+                                configuration.injection.entry.normalized[
+                                    chunkName]
                             ) {
-                                const filePath:?string =
+                                const filePath:null|string =
                                     Helper.determineModuleFilePath(
                                         moduleID, configuration.module.aliases,
                                         configuration.module.replacements
@@ -263,8 +267,9 @@ const main = async ():Promise<void> => {
                                             .propertyNames,
                                         configuration.package
                                             .aliasPropertyNames,
-                                        configuration.encoding)
-                                let type:?string
+                                        configuration.encoding
+                                    )
+                                let type:string
                                 if (filePath)
                                     type = Helper.determineAssetType(
                                         filePath,
@@ -294,7 +299,7 @@ const main = async ():Promise<void> => {
                                             filePath, '755')
                                 }
                             }
-                    for (const filePath:?string of configuration.path.tidyUp)
+                    for (const filePath of configuration.path.tidyUp)
                         if (filePath)
                             if (Tools.isFileSync(filePath))
                                 // NOTE: Close handler have to be synchronous.
@@ -382,7 +387,6 @@ const main = async ():Promise<void> => {
                                 additionalArguments:Array<string>,
                                 filePath:string
                             ):string =>
-                                // IgnoreTypeCheck
                                 new Function(
                                     'global', 'self', 'buildConfiguration',
                                     'path', 'additionalArguments', 'filePath',
@@ -401,10 +405,12 @@ const main = async ():Promise<void> => {
                                 resolve:Function, reject:Function
                             ):ChildProcess => Tools.handleChildProcess(
                                 execChildProcess(
-                                    command, childProcessOptions, (
-                                        error:?Error
-                                    ):void => error ? reject(error) : resolve()
-                                ))))
+                                    command,
+                                    childProcessOptions,
+                                    (error:Error):void =>
+                                        error ? reject(error) : resolve()
+                                )
+                            )))
                         }
             }
             // endregion
@@ -419,7 +425,6 @@ const main = async ():Promise<void> => {
                     const evaluationFunction = (
                         global:Object, self:PlainObject, path:typeof path
                     ):boolean =>
-                        // IgnoreTypeCheck
                         new Function(
                             'global', 'self', 'path',
                             'return ' + (task.hasOwnProperty(
