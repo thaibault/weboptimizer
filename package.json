@@ -260,11 +260,11 @@
               "__evaluate__": "self.path.apiDocumentation"
             },
             {
-              "__evaluate__": "`'${self.path.target.asset.javaScript}'*.js`"
+              "__evaluate__": "`'${self.path.target.asset.javaScript}'*.ts`"
             }
           ],
           "command": "jsdoc",
-          "indicator": "self.needed.javaScript"
+          "indicator": "self.needed.typeScript"
         },
         "lint": [
           {
@@ -313,7 +313,7 @@
               "'**/*.js'"
             ],
             "command": "eslint",
-            "indicator": "self.needed.javaScript"
+            "indicator": "self.needed.typeScript"
           }
         ],
         "serve": {
@@ -354,7 +354,7 @@
         "test:browser": {
           "__evaluate__": "self.commandLine.serve"
         },
-        "check:type": {
+        "check:types": {
           "arguments": [],
           "command": "tsc"
         }
@@ -862,7 +862,7 @@
             },
             "loader": "url"
           },
-          "#": "NOTE: Results in the following error: \"index.js?md5=4d09121c92017d65ec82:80 ERROR TypeError: ws.get is not a function\"",
+          "#": "NOTE: Results in the following error: \"index.ts?md5=4d09121c92017d65ec82:80 ERROR TypeError: ws.get is not a function\"",
           "minimize": true,
           "minimizer": {
             "#": "HTML-Templates shouldn't be transformed via terser to avoid html webpack plugin throwing to not get markup as intermediate result.",
@@ -987,7 +987,7 @@
                 "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}], '@babel/typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             },
-            "regularExpression": "\\.js(?:\\?.*)?$"
+            "regularExpression": "\\.[jt]s(?:\\?.*)?$"
           }
         },
         "provide": {
@@ -1066,7 +1066,8 @@
         "base": "./",
         "configuration": {
           "json": "./webpack.json",
-          "javaScript": "./webpack.config.js"
+          "javaScript": "./webpack.config.js",
+          "typeScript": "./webpack.config.ts"
         },
         "ignore": [
           ".cache",
