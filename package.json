@@ -414,8 +414,8 @@
       "extensions": {
         "file": {
           "internal": [
-            ".ts",
             ".js",
+            ".ts",
             ".json",
             ".css",
             ".eot",

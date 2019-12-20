@@ -165,7 +165,7 @@ describe('helper', ():void => {
         ['', ''],
         ['a', 'a'],
         ['path', 'path'],
-        ['./helper', null]/* TODO,
+        ['./helper', null],
         ['./helper', './', null],
         ['./helper', '../', null],
         ['./helper', './a', './helper'],
@@ -175,7 +175,7 @@ describe('helper', ():void => {
         ['path', './', './', {}, [], 'path'],
         ['path', './', './', {}, [], {path: './main.js'}, './main.js'],
         ['path', './', './', {}, [], {path: 'main.js'}, 'main.js'],
-        ['path', './', './', {}, [], {path: './helper.js'}, null],
+        ['path', './', './', {}, [], {path: './helper.ts'}, null],
         ['webpack', 'webpack'],
         ['a', './', './', {}, ['node_modules'], {a$: 'webpack'}, 'webpack'],
         [
@@ -383,7 +383,7 @@ describe('helper', ():void => {
             false,
             false,
             null
-        ]*/
+        ]
     ])(
         `.determineExternalRequest(...parameter)`,
         (...parameter:Array<any>):void => {
@@ -512,7 +512,7 @@ describe('helper', ():void => {
     )
     test('resolveModulesInFolders', ():void =>
         expect(Helper.resolveModulesInFolders({a: [__dirname]}).a)
-            .toContain('./test/helper.js')
+            .toContain('./test/helper.ts')
     )
     test.each([
         [[], {index: []}],
@@ -700,13 +700,13 @@ describe('helper', ():void => {
             [],
             null
         ],
-        ['helper', 'helper.js'],
+        ['helper', 'helper.ts'],
         ['helper', {}, {}, {file: [], module: []}, './', '', [], null],
         [
             './helper',
             {},
             {},
-            {file: ['.js'], module: []},
+            {file: ['.ts'], module: []},
             '',
             'a',
             [],
@@ -716,10 +716,10 @@ describe('helper', ():void => {
             'helper',
             {},
             {},
-            {file: ['.js'], module: []},
+            {file: ['.ts'], module: []},
             './',
             './',
-            'helper.js'
+            'helper.ts'
         ]
     ])(
         '.determineModuleFilePath(...parameter)',
@@ -765,9 +765,9 @@ describe('helper', ():void => {
     )
     test.each([
         ['./', 'package.json'],
-        ['./', 'index.js'],
+        ['./', 'index.ts'],
         ['../', 'package.json'],
-        ['../', 'index.js']
+        ['../', 'index.ts']
     ])(
         `.findPackageDescriptorFilePath('%s', '%s')`,
         (start:string, fileName:string):void =>

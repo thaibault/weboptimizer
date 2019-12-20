@@ -30,7 +30,7 @@ test('browser', async (done:Function):Promise<void> => {
     if (browser.windowLoaded)
         onWindowLoaded({})
     else
-        browser.window.addEventListener('load', onWindowsLoaded)
+        browser.window.addEventListener('load', onWindowLoaded)
 })
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

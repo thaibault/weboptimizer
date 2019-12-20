@@ -30,6 +30,21 @@ import {
     ResolvedBuildConfigurationItem
 } from './type'
 // endregion
+export const KNOWN_FILE_EXTENSIONS:Array<string> = [
+    'js', 'ts',
+    'json',
+    'css',
+    'eot',
+    'gif',
+    'html',
+    'ico',
+    'jpg',
+    'png',
+    'ejs',
+    'svg',
+    'ttf',
+    'woff', '.woff2'
+]
 // region methods
 /**
  * Provides a class of static methods with generic use cases.
@@ -417,21 +432,9 @@ export class Helper {
         extensions:Extensions = {
             file: {
                 external: ['.compiled.js', '.js', '.json'],
-                internal: [
-                    'js',
-                    'json',
-                    'css',
-                    'eot',
-                    'gif',
-                    'html',
-                    'ico',
-                    'jpg',
-                    'png',
-                    'ejs',
-                    'svg',
-                    'ttf',
-                    'woff', '.woff2'
-                ].map((suffix:string):string => `.${suffix}`)
+                internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                    `.${suffix}`
+                )
             },
             module: []
         },
@@ -694,21 +697,9 @@ export class Helper {
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:PlainObject = {
-            file: [
-                'js',
-                'json',
-                'css',
-                'eot',
-                'gif',
-                'html',
-                'ico',
-                'jpg',
-                'png',
-                'ejs',
-                'svg',
-                'ttf',
-                'woff', '.woff2'
-            ].map((suffix:string):string => `.${suffix}`),
+            file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                `.${suffix}`
+            ),
             module: []
         },
         context:string = './',
@@ -896,21 +887,9 @@ export class Helper {
         extensions:Extensions = {
             file: {
                 external: ['compiled.js', '.js', '.json'],
-                internal: [
-                    'js',
-                    'json',
-                    'css',
-                    'eot',
-                    'gif',
-                    'html',
-                    'ico',
-                    'jpg',
-                    'png',
-                    'ejs',
-                    'svg',
-                    'ttf',
-                    'woff', '.woff2'
-                ].map((suffix:string):string => `.${suffix}`)
+                internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                    `.${suffix}`
+                )
             },
             module: []
         },
@@ -1049,21 +1028,9 @@ export class Helper {
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:PlainObject = {
-            file: [
-                'js',
-                'json',
-                'css',
-                'eot',
-                'gif',
-                'html',
-                'ico',
-                'jpg',
-                'png',
-                'ejs',
-                'svg',
-                'ttf',
-                'woff', '.woff2'
-            ].map((suffix:string):string => `.${suffix}`),
+            file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                `.${suffix}`
+            ),
             module: []
         },
         context:string = './',

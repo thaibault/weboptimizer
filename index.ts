@@ -195,9 +195,9 @@ const main = async ():Promise<void> => {
                     ):void =>
                         removeDirectoryRecursively(
                             configuration.path.apiDocumentation,
-                                {glob: false},
-                                (error:Error):void =>
-                                    error ? reject(error) : resolve()
+                            {glob: false},
+                            (error:Error):void =>
+                                error ? reject(error) : resolve()
                         )
                     )
                 for (const filePath of configuration.path.tidyUpOnClear)

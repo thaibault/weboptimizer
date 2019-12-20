@@ -14,8 +14,7 @@ test('webpackConfigurator', ():void => {
     const webpackConfiguration:WebpackConfiguration = require(
         '../webpackConfigurator.compiled'
     ).default
-    expect(webpackConfiguration.entry.index.includes('./index.js'))
-        .toBeTruthy()
+    expect(webpackConfiguration.entry.index).toContain('./index.ts')
     webpackConfiguration.output.path = __dirname
     webpackConfiguration.output.filename = 'dummy.compiled.js'
     expect(webpack(webpackConfiguration)).toBeInstanceOf(Object)
