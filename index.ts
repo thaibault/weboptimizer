@@ -223,7 +223,8 @@ const main = async ():Promise<void> => {
                     ).filter((filePath:string):boolean =>
                         !configuration.path.context.startsWith(filePath)
                     ),
-                    configuration.package.main.fileNames)
+                    configuration.package.main.fileNames
+                )
             if (['build', 'build:dll', 'document', 'test'].includes(
                 process.argv[2]
             )) {
@@ -249,7 +250,8 @@ const main = async ():Promise<void> => {
                             ) {
                                 const filePath:null|string =
                                     Helper.determineModuleFilePath(
-                                        moduleID, configuration.module.aliases,
+                                        moduleID,
+                                        configuration.module.aliases,
                                         configuration.module.replacements
                                             .normal,
                                         {
@@ -274,7 +276,8 @@ const main = async ():Promise<void> => {
                                     type = Helper.determineAssetType(
                                         filePath,
                                         configuration.buildContext.types,
-                                        configuration.path)
+                                        configuration.path
+                                    )
                                 if (
                                     typeof type === 'string' &&
                                     configuration.buildContext.types[type]
@@ -284,7 +287,9 @@ const main = async ():Promise<void> => {
                                             Helper.stripLoader(
                                                 configuration.files.compose
                                                     .javaScript
-                                            ), {'[name]': chunkName})
+                                            ),
+                                            {'[name]': chunkName}
+                                        )
                                     /*
                                         NOTE: Close handler have to be
                                         synchronous.
@@ -319,13 +324,19 @@ const main = async ():Promise<void> => {
                     const commandLineArguments:Array<string> = (
                         configuration.commandLine.build.arguments || []
                     ).concat(additionalArguments)
-                    console.info('Running "' + (
-                        `${configuration.commandLine.build.command} ` +
-                        commandLineArguments.join(' ')
-                    ).trim() + '"')
+                    console.info(
+                        'Running "' +
+                        (
+                            `${configuration.commandLine.build.command} ` +
+                            commandLineArguments.join(' ')
+                        ).trim() +
+                        '"'
+                    )
                     const childProcess:ChildProcess = spawnChildProcess(
                         configuration.commandLine.build.command,
-                        commandLineArguments, childProcessOptions)
+                        commandLineArguments,
+                        childProcessOptions
+                    )
                     const copyAdditionalFilesAndTidyUp:Function = (
                         ...parameter:Array<any>
                     ):void => {
@@ -350,9 +361,13 @@ const main = async ():Promise<void> => {
                         tidyUp(...parameter)
                     }
                     const closeHandler:Function = Tools.getProcessCloseHandler(
-                        resolve, reject, null, (
-                            process.argv[2] === 'build'
-                        ) ? copyAdditionalFilesAndTidyUp : tidyUp)
+                        resolve,
+                        reject,
+                        null,
+                        (process.argv[2] === 'build') ?
+                            copyAdditionalFilesAndTidyUp :
+                            tidyUp
+                    )
                     for (const closeEventName:string of Tools.closeEventNames)
                         childProcess.on(closeEventName, closeHandler)
                     childProcesses.push(childProcess)

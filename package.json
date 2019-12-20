@@ -179,6 +179,9 @@
               "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.compiled.\\${buildConfiguration.outputExtension}'`"
             }
           },
+          "typeScript": {
+            "extension": "ts"
+          },
           "javaScript": {
             "extension": "js"
           },

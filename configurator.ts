@@ -341,13 +341,16 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     Helper.resolveBuildConfigurationFilePaths(
         resolvedConfiguration.buildContext.types,
         resolvedConfiguration.path.source.asset.base,
-        Helper.normalizePaths(resolvedConfiguration.path.ignore.concat(
-            resolvedConfiguration.module.directoryNames,
-            resolvedConfiguration.loader.directoryNames
-        ).map((filePath:string):string => path.resolve(
-            resolvedConfiguration.path.context, filePath)
-        ).filter((filePath:string):boolean =>
-            !resolvedConfiguration.path.context.startsWith(filePath))),
+        Helper.normalizePaths(
+            resolvedConfiguration.path.ignore.concat(
+                resolvedConfiguration.module.directoryNames,
+                resolvedConfiguration.loader.directoryNames
+            ).map((filePath:string):string =>
+                path.resolve(resolvedConfiguration.path.context, filePath)
+            ).filter((filePath:string):boolean =>
+                !resolvedConfiguration.path.context.startsWith(filePath)
+            )
+        ),
         resolvedConfiguration.package.main.fileNames
     ),
     resolvedConfiguration.injection.autoExclude,
@@ -370,8 +373,8 @@ resolvedConfiguration.injection.entry = {
         resolvedConfiguration.path.ignore.concat(
             resolvedConfiguration.module.directoryNames,
             resolvedConfiguration.loader.directoryNames
-        ).map((filePath:string):string => path.resolve(
-            resolvedConfiguration.path.context, filePath)
+        ).map((filePath:string):string =>
+            path.resolve(resolvedConfiguration.path.context, filePath)
         ).filter((filePath:string):boolean =>
             !resolvedConfiguration.path.context.startsWith(filePath)
         )

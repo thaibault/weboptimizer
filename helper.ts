@@ -30,6 +30,7 @@ import {
     ResolvedBuildConfigurationItem
 } from './type'
 // endregion
+// region constants
 export const KNOWN_FILE_EXTENSIONS:Array<string> = [
     'js', 'ts',
     'json',
@@ -45,6 +46,7 @@ export const KNOWN_FILE_EXTENSIONS:Array<string> = [
     'ttf',
     'woff', '.woff2'
 ]
+// endregion
 // region methods
 /**
  * Provides a class of static methods with generic use cases.
@@ -914,13 +916,12 @@ export class Helper {
                 for (const chunkName:string in injection[type])
                     if (injection[type][chunkName] === '__auto__') {
                         injection[type][chunkName] = []
-                        const modules:{
-                            [key:string]:string
-                        } = Helper.getAutoChunk(
-                            buildConfigurations,
-                            moduleFilePathsToExclude,
-                            referencePath
-                        )
+                        const modules:{[key:string]:string} =
+                            Helper.getAutoChunk(
+                                buildConfigurations,
+                                moduleFilePathsToExclude,
+                                referencePath
+                            )
                         for (const subChunkName:string in modules)
                             if (modules.hasOwnProperty(subChunkName))
                                 injection[type][chunkName].push(
