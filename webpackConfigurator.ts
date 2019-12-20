@@ -45,7 +45,6 @@ import webpack from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 
 const pluginNameResourceMapping:{[key:string]:string} = {
-    BabelMinify: 'babel-minify-webpack-plugin',
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
     AddAssetHTMLPlugin: 'add-asset-html-webpack-plugin',
@@ -199,21 +198,6 @@ if (configuration.module.provide)
         configuration.module.provide))
 // // endregion
 // // region modules/assets
-// /// region perform javaScript minification/optimisation
-if (
-    configuration.module.optimizer.babelMinify &&
-    configuration.module.optimizer.babelMinify.bundle
-)
-    pluginInstances.push(Object.keys(
-        configuration.module.optimizer.babelMinify.bundle
-    ).length ?
-        new plugins.BabelMinify(
-            configuration.module.optimizer.babelMinify.bundle.transform || {},
-            configuration.module.optimizer.babelMinify.bundle.plugin || {}
-        ) :
-        new plugins.BabelMinify()
-    )
-// /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
     compiler.hooks.emit.tap(

@@ -72,7 +72,6 @@
     "@babel/runtime": "*",
     "add-asset-html-webpack-plugin": "*",
     "babel-loader": "*",
-    "babel-minify-webpack-plugin": "*",
     "babel-plugin-transform-with": "*",
     "babel-preset-minify": "*",
     "clientnode": "*",
@@ -401,10 +400,6 @@
         },
         "module": {
           "optimizer": {
-            "babelMinify": {
-              "bundle": null,
-              "module": null
-            },
             "cssnano": null
           }
         }
@@ -565,7 +560,9 @@
           "#: NOTE: We have to add \"test.js\" here additionally to be able to grab \"test.compiled.js\" and \"test.js\" at the same time.",
           "./dummy",
           "./test",
-          "./test.js"
+          "./test.js",
+          "./type.js",
+          "./type.ts"
         ],
         "chunks": {},
         "dllChunkNames": [
@@ -862,7 +859,6 @@
             },
             "loader": "url"
           },
-          "#": "NOTE: Results in the following error: \"index.ts?md5=4d09121c92017d65ec82:80 ERROR TypeError: ws.get is not a function\"",
           "minimize": true,
           "minimizer": {
             "#": "HTML-Templates shouldn't be transformed via terser to avoid html webpack plugin throwing to not get markup as intermediate result.",
@@ -1215,10 +1211,6 @@
         },
         "module": {
           "optimizer": {
-            "babelMinify": {
-              "bundle": null,
-              "module": null
-            },
             "cssnano": null
           }
         },
@@ -1258,10 +1250,6 @@
           }
         },
         "optimizer": {
-          "babelMinify": {
-            "bundle": null,
-            "module": null
-          },
           "cssnano": null,
           "htmlMinifier": null,
           "minimize": false
