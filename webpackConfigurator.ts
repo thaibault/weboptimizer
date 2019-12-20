@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -15,13 +14,9 @@
     endregion
 */
 // region imports
-import Tools from 'clientnode'
-/* eslint-disable no-unused-vars */
-import type {DomNode, PlainObject, ProcedureFunction, Window} from 'clientnode'
-/* eslint-enable no-unused-vars */
+import Tools, {DomNode, PlainObject, ProcedureFunction} from 'clientnode'
 /* eslint-disable no-var */
 try {
-    // IgnoreTypeCheck
     var postcssCSSnano:Function = require('cssnano')
 } catch (error) {}
 /* eslint-enable no-var */
@@ -30,23 +25,18 @@ import {promises as fileSystem} from 'fs'
 import path from 'path'
 /* eslint-disable no-var */
 try {
-    // IgnoreTypeCheck
     var postcssPresetENV:Function = require('postcss-preset-env')
 } catch (error) {}
 try {
-    // IgnoreTypeCheck
     var postcssFontPath:Function = require('postcss-fontpath')
 } catch (error) {}
 try {
-    // IgnoreTypeCheck
     var postcssImport:Function = require('postcss-import')
 } catch (error) {}
 try {
-    // IgnoreTypeCheck
     var postcssSprites:Function = require('postcss-sprites')
 } catch (error) {}
 try {
-    // IgnoreTypeCheck
     var postcssURL:Function = require('postcss-url')
 } catch (error) {}
 /* eslint-enable no-var */
@@ -68,7 +58,6 @@ const plugins:Object = {}
 for (const name:string in pluginNameResourceMapping)
     if (pluginNameResourceMapping.hasOwnProperty(name))
         try {
-            // IgnoreTypeCheck
             plugins[name] = require(pluginNameResourceMapping[name])
         } catch (error) {}
 if (plugins.Imagemin)
@@ -76,7 +65,7 @@ if (plugins.Imagemin)
 
 import ejsLoader from './ejsLoader.compiled'
 /* eslint-disable no-unused-vars */
-import type {
+import {
     HTMLConfiguration, PluginConfiguration, WebpackConfiguration
 } from './type'
 /* eslint-enable no-unused-vars */
@@ -227,32 +216,37 @@ if (
 // /// endregion
 // /// region apply module pattern
 pluginInstances.push({apply: (compiler:Object):void => {
-    compiler.hooks.emit.tap('applyModulePattern', (
-        compilation:Object
-    ):void => {
-        for (const request:string in compilation.assets)
-            if (compilation.assets.hasOwnProperty(request)) {
-                const filePath:string = request.replace(/\?[^?]+$/, '')
-                const type:?string = Helper.determineAssetType(
-                    filePath,
-                    configuration.buildContext.types,
-                    configuration.path)
-                if (
-                    type &&
-                    configuration.assetPattern[type] &&
-                    !(new RegExp(
-                        configuration.assetPattern[type]
-                            .excludeFilePathRegularExpression
-                    )).test(filePath)
-                ) {
-                    const source:?string = compilation.assets[request].source()
-                    if (typeof source === 'string')
-                        compilation.assets[request] = new WebpackRawSource(
-                            configuration.assetPattern[type].pattern.replace(
-                                /\{1\}/g, source.replace(/\$/g, '$$$')))
+    compiler.hooks.emit.tap(
+        'applyModulePattern',
+        (compilation:Object):void => {
+            for (const request:string in compilation.assets)
+                if (compilation.assets.hasOwnProperty(request)) {
+                    const filePath:string = request.replace(/\?[^?]+$/, '')
+                    const type:null|string = Helper.determineAssetType(
+                        filePath,
+                        configuration.buildContext.types,
+                        configuration.path)
+                    if (
+                        type &&
+                        configuration.assetPattern[type] &&
+                        !(new RegExp(
+                            configuration.assetPattern[type]
+                                .excludeFilePathRegularExpression
+                        )).test(filePath)
+                    ) {
+                        const source:string =
+                            compilation.assets[request].source()
+                        if (typeof source === 'string')
+                            compilation.assets[request] = new WebpackRawSource(
+                                configuration.assetPattern[type].pattern
+                                    .replace(
+                                        /\{1\}/g, source.replace(/\$/g, '$$$')
+                                    )
+                            )
+                    }
                 }
-            }
-    })
+        }
+    )
 }})
 // /// endregion
 // /// region in-place configured assets in the main html file
@@ -387,7 +381,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 break
             }
         // region pattern based aliasing
-        const filePath:?string = Helper.determineModuleFilePath(
+        const filePath:null|string = Helper.determineModuleFilePath(
             request,
             {},
             {},
@@ -457,7 +451,7 @@ if (configuration.injection.external.modules === '__implicit__')
                     }
                 }
         // endregion
-        const resolvedRequest:?string = Helper.determineExternalRequest(
+        const resolvedRequest:null|string = Helper.determineExternalRequest(
             request,
             configuration.path.context,
             context,
@@ -522,7 +516,6 @@ if (configuration.injection.external.modules === '__implicit__')
                 // endregion
             }
             if (result.hasOwnProperty('root'))
-                // IgnoreTypeCheck
                 result.root = [].concat(result.root).map((
                     name:string
                 ):string => Tools.stringConvertToValidVariableName(name))
@@ -730,7 +723,6 @@ for (
     pluginInstances.push(new webpack.ContextReplacementPlugin(
         ...contextReplacement.map((value:string):any => (new Function(
             'configuration', '__dirname', '__filename', `return ${value}`
-        // IgnoreTypeCheck
         ))(configuration, __dirname, __filename))))
 // // endregion
 // // region consolidate duplicated module requests
@@ -740,10 +732,9 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
         const targetName:string = resource.request ? 'request' : 'resource'
         const targetPath:string = resource[targetName]
         if (Tools.isFileSync(targetPath)) {
-            const packageDescriptor:?PlainObject =
+            const packageDescriptor:null|PlainObject =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
-                // IgnoreTypeCheck
                 const pathPrefixes:Array<string> = targetPath.match(
                     /((?:^|.*?\/)node_modules\/)/g)
                 // Avoid finding the same artefact.
@@ -757,7 +748,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                 }
                 const pathSuffix:string = targetPath.replace(
                     /(?:^|.*\/)node_modules\/(.+$)/, '$1')
-                let redundantRequest:?PlainObject = null
+                let redundantRequest:PlainObject
                 for (const pathPrefix:string of pathPrefixes) {
                     const alternateTargetPath:string = path.resolve(
                         pathPrefix, pathSuffix)
@@ -835,9 +826,7 @@ const scope:Object = {
     require: eval('require')
 }
 const evaluate:Function = (code:string, filePath:string):any => (new Function(
-    // IgnoreTypeCheck
     'filePath', ...Object.keys(scope), `return ${code}`
-// IgnoreTypeCheck
 ))(filePath, ...Object.values(scope))
 const includingPaths:Array<string> = Helper.normalizePaths([
     configuration.path.source.asset.javaScript
@@ -1358,7 +1347,6 @@ if (
     } catch (error) {}
     if (result)
         if (result.hasOwnProperty('replaceWebOptimizer'))
-            // IgnoreTypeCheck
             webpackConfiguration = webpackConfiguration.replaceWebOptimizer
         else
             Tools.extend(true, webpackConfiguration, result)

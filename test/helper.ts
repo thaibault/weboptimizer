@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import {PlainObject} from 'clientnode'
 import path from 'path'
-import type {PlainObject} from 'clientnode'
 
-import type {
+import {
     BuildConfiguration,
     EntryInjection,
     Extensions,
@@ -94,7 +93,7 @@ describe('helper', ():void => {
         (...parameter:Array<any>):void => {
             const expected:any = parameter.pop()
             expect(Helper.inPlaceCSSAndJavaScriptAssetReferences(...parameter))
-                .toEqual(expected)
+                .toStrictEqual(expected)
         }
     )
     test.each([
@@ -176,7 +175,7 @@ describe('helper', ():void => {
         ['path', './', './', {}, [], 'path'],
         ['path', './', './', {}, [], {path: './main.js'}, './main.js'],
         ['path', './', './', {}, [], {path: 'main.js'}, 'main.js'],
-        ['path', './', './', {}, [], {path: './helper.js'}, null],
+        ['path', './', './', {}, [], {path: './helper.ts'}, null],
         ['webpack', 'webpack'],
         ['a', './', './', {}, ['node_modules'], {a$: 'webpack'}, 'webpack'],
         [
@@ -444,10 +443,10 @@ describe('helper', ():void => {
         }
     )
     test('resolveBuildConfigurationFilePaths', ():void => {
-        expect(Helper.resolveBuildConfigurationFilePaths({})).toEqual([])
+        expect(Helper.resolveBuildConfigurationFilePaths({})).toStrictEqual([])
         expect(Helper.resolveBuildConfigurationFilePaths(
             buildConfiguration, './', ['.git', 'node_modules']
-        )).toEqual([
+        )).toStrictEqual([
             {
                 extension: 'js',
                 filePathPattern: '',
@@ -474,8 +473,7 @@ describe('helper', ():void => {
         [
             'helper',
             {
-                filePaths: [
-                    path.resolve(__dirname, '../helper.js')],
+                filePaths: [path.resolve(__dirname, '../helper.ts')],
                 directoryPaths: [path.resolve(__dirname, '../')]
             }
         ],
@@ -483,14 +481,14 @@ describe('helper', ():void => {
         [
             {example: 'helper'},
             {
-                filePaths: [path.resolve(__dirname, '../helper.js')],
+                filePaths: [path.resolve(__dirname, '../helper.ts')],
                 directoryPaths: [path.resolve(__dirname, '../')]
             }
         ],
         [
-            {helper: ['helper.js']},
+            {helper: ['helper.ts']},
             {
-                filePaths: [path.resolve(__dirname, '../', 'helper.js')],
+                filePaths: [path.resolve(__dirname, '../', 'helper.ts')],
                 directoryPaths: [path.resolve(__dirname, '../')]
             }
         ]
@@ -501,7 +499,7 @@ describe('helper', ():void => {
             expected:{filePaths:Array<string>;directoryPaths:Array<string>}
         ):void =>
             expect(Helper.determineModuleLocations(entryInjection))
-                .toEqual(expected)
+                .toStrictEqual(expected)
     )
     test.each([[{}, {}], [{index: []}, {index: []}]])(
         '.resolveModulesInFolders(%p)',
@@ -510,11 +508,11 @@ describe('helper', ():void => {
             expected:NormalizedEntryInjection
         ):void =>
             expect(Helper.resolveModulesInFolders(normalizedEntryInjection))
-                .toEqual(expected)
+                .toStrictEqual(expected)
     )
     test('resolveModulesInFolders', ():void =>
         expect(Helper.resolveModulesInFolders({a: [__dirname]}).a)
-            .toContain('./test/helper.js')
+            .toContain('./test/helper.ts')
     )
     test.each([
         [[], {index: []}],
@@ -531,7 +529,7 @@ describe('helper', ():void => {
             entryInjection:EntryInjection, expected:NormalizedEntryInjection
         ):void =>
             expect(Helper.normalizeEntryInjection(entryInjection))
-                .toEqual(expected)
+                .toStrictEqual(expected)
     )
     test.each([
         [
@@ -677,7 +675,7 @@ describe('helper', ():void => {
             context,
             referencePath,
             pathsToIgnore
-        )).toEqual(expected)
+        )).toStrictEqual(expected)
     )
     test('getAutoChunk', ():void =>
         expect(Helper.getAutoChunk(
@@ -686,7 +684,7 @@ describe('helper', ():void => {
             ),
             ['.git', 'node_modules'],
             './'
-        )).toEqual({})
+        )).toStrictEqual({})
     )
     test.each([
         ['', null],
@@ -702,13 +700,13 @@ describe('helper', ():void => {
             [],
             null
         ],
-        ['helper', 'helper.js'],
+        ['helper', 'helper.ts'],
         ['helper', {}, {}, {file: [], module: []}, './', '', [], null],
         [
             './helper',
             {},
             {},
-            {file: ['.js'], module: []},
+            {file: ['.ts'], module: []},
             '',
             'a',
             [],
@@ -718,10 +716,10 @@ describe('helper', ():void => {
             'helper',
             {},
             {},
-            {file: ['.js'], module: []},
+            {file: ['.ts'], module: []},
             './',
             './',
-            'helper.js'
+            'helper.ts'
         ]
     ])(
         '.determineModuleFilePath(...parameter)',
@@ -767,9 +765,9 @@ describe('helper', ():void => {
     )
     test.each([
         ['./', 'package.json'],
-        ['./', 'index.js'],
+        ['./', 'index.ts'],
         ['../', 'package.json'],
-        ['../', 'index.js']
+        ['../', 'index.ts']
     ])(
         `.findPackageDescriptorFilePath('%s', '%s')`,
         (start:string, fileName:string):void =>
@@ -782,7 +780,9 @@ describe('helper', ():void => {
             const filePath:string = path.resolve(
                 __dirname, '../', 'package.json')
             expect(Helper.getClosestPackageDescriptor(modulePath, filePath))
-                .toEqual({configuration: eval('require')(filePath), filePath})
+                .toStrictEqual(
+                    {configuration: eval('require')(filePath), filePath}
+                )
         }
     )
     // endregion

@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
 import getInitializedBrowser, {browser} from '../browser.compiled'
-import type {Browser} from '../type'
+import {Browser} from '../type'
 // endregion
 // region declarations
 declare var expect:Function
@@ -31,7 +30,7 @@ test('browser', async (done:Function):Promise<void> => {
     if (browser.windowLoaded)
         onWindowLoaded({})
     else
-        browser.window.addEventListener('load', onWindowsLoaded)
+        browser.window.addEventListener('load', onWindowLoaded)
 })
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

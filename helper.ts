@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -15,14 +14,12 @@
     endregion
 */
 // region imports
-import type {DomNode} from 'clientnode'
-import Tools from 'clientnode'
-import type {File, PlainObject, Window} from 'clientnode'
+import Tools, {DomNode, File, PlainObject, Window} from 'clientnode'
 import {JSDOM as DOM} from 'jsdom'
 import fileSystem from 'fs'
 import path from 'path'
 
-import type {
+import {
     BuildConfiguration,
     Extensions,
     Injection,
@@ -32,6 +29,23 @@ import type {
     ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem
 } from './type'
+// endregion
+// region constants
+export const KNOWN_FILE_EXTENSIONS:Array<string> = [
+    'js', 'ts',
+    'json',
+    'css',
+    'eot',
+    'gif',
+    'html',
+    'ico',
+    'jpg',
+    'png',
+    'ejs',
+    'svg',
+    'ttf',
+    'woff', '.woff2'
+]
 // endregion
 // region methods
 /**
@@ -75,8 +89,8 @@ export class Helper {
      */
     static inPlaceCSSAndJavaScriptAssetReferences(
         content:string,
-        cascadingStyleSheetPattern:?{[key:string]:'body'|'head'|'in'|string},
-        javaScriptPattern:?{[key:string]:'body'|'head'|'in'|string},
+        cascadingStyleSheetPattern:{[key:string]:'body'|'head'|'in'|string},
+        javaScriptPattern:{[key:string]:'body'|'head'|'in'|string},
         basePath:string,
         cascadingStyleSheetChunkNameTemplate:string,
         javaScriptChunkNameTemplate:string,
@@ -181,9 +195,9 @@ export class Helper {
                             else {
                                 const regularExpressionPattern:string =
                                     '(after|before|in):(.+)'
-                                const testMatch:?Array<string> =
-                                    new RegExp(regularExpressionPattern).exec(
-                                        assetType.pattern[pattern])
+                                const testMatch:Array<string>|null =
+                                    (new RegExp(regularExpressionPattern))
+                                        .exec(assetType.pattern[pattern])
                                 let match:Array<string>
                                 if (testMatch)
                                     match = testMatch
@@ -420,21 +434,9 @@ export class Helper {
         extensions:Extensions = {
             file: {
                 external: ['.compiled.js', '.js', '.json'],
-                internal: [
-                    'js',
-                    'json',
-                    'css',
-                    'eot',
-                    'gif',
-                    'html',
-                    'ico',
-                    'jpg',
-                    'png',
-                    'ejs',
-                    'svg',
-                    'ttf',
-                    'woff', '.woff2'
-                ].map((suffix:string):string => `.${suffix}`)
+                internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                    `.${suffix}`
+                )
             },
             module: []
         },
@@ -465,7 +467,7 @@ export class Helper {
             NOTE: Aliases and module replacements doesn't have to be forwarded
             since we pass an already resolved request.
         */
-        const filePath:?string = Helper.determineModuleFilePath(
+        const filePath:null|string = Helper.determineModuleFilePath(
             resolvedRequest,
             {},
             {},
@@ -619,7 +621,7 @@ export class Helper {
                 const newItem:ResolvedBuildConfigurationItem =
                     Tools.extend(true, {filePaths: []}, configuration[type])
                 for (const file:File of Tools.walkDirectoryRecursivelySync(
-                    entryPath, (file:File):?false => {
+                    entryPath, (file:File):false|undefined => {
                         if (Helper.isFilePathInLocation(
                             file.path, pathsToIgnore
                         ))
@@ -697,21 +699,9 @@ export class Helper {
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:PlainObject = {
-            file: [
-                'js',
-                'json',
-                'css',
-                'eot',
-                'gif',
-                'html',
-                'ico',
-                'jpg',
-                'png',
-                'ejs',
-                'svg',
-                'ttf',
-                'woff', '.woff2'
-            ].map((suffix:string):string => `.${suffix}`),
+            file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                `.${suffix}`
+            ),
             module: []
         },
         context:string = './',
@@ -741,7 +731,7 @@ export class Helper {
                 for (const moduleID:string of normalizedEntryInjection[
                     chunkName
                 ]) {
-                    const filePath:?string = Helper.determineModuleFilePath(
+                    const filePath:null|string = Helper.determineModuleFilePath(
                         moduleID,
                         aliases,
                         moduleReplacements,
@@ -803,14 +793,15 @@ export class Helper {
                         normalizedEntryInjection[chunkName].splice(index, 1)
                         for (
                             const file:File of
-                            Tools.walkDirectoryRecursivelySync(resolvedPath, (
-                                file:File
-                            ):?false => {
-                                if (Helper.isFilePathInLocation(
-                                    file.path, pathsToIgnore
-                                ))
-                                    return false
-                            })
+                            Tools.walkDirectoryRecursivelySync(
+                                resolvedPath,
+                                (file:File):false|undefined => {
+                                    if (Helper.isFilePathInLocation(
+                                        file.path, pathsToIgnore
+                                    ))
+                                        return false
+                                }
+                            )
                         )
                             if (file.stats && file.stats.isFile())
                                 normalizedEntryInjection[chunkName].push(
@@ -842,7 +833,6 @@ export class Helper {
     ):NormalizedEntryInjection {
         let result:NormalizedEntryInjection = {}
         if (Tools.isFunction(entryInjection))
-            // IgnoreTypeCheck
             entryInjection = entryInjection()
         if (Array.isArray(entryInjection))
             result = {index: entryInjection}
@@ -899,21 +889,9 @@ export class Helper {
         extensions:Extensions = {
             file: {
                 external: ['compiled.js', '.js', '.json'],
-                internal: [
-                    'js',
-                    'json',
-                    'css',
-                    'eot',
-                    'gif',
-                    'html',
-                    'ico',
-                    'jpg',
-                    'png',
-                    'ejs',
-                    'svg',
-                    'ttf',
-                    'woff', '.woff2'
-                ].map((suffix:string):string => `.${suffix}`)
+                internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                    `.${suffix}`
+                )
             },
             module: []
         },
@@ -938,13 +916,12 @@ export class Helper {
                 for (const chunkName:string in injection[type])
                     if (injection[type][chunkName] === '__auto__') {
                         injection[type][chunkName] = []
-                        const modules:{
-                            [key:string]:string
-                        } = Helper.getAutoChunk(
-                            buildConfigurations,
-                            moduleFilePathsToExclude,
-                            referencePath
-                        )
+                        const modules:{[key:string]:string} =
+                            Helper.getAutoChunk(
+                                buildConfigurations,
+                                moduleFilePathsToExclude,
+                                referencePath
+                            )
                         for (const subChunkName:string in modules)
                             if (modules.hasOwnProperty(subChunkName))
                                 injection[type][chunkName].push(
@@ -1052,21 +1029,9 @@ export class Helper {
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:PlainObject = {
-            file: [
-                'js',
-                'json',
-                'css',
-                'eot',
-                'gif',
-                'html',
-                'ico',
-                'jpg',
-                'png',
-                'ejs',
-                'svg',
-                'ttf',
-                'woff', '.woff2'
-            ].map((suffix:string):string => `.${suffix}`),
+            file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                `.${suffix}`
+            ),
             module: []
         },
         context:string = './',
@@ -1077,7 +1042,7 @@ export class Helper {
         packageMainPropertyNames:Array<string> = ['main'],
         packageAliasPropertyNames:Array<string> = [],
         encoding:string = 'utf-8'
-    ):?string {
+    ):null|string {
         moduleID = Helper.applyModuleReplacements(
             Helper.applyAliases(Helper.stripLoader(moduleID), aliases),
             moduleReplacements)

@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-// @flow
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
 import webpack from 'webpack'
 
-import type {WebpackConfiguration} from '../type'
+import {WebpackConfiguration} from '../type'
 // endregion
 // region declarations
 declare var expect:Function
@@ -15,8 +14,7 @@ test('webpackConfigurator', ():void => {
     const webpackConfiguration:WebpackConfiguration = require(
         '../webpackConfigurator.compiled'
     ).default
-    expect(webpackConfiguration.entry.index.includes('./index.js'))
-        .toBeTruthy()
+    expect(webpackConfiguration.entry.index).toContain('./index.ts')
     webpackConfiguration.output.path = __dirname
     webpackConfiguration.output.filename = 'dummy.compiled.js'
     expect(webpack(webpackConfiguration)).toBeInstanceOf(Object)
