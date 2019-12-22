@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import {transform as babelTransform} from 'babel-core'
+import {transformSync as babelTransformSync} from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
 import transformWith from 'babel-plugin-transform-with'
 import Tools from 'clientnode'
@@ -196,8 +196,9 @@ module.exports = function(source:string):string {
             remainingSteps -= 1
         }
         if (Boolean(compileSteps % 2))
-            return `'use strict';\n` + babelTransform(
-                `module.exports = ${result.toString()};`, {
+            return `'use strict';\n` + babelTransformSync(
+                `module.exports = ${result.toString()};`,
+                {
                     ast: false,
                     babelrc: false,
                     comments: !Boolean(query.compress.javaScript),
@@ -205,9 +206,9 @@ module.exports = function(source:string):string {
                     filename: options.filename || 'unknown',
                     minified: Boolean(query.compress.javaScript),
                     plugins: [transformWith],
-                    presets: query.compress.javaScript ? [[
-                        babelMinifyPreset, query.compress.javaScript
-                    ]] : [],
+                    presets: query.compress.javaScript ?
+                        [[babelMinifyPreset, query.compress.javaScript]] :
+                        [],
                     sourceMaps: false,
                     sourceType: 'script'
                 }).code
