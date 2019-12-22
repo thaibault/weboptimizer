@@ -34,6 +34,7 @@
     "jestEnvironmentBrowser.compiled.js",
     "stylelintConfigurator.ts",
     "stylelintConfigurator.compiled.js",
+    "tsconfig.json",
     "type.ts",
     "webpackConfigurator.ts",
     "webpackConfigurator.compiled.js"
