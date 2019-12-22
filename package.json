@@ -309,7 +309,7 @@
               "'**/backup/*'",
               "--ignore-pattern",
               "'**/plugins/*'",
-              "'**/*.js'"
+              "'**/*.{js,jsx,ts}'"
             ],
             "command": "eslint",
             "indicator": "self.needed.typeScript"
