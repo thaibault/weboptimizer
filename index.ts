@@ -55,7 +55,7 @@ const main = async ():Promise<void> => {
             'serve',
             'test',
             'test:browser',
-            'check:type'
+            'check:types'
         ]
         const closeEventHandlers:Array<Function> = []
         if (configuration.givenCommandLineArguments.length > 2) {
@@ -479,7 +479,7 @@ const main = async ():Promise<void> => {
                 await Promise.all(processPromises)
                 handleTask(configuration.givenCommandLineArguments[2])
             } else if ([
-                'lint', 'test:browser', 'check:type', 'serve'
+                'check:types', 'lint', 'serve', 'test:browser'
             ].includes(configuration.givenCommandLineArguments[2]))
                 handleTask(configuration.givenCommandLineArguments[2])
             // / endregion

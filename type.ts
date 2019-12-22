@@ -183,7 +183,7 @@ export type ResolvedConfiguration = {
         serve:Command;
         test:Command;
         'test:browser':Command;
-        'check:type':Command;
+        'check:types':Command;
     };
     contextType:string;
     debug:boolean;
