@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.568",
+  "version": "2.0.569",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "https://torben.website/webOptimizer",
@@ -35,6 +35,7 @@
     "stylelintConfigurator.ts",
     "stylelintConfigurator.compiled.js",
     "tsconfig.json",
+    "tsconfigLibrary.json",
     "type.ts",
     "webpackConfigurator.ts",
     "webpackConfigurator.compiled.js"
