@@ -356,7 +356,10 @@
           "__evaluate__": "self.commandLine.serve"
         },
         "check:types": {
-          "arguments": [],
+          "arguments": [
+            "--project",
+            "node_modules/weboptimizer/tsconfigLibrary.json"
+          ],
           "command": "tsc"
         }
       },
