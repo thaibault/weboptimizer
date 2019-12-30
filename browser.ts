@@ -18,9 +18,9 @@ import Tools, {Window} from 'clientnode'
 import {Browser} from './type'
 // endregion
 // region declaration
-declare var NAME:string
-declare var TARGET_TECHNOLOGY:string
-declare var window:Window
+declare const NAME:string
+declare const TARGET_TECHNOLOGY:string
+declare const window:Window
 // endregion
 // region variables
 const onCreatedListener:Array<Function> = []
@@ -37,8 +37,9 @@ export const browser:Browser = {
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
     // region mock browser environment
-    const path:Object = require('path')
-    const {JSDOM, VirtualConsole} = require('jsdom')
+    import path = require('path')
+    import jsdom = require('jsdom')
+    const {JSDOM, VirtualConsole} = jsdom
     const virtualConsole = new VirtualConsole()
     for (const name of [
         'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
@@ -87,7 +88,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             NOTE: We load dependencies now to avoid having file imports after
             test runner has finished to isolate the environment.
         */
-        const ejsLoader = require('./ejsLoader.compiled.js')
+        import ejsLoader = require('./ejsLoader.compiled.js')
         require('fs').readFile(
             filePath,
             {encoding: 'utf-8'},
@@ -98,9 +99,10 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
             }
         )
     } else
-        Tools.timeout(():void =>
-            render(require('webOptimizerDefaultTemplateFilePath'))
-        )
+        Tools.timeout(():void => {
+            import template = require('webOptimizerDefaultTemplateFilePath')
+            render(template)
+        })
     // endregion
 } else {
     browser.initialized = true
@@ -124,7 +126,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
  * @returns Determined environment.
  */
 export const getInitializedBrowser = async (
-    replaceWindow:boolean = true
+    replaceWindow = true
 ):Promise<Browser> => {
     let resolvePromise:Function
     const promise:Promise<Browser> = new Promise((resolve:Function):void => {

@@ -1424,8 +1424,9 @@
     ],
     "parserOptions": {
       "ecmaFeatures": {},
-      "ecmaVersion": 7,
+      "ecmaVersion": 2020,
       "impliedStrict": true,
+      "project": "tsconfig.json",
       "sourceType": "module"
     },
     "parser": "@typescript-eslint/parser",
@@ -1434,7 +1435,10 @@
       "@typescript-eslint"
     ],
     "rules": {
-      "@typescript-eslint/rule-name": "error",
+      "@typescript-eslint/type-annotation-spacing": [
+        "error",
+        {"after": false, "before": false}
+      ],
       "arrow-parens": [
         "error",
         "always"

@@ -65,10 +65,14 @@ if (
         is a better assumption than two folders up the hierarchy.
     */
     try {
-        if (fileSystem.lstatSync(path.join(process.cwd(
-        ), 'node_modules')).isSymbolicLink())
+        if (
+            fileSystem.lstatSync(path.join(process.cwd(), 'node_modules'))
+                .isSymbolicLink()
+        )
             metaConfiguration.default.path.context = process.cwd()
-    } catch (error) {}
+    } catch (error) {
+        // continue regardless of error
+    }
 let specificConfiguration:PlainObject
 try {
     /* eslint-disable no-eval */
@@ -135,7 +139,7 @@ if (
 // endregion
 // region merging and evaluating task specific and dynamic configurations
 // / region load additional dynamically given configuration
-let count:number = 0
+let count = 0
 let filePath:null|string = null
 while (true) {
     const newFilePath:string = configuration.path.context +
@@ -183,7 +187,7 @@ for (const type:string of taskTypes)
         configuration, specificConfiguration
     ])
         if (
-            configurationTarget.hasOwnProperty(type) &&
+            Object.prototype.hasOwnProperty.call(configurationTarget, type) &&
             typeof configurationTarget[type] === 'object'
         )
             delete configurationTarget[type]
