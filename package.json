@@ -96,6 +96,7 @@
   },
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
     "babel-eslint": "*",
     "css-loader": "*",
     "cssnano": "*",
@@ -125,6 +126,7 @@
   "devDependencies": {
     "@babel/cli": "*",
     "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
     "babel-eslint": "*",
     "coveralls": "*",
     "css-loader": "*",
@@ -566,6 +568,7 @@
           "./dummy",
           "./test",
           "./test.js",
+          "./type",
           "./type.js",
           "./type.ts"
         ],
@@ -1412,19 +1415,26 @@
       "node": true,
       "jest": true
     },
-    "extends": "google",
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/recommended-requiring-type-checking",
+      "google"
+    ],
     "parserOptions": {
       "ecmaFeatures": {},
       "ecmaVersion": 7,
       "impliedStrict": true,
       "sourceType": "module"
     },
-    "parser": "babel-eslint",
+    "parser": "@typescript-eslint/parser",
     "plugins": [
       "jsdoc",
       "@typescript-eslint"
     ],
     "rules": {
+      "@typescript-eslint/rule-name": "error",
       "arrow-parens": [
         "error",
         "always"

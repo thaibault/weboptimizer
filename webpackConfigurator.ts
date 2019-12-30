@@ -330,7 +330,7 @@ if (configuration.givenCommandLineArguments[2] !== 'build:dll')
         }
 // /// endregion
 // /// region mark empty javaScript modules as dummy
-if (!configuration.needed.javaScript)
+if (!(configuration.needed.javaScript || configuration.needed.typeScript))
     configuration.files.compose.javaScript = path.resolve(
         configuration.path.target.asset.javaScript, '.__dummy__.compiled.js')
 // /// endregion
