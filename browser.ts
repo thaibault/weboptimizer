@@ -35,76 +35,74 @@ export const browser:Browser = {
 }
 // endregion
 // region ensure presence of common browser environment
-if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
+if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
     // region mock browser environment
-    import path = require('path')
-    import jsdom = require('jsdom')
-    const {JSDOM, VirtualConsole} = jsdom
-    const virtualConsole = new VirtualConsole()
-    for (const name of [
-        'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
-    ])
-        virtualConsole.on(name, console[name].bind(console))
-    virtualConsole.on('error', (error:Error):void => {
-        if (
-            !browser.debug &&
-            ['XMLHttpRequest', 'resource loading'].includes(error.type)
-        )
-            console.warn(`Loading resource failed: ${error.toString()}.`)
-        else
-            console.error(error.stack, error.detail)
+    Promise.all([import('path'), import('jsdom')]).then((
+        [path, {JSDOM, VirtualConsole}]
+    ):void => {
+        const virtualConsole = new VirtualConsole()
+        for (const name of [
+            'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
+        ])
+            virtualConsole.on(name, console[name].bind(console))
+        virtualConsole.on('error', (error:Error):void => {
+            if (
+                !browser.debug &&
+                ['XMLHttpRequest', 'resource loading'].includes(error.type)
+            )
+                console.warn(`Loading resource failed: ${error.toString()}.`)
+            else
+                console.error(error.stack, error.detail)
+        })
+        const render:Function = (template:string):void => {
+            browser.DOM = JSDOM
+            browser.initialized = true
+            browser.instance = new JSDOM(template, {
+                beforeParse: (window:Window):void => {
+                    browser.window = window
+                    window.document.addEventListener(
+                        'DOMContentLoaded',
+                        ():void => {
+                            browser.domContentLoaded = true
+                        }
+                    )
+                    window.addEventListener('load', ():void => {
+                        /*
+                            NOTE: Maybe we have miss the "DOMContentLoaded" event
+                            caused by a race condition.
+                        */
+                        browser.domContentLoaded = browser.windowLoaded = true
+                    })
+                    for (const callback:Function of onCreatedListener)
+                        callback()
+                },
+                resources: 'usable',
+                runScripts: 'dangerously',
+                url: 'http://localhost',
+                virtualConsole
+            })
+        }
+        if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
+            const filePath:string = path.join(__dirname, 'index.html.ejs')
+            /*
+                NOTE: We load dependencies now to avoid having file imports after
+                test runner has finished to isolate the environment.
+            */
+            const ejsLoader = require('./ejsLoader.compiled.js')
+            require('fs').readFile(
+                filePath,
+                {encoding: 'utf-8'},
+                (error:Error|null, content:string):void => {
+                    if (error)
+                        throw error
+                    render(ejsLoader.bind({filename: filePath})(content))
+                }
+            )
+        } else
+            import('webOptimizerDefaultTemplateFilePath').then(render)
     })
-    const render:Function = (template:string):void => {
-        browser.DOM = JSDOM
-        browser.initialized = true
-        browser.instance = new JSDOM(template, {
-            beforeParse: (window:Window):void => {
-                browser.window = window
-                window.document.addEventListener(
-                    'DOMContentLoaded',
-                    ():void => {
-                        browser.domContentLoaded = true
-                    }
-                )
-                window.addEventListener('load', ():void => {
-                    /*
-                        NOTE: Maybe we have miss the "DOMContentLoaded" event
-                        caused by a race condition.
-                    */
-                    browser.domContentLoaded = browser.windowLoaded = true
-                })
-                for (const callback:Function of onCreatedListener)
-                    callback()
-            },
-            resources: 'usable',
-            runScripts: 'dangerously',
-            url: 'http://localhost',
-            virtualConsole
-        })
-    }
-    if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
-        const filePath:string = path.join(__dirname, 'index.html.ejs')
-        /*
-            NOTE: We load dependencies now to avoid having file imports after
-            test runner has finished to isolate the environment.
-        */
-        import ejsLoader = require('./ejsLoader.compiled.js')
-        require('fs').readFile(
-            filePath,
-            {encoding: 'utf-8'},
-            (error:Error|null, content:string):void => {
-                if (error)
-                    throw error
-                render(ejsLoader.bind({filename: filePath})(content))
-            }
-        )
-    } else
-        Tools.timeout(():void => {
-            import template = require('webOptimizerDefaultTemplateFilePath')
-            render(template)
-        })
     // endregion
-} else {
+else {
     browser.initialized = true
     browser.window = window
     window.document.addEventListener('DOMContentLoaded', ():void => {

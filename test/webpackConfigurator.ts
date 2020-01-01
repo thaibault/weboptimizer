@@ -7,8 +7,8 @@ import webpack from 'webpack'
 import {WebpackConfiguration} from '../type'
 // endregion
 // region declarations
-declare var expect:Function
-declare var test:Function
+declare const expect:Function
+declare const test:Function
 // endregion
 test('webpackConfigurator', ():void => {
     const webpackConfiguration:WebpackConfiguration = require(

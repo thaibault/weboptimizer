@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
 'use strict'
+// region imports
+import stylelintConfigurator from '../stylelintConfigurator.compiled'
+// endregion
 // region declarations
-declare var expect:Function
-declare var test:Function
+declare const expect:Function
+declare const test:Function
 // endregion
 test('stylelintConfigurator', ():void =>
-    expect(require('../stylelintConfigurator.compiled')).toBeTruthy()
+    expect(stylelintConfigurator).toBeTruthy()
 )
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

@@ -5,8 +5,8 @@
 import main from '../index.compiled'
 // endregion
 // region declarations
-declare var expect:Function
-declare var test:Function
+declare const expect:Function
+declare const test:Function
 // endregion
 test('index', async ():Promise<void> => {
     try {

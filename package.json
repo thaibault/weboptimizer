@@ -1437,7 +1437,10 @@
     "rules": {
       "@typescript-eslint/type-annotation-spacing": [
         "error",
-        {"after": false, "before": false}
+        {
+          "after": false,
+          "before": false
+        }
       ],
       "arrow-parens": [
         "error",
