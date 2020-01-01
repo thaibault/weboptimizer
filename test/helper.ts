@@ -17,9 +17,9 @@ import {
 import Helper from '../helper.compiled'
 // endregion
 // region declarations
-declare var describe:Function
-declare var expect:Function
-declare var test:Function
+declare const describe:Function
+declare const expect:Function
+declare const test:Function
 // endregion
 // region mockup
 const buildConfiguration:BuildConfiguration = {
@@ -90,8 +90,8 @@ describe('helper', ():void => {
             .inPlaceCSSAndJavaScriptAssetReferences(
                 '%s', '%s', '%s', '%s', '%s', '%s', %p)
         `,
-        (...parameter:Array<any>):void => {
-            const expected:any = parameter.pop()
+        (...parameter:Array<unknown>):void => {
+            const expected:unknown = parameter.pop()
             expect(Helper.inPlaceCSSAndJavaScriptAssetReferences(...parameter))
                 .toStrictEqual(expected)
         }
@@ -157,7 +157,7 @@ describe('helper', ():void => {
         ['./a', './a', './a', './a'],
         ['./a', './a', './a', {a: 'b'}, './a'],
         ['./a', './a/a', './', {a: 'b'}, {}, ['a'], 'b/a']
-    ])(`.applyContext(...parameter)`, (...parameter:Array<any>):void => {
+    ])(`.applyContext(...parameter)`, (...parameter:Array<unknown>):void => {
         const expected:string = parameter.pop()
         expect(Helper.applyContext(...parameter)).toStrictEqual(expected)
     })
@@ -386,7 +386,7 @@ describe('helper', ():void => {
         ]
     ])(
         `.determineExternalRequest(...parameter)`,
-        (...parameter:Array<any>):void => {
+        (...parameter:Array<unknown>):void => {
             const expected:null|string = parameter.pop()
             expect(Helper.determineExternalRequest(...parameter))
                 .toStrictEqual(expected)
@@ -723,7 +723,7 @@ describe('helper', ():void => {
         ]
     ])(
         '.determineModuleFilePath(...parameter)',
-        (...parameter:Array<any>):void => {
+        (...parameter:Array<unknown>):void => {
             const expected:null|string = parameter.pop()
             let result:null|string = Helper.determineModuleFilePath(
                 ...parameter)

@@ -6,8 +6,8 @@ import getInitializedBrowser, {browser} from '../browser.compiled'
 import {Browser} from '../type'
 // endregion
 // region declarations
-declare var expect:Function
-declare var test:Function
+declare const expect:Function
+declare const test:Function
 // endregion
 test('browser', async (done:Function):Promise<void> => {
     expect(browser.debug).toStrictEqual(false)

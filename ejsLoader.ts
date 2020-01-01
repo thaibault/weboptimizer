@@ -142,31 +142,40 @@ module.exports = function(source:string):string {
                 `Given template file "${template}" couldn't be resolved.`)
         }
         const compressHTML:Function = (content:string):string =>
-            query.compress.html ? minifyHTML(content, Tools.extend(
-                true,
-                {
-                    caseSensitive: true,
-                    collapseInlineTagWhitespace: true,
-                    collapseWhitespace: true,
-                    conservativeCollapse: true,
-                    minifyCSS: true,
-                    minifyJS: true,
-                    processScripts: [
-                        'text/ng-template', 'text/x-handlebars-template'
-                    ],
-                    removeAttributeQuotes: true,
-                    removeComments: true,
-                    removeRedundantAttributes: true,
-                    removeScriptTypeAttributes: true,
-                    removeStyleLinkTypeAttributes: true,
-                    sortAttributes: true,
-                    sortClassName: true,
-                    // NOTE: Avoids whitespace around placeholder in tags.
-                    trimCustomFragments: true,
-                    useShortDoctype: true
-                },
-                query.compress.html
-            )) : content
+            query.compress.html ?
+                minifyHTML(
+                    content,
+                    Tools.extend(
+                        true,
+                        {
+                            caseSensitive: true,
+                            collapseInlineTagWhitespace: true,
+                            collapseWhitespace: true,
+                            conservativeCollapse: true,
+                            minifyCSS: true,
+                            minifyJS: true,
+                            processScripts: [
+                                'text/ng-template',
+                                'text/x-handlebars-template'
+                            ],
+                            removeAttributeQuotes: true,
+                            removeComments: true,
+                            removeRedundantAttributes: true,
+                            removeScriptTypeAttributes: true,
+                            removeStyleLinkTypeAttributes: true,
+                            sortAttributes: true,
+                            sortClassName: true,
+                            /*
+                                NOTE: Avoids whitespace around placeholder in
+                                tags.
+                            */
+                            trimCustomFragments: true,
+                            useShortDoctype: true
+                        },
+                        query.compress.html
+                    )
+                ) :
+                content
         let remainingSteps:number = compileSteps
         let result:TemplateFunction|string = template
         const isString:boolean = options.isString
@@ -196,22 +205,24 @@ module.exports = function(source:string):string {
             remainingSteps -= 1
         }
         if (Boolean(compileSteps % 2))
-            return `'use strict';\n` + babelTransformSync(
-                `module.exports = ${result.toString()};`,
-                {
-                    ast: false,
-                    babelrc: false,
-                    comments: !Boolean(query.compress.javaScript),
-                    compact: Boolean(query.compress.javaScript),
-                    filename: options.filename || 'unknown',
-                    minified: Boolean(query.compress.javaScript),
-                    plugins: [transformWith],
-                    presets: query.compress.javaScript ?
-                        [[babelMinifyPreset, query.compress.javaScript]] :
-                        [],
-                    sourceMaps: false,
-                    sourceType: 'script'
-                }).code
+            return `'use strict';\n` +
+                babelTransformSync(
+                    `module.exports = ${result.toString()};`,
+                    {
+                        ast: false,
+                        babelrc: false,
+                        comments: !Boolean(query.compress.javaScript),
+                        compact: Boolean(query.compress.javaScript),
+                        filename: options.filename || 'unknown',
+                        minified: Boolean(query.compress.javaScript),
+                        plugins: [transformWith],
+                        presets: query.compress.javaScript ?
+                            [[babelMinifyPreset, query.compress.javaScript]] :
+                            [],
+                        sourceMaps: false,
+                        sourceType: 'script'
+                    }
+                ).code
         result = result
             .replace(new RegExp(
                 `<script +processing-workaround *(?:= *(?:" *"|' *') *)?>` +
