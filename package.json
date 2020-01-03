@@ -56,6 +56,7 @@
     "check:types": "tsc",
     "collect:coverage": "jest --collect-coverage",
     "document": "yarn build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.compiled.js",
+    "prettify": "eslint --fix --ignore-pattern '*.compiled.*' '*.ts' 'test/*.ts' || true",
     "lint": "eslint --ignore-pattern '*.compiled.*' '*.ts' 'test/*.ts' || true",
     "prepare": "yarn build",
     "report:coverage": "shx cat ./test/coverage/lcov.info | coveralls",

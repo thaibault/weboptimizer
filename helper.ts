@@ -149,7 +149,9 @@ export class Helper {
         ])
             if (assetType.pattern)
                 for (const pattern:string in assetType.pattern) {
-                    if (!assetType.pattern.hasOwnProperty(pattern))
+                    if (!Object.prototype.hasOwnProperty.call(
+                        assetType.pattern, pattern
+                    ))
                         continue
                     let selector:string = assetType.selector
                     if (pattern !== '*')
@@ -170,7 +172,9 @@ export class Helper {
                             const path:string = domNode.attributes[
                                 assetType.attributeName
                             ].value.replace(/&.*/g, '')
-                            if (!assets.hasOwnProperty(path))
+                            if (!Object.prototype.hasOwnProperty.call(
+                                assets, path
+                            ))
                                 continue
                             const inPlaceDomNode:DomNode =
                                 window.document.createElement(
@@ -317,7 +321,7 @@ export class Helper {
             scope)
         let filePath:string = template
         for (const placeholderName:string in scope)
-            if (scope.hasOwnProperty(placeholderName))
+            if (Object.prototype.hasOwnProperty.call(scope, placeholderName))
                 filePath = filePath.replace(
                     new RegExp(
                         Tools.stringEscapeRegularExpressions(placeholderName),
@@ -498,7 +502,9 @@ export class Helper {
                 relativeModuleLocations
             )
         for (const chunkName:string in normalizedEntryInjection)
-            if (normalizedEntryInjection.hasOwnProperty(chunkName))
+            if (Object.prototype.hasOwnProperty.call(
+                normalizedEntryInjection, chunkName
+            ))
                 for (const moduleID:string of normalizedEntryInjection[
                     chunkName
                 ])
@@ -590,7 +596,9 @@ export class Helper {
             for (const type:string of ['source', 'target'])
                 for (const assetType:string in paths[type].asset)
                     if (
-                        paths[type].asset.hasOwnProperty(assetType) &&
+                        Object.prototype.hasOwnProperty.call(
+                            paths[type].asset, assetType
+                        ) &&
                         assetType !== 'base' &&
                         paths[type].asset[assetType] &&
                         filePath.startsWith(paths[type].asset[assetType])
@@ -617,7 +625,7 @@ export class Helper {
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
         for (const type:string in configuration)
-            if (configuration.hasOwnProperty(type)) {
+            if (Object.prototype.hasOwnProperty.call(configuration, type)) {
                 const newItem:ResolvedBuildConfigurationItem =
                     Tools.extend(true, {filePaths: []}, configuration[type])
                 for (const file:File of Tools.walkDirectoryRecursivelySync(
@@ -727,7 +735,9 @@ export class Helper {
                 pathsToIgnore
             )
         for (const chunkName:string in normalizedEntryInjection)
-            if (normalizedEntryInjection.hasOwnProperty(chunkName))
+            if (Object.prototype.hasOwnProperty.call(
+                normalizedEntryInjection, chunkName
+            ))
                 for (const moduleID:string of normalizedEntryInjection[
                     chunkName
                 ]) {
@@ -778,7 +788,9 @@ export class Helper {
         if (referencePath.startsWith('/'))
             referencePath = path.relative(context, referencePath)
         for (const chunkName:string in normalizedEntryInjection)
-            if (normalizedEntryInjection.hasOwnProperty(chunkName)) {
+            if (Object.prototype.hasOwnProperty.call(
+                normalizedEntryInjection, chunkName
+            )) {
                 let index:number = 0
                 for (let moduleID:string of normalizedEntryInjection[
                     chunkName
@@ -842,7 +854,9 @@ export class Helper {
             let hasContent:boolean = false
             const chunkNamesToDelete:Array<string> = []
             for (const chunkName:string in entryInjection)
-                if (entryInjection.hasOwnProperty(chunkName))
+                if (Object.prototype.hasOwnProperty.call(
+                    entryInjection, chunkName
+                ))
                     if (Array.isArray(entryInjection[chunkName]))
                         if (entryInjection[chunkName].length > 0) {
                             hasContent = true
@@ -923,7 +937,9 @@ export class Helper {
                                 referencePath
                             )
                         for (const subChunkName:string in modules)
-                            if (modules.hasOwnProperty(subChunkName))
+                            if (Object.prototype.hasOwnProperty.call(
+                                modules, subChunkName
+                            ))
                                 injection[type][chunkName].push(
                                     modules[subChunkName])
                         /*
@@ -987,7 +1003,9 @@ export class Helper {
                             configurations are expected to be sorted in this
                             context).
                         */
-                        if (result.hasOwnProperty(moduleID))
+                        if (Object.prototype.hasOwnProperty.call(
+                            result, moduleID
+                        ))
                             result[relativeModuleFilePath] =
                                 relativeModuleFilePath
                         else
@@ -1100,7 +1118,8 @@ export class Helper {
                                         packageMainPropertyNames
                                     )
                                         if (
-                                            localConfiguration.hasOwnProperty(
+                                            Object.prototype.hasOwnProperty.call(
+                                                localConfiguration,
                                                 propertyName
                                             ) &&
                                             typeof localConfiguration[
@@ -1117,7 +1136,8 @@ export class Helper {
                                         packageAliasPropertyNames
                                     )
                                         if (
-                                            localConfiguration.hasOwnProperty(
+                                            Object.prototype.hasOwnProperty.call(
+                                                localConfiguration,
                                                 propertyName
                                             ) &&
                                             typeof localConfiguration[
@@ -1181,7 +1201,9 @@ export class Helper {
         moduleID:string, replacements:PlainObject
     ):string {
         for (const replacement:string in replacements)
-            if (replacements.hasOwnProperty(replacement))
+            if (Object.prototype.hasOwnProperty.call(
+                replacements, replacement
+            ))
                 moduleID = moduleID.replace(
                     new RegExp(replacement), replacements[replacement])
         return moduleID

@@ -209,7 +209,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
             .givenCommandLineArguments.length - 1],
         configuration, 'configuration')
 if (typeof result === 'object' && result !== null) {
-    if (result.hasOwnProperty('__reference__')) {
+    if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
         const referenceNames:Array<string> = [].concat(result.__reference__)
         delete result.__reference__
         for (const name:string of referenceNames)
@@ -226,7 +226,7 @@ if (Tools.isDirectorySync(configuration.path.target.base))
     for (const fileName:string of fileSystem.readdirSync(
         configuration.path.target.base
     ))
-        if (fileName.match(/^.*\.dll-manifest\.json$/))
+        if (/^.*\.dll-manifest\.json$/.exec(fileName))
             configuration.dllManifestFilePaths.push(path.resolve(
                 configuration.path.target.base, fileName))
 // / endregion
@@ -235,7 +235,7 @@ configuration.path.base = path.resolve(
     configuration.path.context, configuration.path.base)
 for (const key:string in configuration.path)
     if (
-        configuration.path.hasOwnProperty(key) &&
+        Object.prototype.hasOwnProperty.call(configuration.path, key) &&
         key !== 'base' &&
         typeof configuration.path[key] === 'string'
     )
@@ -250,7 +250,8 @@ for (const key:string in configuration.path)
             configuration.path.base, configuration.path[key].base)
         for (const subKey:string in configuration.path[key])
             if (
-                configuration.path[key].hasOwnProperty(subKey) &&
+                Object.prototype.hasOwnProperty.call(
+                    configuration.path[key], subKey) &&
                 !['base', 'public'].includes(subKey) &&
                 typeof configuration.path[key][subKey] === 'string'
             )
@@ -264,8 +265,8 @@ for (const key:string in configuration.path)
                     configuration.path[key][subKey].base)
                 for (const subSubKey:string in configuration.path[key][subKey])
                     if (
-                        configuration.path[key][subKey].hasOwnProperty(
-                            subSubKey
+                        Object.prototype.hasOwnProperty.call(
+                            configuration.path[key][subKey], subSubKey
                         ) &&
                         subSubKey !== 'base' &&
                         typeof configuration.path[key][subKey][
@@ -315,7 +316,9 @@ const defaultConfiguration:PlainObject =
     resolvedConfiguration.buildContext.types.default
 delete resolvedConfiguration.buildContext.types.default
 for (const type:string in resolvedConfiguration.buildContext.types)
-    if (resolvedConfiguration.buildContext.types.hasOwnProperty(type))
+    if (Object.prototype.hasOwnProperty.call(
+        resolvedConfiguration.buildContext.types, type
+    ))
         resolvedConfiguration.buildContext.types[type] = Tools.extend(
             true,
             {},
@@ -389,11 +392,11 @@ resolvedConfiguration.needed = {
         resolvedConfiguration.givenCommandLineArguments[2]
     )
 }
-for (const chunkName:string in resolvedConfiguration.injection.entry
-    .normalized
+for (
+    const chunkName:string in resolvedConfiguration.injection.entry.normalized
 )
-    if (resolvedConfiguration.injection.entry.normalized.hasOwnProperty(
-        chunkName
+    if (Object.prototype.hasOwnProperty.call(
+        resolvedConfiguration.injection.entry.normalized, chunkName
     ))
         for (const moduleID:string of resolvedConfiguration.injection.entry
             .normalized[chunkName]

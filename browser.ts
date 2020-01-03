@@ -68,8 +68,8 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     )
                     window.addEventListener('load', ():void => {
                         /*
-                            NOTE: Maybe we have miss the "DOMContentLoaded" event
-                            caused by a race condition.
+                            NOTE: Maybe we have miss the "DOMContentLoaded"
+                            event caused by a race condition.
                         */
                         browser.domContentLoaded = browser.windowLoaded = true
                     })

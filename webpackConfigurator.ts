@@ -55,7 +55,7 @@ const pluginNameResourceMapping:{[key:string]:string} = {
 }
 const plugins:Object = {}
 for (const name:string in pluginNameResourceMapping)
-    if (pluginNameResourceMapping.hasOwnProperty(name))
+    if (Object.prototype.hasOwnProperty.call(pluginNameResourceMapping, name))
         try {
             plugins[name] = require(pluginNameResourceMapping[name])
         } catch (error) {}
@@ -130,7 +130,9 @@ for (const ignorePattern:string of configuration.injection.ignorePattern)
 // // endregion
 // // region define modules to replace
 for (const source:string in configuration.module.replacements.normal)
-    if (configuration.module.replacements.normal.hasOwnProperty(source)) {
+    if (Object.prototype.hasOwnProperty.call(
+        configuration.module.replacements.normal, source
+    )) {
         const search:RegExp = new RegExp(source)
         pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
             search, (resource:{request:string}):void => {
@@ -204,7 +206,9 @@ pluginInstances.push({apply: (compiler:Object):void => {
         'applyModulePattern',
         (compilation:Object):void => {
             for (const request:string in compilation.assets)
-                if (compilation.assets.hasOwnProperty(request)) {
+                if (Object.prototype.hasOwnProperty.call(
+                    compilation.assets, request
+                )) {
                     const filePath:string = request.replace(/\?[^?]+$/, '')
                     const type:null|string = Helper.determineAssetType(
                         filePath,
@@ -304,8 +308,8 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
 // /// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'build:dll')
     for (const chunkName:string in configuration.injection.entry.normalized)
-        if (configuration.injection.entry.normalized.hasOwnProperty(
-            chunkName
+        if (Object.prototype.hasOwnProperty.call(
+            configuration.injection.entry.normalized, chunkName
         )) {
             const manifestFilePath:string =
                 `${configuration.path.target.base}/${chunkName}.` +
@@ -388,8 +392,9 @@ if (configuration.injection.external.modules === '__implicit__')
                     .aliases
             )
                 if (
-                    configuration.injection.external.aliases.hasOwnProperty(
-                        pattern) &&
+                    Object.prototype.hasOwnProperty.call(
+                        configuration.injection.external.aliases, pattern
+                    ) &&
                     pattern.startsWith('^')
                 ) {
                     const regularExpression:RegExp = new RegExp(pattern)
@@ -460,8 +465,8 @@ if (configuration.injection.external.modules === '__implicit__')
             const keys:Array<string> = [
                 'amd', 'commonjs', 'commonjs2', 'root']
             let result:PlainObject|string = resolvedRequest
-            if (configuration.injection.external.aliases.hasOwnProperty(
-                request
+            if (Object.prototype.hasOwnProperty.call(
+                configuration.injection.external.aliases, request
             )) {
                 // region normal alias replacement
                 result = {default: request}
@@ -493,13 +498,13 @@ if (configuration.injection.external.modules === '__implicit__')
                     Tools.extend(
                         result,
                         configuration.injection.external.aliases[request])
-                if (result.hasOwnProperty('default'))
+                if (Object.prototype.hasOwnProperty.call(result, 'default'))
                     for (const key:string of keys)
-                        if (!result.hasOwnProperty(key))
+                        if (!Object.prototype.hasOwnProperty.call(result, key))
                             result[key] = result.default
                 // endregion
             }
-            if (result.hasOwnProperty('root'))
+            if (Object.prototype.hasOwnProperty.call(result, 'root'))
                 result.root = [].concat(result.root).map((
                     name:string
                 ):string => Tools.stringConvertToValidVariableName(name))
@@ -522,8 +527,8 @@ if (configuration.injection.external.modules === '__implicit__')
 if (configuration.givenCommandLineArguments[2] === 'build:dll') {
     let dllChunkExists:boolean = false
     for (const chunkName:string in configuration.injection.entry.normalized)
-        if (configuration.injection.entry.normalized.hasOwnProperty(
-            chunkName
+        if (Object.prototype.hasOwnProperty.call(
+            configuration.injection.entry.normalized, chunkName
         ))
             if (configuration.injection.dllChunkNames.includes(chunkName))
                 dllChunkExists = true
@@ -615,7 +620,9 @@ if (htmlAvailable)
                     script: 'src'
                 }
                 for (const tagName:string in linkables)
-                    if (linkables.hasOwnProperty(tagName))
+                    if (Object.prototype.hasOwnProperty.call(
+                        linkables, tagName
+                    ))
                         for (
                             const domNode:DomNode of
                             dom.window.document.querySelectorAll(
@@ -662,10 +669,11 @@ if (htmlAvailable)
                             htmlFileSpecification.template.use
                         )
                             if (
-                                loaderConfiguration.hasOwnProperty(
-                                    'options') &&
-                                loaderConfiguration.options.hasOwnProperty(
-                                    'compileSteps'
+                                Object.prototype.hasOwnProperty.call(
+                                    loaderConfiguration, 'options'
+                                ) &&
+                                Object.prototype.hasOwnProperty.call(
+                                    loaderConfiguration.options, 'compileSteps'
                                 ) &&
                                 typeof loaderConfiguration.options
                                     .compileSteps ===
@@ -1332,7 +1340,9 @@ if (
         result = require(configuration.path.configuration.javaScript)
     } catch (error) {}
     if (result)
-        if (result.hasOwnProperty('replaceWebOptimizer'))
+        if (Object.prototype.hasOwnProperty.call(
+            result, 'replaceWebOptimizer'
+        ))
             webpackConfiguration = webpackConfiguration.replaceWebOptimizer
         else
             Tools.extend(true, webpackConfiguration, result)
