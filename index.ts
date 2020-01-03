@@ -25,7 +25,9 @@ import {promises as fileSystem} from 'fs'
 import path from 'path'
 import removeDirectoryRecursively from 'rimraf'
 
+// @ts-ignore: Will be available at runtime.
 import configuration from './configurator.compiled'
+// @ts-ignore: Will be available at runtime.
 import Helper from './helper.compiled'
 import {ResolvedBuildConfiguration} from './type'
 // endregion
@@ -38,7 +40,7 @@ process.env.UV_THREADPOOL_SIZE = 128
 const main = async ():Promise<void> => {
     try {
         // region controller
-        const childProcessOptions:Object = {
+        const childProcessOptions:Record<string, any> = {
             cwd: configuration.path.context,
             env: process.env,
             shell: true,
@@ -73,7 +75,7 @@ const main = async ():Promise<void> => {
                     configuration, 'configuration')
             )
                 configuration.givenCommandLineArguments.pop()
-            let count:number = 0
+            let count = 0
             let filePath:string = path.resolve(
                 configuration.path.context,
                 `.dynamicConfiguration-${count}.json`
@@ -135,8 +137,7 @@ const main = async ():Promise<void> => {
                             ))
                                 return false
                             for (
-                                const type:string in
-                                configuration.buildContext.types
+                                const type in configuration.buildContext.types
                             )
                                 if (new RegExp(
                                     configuration.buildContext.types[
@@ -165,12 +166,13 @@ const main = async ():Promise<void> => {
                         }
                     )
                     for (
-                        const file:File of (
+                        const file of (
                             await Tools.walkDirectoryRecursively(
                                 configuration.path.target.base,
                                 ():false => false,
                                 configuration.encoding
-                            ))
+                            )
+                        )
                     )
                         if (
                             file.name.length > '.dll-manifest.json'.length &&
@@ -228,7 +230,7 @@ const main = async ():Promise<void> => {
             if (['build', 'build:dll', 'document', 'test'].includes(
                 process.argv[2]
             )) {
-                let tidiedUp:boolean = false
+                let tidiedUp = false
                 const tidyUp:Function = ():void => {
                     /*
                         Determines all none javaScript entities which have been
@@ -238,13 +240,13 @@ const main = async ():Promise<void> => {
                         return
                     tidiedUp = true
                     for (
-                        const chunkName:string in
+                        const chunkName in
                         configuration.injection.entry.normalized
                     )
                         if (configuration.injection.entry.normalized
                             .hasOwnProperty(chunkName)
                         )
-                            for (const moduleID:string of
+                            for (const moduleID of
                                 configuration.injection.entry.normalized[
                                     chunkName]
                             ) {
@@ -341,7 +343,7 @@ const main = async ():Promise<void> => {
                         ...parameter:Array<any>
                     ):void => {
                         for (
-                            const filePath:string of
+                            const filePath of
                             configuration.files.additionalPaths
                         ) {
                             const sourcePath:string = path.join(
@@ -368,7 +370,7 @@ const main = async ():Promise<void> => {
                             copyAdditionalFilesAndTidyUp :
                             tidyUp
                     )
-                    for (const closeEventName:string of Tools.closeEventNames)
+                    for (const closeEventName of Tools.closeEventNames)
                         childProcess.on(closeEventName, closeHandler)
                     childProcesses.push(childProcess)
                 }))
@@ -393,10 +395,10 @@ const main = async ():Promise<void> => {
                         configuration.path.ignore
                     ).filePaths
                 for (const buildConfiguration of buildConfigurations)
-                    for (const filePath:string of buildConfiguration.filePaths)
+                    for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
                             const evaluationFunction = (
-                                global:Object, self:PlainObject,
+                                global:Record<string, any>, self:PlainObject,
                                 buildConfiguration:PlainObject,
                                 path:typeof path,
                                 additionalArguments:Array<string>,
@@ -431,14 +433,14 @@ const main = async ():Promise<void> => {
             // endregion
             // region handle remaining tasks
             const handleTask = (type:string):void => {
-                let tasks:Array<Object>
+                let tasks:Array<Record<string, any>>
                 if (Array.isArray(configuration.commandLine[type]))
                     tasks = configuration.commandLine[type]
                 else
                     tasks = [configuration.commandLine[type]]
-                for (const task:Object of tasks) {
+                for (const task of tasks) {
                     const evaluationFunction = (
-                        global:Object, self:PlainObject, path:typeof path
+                        global:Record<string, any>, self:PlainObject, path:typeof path
                     ):boolean =>
                         new Function(
                             'global', 'self', 'path',
@@ -463,10 +465,7 @@ const main = async ():Promise<void> => {
                                     childProcessOptions)
                             const closeHandler:Function =
                                 Tools.getProcessCloseHandler(resolve, reject)
-                            for (
-                                const closeEventName:string of
-                                Tools.closeEventNames
-                            )
+                            for (const closeEventName of Tools.closeEventNames)
                                 childProcess.on(closeEventName, closeHandler)
                             childProcesses.push(childProcess)
                         }))
@@ -485,14 +484,14 @@ const main = async ():Promise<void> => {
             // / endregion
             // endregion
         }
-        let finished:boolean = false
+        let finished = false
         const closeHandler = (...parameter:Array<any>):void => {
             if (!finished)
-                for (const closeEventHandler:Function of closeEventHandlers)
+                for (const closeEventHandler of closeEventHandlers)
                     closeEventHandler(...parameter)
             finished = true
         }
-        for (const closeEventName:string of Tools.closeEventNames)
+        for (const closeEventName of Tools.closeEventNames)
             process.on(closeEventName, closeHandler)
         if (require.main === module && (
             configuration.givenCommandLineArguments.length < 3 ||

@@ -14,6 +14,7 @@
     endregion
 */
 // region imports
+// @ts-ignore: Will be available at runtime.
 import configuration from './configurator.compiled'
 // endregion
 module.exports = configuration.stylelint

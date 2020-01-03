@@ -5,8 +5,9 @@
 declare const expect:Function
 declare const test:Function
 // endregion
-test('configurator', ():void =>
-    expect(require('../configurator.compiled').default.name)
+test('configurator', async ():Promise<void> =>
+    // @ts-ignore: Will be available at runtime.
+    expect((await import('../configurator.compiled')).default.name)
         .toStrictEqual('mockup')
 )
 // region vim modline

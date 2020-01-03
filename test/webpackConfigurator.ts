@@ -10,10 +10,11 @@ import {WebpackConfiguration} from '../type'
 declare const expect:Function
 declare const test:Function
 // endregion
-test('webpackConfigurator', ():void => {
-    const webpackConfiguration:WebpackConfiguration = require(
+test('webpackConfigurator', async ():Promise<void> => {
+    // @ts-ignore: Will be available at runtime.
+    const webpackConfiguration:WebpackConfiguration = (await import(
         '../webpackConfigurator.compiled'
-    ).default
+    )).default
     expect(webpackConfiguration.entry.index).toContain('./index.ts')
     webpackConfiguration.output.path = __dirname
     webpackConfiguration.output.filename = 'dummy.compiled.js'

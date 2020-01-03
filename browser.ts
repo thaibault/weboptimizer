@@ -45,15 +45,18 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
         ])
             virtualConsole.on(name, console[name].bind(console))
-        virtualConsole.on('error', (error:Error):void => {
-            if (
-                !browser.debug &&
-                ['XMLHttpRequest', 'resource loading'].includes(error.type)
-            )
-                console.warn(`Loading resource failed: ${error.toString()}.`)
-            else
-                console.error(error.stack, error.detail)
-        })
+        virtualConsole.on(
+            'error',
+            (error:{type:string;stack:any;detail:any}):void => {
+                if (
+                    !browser.debug &&
+                    ['XMLHttpRequest', 'resource loading'].includes(error.type)
+                )
+                    console.warn(`Loading resource failed: ${error.toString()}.`)
+                else
+                    console.error(error.stack, error.detail)
+            }
+        )
         const render:Function = (template:string):void => {
             browser.DOM = JSDOM
             browser.initialized = true
@@ -68,12 +71,12 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     )
                     window.addEventListener('load', ():void => {
                         /*
-                            NOTE: Maybe we have miss the "DOMContentLoaded" event
-                            caused by a race condition.
+                            NOTE: Maybe we have miss the "DOMContentLoaded"
+                            event caused by a race condition.
                         */
                         browser.domContentLoaded = browser.windowLoaded = true
                     })
-                    for (const callback:Function of onCreatedListener)
+                    for (const callback of onCreatedListener)
                         callback()
                 },
                 resources: 'usable',
@@ -85,20 +88,23 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
         if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
             const filePath:string = path.join(__dirname, 'index.html.ejs')
             /*
-                NOTE: We load dependencies now to avoid having file imports after
-                test runner has finished to isolate the environment.
+                NOTE: We load dependencies now to avoid having file imports
+                after test runner has finished to isolate the environment.
             */
-            const ejsLoader = require('./ejsLoader.compiled.js')
-            require('fs').readFile(
-                filePath,
-                {encoding: 'utf-8'},
-                (error:Error|null, content:string):void => {
-                    if (error)
-                        throw error
-                    render(ejsLoader.bind({filename: filePath})(content))
-                }
+            // @ts-ignore: Will be available at runtime.
+            import('./ejsLoader.compiled.js').then(({default: ejsLoader}) =>
+                require('fs').readFile(
+                    filePath,
+                    {encoding: 'utf-8'},
+                    (error:Error|null, content:string):void => {
+                        if (error)
+                            throw error
+                        render(ejsLoader.bind({filename: filePath})(content))
+                    }
+                )
             )
         } else
+            // @ts-ignore: Will be available at runtime.
             import('webOptimizerDefaultTemplateFilePath').then(render)
     })
     // endregion
@@ -112,7 +118,7 @@ else {
         browser.windowLoaded = true
     })
     Tools.timeout(():void => {
-        for (const callback:Function of onCreatedListener)
+        for (const callback of onCreatedListener)
             callback()
     })
 }
@@ -140,6 +146,7 @@ export const getInitializedBrowser = async (
             typeof global !== 'undefined' &&
             global !== browser.window
         )
+            // @ts-ignore: We modify again global object's specification.
             global.window = browser.window
         resolvePromise(browser)
     }
