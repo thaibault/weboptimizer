@@ -54,7 +54,7 @@ const pluginNameResourceMapping:{[key:string]:string} = {
     Offline: 'offline-plugin'
 }
 const plugins:Record<string, any> = {}
-for (const name:string in pluginNameResourceMapping)
+for (const name in pluginNameResourceMapping)
     if (Object.prototype.hasOwnProperty.call(pluginNameResourceMapping, name))
         try {
             plugins[name] = require(pluginNameResourceMapping[name])
@@ -62,13 +62,16 @@ for (const name:string in pluginNameResourceMapping)
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
 
+// @ts-ignore: Will be available at runtime.
 import ejsLoader from './ejsLoader.compiled'
 /* eslint-disable no-unused-vars */
 import {
     HTMLConfiguration, PluginConfiguration, WebpackConfiguration
 } from './type'
 /* eslint-enable no-unused-vars */
+// @ts-ignore: Will be available at runtime.
 import configuration from './configurator.compiled'
+// @ts-ignore: Will be available at runtime.
 import Helper from './helper.compiled'
 
 // / region monkey patches
@@ -125,11 +128,11 @@ const pluginInstances:Array<Record<string, any>> = [
     new webpack.optimize.OccurrenceOrderPlugin(true)
 ]
 // // region define modules to ignore
-for (const ignorePattern:string of configuration.injection.ignorePattern)
+for (const ignorePattern of configuration.injection.ignorePattern)
     pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
 // // endregion
 // // region define modules to replace
-for (const source:string in configuration.module.replacements.normal)
+for (const source in configuration.module.replacements.normal)
     if (Object.prototype.hasOwnProperty.call(
         configuration.module.replacements.normal, source
     )) {
@@ -144,7 +147,7 @@ for (const source:string in configuration.module.replacements.normal)
 // // region generate html file
 let htmlAvailable = false
 if (configuration.givenCommandLineArguments[2] !== 'build:dll')
-    for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
+    for (const htmlConfiguration of configuration.files.html)
         if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
             pluginInstances.push(new plugins.HTML(Tools.extend(
                 {},
@@ -168,14 +171,14 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
     ))
-        for (const type:Array<string> of [
+        for (const type of [
             ['cascadingStyleSheet', 'css'],
             ['javaScript', 'js']
         ])
             if (configuration.inPlace[type[0]]) {
                 const matches:Array<string> = Object.keys(
                     configuration.inPlace[type[0]])
-                for (const name:string of matches)
+                for (const name of matches)
                     configuration.offline.excludes.push(path.relative(
                         configuration.path.target.base,
                         configuration.path.target.asset[type[0]]
@@ -205,7 +208,7 @@ pluginInstances.push({apply: (compiler:Record<string, any>):void => {
     compiler.hooks.emit.tap(
         'applyModulePattern',
         (compilation:Record<string, any>):void => {
-            for (const request:string in compilation.assets)
+            for (const request in compilation.assets)
                 if (Object.prototype.hasOwnProperty.call(
                     compilation.assets, request
                 )) {
@@ -282,16 +285,14 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                 data:Record<string, any>, callback:ProcedureFunction
             ):Promise<void> => {
                 let promises:Array<Promise<void>> = []
-                for (const path:string of filePathsToRemove)
+                for (const path of filePathsToRemove)
                     if (await Tools.isFile(path))
                         promises.push(fileSystem.unlink(path).catch(
                             console.error
                         ))
                 await Promise.all(promises)
                 promises = []
-                for (
-                    const type:string of ['javaScript', 'cascadingStyleSheet']
-                )
+                for (const type of ['javaScript', 'cascadingStyleSheet'])
                     promises.push(fileSystem.readdir(
                         configuration.path.target.asset[type],
                         {encoding: configuration.encoding}
@@ -307,7 +308,7 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
 // /// endregion
 // /// region remove chunks if a corresponding dll package exists
 if (configuration.givenCommandLineArguments[2] !== 'build:dll')
-    for (const chunkName:string in configuration.injection.entry.normalized)
+    for (const chunkName in configuration.injection.entry.normalized)
         if (Object.prototype.hasOwnProperty.call(
             configuration.injection.entry.normalized, chunkName
         )) {
@@ -361,7 +362,7 @@ if (configuration.injection.external.modules === '__implicit__')
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
-        for (const filePath:string of configuration.module.directoryNames)
+        for (const filePath of configuration.module.directoryNames)
             if (request.startsWith(filePath)) {
                 request = request.substring(filePath.length)
                 if (request.startsWith('/'))
@@ -387,10 +388,7 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.encoding
         )
         if (filePath)
-            for (
-                const pattern:string in configuration.injection.external
-                    .aliases
-            )
+            for (const pattern in configuration.injection.external.aliases)
                 if (
                     Object.prototype.hasOwnProperty.call(
                         configuration.injection.external.aliases, pattern
@@ -475,7 +473,7 @@ if (configuration.injection.external.modules === '__implicit__')
                         request
                     ] === 'string'
                 )
-                    for (const key:string of keys)
+                    for (const key of keys)
                         result[key] =
                             configuration.injection.external.aliases[request]
                 else if (
@@ -483,7 +481,7 @@ if (configuration.injection.external.modules === '__implicit__')
                         request
                     ] === 'function'
                 )
-                    for (const key:string of keys)
+                    for (const key of keys)
                         result[key] =
                             configuration.injection.external.aliases[request](
                                 request, key)
@@ -499,7 +497,7 @@ if (configuration.injection.external.modules === '__implicit__')
                         result,
                         configuration.injection.external.aliases[request])
                 if (Object.prototype.hasOwnProperty.call(result, 'default'))
-                    for (const key:string of keys)
+                    for (const key of keys)
                         if (!Object.prototype.hasOwnProperty.call(result, key))
                             result[key] = result.default
                 // endregion
@@ -526,7 +524,7 @@ if (configuration.injection.external.modules === '__implicit__')
 // /// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'build:dll') {
     let dllChunkExists = false
-    for (const chunkName:string in configuration.injection.entry.normalized)
+    for (const chunkName in configuration.injection.entry.normalized)
         if (Object.prototype.hasOwnProperty.call(
             configuration.injection.entry.normalized, chunkName
         ))
@@ -555,11 +553,9 @@ if (htmlAvailable)
         compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(
             'removeDummyHTMLTags',
             (data:PlainObject, callback:Function):void => {
-                for (const tags:Array<PlainObject> of [
-                    data.body, data.head
-                ]) {
+                for (const tags of [data.body, data.head]) {
                     let index = 0
-                    for (const tag:PlainObject of tags) {
+                    for (const tag of tags) {
                         if (/^\.__dummy__(\..*)?$/.test(path.basename(
                             tag.attributes.src || tag.attributes.href || ''
                         )))
@@ -570,7 +566,7 @@ if (htmlAvailable)
                 const assets:Array<string> = JSON.parse(
                     data.plugin.assetJson)
                 let index = 0
-                for (const assetRequest:string of assets) {
+                for (const assetRequest of assets) {
                     if (/^\.__dummy__(\..*)?$/.test(path.basename(
                         assetRequest
                     )))
@@ -619,12 +615,12 @@ if (htmlAvailable)
                     link: 'href',
                     script: 'src'
                 }
-                for (const tagName:string in linkables)
+                for (const tagName in linkables)
                     if (Object.prototype.hasOwnProperty.call(
                         linkables, tagName
                     ))
                         for (
-                            const domNode:DomNode of
+                            const domNode of
                             dom.window.document.querySelectorAll(
                                 `${tagName}[${linkables[tagName]}*="?` +
                                 `${configuration.hashAlgorithm}="]`)
@@ -657,7 +653,7 @@ if (htmlAvailable)
                         `${startTag}${styleContents.shift()}${endTag}`)
                 // region post compilation
                 for (
-                    const htmlFileSpecification:PlainObject of
+                    const htmlFileSpecification of
                     configuration.files.html
                 )
                     if (
@@ -665,7 +661,7 @@ if (htmlAvailable)
                         data.plugin.options.filename
                     ) {
                         for (
-                            const loaderConfiguration:PlainObject of
+                            const loaderConfiguration of
                             htmlFileSpecification.template.use
                         )
                             if (
@@ -687,8 +683,9 @@ if (htmlAvailable)
                                             loaderConfiguration.options || {}
                                         },
                                         {options: {
-                                            compileSteps: htmlFileSpecification
-                                                .template.postCompileSteps
+                                            compileSteps:
+                                                htmlFileSpecification.template
+                                                    .postCompileSteps
                                         }}
                                     )
                                 )(data.html)
@@ -708,10 +705,7 @@ if (plugins.Imagemin)
         configuration.module.optimizer.image.content))
 // // endregion
 // // region context replacements
-for (
-    const contextReplacement:Array<string> of
-    configuration.module.replacements.context
-)
+for (const contextReplacement of configuration.module.replacements.context)
     pluginInstances.push(new webpack.ContextReplacementPlugin(
         ...contextReplacement.map((value:string):any => (new Function(
             'configuration', '__dirname', '__filename', `return ${value}`
@@ -732,7 +726,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                 // Avoid finding the same artefact.
                 pathPrefixes.pop()
                 let index = 0
-                for (const pathPrefix:string of pathPrefixes) {
+                for (const pathPrefix of pathPrefixes) {
                     if (index > 0)
                         pathPrefixes[index] = path.resolve(
                             pathPrefixes[index - 1], pathPrefix)
@@ -741,7 +735,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                 const pathSuffix:string = targetPath.replace(
                     /(?:^|.*\/)node_modules\/(.+$)/, '$1')
                 let redundantRequest:PlainObject
-                for (const pathPrefix:string of pathPrefixes) {
+                for (const pathPrefix of pathPrefixes) {
                     const alternateTargetPath:string = path.resolve(
                         pathPrefix, pathSuffix)
                     if (Tools.isFileSync(alternateTargetPath)) {
@@ -872,7 +866,7 @@ Tools.extend(loader, {
             const result:any = evaluate(
                 configuration.module.preprocessor.javaScript.include, filePath)
             if ([null, undefined].includes(result)) {
-                for (const includePath:string of includingPaths)
+                for (const includePath of includingPaths)
                     if (filePath.startsWith(includePath))
                         return true
                 return false
@@ -1222,7 +1216,7 @@ if (
 }
 // / endregion
 // endregion
-for (const pluginConfiguration:PluginConfiguration of configuration.plugins)
+for (const pluginConfiguration of configuration.plugins)
     pluginInstances.push(new (eval('require')(pluginConfiguration.name.module)[
         pluginConfiguration.name.initializer
     ])(...pluginConfiguration.parameter))
@@ -1331,7 +1325,7 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
                                         configuration.inPlace.javaScript !==
                                             null
                                     )
-                                        for (const name:string of Object.keys(
+                                        for (const name of Object.keys(
                                             configuration.inPlace.javaScript
                                         ))
                                             if (

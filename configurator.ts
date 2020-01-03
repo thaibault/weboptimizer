@@ -18,6 +18,7 @@ import Tools, {PlainObject} from 'clientnode'
 import fileSystem from 'fs'
 import path from 'path'
 
+// @ts-ignore: Will be available at runtime.
 import Helper from './helper.compiled'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
 // variable named "metaConfiguration".
@@ -164,13 +165,13 @@ if (filePath) {
 const taskTypes:Array<string> = [
     'build', 'debug', 'document', 'serve', 'test', 'test:browser']
 if (runtimeInformation.givenCommandLineArguments.length > 2)
-    for (const type:string of taskTypes)
+    for (const type of taskTypes)
         if (
             runtimeInformation.givenCommandLineArguments[2] === type ||
             debug &&
             type == 'debug'
         )
-            for (const configurationTarget:PlainObject of [
+            for (const configurationTarget of [
                 configuration, specificConfiguration
             ])
                 if (typeof configurationTarget[type] === 'object')
@@ -182,10 +183,8 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
                     )
 // /// endregion
 // /// region clear task type specific configurations
-for (const type:string of taskTypes)
-    for (const configurationTarget:PlainObject of [
-        configuration, specificConfiguration
-    ])
+for (const type of taskTypes)
+    for (const configurationTarget of [configuration, specificConfiguration])
         if (
             Object.prototype.hasOwnProperty.call(configurationTarget, type) &&
             typeof configurationTarget[type] === 'object'
@@ -212,7 +211,7 @@ if (typeof result === 'object' && result !== null) {
     if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
         const referenceNames:Array<string> = [].concat(result.__reference__)
         delete result.__reference__
-        for (const name:string of referenceNames)
+        for (const name of referenceNames)
             Tools.extend(true, result, configuration[name])
     }
     Tools.extend(true, Tools.modifyObject(configuration, result), result)
@@ -223,7 +222,7 @@ configuration = Tools.removeKeys(configuration)
 // / region determine existing pre compiled dll manifests file paths
 configuration.dllManifestFilePaths = []
 if (Tools.isDirectorySync(configuration.path.target.base))
-    for (const fileName:string of fileSystem.readdirSync(
+    for (const fileName of fileSystem.readdirSync(
         configuration.path.target.base
     ))
         if (/^.*\.dll-manifest\.json$/.exec(fileName))
@@ -233,7 +232,7 @@ if (Tools.isDirectorySync(configuration.path.target.base))
 // / region build absolute paths
 configuration.path.base = path.resolve(
     configuration.path.context, configuration.path.base)
-for (const key:string in configuration.path)
+for (const key in configuration.path)
     if (
         Object.prototype.hasOwnProperty.call(configuration.path, key) &&
         key !== 'base' &&
@@ -248,7 +247,7 @@ for (const key:string in configuration.path)
     ) {
         configuration.path[key].base = path.resolve(
             configuration.path.base, configuration.path[key].base)
-        for (const subKey:string in configuration.path[key])
+        for (const subKey in configuration.path[key])
             if (
                 Object.prototype.hasOwnProperty.call(
                     configuration.path[key], subKey) &&
@@ -263,7 +262,7 @@ for (const key:string in configuration.path)
                 configuration.path[key][subKey].base = path.resolve(
                     configuration.path[key].base,
                     configuration.path[key][subKey].base)
-                for (const subSubKey:string in configuration.path[key][subKey])
+                for (const subSubKey in configuration.path[key][subKey])
                     if (
                         Object.prototype.hasOwnProperty.call(
                             configuration.path[key][subKey], subSubKey
@@ -315,7 +314,7 @@ export const resolvedConfiguration:ResolvedConfiguration =
 const defaultConfiguration:PlainObject =
     resolvedConfiguration.buildContext.types.default
 delete resolvedConfiguration.buildContext.types.default
-for (const type:string in resolvedConfiguration.buildContext.types)
+for (const type in resolvedConfiguration.buildContext.types)
     if (Object.prototype.hasOwnProperty.call(
         resolvedConfiguration.buildContext.types, type
     ))
@@ -368,11 +367,10 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore
 )
-const entryInjection:any = resolvedConfiguration.injection.entry
 resolvedConfiguration.injection.entry = {
     given: resolvedConfiguration.injection.entry,
     normalized: Helper.resolveModulesInFolders(
-        Helper.normalizeEntryInjection(entryInjection),
+        Helper.normalizeEntryInjection(resolvedConfiguration.injection.entry),
         resolvedConfiguration.module.aliases,
         resolvedConfiguration.module.replacements.normal,
         resolvedConfiguration.path.context,
@@ -388,18 +386,19 @@ resolvedConfiguration.injection.entry = {
     )
 }
 resolvedConfiguration.needed = {
-    javaScript: configuration.debug && ['serve', 'test:browser'].includes(
-        resolvedConfiguration.givenCommandLineArguments[2]
-    )
+    javaScript:
+        configuration.debug &&
+        ['serve', 'test:browser'].includes(
+            resolvedConfiguration.givenCommandLineArguments[2]
+        )
 }
-for (
-    const chunkName:string in resolvedConfiguration.injection.entry.normalized
-)
+for (const chunkName in resolvedConfiguration.injection.entry.normalized)
     if (Object.prototype.hasOwnProperty.call(
         resolvedConfiguration.injection.entry.normalized, chunkName
     ))
-        for (const moduleID:string of resolvedConfiguration.injection.entry
-            .normalized[chunkName]
+        for (
+            const moduleID of
+            resolvedConfiguration.injection.entry.normalized[chunkName]
         ) {
             const filePath:null|string = Helper.determineModuleFilePath(
                 moduleID,
@@ -441,9 +440,7 @@ for (
 // NOTE: This alias couldn't be set in the "package.json" file since this would
 // result in an endless loop.
 resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader = ''
-for (const loader:PlainObject of resolvedConfiguration.files.defaultHTML
-    .template.use
-) {
+for (const loader of resolvedConfiguration.files.defaultHTML.template.use) {
     if (
         resolvedConfiguration.loader.aliases
             .webOptimizerDefaultTemplateFileLoader
@@ -465,10 +462,7 @@ resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath$ =
     NOTE: Provides a workaround to handle a bug with chained loader
     configurations.
 */
-for (
-    const htmlConfiguration:HTMLConfiguration of
-    resolvedConfiguration.files.html
-) {
+for (const htmlConfiguration of resolvedConfiguration.files.html) {
     Tools.extend(
         true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)
     htmlConfiguration.template.request = htmlConfiguration.template.filePath
@@ -477,14 +471,17 @@ for (
             resolvedConfiguration.files.defaultHTML.template.filePath &&
         htmlConfiguration.template.options
     ) {
-        const requestString:Record<string, any> = new String(
+        const requestString:string = new String(
             htmlConfiguration.template.request +
             Tools.convertCircularObjectToJSON(
-                htmlConfiguration.template.options))
-        requestString.replace = ((string:string):Function => (
-            _search:RegExp|string,
-            _replacement:string|Function
-        ):string => string)(htmlConfiguration.template.filePath)
+                htmlConfiguration.template.options
+            )
+        )
+        /* eslint-disable @typescript-eslint/unbound-method */
+        requestString.replace = (
+            (value:string):Function => ():string => value
+        )(htmlConfiguration.template.filePath)
+        /* eslint-enable @typescript-eslint/unbound-method */
         htmlConfiguration.template.request = requestString
     }
 }

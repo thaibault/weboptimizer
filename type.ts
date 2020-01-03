@@ -21,10 +21,10 @@ import {PlainObject, ProcedureFunction, Window} from 'clientnode'
 export type Browser = {
     debug:boolean;
     domContentLoaded:boolean;
-    DOM:?Record<string, any>;
+    DOM?:null|Record<string, any>;
     initialized:boolean;
     instance:null|Record<string, any>;
-    window:Window;
+    window:null|Window;
     windowLoaded:boolean;
 }
 // / endregion
@@ -84,12 +84,12 @@ export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
 export type Command = {
     arguments:Array<string>;
     command:string;
-    indicator:?string;
+    indicator?:string;
 }
 export type Path = {
     apiDocumentation:string;
     base:string;
-    configuration?:?{javaScript?:?string};
+    configuration:{javaScript:null|string};
     context:string;
     ignore:Array<string>;
     source:{
@@ -244,12 +244,12 @@ export type ResolvedConfiguration = {
         html:LoaderConfiguration;
         locations:{filePaths:Array<string>;directoryPaths:Array<string>};
         optimizer:{
-            babelMinify:?{
-                bundle:?{
-                    plugin:?PlainObject;
-                    transform:?PlainObject;
+            babelMinify?:{
+                bundle?:{
+                    plugin?:PlainObject;
+                    transform?:PlainObject;
                 };
-                module:?PlainObject;
+                module?:PlainObject;
             };
             cssnano:PlainObject;
             data:LoaderConfiguration;
@@ -259,7 +259,7 @@ export type ResolvedConfiguration = {
                 ttf:LoaderConfiguration;
                 woff:LoaderConfiguration;
             };
-            htmlMinifier:?PlainObject;
+            htmlMinifier?:PlainObject;
             image:{
                 additional:Additional;
                 content:PlainObject;

@@ -419,6 +419,9 @@
       },
       "extensions": {
         "file": {
+          "external": {
+            "__evaluate__": "['.compiled.js'].concat(self.targetTechnology === 'node' ? ['.js', '.json'] : self.extensions.file.internal)"
+          },
           "internal": [
             ".js",
             ".ts",
@@ -436,10 +439,7 @@
             ".woff2",
             ".html.ejs",
             ".ejs"
-          ],
-          "external": {
-            "__evaluate__": "['.compiled.js'].concat(self.targetTechnology === 'node' ? ['.js', '.json'] : self.extensions.file.internal)"
-          }
+          ]
         },
         "module": []
       },

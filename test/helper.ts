@@ -14,6 +14,7 @@ import {
     Path,
     ResolvedBuildConfiguration
 } from '../type'
+// @ts-ignore: Will be available at runtime.
 import Helper from '../helper.compiled'
 // endregion
 // region declarations
@@ -430,8 +431,7 @@ describe('helper', ():void => {
                     },
                     base: '',
                     manifest: '',
-                    public: '',
-                    target: ''
+                    public: ''
                 },
                 ignore: [],
                 tidyUp: [],

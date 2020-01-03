@@ -14,7 +14,9 @@
     endregion
 */
 // region imports
-import {transformSync as babelTransformSync} from '@babel/core'
+import {
+    BabelFileResult, transformSync as babelTransformSync
+} from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
 /*
     NOTE: Would result in error: "TypeError:
@@ -30,42 +32,77 @@ import {minify as minifyHTML} from 'html-minifier'
 import * as loaderUtils from 'loader-utils'
 import path from 'path'
 
+// @ts-ignore: Will be available at runtime.regionendregion
 import configuration from './configurator.compiled'
+// @ts-ignore: Will be available at runtime.
 import Helper from './helper.compiled'
 // endregion
 // region types
-type TemplateFunction = (locals:Record<string, any>) => string
+type TemplateFunction = (locals:Record<string, unknown>) => string
+type CompilerOptions = {
+    cache?:boolean;
+    client:boolean;
+    compileDebug:boolean;
+    debug:boolean;
+    encoding?:string;
+    filename:string;
+    isString:boolean;
+}
 type CompileFunction = (
-    template:string, options:Record<string, any>, compileSteps?:number
+    template:string, options:CompilerOptions, compileSteps?:number
 ) => TemplateFunction
 // endregion
-module.exports = function(source:string):string {
+module.exports = function(this:any, source:string):string {
     if ('cachable' in this && this.cacheable)
         this.cacheable()
-    const query:Record<string, any> = Tools.convertSubstringInPlainObject(
+    const query:{
+        compiler:CompilerOptions;
+        compileSteps: number;
+        compress:{
+            html:Record<string, unknown>;
+            javaScript:Record<string, unknown>;
+        };
+        context:string;
+        extensions:{
+            file:{
+                external:Array<string>;
+                internal:Array<string>;
+            };
+            module:Array<string>;
+        };
+        locals?:Record<string, unknown>;
+        module:{
+            aliases:Record<string, string>;
+            replacements:Record<string, string>;
+        };
+        [key:string]: unknown;
+    } = Tools.convertSubstringInPlainObject(
         Tools.extend(
             true,
             {
+                compileSteps: 2,
                 compress: {
                     html: {},
                     javaScript: {}
                 },
                 context: './',
                 extensions: {
-                    file: [
-                        '.js', '.json',
-                        '.css',
-                        '.svg', '.png', '.jpg', '.gif', '.ico',
-                        '.html',
-                        '.eot', '.ttf', '.woff', '.woff2'
-                    ],
+                    file: {
+                        external: [],
+                        internal: [
+                            '.js', '.json',
+                            '.css',
+                            '.svg', '.png', '.jpg', '.gif', '.ico',
+                            '.html',
+                            '.eot', '.ttf', '.woff', '.woff2'
+                        ]
+                    },
                     module: []
                 },
                 module: {
                     aliases: {},
                     replacements: {}
-                },
-                compileSteps: 2
+                }
             },
             this.options || {},
             'query' in this ? loaderUtils.getOptions(this) || {} : {}
@@ -75,36 +112,37 @@ module.exports = function(source:string):string {
     )
     const compile:CompileFunction = (
         template:string,
-        options:Record<string, any> = query.compiler,
+        options:CompilerOptions = query.compiler,
         compileSteps = 2
-    ):TemplateFunction => (locals:Record<string, any> = {}):string => {
+    ):TemplateFunction => (locals:Record<string, unknown> = {}):string => {
         options = Tools.extend(true, {filename: template}, options)
         const require:Function = (
-            request:string, nestedLocals:Record<string, any> = {}
+            request:string, nestedLocals:Record<string, unknown> = {}
         ):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
-            const queryMatch:Array<string>|null = request.match(/^[^?]+\?(.+)$/)
+            const queryMatch:Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
             if (queryMatch) {
                 const evaluationFunction = (
                     request:string,
                     template:string, source:string,
                     compile:CompileFunction,
-                    locals:Record<string, any>
-                ):Record<string, any> => new Function(
-                    'request',
-                    'template',
-                    'source',
-                    'compile',
-                    'locals',
-                    `return ${queryMatch[1]}`
-                )(request, template, source, compile, locals)
+                    locals:Record<string, unknown>
+                ):Record<string, unknown> =>
+                    (new Function(
+                        'request',
+                        'template',
+                        'source',
+                        'compile',
+                        'locals',
+                        `return ${queryMatch[1]}`
+                    ))(request, template, source, compile, locals)
                 nestedLocals = Tools.extend(
                     true,
                     nestedLocals,
                     evaluationFunction(
                         request, template, source, compile, locals))
             }
-            let nestedOptions:Record<string, any> = Tools.copy(options)
+            let nestedOptions:CompilerOptions = Tools.copy(options)
             delete nestedOptions.client
             nestedOptions = Tools.extend(
                 true,
@@ -142,7 +180,7 @@ module.exports = function(source:string):string {
                 if (queryMatch || templateFilePath.endsWith('.ejs'))
                     return compile(templateFilePath, nestedOptions)(
                         nestedLocals)
-                return fileSystem.readFileSync(templateFilePath, nestedOptions)
+                return fileSystem.readFileSync(templateFilePath, nestedOptions) as unknown as string
             }
             throw new Error(
                 `Given template file "${template}" couldn't be resolved.`)
@@ -194,7 +232,7 @@ module.exports = function(source:string):string {
                 else {
                     if (!isString) {
                         let encoding:string = configuration.encoding
-                        if ('encoding' in options)
+                        if (typeof options.encoding === 'string')
                             encoding = options.encoding
                         result = fileSystem.readFileSync(result, {encoding})
                     }
@@ -210,39 +248,53 @@ module.exports = function(source:string):string {
                 )))
             remainingSteps -= 1
         }
-        if (compileSteps % 2)
-            return `'use strict';\n` +
-                babelTransformSync(
-                    `module.exports = ${result.toString()};`,
-                    {
-                        ast: false,
-                        babelrc: false,
-                        comments: !query.compress.javaScript,
-                        compact: Boolean(query.compress.javaScript),
-                        filename: options.filename || 'unknown',
-                        minified: Boolean(query.compress.javaScript),
-                        /*
-                            NOTE: See corresponding import statement.
-                        plugins: [transformWith],
-                        */
-                        presets: query.compress.javaScript ?
-                            [[babelMinifyPreset, query.compress.javaScript]] :
-                            [],
-                        sourceMaps: false,
-                        sourceType: 'script'
-                    }
-                ).code
-        result = result
-            .replace(new RegExp(
-                `<script +processing-workaround *(?:= *(?:" *"|' *') *)?>` +
-                '([\\s\\S]*?)</ *script *>', 'ig'
-            ), '$1')
-            .replace(new RegExp(
-                `<script +processing(-+)-workaround *(?:= *(?:" *"|' *') *)?` +
-                '>([\\s\\S]*?)</ *script *>',
-                'ig'
-            ), '<script processing$1workaround>$2</script>')
-        return result
+        if (compileSteps % 2) {
+            let code:string = `module.exports = ${result.toString()};`
+            const processed:BabelFileResult|null = babelTransformSync(
+                code,
+                {
+                    ast: false,
+                    babelrc: false,
+                    comments: !query.compress.javaScript,
+                    compact: Boolean(query.compress.javaScript),
+                    filename: options.filename || 'unknown',
+                    minified: Boolean(query.compress.javaScript),
+                    /*
+                        NOTE: See corresponding import statement.
+                    plugins: [transformWith],
+                    */
+                    presets: query.compress.javaScript ?
+                        [[babelMinifyPreset, query.compress.javaScript]] :
+                        [],
+                    sourceMaps: false,
+                    sourceType: 'script'
+                }
+            )
+            if (processed && typeof processed.code === 'string')
+                code = processed.code
+            return `'use strict';\n${code}`
+        }
+        if (typeof result === 'string') {
+            result = result
+                .replace(
+                    new RegExp(
+                        `<script +processing-workaround *` +
+                        `(?:= *(?:" *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
+                        'ig'
+                    ),
+                    '$1'
+                )
+                .replace(
+                    new RegExp(
+                        `<script +processing(-+)-workaround *` +
+                        `(?:= *(?:" *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
+                        'ig'
+                    ),
+                    '<script processing$1workaround>$2</script>'
+                )
+            return result
+        }
+        return ''
     }
     return compile(
         source,
@@ -250,9 +302,10 @@ module.exports = function(source:string):string {
             client: Boolean(query.compileSteps % 2),
             compileDebug: this.debug || false,
             debug: this.debug || false,
-            filename: 'query' in this ?
-                loaderUtils.getRemainingRequest(this).replace(/^!/, '') :
-                this.filename || null,
+            filename:
+                'query' in this ?
+                    loaderUtils.getRemainingRequest(this).replace(/^!/, '') :
+                    this.filename || null,
             isString: true
         },
         query.compileSteps

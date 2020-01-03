@@ -64,7 +64,7 @@ export class Helper {
     static isFilePathInLocation(
         filePath:string, locationsToCheck:Array<string>
     ):boolean {
-        for (const pathToCheck:string of locationsToCheck)
+        for (const pathToCheck of locationsToCheck)
             if (path.resolve(filePath).startsWith(path.resolve(pathToCheck)))
                 return true
         return false
@@ -127,7 +127,7 @@ export class Helper {
         )).window
         const inPlaceStyleContents:Array<string> = []
         const filePathsToRemove:Array<string> = []
-        for (const assetType:PlainObject of [
+        for (const assetType of [
             {
                 attributeName: 'href',
                 hash: 'hash',
@@ -148,7 +148,7 @@ export class Helper {
             }
         ])
             if (assetType.pattern)
-                for (const pattern:string in assetType.pattern) {
+                for (const pattern in assetType.pattern) {
                     if (!Object.prototype.hasOwnProperty.call(
                         assetType.pattern, pattern
                     ))
@@ -168,7 +168,7 @@ export class Helper {
                         window.document.querySelectorAll(
                             `${assetType.linkTagName}${selector}`)
                     if (domNodes.length)
-                        for (const domNode:DomNode of domNodes) {
+                        for (const domNode of domNodes) {
                             const path:string = domNode.attributes[
                                 assetType.attributeName
                             ].value.replace(/&.*/g, '')
@@ -320,7 +320,7 @@ export class Helper {
             },
             scope)
         let filePath:string = template
-        for (const placeholderName:string in scope)
+        for (const placeholderName in scope)
             if (Object.prototype.hasOwnProperty.call(scope, placeholderName))
                 filePath = filePath.replace(
                     new RegExp(
@@ -358,7 +358,7 @@ export class Helper {
             path.resolve(context) !== referencePath
         ) {
             request = path.resolve(context, request)
-            for (const modulePath:string of relativeModuleLocations) {
+            for (const modulePath of relativeModuleLocations) {
                 const pathPrefix:string = path.resolve(
                     referencePath, modulePath)
                 if (request.startsWith(pathPrefix)) {
@@ -501,13 +501,11 @@ export class Helper {
                 moduleReplacements,
                 relativeModuleLocations
             )
-        for (const chunkName:string in normalizedEntryInjection)
+        for (const chunkName in normalizedEntryInjection)
             if (Object.prototype.hasOwnProperty.call(
                 normalizedEntryInjection, chunkName
             ))
-                for (const moduleID:string of normalizedEntryInjection[
-                    chunkName
-                ])
+                for (const moduleID of normalizedEntryInjection[chunkName])
                     if (Helper.determineModuleFilePath(
                         moduleID,
                         aliases,
@@ -529,9 +527,10 @@ export class Helper {
         const parts = context.split('/')
         const externalModuleLocations = []
         while (parts.length > 0) {
-            for (const relativePath:string of relativeExternalModuleLocations)
+            for (const relativePath of relativeExternalModuleLocations)
                 externalModuleLocations.push(path.join(
-                    '/', parts.join('/'), relativePath))
+                    '/', parts.join('/'), relativePath
+                ))
             parts.splice(-1, 1)
         }
         /*
@@ -584,7 +583,7 @@ export class Helper {
         filePath:string, buildConfiguration:BuildConfiguration, paths:Path
     ):null|string {
         let result:null|string = null
-        for (const type:string in buildConfiguration)
+        for (const type in buildConfiguration)
             if (
                 path.extname(filePath) ===
                 `.${buildConfiguration[type].extension}`
@@ -593,8 +592,8 @@ export class Helper {
                 break
             }
         if (!result)
-            for (const type:string of ['source', 'target'])
-                for (const assetType:string in paths[type].asset)
+            for (const type of ['source', 'target'])
+                for (const assetType in paths[type].asset)
                     if (
                         Object.prototype.hasOwnProperty.call(
                             paths[type].asset, assetType
@@ -624,11 +623,11 @@ export class Helper {
         mainFileBasenames:Array<string> = ['index', 'main']
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
-        for (const type:string in configuration)
+        for (const type in configuration)
             if (Object.prototype.hasOwnProperty.call(configuration, type)) {
                 const newItem:ResolvedBuildConfigurationItem =
                     Tools.extend(true, {filePaths: []}, configuration[type])
-                for (const file:File of Tools.walkDirectoryRecursivelySync(
+                for (const file of Tools.walkDirectoryRecursivelySync(
                     entryPath, (file:File):false|undefined => {
                         if (Helper.isFilePathInLocation(
                             file.path, pathsToIgnore
@@ -734,13 +733,11 @@ export class Helper {
                 referencePath,
                 pathsToIgnore
             )
-        for (const chunkName:string in normalizedEntryInjection)
+        for (const chunkName in normalizedEntryInjection)
             if (Object.prototype.hasOwnProperty.call(
                 normalizedEntryInjection, chunkName
             ))
-                for (const moduleID:string of normalizedEntryInjection[
-                    chunkName
-                ]) {
+                for (const moduleID of normalizedEntryInjection[chunkName]) {
                     const filePath:null|string = Helper.determineModuleFilePath(
                         moduleID,
                         aliases,
@@ -787,14 +784,12 @@ export class Helper {
     ):NormalizedEntryInjection {
         if (referencePath.startsWith('/'))
             referencePath = path.relative(context, referencePath)
-        for (const chunkName:string in normalizedEntryInjection)
+        for (const chunkName in normalizedEntryInjection)
             if (Object.prototype.hasOwnProperty.call(
                 normalizedEntryInjection, chunkName
             )) {
                 let index = 0
-                for (let moduleID:string of normalizedEntryInjection[
-                    chunkName
-                ]) {
+                for (let moduleID of normalizedEntryInjection[chunkName]) {
                     moduleID = Helper.applyModuleReplacements(
                         Helper.applyAliases(Helper.stripLoader(
                             moduleID
@@ -803,18 +798,15 @@ export class Helper {
                         referencePath, moduleID)
                     if (Tools.isDirectorySync(resolvedPath)) {
                         normalizedEntryInjection[chunkName].splice(index, 1)
-                        for (
-                            const file:File of
-                            Tools.walkDirectoryRecursivelySync(
-                                resolvedPath,
-                                (file:File):false|undefined => {
-                                    if (Helper.isFilePathInLocation(
-                                        file.path, pathsToIgnore
-                                    ))
-                                        return false
-                                }
-                            )
-                        )
+                        for (const file of Tools.walkDirectoryRecursivelySync(
+                            resolvedPath,
+                            (file:File):false|undefined => {
+                                if (Helper.isFilePathInLocation(
+                                    file.path, pathsToIgnore
+                                ))
+                                    return false
+                            }
+                        ))
                             if (file.stats && file.stats.isFile())
                                 normalizedEntryInjection[chunkName].push(
                                     './' + path.relative(
@@ -853,7 +845,7 @@ export class Helper {
         else if (Tools.isPlainObject(entryInjection)) {
             let hasContent = false
             const chunkNamesToDelete:Array<string> = []
-            for (const chunkName:string in entryInjection)
+            for (const chunkName in entryInjection)
                 if (Object.prototype.hasOwnProperty.call(
                     entryInjection, chunkName
                 ))
@@ -868,7 +860,7 @@ export class Helper {
                         result[chunkName] = [entryInjection[chunkName]]
                     }
             if (hasContent)
-                for (const chunkName:string of chunkNamesToDelete)
+                for (const chunkName of chunkNamesToDelete)
                     delete result[chunkName]
             else
                 result = {index: []}
@@ -924,10 +916,10 @@ export class Helper {
                 referencePath,
                 pathsToIgnore
             ).filePaths
-        for (const type:string of ['entry', 'external'])
+        for (const type of ['entry', 'external'])
             /* eslint-disable curly */
             if (typeof injection[type] === 'object') {
-                for (const chunkName:string in injection[type])
+                for (const chunkName in injection[type])
                     if (injection[type][chunkName] === '__auto__') {
                         injection[type][chunkName] = []
                         const modules:{[key:string]:string} =
@@ -936,7 +928,7 @@ export class Helper {
                                 moduleFilePathsToExclude,
                                 referencePath
                             )
-                        for (const subChunkName:string in modules)
+                        for (const subChunkName in modules)
                             if (Object.prototype.hasOwnProperty.call(
                                 modules, subChunkName
                             ))
@@ -970,13 +962,10 @@ export class Helper {
     ):{[key:string]:string} {
         const result:{[key:string]:string} = {}
         const injectedModuleIDs:{[key:string]:Array<string>} = {}
-        for (
-            const buildConfiguration:ResolvedBuildConfigurationItem of
-            buildConfigurations
-        ) {
+        for (const buildConfiguration of buildConfigurations) {
             if (!injectedModuleIDs[buildConfiguration.outputExtension])
                 injectedModuleIDs[buildConfiguration.outputExtension] = []
-            for (const moduleFilePath:string of buildConfiguration.filePaths)
+            for (const moduleFilePath of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
                     const relativeModuleFilePath:string = './' + path.relative(
                         context, moduleFilePath)
@@ -1076,24 +1065,17 @@ export class Helper {
         const parts = context.split('/')
         parts.splice(-1, 1)
         while (parts.length > 0) {
-            for (const relativePath:string of relativeModuleLocations)
+            for (const relativePath of relativeModuleLocations)
                 moduleLocations.push(path.join(
                     '/', parts.join('/'), relativePath))
             parts.splice(-1, 1)
         }
-        for (const moduleLocation:string of [referencePath].concat(
-            moduleLocations
-        ))
-            for (let fileName:string of ['', '__package__'].concat(
+        for (const moduleLocation of [referencePath].concat(moduleLocations))
+            for (let fileName of ['', '__package__'].concat(
                 packageEntryFileNames
             ))
-                for (
-                    const moduleExtension:string of
-                    extensions.module.concat([''])
-                )
-                    for (const fileExtension:string of [''].concat(
-                        extensions.file
-                    )) {
+                for (const moduleExtension of extensions.module.concat(['']))
+                    for (const fileExtension of [''].concat(extensions.file)) {
                         let currentModuleFilePath:string
                         if (moduleFilePath.startsWith('/'))
                             currentModuleFilePath = path.resolve(
@@ -1114,7 +1096,7 @@ export class Helper {
                                                 pathToPackageJSON, {encoding}))
                                     } catch (error) {}
                                     for (
-                                        const propertyName:string of
+                                        const propertyName of
                                         packageMainPropertyNames
                                     )
                                         if (
@@ -1132,7 +1114,7 @@ export class Helper {
                                             break
                                         }
                                     for (
-                                        const propertyName:string of
+                                        const propertyName of
                                         packageAliasPropertyNames
                                     )
                                         if (
@@ -1182,7 +1164,7 @@ export class Helper {
      * @returns The alias applied given module id.
      */
     static applyAliases(moduleID:string, aliases:PlainObject):string {
-        for (const alias:string in aliases)
+        for (const alias in aliases)
             if (alias.endsWith('$')) {
                 if (moduleID === alias.substring(0, alias.length - 1))
                     moduleID = aliases[alias]
@@ -1200,7 +1182,7 @@ export class Helper {
     static applyModuleReplacements(
         moduleID:string, replacements:PlainObject
     ):string {
-        for (const replacement:string in replacements)
+        for (const replacement in replacements)
             if (Object.prototype.hasOwnProperty.call(
                 replacements, replacement
             ))

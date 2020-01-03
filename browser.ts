@@ -45,15 +45,18 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
         ])
             virtualConsole.on(name, console[name].bind(console))
-        virtualConsole.on('error', (error:Error):void => {
-            if (
-                !browser.debug &&
-                ['XMLHttpRequest', 'resource loading'].includes(error.type)
-            )
-                console.warn(`Loading resource failed: ${error.toString()}.`)
-            else
-                console.error(error.stack, error.detail)
-        })
+        virtualConsole.on(
+            'error',
+            (error:{type:string;stack:any;detail:any}):void => {
+                if (
+                    !browser.debug &&
+                    ['XMLHttpRequest', 'resource loading'].includes(error.type)
+                )
+                    console.warn(`Loading resource failed: ${error.toString()}.`)
+                else
+                    console.error(error.stack, error.detail)
+            }
+        )
         const render:Function = (template:string):void => {
             browser.DOM = JSDOM
             browser.initialized = true
@@ -73,7 +76,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                         */
                         browser.domContentLoaded = browser.windowLoaded = true
                     })
-                    for (const callback:Function of onCreatedListener)
+                    for (const callback of onCreatedListener)
                         callback()
                 },
                 resources: 'usable',
@@ -88,6 +91,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 NOTE: We load dependencies now to avoid having file imports
                 after test runner has finished to isolate the environment.
             */
+            // @ts-ignore: Will be available at runtime.
             import('./ejsLoader.compiled.js').then(({default: ejsLoader}) =>
                 require('fs').readFile(
                     filePath,
@@ -100,6 +104,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 )
             )
         } else
+            // @ts-ignore: Will be available at runtime.
             import('webOptimizerDefaultTemplateFilePath').then(render)
     })
     // endregion
@@ -113,7 +118,7 @@ else {
         browser.windowLoaded = true
     })
     Tools.timeout(():void => {
-        for (const callback:Function of onCreatedListener)
+        for (const callback of onCreatedListener)
             callback()
     })
 }
@@ -141,6 +146,7 @@ export const getInitializedBrowser = async (
             typeof global !== 'undefined' &&
             global !== browser.window
         )
+            // @ts-ignore: We modify again global object's specification.
             global.window = browser.window
         resolvePromise(browser)
     }

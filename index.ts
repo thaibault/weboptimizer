@@ -25,7 +25,9 @@ import {promises as fileSystem} from 'fs'
 import path from 'path'
 import removeDirectoryRecursively from 'rimraf'
 
+// @ts-ignore: Will be available at runtime.
 import configuration from './configurator.compiled'
+// @ts-ignore: Will be available at runtime.
 import Helper from './helper.compiled'
 import {ResolvedBuildConfiguration} from './type'
 // endregion
@@ -135,8 +137,7 @@ const main = async ():Promise<void> => {
                             ))
                                 return false
                             for (
-                                const type:string in
-                                configuration.buildContext.types
+                                const type in configuration.buildContext.types
                             )
                                 if (new RegExp(
                                     configuration.buildContext.types[
@@ -165,12 +166,13 @@ const main = async ():Promise<void> => {
                         }
                     )
                     for (
-                        const file:File of (
+                        const file of (
                             await Tools.walkDirectoryRecursively(
                                 configuration.path.target.base,
                                 ():false => false,
                                 configuration.encoding
-                            ))
+                            )
+                        )
                     )
                         if (
                             file.name.length > '.dll-manifest.json'.length &&
@@ -238,13 +240,13 @@ const main = async ():Promise<void> => {
                         return
                     tidiedUp = true
                     for (
-                        const chunkName:string in
+                        const chunkName in
                         configuration.injection.entry.normalized
                     )
                         if (configuration.injection.entry.normalized
                             .hasOwnProperty(chunkName)
                         )
-                            for (const moduleID:string of
+                            for (const moduleID of
                                 configuration.injection.entry.normalized[
                                     chunkName]
                             ) {
@@ -341,7 +343,7 @@ const main = async ():Promise<void> => {
                         ...parameter:Array<any>
                     ):void => {
                         for (
-                            const filePath:string of
+                            const filePath of
                             configuration.files.additionalPaths
                         ) {
                             const sourcePath:string = path.join(
@@ -368,7 +370,7 @@ const main = async ():Promise<void> => {
                             copyAdditionalFilesAndTidyUp :
                             tidyUp
                     )
-                    for (const closeEventName:string of Tools.closeEventNames)
+                    for (const closeEventName of Tools.closeEventNames)
                         childProcess.on(closeEventName, closeHandler)
                     childProcesses.push(childProcess)
                 }))
@@ -393,7 +395,7 @@ const main = async ():Promise<void> => {
                         configuration.path.ignore
                     ).filePaths
                 for (const buildConfiguration of buildConfigurations)
-                    for (const filePath:string of buildConfiguration.filePaths)
+                    for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
                             const evaluationFunction = (
                                 global:Record<string, any>, self:PlainObject,
@@ -436,7 +438,7 @@ const main = async ():Promise<void> => {
                     tasks = configuration.commandLine[type]
                 else
                     tasks = [configuration.commandLine[type]]
-                for (const task:Record<string, any> of tasks) {
+                for (const task of tasks) {
                     const evaluationFunction = (
                         global:Record<string, any>, self:PlainObject, path:typeof path
                     ):boolean =>
@@ -463,10 +465,7 @@ const main = async ():Promise<void> => {
                                     childProcessOptions)
                             const closeHandler:Function =
                                 Tools.getProcessCloseHandler(resolve, reject)
-                            for (
-                                const closeEventName:string of
-                                Tools.closeEventNames
-                            )
+                            for (const closeEventName of Tools.closeEventNames)
                                 childProcess.on(closeEventName, closeHandler)
                             childProcesses.push(childProcess)
                         }))
@@ -488,11 +487,11 @@ const main = async ():Promise<void> => {
         let finished = false
         const closeHandler = (...parameter:Array<any>):void => {
             if (!finished)
-                for (const closeEventHandler:Function of closeEventHandlers)
+                for (const closeEventHandler of closeEventHandlers)
                     closeEventHandler(...parameter)
             finished = true
         }
-        for (const closeEventName:string of Tools.closeEventNames)
+        for (const closeEventName of Tools.closeEventNames)
             process.on(closeEventName, closeHandler)
         if (require.main === module && (
             configuration.givenCommandLineArguments.length < 3 ||
