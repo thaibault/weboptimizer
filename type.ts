@@ -21,9 +21,9 @@ import {PlainObject, ProcedureFunction, Window} from 'clientnode'
 export type Browser = {
     debug:boolean;
     domContentLoaded:boolean;
-    DOM:?Object;
+    DOM:?Record<string, any>;
     initialized:boolean;
-    instance:null|Object;
+    instance:null|Record<string, any>;
     window:Window;
     windowLoaded:boolean;
 }
@@ -41,7 +41,7 @@ export type Injection = {
     dllChunkNames:Array<string>;
     entry:{
         given:EntryInjection;
-        normalized:NormalizedEntryInjection
+        normalized:NormalizedEntryInjection;
     };
     external:{
         aliases:PlainObject;
@@ -78,7 +78,7 @@ export type AssetPath = {
 export type BuildConfigurationItem = {
     extension:string;
     outputExtension:string;
-    filePathPattern:string
+    filePathPattern:string;
 }
 export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
 export type Command = {
@@ -116,14 +116,14 @@ export type DefaultConfiguration = {
     contextType:string;
     debug:boolean;
     dllManifestFilePaths:Array<any>;
-    document:Object;
+    document:Record<string, any>;
     encoding:string;
     library:boolean;
     nodeEnvironment:{[key:string]:boolean|'empty'|'mock'};
     path:Path;
     plugins:Array<PluginConfiguration>;
-    test:Object;
-    'test:browser':Object
+    test:Record<string, any>;
+    'test:browser':Record<string, any>;
 }
 /* eslint-disable max-len */
 export type ExportFormat = 'amd'|'amd-require'|'assign'|'global'|'jsonp'|'var'|'this'|'commonjs'|'commonjs2'|'umd';
@@ -133,20 +133,20 @@ export type HTMLConfiguration = {
     template:{
         filePath:string;
         options:PlainObject;
-        request:string|String;
-        use:Array<{loader:string;options:Object}>;
+        request:string|string;
+        use:Array<{loader:string;options:Record<string, any>}>;
     };
 }
 export type MetaConfiguration = {
     default:DefaultConfiguration;
     debug:PlainObject;
-    library:PlainObject
+    library:PlainObject;
 }
 export type ResolvedBuildConfigurationItem = {
     filePaths:Array<string>;
     extension:string;
     outputExtension:string;
-    filePathPattern:string
+    filePathPattern:string;
 }
 export type Extensions = {
     file:{
@@ -160,14 +160,14 @@ export type LoaderConfiguration = {
     exclude:string;
     include:string;
     loader:string;
-    options:Object;
+    options:Record<string, any>;
     regularExpression:string;
 }
 export type ResolvedConfiguration = {
     assetPattern:{[key:string]:{
         excludeFilePathRegularExpression:string;
-        pattern:string
-    }};
+        pattern:string;
+    };};
     buildContext:{
         definitions:PlainObject;
         types:PlainObject;
@@ -268,7 +268,7 @@ export type ResolvedConfiguration = {
                 loader:string;
             };
             minimize:boolean;
-            minimizer:Array<Object>;
+            minimizer:Array<Record<string, any>>;
         };
         preprocessor:{
             cascadingStyleSheet:{
@@ -278,8 +278,8 @@ export type ResolvedConfiguration = {
                     pre:Array<string>;
                 };
                 loader:string;
-                options:Object;
-                postcssPresetEnv:Object;
+                options:Record<string, any>;
+                postcssPresetEnv:Record<string, any>;
             };
             ejs:LoaderConfiguration;
             html:LoaderConfiguration;
@@ -340,7 +340,7 @@ export type WebpackConfiguration = {
         aliasFields:Array<string>;
         mainFields:Array<string>;
         mainFiles:Array<string>;
-    },
+    };
     resolveLoader:{
         alias:PlainObject;
         extensions:Array<string>;
@@ -349,7 +349,7 @@ export type WebpackConfiguration = {
         aliasFields:Array<string>;
         mainFields:Array<string>;
         mainFiles:Array<string>;
-    },
+    };
     // endregion
     // region output
     output:{
@@ -360,17 +360,17 @@ export type WebpackConfiguration = {
         path:string;
         publicPath:string;
         umdNamedDefine:boolean;
-    },
+    };
     target:string;
     // endregion
     module:{
         noParse?:RegExp|Array<RegExp>;
         rules:Array<PlainObject>;
-    },
+    };
     performance:{
         hints:false|string;
     };
-    plugins:Array<Object>;
+    plugins:Array<Record<string, any>>;
 }
 // / endregion
 // endregion

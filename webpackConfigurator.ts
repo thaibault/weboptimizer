@@ -53,7 +53,7 @@ const pluginNameResourceMapping:{[key:string]:string} = {
     Imagemin: 'imagemin-webpack-plugin',
     Offline: 'offline-plugin'
 }
-const plugins:Object = {}
+const plugins:Record<string, any> = {}
 for (const name:string in pluginNameResourceMapping)
     if (Object.prototype.hasOwnProperty.call(pluginNameResourceMapping, name))
         try {
@@ -121,7 +121,7 @@ else {
 }
 // / endregion
 // / region plugins
-const pluginInstances:Array<Object> = [
+const pluginInstances:Array<Record<string, any>> = [
     new webpack.optimize.OccurrenceOrderPlugin(true)
 ]
 // // region define modules to ignore
@@ -133,7 +133,7 @@ for (const source:string in configuration.module.replacements.normal)
     if (Object.prototype.hasOwnProperty.call(
         configuration.module.replacements.normal, source
     )) {
-        const search:RegExp = new RegExp(source)
+        const search = new RegExp(source)
         pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
             search, (resource:{request:string}):void => {
                 resource.request = resource.request.replace(
@@ -142,7 +142,7 @@ for (const source:string in configuration.module.replacements.normal)
     }
 // // endregion
 // // region generate html file
-let htmlAvailable:boolean = false
+let htmlAvailable = false
 if (configuration.givenCommandLineArguments[2] !== 'build:dll')
     for (const htmlConfiguration:HTMLConfiguration of configuration.files.html)
         if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
@@ -201,10 +201,10 @@ if (configuration.module.provide)
 // // endregion
 // // region modules/assets
 // /// region apply module pattern
-pluginInstances.push({apply: (compiler:Object):void => {
+pluginInstances.push({apply: (compiler:Record<string, any>):void => {
     compiler.hooks.emit.tap(
         'applyModulePattern',
-        (compilation:Object):void => {
+        (compilation:Record<string, any>):void => {
             for (const request:string in compilation.assets)
                 if (Object.prototype.hasOwnProperty.call(
                     compilation.assets, request
@@ -241,10 +241,10 @@ pluginInstances.push({apply: (compiler:Object):void => {
 if (htmlAvailable && !['serve', 'test:browser'].includes(
     configuration.givenCommandLineArguments[2]
 ))
-    pluginInstances.push({apply: (compiler:Object):void => {
+    pluginInstances.push({apply: (compiler:Record<string, any>):void => {
         const filePathsToRemove:Array<string> = []
         compiler.hooks.compilation.tap('inPlaceHTMLAssets', (
-            compilation:Object
+            compilation:Record<string, any>
         ):void =>
             compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
                 'inPlaceHTMLAssets',
@@ -259,7 +259,7 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                     )
                         try {
                             const result:{
-                                content:string, filePathsToRemove:Array<string>
+                                content:string; filePathsToRemove:Array<string>;
                             } = Helper.inPlaceCSSAndJavaScriptAssetReferences(
                                 data.html,
                                 configuration.inPlace.cascadingStyleSheet,
@@ -279,7 +279,7 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                 }))
         compiler.hooks.afterEmit.tapAsync(
             'removeInPlaceHTMLAssetFiles', async (
-                data:Object, callback:ProcedureFunction
+                data:Record<string, any>, callback:ProcedureFunction
             ):Promise<void> => {
                 let promises:Array<Promise<void>> = []
                 for (const path:string of filePathsToRemove)
@@ -397,12 +397,12 @@ if (configuration.injection.external.modules === '__implicit__')
                     ) &&
                     pattern.startsWith('^')
                 ) {
-                    const regularExpression:RegExp = new RegExp(pattern)
+                    const regularExpression = new RegExp(pattern)
                     if (regularExpression.test(filePath)) {
-                        let match:boolean = false
+                        let match = false
                         const targetConfiguration:PlainObject =
                             configuration.injection.external.aliases[pattern]
-                        const replacementRegularExpression:RegExp = new RegExp(
+                        const replacementRegularExpression = new RegExp(
                             Object.keys(targetConfiguration)[0])
                         let target:string = targetConfiguration[
                             Object.keys(targetConfiguration)[0]
@@ -525,7 +525,7 @@ if (configuration.injection.external.modules === '__implicit__')
 // /// endregion
 // /// region build dll packages
 if (configuration.givenCommandLineArguments[2] === 'build:dll') {
-    let dllChunkExists:boolean = false
+    let dllChunkExists = false
     for (const chunkName:string in configuration.injection.entry.normalized)
         if (Object.prototype.hasOwnProperty.call(
             configuration.injection.entry.normalized, chunkName
@@ -548,9 +548,9 @@ if (configuration.givenCommandLineArguments[2] === 'build:dll') {
 // // region apply final dom/javaScript/cascadingStyleSheet modifications/fixes
 if (htmlAvailable)
     pluginInstances.push({apply: (
-        compiler:Object
+        compiler:Record<string, any>
     ):void => compiler.hooks.compilation.tap('compilation', (
-        compilation:Object
+        compilation:Record<string, any>
     ):void => {
         compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(
             'removeDummyHTMLTags',
@@ -558,7 +558,7 @@ if (htmlAvailable)
                 for (const tags:Array<PlainObject> of [
                     data.body, data.head
                 ]) {
-                    let index:number = 0
+                    let index = 0
                     for (const tag:PlainObject of tags) {
                         if (/^\.__dummy__(\..*)?$/.test(path.basename(
                             tag.attributes.src || tag.attributes.href || ''
@@ -569,7 +569,7 @@ if (htmlAvailable)
                 }
                 const assets:Array<string> = JSON.parse(
                     data.plugin.assetJson)
-                let index:number = 0
+                let index = 0
                 for (const assetRequest:string of assets) {
                     if (/^\.__dummy__(\..*)?$/.test(path.basename(
                         assetRequest
@@ -720,7 +720,7 @@ for (
 // // region consolidate duplicated module requests
 pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
     /((?:^|\/)node_modules\/.+){2}/,
-    (resource:{request:string;resource:string;}):void => {
+    (resource:{request:string;resource:string}):void => {
         const targetName:string = resource.request ? 'request' : 'resource'
         const targetPath:string = resource[targetName]
         if (Tools.isFileSync(targetPath)) {
@@ -731,7 +731,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                     /((?:^|.*?\/)node_modules\/)/g)
                 // Avoid finding the same artefact.
                 pathPrefixes.pop()
-                let index:number = 0
+                let index = 0
                 for (const pathPrefix:string of pathPrefixes) {
                     if (index > 0)
                         pathPrefixes[index] = path.resolve(
@@ -810,8 +810,8 @@ const evaluateLoaderConfiguration:Function = (
         loaderConfiguration.test, configuration.path.context)),
     use: evaluate(loaderConfiguration.use)
 })
-const loader:Object = {}
-const scope:Object = {
+const loader:Record<string, any> = {}
+const scope:Record<string, any> = {
     configuration,
     isFilePathInDependencies,
     loader,
@@ -835,20 +835,25 @@ Tools.extend(loader, {
             ).map((htmlConfiguration:HTMLConfiguration):string =>
                 htmlConfiguration.template.filePath)
         ).includes(filePath) ||
-            ((configuration.module.preprocessor.ejs.exclude === null) ?
+            (configuration.module.preprocessor.ejs.exclude === null) ?
                 false :
                 evaluate(
-                    configuration.module.preprocessor.ejs.exclude, filePath)),
+                    configuration.module.preprocessor.ejs.exclude, filePath),
         include: includingPaths,
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: configuration.module.preprocessor.ejs.additional.pre.map(
             evaluate
         ).concat(
-            {loader: 'file?name=[path][name]' + (Boolean(
-                (configuration.module.preprocessor.ejs.options || {
-                    compileSteps: 2
-                }).compileSteps % 2
-            ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`},
+            {
+                loader: 'file?name=[path][name]' +
+                    (
+                        (
+                            configuration.module.preprocessor.ejs.options ||
+                            {compileSteps: 2}
+                        ).compileSteps % 2 ? '.js' : ''
+                    ) +
+                    `?${configuration.hashAlgorithm}=[hash]`
+            },
             {loader: 'extract'},
             {
                 loader: configuration.module.preprocessor.ejs.loader,
@@ -915,57 +920,83 @@ Tools.extend(loader, {
                 evaluate
             ).concat(
                 {
-                    loader: 'file?name=' + path.join(path.relative(
-                        configuration.path.target.asset.base,
-                        configuration.path.target.asset.template
-                    ), '[name]' + (Boolean(
-                        (configuration.module.preprocessor.html.options || {
-                            compileSteps: 2
-                        }).compileSteps % 2
-                    ) ? '.js' : '') + `?${configuration.hashAlgorithm}=[hash]`)
+                    loader:
+                        'file?name=' +
+                        path.join(
+                            path.relative(
+                                configuration.path.target.asset.base,
+                                configuration.path.target.asset.template
+                            ),
+                            '[name]' +
+                            (
+                                (
+                                    configuration.module.preprocessor.html
+                                        .options ||
+                                    {compileSteps: 2}
+                                ).compileSteps % 2 ?
+                                    '.js' :
+                                    ''
+                            ) +
+                            `?${configuration.hashAlgorithm}=[hash]`
+                        )
                 },
-                (Boolean((
-                    configuration.module.preprocessor.html.options || {
-                        compileSteps: 2
-                    }
-                ).compileSteps % 2) ? [] : [
-                    {loader: 'extract'},
-                    {
-                        loader: configuration.module.html.loader,
-                        options: configuration.module.html.options || {}
-                    }
-                ]),
+                (
+                    (
+                        configuration.module.preprocessor.html.options ||
+                        {compileSteps: 2}
+                    ).compileSteps % 2 ?
+                        [] :
+                        [
+                            {loader: 'extract'},
+                            {
+                                loader: configuration.module.html.loader,
+                                options:
+                                    configuration.module.html.options || {}
+                            }
+                        ]
+                ),
                 {
                     loader: configuration.module.preprocessor.html.loader,
-                    options: configuration.module.preprocessor.html.options ||
-                        {}
+                    options:
+                        configuration.module.preprocessor.html.options || {}
                 },
                 configuration.module.preprocessor.html.additional.post.map(
                     evaluate))
         },
         html: {
-            exclude: (filePath:string):boolean => Helper.normalizePaths(
-                configuration.files.html.concat(
-                    configuration.files.defaultHTML
-                ).map((htmlConfiguration:HTMLConfiguration):string =>
-                    htmlConfiguration.template.filePath)
-            ).includes(filePath) ||
-                ((configuration.module.html.exclude === null) ?
-                    true :
-                    evaluate(configuration.module.html.exclude, filePath)),
+            exclude: (filePath:string):boolean =>
+                Helper.normalizePaths(
+                    configuration.files.html.concat(
+                        configuration.files.defaultHTML
+                    ).map((htmlConfiguration:HTMLConfiguration):string =>
+                        htmlConfiguration.template.filePath)
+                ).includes(filePath) ||
+                (
+                    (configuration.module.html.exclude === null) ?
+                        true :
+                        evaluate(configuration.module.html.exclude, filePath)
+                ),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
             use: configuration.module.html.additional.pre.concat(
-                {loader: 'file?name=' + path.join(path.relative(
-                    configuration.path.target.base,
-                    configuration.path.target.asset.template
-                ), `[name].[ext]?${configuration.hashAlgorithm}=[hash]`)},
+                {
+                    loader:
+                         'file?name=' +
+                        path.join(
+                            path.relative(
+                                configuration.path.target.base,
+                                configuration.path.target.asset.template
+                            ),
+                            `[name].[ext]?${configuration.hashAlgorithm}=[hash]`
+                        )
+                },
                 {loader: 'extract'},
                 {
                     loader: configuration.module.html.loader,
                     options: configuration.module.html.options || {}
                 },
-                configuration.module.html.additional.post.map(evaluate))
+                configuration.module.html.additional.post.map(evaluate)
+            )
         }
     },
     // endregion
@@ -996,7 +1027,7 @@ Tools.extend(loader, {
                             .loader,
                     options: Tools.extend(true, {
                         ident: 'postcss',
-                        plugins: ():Array<Object> => [
+                        plugins: ():Array<Record<string, any>> => [
                             postcssImport({
                                 addDependencyTo: webpack,
                                 root: configuration.path.context
@@ -1031,7 +1062,7 @@ Tools.extend(loader, {
                                             resolve : reject
                                     )()),
                                 hooks: {
-                                    onSaveSpritesheet: (image:Object):string =>
+                                    onSaveSpritesheet: (image:Record<string, any>):string =>
                                         path.join(
                                             image.spritePath,
                                             path.relative(
@@ -1292,7 +1323,7 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
                         chunks: 'all',
                         cacheGroups: {
                             vendors: {
-                                chunks: (module:Object):boolean => {
+                                chunks: (module:Record<string, any>):boolean => {
                                     if (
                                         typeof configuration.inPlace
                                             .javaScript ===
@@ -1335,7 +1366,7 @@ if (
     configuration.path.configuration &&
     configuration.path.configuration.javaScript
 ) {
-    let result:Object
+    let result:Record<string, any>
     try {
         result = require(configuration.path.configuration.javaScript)
     } catch (error) {}

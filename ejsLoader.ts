@@ -34,15 +34,15 @@ import configuration from './configurator.compiled'
 import Helper from './helper.compiled'
 // endregion
 // region types
-type TemplateFunction = (locals:Object) => string
+type TemplateFunction = (locals:Record<string, any>) => string
 type CompileFunction = (
-    template:string, options:Object, compileSteps?:number
+    template:string, options:Record<string, any>, compileSteps?:number
 ) => TemplateFunction
 // endregion
 module.exports = function(source:string):string {
     if ('cachable' in this && this.cacheable)
         this.cacheable()
-    const query:Object = Tools.convertSubstringInPlainObject(
+    const query:Record<string, any> = Tools.convertSubstringInPlainObject(
         Tools.extend(
             true,
             {
@@ -75,12 +75,12 @@ module.exports = function(source:string):string {
     )
     const compile:CompileFunction = (
         template:string,
-        options:Object = query.compiler,
-        compileSteps:number = 2
-    ):TemplateFunction => (locals:Object = {}):string => {
+        options:Record<string, any> = query.compiler,
+        compileSteps = 2
+    ):TemplateFunction => (locals:Record<string, any> = {}):string => {
         options = Tools.extend(true, {filename: template}, options)
         const require:Function = (
-            request:string, nestedLocals:Object = {}
+            request:string, nestedLocals:Record<string, any> = {}
         ):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
             const queryMatch:Array<string>|null = request.match(/^[^?]+\?(.+)$/)
@@ -89,8 +89,8 @@ module.exports = function(source:string):string {
                     request:string,
                     template:string, source:string,
                     compile:CompileFunction,
-                    locals:Object
-                ):Object => new Function(
+                    locals:Record<string, any>
+                ):Record<string, any> => new Function(
                     'request',
                     'template',
                     'source',
@@ -104,7 +104,7 @@ module.exports = function(source:string):string {
                     evaluationFunction(
                         request, template, source, compile, locals))
             }
-            let nestedOptions:Object = Tools.copy(options)
+            let nestedOptions:Record<string, any> = Tools.copy(options)
             delete nestedOptions.client
             nestedOptions = Tools.extend(
                 true,
@@ -210,14 +210,14 @@ module.exports = function(source:string):string {
                 )))
             remainingSteps -= 1
         }
-        if (Boolean(compileSteps % 2))
+        if (compileSteps % 2)
             return `'use strict';\n` +
                 babelTransformSync(
                     `module.exports = ${result.toString()};`,
                     {
                         ast: false,
                         babelrc: false,
-                        comments: !Boolean(query.compress.javaScript),
+                        comments: !query.compress.javaScript,
                         compact: Boolean(query.compress.javaScript),
                         filename: options.filename || 'unknown',
                         minified: Boolean(query.compress.javaScript),

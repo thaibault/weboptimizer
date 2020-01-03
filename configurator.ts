@@ -477,7 +477,7 @@ for (
             resolvedConfiguration.files.defaultHTML.template.filePath &&
         htmlConfiguration.template.options
     ) {
-        const requestString:Object = new String(
+        const requestString:Record<string, any> = new String(
             htmlConfiguration.template.request +
             Tools.convertCircularObjectToJSON(
                 htmlConfiguration.template.options))

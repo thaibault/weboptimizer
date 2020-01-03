@@ -38,7 +38,7 @@ process.env.UV_THREADPOOL_SIZE = 128
 const main = async ():Promise<void> => {
     try {
         // region controller
-        const childProcessOptions:Object = {
+        const childProcessOptions:Record<string, any> = {
             cwd: configuration.path.context,
             env: process.env,
             shell: true,
@@ -73,7 +73,7 @@ const main = async ():Promise<void> => {
                     configuration, 'configuration')
             )
                 configuration.givenCommandLineArguments.pop()
-            let count:number = 0
+            let count = 0
             let filePath:string = path.resolve(
                 configuration.path.context,
                 `.dynamicConfiguration-${count}.json`
@@ -228,7 +228,7 @@ const main = async ():Promise<void> => {
             if (['build', 'build:dll', 'document', 'test'].includes(
                 process.argv[2]
             )) {
-                let tidiedUp:boolean = false
+                let tidiedUp = false
                 const tidyUp:Function = ():void => {
                     /*
                         Determines all none javaScript entities which have been
@@ -396,7 +396,7 @@ const main = async ():Promise<void> => {
                     for (const filePath:string of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
                             const evaluationFunction = (
-                                global:Object, self:PlainObject,
+                                global:Record<string, any>, self:PlainObject,
                                 buildConfiguration:PlainObject,
                                 path:typeof path,
                                 additionalArguments:Array<string>,
@@ -431,14 +431,14 @@ const main = async ():Promise<void> => {
             // endregion
             // region handle remaining tasks
             const handleTask = (type:string):void => {
-                let tasks:Array<Object>
+                let tasks:Array<Record<string, any>>
                 if (Array.isArray(configuration.commandLine[type]))
                     tasks = configuration.commandLine[type]
                 else
                     tasks = [configuration.commandLine[type]]
-                for (const task:Object of tasks) {
+                for (const task:Record<string, any> of tasks) {
                     const evaluationFunction = (
-                        global:Object, self:PlainObject, path:typeof path
+                        global:Record<string, any>, self:PlainObject, path:typeof path
                     ):boolean =>
                         new Function(
                             'global', 'self', 'path',
@@ -485,7 +485,7 @@ const main = async ():Promise<void> => {
             // / endregion
             // endregion
         }
-        let finished:boolean = false
+        let finished = false
         const closeHandler = (...parameter:Array<any>):void => {
             if (!finished)
                 for (const closeEventHandler:Function of closeEventHandlers)

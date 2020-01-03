@@ -94,7 +94,7 @@ export class Helper {
         basePath:string,
         cascadingStyleSheetChunkNameTemplate:string,
         javaScriptChunkNameTemplate:string,
-        assets:{[key:string]:Object}
+        assets:{[key:string]:Record<string, any>}
     ):{
         content:string;
         filePathsToRemove:Array<string>;
@@ -197,7 +197,7 @@ export class Helper {
                                 window.document.head.appendChild(
                                     inPlaceDomNode)
                             else {
-                                const regularExpressionPattern:string =
+                                const regularExpressionPattern =
                                     '(after|before|in):(.+)'
                                 const testMatch:Array<string>|null =
                                     (new RegExp(regularExpressionPattern))
@@ -276,7 +276,7 @@ export class Helper {
      * @param moduleID - Module request to strip.
      * @returns Given module id stripped.
      */
-    static stripLoader(moduleID:string|String):string {
+    static stripLoader(moduleID:string|string):string {
         moduleID = moduleID.toString()
         const moduleIDWithoutLoader:string = moduleID.substring(
             moduleID.lastIndexOf('!') + 1)
@@ -346,8 +346,8 @@ export class Helper {
      */
     static applyContext(
         request:string,
-        context:string = './',
-        referencePath:string = './',
+        context = './',
+        referencePath = './',
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         relativeModuleLocations:Array<string> = ['node_modules']
@@ -429,8 +429,8 @@ export class Helper {
      */
     static determineExternalRequest(
         request:string,
-        context:string = './',
-        requestContext:string = './',
+        context = './',
+        requestContext = './',
         normalizedEntryInjection:NormalizedEntryInjection = {},
         relativeExternalModuleLocations:Array<string> = ['node_modules'],
         aliases:PlainObject = {},
@@ -444,7 +444,7 @@ export class Helper {
             },
             module: []
         },
-        referencePath:string = './',
+        referencePath = './',
         pathsToIgnore:Array<string> = ['.git'],
         relativeModuleLocations:Array<string> = ['node_modules'],
         packageEntryFileNames:Array<string> = ['index', 'main'],
@@ -452,9 +452,9 @@ export class Helper {
         packageAliasPropertyNames:Array<string> = [],
         includePattern:Array<string|RegExp> = [],
         excludePattern:Array<string|RegExp> = [],
-        inPlaceNormalLibrary:boolean = false,
-        inPlaceDynamicLibrary:boolean = true,
-        encoding:string = 'utf-8'
+        inPlaceNormalLibrary = false,
+        inPlaceDynamicLibrary = true,
+        encoding = 'utf-8'
     ):null|string {
         context = path.resolve(context)
         requestContext = path.resolve(requestContext)
@@ -619,7 +619,7 @@ export class Helper {
      */
     static resolveBuildConfigurationFilePaths(
         configuration:BuildConfiguration,
-        entryPath:string = './',
+        entryPath = './',
         pathsToIgnore:Array<string> = ['.git'],
         mainFileBasenames:Array<string> = ['index', 'main']
     ):ResolvedBuildConfiguration {
@@ -712,8 +712,8 @@ export class Helper {
             ),
             module: []
         },
-        context:string = './',
-        referencePath:string = '',
+        context = './',
+        referencePath = '',
         pathsToIgnore:Array<string> = ['.git'],
         relativeModuleLocations:Array<string> = ['node_modules'],
         packageEntryFileNames:Array<string> = [
@@ -721,7 +721,7 @@ export class Helper {
         ],
         packageMainPropertyNames:Array<string> = ['main', 'module'],
         packageAliasPropertyNames:Array<string> = [],
-        encoding:string = 'utf-8'
+        encoding = 'utf-8'
     ):{filePaths:Array<string>;directoryPaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
@@ -781,8 +781,8 @@ export class Helper {
         normalizedEntryInjection:NormalizedEntryInjection,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
-        context:string = './',
-        referencePath:string = '',
+        context = './',
+        referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
     ):NormalizedEntryInjection {
         if (referencePath.startsWith('/'))
@@ -791,7 +791,7 @@ export class Helper {
             if (Object.prototype.hasOwnProperty.call(
                 normalizedEntryInjection, chunkName
             )) {
-                let index:number = 0
+                let index = 0
                 for (let moduleID:string of normalizedEntryInjection[
                     chunkName
                 ]) {
@@ -851,7 +851,7 @@ export class Helper {
         else if (typeof entryInjection === 'string')
             result = {index: [entryInjection]}
         else if (Tools.isPlainObject(entryInjection)) {
-            let hasContent:boolean = false
+            let hasContent = false
             const chunkNamesToDelete:Array<string> = []
             for (const chunkName:string in entryInjection)
                 if (Object.prototype.hasOwnProperty.call(
@@ -909,8 +909,8 @@ export class Helper {
             },
             module: []
         },
-        context:string = './',
-        referencePath:string = '',
+        context = './',
+        referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
     ):Injection {
         const injection:Injection = Tools.extend(true, {}, givenInjection)
@@ -1052,14 +1052,14 @@ export class Helper {
             ),
             module: []
         },
-        context:string = './',
-        referencePath:string = '',
+        context = './',
+        referencePath = '',
         pathsToIgnore:Array<string> = ['.git'],
         relativeModuleLocations:Array<string> = ['node_modules'],
         packageEntryFileNames:Array<string> = ['index'],
         packageMainPropertyNames:Array<string> = ['main'],
         packageAliasPropertyNames:Array<string> = [],
-        encoding:string = 'utf-8'
+        encoding = 'utf-8'
     ):null|string {
         moduleID = Helper.applyModuleReplacements(
             Helper.applyAliases(Helper.stripLoader(moduleID), aliases),
@@ -1215,7 +1215,7 @@ export class Helper {
      * @returns Determined file path.
      */
     static findPackageDescriptorFilePath(
-        start:Array<string>|string, fileName:string = 'package.json'
+        start:Array<string>|string, fileName = 'package.json'
     ):null|string {
         if (typeof start === 'string') {
             if (start[start.length - 1] !== path.sep)
@@ -1243,7 +1243,7 @@ export class Helper {
      * corresponding file path.
      */
     static getClosestPackageDescriptor(
-        modulePath:string, fileName:string = 'package.json'
+        modulePath:string, fileName = 'package.json'
     ):null|PlainObject {
         const filePath:null|string = Helper.findPackageDescriptorFilePath(
             modulePath, fileName)
