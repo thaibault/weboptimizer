@@ -1439,7 +1439,13 @@
         "error",
         {
           "after": false,
-          "before": false
+          "before": false,
+          "overrides": {
+            "arrow": {
+              "after": true,
+              "before": true
+            }
+          }
         }
       ],
       "arrow-parens": [

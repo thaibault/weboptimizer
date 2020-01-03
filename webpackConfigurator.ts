@@ -788,7 +788,7 @@ const isFilePathInDependencies:Function = (filePath:string):boolean => {
         )
     )
 }
-const generateLoader:Function = (
+const evaluateLoaderConfiguration:Function = (
     loaderConfiguration:PlainObject
 ):PlainObject => ({
     exclude: (filePath:string):boolean => evaluate(
@@ -809,12 +809,14 @@ const scope:Object = {
     loader,
     require: eval('require')
 }
-const evaluate:Function = (code:string, filePath:string):any => (new Function(
-    'filePath', ...Object.keys(scope), `return ${code}`
-))(filePath, ...Object.values(scope))
-const includingPaths:Array<string> = Helper.normalizePaths([
-    configuration.path.source.asset.javaScript
-].concat(configuration.module.locations.directoryPaths))
+const evaluate:Function = (code:string, filePath:string):any =>
+    (new Function('filePath', ...Object.keys(scope), `return ${code}`))(
+        filePath, ...Object.values(scope)
+    )
+const includingPaths:Array<string> =
+    Helper.normalizePaths([configuration.path.source.asset.javaScript].concat(
+        configuration.module.locations.directoryPaths
+    ))
 Tools.extend(loader, {
     // Convert to compatible native web types.
     // region generic template
@@ -1170,8 +1172,7 @@ Tools.extend(loader, {
     // endregion
 })
 if (
-    configuration.files.compose.cascadingStyleSheet &&
-    plugins.MiniCSSExtract
+    configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract
 ) {
     /*
         NOTE: We have to remove the client side javascript hmr style loader
@@ -1246,7 +1247,7 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
         mode: configuration.debug ? 'development' : 'production',
         module: {
             rules: configuration.module.additional.pre.map(
-                generateLoader
+                evaluateLoaderConfiguration
             ).concat(
                 loader.ejs,
                 loader.script,
@@ -1256,7 +1257,8 @@ export const webpackConfiguration:WebpackConfiguration = Tools.extend(
                 loader.font.woff,
                 loader.image,
                 loader.data,
-                configuration.module.additional.post.map(generateLoader)
+                configuration.module.additional.post.map(
+                    evaluateLoaderConfiguration)
             )
         },
         node: configuration.nodeEnvironment,

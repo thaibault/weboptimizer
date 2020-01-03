@@ -19,7 +19,7 @@ test('browser', async (done:Function):Promise<void> => {
     expect(browser.initialized).toStrictEqual(true)
     expect(browser.window).toHaveProperty('document')
     expect(browser.window.document).toHaveProperty('location')
-    const onWindowLoaded:Function = (event:Object):void => {
+    const onWindowLoaded:Function = (event:Event):void => {
         expect(event).toBeInstanceOf(Object)
         expect(browser.domContentLoaded).toStrictEqual(true)
         expect(browser.window.document.querySelector('body'))

@@ -16,7 +16,13 @@
 // region imports
 import {transformSync as babelTransformSync} from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
-import transformWith from 'babel-plugin-transform-with'
+/*
+    NOTE: Would result in error: "TypeError:
+    ../webOptimizer/unknown: Cannot read property
+    'contextVariables' of undefined
+
+    import transformWith from 'babel-plugin-transform-with'
+*/
 import Tools from 'clientnode'
 import ejs from 'ejs'
 import fileSystem from 'fs'
@@ -215,7 +221,10 @@ module.exports = function(source:string):string {
                         compact: Boolean(query.compress.javaScript),
                         filename: options.filename || 'unknown',
                         minified: Boolean(query.compress.javaScript),
+                        /*
+                            NOTE: See corresponding import statement.
                         plugins: [transformWith],
+                        */
                         presets: query.compress.javaScript ?
                             [[babelMinifyPreset, query.compress.javaScript]] :
                             [],
@@ -241,9 +250,9 @@ module.exports = function(source:string):string {
             client: Boolean(query.compileSteps % 2),
             compileDebug: this.debug || false,
             debug: this.debug || false,
-            filename: 'query' in this ? loaderUtils.getRemainingRequest(
-                this
-            ).replace(/^!/, '') : this.filename || null,
+            filename: 'query' in this ?
+                loaderUtils.getRemainingRequest(this).replace(/^!/, '') :
+                this.filename || null,
             isString: true
         },
         query.compileSteps

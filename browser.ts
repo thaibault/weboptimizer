@@ -85,18 +85,19 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
         if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
             const filePath:string = path.join(__dirname, 'index.html.ejs')
             /*
-                NOTE: We load dependencies now to avoid having file imports after
-                test runner has finished to isolate the environment.
+                NOTE: We load dependencies now to avoid having file imports
+                after test runner has finished to isolate the environment.
             */
-            const ejsLoader = require('./ejsLoader.compiled.js')
-            require('fs').readFile(
-                filePath,
-                {encoding: 'utf-8'},
-                (error:Error|null, content:string):void => {
-                    if (error)
-                        throw error
-                    render(ejsLoader.bind({filename: filePath})(content))
-                }
+            import('./ejsLoader.compiled.js').then(({default: ejsLoader}) =>
+                require('fs').readFile(
+                    filePath,
+                    {encoding: 'utf-8'},
+                    (error:Error|null, content:string):void => {
+                        if (error)
+                            throw error
+                        render(ejsLoader.bind({filename: filePath})(content))
+                    }
+                )
             )
         } else
             import('webOptimizerDefaultTemplateFilePath').then(render)

@@ -16,10 +16,10 @@ const context:{
     addDependency:() => void;
     query:string;
     debug:boolean;
-    loaders:Array<Object>;
-    loaderIndex:number
+    loaders:Array<Record<string, Function>>;
+    loaderIndex:number;
 } = {
-    addDependency: ():void => {},
+    addDependency: Tools.noop,
     query: '',
     debug: false,
     loaders: [],
@@ -34,7 +34,7 @@ describe('ejsLoader', ():void => {
             true,
             {},
             context, {
-                cacheable: ():void => {},
+                cacheable: Tools.noop,
                 query: {
                     locals: {test: 'hans'},
                     compiler: {pretty: true}
