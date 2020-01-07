@@ -91,8 +91,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 NOTE: We load dependencies now to avoid having file imports
                 after test runner has finished to isolate the environment.
             */
-            // @ts-ignore: Will be available at runtime.
-            import('./ejsLoader.compiled.js').then(({default: ejsLoader}) =>
+            import('./ejsLoader.js').then(({default: ejsLoader}) =>
                 require('fs').readFile(
                     filePath,
                     {encoding: 'utf-8'},

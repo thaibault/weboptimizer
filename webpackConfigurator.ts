@@ -62,18 +62,15 @@ for (const name in pluginNameResourceMapping)
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
 
-// @ts-ignore: Will be available at runtime.
-import ejsLoader from './ejsLoader.compiled'
+
+import ejsLoader from './ejsLoader'
 /* eslint-disable no-unused-vars */
 import {
     HTMLConfiguration, PluginConfiguration, WebpackConfiguration
 } from './type'
 /* eslint-enable no-unused-vars */
-// @ts-ignore: Will be available at runtime.
-import configuration from './configurator.compiled'
-// @ts-ignore: Will be available at runtime.
-import Helper from './helper.compiled'
-
+import configuration from './configurator'
+import Helper from './helper'
 // / region monkey patches
 // Monkey-Patch html loader to retrieve html loader options since the
 // "webpack-html-plugin" doesn't preserve the original loader interface.

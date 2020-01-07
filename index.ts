@@ -25,10 +25,8 @@ import {promises as fileSystem} from 'fs'
 import path from 'path'
 import removeDirectoryRecursively from 'rimraf'
 
-// @ts-ignore: Will be available at runtime.
-import configuration from './configurator.compiled'
-// @ts-ignore: Will be available at runtime.
-import Helper from './helper.compiled'
+import configuration from './configurator'
+import Helper from './helper'
 import {ResolvedBuildConfiguration} from './type'
 // endregion
 // NOTE: Specifies number of allowed threads to spawn.

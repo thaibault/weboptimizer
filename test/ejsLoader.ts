@@ -4,8 +4,7 @@
 // region imports
 import Tools from 'clientnode'
 
-// @ts-ignore: Will be available at runtime.
-import ejsLoader from '../ejsLoader.compiled'
+import ejsLoader from '../ejsLoader'
 // endregion
 // region declarations
 declare const describe:Function

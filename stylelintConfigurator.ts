@@ -14,8 +14,7 @@
     endregion
 */
 // region imports
-// @ts-ignore: Will be available at runtime.
-import configuration from './configurator.compiled'
+import configuration from './configurator'
 // endregion
 module.exports = configuration.stylelint
 // region vim modline

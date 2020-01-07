@@ -2,7 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import stylelintConfigurator from '../stylelintConfigurator.compiled'
+import stylelintConfigurator from '../stylelintConfigurator'
 // endregion
 // region declarations
 declare const expect:Function

@@ -32,10 +32,8 @@ import {minify as minifyHTML} from 'html-minifier'
 import * as loaderUtils from 'loader-utils'
 import path from 'path'
 
-// @ts-ignore: Will be available at runtime.regionendregion
-import configuration from './configurator.compiled'
-// @ts-ignore: Will be available at runtime.
-import Helper from './helper.compiled'
+import configuration from './configurator'
+import Helper from './helper'
 // endregion
 // region types
 type TemplateFunction = (locals:Record<string, unknown>) => string
