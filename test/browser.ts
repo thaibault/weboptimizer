@@ -2,7 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import getInitializedBrowser, {browser} from '../browser.compiled'
+import getInitializedBrowser, {browser} from '../browser'
 import {Browser} from '../type'
 // endregion
 // region declarations

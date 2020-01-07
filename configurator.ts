@@ -18,8 +18,7 @@ import Tools, {PlainObject} from 'clientnode'
 import fileSystem from 'fs'
 import path from 'path'
 
-// @ts-ignore: Will be available at runtime.
-import Helper from './helper.compiled'
+import Helper from './helper'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
 // variable named "metaConfiguration".
 import {configuration as givenMetaConfiguration} from './package'

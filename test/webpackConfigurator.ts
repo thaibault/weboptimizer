@@ -11,9 +11,8 @@ declare const expect:Function
 declare const test:Function
 // endregion
 test('webpackConfigurator', async ():Promise<void> => {
-    // @ts-ignore: Will be available at runtime.
     const webpackConfiguration:WebpackConfiguration = (await import(
-        '../webpackConfigurator.compiled'
+        '../webpackConfigurator'
     )).default
     expect(webpackConfiguration.entry.index).toContain('./index.ts')
     webpackConfiguration.output.path = __dirname

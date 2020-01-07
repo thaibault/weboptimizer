@@ -14,8 +14,7 @@ import {
     Path,
     ResolvedBuildConfiguration
 } from '../type'
-// @ts-ignore: Will be available at runtime.
-import Helper from '../helper.compiled'
+import Helper from '../helper'
 // endregion
 // region declarations
 declare const describe:Function
@@ -473,7 +472,7 @@ describe('helper', ():void => {
         [
             'helper',
             {
-                filePaths: [path.resolve(__dirname, '../helper.ts')],
+                filePaths: [path.resolve(__dirname, '../helper.js')],
                 directoryPaths: [path.resolve(__dirname, '../')]
             }
         ],
@@ -481,7 +480,7 @@ describe('helper', ():void => {
         [
             {example: 'helper'},
             {
-                filePaths: [path.resolve(__dirname, '../helper.ts')],
+                filePaths: [path.resolve(__dirname, '../helper.js')],
                 directoryPaths: [path.resolve(__dirname, '../')]
             }
         ],
@@ -700,7 +699,7 @@ describe('helper', ():void => {
             [],
             null
         ],
-        ['helper', 'helper.ts'],
+        ['helper', 'helper.js'],
         ['helper', {}, {}, {file: [], module: []}, './', '', [], null],
         [
             './helper',
