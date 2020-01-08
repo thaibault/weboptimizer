@@ -1223,7 +1223,7 @@ if (configuration.path.configuration && configuration.path.configuration.json)
     try {
         customConfiguration = require(configuration.path.configuration.json)
     } catch (error) {}
-export const webpackConfiguration:WebpackConfiguration = Tools.extend(
+export let webpackConfiguration:WebpackConfiguration = Tools.extend(
     true,
     {
         bail: true,
@@ -1357,7 +1357,7 @@ if (
     configuration.path.configuration &&
     configuration.path.configuration.javaScript
 ) {
-    let result:Record<string, any>
+    let result:any
     try {
         result = require(configuration.path.configuration.javaScript)
     } catch (error) {}
@@ -1365,7 +1365,7 @@ if (
         if (Object.prototype.hasOwnProperty.call(
             result, 'replaceWebOptimizer'
         ))
-            webpackConfiguration = webpackConfiguration.replaceWebOptimizer
+            webpackConfiguration = result.replaceWebOptimizer
         else
             Tools.extend(true, webpackConfiguration, result)
 }

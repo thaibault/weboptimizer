@@ -4054,9 +4054,9 @@ eslint-config-google@*:
   integrity sha512-WsbX4WbjuMvTdeVL6+J3rK1RGhCTqjsFjX7UMSMgZiyxxaNLkoJENbrGExzERFeoTpGw3F3FypTiWAP9ZXzkEw==
 
 eslint-plugin-jsdoc@*:
-  version "20.0.2"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-20.0.2.tgz#e573818a15077116b418f2828cb254bef60e3fac"
-  integrity sha512-Acj6D4tUnmw4tfX0BhJlxRbjZbF8hPDY6RGSCIjPRUmayOi40NEHyGN6rSlGYkblBwD0Yd817mPdNKFhkdchiw==
+  version "20.0.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-20.0.3.tgz#29d9eba98e9872e4b4b6bce7e1013d8985fba089"
+  integrity sha512-h/f9skf8oFmYg7jJfV2P43ciBV78q0dxkpnL++zPJrbuV4ZRCSlFmQWjjlNgNfYLGfAl166SNjGg7veEEVX9oA==
   dependencies:
     comment-parser "^0.7.2"
     debug "^4.1.1"

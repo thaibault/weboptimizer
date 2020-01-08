@@ -50,7 +50,7 @@ type CompileFunction = (
     template:string, options:CompilerOptions, compileSteps?:number
 ) => TemplateFunction
 // endregion
-module.exports = function(this:any, source:string):string {
+module.exports.default = module.exports = function(this:any, source:string):string {
     if ('cachable' in this && this.cacheable)
         this.cacheable()
     const query:{
