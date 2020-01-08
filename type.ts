@@ -371,6 +371,7 @@ export type WebpackConfiguration = {
         hints:false|string;
     };
     plugins:Array<Record<string, any>>;
+    replaceWebOptimizer:WebpackConfiguration;
 }
 // / endregion
 // endregion

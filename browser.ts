@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import Tools, {Window} from 'clientnode'
+import Tools from 'clientnode'
 import {Browser} from './type'
 // endregion
 // region declaration
@@ -91,7 +91,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 NOTE: We load dependencies now to avoid having file imports
                 after test runner has finished to isolate the environment.
             */
-            import('./ejsLoader.js').then(({default: ejsLoader}) =>
+            import('./ejsLoader').then(({ejsLoader}) =>
                 require('fs').readFile(
                     filePath,
                     {encoding: 'utf-8'},

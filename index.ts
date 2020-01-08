@@ -441,10 +441,15 @@ const main = async ():Promise<void> => {
                         global:Record<string, any>, self:PlainObject, path:typeof path
                     ):boolean =>
                         new Function(
-                            'global', 'self', 'path',
-                            'return ' + (task.hasOwnProperty(
-                                'indicator'
-                            ) ? task.indicator : 'true')
+                            'global',
+                            'self',
+                            'path',
+                            'return ' +
+                            (
+                                task.hasOwnProperty('indicator') ?
+                                    task.indicator :
+                                    'true'
+                            )
                         )(global, self, path)
                     if (evaluationFunction(global, configuration, path))
                         processPromises.push(new Promise((
@@ -453,10 +458,14 @@ const main = async ():Promise<void> => {
                             const commandLineArguments:Array<string> = (
                                 task.arguments || []
                             ).concat(additionalArguments)
-                            console.info('Running "' + (
-                                `${task.command} ` + commandLineArguments.join(
-                                    ' ')
-                            ).trim() + '"')
+                            console.info(
+                                'Running "' +
+                                (
+                                    `${task.command} ` +
+                                    commandLineArguments.join(' ')
+                                ).trim() +
+                                '"'
+                            )
                             const childProcess:ChildProcess =
                                 spawnChildProcess(
                                     task.command, commandLineArguments,

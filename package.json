@@ -240,7 +240,7 @@
             "--bail",
             "--config",
             {
-              "__evaluate__": "`${webOptimizerPath}/webpackConfigurator.compiled.js`"
+              "__evaluate__": "`${webOptimizerPath}/webpackConfigurator.js`"
             },
             "--display-chunks",
             "--display-reasons",
@@ -325,7 +325,7 @@
             "--cache",
             "--config",
             {
-              "__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.compiled.js'`"
+              "__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.js'`"
             },
             {
               "__evaluate__": "self.debug ? '--hot' : ''"
@@ -631,7 +631,7 @@
       "library": true,
       "loader": {
         "aliases": {
-          "ejs": "weboptimizer/ejsLoader.compiled"
+          "ejs": "weboptimizer/ejsLoader"
         },
         "extensions": {
           "file": [
@@ -650,11 +650,6 @@
         "additional": {
           "post": [],
           "pre": []
-        },
-        "aliases": {
-          "weboptimizer/browser$": "weboptimizer/browser.compiled",
-          "weboptimizer/helper$": "weboptimizer/helper.compiled",
-          "weboptimizer/jestEnvironmentBrowser": "weboptimizer/jestEnvironmentBrowser.compiled"
         },
         "cascadingStyleSheet": {
           "exclude": null,
