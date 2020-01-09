@@ -651,6 +651,7 @@
           "post": [],
           "pre": []
         },
+        "aliases": {},
         "cascadingStyleSheet": {
           "exclude": null,
           "loader": "css",

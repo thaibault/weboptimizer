@@ -453,7 +453,7 @@ for (const loader of resolvedConfiguration.files.defaultHTML.template.use) {
             .webOptimizerDefaultTemplateFileLoader += '?' +
                 Tools.convertCircularObjectToJSON(loader.options)
 }
-resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath$ =
+resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath =
     resolvedConfiguration.files.defaultHTML.template.filePath
 // endregion
 // region apply html webpack plugin workarounds
