@@ -268,7 +268,7 @@
             }
           ],
           "command": "jsdoc",
-          "indicator": "self.needed.typeScript"
+          "indicator": "self.needed.javaScript || self.needed.typeScript"
         },
         "lint": [
           {
@@ -317,7 +317,7 @@
               "'**/*.{js,jsx,ts}'"
             ],
             "command": "eslint",
-            "indicator": "self.needed.typeScript"
+            "indicator": "self.needed.javaScript || self.needed.typeScript"
           }
         ],
         "serve": {
