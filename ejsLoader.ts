@@ -13,7 +13,7 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports
+// region imports 
 import {
     BabelFileResult, transformSync as babelTransformSync
 } from '@babel/core'
@@ -29,7 +29,7 @@ import Tools from 'clientnode'
 import ejs from 'ejs'
 import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
-import * as loaderUtils from 'loader-utils'
+import {getOptions, getRemainingRequest} from 'loader-utils'
 import path from 'path'
 
 import configuration from './configurator'
@@ -50,7 +50,7 @@ type CompileFunction = (
     template:string, options:CompilerOptions, compileSteps?:number
 ) => TemplateFunction
 // endregion
-module.exports.default = module.exports = function(this:any, source:string):string {
+export default function(this:any, source:string):string {
     if ('cachable' in this && this.cacheable)
         this.cacheable()
     const query:{
@@ -103,7 +103,7 @@ module.exports.default = module.exports = function(this:any, source:string):stri
                 }
             },
             this.options || {},
-            'query' in this ? loaderUtils.getOptions(this) || {} : {}
+            'query' in this ? getOptions(this) || {} : {}
         ),
         /#%%%#/g,
         '!'
@@ -302,7 +302,7 @@ module.exports.default = module.exports = function(this:any, source:string):stri
             debug: this.debug || false,
             filename:
                 'query' in this ?
-                    loaderUtils.getRemainingRequest(this).replace(/^!/, '') :
+                    getRemainingRequest(this).replace(/^!/, '') :
                     this.filename || null,
             isString: true
         },

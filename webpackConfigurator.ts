@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import Tools, {DomNode, PlainObject, ProcedureFunction} from 'clientnode'
+import Tools, {PlainObject, ProcedureFunction} from 'clientnode/type'
 /* eslint-disable no-var */
 try {
     var postcssCSSnano:Function = require('cssnano')
@@ -70,7 +70,8 @@ import {
     HTMLConfiguration,
     PluginConfiguration,
     WebpackConfiguration,
-    WebpackLoader
+    WebpackLoader,
+    WebpackLoaderConfiguration
 } from './type'
 /* eslint-enable no-unused-vars */
 import configuration from './configurator'
@@ -85,27 +86,29 @@ if (
     require.resolve('html-loader') in require.cache
 )
     require.cache[require.resolve('html-loader')].exports = function(
-        ...parameter:Array<any>
+        this:WebpackLoader, ...parameter:Array<any>
     ):any {
         Tools.extend(true, this.options, module, this.options)
         return htmlLoaderModuleBackup.call(this, ...parameter)
     }
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
-const loaderUtilsIsUrlRequestBackup:(url:string) => boolean =
-    loaderUtilsModuleBackup.isUrlRequest
+const loaderUtilsIsUrlRequestBackup:(
+    url:string, ...parameter:Array<any>
+) => boolean = loaderUtilsModuleBackup.isUrlRequest
 if (
     'cache' in require &&
     require.cache &&
     require.resolve('loader-utils') in require.cache
 )
     require.cache[require.resolve('loader-utils')].exports.isUrlRequest = (
-        url:string, ...additionalParameter:Array<any>
+        url:string, ...parameter:Array<any>
     ):boolean => {
         if (url.match(/^[a-z]+:.+/))
             return false
-        return loaderUtilsIsUrlRequestBackup.apply(
-            loaderUtilsModuleBackup, [url].concat(additionalParameter))
+        return loaderUtilsIsUrlRequestBackup.call(
+            loaderUtilsModuleBackup, url, ...parameter
+        )
     }
 // / endregion
 // endregion
@@ -139,10 +142,13 @@ for (const source in configuration.module.replacements.normal)
     )) {
         const search = new RegExp(source)
         pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
-            search, (resource:{request:string}):void => {
+            search,
+            (resource:{request:string}):void => {
                 resource.request = resource.request.replace(
-                    search, configuration.module.replacements.normal[source])
-            }))
+                    search, configuration.module.replacements.normal[source]
+                )
+            }
+        ))
     }
 // // endregion
 // // region generate html file
@@ -297,7 +303,9 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                     promises.push(fileSystem.readdir(
                         configuration.path.target.asset[type],
                         {encoding: configuration.encoding}
-                    ).then(async (files:Array<string>):Promise<void> => {
+                    ).then(async (
+                        files:Array<string>|Array<Buffer>
+                    ):Promise<void> => {
                         if (files.length === 0)
                             await fileSystem.rmdir(
                                 configuration.path.target.asset[type])
@@ -646,12 +654,15 @@ if (htmlAvailable)
                 data.html = dom.serialize()
                     .replace(/##\+#\+#\+##/g, '<%')
                     .replace(/##-#-#-##/g, '%>')
-                    .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
-                        match:string,
-                        startTag:string,
-                        endTag:string
-                    ):string =>
-                        `${startTag}${styleContents.shift()}${endTag}`)
+                    .replace(
+                        /(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi,
+                        (
+                            match:string,
+                            startTag:string,
+                            endTag:string
+                        ):string =>
+                            `${startTag}${styleContents.shift()}${endTag}`
+                    )
                 // region post compilation
                 for (
                     const htmlFileSpecification of
@@ -666,12 +677,8 @@ if (htmlAvailable)
                             htmlFileSpecification.template.use
                         )
                             if (
-                                Object.prototype.hasOwnProperty.call(
-                                    loaderConfiguration, 'options'
-                                ) &&
-                                Object.prototype.hasOwnProperty.call(
-                                    loaderConfiguration.options, 'compileSteps'
-                                ) &&
+                                loaderConfiguration.options &&
+                                loaderConfiguration.options.compileSteps &&
                                 typeof loaderConfiguration.options
                                     .compileSteps ===
                                 'number'
@@ -722,8 +729,11 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
             const packageDescriptor:null|PlainObject =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
-                const pathPrefixes:Array<string> = targetPath.match(
-                    /((?:^|.*?\/)node_modules\/)/g)
+                const pathPrefixes:null|RegExpMatchArray = targetPath.match(
+                    /((?:^|.*?\/)node_modules\/)/g
+                )
+                if (pathPrefixes === null)
+                    return
                 // Avoid finding the same artefact.
                 pathPrefixes.pop()
                 let index = 0
@@ -735,7 +745,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                 }
                 const pathSuffix:string = targetPath.replace(
                     /(?:^|.*\/)node_modules\/(.+$)/, '$1')
-                let redundantRequest:PlainObject
+                let redundantRequest:null|PlainObject = null
                 for (const pathPrefix of pathPrefixes) {
                     const alternateTargetPath:string = path.resolve(
                         pathPrefix, pathSuffix)
@@ -809,8 +819,8 @@ const evaluateLoaderConfiguration = (loader:string):WebpackLoader =>
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration:AdditionalLoaderConfiguration
 ):WebpackLoaderConfiguration => ({
-    exclude: (filePath:string):boolean => evaluate(
-        loaderConfiguration.exclude || 'false', filePath),
+    exclude: (filePath:string):boolean =>
+        evaluate(loaderConfiguration.exclude || 'false', filePath),
     include:
         loaderConfiguration.include &&
         evaluate(loaderConfiguration.include) ||
@@ -826,12 +836,14 @@ Tools.extend(loader, {
     // Convert to compatible native web types.
     // region generic template
     ejs: {
-        exclude: (filePath:string):boolean => Helper.normalizePaths(
-            configuration.files.html.concat(
-                configuration.files.defaultHTML
-            ).map((htmlConfiguration:HTMLConfiguration):string =>
-                htmlConfiguration.template.filePath)
-        ).includes(filePath) ||
+        exclude: (filePath:string):boolean =>
+            Helper.normalizePaths(
+                configuration.files.html.concat(
+                    configuration.files.defaultHTML)
+                .map((htmlConfiguration:HTMLConfiguration):string =>
+                    htmlConfiguration.template.filePath
+                )
+            ).includes(filePath) ||
             (configuration.module.preprocessor.ejs.exclude === null) ?
                 false :
                 evaluate(
@@ -840,7 +852,7 @@ Tools.extend(loader, {
         include: includingPaths,
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: configuration.module.preprocessor.ejs.additional.pre.map(
-            (loader:string):WebpackLoader => evaluate(loader)
+            evaluateLoaderConfiguration
         ).concat(
             {
                 loader: 'file?name=[path][name]' +
@@ -858,19 +870,23 @@ Tools.extend(loader, {
                 options: configuration.module.preprocessor.ejs.options || {}
             },
             configuration.module.preprocessor.ejs.additional.post.map(
-                (loader:string):WebpackLoader => evaluate(loader)
+                evaluateLoaderConfiguration
             )
         )
     },
     // endregion
     // region script
     script: {
-        exclude: (filePath:string):boolean => evaluate(
-            configuration.module.preprocessor.javaScript.exclude, filePath
-        ),
+        exclude: (filePath:string):boolean =>
+            evaluate(
+                configuration.module.preprocessor.javaScript.exclude, filePath
+            ),
         include: (filePath:string):boolean => {
-            const result:any = evaluate(
-                configuration.module.preprocessor.javaScript.include, filePath)
+            const result:any =
+                evaluate(
+                    configuration.module.preprocessor.javaScript.include,
+                    filePath
+                )
             if ([null, undefined].includes(result)) {
                 for (const includePath of includingPaths)
                     if (filePath.startsWith(includePath))
@@ -883,7 +899,7 @@ Tools.extend(loader, {
             configuration.module.preprocessor.javaScript.regularExpression, 'i'
         ),
         use: configuration.module.preprocessor.javaScript.additional.pre.map(
-            (loader:string):WebpackLoader => evaluate(loader)
+            evaluateLoaderConfiguration
         ).concat(
             {
                 loader: configuration.module.preprocessor.javaScript.loader,
@@ -891,7 +907,7 @@ Tools.extend(loader, {
                     configuration.module.preprocessor.javaScript.options || {}
             },
             configuration.module.preprocessor.javaScript.additional.post.map(
-                (loader:string):WebpackLoader => evaluate(loader)
+                evaluateLoaderConfiguration
             )
         )
     },
@@ -923,7 +939,7 @@ Tools.extend(loader, {
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
             use: configuration.module.preprocessor.html.additional.pre.map(
-                (loader:string):WebpackLoader => evaluate(loader)
+                evaluateLoaderConfiguration
             ).concat(
                 {
                     loader:
@@ -967,7 +983,7 @@ Tools.extend(loader, {
                         configuration.module.preprocessor.html.options || {}
                 },
                 configuration.module.preprocessor.html.additional.post.map(
-                    (loader:string):WebpackLoader => evaluate(loader)
+                    evaluateLoaderConfiguration
                 )
             )
         },
@@ -986,10 +1002,12 @@ Tools.extend(loader, {
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
-            use: configuration.module.html.additional.pre.concat(
+            use: configuration.module.html.additional.pre.map(
+                evaluateLoaderConfiguration
+            ).concat(
                 {
                     loader:
-                         'file?name=' +
+                       'file?name=' +
                         path.join(
                             path.relative(
                                 configuration.path.target.base,
@@ -1004,7 +1022,7 @@ Tools.extend(loader, {
                     options: configuration.module.html.options || {}
                 },
                 configuration.module.html.additional.post.map(
-                    (loader:string):WebpackLoader => evaluate(loader)
+                    evaluateLoaderConfiguration
                 )
             )
         }
@@ -1022,10 +1040,9 @@ Tools.extend(loader, {
                 ),
         include: includingPaths,
         test: /\.s?css(?:\?.*)?$/i,
-        use: configuration.module.preprocessor.cascadingStyleSheet.additional
-            .pre.map(
-                (loader:string):WebpackLoader => evaluate(loader)
-            ).concat(
+        use:
+            configuration.module.preprocessor.cascadingStyleSheet.additional
+            .pre.map(evaluateLoaderConfiguration).concat(
                 {
                     loader: configuration.module.style.loader,
                     options: configuration.module.style.options || {}
@@ -1049,9 +1066,7 @@ Tools.extend(loader, {
                         ].concat(
                             configuration.module.preprocessor
                                 .cascadingStyleSheet.additional
-                                .plugins.pre.map((
-                                    loader:string
-                                ):WebpackLoader => evaluate(loader)),
+                                .plugins.pre.map(evaluateLoaderConfiguration),
                             postcssPresetENV(
                                 configuration.module.preprocessor
                                     .cascadingStyleSheet.postcssPresetEnv),
@@ -1095,21 +1110,19 @@ Tools.extend(loader, {
                             }),
                             configuration.module.preprocessor
                                 .cascadingStyleSheet.additional.plugins.post
-                                .map((loader:string):WebpackLoader =>
-                                    evaluate(loader)
-                                ),
+                                .map(evaluateLoaderConfiguration),
                             configuration.module.optimizer.cssnano ?
                                 postcssCSSnano(
                                     configuration.module.optimizer.cssnano
-                                ) : [])
+                                ) :
+                                []
+                        )
                     },
                     configuration.module.preprocessor.cascadingStyleSheet
                         .options || {})
                 },
                 configuration.module.preprocessor.cascadingStyleSheet
-                    .additional.post.map((loader:string):WebpackLoader =>
-                        evaluate(loader)
-                    )
+                    .additional.post.map(evaluateLoaderConfiguration)
             )
     },
     // endregion
@@ -1126,7 +1139,7 @@ Tools.extend(loader, {
                     ),
             test: /\.eot(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.eot.additional.pre.map(
-                (loader:string):WebpackLoader => evaluate(loader)
+                evaluateLoaderConfiguration
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.eot.loader,
@@ -1134,7 +1147,7 @@ Tools.extend(loader, {
                         {}
                 },
                 configuration.module.optimizer.font.eot.additional.post.map(
-                    (loader:string):WebpackLoader => evaluate(loader)
+                    evaluateLoaderConfiguration
                 )
             )
         },
@@ -1148,7 +1161,7 @@ Tools.extend(loader, {
                     ),
             test: /\.svg(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.svg.additional.pre.map(
-                (loader:string):WebpackLoader => evaluate(loader)
+                evaluateLoaderConfiguration
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.svg.loader,
@@ -1156,7 +1169,7 @@ Tools.extend(loader, {
                         {}
                 },
                 configuration.module.optimizer.font.svg.additional.post.map(
-                    (loader:string):WebpackLoader => evaluate(loader)
+                    evaluateLoaderConfiguration
                 )
             )
         },
@@ -1170,7 +1183,7 @@ Tools.extend(loader, {
                     ),
             test: /\.ttf(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.ttf.additional.pre.map(
-                (loader:string):WebpackLoader => evaluate(loader)
+                evaluateLoaderConfiguration
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.ttf.loader,
@@ -1178,7 +1191,7 @@ Tools.extend(loader, {
                         {}
                 },
                 configuration.module.optimizer.font.ttf.additional.post.map(
-                    (loader:string):WebpackLoader => evaluate(loader)
+                    evaluateLoaderConfiguration
                 )
             )
         },
@@ -1192,7 +1205,7 @@ Tools.extend(loader, {
                     ),
             test: /\.woff2?(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.woff.additional.pre.map(
-                (loader:string):WebpackLoader => evaluate(loader)
+                evaluateLoaderConfiguration
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.woff.loader,
@@ -1200,7 +1213,7 @@ Tools.extend(loader, {
                         configuration.module.optimizer.font.woff.options || {}
                 },
                 configuration.module.optimizer.font.woff.additional.post.map(
-                    (loader:string):WebpackLoader => evaluate(loader)
+                    evaluateLoaderConfiguration
                 )
             )
         }
@@ -1217,14 +1230,14 @@ Tools.extend(loader, {
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
         use: configuration.module.optimizer.image.additional.pre.map(
-            (loader:string):WebpackLoader => evaluate(loader)
+            evaluateLoaderConfiguration
         ).concat(
             {
                 loader: configuration.module.optimizer.image.loader,
                 options: configuration.module.optimizer.image.file || {}
             },
             configuration.module.optimizer.image.additional.post.map(
-                (loader:string):WebpackLoader => evaluate(loader)
+                evaluateLoaderConfiguration
             )
         )
     },
@@ -1244,14 +1257,14 @@ Tools.extend(loader, {
             ),
         test: /.+/,
         use: configuration.module.optimizer.data.additional.pre.map(
-            (loader:string):WebpackLoader => evaluate(loader)
+            evaluateLoaderConfiguration
         ).concat(
             {
                 loader: configuration.module.optimizer.data.loader,
                 options: configuration.module.optimizer.data.options || {}
             },
             configuration.module.optimizer.data.additional.post.map(
-                (loader:string):WebpackLoader => evaluate(loader)
+                evaluateLoaderConfiguration
             )
         )
     }

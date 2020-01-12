@@ -15,16 +15,16 @@
     endregion
 */
 // region imports
-import {PlainObject, ProcedureFunction, Window} from 'clientnode'
+import {PlainObject, ProcedureFunction} from 'clientnode/type'
 // endregion
 // region exports
 // / region generic
 export type Browser = {
     debug:boolean;
     domContentLoaded:boolean;
-    DOM?:null|Record<string, any>;
+    DOM?:null|PlainObject;
     initialized:boolean;
-    instance:null|Record<string, any>;
+    instance:null|PlainObject;
     window:null|Window;
     windowLoaded:boolean;
 }
@@ -119,20 +119,21 @@ export type LoaderConfiguration = {
     exclude:string;
     include:string;
     loader:string;
-    options:Record<string, any>;
+    options:PlainObject;
     regularExpression:string;
 }
 export type WebpackLoader = {
     loader:string;
-    options:Record<string, any>;
+    options?:PlainObject;
 }
-// TODO
 export type WebpackLoaderConfiguration = {
-    exclude:;
-    include:;
-    test:;
-    use:WebpackLoader;
+    exclude:WebpackLoaderIndicator;
+    include:WebpackLoaderIndicator;
+    test:RegExp;
+    use:Array<WebpackLoader>|WebpackLoader;
 }
+export type WebpackLoaderIndicator =
+    Array<WebpackLoaderIndicator>|Function|string
 // // endregion
 export type Command = {
     arguments:Array<string>;
@@ -150,14 +151,14 @@ export type DefaultConfiguration = {
     contextType:string;
     debug:boolean;
     dllManifestFilePaths:Array<any>;
-    document:Record<string, any>;
+    document:PlainObject;
     encoding:string;
     library:boolean;
     nodeEnvironment:{[key:string]:boolean|'empty'|'mock'};
     path:Path;
     plugins:Array<PluginConfiguration>;
-    test:Record<string, any>;
-    'test:browser':Record<string, any>;
+    test:PlainObject;
+    'test:browser':PlainObject;
 }
 /* eslint-disable max-len */
 export type ExportFormat = 'amd'|'amd-require'|'assign'|'global'|'jsonp'|'var'|'this'|'commonjs'|'commonjs2'|'umd';
@@ -166,9 +167,10 @@ export type HTMLConfiguration = {
     filename:string;
     template:{
         filePath:string;
-        options:PlainObject;
+        options?:PlainObject;
+        postCompileSteps:number;
         request:string|string;
-        use:Array<{loader:string;options:Record<string, any>}>;
+        use:Array<WebpackLoader>|WebpackLoader;
     };
 }
 export type MetaConfiguration = {
@@ -294,7 +296,7 @@ export type ResolvedConfiguration = {
                 loader:string;
             };
             minimize:boolean;
-            minimizer:Array<Record<string, any>>;
+            minimizer:Array<PlainObject>;
         };
         preprocessor:{
             cascadingStyleSheet:{
@@ -304,8 +306,8 @@ export type ResolvedConfiguration = {
                     pre:Array<string>;
                 };
                 loader:string;
-                options:Record<string, any>;
-                postcssPresetEnv:Record<string, any>;
+                options:PlainObject;
+                postcssPresetEnv:PlainObject;
             };
             ejs:LoaderConfiguration;
             html:LoaderConfiguration;
@@ -318,7 +320,11 @@ export type ResolvedConfiguration = {
         provide:{[key:string]:string};
         replacements:{
             context:Array<Array<string>>;
-            normal:{[key:string]:Function|string};
+            normal:{
+                [key:string]:(
+                    substring:string, ...parameter:Array<any>
+                ) => string|string
+            };
         };
         skipParseRegularExpressions:RegExp|Array<RegExp>;
         style:PlainObject;
@@ -396,7 +402,7 @@ export type WebpackConfiguration = {
     performance:{
         hints:false|string;
     };
-    plugins:Array<Record<string, any>>;
+    plugins:Array<PlainObject>;
     replaceWebOptimizer:WebpackConfiguration;
 }
 // / endregion
