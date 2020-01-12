@@ -66,7 +66,11 @@ if (plugins.Imagemin)
 import ejsLoader from './ejsLoader'
 /* eslint-disable no-unused-vars */
 import {
-    HTMLConfiguration, PluginConfiguration, WebpackConfiguration
+    AdditionalLoaderConfiguration,
+    HTMLConfiguration,
+    PluginConfiguration,
+    WebpackConfiguration,
+    WebpackLoader
 } from './type'
 /* eslint-enable no-unused-vars */
 import configuration from './configurator'
@@ -787,20 +791,6 @@ const isFilePathInDependencies:Function = (filePath:string):boolean => {
         )
     )
 }
-const evaluateLoaderConfiguration:Function = (
-    loaderConfiguration:PlainObject
-):PlainObject => ({
-    exclude: (filePath:string):boolean => evaluate(
-        loaderConfiguration.exclude || 'false', filePath),
-    include:
-        loaderConfiguration.include &&
-        evaluate(
-            loaderConfiguration.include, configuration.path.context) ||
-        configuration.path.source.base,
-    test: new RegExp(evaluate(
-        loaderConfiguration.test, configuration.path.context)),
-    use: evaluate(loaderConfiguration.use)
-})
 const loader:Record<string, any> = {}
 const scope:Record<string, any> = {
     configuration,
@@ -808,10 +798,26 @@ const scope:Record<string, any> = {
     loader,
     require: eval('require')
 }
-const evaluate:Function = (code:string, filePath:string):any =>
+const evaluate = (
+    code:string, filePath:string = configuration.path.context
+):any =>
     (new Function('filePath', ...Object.keys(scope), `return ${code}`))(
         filePath, ...Object.values(scope)
     )
+const evaluateLoaderConfiguration = (loader:string):WebpackLoader =>
+    evaluate(loader)
+const evaluateAdditionalLoaderConfiguration = (
+    loaderConfiguration:AdditionalLoaderConfiguration
+):WebpackLoaderConfiguration => ({
+    exclude: (filePath:string):boolean => evaluate(
+        loaderConfiguration.exclude || 'false', filePath),
+    include:
+        loaderConfiguration.include &&
+        evaluate(loaderConfiguration.include) ||
+        configuration.path.source.base,
+    test: new RegExp(evaluate(loaderConfiguration.test)),
+    use: evaluate(loaderConfiguration.use)
+})
 const includingPaths:Array<string> =
     Helper.normalizePaths([configuration.path.source.asset.javaScript].concat(
         configuration.module.locations.directoryPaths
@@ -829,11 +835,12 @@ Tools.extend(loader, {
             (configuration.module.preprocessor.ejs.exclude === null) ?
                 false :
                 evaluate(
-                    configuration.module.preprocessor.ejs.exclude, filePath),
+                    configuration.module.preprocessor.ejs.exclude, filePath
+                ),
         include: includingPaths,
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: configuration.module.preprocessor.ejs.additional.pre.map(
-            evaluate
+            (loader:string):WebpackLoader => evaluate(loader)
         ).concat(
             {
                 loader: 'file?name=[path][name]' +
@@ -851,7 +858,9 @@ Tools.extend(loader, {
                 options: configuration.module.preprocessor.ejs.options || {}
             },
             configuration.module.preprocessor.ejs.additional.post.map(
-                evaluate))
+                (loader:string):WebpackLoader => evaluate(loader)
+            )
+        )
     },
     // endregion
     // region script
@@ -874,7 +883,7 @@ Tools.extend(loader, {
             configuration.module.preprocessor.javaScript.regularExpression, 'i'
         ),
         use: configuration.module.preprocessor.javaScript.additional.pre.map(
-            evaluate
+            (loader:string):WebpackLoader => evaluate(loader)
         ).concat(
             {
                 loader: configuration.module.preprocessor.javaScript.loader,
@@ -882,7 +891,9 @@ Tools.extend(loader, {
                     configuration.module.preprocessor.javaScript.options || {}
             },
             configuration.module.preprocessor.javaScript.additional.post.map(
-                evaluate))
+                (loader:string):WebpackLoader => evaluate(loader)
+            )
+        )
     },
     // endregion
     // region html template
@@ -895,20 +906,24 @@ Tools.extend(loader, {
             use: configuration.files.defaultHTML.template.use
         },
         ejs: {
-            exclude: (filePath:string):boolean => Helper.normalizePaths(
-                configuration.files.html.concat(
-                    configuration.files.defaultHTML
-                ).map((htmlConfiguration:HTMLConfiguration):string =>
-                    htmlConfiguration.template.filePath)
-            ).includes(filePath) ||
+            exclude:
+                (filePath:string):boolean => Helper.normalizePaths(
+                    configuration.files.html.concat(
+                        configuration.files.defaultHTML
+                    ).map((htmlConfiguration:HTMLConfiguration):string =>
+                        htmlConfiguration.template.filePath)
+                ).includes(filePath) ||
                 ((configuration.module.preprocessor.html.exclude === null) ?
-                    false : evaluate(
+                    false :
+                    evaluate(
                         configuration.module.preprocessor.html.exclude,
-                        filePath)),
+                        filePath
+                    )
+                ),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
             use: configuration.module.preprocessor.html.additional.pre.map(
-                evaluate
+                (loader:string):WebpackLoader => evaluate(loader)
             ).concat(
                 {
                     loader:
@@ -952,7 +967,9 @@ Tools.extend(loader, {
                         configuration.module.preprocessor.html.options || {}
                 },
                 configuration.module.preprocessor.html.additional.post.map(
-                    evaluate))
+                    (loader:string):WebpackLoader => evaluate(loader)
+                )
+            )
         },
         html: {
             exclude: (filePath:string):boolean =>
@@ -986,7 +1003,9 @@ Tools.extend(loader, {
                     loader: configuration.module.html.loader,
                     options: configuration.module.html.options || {}
                 },
-                configuration.module.html.additional.post.map(evaluate)
+                configuration.module.html.additional.post.map(
+                    (loader:string):WebpackLoader => evaluate(loader)
+                )
             )
         }
     },
@@ -994,15 +1013,19 @@ Tools.extend(loader, {
     // Load dependencies.
     // region style
     style: {
-        exclude: (filePath:string):boolean => (
-            configuration.module.cascadingStyleSheet.exclude === null
-        ) ? isFilePathInDependencies(filePath) :
-            evaluate(
-                configuration.module.cascadingStyleSheet.exclude, filePath),
+        exclude: (filePath:string):boolean =>
+            (configuration.module.cascadingStyleSheet.exclude === null) ?
+                isFilePathInDependencies(filePath) :
+                evaluate(
+                    configuration.module.cascadingStyleSheet.exclude,
+                    filePath
+                ),
         include: includingPaths,
         test: /\.s?css(?:\?.*)?$/i,
         use: configuration.module.preprocessor.cascadingStyleSheet.additional
-            .pre.concat(
+            .pre.map(
+                (loader:string):WebpackLoader => evaluate(loader)
+            ).concat(
                 {
                     loader: configuration.module.style.loader,
                     options: configuration.module.style.options || {}
@@ -1026,7 +1049,9 @@ Tools.extend(loader, {
                         ].concat(
                             configuration.module.preprocessor
                                 .cascadingStyleSheet.additional
-                                .plugins.pre.map(evaluate),
+                                .plugins.pre.map((
+                                    loader:string
+                                ):WebpackLoader => evaluate(loader)),
                             postcssPresetENV(
                                 configuration.module.preprocessor
                                     .cascadingStyleSheet.postcssPresetEnv),
@@ -1070,7 +1095,9 @@ Tools.extend(loader, {
                             }),
                             configuration.module.preprocessor
                                 .cascadingStyleSheet.additional.plugins.post
-                                .map(evaluate),
+                                .map((loader:string):WebpackLoader =>
+                                    evaluate(loader)
+                                ),
                             configuration.module.optimizer.cssnano ?
                                 postcssCSSnano(
                                     configuration.module.optimizer.cssnano
@@ -1080,21 +1107,26 @@ Tools.extend(loader, {
                         .options || {})
                 },
                 configuration.module.preprocessor.cascadingStyleSheet
-                    .additional.post.map(evaluate))
+                    .additional.post.map((loader:string):WebpackLoader =>
+                        evaluate(loader)
+                    )
+            )
     },
     // endregion
     // Optimize loaded assets.
     // region font
     font: {
         eot: {
-            exclude: (filePath:string):boolean => (
-                configuration.module.optimizer.font.eot.exclude === null
-            ) ? false :
-                evaluate(
-                    configuration.module.optimizer.font.eot.exclude, filePath),
+            exclude: (filePath:string):boolean =>
+                (configuration.module.optimizer.font.eot.exclude === null) ?
+                    false :
+                    evaluate(
+                        configuration.module.optimizer.font.eot.exclude,
+                        filePath
+                    ),
             test: /\.eot(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.eot.additional.pre.map(
-                evaluate
+                (loader:string):WebpackLoader => evaluate(loader)
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.eot.loader,
@@ -1102,17 +1134,21 @@ Tools.extend(loader, {
                         {}
                 },
                 configuration.module.optimizer.font.eot.additional.post.map(
-                    evaluate))
+                    (loader:string):WebpackLoader => evaluate(loader)
+                )
+            )
         },
         svg: {
-            exclude: (filePath:string):boolean => (
-                configuration.module.optimizer.font.svg.exclude === null
-            ) ? false :
-                evaluate(
-                    configuration.module.optimizer.font.svg.exclude, filePath),
+            exclude: (filePath:string):boolean =>
+                (configuration.module.optimizer.font.svg.exclude === null) ?
+                    false :
+                    evaluate(
+                        configuration.module.optimizer.font.svg.exclude,
+                        filePath
+                    ),
             test: /\.svg(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.svg.additional.pre.map(
-                evaluate
+                (loader:string):WebpackLoader => evaluate(loader)
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.svg.loader,
@@ -1120,17 +1156,21 @@ Tools.extend(loader, {
                         {}
                 },
                 configuration.module.optimizer.font.svg.additional.post.map(
-                    evaluate))
+                    (loader:string):WebpackLoader => evaluate(loader)
+                )
+            )
         },
         ttf: {
-            exclude: (filePath:string):boolean => (
-                configuration.module.optimizer.font.ttf.exclude === null
-            ) ? false :
-                evaluate(
-                    configuration.module.optimizer.font.ttf.exclude, filePath),
+            exclude: (filePath:string):boolean =>
+                (configuration.module.optimizer.font.ttf.exclude === null) ?
+                    false :
+                    evaluate(
+                        configuration.module.optimizer.font.ttf.exclude,
+                        filePath
+                    ),
             test: /\.ttf(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.ttf.additional.pre.map(
-                evaluate
+                (loader:string):WebpackLoader => evaluate(loader)
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.ttf.loader,
@@ -1138,18 +1178,21 @@ Tools.extend(loader, {
                         {}
                 },
                 configuration.module.optimizer.font.ttf.additional.post.map(
-                    evaluate))
+                    (loader:string):WebpackLoader => evaluate(loader)
+                )
+            )
         },
         woff: {
-            exclude: (filePath:string):boolean => (
-                configuration.module.optimizer.font.woff.exclude === null
-            ) ? false :
-                evaluate(
-                    configuration.module.optimizer.font.woff.exclude, filePath
-                ),
+            exclude: (filePath:string):boolean =>
+                (configuration.module.optimizer.font.woff.exclude === null) ?
+                    false :
+                    evaluate(
+                        configuration.module.optimizer.font.woff.exclude,
+                        filePath
+                    ),
             test: /\.woff2?(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.woff.additional.pre.map(
-                evaluate
+                (loader:string):WebpackLoader => evaluate(loader)
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.woff.loader,
@@ -1157,26 +1200,33 @@ Tools.extend(loader, {
                         configuration.module.optimizer.font.woff.options || {}
                 },
                 configuration.module.optimizer.font.woff.additional.post.map(
-                    evaluate))
+                    (loader:string):WebpackLoader => evaluate(loader)
+                )
+            )
         }
     },
     // endregion
     // region image
     image: {
-        exclude: (filePath:string):boolean => (
-            configuration.module.optimizer.image.exclude === null
-        ) ? isFilePathInDependencies(filePath) :
-            evaluate(configuration.module.optimizer.image.exclude, filePath),
+        exclude: (filePath:string):boolean =>
+            (configuration.module.optimizer.image.exclude === null) ?
+                isFilePathInDependencies(filePath) :
+                evaluate(
+                    configuration.module.optimizer.image.exclude, filePath
+                ),
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
         use: configuration.module.optimizer.image.additional.pre.map(
-            evaluate
+            (loader:string):WebpackLoader => evaluate(loader)
         ).concat(
             {
                 loader: configuration.module.optimizer.image.loader,
                 options: configuration.module.optimizer.image.file || {}
             },
-            configuration.module.optimizer.image.additional.post.map(evaluate))
+            configuration.module.optimizer.image.additional.post.map(
+                (loader:string):WebpackLoader => evaluate(loader)
+            )
+        )
     },
     // endregion
     // region data
@@ -1184,20 +1234,26 @@ Tools.extend(loader, {
         exclude: (filePath:string):boolean =>
             configuration.extensions.file.internal.includes(
                 path.extname(Helper.stripLoader(filePath))
-            ) || ((
-                configuration.module.optimizer.data.exclude === null
-            ) ? isFilePathInDependencies(filePath) :
-                evaluate(
-                    configuration.module.optimizer.data.exclude, filePath)),
+            ) ||
+            (
+                (configuration.module.optimizer.data.exclude === null) ?
+                    isFilePathInDependencies(filePath) :
+                    evaluate(
+                        configuration.module.optimizer.data.exclude, filePath
+                    )
+            ),
         test: /.+/,
         use: configuration.module.optimizer.data.additional.pre.map(
-            evaluate
+            (loader:string):WebpackLoader => evaluate(loader)
         ).concat(
             {
                 loader: configuration.module.optimizer.data.loader,
                 options: configuration.module.optimizer.data.options || {}
             },
-            configuration.module.optimizer.data.additional.post.map(evaluate))
+            configuration.module.optimizer.data.additional.post.map(
+                (loader:string):WebpackLoader => evaluate(loader)
+            )
+        )
     }
     // endregion
 })
@@ -1277,7 +1333,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
         mode: configuration.debug ? 'development' : 'production',
         module: {
             rules: configuration.module.additional.pre.map(
-                evaluateLoaderConfiguration
+                evaluateAdditionalLoaderConfiguration
             ).concat(
                 loader.ejs,
                 loader.script,
@@ -1288,7 +1344,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                 loader.image,
                 loader.data,
                 configuration.module.additional.post.map(
-                    evaluateLoaderConfiguration)
+                    evaluateAdditionalLoaderConfiguration)
             )
         },
         node: configuration.nodeEnvironment,

@@ -1,4 +1,5 @@
-#!/usr/bin/env node
+#!/usr/bin/env nodedd
+
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -60,10 +61,7 @@ export type Injection = {
 }
 // / endregion
 // / region configuration
-export type Additional = {
-    post:Array<string>;
-    pre:Array<string>;
-}
+// // region path
 export type AssetPath = {
     base:string;
     cascadingStyleSheet:string;
@@ -75,21 +73,13 @@ export type AssetPath = {
     target:string;
     template:string;
 }
-export type BuildConfigurationItem = {
-    extension:string;
-    outputExtension:string;
-    filePathPattern:string;
-}
-export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
-export type Command = {
-    arguments:Array<string>;
-    command:string;
-    indicator?:string;
-}
 export type Path = {
     apiDocumentation:string;
     base:string;
-    configuration:{javaScript:null|string};
+    configuration:{
+        javaScript:string;
+        json:string;
+    };
     context:string;
     ignore:Array<string>;
     source:{
@@ -104,6 +94,50 @@ export type Path = {
     };
     tidyUp:Array<string>;
     tidyUpOnClear:Array<string>;
+}
+// // endregion
+// // region build
+export type BuildConfigurationItem = {
+    extension:string;
+    outputExtension:string;
+    filePathPattern:string;
+}
+export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
+// // endregion
+// // region loader
+export type AdditionalLoaderConfiguration = {
+    exclude?:string;
+    include?:string;
+    test:string;
+    use:string;
+}
+export type LoaderConfiguration = {
+    additional:{
+        post:Array<string>;
+        pre:Array<string>;
+    };
+    exclude:string;
+    include:string;
+    loader:string;
+    options:Record<string, any>;
+    regularExpression:string;
+}
+export type WebpackLoader = {
+    loader:string;
+    options:Record<string, any>;
+}
+// TODO
+export type WebpackLoaderConfiguration = {
+    exclude:;
+    include:;
+    test:;
+    use:WebpackLoader;
+}
+// // endregion
+export type Command = {
+    arguments:Array<string>;
+    command:string;
+    indicator?:string;
 }
 export type PluginConfiguration = {
     name:{
@@ -154,14 +188,6 @@ export type Extensions = {
         internal:Array<string>;
     };
     module:Array<string>;
-}
-export type LoaderConfiguration = {
-    additional:Additional;
-    exclude:string;
-    include:string;
-    loader:string;
-    options:Record<string, any>;
-    regularExpression:string;
 }
 export type ResolvedConfiguration = {
     assetPattern:{[key:string]:{
@@ -237,7 +263,7 @@ export type ResolvedConfiguration = {
         };
     };
     module:{
-        additional:Additional;
+        additional:AdditionalLoaderConfigurations;
         aliases:PlainObject;
         cascadingStyleSheet:LoaderConfiguration;
         directoryNames:Array<string>;
@@ -261,7 +287,7 @@ export type ResolvedConfiguration = {
             };
             htmlMinifier?:PlainObject;
             image:{
-                additional:Additional;
+                additional:AdditionalLoaderConfigurations;
                 content:PlainObject;
                 exclude:string;
                 file:PlainObject;
@@ -273,7 +299,7 @@ export type ResolvedConfiguration = {
         preprocessor:{
             cascadingStyleSheet:{
                 additional:{
-                    plugins:Additional;
+                    plugins:AdditionalLoaderConfigurations;
                     post:Array<string>;
                     pre:Array<string>;
                 };
