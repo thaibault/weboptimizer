@@ -14,7 +14,8 @@
     endregion
 */
 // region imports
-import Tools, {PlainObject, ProcedureFunction} from 'clientnode/type'
+import Tools from 'clientnode'
+import {PlainObject, ProcedureFunction} from 'clientnode/type'
 /* eslint-disable no-var */
 try {
     var postcssCSSnano:Function = require('cssnano')
