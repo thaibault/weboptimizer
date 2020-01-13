@@ -1,13 +1,17 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "allowJs": true,
+        "esModuleInterop": true,
+        "isolatedModules": true,
         "module": "esnext",
         "moduleResolution": "node",
         "noImplicitAny": false,
-        "allowJs": true,
         "noEmit": true,
         "strict": true,
-        "isolatedModules": true,
-        "esModuleInterop": true
-    }
+        "target": "esnext",
+        "types": ["jest", "node"]
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }

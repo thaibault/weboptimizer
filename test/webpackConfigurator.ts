@@ -6,10 +6,6 @@ import webpack from 'webpack'
 
 import {WebpackConfiguration} from '../type'
 // endregion
-// region declarations
-declare const expect:Function
-declare const test:Function
-// endregion
 test('webpackConfigurator', async ():Promise<void> => {
     const webpackConfiguration:WebpackConfiguration = (await import(
         '../webpackConfigurator'

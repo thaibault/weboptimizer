@@ -16,11 +16,6 @@ import {
 } from '../type'
 import Helper from '../helper'
 // endregion
-// region declarations
-declare const describe:Function
-declare const expect:Function
-declare const test:Function
-// endregion
 // region mockup
 const buildConfiguration:BuildConfiguration = {
     other: {

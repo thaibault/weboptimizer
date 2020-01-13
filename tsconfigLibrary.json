@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
-        "target": "esnext",
-        "moduleResolution": "node",
         "allowJs": true,
+        "esModuleInterop": true,
+        "isolatedModules": true,
+        "moduleResolution": "node",
         "noEmit": true,
         "strict": true,
-        "isolatedModules": true,
-        "esModuleInterop": true
+        "target": "esnext",
+        "types": ["jest", "node"]
     },
     "files": ["../../index"]
 }

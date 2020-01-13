@@ -1,10 +1,6 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
 'use strict'
-// region declarations
-declare const expect:Function
-declare const test:Function
-// endregion
 test('configurator', async ():Promise<void> =>
     expect((await import('../configurator')).default.name)
         .toStrictEqual('mockup')

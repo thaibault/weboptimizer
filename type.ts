@@ -111,11 +111,16 @@ export type AdditionalLoaderConfiguration = {
     test:string;
     use:string;
 }
+export type AdditionalLoaderConfigurations = {
+    post:Array<AdditionalLoaderConfiguration>;
+    pre:Array<AdditionalLoaderConfiguration>;
+}
+export type AdditionalLoader = {
+    post:Array<string>;
+    pre:Array<string>;
+}
 export type LoaderConfiguration = {
-    additional:{
-        post:Array<string>;
-        pre:Array<string>;
-    };
+    additional:AdditionalLoader;
     exclude:string;
     include:string;
     loader:string;
@@ -270,7 +275,10 @@ export type ResolvedConfiguration = {
         cascadingStyleSheet:LoaderConfiguration;
         directoryNames:Array<string>;
         html:LoaderConfiguration;
-        locations:{filePaths:Array<string>;directoryPaths:Array<string>};
+        locations:{
+            directoryPaths:Array<string>;
+            filePaths:Array<string>;
+        };
         optimizer:{
             babelMinify?:{
                 bundle?:{
@@ -289,7 +297,7 @@ export type ResolvedConfiguration = {
             };
             htmlMinifier?:PlainObject;
             image:{
-                additional:AdditionalLoaderConfigurations;
+                additional:AdditionalLoader;
                 content:PlainObject;
                 exclude:string;
                 file:PlainObject;
@@ -301,7 +309,7 @@ export type ResolvedConfiguration = {
         preprocessor:{
             cascadingStyleSheet:{
                 additional:{
-                    plugins:AdditionalLoaderConfigurations;
+                    plugins:AdditionalLoader;
                     post:Array<string>;
                     pre:Array<string>;
                 };
@@ -341,9 +349,7 @@ export type ResolvedConfiguration = {
         };
     };
     path:Path;
-    performanceHints:{
-        hints:false|string;
-    };
+    performanceHints:{hints:false|string;};
     plugins:Array<PluginConfiguration>;
     showConfiguration:boolean;
     stylelint:PlainObject;

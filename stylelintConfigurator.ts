@@ -17,6 +17,7 @@
 import configuration from './configurator'
 // endregion
 module.exports = configuration.stylelint
+export default module.exports
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
