@@ -4,10 +4,6 @@
 // region imports
 import stylelintConfigurator from '../stylelintConfigurator'
 // endregion
-// region declarations
-declare const expect:Function
-declare const test:Function
-// endregion
 test('stylelintConfigurator', ():void =>
     expect(stylelintConfigurator).toBeTruthy()
 )

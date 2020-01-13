@@ -512,7 +512,10 @@ if (configuration.injection.external.modules === '__implicit__')
                             result[key] = result.default
                 // endregion
             }
-            if (Object.prototype.hasOwnProperty.call(result, 'root'))
+            if (
+                typeof result !== 'string' &&
+                Object.prototype.hasOwnProperty.call(result, 'root')
+            )
                 result.root = [].concat(result.root).map((
                     name:string
                 ):string => Tools.stringConvertToValidVariableName(name))

@@ -4,10 +4,6 @@
 // region imports
 import main from '../index'
 // endregion
-// region declarations
-declare const expect:Function
-declare const test:Function
-// endregion
 test('index', async ():Promise<void> => {
     try {
         await main()
