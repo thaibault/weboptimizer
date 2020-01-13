@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.581",
+  "version": "2.0.582",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "https://torben.website/webOptimizer",
@@ -96,9 +96,9 @@
     "webpack-sources": "*"
   },
   "peerDependencies": {
+    "@types/jest": "*",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
-    "@types/jest": "*",
     "babel-eslint": "*",
     "css-loader": "*",
     "cssnano": "*",
@@ -127,9 +127,9 @@
   },
   "devDependencies": {
     "@babel/cli": "*",
+    "@types/jest": "*",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
-    "@types/jest": "*",
     "babel-eslint": "*",
     "coveralls": "*",
     "css-loader": "*",
