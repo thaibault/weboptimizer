@@ -659,17 +659,20 @@ describe('helper', ():void => {
             referencePath:string,
             pathsToIgnore:Array<string>,
             expected:Injection
-        ):void => expect(Helper.resolveInjection(
-            givenInjection,
-            buildConfigurations,
-            modulesToExclude,
-            aliases,
-            moduleReplacements,
-            extensions,
-            context,
-            referencePath,
-            pathsToIgnore
-        )).toStrictEqual(expected)
+        ):void =>
+            expect(
+                Helper.resolveInjection(
+                    givenInjection,
+                    buildConfigurations,
+                    modulesToExclude,
+                    aliases,
+                    moduleReplacements,
+                    extensions,
+                    context,
+                    referencePath,
+                    pathsToIgnore
+                )
+            ).toStrictEqual(expected)
     )
     test('getAutoChunk', ():void =>
         expect(Helper.getAutoChunk(
@@ -717,10 +720,10 @@ describe('helper', ():void => {
         ]
     ])(
         '.determineModuleFilePath(...parameter)',
-        (...parameter:Array<unknown>):void => {
-            const expected:null|string = parameter.pop()
+        (moduleName:string, ...parameter:Array<unknown>):void => {
+            const expected:unknown = parameter.pop()
             let result:null|string = Helper.determineModuleFilePath(
-                ...parameter)
+                moduleName, ...parameter)
             if (result)
                 result = path.basename(result)
             expect(result).toStrictEqual(expected)
