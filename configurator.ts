@@ -14,14 +14,15 @@
     endregion
 */
 // region imports
-import Tools, {PlainObject} from 'clientnode'
+import Tools from 'clientnode'
+import {PlainObject} from 'clientnode/type'
 import fileSystem from 'fs'
 import path from 'path'
 
 import Helper from './helper'
 // NOTE: "{configuration as metaConfiguration}" would result in a read only
 // variable named "metaConfiguration".
-import {configuration as givenMetaConfiguration} from './package'
+import {configuration as givenMetaConfiguration} from './package.json'
 import {
     DefaultConfiguration,
     /* eslint-disable no-unused-vars */

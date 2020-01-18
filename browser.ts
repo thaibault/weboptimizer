@@ -143,6 +143,7 @@ export const getInitializedBrowser = async (
         if (
             replaceWindow &&
             typeof global !== 'undefined' &&
+            // @ts-ignore: We modify again global object's specification.
             global !== browser.window
         )
             // @ts-ignore: We modify again global object's specification.
