@@ -79,6 +79,7 @@ export type Path = {
     configuration:{
         javaScript:string;
         json:string;
+        typeScript:string;
     };
     context:string;
     ignore:Array<string>;
@@ -140,6 +141,11 @@ export type WebpackLoaderConfiguration = {
 export type WebpackLoaderIndicator =
     Array<WebpackLoaderIndicator>|Function|string
 // // endregion
+export type AssetPositionPattern = {[key:string]:'body'|'head'|'in'|string}|null
+export type AssetInPlaceInjectionResult = {
+    content:string;
+    filePathsToRemove:Array<string>;
+}
 export type Command = {
     arguments:Array<string>;
     command:string;

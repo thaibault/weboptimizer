@@ -754,25 +754,27 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                     const alternateTargetPath:string = path.resolve(
                         pathPrefix, pathSuffix)
                     if (Tools.isFileSync(alternateTargetPath)) {
-                        const alternatePackageDescriptor:PlainObject =
+                        const alternatePackageDescriptor:null|PlainObject =
                             Helper.getClosestPackageDescriptor(
                                 alternateTargetPath)
-                        if (
-                            packageDescriptor.configuration.version ===
-                            alternatePackageDescriptor.configuration.version
-                        ) {
-                            console.info(
-                                `Consolidate module request "${targetPath}" ` +
-                                `to "${alternateTargetPath}".`
-                            )
-                            resource[targetName] = alternateTargetPath
-                            return
-                        } else
-                            redundantRequest = {
-                                path: alternateTargetPath,
-                                version: alternatePackageDescriptor
-                                    .configuration.version
-                            }
+                        if (alternatePackageDescriptor)
+                            if (
+                                packageDescriptor.configuration.version ===
+                                alternatePackageDescriptor.configuration.version
+                            ) {
+                                console.info(
+                                    'Consolidate module request "' +
+                                    `${targetPath}" to "` +
+                                    `${alternateTargetPath}".`
+                                )
+                                resource[targetName] = alternateTargetPath
+                                return
+                            } else
+                                redundantRequest = {
+                                    path: alternateTargetPath,
+                                    version: alternatePackageDescriptor
+                                        .configuration.version
+                                }
                     }
                 }
                 if (redundantRequest)
