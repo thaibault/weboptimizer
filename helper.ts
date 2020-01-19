@@ -14,12 +14,15 @@
     endregion
 */
 // region imports
-import Tools, {DomNode, File, PlainObject, Window} from 'clientnode'
+import Tools from 'clientnode'
+import {File, PlainObject} from 'clientnode/type'
 import {JSDOM as DOM} from 'jsdom'
 import fileSystem from 'fs'
 import path from 'path'
 
 import {
+    AssetInPlaceInjectionResult,
+    AssetPositionPattern,
     BuildConfiguration,
     Extensions,
     Injection,
@@ -89,16 +92,13 @@ export class Helper {
      */
     static inPlaceCSSAndJavaScriptAssetReferences(
         content:string,
-        cascadingStyleSheetPattern:{[key:string]:'body'|'head'|'in'|string},
-        javaScriptPattern:{[key:string]:'body'|'head'|'in'|string},
+        cascadingStyleSheetPattern:AssetPositionPattern,
+        javaScriptPattern:AssetPositionPattern,
         basePath:string,
         cascadingStyleSheetChunkNameTemplate:string,
         javaScriptChunkNameTemplate:string,
         assets:{[key:string]:Record<string, any>}
-    ):{
-        content:string;
-        filePathsToRemove:Array<string>;
-    } {
+    ):AssetInPlaceInjectionResult {
         /*
             NOTE: We have to prevent creating native "style" dom nodes to
             prevent jsdom from parsing the entire cascading style sheet. Which
@@ -164,7 +164,7 @@ export class Helper {
                                         '[name]': pattern
                                     }
                                 )) + '"]'
-                    const domNodes:Array<DomNode> =
+                    const domNodes:Array<HTMLElement> =
                         window.document.querySelectorAll(
                             `${assetType.linkTagName}${selector}`)
                     if (domNodes.length)
@@ -176,7 +176,7 @@ export class Helper {
                                 assets, path
                             ))
                                 continue
-                            const inPlaceDomNode:DomNode =
+                            const inPlaceDomNode:HTMLElement =
                                 window.document.createElement(
                                     assetType.tagName)
                             if (assetType.tagName === 'style') {
@@ -213,7 +213,7 @@ export class Helper {
                                         'satisfy the specified pattern "' +
                                         `${regularExpressionPattern}".`
                                     )
-                                const domNode:DomNode =
+                                const domNode:HTMLElement =
                                     window.document.querySelector(match[2])
                                 if (!domNode)
                                     throw new Error(

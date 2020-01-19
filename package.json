@@ -1068,8 +1068,8 @@
         "apiDocumentation": "apiDocumentation/",
         "base": "./",
         "configuration": {
-          "json": "./webpack.json",
           "javaScript": "./webpack.config.js",
+          "json": "./webpack.json",
           "typeScript": "./webpack.config.ts"
         },
         "ignore": [

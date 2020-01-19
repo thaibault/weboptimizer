@@ -6,6 +6,8 @@ import {PlainObject} from 'clientnode'
 import path from 'path'
 
 import {
+    AssetInPlaceInjectionResult,
+    AssetPositionPattern,
     BuildConfiguration,
     EntryInjection,
     Extensions,
@@ -83,10 +85,20 @@ describe('helper', ():void => {
     ])(
         `
             .inPlaceCSSAndJavaScriptAssetReferences(
-                '%s', '%s', '%s', '%s', '%s', '%s', %p)
+                '%s', '%s', '%s', '%s', '%s', '%s', %p
+            ) === %p
         `,
-        (...parameter:Array<unknown>):void => {
-            const expected:unknown = parameter.pop()
+        (...parameter:[
+            string,
+            AssetPositionPattern,
+            AssetPositionPattern,
+            string,
+            string,
+            string,
+            Record<string, Record<string, any>>,
+            AssetInPlaceInjectionResult
+        ]):void => {
+            const expected:AssetInPlaceInjectionResult = parameter.pop()
             expect(Helper.inPlaceCSSAndJavaScriptAssetReferences(...parameter))
                 .toStrictEqual(expected)
         }
@@ -119,11 +131,9 @@ describe('helper', ():void => {
         [['a/', 'a/', 'b'], ['a', 'b']],
         [['a/', 'a/', 'b', '', '.'], ['a', 'b', '.']]
     ])(
-        `.normalizePaths(...parameter)`,
-        (...parameter:Array<string>):void => {
-            const expected:string = parameter.pop()
-            expect(Helper.normalizePaths(...parameter)).toStrictEqual(expected)
-        }
+        '.normalizePaths(%p) === %p',
+        (paths:Array<string>, expected:Array<string>):void =>
+            expect(Helper.normalizePaths(paths)).toStrictEqual(expected)
     )
     // / endregion
     // / region file handler
@@ -137,7 +147,7 @@ describe('helper', ():void => {
         ['a[id]b[hash]', {'[id]': 1, '[hash]': 2}, 'a1b2'],
         ['a[id]b[hash]', {'[id]': '[id]', '[hash]': '[hash]'}, 'a[id]b[hash]']
     ])(
-        `.renderFilePathTemplate('%s', %p)`,
+        `.renderFilePathTemplate('%s', %p) === %p`,
         (template:string, scope:{[key:string]:string}, expected:string):void =>
             expect(Helper.renderFilePathTemplate(template, scope))
                 .toStrictEqual(expected)
@@ -152,10 +162,14 @@ describe('helper', ():void => {
         ['./a', './a', './a', './a'],
         ['./a', './a', './a', {a: 'b'}, './a'],
         ['./a', './a/a', './', {a: 'b'}, {}, ['a'], 'b/a']
-    ])(`.applyContext(...parameter)`, (...parameter:Array<unknown>):void => {
-        const expected:string = parameter.pop()
-        expect(Helper.applyContext(...parameter)).toStrictEqual(expected)
-    })
+    ])(
+        `.applyContext('%s', ...parameter)`,
+        (request:string, ...parameter:Array<any>):void => {
+            const expected:string = parameter.pop()
+            expect(Helper.applyContext(request, ...parameter))
+                .toStrictEqual(expected)
+        }
+    )
     test.each([
         ['', ''],
         ['a', 'a'],
@@ -380,10 +394,10 @@ describe('helper', ():void => {
             null
         ]
     ])(
-        `.determineExternalRequest(...parameter)`,
-        (...parameter:Array<unknown>):void => {
+        `.determineExternalRequest('%s', ...parameter)`,
+        (request:string, ...parameter:Array<any>):void => {
             const expected:null|string = parameter.pop()
-            expect(Helper.determineExternalRequest(...parameter))
+            expect(Helper.determineExternalRequest(request, ...parameter))
                 .toStrictEqual(expected)
         }
     )
@@ -394,9 +408,12 @@ describe('helper', ():void => {
                 apiDocumentation: '',
                 base: '',
                 configuration: {
-                    javaScript: null
+                    javaScript: '',
+                    json: '',
+                    typeScript: ''
                 },
                 context: '',
+                ignore: [],
                 source: {
                     asset: {
                         base: '',
@@ -427,7 +444,6 @@ describe('helper', ():void => {
                     manifest: '',
                     public: ''
                 },
-                ignore: [],
                 tidyUp: [],
                 tidyUpOnClear: []
             }
@@ -647,7 +663,7 @@ describe('helper', ():void => {
             }
         ]
     ])(
-        '.resolveInjection(%p, %p, %p, %p, %p, %p, %s, %s, %p, %p)',
+        `.resolveInjection(%p, %p, %p, %p, %p, %p, '%s', '%s', %p) === %p`,
         (
             givenInjection:Injection,
             buildConfigurations:ResolvedBuildConfiguration,
