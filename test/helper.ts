@@ -54,54 +54,55 @@ describe('helper', ():void => {
     )
     // / endregion
     // / region string
+    // TODO use as template for other cases.
     test.each([
         [
-            '',
-            null,
-            null,
-            '',
-            '',
-            '',
-            {},
             {
                 content: '<html><head></head><body></body></html>',
                 filePathsToRemove: []
-            }
+            },
+            '',
+            null,
+            null,
+            '',
+            '',
+            '',
+            {}
         ],
         [
+            {
+                content:
+                    '<!doctype html><html><head></head><body></body></html>',
+                filePathsToRemove: []
+            },
             '<!doctype html><html><head></head><body></body></html>',
             null,
             null,
             '',
             '',
             '',
-            {},
-            {
-                content:
-                    '<!doctype html><html><head></head><body></body></html>',
-                filePathsToRemove: []
-            }
+            {}
         ]
     ])(
         `
-            .inPlaceCSSAndJavaScriptAssetReferences(
+            %p === .inPlaceCSSAndJavaScriptAssetReferences(
                 '%s', '%s', '%s', '%s', '%s', '%s', %p
-            ) === %p
+            )
         `,
-        (...parameter:[
-            string,
-            AssetPositionPattern,
-            AssetPositionPattern,
-            string,
-            string,
-            string,
-            Record<string, Record<string, any>>,
-            AssetInPlaceInjectionResult
-        ]):void => {
-            const expected:AssetInPlaceInjectionResult = parameter.pop()
+        (
+            expected:AssetInPlaceInjectionResult,
+            ...parameter:[
+                string,
+                AssetPositionPattern,
+                AssetPositionPattern,
+                string,
+                string,
+                string,
+                Record<string, Record<string, any>>
+            ]
+        ):void =>
             expect(Helper.inPlaceCSSAndJavaScriptAssetReferences(...parameter))
                 .toStrictEqual(expected)
-        }
     )
     test.each([
         ['', ''],
@@ -668,27 +669,18 @@ describe('helper', ():void => {
             givenInjection:Injection,
             buildConfigurations:ResolvedBuildConfiguration,
             modulesToExclude:EntryInjection,
-            aliases:PlainObject,
-            moduleReplacements:PlainObject,
-            extensions:Extensions,
-            context:string,
-            referencePath:string,
-            pathsToIgnore:Array<string>,
-            expected:Injection
-        ):void =>
+            ...parameter:Array<any>
+        ):void => {
+            const expected = parameter.pop()
             expect(
                 Helper.resolveInjection(
                     givenInjection,
                     buildConfigurations,
                     modulesToExclude,
-                    aliases,
-                    moduleReplacements,
-                    extensions,
-                    context,
-                    referencePath,
-                    pathsToIgnore
+                    ...parameter
                 )
             ).toStrictEqual(expected)
+        }
     )
     test('getAutoChunk', ():void =>
         expect(Helper.getAutoChunk(
@@ -736,7 +728,7 @@ describe('helper', ():void => {
         ]
     ])(
         '.determineModuleFilePath(...parameter)',
-        (moduleName:string, ...parameter:Array<unknown>):void => {
+        (moduleName:string, ...parameter:Array<any>):void => {
             const expected:unknown = parameter.pop()
             let result:null|string = Helper.determineModuleFilePath(
                 moduleName, ...parameter)
