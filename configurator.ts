@@ -39,7 +39,6 @@ const metaConfiguration:MetaConfiguration = givenMetaConfiguration
     this library is located as a nested dependency.
 */
 metaConfiguration.default.path.context = __dirname
-metaConfiguration.default.contextType = 'main'
 while (true) {
     metaConfiguration.default.path.context = path.resolve(
         metaConfiguration.default.path.context, '../../')
@@ -96,6 +95,7 @@ if (typeof specificConfiguration.debug === 'boolean')
     debug = specificConfiguration.debug
 else if (
     process.env.npm_config_dev === 'true' ||
+    typeof process.env.NODE_ENV === 'string' &&
     ['debug', 'dev', 'development'].includes(process.env.NODE_ENV)
 )
     debug = true
@@ -220,7 +220,6 @@ if (typeof result === 'object' && result !== null) {
 configuration = Tools.removeKeys(configuration)
 // endregion
 // / region determine existing pre compiled dll manifests file paths
-configuration.dllManifestFilePaths = []
 if (Tools.isDirectorySync(configuration.path.target.base))
     for (const fileName of fileSystem.readdirSync(
         configuration.path.target.base

@@ -28,6 +28,7 @@ export type Browser = {
     window:null|Window;
     windowLoaded:boolean;
 }
+export type Resolvable = {[key:__evaluate__|__execute__]:string}
 // / endregion
 // / region injection
 export type ExternalInjection = string|((
@@ -69,8 +70,6 @@ export type AssetPath = {
     font:string;
     image:string;
     javaScript:string;
-    source:string;
-    target:string;
     template:string;
 }
 export type Path = {
@@ -82,7 +81,7 @@ export type Path = {
         typeScript:string;
     };
     context:string;
-    ignore:Array<string>;
+    ignore:Array<Resolvable|string>;
     source:{
         asset:AssetPath;
         base:string;
@@ -93,8 +92,8 @@ export type Path = {
         manifest:string;
         public:string;
     };
-    tidyUp:Array<string>;
-    tidyUpOnClear:Array<string>;
+    tidyUp:Array<Resolvable|string>;
+    tidyUpOnClear:Array<Resolvable|string>;
 }
 // // endregion
 // // region build
@@ -161,11 +160,12 @@ export type PluginConfiguration = {
 export type DefaultConfiguration = {
     contextType:string;
     debug:boolean;
-    dllManifestFilePaths:Array<any>;
+    dllManifestFilePaths:Array<string>;
     document:PlainObject;
     encoding:string;
+    givenCommandLineArguments:Array<string>;
     library:boolean;
-    nodeEnvironment:{[key:string]:boolean|'empty'|'mock'};
+    nodeEnvironment:{'#':string;[key:string]:boolean|string};
     path:Path;
     plugins:Array<PluginConfiguration>;
     test:PlainObject;
@@ -255,7 +255,7 @@ export type ResolvedConfiguration = {
     };
     givenCommandLineArguments:Array<string>;
     hashAlgorithm:string;
-    injection:PlainObject;
+    injection:Injection;
     inPlace:{
         cascadingStyleSheet:{[key:string]:'body'|'head'|'in'|string};
         externalLibrary:{

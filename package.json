@@ -368,6 +368,7 @@
           "command": "tsc"
         }
       },
+      "contextType": "main",
       "debug": false,
       "development": {
         "openBrowser": null,
@@ -402,6 +403,7 @@
         },
         "tool": false
       },
+      "dllManifestFilePaths": [],
       "document": {
         "inPlace": {
           "externalLibrary": {
@@ -564,6 +566,7 @@
           "> 5%"
         ]
       },
+      "givenCommandLineArguments": [],
       "hashAlgorithm": "md5",
       "injection": {
         "autoExclude": [
@@ -1072,6 +1075,7 @@
           "json": "./webpack.json",
           "typeScript": "./webpack.config.ts"
         },
+        "context": "./",
         "ignore": [
           ".cache",
           ".git",
