@@ -25,11 +25,13 @@ import Helper from './helper'
 import {configuration as givenMetaConfiguration} from './package.json'
 import {
     DefaultConfiguration,
+    EntryInjection,
     /* eslint-disable no-unused-vars */
     HTMLConfiguration,
     /* eslint-enable no-unused-vars */
     MetaConfiguration,
-    ResolvedConfiguration
+    ResolvedConfiguration,
+    WebpackLoader
 } from './type'
 const metaConfiguration:MetaConfiguration = givenMetaConfiguration
 /*
@@ -331,7 +333,7 @@ for (const type in resolvedConfiguration.buildContext.types)
 // endregion
 // region resolve module location and determine which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(
-    resolvedConfiguration.injection.entry,
+    resolvedConfiguration.injection.entry.normalized,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.module.replacements.normal,
     {
@@ -366,10 +368,12 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore
 )
+const entryInjection:EntryInjection =
+    resolvedConfiguration.injection.entry as any as EntryInjection
 resolvedConfiguration.injection.entry = {
-    given: resolvedConfiguration.injection.entry,
+    given: entryInjection,
     normalized: Helper.resolveModulesInFolders(
-        Helper.normalizeEntryInjection(resolvedConfiguration.injection.entry),
+        Helper.normalizeEntryInjection(entryInjection),
         resolvedConfiguration.module.aliases,
         resolvedConfiguration.module.replacements.normal,
         resolvedConfiguration.path.context,
@@ -439,7 +443,12 @@ for (const chunkName in resolvedConfiguration.injection.entry.normalized)
 // NOTE: This alias couldn't be set in the "package.json" file since this would
 // result in an endless loop.
 resolvedConfiguration.loader.aliases.webOptimizerDefaultTemplateFileLoader = ''
-for (const loader of resolvedConfiguration.files.defaultHTML.template.use) {
+for (const loader of Array.isArray(
+    resolvedConfiguration.files.defaultHTML.template.use
+) ?
+    resolvedConfiguration.files.defaultHTML.template.use :
+    [resolvedConfiguration.files.defaultHTML.template.use]
+) {
     if (
         resolvedConfiguration.loader.aliases
             .webOptimizerDefaultTemplateFileLoader
@@ -470,18 +479,21 @@ for (const htmlConfiguration of resolvedConfiguration.files.html) {
             resolvedConfiguration.files.defaultHTML.template.filePath &&
         htmlConfiguration.template.options
     ) {
-        const requestString:string = new String(
+        const requestString:String = new String(
             htmlConfiguration.template.request +
             Tools.convertCircularObjectToJSON(
                 htmlConfiguration.template.options
             )
         )
         /* eslint-disable @typescript-eslint/unbound-method */
+        // TODO
+        type Replacer = string|((value:string, ...parameter:Array<any>) => string)
+        type StringReplacer = (value:RegExp|string, replacer:Replacer) => string
         requestString.replace = (
-            (value:string):Function => ():string => value
+            (value:string):StringReplacer => ():string => value
         )(htmlConfiguration.template.filePath)
         /* eslint-enable @typescript-eslint/unbound-method */
-        htmlConfiguration.template.request = requestString
+        htmlConfiguration.template.request = requestString as string
     }
 }
 // endregion

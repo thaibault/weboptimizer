@@ -1,5 +1,4 @@
 #!/usr/bin/env nodedd
-
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -28,7 +27,10 @@ export type Browser = {
     window:null|Window;
     windowLoaded:boolean;
 }
-export type Resolvable = {[key:__evaluate__|__execute__]:string}
+export type Resolvable = {
+    [key:__evaluate__|__execute__]:string;
+    [key:string]:any|string|Resolvable;
+}
 // / endregion
 // / region injection
 export type ExternalInjection = string|((
@@ -81,7 +83,7 @@ export type Path = {
         typeScript:string;
     };
     context:string;
-    ignore:Array<Resolvable|string>;
+    ignore:Array<string>;
     source:{
         asset:AssetPath;
         base:string;
@@ -92,8 +94,8 @@ export type Path = {
         manifest:string;
         public:string;
     };
-    tidyUp:Array<Resolvable|string>;
-    tidyUpOnClear:Array<Resolvable|string>;
+    tidyUp:Array<string>;
+    tidyUpOnClear:Array<string>;
 }
 // // endregion
 // // region build
@@ -157,6 +159,7 @@ export type PluginConfiguration = {
     };
     parameter:Array<any>;
 }
+export type NodeEnvironment = {'#':string;[key:string]:boolean|string}
 export type DefaultConfiguration = {
     contextType:string;
     debug:boolean;
@@ -165,8 +168,8 @@ export type DefaultConfiguration = {
     encoding:string;
     givenCommandLineArguments:Array<string>;
     library:boolean;
-    nodeEnvironment:{'#':string;[key:string]:boolean|string};
-    path:Path;
+    nodeEnvironment:NodeEnvironment;
+    path:Resolvable;
     plugins:Array<PluginConfiguration>;
     test:PlainObject;
     'test:browser':PlainObject;
@@ -186,8 +189,8 @@ export type HTMLConfiguration = {
 }
 export type MetaConfiguration = {
     default:DefaultConfiguration;
-    debug:PlainObject;
-    library:PlainObject;
+    debug:Resolvable;
+    library:Resolvable;
 }
 export type ResolvedBuildConfigurationItem = {
     filePaths:Array<string>;
@@ -345,7 +348,7 @@ export type ResolvedConfiguration = {
     };
     name:string;
     needed:{[key:string]:boolean};
-    nodeEnvironment:{[key:string]:boolean|'empty'|'mock'};
+    nodeEnvironment:NodeEnvironment;
     offline:PlainObject;
     package:{
         aliasPropertyNames:Array<string>;
