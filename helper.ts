@@ -187,75 +187,65 @@ export class Helper {
                             } else
                                 inPlaceDomNode.textContent =
                                     assets[path].source()
-                            if (assetType.pattern[pattern] === 'body')
-                                window.document.body.appendChild(
-                                    inPlaceDomNode)
-                            else if (assetType.pattern[pattern] === 'in')
-                                if (domNode.parentNode)
+                            if (domNode.parentNode) {
+                                if (assetType.pattern[pattern] === 'body')
+                                    window.document.body.appendChild(
+                                        inPlaceDomNode)
+                                else if (assetType.pattern[pattern] === 'in')
                                     domNode.parentNode.insertBefore(
                                         inPlaceDomNode, domNode)
-                                else
-                                    throw new Error(
-                                        'Given in place specification "' +
-                                        `${assetType.pattern[pattern]}" for ` +
-                                        `${assetType.tagName} is not ` +
-                                        'possible because of missing parent ' +
-                                        'node.'
-                                    )
-                            else if (assetType.pattern[pattern] === 'head')
-                                window.document.head.appendChild(
-                                    inPlaceDomNode)
-                            else {
-                                const regularExpressionPattern =
-                                    '(after|before|in):(.+)'
-                                const testMatch:Array<string>|null =
-                                    (new RegExp(regularExpressionPattern))
-                                        .exec(assetType.pattern[pattern])
-                                let match:Array<string>
-                                if (testMatch)
-                                    match = testMatch
-                                else
-                                    throw new Error(
-                                        'Given in place specification "' +
-                                        `${assetType.pattern[pattern]}" for ` +
-                                        `${assetType.tagName} does not ` +
-                                        'satisfy the specified pattern "' +
-                                        `${regularExpressionPattern}".`
-                                    )
-                                const domNode:HTMLElement|null =
-                                    window.document.querySelector(match[2])
-                                if (!domNode)
-                                    throw new Error(
-                                        `Specified dom node "${match[2]}" ` +
-                                        'could not be found to in place "' +
-                                        `${pattern}".`)
-                                if (match[1] === 'in')
-                                    domNode.appendChild(inPlaceDomNode)
-                                else if (domNode.parentNode)
-                                    if (match[1] === 'before')
-                                        domNode.parentNode.insertBefore(
-                                            inPlaceDomNode, domNode)
+                                else if (assetType.pattern[pattern] === 'head')
+                                    window.document.head.appendChild(
+                                        inPlaceDomNode)
+                                else {
+                                    const regularExpressionPattern =
+                                        '(after|before|in):(.+)'
+                                    const testMatch:Array<string>|null =
+                                        (new RegExp(regularExpressionPattern))
+                                            .exec(assetType.pattern[pattern])
+                                    let match:Array<string>
+                                    if (testMatch)
+                                        match = testMatch
                                     else
-                                        domNode.parentNode.insertAfter(
-                                            inPlaceDomNode, domNode)
-                                else
-                                    throw new Error(
-                                        'Given in place specification "' +
-                                        `${assetType.pattern[pattern]}" for ` +
-                                        `${assetType.tagName} is not ` +
-                                        'possible because of missing parent ' +
-                                        'node.'
-                                    )
-                            }
-                            domNode.parentNode.removeChild(domNode)
-                            /*
-                                NOTE: This doesn't prevent webpack from
-                                creating this file if present in another chunk
-                                so removing it (and a potential source map
-                                file) later in the "done" hook.
-                            */
-                            filePathsToRemove.push(Helper.stripLoader(path))
-                            delete assets[path]
+                                        throw new Error(
+                                            'Given in place specification "' +
+                                            `${assetType.pattern[pattern]}" for ` +
+                                            `${assetType.tagName} does not ` +
+                                            'satisfy the specified pattern "' +
+                                            `${regularExpressionPattern}".`
+                                        )
+                                    const domNode:HTMLElement|null =
+                                        window.document.querySelector(match[2])
+                                    if (!domNode)
+                                        throw new Error(
+                                            `Specified dom node "${match[2]}` +
+                                            '" could not be found to in ' +
+                                            `place "${pattern}".`)
+                                    if (match[1] === 'in')
+                                        domNode.appendChild(inPlaceDomNode)
+                                    else if (match[1] === 'before')
+                                        domNode.insertAdjacentElement(
+                                            'beforebegin', inPlaceDomNode)
+                                    else
+                                        domNode.insertAdjacentElement(
+                                            'afterend', inPlaceDomNode)
+                                }
+                                domNode.parentNode.removeChild(domNode)
+                                /*
+                                    NOTE: This doesn't prevent webpack from
+                                    creating this file if present in another chunk
+                                    so removing it (and a potential source map
+                                    file) later in the "done" hook.
+                                */
+                                filePathsToRemove.push(Helper.stripLoader(path))
+                                delete assets[path]
+                            } else
+                                throw new Error(
+                                    'Given in place specification "' +
+                                    `${assetType.pattern[pattern]}" for ` +
+                                    `${assetType.tagName} is not ` +
+                                    'possible because of missing parent node.'
+                                )
                         }
                     else
                         console.warn(
@@ -267,24 +257,26 @@ export class Helper {
         // NOTE: We have to restore template delimiter and style contents.
         return {
             content: content
-                .replace(
-                    /^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1'
-                ) + window.document.documentElement.outerHTML
+                .replace(/^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1') +
+                window.document.documentElement.outerHTML
                 .replace(/##\+#\+#\+##/g, '<%')
                 .replace(/##-#-#-##/g, '%>')
-                .replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, (
-                    match:string,
-                    startTag:string,
-                    endTag:string
-                ):string => {
-                    if (startTag.includes(' weboptimizerinplace="true"'))
-                        return (
-                            startTag.replace(
-                                ' weboptimizerinplace="true"', '') +
-                            `${inPlaceStyleContents.shift()}${endTag}`
-                        )
-                    return `${startTag}${styleContents.shift()}${endTag}`
-                }),
+                .replace(
+                    /(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi,
+                    (
+                        match:string,
+                        startTag:string,
+                        endTag:string
+                    ):string => {
+                        if (startTag.includes(' weboptimizerinplace="true"'))
+                            return (
+                                startTag.replace(
+                                    ' weboptimizerinplace="true"', '') +
+                                `${inPlaceStyleContents.shift()}${endTag}`
+                            )
+                        return `${startTag}${styleContents.shift()}${endTag}`
+                    }
+                ),
             filePathsToRemove
         }
     }
@@ -542,13 +534,13 @@ export class Helper {
                         encoding
                     ) === filePath)
                         return null
-        const parts = context.split('/')
-        const externalModuleLocations = []
+        const parts:Array<string> = context.split('/')
+        const externalModuleLocations:Array<string> = []
         while (parts.length > 0) {
             for (const relativePath of relativeExternalModuleLocations)
-                externalModuleLocations.push(path.join(
-                    '/', parts.join('/'), relativePath
-                ))
+                externalModuleLocations.push(
+                    path.join('/', parts.join('/'), relativePath)
+                )
             parts.splice(-1, 1)
         }
         /*

@@ -677,8 +677,11 @@ if (htmlAvailable)
                         data.plugin.options.filename
                     ) {
                         for (
-                            const loaderConfiguration of
-                            htmlFileSpecification.template.use
+                            const loaderConfiguration of Array.isArray(
+                                htmlFileSpecification.template.use
+                            ) ?
+                                htmlFileSpecification.template.use :
+                                [htmlFileSpecification.template.use]
                         )
                             if (
                                 loaderConfiguration.options &&

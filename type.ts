@@ -28,8 +28,7 @@ export type Browser = {
     windowLoaded:boolean;
 }
 export type Resolvable = {
-    [key:__evaluate__|__execute__]:string;
-    [key:string]:any|string|Resolvable;
+    [TYPE in '__evaluate__'|'__execute__'|string]:any|Resolvable|string
 }
 // / endregion
 // / region injection
@@ -141,6 +140,43 @@ export type WebpackLoaderConfiguration = {
 }
 export type WebpackLoaderIndicator =
     Array<WebpackLoaderIndicator>|Function|string
+// // / region ejs
+export type TemplateFunction = (locals:Record<string, unknown>) => string
+export type CompileFunction = (
+    template:string, options:EJSCompilerConfiguration, compileSteps?:number
+) => TemplateFunction
+export type EJSCompilerConfiguration = {
+    cache?:boolean;
+    client:boolean;
+    compileDebug:boolean;
+    debug:boolean;
+    encoding?:string;
+    filename:string;
+    isString:boolean;
+}
+export type EJSLoaderConfiguration = {
+    compiler:EJSCompilerConfiguration;
+    compileSteps:number;
+    compress:{
+        html:Record<string, unknown>;
+        javaScript:Record<string, unknown>;
+    };
+    context:string;
+    extensions:{
+        file:{
+            external:Array<string>;
+            internal:Array<string>;
+        };
+        module:Array<string>;
+    };
+    locals?:Record<string, unknown>;
+    module:{
+        aliases:Record<string, string>;
+        replacements:Record<string, string>;
+    };
+    [key:string]:unknown;
+}
+// // / endregion
 // // endregion
 export type AssetPositionPattern = {[key:string]:'body'|'head'|'in'|string}|null
 export type AssetInPlaceInjectionResult = {
@@ -152,10 +188,7 @@ export type Command = {
     command:string;
     indicator?:string;
 }
-export type TemplateFunction = (locals:Record<string, unknown>) => string
-export type CompileFunction = (
-    template:string, options:EJSCompilerConfiguration, compileSteps?:number
-) => TemplateFunction
+
 export type NodeEnvironment = {'#':string;[key:string]:boolean|string}
 export type PluginConfiguration = {
     name:{
@@ -177,37 +210,6 @@ export type DefaultConfiguration = {
     plugins:Array<PluginConfiguration>;
     test:PlainObject;
     'test:browser':PlainObject;
-}
-export type EJSCompilerConfiguration = {
-    cache?:boolean;
-    client:boolean;
-    compileDebug:boolean;
-    debug:boolean;
-    encoding?:string;
-    filename:string;
-    isString:boolean;
-}
-export type EJSLoaderConfiguration = {
-    compiler:CompilerOptions;
-    compileSteps:number;
-    compress:{
-        html:Record<string, unknown>;
-        javaScript:Record<string, unknown>;
-    };
-    context:string;
-    extensions:{
-        file:{
-            external:Array<string>;
-            internal:Array<string>;
-        };
-        module:Array<string>;
-    };
-    locals?:Record<string, unknown>;
-    module:{
-        aliases:Record<string, string>;
-        replacements:Record<string, string>;
-    };
-    [key:string]:unknown;
 }
 /* eslint-disable max-len */
 export type ExportFormat = 'amd'|'amd-require'|'assign'|'global'|'jsonp'|'var'|'this'|'commonjs'|'commonjs2'|'umd';
