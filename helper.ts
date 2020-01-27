@@ -164,7 +164,7 @@ export class Helper {
                                         '[name]': pattern
                                     }
                                 )) + '"]'
-                    const domNodes:Array<HTMLElement> =
+                    const domNodes:NodeListOf<HTMLElement> =
                         window.document.querySelectorAll(
                             `${assetType.linkTagName}${selector}`)
                     if (domNodes.length)
@@ -191,8 +191,17 @@ export class Helper {
                                 window.document.body.appendChild(
                                     inPlaceDomNode)
                             else if (assetType.pattern[pattern] === 'in')
-                                domNode.parentNode.insertBefore(
-                                    inPlaceDomNode, domNode)
+                                if (domNode.parentNode)
+                                    domNode.parentNode.insertBefore(
+                                        inPlaceDomNode, domNode)
+                                else
+                                    throw new Error(
+                                        'Given in place specification "' +
+                                        `${assetType.pattern[pattern]}" for ` +
+                                        `${assetType.tagName} is not ` +
+                                        'possible because of missing parent ' +
+                                        'node.'
+                                    )
                             else if (assetType.pattern[pattern] === 'head')
                                 window.document.head.appendChild(
                                     inPlaceDomNode)
@@ -213,7 +222,7 @@ export class Helper {
                                         'satisfy the specified pattern "' +
                                         `${regularExpressionPattern}".`
                                     )
-                                const domNode:HTMLElement =
+                                const domNode:HTMLElement|null =
                                     window.document.querySelector(match[2])
                                 if (!domNode)
                                     throw new Error(
@@ -222,12 +231,21 @@ export class Helper {
                                         `${pattern}".`)
                                 if (match[1] === 'in')
                                     domNode.appendChild(inPlaceDomNode)
-                                else if (match[1] === 'before')
-                                    domNode.parentNode.insertBefore(
-                                        inPlaceDomNode, domNode)
+                                else if (domNode.parentNode)
+                                    if (match[1] === 'before')
+                                        domNode.parentNode.insertBefore(
+                                            inPlaceDomNode, domNode)
+                                    else
+                                        domNode.parentNode.insertAfter(
+                                            inPlaceDomNode, domNode)
                                 else
-                                    domNode.parentNode.insertAfter(
-                                        inPlaceDomNode, domNode)
+                                    throw new Error(
+                                        'Given in place specification "' +
+                                        `${assetType.pattern[pattern]}" for ` +
+                                        `${assetType.tagName} is not ` +
+                                        'possible because of missing parent ' +
+                                        'node.'
+                                    )
                             }
                             domNode.parentNode.removeChild(domNode)
                             /*

@@ -486,11 +486,9 @@ for (const htmlConfiguration of resolvedConfiguration.files.html) {
             )
         )
         /* eslint-disable @typescript-eslint/unbound-method */
-        // TODO
-        type Replacer = string|((value:string, ...parameter:Array<any>) => string)
-        type StringReplacer = (value:RegExp|string, replacer:Replacer) => string
+        // @ts-ignore: Monkeypatching is not allowed by typescript.
         requestString.replace = (
-            (value:string):StringReplacer => ():string => value
+            (value:string):Function => ():string => value
         )(htmlConfiguration.template.filePath)
         /* eslint-enable @typescript-eslint/unbound-method */
         htmlConfiguration.template.request = requestString as string

@@ -152,6 +152,11 @@ export type Command = {
     command:string;
     indicator?:string;
 }
+export type TemplateFunction = (locals:Record<string, unknown>) => string
+export type CompileFunction = (
+    template:string, options:EJSCompilerConfiguration, compileSteps?:number
+) => TemplateFunction
+export type NodeEnvironment = {'#':string;[key:string]:boolean|string}
 export type PluginConfiguration = {
     name:{
         initializer:string;
@@ -159,7 +164,6 @@ export type PluginConfiguration = {
     };
     parameter:Array<any>;
 }
-export type NodeEnvironment = {'#':string;[key:string]:boolean|string}
 export type DefaultConfiguration = {
     contextType:string;
     debug:boolean;
@@ -173,6 +177,37 @@ export type DefaultConfiguration = {
     plugins:Array<PluginConfiguration>;
     test:PlainObject;
     'test:browser':PlainObject;
+}
+export type EJSCompilerConfiguration = {
+    cache?:boolean;
+    client:boolean;
+    compileDebug:boolean;
+    debug:boolean;
+    encoding?:string;
+    filename:string;
+    isString:boolean;
+}
+export type EJSLoaderConfiguration = {
+    compiler:CompilerOptions;
+    compileSteps:number;
+    compress:{
+        html:Record<string, unknown>;
+        javaScript:Record<string, unknown>;
+    };
+    context:string;
+    extensions:{
+        file:{
+            external:Array<string>;
+            internal:Array<string>;
+        };
+        module:Array<string>;
+    };
+    locals?:Record<string, unknown>;
+    module:{
+        aliases:Record<string, string>;
+        replacements:Record<string, string>;
+    };
+    [key:string]:unknown;
 }
 /* eslint-disable max-len */
 export type ExportFormat = 'amd'|'amd-require'|'assign'|'global'|'jsonp'|'var'|'this'|'commonjs'|'commonjs2'|'umd';
