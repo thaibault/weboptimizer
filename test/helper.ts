@@ -54,54 +54,55 @@ describe('helper', ():void => {
     )
     // / endregion
     // / region string
+    // TODO use as template for other cases.
     test.each([
         [
-            '',
-            null,
-            null,
-            '',
-            '',
-            '',
-            {},
             {
                 content: '<html><head></head><body></body></html>',
                 filePathsToRemove: []
-            }
+            },
+            '',
+            null,
+            null,
+            '',
+            '',
+            '',
+            {}
         ],
         [
+            {
+                content:
+                    '<!doctype html><html><head></head><body></body></html>',
+                filePathsToRemove: []
+            },
             '<!doctype html><html><head></head><body></body></html>',
             null,
             null,
             '',
             '',
             '',
-            {},
-            {
-                content:
-                    '<!doctype html><html><head></head><body></body></html>',
-                filePathsToRemove: []
-            }
+            {}
         ]
     ])(
         `
-            .inPlaceCSSAndJavaScriptAssetReferences(
+            %p === .inPlaceCSSAndJavaScriptAssetReferences(
                 '%s', '%s', '%s', '%s', '%s', '%s', %p
-            ) === %p
+            )
         `,
-        (...parameter:[
-            string,
-            AssetPositionPattern,
-            AssetPositionPattern,
-            string,
-            string,
-            string,
-            Record<string, Record<string, any>>,
-            AssetInPlaceInjectionResult
-        ]):void => {
-            const expected:AssetInPlaceInjectionResult = parameter.pop()
+        (
+            expected:AssetInPlaceInjectionResult,
+            ...parameter:[
+                string,
+                AssetPositionPattern,
+                AssetPositionPattern,
+                string,
+                string,
+                string,
+                Record<string, Record<string, any>>
+            ]
+        ):void =>
             expect(Helper.inPlaceCSSAndJavaScriptAssetReferences(...parameter))
                 .toStrictEqual(expected)
-        }
     )
     test.each([
         ['', ''],
@@ -663,30 +664,20 @@ describe('helper', ():void => {
             }
         ]
     ])(
-        `.resolveInjection(%p, %p, %p, %p, %p, %p, '%s', '%s', %p) === %p`,
+        `%p === .resolveInjection(%p, %p, %p, ...%p)`,
         (
+            expected:Injection,
             givenInjection:Injection,
             buildConfigurations:ResolvedBuildConfiguration,
             modulesToExclude:EntryInjection,
-            aliases:PlainObject,
-            moduleReplacements:PlainObject,
-            extensions:Extensions,
-            context:string,
-            referencePath:string,
-            pathsToIgnore:Array<string>,
-            expected:Injection
+            ...parameter:Array<any>
         ):void =>
             expect(
                 Helper.resolveInjection(
                     givenInjection,
                     buildConfigurations,
                     modulesToExclude,
-                    aliases,
-                    moduleReplacements,
-                    extensions,
-                    context,
-                    referencePath,
-                    pathsToIgnore
+                    ...parameter
                 )
             ).toStrictEqual(expected)
     )
@@ -735,8 +726,8 @@ describe('helper', ():void => {
             'helper.ts'
         ]
     ])(
-        '.determineModuleFilePath(...parameter)',
-        (moduleName:string, ...parameter:Array<unknown>):void => {
+        `.determineModuleFilePath('%s', ...parameter)`,
+        (moduleName:string, ...parameter:Array<any>):void => {
             const expected:unknown = parameter.pop()
             let result:null|string = Helper.determineModuleFilePath(
                 moduleName, ...parameter)
@@ -756,7 +747,7 @@ describe('helper', ():void => {
         ['bba', {a: 'b'}, 'bbb'],
         ['helper', {}, 'helper']
     ])(
-        `.applyAliases('%s', %p)`,
+        `.applyAliases('%s', %p) === '%s'`,
         (moduleID:string, aliases:PlainObject, expected:string):void =>
             expect(Helper.applyAliases(moduleID, aliases))
                 .toStrictEqual(expected)
@@ -771,7 +762,7 @@ describe('helper', ():void => {
         ['aa', {a: 'b'}, 'ba'],
         ['helper', {}, 'helper']
     ])(
-        `.applyModuleReplacements('%s', %p)`,
+        `.applyModuleReplacements('%s', %p) === '%s'`,
         (moduleID:string, replacements:PlainObject, expected:string):void =>
             expect(Helper.applyModuleReplacements(moduleID, replacements))
                 .toStrictEqual(expected)

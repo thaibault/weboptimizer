@@ -1,5 +1,4 @@
 #!/usr/bin/env nodedd
-
 // -*- coding: utf-8 -*-
 'use strict'
 /* !
@@ -27,6 +26,9 @@ export type Browser = {
     instance:null|PlainObject;
     window:null|Window;
     windowLoaded:boolean;
+}
+export type Resolvable = {
+    [TYPE in '__evaluate__'|'__execute__'|string]:any|Resolvable|string
 }
 // / endregion
 // / region injection
@@ -69,8 +71,6 @@ export type AssetPath = {
     font:string;
     image:string;
     javaScript:string;
-    source:string;
-    target:string;
     template:string;
 }
 export type Path = {
@@ -140,6 +140,43 @@ export type WebpackLoaderConfiguration = {
 }
 export type WebpackLoaderIndicator =
     Array<WebpackLoaderIndicator>|Function|string
+// // / region ejs
+export type TemplateFunction = (locals:Record<string, unknown>) => string
+export type CompileFunction = (
+    template:string, options:EJSCompilerConfiguration, compileSteps?:number
+) => TemplateFunction
+export type EJSCompilerConfiguration = {
+    cache?:boolean;
+    client:boolean;
+    compileDebug:boolean;
+    debug:boolean;
+    encoding?:string;
+    filename:string;
+    isString:boolean;
+}
+export type EJSLoaderConfiguration = {
+    compiler:EJSCompilerConfiguration;
+    compileSteps:number;
+    compress:{
+        html:Record<string, unknown>;
+        javaScript:Record<string, unknown>;
+    };
+    context:string;
+    extensions:{
+        file:{
+            external:Array<string>;
+            internal:Array<string>;
+        };
+        module:Array<string>;
+    };
+    locals?:Record<string, unknown>;
+    module:{
+        aliases:Record<string, string>;
+        replacements:Record<string, string>;
+    };
+    [key:string]:unknown;
+}
+// // / endregion
 // // endregion
 export type AssetPositionPattern = {[key:string]:'body'|'head'|'in'|string}|null
 export type AssetInPlaceInjectionResult = {
@@ -151,6 +188,8 @@ export type Command = {
     command:string;
     indicator?:string;
 }
+
+export type NodeEnvironment = {'#':string;[key:string]:boolean|string}
 export type PluginConfiguration = {
     name:{
         initializer:string;
@@ -161,12 +200,13 @@ export type PluginConfiguration = {
 export type DefaultConfiguration = {
     contextType:string;
     debug:boolean;
-    dllManifestFilePaths:Array<any>;
+    dllManifestFilePaths:Array<string>;
     document:PlainObject;
     encoding:string;
+    givenCommandLineArguments:Array<string>;
     library:boolean;
-    nodeEnvironment:{[key:string]:boolean|'empty'|'mock'};
-    path:Path;
+    nodeEnvironment:NodeEnvironment;
+    path:Resolvable;
     plugins:Array<PluginConfiguration>;
     test:PlainObject;
     'test:browser':PlainObject;
@@ -186,8 +226,8 @@ export type HTMLConfiguration = {
 }
 export type MetaConfiguration = {
     default:DefaultConfiguration;
-    debug:PlainObject;
-    library:PlainObject;
+    debug:Resolvable;
+    library:Resolvable;
 }
 export type ResolvedBuildConfigurationItem = {
     filePaths:Array<string>;
@@ -255,7 +295,7 @@ export type ResolvedConfiguration = {
     };
     givenCommandLineArguments:Array<string>;
     hashAlgorithm:string;
-    injection:PlainObject;
+    injection:Injection;
     inPlace:{
         cascadingStyleSheet:{[key:string]:'body'|'head'|'in'|string};
         externalLibrary:{
@@ -345,7 +385,7 @@ export type ResolvedConfiguration = {
     };
     name:string;
     needed:{[key:string]:boolean};
-    nodeEnvironment:{[key:string]:boolean|'empty'|'mock'};
+    nodeEnvironment:NodeEnvironment;
     offline:PlainObject;
     package:{
         aliasPropertyNames:Array<string>;

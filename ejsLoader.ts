@@ -33,48 +33,18 @@ import {getOptions, getRemainingRequest} from 'loader-utils'
 import path from 'path'
 
 import configuration from './configurator'
+import {
+    CompileFunction,
+    EJSCompilerConfiguration,
+    EJSLoaderConfiguration,
+    TemplateFunction
+} from './type'
 import Helper from './helper'
-// endregion
-// region types
-type TemplateFunction = (locals:Record<string, unknown>) => string
-type CompilerOptions = {
-    cache?:boolean;
-    client:boolean;
-    compileDebug:boolean;
-    debug:boolean;
-    encoding?:string;
-    filename:string;
-    isString:boolean;
-}
-type CompileFunction = (
-    template:string, options:CompilerOptions, compileSteps?:number
-) => TemplateFunction
 // endregion
 export default function(this:any, source:string):string {
     if ('cachable' in this && this.cacheable)
         this.cacheable()
-    const query:{
-        compiler:CompilerOptions;
-        compileSteps: number;
-        compress:{
-            html:Record<string, unknown>;
-            javaScript:Record<string, unknown>;
-        };
-        context:string;
-        extensions:{
-            file:{
-                external:Array<string>;
-                internal:Array<string>;
-            };
-            module:Array<string>;
-        };
-        locals?:Record<string, unknown>;
-        module:{
-            aliases:Record<string, string>;
-            replacements:Record<string, string>;
-        };
-        [key:string]: unknown;
-    } = Tools.convertSubstringInPlainObject(
+    const query:EJSLoaderConfiguration = Tools.convertSubstringInPlainObject(
         Tools.extend(
             true,
             {
@@ -107,10 +77,10 @@ export default function(this:any, source:string):string {
         ),
         /#%%%#/g,
         '!'
-    )
+    ) as EJSLoaderConfiguration
     const compile:CompileFunction = (
         template:string,
-        options:CompilerOptions = query.compiler,
+        options:EJSCompilerConfiguration = query.compiler,
         compileSteps = 2
     ):TemplateFunction => (locals:Record<string, unknown> = {}):string => {
         options = Tools.extend(true, {filename: template}, options)
@@ -140,7 +110,7 @@ export default function(this:any, source:string):string {
                     evaluationFunction(
                         request, template, source, compile, locals))
             }
-            let nestedOptions:CompilerOptions = Tools.copy(options)
+            let nestedOptions:EJSCompilerConfiguration = Tools.copy(options)
             delete nestedOptions.client
             nestedOptions = Tools.extend(
                 true,
