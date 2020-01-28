@@ -550,24 +550,30 @@ describe('helper', ():void => {
                 entry: [],
                 external: []
             },
-            Helper.resolveBuildConfigurationFilePaths(
-                buildConfiguration, './', ['.git', 'node_modules']
-            ),
-            [],
-            {},
-            {},
-            {file: {external: [], internal: []}, module: []},
-            './',
-            '',
-            ['.git', 'node_modules'],
             {
                 chunks: [],
                 dllChunkNames: [],
                 entry: [],
                 external: []
-            }
+            },
+            Helper.resolveBuildConfigurationFilePaths(
+                buildConfiguration, './', ['.git', 'node_modules']
+            ),
+            [],
+            {},
+            {},
+            {file: {external: [], internal: []}, module: []},
+            './',
+            '',
+            ['.git', 'node_modules']
         ],
         [
+            {
+                chunks: [],
+                dllChunkNames: [],
+                entry: 'a.js',
+                external: []
+            },
             {
                 chunks: [],
                 dllChunkNames: [],
@@ -583,15 +589,15 @@ describe('helper', ():void => {
             {file: {external: [], internal: []}, module: []},
             './',
             '',
-            ['.git', 'node_modules'],
+            ['.git', 'node_modules']
+        ],
+        [
             {
                 chunks: [],
                 dllChunkNames: [],
-                entry: 'a.js',
+                entry: ['a'],
                 external: []
-            }
-        ],
-        [
+            },
             {
                 chunks: [],
                 dllChunkNames: [],
@@ -607,15 +613,15 @@ describe('helper', ():void => {
             {file: {external: [], internal: []}, module: []},
             './',
             '',
-            ['.git', 'node_modules'],
+            ['.git', 'node_modules']
+        ],
+        [
             {
                 chunks: [],
                 dllChunkNames: [],
-                entry: ['a'],
+                entry: {},
                 external: []
-            }
-        ],
-        [
+            },
             {
                 chunks: [],
                 dllChunkNames: [],
@@ -631,15 +637,15 @@ describe('helper', ():void => {
             {file: {external: [], internal: []}, module: []},
             './',
             '',
-            ['.git', 'node_modules'],
-            {
-                chunks: [],
-                dllChunkNames: [],
-                entry: {},
-                external: []
-            }
+            ['.git', 'node_modules']
         ],
         [
+            {
+                chunks: [],
+                external: [],
+                entry: {index: []},
+                dllChunkNames: []
+            },
             {
                 chunks: [],
                 dllChunkNames: [],
@@ -655,13 +661,7 @@ describe('helper', ():void => {
             {file: {external: [], internal: []}, module: []},
             './',
             '',
-            ['.git', 'node_modules'],
-            {
-                chunks: [],
-                external: [],
-                entry: {index: []},
-                dllChunkNames: []
-            }
+            ['.git', 'node_modules']
         ]
     ])(
         `%p === .resolveInjection(%p, %p, %p, ...%p)`,
