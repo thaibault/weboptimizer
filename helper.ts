@@ -846,8 +846,6 @@ export class Helper {
         entryInjection:EntryInjection
     ):NormalizedEntryInjection {
         let result:NormalizedEntryInjection = {}
-        if (Tools.isFunction(entryInjection))
-            entryInjection = entryInjection()
         if (Array.isArray(entryInjection))
             result = {index: entryInjection}
         else if (typeof entryInjection === 'string')
