@@ -19,7 +19,8 @@
 import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
-import Tools, {File, PlainObject} from 'clientnode'
+import Tools from 'clientnode'
+import {File, PlainObject, ProcessHandler} from 'clientnode/type'
 import synchronousFileSystem from 'fs'
 import {promises as fileSystem} from 'fs'
 import path from 'path'
@@ -29,7 +30,15 @@ import configuration from './configurator'
 import Helper from './helper'
 import {ResolvedBuildConfiguration} from './type'
 // endregion
+type PathModule = typeof path
 // NOTE: Specifies number of allowed threads to spawn.
+declare global {
+    namespace NodeJS {
+        interface ProcessEnv {
+            UV_THREADPOOL_SIZE:number;
+        }
+    }
+}
 process.env.UV_THREADPOOL_SIZE = 128
 /**
  * Main entry point.
@@ -271,7 +280,7 @@ const main = async ():Promise<void> => {
                                             .aliasPropertyNames,
                                         configuration.encoding
                                     )
-                                let type:string
+                                let type:null|string = null
                                 if (filePath)
                                     type = Helper.determineAssetType(
                                         filePath,
@@ -360,7 +369,7 @@ const main = async ():Promise<void> => {
                         }
                         tidyUp(...parameter)
                     }
-                    const closeHandler:Function = Tools.getProcessCloseHandler(
+                    const closeHandler:ProcessHandler = Tools.getProcessCloseHandler(
                         resolve,
                         reject,
                         null,
@@ -373,7 +382,7 @@ const main = async ():Promise<void> => {
                     childProcesses.push(childProcess)
                 }))
             // endregion
-            // region handle preinstall
+            // region handle pre-install
             } else if (
                 configuration.library &&
                 configuration.givenCommandLineArguments[2] === 'preinstall'
@@ -396,25 +405,42 @@ const main = async ():Promise<void> => {
                     for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
                             const evaluationFunction = (
-                                global:Record<string, any>, self:PlainObject,
+                                global:Record<string, any>,
+                                self:PlainObject,
                                 buildConfiguration:PlainObject,
-                                path:typeof path,
+                                path:PathModule,
                                 additionalArguments:Array<string>,
                                 filePath:string
                             ):string =>
                                 new Function(
-                                    'global', 'self', 'buildConfiguration',
-                                    'path', 'additionalArguments', 'filePath',
-                                    'return `' + buildConfiguration[
+                                    'global',
+                                    'self',
+                                    'buildConfiguration',
+                                    'path',
+                                    'additionalArguments',
+                                    'filePath',
+                                    'return `' +
+                                    buildConfiguration[
                                         configuration
                                             .givenCommandLineArguments[2]
-                                    ].trim() + '`'
+                                    ].trim() +
+                                    '`'
                                 )(
-                                    global, self, buildConfiguration, path,
-                                    additionalArguments, filePath)
+                                    global,
+                                    self,
+                                    buildConfiguration,
+                                    path,
+                                    additionalArguments,
+                                    filePath
+                                )
                             const command:string = evaluationFunction(
-                                global, configuration, buildConfiguration,
-                                path, additionalArguments, filePath)
+                                global,
+                                configuration,
+                                buildConfiguration,
+                                path,
+                                additionalArguments,
+                                filePath
+                            )
                             console.info(`Running "${command}"`)
                             processPromises.push(new Promise((
                                 resolve:Function, reject:Function
@@ -438,7 +464,9 @@ const main = async ():Promise<void> => {
                     tasks = [configuration.commandLine[type]]
                 for (const task of tasks) {
                     const evaluationFunction = (
-                        global:Record<string, any>, self:PlainObject, path:typeof path
+                        global:Record<string, any>,
+                        self:PlainObject,
+                        path:PathModule
                     ):boolean =>
                         new Function(
                             'global',
