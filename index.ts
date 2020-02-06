@@ -20,7 +20,9 @@ import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
 import Tools from 'clientnode'
-import {File, PlainObject, ProcessHandler} from 'clientnode/type'
+import {
+    File, PlainObject, ProcedureFunction, ProcessHandler
+} from 'clientnode/type'
 import synchronousFileSystem from 'fs'
 import {promises as fileSystem} from 'fs'
 import path from 'path'
@@ -448,7 +450,7 @@ const main = async ():Promise<void> => {
                                 execChildProcess(
                                     command,
                                     childProcessOptions,
-                                    (error:Error):void =>
+                                    (error:Error|null):void =>
                                         error ? reject(error) : resolve()
                                 )
                             )))
@@ -496,9 +498,10 @@ const main = async ():Promise<void> => {
                             )
                             const childProcess:ChildProcess =
                                 spawnChildProcess(
-                                    task.command, commandLineArguments,
+                                    task.command,
+                                    commandLineArguments,
                                     childProcessOptions)
-                            const closeHandler:Function =
+                            const closeHandler:ProcedureFunction =
                                 Tools.getProcessCloseHandler(resolve, reject)
                             for (const closeEventName of Tools.closeEventNames)
                                 childProcess.on(closeEventName, closeHandler)
@@ -528,11 +531,14 @@ const main = async ():Promise<void> => {
         }
         for (const closeEventName of Tools.closeEventNames)
             process.on(closeEventName, closeHandler)
-        if (require.main === module && (
-            configuration.givenCommandLineArguments.length < 3 ||
-            !possibleArguments.includes(
-                configuration.givenCommandLineArguments[2])
-        ))
+        if (
+            require.main === module &&
+            (
+                configuration.givenCommandLineArguments.length < 3 ||
+                !possibleArguments.includes(
+                    configuration.givenCommandLineArguments[2])
+            )
+        )
             console.info(
                 `Give one of "${possibleArguments.join('", "')}" as command ` +
                 'line argument. You can provide a json string as second ' +
