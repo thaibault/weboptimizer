@@ -25,7 +25,7 @@ import Helper from './helper'
 import {configuration as givenMetaConfiguration} from './package.json'
 import {
     DefaultConfiguration,
-    EntryInjection,
+    GivenInjection,
     /* eslint-disable no-unused-vars */
     HTMLConfiguration,
     /* eslint-enable no-unused-vars */
@@ -368,12 +368,12 @@ resolvedConfiguration.injection = Helper.resolveInjection(
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore
 )
-const entryInjection:EntryInjection =
-    resolvedConfiguration.injection.entry as any as EntryInjection
+const givenInjection:GivenInjection =
+    resolvedConfiguration.injection.entry as any as GivenInjection
 resolvedConfiguration.injection.entry = {
-    given: entryInjection,
+    given: givenInjection,
     normalized: Helper.resolveModulesInFolders(
-        Helper.normalizeEntryInjection(entryInjection),
+        Helper.normalizeGivenInjection(givenInjection),
         resolvedConfiguration.module.aliases,
         resolvedConfiguration.module.replacements.normal,
         resolvedConfiguration.path.context,

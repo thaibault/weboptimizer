@@ -25,9 +25,9 @@ import {
     AssetPositionPattern,
     BuildConfiguration,
     Extensions,
+    GivenInjection,
     Injection,
-    EntryInjection,
-    NormalizedEntryInjection,
+    NormalizedGivenInjection,
     Path,
     ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem
@@ -320,7 +320,7 @@ export class Helper {
      * @returns Processed file path.
      */
     static renderFilePathTemplate(
-        template:string, scope:{[key:string]:string} = {}
+        template:string, scope:{[key:string]:number|string} = {}
     ):string {
         scope = Tools.extend(
             {
@@ -337,7 +337,7 @@ export class Helper {
                         Tools.stringEscapeRegularExpressions(placeholderName),
                         'g'
                     ),
-                    scope[placeholderName]
+                    `${scope[placeholderName]}`
                 )
         return filePath
     }
@@ -405,7 +405,7 @@ export class Helper {
      * @param request - Request to determine.
      * @param context - Context of current project.
      * @param requestContext - Context of given request to resolve relative to.
-     * @param normalizedEntryInjection - Mapping of chunk names to modules
+     * @param normalizedGivenInjection - Mapping of chunk names to modules
      * which should be injected.
      * @param relativeExternalModuleLocations - Array of paths where external
      * modules take place.
@@ -441,7 +441,7 @@ export class Helper {
         request:string,
         context = './',
         requestContext = './',
-        normalizedEntryInjection:NormalizedEntryInjection = {},
+        normalizedGivenInjection:NormalizedGivenInjection = {},
         relativeExternalModuleLocations:Array<string> = ['node_modules'],
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
@@ -511,11 +511,11 @@ export class Helper {
                 moduleReplacements,
                 relativeModuleLocations
             )
-        for (const chunkName in normalizedEntryInjection)
+        for (const chunkName in normalizedGivenInjection)
             if (Object.prototype.hasOwnProperty.call(
-                normalizedEntryInjection, chunkName
+                normalizedGivenInjection, chunkName
             ))
-                for (const moduleID of normalizedEntryInjection[chunkName])
+                for (const moduleID of normalizedGivenInjection[chunkName])
                     if (Helper.determineModuleFilePath(
                         moduleID,
                         aliases,
@@ -689,7 +689,7 @@ export class Helper {
     /**
      * Determines all file and directory paths related to given internal
      * modules as array.
-     * @param entryInjection - List of module ids or module file paths.
+     * @param givenInjection - List of module ids or module file paths.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of module replacements to take into
      * account.
@@ -712,7 +712,7 @@ export class Helper {
      * corresponding list of paths.
      */
     static determineModuleLocations(
-        entryInjection:EntryInjection,
+        givenInjection:GivenInjection,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:PlainObject = {
@@ -734,20 +734,20 @@ export class Helper {
     ):{filePaths:Array<string>;directoryPaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
-        const normalizedEntryInjection:NormalizedEntryInjection =
+        const normalizedGivenInjection:NormalizedGivenInjection =
             Helper.resolveModulesInFolders(
-                Helper.normalizeEntryInjection(entryInjection),
+                Helper.normalizeGivenInjection(givenInjection),
                 aliases,
                 moduleReplacements,
                 context,
                 referencePath,
                 pathsToIgnore
             )
-        for (const chunkName in normalizedEntryInjection)
+        for (const chunkName in normalizedGivenInjection)
             if (Object.prototype.hasOwnProperty.call(
-                normalizedEntryInjection, chunkName
+                normalizedGivenInjection, chunkName
             ))
-                for (const moduleID of normalizedEntryInjection[chunkName]) {
+                for (const moduleID of normalizedGivenInjection[chunkName]) {
                     const filePath:null|string = Helper.determineModuleFilePath(
                         moduleID,
                         aliases,
@@ -774,7 +774,7 @@ export class Helper {
     /**
      * Determines a list of concrete file paths for given module id pointing to
      * a folder which isn't a package.
-     * @param normalizedEntryInjection - Injection data structure of modules
+     * @param normalizedGivenInjection - Injection data structure of modules
      * with folder references to resolve.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
@@ -785,21 +785,21 @@ export class Helper {
      * @returns Given injections with resolved folder pointing modules.
      */
     static resolveModulesInFolders(
-        normalizedEntryInjection:NormalizedEntryInjection,
+        normalizedGivenInjection:NormalizedGivenInjection,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         context = './',
         referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
-    ):NormalizedEntryInjection {
+    ):NormalizedGivenInjection {
         if (referencePath.startsWith('/'))
             referencePath = path.relative(context, referencePath)
-        for (const chunkName in normalizedEntryInjection)
+        for (const chunkName in normalizedGivenInjection)
             if (Object.prototype.hasOwnProperty.call(
-                normalizedEntryInjection, chunkName
+                normalizedGivenInjection, chunkName
             )) {
                 let index = 0
-                for (let moduleID of normalizedEntryInjection[chunkName]) {
+                for (let moduleID of normalizedGivenInjection[chunkName]) {
                     moduleID = Helper.applyModuleReplacements(
                         Helper.applyAliases(Helper.stripLoader(
                             moduleID
@@ -807,7 +807,7 @@ export class Helper {
                     const resolvedPath:string = path.resolve(
                         referencePath, moduleID)
                     if (Tools.isDirectorySync(resolvedPath)) {
-                        normalizedEntryInjection[chunkName].splice(index, 1)
+                        normalizedGivenInjection[chunkName].splice(index, 1)
                         for (const file of Tools.walkDirectoryRecursivelySync(
                             resolvedPath,
                             (file:File):false|undefined => {
@@ -818,7 +818,7 @@ export class Helper {
                             }
                         ))
                             if (file.stats && file.stats.isFile())
-                                normalizedEntryInjection[chunkName].push(
+                                normalizedGivenInjection[chunkName].push(
                                     './' + path.relative(
                                         referencePath, path.resolve(
                                             resolvedPath, file.path)))
@@ -828,44 +828,44 @@ export class Helper {
                             `./${path.relative(context, referencePath)}`
                         )
                     )
-                        normalizedEntryInjection[chunkName][index] =
+                        normalizedGivenInjection[chunkName][index] =
                             `./${path.relative(context, resolvedPath)}`
                     index += 1
                 }
             }
-        return normalizedEntryInjection
+        return normalizedGivenInjection
     }
     /**
      * Every injection definition type can be represented as plain object
      * (mapping from chunk name to array of module ids). This method converts
      * each representation into the normalized plain object notation.
-     * @param entryInjection - Given entry injection to normalize.
+     * @param givenInjection - Given entry injection to normalize.
      * @returns Normalized representation of given entry injection.
      */
-    static normalizeEntryInjection(
-        entryInjection:EntryInjection
-    ):NormalizedEntryInjection {
-        let result:NormalizedEntryInjection = {}
-        if (Array.isArray(entryInjection))
-            result = {index: entryInjection}
-        else if (typeof entryInjection === 'string')
-            result = {index: [entryInjection]}
-        else if (Tools.isPlainObject(entryInjection)) {
+    static normalizeGivenInjection(
+        givenInjection:GivenInjection
+    ):NormalizedGivenInjection {
+        let result:NormalizedGivenInjection = {}
+        if (Array.isArray(givenInjection))
+            result = {index: givenInjection}
+        else if (typeof givenInjection === 'string')
+            result = {index: [givenInjection]}
+        else if (Tools.isPlainObject(givenInjection)) {
             let hasContent = false
             const chunkNamesToDelete:Array<string> = []
-            for (const chunkName in entryInjection)
+            for (const chunkName in givenInjection)
                 if (Object.prototype.hasOwnProperty.call(
-                    entryInjection, chunkName
+                    givenInjection, chunkName
                 ))
-                    if (Array.isArray(entryInjection[chunkName]))
-                        if (entryInjection[chunkName].length > 0) {
+                    if (Array.isArray(givenInjection[chunkName]))
+                        if (givenInjection[chunkName].length > 0) {
                             hasContent = true
-                            result[chunkName] = entryInjection[chunkName]
+                            result[chunkName] = givenInjection[chunkName]
                         } else
                             chunkNamesToDelete.push(chunkName)
                     else {
                         hasContent = true
-                        result[chunkName] = [entryInjection[chunkName]]
+                        result[chunkName] = [givenInjection[chunkName]]
                     }
             if (hasContent)
                 for (const chunkName of chunkNamesToDelete)
@@ -897,7 +897,7 @@ export class Helper {
     static resolveInjection(
         givenInjection:Injection,
         buildConfigurations:ResolvedBuildConfiguration,
-        modulesToExclude:EntryInjection,
+        modulesToExclude:GivenInjection,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:Extensions = {

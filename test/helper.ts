@@ -2,17 +2,17 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import {PlainObject} from 'clientnode'
+import {PlainObject} from 'clientnode/type'
 import path from 'path'
 
 import {
     AssetInPlaceInjectionResult,
     AssetPositionPattern,
     BuildConfiguration,
-    EntryInjection,
     Extensions,
+    GivenInjection,
     Injection,
-    NormalizedEntryInjection,
+    NormalizedGivenInjection,
     Path,
     ResolvedBuildConfiguration
 } from '../type'
@@ -149,7 +149,11 @@ describe('helper', ():void => {
         ['a[id]b[hash]', {'[id]': '[id]', '[hash]': '[hash]'}, 'a[id]b[hash]']
     ])(
         `.renderFilePathTemplate('%s', %p) === %p`,
-        (template:string, scope:{[key:string]:string}, expected:string):void =>
+        (
+            template:string,
+            scope:{[key:string]:number|string},
+            expected:string
+        ):void =>
             expect(Helper.renderFilePathTemplate(template, scope))
                 .toStrictEqual(expected)
     )
@@ -423,8 +427,6 @@ describe('helper', ():void => {
                         font: '',
                         image: '',
                         javaScript: '',
-                        source: '',
-                        target: '',
                         template: ''
                     },
                     base: ''
@@ -437,8 +439,6 @@ describe('helper', ():void => {
                         font: '',
                         image: '',
                         javaScript: '',
-                        source: '',
-                        target: '',
                         template: ''
                     },
                     base: '',
@@ -506,19 +506,19 @@ describe('helper', ():void => {
     ])(
         '.determineModuleLocations(%p)',
         (
-            entryInjection:EntryInjection,
+            givenInjection:GivenInjection,
             expected:{filePaths:Array<string>;directoryPaths:Array<string>}
         ):void =>
-            expect(Helper.determineModuleLocations(entryInjection))
+            expect(Helper.determineModuleLocations(givenInjection))
                 .toStrictEqual(expected)
     )
     test.each([[{}, {}], [{index: []}, {index: []}]])(
         '.resolveModulesInFolders(%p)',
         (
-            normalizedEntryInjection:NormalizedEntryInjection,
-            expected:NormalizedEntryInjection
+            normalizedGivenInjection:NormalizedGivenInjection,
+            expected:NormalizedGivenInjection
         ):void =>
-            expect(Helper.resolveModulesInFolders(normalizedEntryInjection))
+            expect(Helper.resolveModulesInFolders(normalizedGivenInjection))
                 .toStrictEqual(expected)
     )
     test('resolveModulesInFolders', ():void =>
@@ -535,26 +535,30 @@ describe('helper', ():void => {
         [{a: ['example'], b: []}, {a: ['example']}],
         [{a: [], b: []}, {index: []}]
     ])(
-        '.normalizeEntryInjection(%p)',
+        '.normalizeGivenInjection(%p)',
         (
-            entryInjection:EntryInjection, expected:NormalizedEntryInjection
+            givenInjection:GivenInjection, expected:NormalizedGivenInjection
         ):void =>
-            expect(Helper.normalizeEntryInjection(entryInjection))
+            expect(Helper.normalizeGivenInjection(givenInjection))
                 .toStrictEqual(expected)
     )
     test.each([
         [
             {
+                autoExclude: [],
                 chunks: [],
                 dllChunkNames: [],
                 entry: [],
-                external: []
+                external: {
+                }
             },
             {
+                autoExclude: [],
                 chunks: [],
                 dllChunkNames: [],
                 entry: [],
-                external: []
+                external: {
+                }
             },
             Helper.resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
@@ -566,7 +570,7 @@ describe('helper', ():void => {
             './',
             '',
             ['.git', 'node_modules']
-        ],
+        ]/*,
         [
             {
                 chunks: [],
@@ -662,14 +666,14 @@ describe('helper', ():void => {
             './',
             '',
             ['.git', 'node_modules']
-        ]
+        ]*/
     ])(
         `%p === .resolveInjection(%p, %p, %p, ...%p)`,
         (
             expected:Injection,
             givenInjection:Injection,
             buildConfigurations:ResolvedBuildConfiguration,
-            modulesToExclude:EntryInjection,
+            modulesToExclude:GivenInjection,
             ...parameter:Array<any>
         ):void =>
             expect(

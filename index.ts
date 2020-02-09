@@ -33,15 +33,8 @@ import Helper from './helper'
 import {ResolvedBuildConfiguration} from './type'
 // endregion
 type PathModule = typeof path
-// NOTE: Specifies number of allowed threads to spawn.
-declare global {
-    namespace NodeJS {
-        interface ProcessEnv {
-            UV_THREADPOOL_SIZE:number;
-        }
-    }
-}
-process.env.UV_THREADPOOL_SIZE = 128
+// NOTE: Environment variables can only be strings.
+process.env.UV_THREADPOOL_SIZE = '128'
 /**
  * Main entry point.
  * @returns Nothing.
@@ -530,6 +523,8 @@ const main = async ():Promise<void> => {
             finished = true
         }
         for (const closeEventName of Tools.closeEventNames)
+            // @ts-ignore: Accepts only "NodeSignals" but other strings are
+            // available.
             process.on(closeEventName, closeHandler)
         if (
             require.main === module &&

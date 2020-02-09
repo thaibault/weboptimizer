@@ -35,16 +35,16 @@ export type Resolvable = {
 export type ExternalInjection = string|((
     context:string, request:string, callback:ProcedureFunction
 ) => void)|RegExp|Array<ExternalInjection>
-export type EntryInjection =
+export type GivenInjection =
     Function|string|Array<string>|{[key:string]:string|Array<string>}
-export type NormalizedEntryInjection = {[key:string]:Array<string>}
+export type NormalizedGivenInjection = {[key:string]:Array<string>}
 export type Injection = {
     autoExclude:Array<string>;
     chunks:PlainObject;
     dllChunkNames:Array<string>;
     entry:{
-        given:EntryInjection;
-        normalized:NormalizedEntryInjection;
+        given:GivenInjection;
+        normalized:NormalizedGivenInjection;
     };
     external:{
         aliases:PlainObject;
