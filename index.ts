@@ -20,7 +20,9 @@ import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
 import Tools from 'clientnode'
-import {File, PlainObject, ProcessHandler} from 'clientnode/type'
+import {
+    File, PlainObject, ProcedureFunction, ProcessHandler
+} from 'clientnode/type'
 import synchronousFileSystem from 'fs'
 import {promises as fileSystem} from 'fs'
 import path from 'path'
@@ -31,15 +33,8 @@ import Helper from './helper'
 import {ResolvedBuildConfiguration} from './type'
 // endregion
 type PathModule = typeof path
-// NOTE: Specifies number of allowed threads to spawn.
-declare global {
-    namespace NodeJS {
-        interface ProcessEnv {
-            UV_THREADPOOL_SIZE:number;
-        }
-    }
-}
-process.env.UV_THREADPOOL_SIZE = 128
+// NOTE: Environment variables can only be strings.
+process.env.UV_THREADPOOL_SIZE = '128'
 /**
  * Main entry point.
  * @returns Nothing.
@@ -448,7 +443,7 @@ const main = async ():Promise<void> => {
                                 execChildProcess(
                                     command,
                                     childProcessOptions,
-                                    (error:Error):void =>
+                                    (error:Error|null):void =>
                                         error ? reject(error) : resolve()
                                 )
                             )))
@@ -496,9 +491,10 @@ const main = async ():Promise<void> => {
                             )
                             const childProcess:ChildProcess =
                                 spawnChildProcess(
-                                    task.command, commandLineArguments,
+                                    task.command,
+                                    commandLineArguments,
                                     childProcessOptions)
-                            const closeHandler:Function =
+                            const closeHandler:ProcedureFunction =
                                 Tools.getProcessCloseHandler(resolve, reject)
                             for (const closeEventName of Tools.closeEventNames)
                                 childProcess.on(closeEventName, closeHandler)
@@ -527,12 +523,17 @@ const main = async ():Promise<void> => {
             finished = true
         }
         for (const closeEventName of Tools.closeEventNames)
+            // @ts-ignore: Accepts only "NodeSignals" but other strings are
+            // available.
             process.on(closeEventName, closeHandler)
-        if (require.main === module && (
-            configuration.givenCommandLineArguments.length < 3 ||
-            !possibleArguments.includes(
-                configuration.givenCommandLineArguments[2])
-        ))
+        if (
+            require.main === module &&
+            (
+                configuration.givenCommandLineArguments.length < 3 ||
+                !possibleArguments.includes(
+                    configuration.givenCommandLineArguments[2])
+            )
+        )
             console.info(
                 `Give one of "${possibleArguments.join('", "')}" as command ` +
                 'line argument. You can provide a json string as second ' +
