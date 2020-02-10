@@ -545,17 +545,11 @@ describe('helper', ():void => {
     test.each([
         [
             {
-                autoExclude: [],
-                chunks: [],
-                dllChunkNames: [],
                 entry: [],
                 external: {
                 }
             },
             {
-                autoExclude: [],
-                chunks: [],
-                dllChunkNames: [],
                 entry: [],
                 external: {
                 }
@@ -570,17 +564,13 @@ describe('helper', ():void => {
             './',
             '',
             ['.git', 'node_modules']
-        ]/*,
+        ]/* TODO,
         [
             {
-                chunks: [],
-                dllChunkNames: [],
                 entry: 'a.js',
                 external: []
             },
             {
-                chunks: [],
-                dllChunkNames: [],
                 entry: 'a.js',
                 external: []
             },
@@ -597,14 +587,10 @@ describe('helper', ():void => {
         ],
         [
             {
-                chunks: [],
-                dllChunkNames: [],
                 entry: ['a'],
                 external: []
             },
             {
-                chunks: [],
-                dllChunkNames: [],
                 entry: ['a'],
                 external: []
             },
@@ -621,14 +607,10 @@ describe('helper', ():void => {
         ],
         [
             {
-                chunks: [],
-                dllChunkNames: [],
                 entry: {},
                 external: []
             },
             {
-                chunks: [],
-                dllChunkNames: [],
                 entry: '__auto__',
                 external: []
             },
@@ -645,14 +627,10 @@ describe('helper', ():void => {
         ],
         [
             {
-                chunks: [],
-                external: [],
                 entry: {index: []},
-                dllChunkNames: []
+                external: []
             },
             {
-                chunks: [],
-                dllChunkNames: [],
                 entry: {index: '__auto__'},
                 external: []
             },
@@ -668,7 +646,7 @@ describe('helper', ():void => {
             ['.git', 'node_modules']
         ]*/
     ])(
-        `%p === .resolveInjection(%p, %p, %p, ...%p)`,
+        `%p === .resolveAutoInjection(%p, %p, %p, ...%p)`,
         (
             expected:Injection,
             givenInjection:Injection,
@@ -677,7 +655,7 @@ describe('helper', ():void => {
             ...parameter:Array<any>
         ):void =>
             expect(
-                Helper.resolveInjection(
+                Helper.resolveAutoInjection(
                     givenInjection,
                     buildConfigurations,
                     modulesToExclude,
@@ -685,8 +663,8 @@ describe('helper', ():void => {
                 )
             ).toStrictEqual(expected)
     )
-    test('getAutoChunk', ():void =>
-        expect(Helper.getAutoChunk(
+    test('getAutoInjection', ():void =>
+        expect(Helper.getAutoInjection(
             Helper.resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),

@@ -343,7 +343,7 @@ resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base
 )
-resolvedConfiguration.injection = Helper.resolveInjection(
+resolvedConfiguration.injection = Helper.resolveAutoInjection(
     resolvedConfiguration.injection,
     Helper.resolveBuildConfigurationFilePaths(
         resolvedConfiguration.buildContext.types,
