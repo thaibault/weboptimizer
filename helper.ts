@@ -894,7 +894,7 @@ export class Helper {
      * @param pathsToIgnore - Paths which marks location to ignore.
      * @returns Given injection with resolved marked indicators.
      */
-    static resolveInjection(
+    static resolveAutoInjection(
         givenInjection:Injection,
         buildConfigurations:ResolvedBuildConfiguration,
         modulesToExclude:GivenInjection,
@@ -931,7 +931,7 @@ export class Helper {
                     if (injection[type][chunkName] === '__auto__') {
                         injection[type][chunkName] = []
                         const modules:{[key:string]:string} =
-                            Helper.getAutoChunk(
+                            Helper.getAutoInjection(
                                 buildConfigurations,
                                 moduleFilePathsToExclude,
                                 referencePath
@@ -950,7 +950,7 @@ export class Helper {
                     }
             } else if (injection[type] === '__auto__')
             /* eslint-enable curly */
-                injection[type] = Helper.getAutoChunk(
+                injection[type] = Helper.getAutoInjection(
                     buildConfigurations, moduleFilePathsToExclude, context)
         return injection
     }
@@ -963,7 +963,7 @@ export class Helper {
      * @param context - File path to use as starting point.
      * @returns All determined module file paths.
      */
-    static getAutoChunk(
+    static getAutoInjection(
         buildConfigurations:ResolvedBuildConfiguration,
         moduleFilePathsToExclude:Array<string>,
         context:string
@@ -975,13 +975,14 @@ export class Helper {
                 injectedModuleIDs[buildConfiguration.outputExtension] = []
             for (const moduleFilePath of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
-                    const relativeModuleFilePath:string = './' + path.relative(
-                        context, moduleFilePath)
+                    const relativeModuleFilePath:string =
+                        `./${path.relative(context, moduleFilePath)}`
                     const directoryPath:string = path.dirname(
                         relativeModuleFilePath)
                     const baseName:string = path.basename(
                         relativeModuleFilePath,
-                        `.${buildConfiguration.extension}`)
+                        `.${buildConfiguration.extension}`
+                    )
                     let moduleID:string = baseName
                     if (directoryPath !== '.')
                         moduleID = path.join(directoryPath, baseName)
