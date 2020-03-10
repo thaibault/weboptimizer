@@ -38,10 +38,8 @@ export type ExternalInjection = string|((
 export type GivenInjection =
     Function|string|Array<string>|{[key:string]:string|Array<string>}
 export type NormalizedGivenInjection = {[key:string]:Array<string>}
-export type Injection = {
+export type SimpleInjection = {
     autoExclude:Array<string>;
-    chunks:PlainObject;
-    dllChunkNames:Array<string>;
     entry:{
         given:GivenInjection;
         normalized:NormalizedGivenInjection;
@@ -56,6 +54,10 @@ export type Injection = {
         };
         modules:ExternalInjection;
     };
+};
+export type Injection = SimpleInjection & {
+    chunks:PlainObject;
+    dllChunkNames:Array<string>;
     externalAliases:PlainObject;
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;

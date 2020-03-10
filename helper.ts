@@ -26,11 +26,11 @@ import {
     BuildConfiguration,
     Extensions,
     GivenInjection,
-    Injection,
     NormalizedGivenInjection,
     Path,
     ResolvedBuildConfiguration,
-    ResolvedBuildConfigurationItem
+    ResolvedBuildConfigurationItem,
+    SimpleInjection
 } from './type'
 // endregion
 // region constants
@@ -895,9 +895,8 @@ export class Helper {
      * @returns Given injection with resolved marked indicators.
      */
     static resolveAutoInjection(
-        givenInjection:Injection,
+        givenInjection:SimpleInjection,
         buildConfigurations:ResolvedBuildConfiguration,
-        modulesToExclude:GivenInjection,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
         extensions:Extensions = {
@@ -912,11 +911,12 @@ export class Helper {
         context = './',
         referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
-    ):Injection {
-        const injection:Injection = Tools.extend(true, {}, givenInjection)
+    ):SimpleInjection {
+        const injection:SimpleInjection = Tools.extend(
+            true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
-                modulesToExclude,
+                givenInjection.autoExclude,
                 aliases,
                 moduleReplacements,
                 {file: extensions.file.internal, module: extensions.module},
