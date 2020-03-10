@@ -360,7 +360,6 @@ resolvedConfiguration.injection = Helper.resolveAutoInjection(
         ),
         resolvedConfiguration.package.main.fileNames
     ),
-    resolvedConfiguration.injection.autoExclude,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.module.replacements.normal,
     resolvedConfiguration.extensions,
