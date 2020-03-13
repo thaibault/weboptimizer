@@ -146,6 +146,8 @@ for (const source in configuration.module.replacements.normal)
             search,
             (resource:{request:string}):void => {
                 resource.request = resource.request.replace(
+                    // @ts-ignore: https://github.com/microsoft/TypeScript/
+                    // issues/22378
                     search, configuration.module.replacements.normal[source]
                 )
             }

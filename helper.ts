@@ -15,7 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
-import {File, PlainObject} from 'clientnode/type'
+import {File, Mapping, PlainObject} from 'clientnode/type'
 import {JSDOM as DOM} from 'jsdom'
 import fileSystem from 'fs'
 import path from 'path'
@@ -28,9 +28,11 @@ import {
     GivenInjection,
     NormalizedGivenInjection,
     Path,
+    Replacements,
     ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem,
-    SimpleInjection
+    SimpleInjection,
+    SpecificExtensions
 } from './type'
 // endregion
 // region constants
@@ -358,8 +360,8 @@ export class Helper {
         request:string,
         context = './',
         referencePath = './',
-        aliases:PlainObject = {},
-        moduleReplacements:PlainObject = {},
+        aliases:Mapping = {},
+        moduleReplacements:Replacements = {},
         relativeModuleLocations:Array<string> = ['node_modules']
     ):string {
         referencePath = path.resolve(referencePath)
@@ -443,8 +445,8 @@ export class Helper {
         requestContext = './',
         normalizedGivenInjection:NormalizedGivenInjection = {},
         relativeExternalModuleLocations:Array<string> = ['node_modules'],
-        aliases:PlainObject = {},
-        moduleReplacements:PlainObject = {},
+        aliases:Mapping = {},
+        moduleReplacements:Replacements = {},
         extensions:Extensions = {
             file: {
                 external: ['.compiled.js', '.js', '.json'],
@@ -713,9 +715,9 @@ export class Helper {
      */
     static determineModuleLocations(
         givenInjection:GivenInjection,
-        aliases:PlainObject = {},
-        moduleReplacements:PlainObject = {},
-        extensions:PlainObject = {
+        aliases:Mapping = {},
+        moduleReplacements:Replacements = {},
+        extensions:SpecificExtensions = {
             file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
                 `.${suffix}`
             ),
@@ -786,8 +788,8 @@ export class Helper {
      */
     static resolveModulesInFolders(
         normalizedGivenInjection:NormalizedGivenInjection,
-        aliases:PlainObject = {},
-        moduleReplacements:PlainObject = {},
+        aliases:Mapping = {},
+        moduleReplacements:Replacements = {},
         context = './',
         referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
@@ -861,12 +863,15 @@ export class Helper {
                     if (Array.isArray(givenInjection[chunkName]))
                         if (givenInjection[chunkName].length > 0) {
                             hasContent = true
-                            result[chunkName] = givenInjection[chunkName]
+                            result[chunkName] =
+                                givenInjection[chunkName] as Array<string>
                         } else
                             chunkNamesToDelete.push(chunkName)
                     else {
                         hasContent = true
-                        result[chunkName] = [givenInjection[chunkName]]
+                        result[chunkName] = [
+                            givenInjection[chunkName] as string
+                        ]
                     }
             if (hasContent)
                 for (const chunkName of chunkNamesToDelete)
@@ -898,8 +903,8 @@ export class Helper {
     static resolveAutoInjection<T extends SimpleInjection>(
         givenInjection:T,
         buildConfigurations:ResolvedBuildConfiguration,
-        aliases:PlainObject = {},
-        moduleReplacements:PlainObject = {},
+        aliases:Mapping = {},
+        moduleReplacements:Replacements = {},
         extensions:Extensions = {
             file: {
                 external: ['compiled.js', '.js', '.json'],
@@ -953,7 +958,7 @@ export class Helper {
             /* eslint-enable curly */
                 injection[type] = Helper.getAutoInjection(
                     buildConfigurations, moduleFilePathsToExclude, context)
-        return injection
+        return injection as T
     }
     /**
      * Determines all module file paths.
@@ -1043,9 +1048,9 @@ export class Helper {
      */
     static determineModuleFilePath(
         moduleID:string,
-        aliases:PlainObject = {},
-        moduleReplacements:PlainObject = {},
-        extensions:PlainObject = {
+        aliases:Mapping = {},
+        moduleReplacements:Replacements = {},
+        extensions:SpecificExtensions = {
             file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
                 `.${suffix}`
             ),
@@ -1062,7 +1067,8 @@ export class Helper {
     ):null|string {
         moduleID = Helper.applyModuleReplacements(
             Helper.applyAliases(Helper.stripLoader(moduleID), aliases),
-            moduleReplacements)
+            moduleReplacements
+        )
         if (!moduleID)
             return null
         let moduleFilePath:string = moduleID
@@ -1093,7 +1099,7 @@ export class Helper {
                         else
                             currentModuleFilePath = path.resolve(
                                 moduleLocation, moduleFilePath)
-                        let packageAliases:PlainObject = {}
+                        let packageAliases:Mapping = {}
                         if (fileName === '__package__') {
                             if (Tools.isDirectorySync(currentModuleFilePath)) {
                                 const pathToPackageJSON:string = path.resolve(
@@ -1120,7 +1126,8 @@ export class Helper {
                                             localConfiguration[propertyName]
                                         ) {
                                             fileName = localConfiguration[
-                                                propertyName]
+                                                propertyName
+                                            ] as string
                                             break
                                         }
                                     for (
@@ -1132,13 +1139,14 @@ export class Helper {
                                                 localConfiguration,
                                                 propertyName
                                             ) &&
-                                            typeof localConfiguration[
-                                                propertyName
-                                            ] === 'object'
+                                            Tools.isPlainObject(
+                                                localConfiguration[
+                                                    propertyName])
                                         ) {
                                             packageAliases =
                                                 localConfiguration[
-                                                    propertyName]
+                                                    propertyName
+                                                ] as Mapping
                                             break
                                         }
                                 }
@@ -1148,7 +1156,8 @@ export class Helper {
                         }
                         fileName = Helper.applyModuleReplacements(
                             Helper.applyAliases(fileName, packageAliases),
-                            moduleReplacements)
+                            moduleReplacements
+                        )
                         if (fileName)
                             currentModuleFilePath = path.resolve(
                                 currentModuleFilePath,
@@ -1173,7 +1182,7 @@ export class Helper {
      * @param aliases - Mapping of aliases to take into account.
      * @returns The alias applied given module id.
      */
-    static applyAliases(moduleID:string, aliases:PlainObject):string {
+    static applyAliases(moduleID:string, aliases:Mapping):string {
         for (const alias in aliases)
             if (alias.endsWith('$')) {
                 if (moduleID === alias.substring(0, alias.length - 1))
@@ -1190,13 +1199,15 @@ export class Helper {
      * @returns The replacement applied given module id.
      */
     static applyModuleReplacements(
-        moduleID:string, replacements:PlainObject
+        moduleID:string, replacements:Replacements
     ):string {
         for (const replacement in replacements)
             if (Object.prototype.hasOwnProperty.call(
                 replacements, replacement
             ))
                 moduleID = moduleID.replace(
+                    // @ts-ignore: https://github.com/microsoft/TypeScript/
+                    // issues/22378
                     new RegExp(replacement), replacements[replacement])
         return moduleID
     }

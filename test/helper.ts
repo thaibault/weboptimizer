@@ -2,7 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import {PlainObject} from 'clientnode/type'
+import {Mapping} from 'clientnode/type'
 import path from 'path'
 
 import {
@@ -14,6 +14,7 @@ import {
     Injection,
     NormalizedGivenInjection,
     Path,
+    Replacements,
     ResolvedBuildConfiguration
 } from '../type'
 import Helper from '../helper'
@@ -731,7 +732,7 @@ describe('helper', ():void => {
         ['helper', {}, 'helper']
     ])(
         `.applyAliases('%s', %p) === '%s'`,
-        (moduleID:string, aliases:PlainObject, expected:string):void =>
+        (moduleID:string, aliases:Mapping, expected:string):void =>
             expect(Helper.applyAliases(moduleID, aliases))
                 .toStrictEqual(expected)
     )
@@ -746,7 +747,7 @@ describe('helper', ():void => {
         ['helper', {}, 'helper']
     ])(
         `.applyModuleReplacements('%s', %p) === '%s'`,
-        (moduleID:string, replacements:PlainObject, expected:string):void =>
+        (moduleID:string, replacements:Replacements, expected:string):void =>
             expect(Helper.applyModuleReplacements(moduleID, replacements))
                 .toStrictEqual(expected)
     )
