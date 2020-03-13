@@ -660,7 +660,6 @@ describe('helper', ():void => {
                 Helper.resolveAutoInjection(
                     givenInjection,
                     buildConfigurations,
-                    modulesToExclude,
                     ...parameter
                 )
             ).toStrictEqual(expected)

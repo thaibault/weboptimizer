@@ -894,8 +894,8 @@ export class Helper {
      * @param pathsToIgnore - Paths which marks location to ignore.
      * @returns Given injection with resolved marked indicators.
      */
-    static resolveAutoInjection(
-        givenInjection:SimpleInjection,
+    static resolveAutoInjection<T extends SimpleInjection>(
+        givenInjection:T,
         buildConfigurations:ResolvedBuildConfiguration,
         aliases:PlainObject = {},
         moduleReplacements:PlainObject = {},
@@ -911,7 +911,7 @@ export class Helper {
         context = './',
         referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
-    ):SimpleInjection {
+    ):T {
         const injection:SimpleInjection = Tools.extend(
             true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
