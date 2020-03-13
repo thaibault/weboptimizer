@@ -801,9 +801,10 @@ export class Helper {
                 let index = 0
                 for (let moduleID of normalizedGivenInjection[chunkName]) {
                     moduleID = Helper.applyModuleReplacements(
-                        Helper.applyAliases(Helper.stripLoader(
-                            moduleID
-                        ), aliases), moduleReplacements)
+                        Helper.applyAliases(
+                            Helper.stripLoader(moduleID), aliases),
+                        moduleReplacements
+                    )
                     const resolvedPath:string = path.resolve(
                         referencePath, moduleID)
                     if (Tools.isDirectorySync(resolvedPath)) {

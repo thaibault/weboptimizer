@@ -14,19 +14,24 @@
     endregion
 */
 // region imports
-import {PlainObject, ProcedureFunction} from 'clientnode/type'
+import {
+    PlainObject, PlainStringObject, ProcedureFunction
+} from 'clientnode/type'
 // endregion
 // region exports
 // / region generic
 export type Browser = {
     debug:boolean;
     domContentLoaded:boolean;
-    DOM?:null|PlainObject;
+    DOM:null|Object;
     initialized:boolean;
-    instance:null|PlainObject;
+    instance:null|Object;
     window:null|Window;
     windowLoaded:boolean;
 }
+export type Replacement = ((
+    substring:string, ...parameter:Array<any>
+) => string)|string
 export type Resolvable = {
     [TYPE in '__evaluate__'|'__execute__'|string]:any|Resolvable|string
 }
@@ -45,7 +50,7 @@ export type SimpleInjection = {
         normalized:NormalizedGivenInjection;
     };
     external:{
-        aliases:PlainObject;
+        aliases:PlainStringObject;
         implicit:{
             pattern:{
                 exclude:Array<RegExp|string>;
@@ -58,7 +63,7 @@ export type SimpleInjection = {
 export type Injection = SimpleInjection & {
     chunks:PlainObject;
     dllChunkNames:Array<string>;
-    externalAliases:PlainObject;
+    externalAliases:PlainStringObject;
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
     implicitExternalIncludePattern:Array<RegExp|string>;
@@ -310,7 +315,7 @@ export type ResolvedConfiguration = {
     library:boolean;
     libraryName:string;
     loader:{
-        aliases:PlainObject;
+        aliases:PlainStringObject;
         directoryNames:Array<string>;
         extensions:{
             file:Array<string>;
@@ -319,7 +324,7 @@ export type ResolvedConfiguration = {
     };
     module:{
         additional:AdditionalLoaderConfigurations;
-        aliases:PlainObject;
+        aliases:PlainStringObject;
         cascadingStyleSheet:LoaderConfiguration;
         directoryNames:Array<string>;
         html:LoaderConfiguration;
@@ -376,11 +381,7 @@ export type ResolvedConfiguration = {
         provide:{[key:string]:string};
         replacements:{
             context:Array<Array<string>>;
-            normal:{
-                [key:string]:(
-                    substring:string, ...parameter:Array<any>
-                ) => string|string
-            };
+            normal:{[key:string]:Replacement};
         };
         skipParseRegularExpressions:RegExp|Array<RegExp>;
         style:PlainObject;
@@ -418,7 +419,7 @@ export type WebpackConfiguration = {
     entry:PlainObject;
     externals:ExternalInjection;
     resolve:{
-        alias:PlainObject;
+        alias:PlainStringObject;
         extensions:Array<string>;
         moduleExtensions:Array<string>;
         modules:Array<string>;
@@ -428,7 +429,7 @@ export type WebpackConfiguration = {
         mainFiles:Array<string>;
     };
     resolveLoader:{
-        alias:PlainObject;
+        alias:PlainStringObject;
         extensions:Array<string>;
         moduleExtensions:Array<string>;
         modules:Array<string>;
