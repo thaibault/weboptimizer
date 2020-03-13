@@ -189,10 +189,13 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
                 const matches:Array<string> = Object.keys(
                     configuration.inPlace[type[0]])
                 for (const name of matches)
-                    configuration.offline.excludes.push(path.relative(
-                        configuration.path.target.base,
-                        configuration.path.target.asset[type[0]]
-                    ) + `${name}.${type[1]}?${configuration.hashAlgorithm}=*`)
+                    configuration.offline.excludes.push(
+                        path.relative(
+                            configuration.path.target.base,
+                            configuration.path.target.asset[type[0]]
+                        ) +
+                        `${name}.${type[1]}?${configuration.hashAlgorithm}=*`
+                    )
             }
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
