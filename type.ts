@@ -36,6 +36,7 @@ export type Resolvable = {
 }
 // / endregion
 // / region injection
+export type ExternalAliases = {[key:string]:{[key:string]:Function|string}}
 export type ExternalInjection = string|((
     context:string, request:string, callback:ProcedureFunction
 ) => void)|RegExp|Array<ExternalInjection>
@@ -49,7 +50,7 @@ export type SimpleInjection = {
         normalized:NormalizedGivenInjection;
     };
     external:{
-        aliases:Mapping;
+        aliases:ExternalAliases;
         implicit:{
             pattern:{
                 exclude:Array<RegExp|string>;
@@ -388,7 +389,7 @@ export type ResolvedConfiguration = {
     name:string;
     needed:{[key:string]:boolean};
     nodeEnvironment:NodeEnvironment;
-    offline:PlainObject;
+    offline:PlainObject & {excludes:Array<string>};
     package:{
         aliasPropertyNames:Array<string>;
         main:{

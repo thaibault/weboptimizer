@@ -15,7 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
-import {PlainObject, ProcedureFunction} from 'clientnode/type'
+import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
 /* eslint-disable no-var */
 try {
     var postcssCSSnano:Function = require('cssnano')
@@ -62,7 +62,6 @@ for (const name in pluginNameResourceMapping)
         } catch (error) {}
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
-
 
 import ejsLoader from './ejsLoader'
 /* eslint-disable no-unused-vars */
@@ -264,7 +263,7 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
         ):void =>
             compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
                 'inPlaceHTMLAssets',
-                (data:PlainObject, callback:Function):void => {
+                (data:{html:string}, callback:Function):void => {
                     if (
                         configuration.inPlace.cascadingStyleSheet &&
                         Object.keys(
@@ -413,8 +412,10 @@ if (configuration.injection.external.modules === '__implicit__')
                     const regularExpression = new RegExp(pattern)
                     if (regularExpression.test(filePath)) {
                         let match = false
-                        const targetConfiguration:PlainObject =
+                        const targetConfiguration =
                             configuration.injection.external.aliases[pattern]
+                        if (typeof targetConfiguration !== 'string')
+                            break
                         const replacementRegularExpression = new RegExp(
                             Object.keys(targetConfiguration)[0])
                         let target:string = targetConfiguration[
@@ -489,17 +490,20 @@ if (configuration.injection.external.modules === '__implicit__')
                     ] === 'string'
                 )
                     for (const key of keys)
-                        result[key] =
-                            configuration.injection.external.aliases[request]
+                        result[key] = configuration.injection.external.aliases[
+                            request
+                        ] as unknown as string
                 else if (
                     typeof configuration.injection.external.aliases[
                         request
                     ] === 'function'
                 )
                     for (const key of keys)
-                        result[key] =
-                            configuration.injection.external.aliases[request](
-                                request, key)
+                        result[key] = (
+                            configuration.injection.external.aliases[
+                                request
+                            ] as unknown as Function
+                        )(request, key)
                 else if (
                     configuration.injection.external.aliases[
                         request
@@ -521,6 +525,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 typeof result !== 'string' &&
                 Object.prototype.hasOwnProperty.call(result, 'root')
             )
+                // @ts-ignore: Workaround to ensure having an array.
                 result.root = [].concat(result.root).map((
                     name:string
                 ):string => Tools.stringConvertToValidVariableName(name))
