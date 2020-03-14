@@ -30,7 +30,12 @@ import removeDirectoryRecursively from 'rimraf'
 
 import configuration from './configurator'
 import Helper from './helper'
-import {ResolvedBuildConfiguration} from './type'
+import {
+    GivenInjection,
+    ResolvedConfiguration,
+    ResolvedBuildConfiguration,
+    ResolvedBuildConfigurationItem
+} from './type'
 // endregion
 type PathModule = typeof path
 // NOTE: Environment variables can only be strings.
@@ -383,9 +388,15 @@ const main = async ():Promise<void> => {
                 configuration.givenCommandLineArguments[2] === 'preinstall'
             ) {
                 // Perform all file specific preprocessing stuff.
-                const testModuleFilePaths:Array<string> =
-                    Helper.determineModuleLocations(
-                        configuration['test:browser'].injection.entry,
+                let testModuleFilePaths:Array<string> = []
+                if (
+                    Tools.isPlainObject(
+                        configuration['test:browser'].injection
+                    ) &&
+                    configuration['test:browser'].injection.entry
+                )
+                    testModuleFilePaths = Helper.determineModuleLocations(
+                        configuration['test:browser'].injection.entry as GivenInjection,
                         configuration.module.aliases,
                         configuration.module.replacements.normal,
                         {
@@ -401,8 +412,8 @@ const main = async ():Promise<void> => {
                         if (!testModuleFilePaths.includes(filePath)) {
                             const evaluationFunction = (
                                 global:Record<string, any>,
-                                self:PlainObject,
-                                buildConfiguration:PlainObject,
+                                self:ResolvedConfiguration,
+                                buildConfiguration:ResolvedBuildConfigurationItem,
                                 path:PathModule,
                                 additionalArguments:Array<string>,
                                 filePath:string
@@ -460,7 +471,7 @@ const main = async ():Promise<void> => {
                 for (const task of tasks) {
                     const evaluationFunction = (
                         global:Record<string, any>,
-                        self:PlainObject,
+                        self:ResolvedConfiguration,
                         path:PathModule
                     ):boolean =>
                         new Function(

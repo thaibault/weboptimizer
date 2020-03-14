@@ -20,9 +20,7 @@ import fileSystem from 'fs'
 import path from 'path'
 
 import Helper from './helper'
-// NOTE: "{configuration as metaConfiguration}" would result in a read only
-// variable named "metaConfiguration".
-import {configuration as givenMetaConfiguration} from './package.json'
+import {configuration as metaConfiguration} from './package.json'
 import {
     DefaultConfiguration,
     GivenInjection,
@@ -33,7 +31,6 @@ import {
     ResolvedConfiguration,
     WebpackLoader
 } from './type'
-const metaConfiguration:MetaConfiguration = givenMetaConfiguration
 /*
     To assume to go two folder up from this file until there is no
     "node_modules" parent folder is usually resilient again dealing with
@@ -75,18 +72,21 @@ if (
     } catch (error) {
         // continue regardless of error
     }
-let specificConfiguration:PlainObject
+let specificConfiguration:PlainObject = {}
 try {
     /* eslint-disable no-eval */
     specificConfiguration = eval('require')(path.join(
-        metaConfiguration.default.path.context, 'package'))
+        metaConfiguration.default.path.context, 'package'
+    ))
     /* eslint-enable no-eval */
 } catch (error) {
-    specificConfiguration = {name: 'mockup'}
     metaConfiguration.default.path.context = process.cwd()
 }
-const name:string = specificConfiguration.name
-specificConfiguration = specificConfiguration.webOptimizer || {}
+const name:string = typeof specificConfiguration.name === 'string' ?
+    specificConfiguration.name :
+    'mockup'
+specificConfiguration =
+    (specificConfiguration.webOptimizer as PlainObject) || {}
 specificConfiguration.name = name
 // endregion
 // region determine debug mode
@@ -152,7 +152,9 @@ while (true) {
     filePath = newFilePath
     count += 1
 }
-let runtimeInformation:PlainObject = {givenCommandLineArguments: process.argv}
+let runtimeInformation:PlainObject & {
+    givenCommandLineArguments:Array<string>
+} = {givenCommandLineArguments: process.argv}
 if (filePath) {
     runtimeInformation = JSON.parse(fileSystem.readFileSync(
         filePath, {encoding: configuration.encoding}
@@ -211,6 +213,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         configuration, 'configuration')
 if (typeof result === 'object' && result !== null) {
     if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
+        // @ts-ignore: Workaround to ensure having an array.
         const referenceNames:Array<string> = [].concat(result.__reference__)
         delete result.__reference__
         for (const name of referenceNames)
@@ -293,7 +296,8 @@ export const resolvedConfiguration:ResolvedConfiguration =
                 2 < configuration.givenCommandLineArguments.length &&
                 (
                     ['build:dll', 'watch:dll'].includes(
-                        configuration.givenCommandLineArguments[2]) ||
+                        configuration.givenCommandLineArguments[2]
+                    ) ||
                     configuration.dllManifestFilePaths.length &&
                     ['build', 'serve', 'test:browser'].includes(
                         configuration.givenCommandLineArguments[2]
@@ -313,7 +317,7 @@ export const resolvedConfiguration:ResolvedConfiguration =
 // Apply default file level build configurations to all file type specific
 // ones.
 const defaultConfiguration:PlainObject =
-    resolvedConfiguration.buildContext.types.default
+    resolvedConfiguration.buildContext.types.default as PlainObject
 delete resolvedConfiguration.buildContext.types.default
 for (const type in resolvedConfiguration.buildContext.types)
     if (Object.prototype.hasOwnProperty.call(
