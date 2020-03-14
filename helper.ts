@@ -28,6 +28,8 @@ import {
     GivenInjection,
     NormalizedGivenInjection,
     Path,
+    PackageConfiguration,
+    PackageDescriptor,
     Replacements,
     ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem,
@@ -1208,7 +1210,8 @@ export class Helper {
                 moduleID = moduleID.replace(
                     // @ts-ignore: https://github.com/microsoft/TypeScript/
                     // issues/22378
-                    new RegExp(replacement), replacements[replacement])
+                    new RegExp(replacement), replacements[replacement]
+                )
         return moduleID
     }
     /**
@@ -1247,19 +1250,22 @@ export class Helper {
      */
     static getClosestPackageDescriptor(
         modulePath:string, fileName = 'package.json'
-    ):null|PlainObject {
+    ):null|PackageDescriptor {
         const filePath:null|string = Helper.findPackageDescriptorFilePath(
             modulePath, fileName)
         if (!filePath)
             return null
-        const configuration:PlainObject = eval('require')(filePath)
+        const configuration:PackageConfiguration = eval('require')(filePath)
         /*
             If the package.json does not have a name property, try again from
             one level higher.
         */
         if (!configuration.name)
             return Helper.getClosestPackageDescriptor(
-                path.resolve(path.dirname(filePath), '..'), fileName)
+                path.resolve(path.dirname(filePath), '..'), fileName
+            )
+        if (!configuration.version)
+            configuration.version = 'not set'
         return {configuration, filePath}
     }
 }

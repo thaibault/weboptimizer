@@ -63,11 +63,12 @@ for (const name in pluginNameResourceMapping)
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
 
-import ejsLoader from './ejsLoader'
+import ejsLoader, {EJSLoaderConfiguration} from './ejsLoader'
 /* eslint-disable no-unused-vars */
 import {
     AdditionalLoaderConfiguration,
     HTMLConfiguration,
+    PackageDescriptor,
     PluginConfiguration,
     WebpackConfiguration,
     WebpackLoader,
@@ -575,7 +576,7 @@ if (htmlAvailable)
     ):void => {
         compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(
             'removeDummyHTMLTags',
-            (data:PlainObject, callback:Function):void => {
+            (data, callback:Function):void => {
                 for (const tags of [data.body, data.head]) {
                     let index = 0
                     for (const tag of tags) {
@@ -601,7 +602,7 @@ if (htmlAvailable)
             })
         compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
             'postProcessHTML',
-            (data:PlainObject, callback:Function):void => {
+            (data, callback:Function):void => {
                 /*
                     NOTE: We have to prevent creating native "style" dom nodes
                     to prevent jsdom from parsing the entire cascading style
@@ -743,7 +744,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
         const targetName:string = resource.request ? 'request' : 'resource'
         const targetPath:string = resource[targetName]
         if (Tools.isFileSync(targetPath)) {
-            const packageDescriptor:null|PlainObject =
+            const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
                 const pathPrefixes:null|RegExpMatchArray = targetPath.match(
@@ -767,7 +768,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                     const alternateTargetPath:string = path.resolve(
                         pathPrefix, pathSuffix)
                     if (Tools.isFileSync(alternateTargetPath)) {
-                        const alternatePackageDescriptor:null|PlainObject =
+                        const alternatePackageDescriptor:null|PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
                                 alternateTargetPath)
                         if (alternatePackageDescriptor)
@@ -877,8 +878,12 @@ Tools.extend(loader, {
                 loader: 'file?name=[path][name]' +
                     (
                         (
-                            configuration.module.preprocessor.ejs.options ||
-                            {compileSteps: 2}
+                            Tools.isPlainObject(
+                                configuration.module.preprocessor.ejs.options
+                            ) ?
+                                configuration.module.preprocessor.ejs
+                                    .options as EJSLoaderConfiguration :
+                                {compileSteps: 2}
                         ).compileSteps % 2 ? '.js' : ''
                     ) +
                     `?${configuration.hashAlgorithm}=[hash]`
@@ -971,9 +976,13 @@ Tools.extend(loader, {
                             '[name]' +
                             (
                                 (
-                                    configuration.module.preprocessor.html
-                                        .options ||
-                                    {compileSteps: 2}
+                                    Tools.isPlainObject(
+                                        configuration.module.preprocessor.html
+                                            .options
+                                    ) ?
+                                        configuration.module.preprocessor.html
+                                            .options as EJSLoaderConfiguration :
+                                        {compileSteps: 2}
                                 ).compileSteps % 2 ?
                                     '.js' :
                                     ''
@@ -983,8 +992,11 @@ Tools.extend(loader, {
                 },
                 (
                     (
-                        configuration.module.preprocessor.html.options ||
-                        {compileSteps: 2}
+                        Tools.isPlainObject(
+                            configuration.module.preprocessor.html.options
+                        ) ?
+                            configuration.module.preprocessor.html.options as EJSLoaderConfiguration :
+                            {compileSteps: 2}
                     ).compileSteps % 2 ?
                         [] :
                         [

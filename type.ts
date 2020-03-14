@@ -27,6 +27,14 @@ export type Browser = {
     window:null|Window;
     windowLoaded:boolean;
 }
+export type PackageConfiguration = {
+    name:string;
+    version:string;
+}
+export type PackageDescriptor = {
+    configuration:PackageConfiguration;
+    filePath:string;
+}
 export type Replacement = ((
     substring:string, ...parameter:Array<any>
 ) => string)|string
@@ -127,17 +135,15 @@ export type AdditionalLoader = {
     post:Array<string>;
     pre:Array<string>;
 }
-export type LoaderConfiguration = {
-    additional:AdditionalLoader;
-    exclude:string;
-    include:string;
-    loader:string;
-    options:PlainObject;
-    regularExpression:string;
-}
 export type WebpackLoader = {
     loader:string;
     options?:PlainObject;
+}
+export type LoaderConfiguration = WebpackLoader & {
+    additional:AdditionalLoader;
+    exclude:string;
+    include:string;
+    regularExpression:string;
 }
 export type WebpackLoaderConfiguration = {
     exclude:WebpackLoaderIndicator;
@@ -147,37 +153,6 @@ export type WebpackLoaderConfiguration = {
 }
 export type WebpackLoaderIndicator =
     Array<WebpackLoaderIndicator>|Function|string
-// // / region ejs
-export type TemplateFunction = (locals:Record<string, unknown>) => string
-export type CompileFunction = (
-    template:string, options:EJSCompilerConfiguration, compileSteps?:number
-) => TemplateFunction
-export type EJSCompilerConfiguration = {
-    cache?:boolean;
-    client:boolean;
-    compileDebug:boolean;
-    debug:boolean;
-    encoding?:string;
-    filename:string;
-    isString:boolean;
-}
-export type EJSLoaderConfiguration = {
-    compiler:EJSCompilerConfiguration;
-    compileSteps:number;
-    compress:{
-        html:Record<string, unknown>;
-        javaScript:Record<string, unknown>;
-    };
-    context:string;
-    extensions:Extensions;
-    locals?:Record<string, unknown>;
-    module:{
-        aliases:Record<string, string>;
-        replacements:Record<string, string>;
-    };
-    [key:string]:unknown;
-}
-// // / endregion
 // // endregion
 export type AssetPositionPattern = {[key:string]:'body'|'head'|'in'|string}|null
 export type AssetInPlaceInjectionResult = {
@@ -360,14 +335,12 @@ export type ResolvedConfiguration = {
             minimizer:Array<PlainObject>;
         };
         preprocessor:{
-            cascadingStyleSheet:{
+            cascadingStyleSheet:WebpackLoader & {
                 additional:{
                     plugins:AdditionalLoader;
                     post:Array<string>;
                     pre:Array<string>;
                 };
-                loader:string;
-                options:PlainObject;
                 postcssPresetEnv:PlainObject;
             };
             ejs:LoaderConfiguration;
@@ -384,7 +357,7 @@ export type ResolvedConfiguration = {
             normal:Replacements;
         };
         skipParseRegularExpressions:RegExp|Array<RegExp>;
-        style:PlainObject;
+        style:WebpackLoader;
     };
     name:string;
     needed:{[key:string]:boolean};
