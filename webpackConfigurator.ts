@@ -15,7 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
-import {PlainObject, ProcedureFunction} from 'clientnode/type'
+import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
 /* eslint-disable no-var */
 try {
     var postcssCSSnano:Function = require('cssnano')
@@ -63,12 +63,12 @@ for (const name in pluginNameResourceMapping)
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
 
-
-import ejsLoader from './ejsLoader'
+import ejsLoader, {EJSLoaderConfiguration} from './ejsLoader'
 /* eslint-disable no-unused-vars */
 import {
     AdditionalLoaderConfiguration,
     HTMLConfiguration,
+    PackageDescriptor,
     PluginConfiguration,
     WebpackConfiguration,
     WebpackLoader,
@@ -146,6 +146,8 @@ for (const source in configuration.module.replacements.normal)
             search,
             (resource:{request:string}):void => {
                 resource.request = resource.request.replace(
+                    // @ts-ignore: https://github.com/microsoft/TypeScript/
+                    // issues/22378
                     search, configuration.module.replacements.normal[source]
                 )
             }
@@ -187,10 +189,13 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
                 const matches:Array<string> = Object.keys(
                     configuration.inPlace[type[0]])
                 for (const name of matches)
-                    configuration.offline.excludes.push(path.relative(
-                        configuration.path.target.base,
-                        configuration.path.target.asset[type[0]]
-                    ) + `${name}.${type[1]}?${configuration.hashAlgorithm}=*`)
+                    configuration.offline.excludes.push(
+                        path.relative(
+                            configuration.path.target.base,
+                            configuration.path.target.asset[type[0]]
+                        ) +
+                        `${name}.${type[1]}?${configuration.hashAlgorithm}=*`
+                    )
             }
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
@@ -259,7 +264,7 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
         ):void =>
             compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
                 'inPlaceHTMLAssets',
-                (data:PlainObject, callback:Function):void => {
+                (data:{html:string}, callback:Function):void => {
                     if (
                         configuration.inPlace.cascadingStyleSheet &&
                         Object.keys(
@@ -408,8 +413,10 @@ if (configuration.injection.external.modules === '__implicit__')
                     const regularExpression = new RegExp(pattern)
                     if (regularExpression.test(filePath)) {
                         let match = false
-                        const targetConfiguration:PlainObject =
+                        const targetConfiguration =
                             configuration.injection.external.aliases[pattern]
+                        if (typeof targetConfiguration !== 'string')
+                            break
                         const replacementRegularExpression = new RegExp(
                             Object.keys(targetConfiguration)[0])
                         let target:string = targetConfiguration[
@@ -484,17 +491,20 @@ if (configuration.injection.external.modules === '__implicit__')
                     ] === 'string'
                 )
                     for (const key of keys)
-                        result[key] =
-                            configuration.injection.external.aliases[request]
+                        result[key] = configuration.injection.external.aliases[
+                            request
+                        ] as unknown as string
                 else if (
                     typeof configuration.injection.external.aliases[
                         request
                     ] === 'function'
                 )
                     for (const key of keys)
-                        result[key] =
-                            configuration.injection.external.aliases[request](
-                                request, key)
+                        result[key] = (
+                            configuration.injection.external.aliases[
+                                request
+                            ] as unknown as Function
+                        )(request, key)
                 else if (
                     configuration.injection.external.aliases[
                         request
@@ -516,6 +526,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 typeof result !== 'string' &&
                 Object.prototype.hasOwnProperty.call(result, 'root')
             )
+                // @ts-ignore: Workaround to ensure having an array.
                 result.root = [].concat(result.root).map((
                     name:string
                 ):string => Tools.stringConvertToValidVariableName(name))
@@ -565,7 +576,7 @@ if (htmlAvailable)
     ):void => {
         compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(
             'removeDummyHTMLTags',
-            (data:PlainObject, callback:Function):void => {
+            (data, callback:Function):void => {
                 for (const tags of [data.body, data.head]) {
                     let index = 0
                     for (const tag of tags) {
@@ -591,7 +602,7 @@ if (htmlAvailable)
             })
         compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
             'postProcessHTML',
-            (data:PlainObject, callback:Function):void => {
+            (data, callback:Function):void => {
                 /*
                     NOTE: We have to prevent creating native "style" dom nodes
                     to prevent jsdom from parsing the entire cascading style
@@ -733,7 +744,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
         const targetName:string = resource.request ? 'request' : 'resource'
         const targetPath:string = resource[targetName]
         if (Tools.isFileSync(targetPath)) {
-            const packageDescriptor:null|PlainObject =
+            const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
                 const pathPrefixes:null|RegExpMatchArray = targetPath.match(
@@ -757,7 +768,7 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                     const alternateTargetPath:string = path.resolve(
                         pathPrefix, pathSuffix)
                     if (Tools.isFileSync(alternateTargetPath)) {
-                        const alternatePackageDescriptor:null|PlainObject =
+                        const alternatePackageDescriptor:null|PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
                                 alternateTargetPath)
                         if (alternatePackageDescriptor)
@@ -867,8 +878,12 @@ Tools.extend(loader, {
                 loader: 'file?name=[path][name]' +
                     (
                         (
-                            configuration.module.preprocessor.ejs.options ||
-                            {compileSteps: 2}
+                            Tools.isPlainObject(
+                                configuration.module.preprocessor.ejs.options
+                            ) ?
+                                configuration.module.preprocessor.ejs
+                                    .options as EJSLoaderConfiguration :
+                                {compileSteps: 2}
                         ).compileSteps % 2 ? '.js' : ''
                     ) +
                     `?${configuration.hashAlgorithm}=[hash]`
@@ -961,9 +976,13 @@ Tools.extend(loader, {
                             '[name]' +
                             (
                                 (
-                                    configuration.module.preprocessor.html
-                                        .options ||
-                                    {compileSteps: 2}
+                                    Tools.isPlainObject(
+                                        configuration.module.preprocessor.html
+                                            .options
+                                    ) ?
+                                        configuration.module.preprocessor.html
+                                            .options as EJSLoaderConfiguration :
+                                        {compileSteps: 2}
                                 ).compileSteps % 2 ?
                                     '.js' :
                                     ''
@@ -973,8 +992,11 @@ Tools.extend(loader, {
                 },
                 (
                     (
-                        configuration.module.preprocessor.html.options ||
-                        {compileSteps: 2}
+                        Tools.isPlainObject(
+                            configuration.module.preprocessor.html.options
+                        ) ?
+                            configuration.module.preprocessor.html.options as EJSLoaderConfiguration :
+                            {compileSteps: 2}
                     ).compileSteps % 2 ?
                         [] :
                         [

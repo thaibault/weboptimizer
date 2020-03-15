@@ -33,13 +33,39 @@ import {getOptions, getRemainingRequest} from 'loader-utils'
 import path from 'path'
 
 import configuration from './configurator'
-import {
-    CompileFunction,
-    EJSCompilerConfiguration,
-    EJSLoaderConfiguration,
-    TemplateFunction
-} from './type'
 import Helper from './helper'
+import {Extensions} from './type'
+// endregion
+// region types
+export type TemplateFunction = (locals:Record<string, unknown>) => string
+export type CompileFunction = (
+    template:string, options:EJSCompilerConfiguration, compileSteps?:number
+) => TemplateFunction
+export type EJSCompilerConfiguration = {
+    cache?:boolean;
+    client:boolean;
+    compileDebug:boolean;
+    debug:boolean;
+    encoding?:string;
+    filename:string;
+    isString:boolean;
+}
+export type EJSLoaderConfiguration = {
+    compiler:EJSCompilerConfiguration;
+    compileSteps:number;
+    compress:{
+        html:Record<string, unknown>;
+        javaScript:Record<string, unknown>;
+    };
+    context:string;
+    extensions:Extensions;
+    locals?:Record<string, unknown>;
+    module:{
+        aliases:Record<string, string>;
+        replacements:Record<string, string>;
+    };
+    [key:string]:unknown;
+}
 // endregion
 export default function(this:any, source:string):string {
     if ('cachable' in this && this.cacheable)

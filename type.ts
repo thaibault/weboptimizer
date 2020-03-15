@@ -14,24 +14,37 @@
     endregion
 */
 // region imports
-import {PlainObject, ProcedureFunction} from 'clientnode/type'
+import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
 // endregion
 // region exports
 // / region generic
 export type Browser = {
     debug:boolean;
     domContentLoaded:boolean;
-    DOM?:null|PlainObject;
+    DOM:null|Object;
     initialized:boolean;
-    instance:null|PlainObject;
+    instance:null|Object;
     window:null|Window;
     windowLoaded:boolean;
 }
+export type PackageConfiguration = {
+    name:string;
+    version:string;
+}
+export type PackageDescriptor = {
+    configuration:PackageConfiguration;
+    filePath:string;
+}
+export type Replacement = ((
+    substring:string, ...parameter:Array<any>
+) => string)|string
+export type Replacements = {[key:string]:Replacement}
 export type Resolvable = {
     [TYPE in '__evaluate__'|'__execute__'|string]:any|Resolvable|string
 }
 // / endregion
 // / region injection
+export type ExternalAliases = {[key:string]:{[key:string]:Function|string}}
 export type ExternalInjection = string|((
     context:string, request:string, callback:ProcedureFunction
 ) => void)|RegExp|Array<ExternalInjection>
@@ -45,7 +58,7 @@ export type SimpleInjection = {
         normalized:NormalizedGivenInjection;
     };
     external:{
-        aliases:PlainObject;
+        aliases:ExternalAliases;
         implicit:{
             pattern:{
                 exclude:Array<RegExp|string>;
@@ -58,7 +71,7 @@ export type SimpleInjection = {
 export type Injection = SimpleInjection & {
     chunks:PlainObject;
     dllChunkNames:Array<string>;
-    externalAliases:PlainObject;
+    externalAliases:Mapping;
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
     implicitExternalIncludePattern:Array<RegExp|string>;
@@ -122,17 +135,15 @@ export type AdditionalLoader = {
     post:Array<string>;
     pre:Array<string>;
 }
-export type LoaderConfiguration = {
-    additional:AdditionalLoader;
-    exclude:string;
-    include:string;
-    loader:string;
-    options:PlainObject;
-    regularExpression:string;
-}
 export type WebpackLoader = {
     loader:string;
     options?:PlainObject;
+}
+export type LoaderConfiguration = WebpackLoader & {
+    additional:AdditionalLoader;
+    exclude:string;
+    include:string;
+    regularExpression:string;
 }
 export type WebpackLoaderConfiguration = {
     exclude:WebpackLoaderIndicator;
@@ -142,43 +153,6 @@ export type WebpackLoaderConfiguration = {
 }
 export type WebpackLoaderIndicator =
     Array<WebpackLoaderIndicator>|Function|string
-// // / region ejs
-export type TemplateFunction = (locals:Record<string, unknown>) => string
-export type CompileFunction = (
-    template:string, options:EJSCompilerConfiguration, compileSteps?:number
-) => TemplateFunction
-export type EJSCompilerConfiguration = {
-    cache?:boolean;
-    client:boolean;
-    compileDebug:boolean;
-    debug:boolean;
-    encoding?:string;
-    filename:string;
-    isString:boolean;
-}
-export type EJSLoaderConfiguration = {
-    compiler:EJSCompilerConfiguration;
-    compileSteps:number;
-    compress:{
-        html:Record<string, unknown>;
-        javaScript:Record<string, unknown>;
-    };
-    context:string;
-    extensions:{
-        file:{
-            external:Array<string>;
-            internal:Array<string>;
-        };
-        module:Array<string>;
-    };
-    locals?:Record<string, unknown>;
-    module:{
-        aliases:Record<string, string>;
-        replacements:Record<string, string>;
-    };
-    [key:string]:unknown;
-}
-// // / endregion
 // // endregion
 export type AssetPositionPattern = {[key:string]:'body'|'head'|'in'|string}|null
 export type AssetInPlaceInjectionResult = {
@@ -244,14 +218,20 @@ export type Extensions = {
     };
     module:Array<string>;
 }
+export type SpecificExtensions = {
+    file:Array<string>;
+    module:Array<string>;
+}
 export type ResolvedConfiguration = {
-    assetPattern:{[key:string]:{
-        excludeFilePathRegularExpression:string;
-        pattern:string;
-    };};
+    assetPattern:{
+        [key:string]:{
+            excludeFilePathRegularExpression:string;
+            pattern:string;
+        }
+    };
     buildContext:{
         definitions:PlainObject;
-        types:PlainObject;
+        types:BuildConfiguration;
     };
     cache:{
         main:boolean;
@@ -310,7 +290,7 @@ export type ResolvedConfiguration = {
     library:boolean;
     libraryName:string;
     loader:{
-        aliases:PlainObject;
+        aliases:Mapping;
         directoryNames:Array<string>;
         extensions:{
             file:Array<string>;
@@ -319,7 +299,7 @@ export type ResolvedConfiguration = {
     };
     module:{
         additional:AdditionalLoaderConfigurations;
-        aliases:PlainObject;
+        aliases:Mapping;
         cascadingStyleSheet:LoaderConfiguration;
         directoryNames:Array<string>;
         html:LoaderConfiguration;
@@ -355,14 +335,12 @@ export type ResolvedConfiguration = {
             minimizer:Array<PlainObject>;
         };
         preprocessor:{
-            cascadingStyleSheet:{
+            cascadingStyleSheet:WebpackLoader & {
                 additional:{
                     plugins:AdditionalLoader;
                     post:Array<string>;
                     pre:Array<string>;
                 };
-                loader:string;
-                options:PlainObject;
                 postcssPresetEnv:PlainObject;
             };
             ejs:LoaderConfiguration;
@@ -376,19 +354,15 @@ export type ResolvedConfiguration = {
         provide:{[key:string]:string};
         replacements:{
             context:Array<Array<string>>;
-            normal:{
-                [key:string]:(
-                    substring:string, ...parameter:Array<any>
-                ) => string|string
-            };
+            normal:Replacements;
         };
         skipParseRegularExpressions:RegExp|Array<RegExp>;
-        style:PlainObject;
+        style:WebpackLoader;
     };
     name:string;
     needed:{[key:string]:boolean};
     nodeEnvironment:NodeEnvironment;
-    offline:PlainObject;
+    offline:PlainObject & {excludes:Array<string>};
     package:{
         aliasPropertyNames:Array<string>;
         main:{
@@ -418,7 +392,7 @@ export type WebpackConfiguration = {
     entry:PlainObject;
     externals:ExternalInjection;
     resolve:{
-        alias:PlainObject;
+        alias:Mapping;
         extensions:Array<string>;
         moduleExtensions:Array<string>;
         modules:Array<string>;
@@ -428,7 +402,7 @@ export type WebpackConfiguration = {
         mainFiles:Array<string>;
     };
     resolveLoader:{
-        alias:PlainObject;
+        alias:Mapping;
         extensions:Array<string>;
         moduleExtensions:Array<string>;
         modules:Array<string>;
