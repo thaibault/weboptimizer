@@ -645,9 +645,10 @@ if (htmlAvailable)
                     ))
                         for (
                             const domNode of
-                            dom.window.document.querySelectorAll(
+                            Array.from(dom.window.document.querySelectorAll(
                                 `${tagName}[${linkables[tagName]}*="?` +
-                                `${configuration.hashAlgorithm}="]`)
+                                `${configuration.hashAlgorithm}="]`
+                            ))
                         )
                             /*
                                 NOTE: Removing symbols after a "&" in hash
@@ -656,12 +657,17 @@ if (htmlAvailable)
                             */
                             domNode.setAttribute(
                                 linkables[tagName],
-                                domNode.getAttribute(
-                                    linkables[tagName]
-                                ).replace(new RegExp(
-                                    `(\\?${configuration.hashAlgorithm}=` +
-                                    '[^&]+).*$'
-                                ), '$1'))
+                                domNode
+                                    .getAttribute(linkables[tagName])
+                                    .replace(
+                                        new RegExp(
+                                            '(\\?' +
+                                            `${configuration.hashAlgorithm}=` +
+                                            '[^&]+).*$'
+                                        ),
+                                        '$1'
+                                    )
+                            )
                 /*
                     NOTE: We have to restore template delimiter and style
                     contents.
