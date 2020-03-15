@@ -26,6 +26,7 @@ import {
     BuildConfiguration,
     Extensions,
     GivenInjection,
+    GivenInjectionConfiguration,
     NormalizedGivenInjection,
     Path,
     PackageConfiguration,
@@ -33,7 +34,6 @@ import {
     Replacements,
     ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem,
-    SimpleInjection,
     SpecificExtensions
 } from './type'
 // endregion
@@ -902,7 +902,7 @@ export class Helper {
      * @param pathsToIgnore - Paths which marks location to ignore.
      * @returns Given injection with resolved marked indicators.
      */
-    static resolveAutoInjection<T extends SimpleInjection>(
+    static resolveAutoInjection<T extends GivenInjectionConfiguration>(
         givenInjection:T,
         buildConfigurations:ResolvedBuildConfiguration,
         aliases:Mapping = {},
@@ -920,8 +920,7 @@ export class Helper {
         referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
     ):T {
-        const injection:SimpleInjection = Tools.extend(
-            true, {}, givenInjection)
+        const injection:T = Tools.extend(true, {}, givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
                 givenInjection.autoExclude,
@@ -960,7 +959,7 @@ export class Helper {
             /* eslint-enable curly */
                 injection[type] = Helper.getAutoInjection(
                     buildConfigurations, moduleFilePathsToExclude, context)
-        return injection as T
+        return injection
     }
     /**
      * Determines all module file paths.
