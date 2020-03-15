@@ -2,7 +2,9 @@
     "compilerOptions": {
         "allowJs": true,
         "esModuleInterop": true,
+        "incremental": true,
         "isolatedModules": true,
+        "lib": ["esnext", "dom"],
         "module": "esnext",
         "moduleResolution": "node",
         "noEmit": true,

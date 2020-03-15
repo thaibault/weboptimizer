@@ -86,9 +86,9 @@ if (
     require.cache &&
     require.resolve('html-loader') in require.cache
 )
-    require.cache[require.resolve('html-loader')].exports = function(
-        this:WebpackLoader, ...parameter:Array<any>
-    ):any {
+    require.cache[require.resolve('html-loader')].exports = function<A, B>(
+        this:WebpackLoader, ...parameter:Array<A>
+    ):B {
         Tools.extend(true, this.options, module, this.options)
         return htmlLoaderModuleBackup.call(this, ...parameter)
     }
