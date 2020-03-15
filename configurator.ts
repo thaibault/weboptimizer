@@ -24,9 +24,8 @@ import {configuration as metaConfiguration} from './package.json'
 import {
     DefaultConfiguration,
     GivenInjection,
-    /* eslint-disable no-unused-vars */
-    HTMLConfiguration,
-    /* eslint-enable no-unused-vars */
+    GivenInjectionConfiguration,
+    InjectionConfiguration,
     MetaConfiguration,
     ResolvedConfiguration,
     WebpackLoader
@@ -285,6 +284,10 @@ for (const key in configuration.path)
     }
 // / endregion
 const now:Date = new Date()
+/*
+    NOTE: The configuration is not yet fully resolved but will be transformed
+    in place in the following lines of code.
+*/
 export const resolvedConfiguration:ResolvedConfiguration =
     Tools.evaluateDynamicDataStructure(
         configuration,
@@ -348,7 +351,7 @@ resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.path.source.asset.base
 )
 resolvedConfiguration.injection = Helper.resolveAutoInjection(
-    resolvedConfiguration.injection,
+    resolvedConfiguration.injection as unknown as GivenInjectionConfiguration,
     Helper.resolveBuildConfigurationFilePaths(
         resolvedConfiguration.buildContext.types,
         resolvedConfiguration.path.source.asset.base,
@@ -370,9 +373,9 @@ resolvedConfiguration.injection = Helper.resolveAutoInjection(
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base,
     resolvedConfiguration.path.ignore
-)
+) as unknown as InjectionConfiguration
 const givenInjection:GivenInjection =
-    resolvedConfiguration.injection.entry as any as GivenInjection
+    resolvedConfiguration.injection.entry as unknown as GivenInjection
 resolvedConfiguration.injection.entry = {
     given: givenInjection,
     normalized: Helper.resolveModulesInFolders(

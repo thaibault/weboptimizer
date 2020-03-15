@@ -11,7 +11,7 @@ import {
     BuildConfiguration,
     Extensions,
     GivenInjection,
-    Injection,
+    GivenInjectionConfiguration,
     NormalizedGivenInjection,
     Path,
     Replacements,
@@ -652,8 +652,8 @@ describe('helper', ():void => {
     ])(
         `%p === .resolveAutoInjection(%p, %p, %p, ...%p)`,
         (
-            expected:Injection,
-            givenInjection:Injection,
+            expected:GivenInjectionConfiguration,
+            givenInjection:GivenInjectionConfiguration,
             buildConfigurations:ResolvedBuildConfiguration,
             ...parameter:Array<any>
         ):void =>

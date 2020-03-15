@@ -51,8 +51,15 @@ export type ExternalInjection = string|((
 export type GivenInjection =
     Function|string|Array<string>|{[key:string]:string|Array<string>}
 export type NormalizedGivenInjection = {[key:string]:Array<string>}
-export type SimpleInjection = {
+export type GivenInjectionConfiguration = {
     autoExclude:Array<string>;
+    entry:GivenInjection;
+    external:GivenInjection;
+}
+export type InjectionConfiguration = {
+    autoExclude:Array<string>;
+    chunks:PlainObject;
+    dllChunkNames:Array<string>;
     entry:{
         given:GivenInjection;
         normalized:NormalizedGivenInjection;
@@ -67,10 +74,6 @@ export type SimpleInjection = {
         };
         modules:ExternalInjection;
     };
-};
-export type Injection = SimpleInjection & {
-    chunks:PlainObject;
-    dllChunkNames:Array<string>;
     externalAliases:Mapping;
     ignorePattern:Array<string>;
     implicitExternalExcludePattern:Array<RegExp|string>;
@@ -277,7 +280,7 @@ export type ResolvedConfiguration = {
     };
     givenCommandLineArguments:Array<string>;
     hashAlgorithm:string;
-    injection:Injection;
+    injection:InjectionConfiguration;
     inPlace:{
         cascadingStyleSheet:{[key:string]:'body'|'head'|'in'|string};
         externalLibrary:{
