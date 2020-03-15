@@ -73,6 +73,7 @@
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "*",
     "@babel/runtime": "*",
+    "@types/jsdom": "^16.1.0",
     "add-asset-html-webpack-plugin": "*",
     "babel-loader": "*",
     "babel-plugin-transform-with": "*",

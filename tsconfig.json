@@ -1,14 +1,15 @@
 {
     "compilerOptions": {
         "allowJs": true,
+        "checkJs": true,
+        "declaration": true,
         "esModuleInterop": true,
-        "incremental": true,
         "isolatedModules": true,
-        "lib": ["esnext", "dom"],
+        "lib": ["dom", "esnext"],
         "module": "esnext",
         "moduleResolution": "node",
         "noEmit": true,
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "resolveJsonModule": true,
         "strict": true,
         "target": "esnext",

@@ -168,9 +168,10 @@ export class Helper {
                                         '[name]': pattern
                                     }
                                 )) + '"]'
-                    const domNodes:NodeListOf<HTMLElement> =
-                        window.document.querySelectorAll(
+                    const domNodes:Array<HTMLElement> = Array.from(
+                        window.document.querySelectorAll<HTMLElement>(
                             `${assetType.linkTagName}${selector}`)
+                    )
                     if (domNodes.length)
                         for (const domNode of domNodes) {
                             const path:string = domNode.attributes[
