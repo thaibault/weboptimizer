@@ -12,8 +12,7 @@
         "noImplicitAny": true,
         "resolveJsonModule": true,
         "strict": true,
-        "target": "esnext",
-        "types": ["jest", "node"]
+        "target": "esnext"
     },
     "exclude": [
         "node_modules"
