@@ -37,6 +37,7 @@
     "tsconfig.json",
     "tsconfigLibrary.json",
     "type.ts",
+    "untypedDependencies.d.ts",
     "webpackConfigurator.ts",
     "webpackConfigurator.js"
   ],
