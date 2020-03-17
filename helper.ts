@@ -16,7 +16,7 @@
 // region imports
 import Tools from 'clientnode'
 import {File, Mapping, PlainObject} from 'clientnode/type'
-import {JSDOM as DOM} from 'jsdom'
+import {DOMWindow, JSDOM as DOM} from 'jsdom'
 import fileSystem from 'fs'
 import path from 'path'
 
@@ -124,7 +124,7 @@ export class Helper {
             sequences and translate it back later to avoid unexpected escape
             sequences in resulting html.
         */
-        const window:Window = (new DOM(
+        const window:DOMWindow = (new DOM(
             content
                 .replace(/<%/g, '##+#+#+##')
                 .replace(/%>/g, '##-#-#-##')
@@ -174,82 +174,91 @@ export class Helper {
                     )
                     if (domNodes.length)
                         for (const domNode of domNodes) {
-                            const path:string = domNode.attributes[
-                                assetType.attributeName
-                            ].value.replace(/&.*/g, '')
-                            if (!Object.prototype.hasOwnProperty.call(
-                                assets, path
-                            ))
-                                continue
-                            const inPlaceDomNode:HTMLElement =
-                                window.document.createElement(
-                                    assetType.tagName)
-                            if (assetType.tagName === 'style') {
-                                inPlaceDomNode.setAttribute(
-                                    'weboptimizerinplace', 'true')
-                                inPlaceStyleContents.push(
-                                    assets[path].source())
-                            } else
-                                inPlaceDomNode.textContent =
-                                    assets[path].source()
-                            if (domNode.parentNode) {
-                                if (assetType.pattern[pattern] === 'body')
-                                    window.document.body.appendChild(
-                                        inPlaceDomNode)
-                                else if (assetType.pattern[pattern] === 'in')
-                                    domNode.parentNode.insertBefore(
-                                        inPlaceDomNode, domNode)
-                                else if (assetType.pattern[pattern] === 'head')
-                                    window.document.head.appendChild(
-                                        inPlaceDomNode)
-                                else {
-                                    const regularExpressionPattern =
-                                        '(after|before|in):(.+)'
-                                    const testMatch:Array<string>|null =
-                                        (new RegExp(regularExpressionPattern))
-                                            .exec(assetType.pattern[pattern])
-                                    let match:Array<string>
-                                    if (testMatch)
-                                        match = testMatch
-                                    else
-                                        throw new Error(
-                                            'Given in place specification "' +
-                                            `${assetType.pattern[pattern]}" for ` +
-                                            `${assetType.tagName} does not ` +
-                                            'satisfy the specified pattern "' +
-                                            `${regularExpressionPattern}".`
-                                        )
-                                    const domNode:HTMLElement|null =
-                                        window.document.querySelector(match[2])
-                                    if (!domNode)
-                                        throw new Error(
-                                            `Specified dom node "${match[2]}` +
-                                            '" could not be found to in ' +
-                                            `place "${pattern}".`)
-                                    if (match[1] === 'in')
-                                        domNode.appendChild(inPlaceDomNode)
-                                    else if (match[1] === 'before')
-                                        domNode.insertAdjacentElement(
-                                            'beforebegin', inPlaceDomNode)
-                                    else
-                                        domNode.insertAdjacentElement(
-                                            'afterend', inPlaceDomNode)
-                                }
-                                domNode.parentNode.removeChild(domNode)
-                                /*
-                                    NOTE: This doesn't prevent webpack from
-                                    creating this file if present in another chunk
-                                    so removing it (and a potential source map
-                                    file) later in the "done" hook.
-                                */
-                                filePathsToRemove.push(Helper.stripLoader(path))
-                                delete assets[path]
+                            let path:null|string = domNode.getAttribute(
+                                assetType.attributeName)
+                            if (typeof path === 'string') {
+                                path = path.replace(/&.*/g, '')
+                                if (!Object.prototype.hasOwnProperty.call(
+                                    assets, path
+                                ))
+                                    continue
+                                const inPlaceDomNode:HTMLElement =
+                                    window.document.createElement(
+                                        assetType.tagName)
+                                if (assetType.tagName === 'style') {
+                                    inPlaceDomNode.setAttribute(
+                                        'weboptimizerinplace', 'true')
+                                    inPlaceStyleContents.push(
+                                        assets[path].source())
+                                } else
+                                    inPlaceDomNode.textContent =
+                                        assets[path].source()
+                                if (domNode.parentNode) {
+                                    if (assetType.pattern[pattern] === 'body')
+                                        window.document.body.appendChild(
+                                            inPlaceDomNode)
+                                    else if (assetType.pattern[pattern] === 'in')
+                                        domNode.parentNode.insertBefore(
+                                            inPlaceDomNode, domNode)
+                                    else if (assetType.pattern[pattern] === 'head')
+                                        window.document.head.appendChild(
+                                            inPlaceDomNode)
+                                    else {
+                                        const regularExpressionPattern =
+                                            '(after|before|in):(.+)'
+                                        const testMatch:Array<string>|null =
+                                            (new RegExp(regularExpressionPattern))
+                                                .exec(assetType.pattern[pattern])
+                                        let match:Array<string>
+                                        if (testMatch)
+                                            match = testMatch
+                                        else
+                                            throw new Error(
+                                                'Given in place specification "' +
+                                                `${assetType.pattern[pattern]}" for ` +
+                                                `${assetType.tagName} does not ` +
+                                                'satisfy the specified pattern "' +
+                                                `${regularExpressionPattern}".`
+                                            )
+                                        const domNode:HTMLElement|null =
+                                            window.document.querySelector(match[2])
+                                        if (!domNode)
+                                            throw new Error(
+                                                `Specified dom node "${match[2]}` +
+                                                '" could not be found to in ' +
+                                                `place "${pattern}".`)
+                                        if (match[1] === 'in')
+                                            domNode.appendChild(inPlaceDomNode)
+                                        else if (match[1] === 'before')
+                                            domNode.insertAdjacentElement(
+                                                'beforebegin', inPlaceDomNode)
+                                        else
+                                            domNode.insertAdjacentElement(
+                                                'afterend', inPlaceDomNode)
+                                    }
+                                    domNode.parentNode.removeChild(domNode)
+                                    /*
+                                        NOTE: This doesn't prevent webpack from
+                                        creating this file if present in another chunk
+                                        so removing it (and a potential source map
+                                        file) later in the "done" hook.
+                                    */
+                                    filePathsToRemove.push(Helper.stripLoader(path))
+                                    delete assets[path]
+                                } else
+                                    throw new Error(
+                                        'Given in place specification "' +
+                                        `${assetType.pattern[pattern]}" for ` +
+                                        `${assetType.tagName} is not ` +
+                                        'possible because of missing parent node.'
+                                    )
                             } else
                                 throw new Error(
                                     'Given in place specification "' +
                                     `${assetType.pattern[pattern]}" for ` +
                                     `${assetType.tagName} is not ` +
-                                    'possible because of missing parent node.'
+                                    'possible because of missing attribute "' +
+                                    `${assetType.attributeName}".`
                                 )
                         }
                     else

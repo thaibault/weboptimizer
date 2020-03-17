@@ -215,7 +215,7 @@ export default function(this:any, source:string):string {
                 ) :
                 content
         let remainingSteps:number = compileSteps
-        let result:TemplateFunction|string = template
+        let result:string|TemplateFunction = template
         const isString:boolean = options.isString
         delete options.isString
         while (remainingSteps > 0) {
@@ -231,8 +231,8 @@ export default function(this:any, source:string):string {
                         result = fileSystem.readFileSync(result, {encoding})
                     }
                     if (remainingSteps === 1)
-                        result = compressHTML(result)
-                    result = ejs.compile(result, options)
+                        result = compressHTML(result as string)
+                    result = ejs.compile(result as string, options) as TemplateFunction
                 }
             } else
                 result = compressHTML(result(Tools.extend(

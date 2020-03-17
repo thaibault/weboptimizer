@@ -16,6 +16,7 @@
 // region imports
 import Tools from 'clientnode'
 import {ConsoleOutputMethods} from 'clientnode/type'
+import {DOMWindow} from 'jsdom'
 
 import {Browser} from './type'
 // endregion
@@ -69,7 +70,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             browser.instance = new JSDOM(
                 template,
                 {
-                    beforeParse: (window):void => {
+                    beforeParse: (window:DOMWindow):void => {
                         // We want to use it in a polymorphic way.
                         browser.window = window as unknown as Window
                         window.document.addEventListener(
