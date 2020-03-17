@@ -28,6 +28,7 @@ import {
     InjectionConfiguration,
     MetaConfiguration,
     ResolvedConfiguration,
+    SubConfigurationTypes,
     WebpackLoader
 } from './type'
 /*
@@ -165,19 +166,18 @@ if (filePath) {
 }
 // // region task specific configuration
 // /// region apply task type specific configuration
-const taskTypes:Array<string> = [
-    'build', 'debug', 'document', 'serve', 'test', 'test:browser']
 if (runtimeInformation.givenCommandLineArguments.length > 2)
-    for (const type of taskTypes)
+    for (const type of SubConfigurationTypes)
         if (
             runtimeInformation.givenCommandLineArguments[2] === type ||
-            debug &&
-            type == 'debug'
+            debug && type === 'debug'
         )
             for (const configurationTarget of [
                 configuration, specificConfiguration
             ])
-                if (typeof configurationTarget[type] === 'object')
+                if (Tools.isPlainObject(configurationTarget[
+                    type as keyof DefaultConfiguration
+                ]))
                     Tools.extend(
                         true,
                         Tools.modifyObject(
@@ -186,7 +186,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
                     )
 // /// endregion
 // /// region clear task type specific configurations
-for (const type of taskTypes)
+for (const type of SubConfigurationTypes)
     for (const configurationTarget of [configuration, specificConfiguration])
         if (
             Object.prototype.hasOwnProperty.call(configurationTarget, type) &&
@@ -216,7 +216,9 @@ if (typeof result === 'object' && result !== null) {
         const referenceNames:Array<string> = [].concat(result.__reference__)
         delete result.__reference__
         for (const name of referenceNames)
-            Tools.extend(true, result, configuration[name])
+            Tools.extend(
+                true, result, configuration[name as keyof DefaultConfiguration]
+            )
     }
     Tools.extend(true, Tools.modifyObject(configuration, result), result)
 }

@@ -122,6 +122,10 @@ export type BuildConfigurationItem = {
     filePathPattern:string;
 }
 export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
+export const SubConfigurationTypes = [
+    'debug', 'document', 'test', 'test:browser'
+] as const
+export const TaskTypes = ['build', 'serve', ...SubConfigurationTypes] as const
 // // endregion
 // // region loader
 export type AdditionalLoaderConfiguration = {
