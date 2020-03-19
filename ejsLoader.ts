@@ -13,10 +13,11 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports 
+// region imports
 import {
     BabelFileResult, transformSync as babelTransformSync
 } from '@babel/core'
+// @ts-ignore: Not possible to declare as module yet.
 import babelMinifyPreset from 'babel-preset-minify'
 /*
     NOTE: Would result in error: "TypeError:

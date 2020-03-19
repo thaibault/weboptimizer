@@ -15,6 +15,11 @@
 */
 // region imports
 import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
+import {
+    Configuration as BaseWebpackConfiguration,
+    Entry as WebpackEntry,
+    Output as WebpackOutput
+} from 'webpack'
 // endregion
 // region exports
 // / region generic
@@ -82,7 +87,7 @@ export type InjectionConfiguration = {
 // / endregion
 // / region configuration
 // // region path
-export type AssetPath = {
+export type AssetPathConfiguration = {
     base:string;
     cascadingStyleSheet:string;
     data:string;
@@ -91,7 +96,7 @@ export type AssetPath = {
     javaScript:string;
     template:string;
 }
-export type Path = {
+export type PathConfiguration = {
     apiDocumentation:string;
     base:string;
     configuration:{
@@ -102,11 +107,11 @@ export type Path = {
     context:string;
     ignore:Array<string>;
     source:{
-        asset:AssetPath;
+        asset:AssetPathConfiguration;
         base:string;
     };
     target:{
-        asset:AssetPath;
+        asset:AssetPathConfiguration;
         base:string;
         manifest:string;
         public:string;
@@ -171,7 +176,15 @@ export type Command = {
     command:string;
     indicator?:string;
 }
-
+export type CommandLineArguments = {
+    build:Command;
+    document:Array<Command>|Command;
+    lint:Array<Command>|Command;
+    serve:Array<Command>|Command;
+    test:Array<Command>|Command;
+    'test:browser':Array<Command>|Command;
+    'check:types':Array<Command>|Command;
+}
 export type NodeEnvironment = {'#':string;[key:string]:boolean|string}
 export type PluginConfiguration = {
     name:{
@@ -244,15 +257,7 @@ export type ResolvedConfiguration = {
         main:boolean;
         unsafe:boolean;
     };
-    commandLine:{
-        build:Command;
-        document:Command;
-        lint:Command;
-        serve:Command;
-        test:Command;
-        'test:browser':Command;
-        'check:types':Command;
-    };
+    commandLine:CommandLineArguments;
     contextType:string;
     debug:boolean;
     development:{
@@ -377,7 +382,7 @@ export type ResolvedConfiguration = {
             propertyNames:Array<string>;
         };
     };
-    path:Path;
+    path:PathConfiguration;
     performanceHints:{hints:false|string;};
     plugins:Array<PluginConfiguration>;
     showConfiguration:boolean;
@@ -390,54 +395,13 @@ export type ResolvedConfiguration = {
     webpack:WebpackConfiguration;
 }
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
-export type WebpackConfiguration = {
-    cache:boolean;
-    context:string;
-    devtool:false|string;
-    devServer:PlainObject;
+export type WebpackConfiguration = BaseWebpackConfiguration & {
     // region input
-    entry:PlainObject;
-    externals:ExternalInjection;
-    resolve:{
-        alias:Mapping;
-        extensions:Array<string>;
-        moduleExtensions:Array<string>;
-        modules:Array<string>;
-        unsafeCache:boolean;
-        aliasFields:Array<string>;
-        mainFields:Array<string>;
-        mainFiles:Array<string>;
-    };
-    resolveLoader:{
-        alias:Mapping;
-        extensions:Array<string>;
-        moduleExtensions:Array<string>;
-        modules:Array<string>;
-        aliasFields:Array<string>;
-        mainFields:Array<string>;
-        mainFiles:Array<string>;
-    };
+    entry:WebpackEntry;
     // endregion
     // region output
-    output:{
-        filename:string;
-        hashFunction:string;
-        library:string;
-        libraryTarget:string;
-        path:string;
-        publicPath:string;
-        umdNamedDefine:boolean;
-    };
-    target:string;
+    output:WebpackOutput;
     // endregion
-    module:{
-        noParse?:RegExp|Array<RegExp>;
-        rules:Array<PlainObject>;
-    };
-    performance:{
-        hints:false|string;
-    };
-    plugins:Array<PlainObject>;
     replaceWebOptimizer:WebpackConfiguration;
 }
 // / endregion
