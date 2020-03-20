@@ -16,6 +16,7 @@
 // region imports
 import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
 import {
+    DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
     Entry as WebpackEntry,
     Output as WebpackOutput
@@ -242,6 +243,15 @@ export type SpecificExtensions = {
     file:Array<string>;
     module:Array<string>;
 }
+export type InPlaceConfiguration = {
+    cascadingStyleSheet:{[key:string]:'body'|'head'|'in'|string};
+    externalLibrary:{
+        normal:boolean;
+        dynamic:boolean;
+    };
+    javaScript:{[key:string]:'body'|'head'|'in'|string};
+    otherMaximumFileSizeLimitInByte:number;
+}
 export type ResolvedConfiguration = {
     assetPattern:{
         [key:string]:{
@@ -250,7 +260,7 @@ export type ResolvedConfiguration = {
         }
     };
     buildContext:{
-        definitions:PlainObject;
+        definitions:{[key:string]:WebpackDefinePlugin.CodeValueObject};
         types:BuildConfiguration;
     };
     cache:{
@@ -290,15 +300,7 @@ export type ResolvedConfiguration = {
     givenCommandLineArguments:Array<string>;
     hashAlgorithm:string;
     injection:InjectionConfiguration;
-    inPlace:{
-        cascadingStyleSheet:{[key:string]:'body'|'head'|'in'|string};
-        externalLibrary:{
-            normal:boolean;
-            dynamic:boolean;
-        };
-        javaScript:{[key:string]:'body'|'head'|'in'|string};
-        otherMaximumFileSizeLimitInByte:number;
-    };
+    inPlace:InPlaceConfiguration;
     library:boolean;
     libraryName:string;
     loader:{

@@ -67,7 +67,9 @@ import ejsLoader, {EJSLoaderConfiguration} from './ejsLoader'
 /* eslint-disable no-unused-vars */
 import {
     AdditionalLoaderConfiguration,
+    AssetPathConfiguration,
     HTMLConfiguration,
+    InPlaceConfiguration,
     PackageDescriptor,
     PluginConfiguration,
     WebpackConfiguration,
@@ -181,22 +183,27 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
     ))
-        for (const type of [
-            ['cascadingStyleSheet', 'css'],
-            ['javaScript', 'js']
-        ])
-            if (configuration.inPlace[type[0]]) {
+        for (const [name, extension] of Object.entries({
+            cascadingStyleSheet: 'css',
+            javaScript: 'js'
+        })) {
+            const type:keyof InPlaceConfiguration =
+                name as keyof InPlaceConfiguration
+            if (configuration.inPlace[type]) {
                 const matches:Array<string> = Object.keys(
-                    configuration.inPlace[type[0]])
+                    configuration.inPlace[type])
                 for (const name of matches)
                     configuration.offline.excludes.push(
                         path.relative(
                             configuration.path.target.base,
-                            configuration.path.target.asset[type[0]]
+                            configuration.path.target.asset[
+                                type as keyof AssetPathConfiguration
+                            ]
                         ) +
-                        `${name}.${type[1]}?${configuration.hashAlgorithm}=*`
+                        `${name}.${extension}?${configuration.hashAlgorithm}=*`
                     )
             }
+        }
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
 // // endregion
@@ -305,17 +312,21 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                         ))
                 await Promise.all(promises)
                 promises = []
-                for (const type of ['javaScript', 'cascadingStyleSheet'])
-                    promises.push(fileSystem.readdir(
-                        configuration.path.target.asset[type],
-                        {encoding: configuration.encoding}
-                    ).then(async (
-                        files:Array<string>|Array<Buffer>
-                    ):Promise<void> => {
-                        if (files.length === 0)
-                            await fileSystem.rmdir(
-                                configuration.path.target.asset[type])
-                    }))
+                for (const type of [
+                    configuration.path.target.asset.javaScript,
+                    configuration.path.target.asset.cascadingStyleSheet
+                ])
+                    promises.push(
+                        fileSystem.readdir(
+                            type, {encoding: configuration.encoding}
+                        )
+                            .then(async (
+                                files:Array<Buffer>|Array<string>
+                            ):Promise<void> => {
+                                if (files.length === 0)
+                                    await fileSystem.rmdir(type)
+                            })
+                    )
                 await Promise.all(promises)
                 callback()
             })
