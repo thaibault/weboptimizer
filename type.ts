@@ -15,6 +15,7 @@
 */
 // region imports
 import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 import {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
@@ -407,6 +408,12 @@ export type WebpackConfiguration = BaseWebpackConfiguration & {
     replaceWebOptimizer:WebpackConfiguration;
 }
 // / endregion
+export type HTMLWebpackPluginAssetTagGroupsData = {
+    bodyTags: HtmlWebpackPlugin.HtmlTagObject[];
+    headTags: HtmlWebpackPlugin.HtmlTagObject[];
+    outputName: string;
+    plugin: HtmlWebpackPlugin;
+}
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

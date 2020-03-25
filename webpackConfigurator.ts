@@ -69,6 +69,7 @@ import {
     AdditionalLoaderConfiguration,
     AssetPathConfiguration,
     HTMLConfiguration,
+    HTMLWebpackPluginAssetTagGroupsData,
     InPlaceConfiguration,
     PackageDescriptor,
     PluginConfiguration,
@@ -581,14 +582,14 @@ if (configuration.givenCommandLineArguments[2] === 'build:dll') {
 // // region apply final dom/javaScript/cascadingStyleSheet modifications/fixes
 if (htmlAvailable)
     pluginInstances.push({apply: (
-        compiler:Record<string, any>
-    ):void => compiler.hooks.compilation.tap('compilation', (
-        compilation:Record<string, any>
+        compiler:webpack.Compiler
+    ):void => compiler.hooks.compilation.tap('WebOptimizer', (
+        compilation:webpack.compilation.Compilation
     ):void => {
-        compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(
-            'removeDummyHTMLTags',
-            (data, callback:Function):void => {
-                for (const tags of [data.body, data.head]) {
+        plugins.HTML.getHooks(compilation).alterAssetTagGroups.tapAsync(
+            'WebOptimizerRemoveDummyHTMLTags',
+            (data:HTMLWebpackPluginAssetTagGroupsData, callback:Function):void => {
+                for (const tags of [data.bodyTags, data.headTags]) {
                     let index = 0
                     for (const tag of tags) {
                         if (/^\.__dummy__(\..*)?$/.test(path.basename(
@@ -611,9 +612,9 @@ if (htmlAvailable)
                 data.plugin.assetJson = JSON.stringify(assets)
                 callback(null, data)
             })
-        compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
-            'postProcessHTML',
-            (data, callback:Function):void => {
+        plugins.HTML.getHooks(compilation).beforeEmit.tapAsync(
+            'WebOptimizerPostProcessHTML',
+            (data:HTMLWebpackPluginHooks.beforeEmit, callback:Function):void => {
                 /*
                     NOTE: We have to prevent creating native "style" dom nodes
                     to prevent jsdom from parsing the entire cascading style
