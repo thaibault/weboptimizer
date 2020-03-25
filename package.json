@@ -20,26 +20,27 @@
     "mock"
   ],
   "files": [
-    "browser.ts",
     "browser.js",
-    "configurator.ts",
+    "browser.ts",
     "configurator.js",
-    "ejsLoader.ts",
+    "configurator.ts",
     "ejsLoader.js",
-    "helper.ts",
+    "ejsLoader.ts",
     "helper.js",
-    "index.ts",
+    "helper.ts",
     "index.html.ejs",
-    "jestEnvironmentBrowser.ts",
+    "index.ts",
     "jestEnvironmentBrowser.js",
-    "stylelintConfigurator.ts",
+    "jestEnvironmentBrowser.ts",
     "stylelintConfigurator.js",
+    "stylelintConfigurator.ts",
     "tsconfig.json",
     "tsconfigLibrary.json",
+    "type.js",
     "type.ts",
     "untypedDependencies.d.ts",
-    "webpackConfigurator.ts",
-    "webpackConfigurator.js"
+    "webpackConfigurator.js",
+    "webpackConfigurator.ts"
   ],
   "main": "index.js",
   "bin": {
@@ -50,7 +51,7 @@
     "url": "https://github.com/thaibault/webOptimizer.git"
   },
   "scripts": {
-    "build": "command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --out-file' && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command jestEnvironmentBrowser.js jestEnvironmentBrowser.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command index.js index.ts && $command webpackConfigurator.js webpackConfigurator.ts && chmod +x index.js",
+    "build": "command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --out-file' && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestEnvironmentBrowser.js jestEnvironmentBrowser.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && chmod +x index.js",
     "build:test": "yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --source-root ../ --out-file' && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.ts *.js *.json *.ejs node_modules/weboptimizer/ && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
     "clear": "rimraf apiDocumentation *.js *.compiled.* *.compiled test/*.js test/*.compiled.* *.html *.log node_modules/weboptimizer .nyc_output || true",
     "check": "yarn check:types; yarn lint",
