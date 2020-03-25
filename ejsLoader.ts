@@ -13,10 +13,11 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports 
+// region imports
 import {
     BabelFileResult, transformSync as babelTransformSync
 } from '@babel/core'
+// @ts-ignore: Not possible to declare as module yet.
 import babelMinifyPreset from 'babel-preset-minify'
 /*
     NOTE: Would result in error: "TypeError:
@@ -215,7 +216,7 @@ export default function(this:any, source:string):string {
                 ) :
                 content
         let remainingSteps:number = compileSteps
-        let result:TemplateFunction|string = template
+        let result:string|TemplateFunction = template
         const isString:boolean = options.isString
         delete options.isString
         while (remainingSteps > 0) {
@@ -231,8 +232,8 @@ export default function(this:any, source:string):string {
                         result = fileSystem.readFileSync(result, {encoding})
                     }
                     if (remainingSteps === 1)
-                        result = compressHTML(result)
-                    result = ejs.compile(result, options)
+                        result = compressHTML(result as string)
+                    result = ejs.compile(result as string, options) as TemplateFunction
                 }
             } else
                 result = compressHTML(result(Tools.extend(

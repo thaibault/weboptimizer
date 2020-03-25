@@ -15,12 +15,14 @@
 */
 // region imports
 import Tools from 'clientnode'
+import {ConsoleOutputMethods} from 'clientnode/type'
+import {DOMWindow} from 'jsdom'
+
 import {Browser} from './type'
 // endregion
 // region declaration
 declare const NAME:string
 declare const TARGET_TECHNOLOGY:string
-declare const window:Window
 // endregion
 // region variables
 const onCreatedListener:Array<Function> = []
@@ -37,13 +39,18 @@ export const browser:Browser = {
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
     // region mock browser environment
+    /*
+    NOTE: This syntax cannot be interpret by typescript currently.
+
     Promise.all([import('path'), import('jsdom')]).then((
         [path, {JSDOM, VirtualConsole}]
     ):void => {
+    */
+    import('path').then((path) => import('jsdom').then(({
+        JSDOM, VirtualConsole
+    }) => {
         const virtualConsole = new VirtualConsole()
-        for (const name of [
-            'assert', 'dir', 'info', 'log', 'time', 'timeEnd', 'trace', 'warn'
-        ])
+        for (const name of ConsoleOutputMethods)
             virtualConsole.on(name, console[name].bind(console))
         virtualConsole.on(
             'error',
@@ -60,30 +67,34 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
         const render:Function = (template:string):void => {
             browser.DOM = JSDOM
             browser.initialized = true
-            browser.instance = new JSDOM(template, {
-                beforeParse: (window:Window):void => {
-                    browser.window = window
-                    window.document.addEventListener(
-                        'DOMContentLoaded',
-                        ():void => {
-                            browser.domContentLoaded = true
-                        }
-                    )
-                    window.addEventListener('load', ():void => {
-                        /*
-                            NOTE: Maybe we have miss the "DOMContentLoaded"
-                            event caused by a race condition.
-                        */
-                        browser.domContentLoaded = browser.windowLoaded = true
-                    })
-                    for (const callback of onCreatedListener)
-                        callback()
-                },
-                resources: 'usable',
-                runScripts: 'dangerously',
-                url: 'http://localhost',
-                virtualConsole
-            })
+            browser.instance = new JSDOM(
+                template,
+                {
+                    beforeParse: (window:DOMWindow):void => {
+                        // We want to use it in a polymorphic way.
+                        browser.window = window as unknown as Window
+                        window.document.addEventListener(
+                            'DOMContentLoaded',
+                            ():void => {
+                                browser.domContentLoaded = true
+                            }
+                        )
+                        window.addEventListener('load', ():void => {
+                            /*
+                                NOTE: Maybe we have miss the "DOMContentLoaded"
+                                event caused by a race condition.
+                            */
+                            browser.domContentLoaded = browser.windowLoaded = true
+                        })
+                        for (const callback of onCreatedListener)
+                            callback()
+                    },
+                    resources: 'usable',
+                    runScripts: 'dangerously',
+                    url: 'http://localhost',
+                    virtualConsole
+                }
+            )
         }
         if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
             const filePath:string = path.join(__dirname, 'index.html.ejs')
@@ -105,7 +116,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
         } else
             // @ts-ignore: Will be available at runtime.
             import('webOptimizerDefaultTemplateFilePath').then(render)
-    })
+    }))
     // endregion
 else {
     browser.initialized = true

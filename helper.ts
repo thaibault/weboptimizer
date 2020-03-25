@@ -16,19 +16,20 @@
 // region imports
 import Tools from 'clientnode'
 import {File, Mapping, PlainObject} from 'clientnode/type'
-import {JSDOM as DOM} from 'jsdom'
+import {DOMWindow, JSDOM as DOM} from 'jsdom'
 import fileSystem from 'fs'
 import path from 'path'
 
 import {
     AssetInPlaceInjectionResult,
+    AssetPathConfiguration,
     AssetPositionPattern,
     BuildConfiguration,
     Extensions,
     GivenInjection,
     GivenInjectionConfiguration,
     NormalizedGivenInjection,
-    Path,
+    PathConfiguration,
     PackageConfiguration,
     PackageDescriptor,
     Replacements,
@@ -124,7 +125,7 @@ export class Helper {
             sequences and translate it back later to avoid unexpected escape
             sequences in resulting html.
         */
-        const window:Window = (new DOM(
+        const window:DOMWindow = (new DOM(
             content
                 .replace(/<%/g, '##+#+#+##')
                 .replace(/%>/g, '##-#-#-##')
@@ -168,87 +169,97 @@ export class Helper {
                                         '[name]': pattern
                                     }
                                 )) + '"]'
-                    const domNodes:NodeListOf<HTMLElement> =
-                        window.document.querySelectorAll(
+                    const domNodes:Array<HTMLElement> = Array.from(
+                        window.document.querySelectorAll<HTMLElement>(
                             `${assetType.linkTagName}${selector}`)
+                    )
                     if (domNodes.length)
                         for (const domNode of domNodes) {
-                            const path:string = domNode.attributes[
-                                assetType.attributeName
-                            ].value.replace(/&.*/g, '')
-                            if (!Object.prototype.hasOwnProperty.call(
-                                assets, path
-                            ))
-                                continue
-                            const inPlaceDomNode:HTMLElement =
-                                window.document.createElement(
-                                    assetType.tagName)
-                            if (assetType.tagName === 'style') {
-                                inPlaceDomNode.setAttribute(
-                                    'weboptimizerinplace', 'true')
-                                inPlaceStyleContents.push(
-                                    assets[path].source())
-                            } else
-                                inPlaceDomNode.textContent =
-                                    assets[path].source()
-                            if (domNode.parentNode) {
-                                if (assetType.pattern[pattern] === 'body')
-                                    window.document.body.appendChild(
-                                        inPlaceDomNode)
-                                else if (assetType.pattern[pattern] === 'in')
-                                    domNode.parentNode.insertBefore(
-                                        inPlaceDomNode, domNode)
-                                else if (assetType.pattern[pattern] === 'head')
-                                    window.document.head.appendChild(
-                                        inPlaceDomNode)
-                                else {
-                                    const regularExpressionPattern =
-                                        '(after|before|in):(.+)'
-                                    const testMatch:Array<string>|null =
-                                        (new RegExp(regularExpressionPattern))
-                                            .exec(assetType.pattern[pattern])
-                                    let match:Array<string>
-                                    if (testMatch)
-                                        match = testMatch
-                                    else
-                                        throw new Error(
-                                            'Given in place specification "' +
-                                            `${assetType.pattern[pattern]}" for ` +
-                                            `${assetType.tagName} does not ` +
-                                            'satisfy the specified pattern "' +
-                                            `${regularExpressionPattern}".`
-                                        )
-                                    const domNode:HTMLElement|null =
-                                        window.document.querySelector(match[2])
-                                    if (!domNode)
-                                        throw new Error(
-                                            `Specified dom node "${match[2]}` +
-                                            '" could not be found to in ' +
-                                            `place "${pattern}".`)
-                                    if (match[1] === 'in')
-                                        domNode.appendChild(inPlaceDomNode)
-                                    else if (match[1] === 'before')
-                                        domNode.insertAdjacentElement(
-                                            'beforebegin', inPlaceDomNode)
-                                    else
-                                        domNode.insertAdjacentElement(
-                                            'afterend', inPlaceDomNode)
-                                }
-                                domNode.parentNode.removeChild(domNode)
-                                /*
-                                    NOTE: This doesn't prevent webpack from
-                                    creating this file if present in another chunk
-                                    so removing it (and a potential source map
-                                    file) later in the "done" hook.
-                                */
-                                filePathsToRemove.push(Helper.stripLoader(path))
-                                delete assets[path]
+                            let path:null|string = domNode.getAttribute(
+                                assetType.attributeName)
+                            if (typeof path === 'string') {
+                                path = path.replace(/&.*/g, '')
+                                if (!Object.prototype.hasOwnProperty.call(
+                                    assets, path
+                                ))
+                                    continue
+                                const inPlaceDomNode:HTMLElement =
+                                    window.document.createElement(
+                                        assetType.tagName)
+                                if (assetType.tagName === 'style') {
+                                    inPlaceDomNode.setAttribute(
+                                        'weboptimizerinplace', 'true')
+                                    inPlaceStyleContents.push(
+                                        assets[path].source())
+                                } else
+                                    inPlaceDomNode.textContent =
+                                        assets[path].source()
+                                if (domNode.parentNode) {
+                                    if (assetType.pattern[pattern] === 'body')
+                                        window.document.body.appendChild(
+                                            inPlaceDomNode)
+                                    else if (assetType.pattern[pattern] === 'in')
+                                        domNode.parentNode.insertBefore(
+                                            inPlaceDomNode, domNode)
+                                    else if (assetType.pattern[pattern] === 'head')
+                                        window.document.head.appendChild(
+                                            inPlaceDomNode)
+                                    else {
+                                        const regularExpressionPattern =
+                                            '(after|before|in):(.+)'
+                                        const testMatch:Array<string>|null =
+                                            (new RegExp(regularExpressionPattern))
+                                                .exec(assetType.pattern[pattern])
+                                        let match:Array<string>
+                                        if (testMatch)
+                                            match = testMatch
+                                        else
+                                            throw new Error(
+                                                'Given in place specification "' +
+                                                `${assetType.pattern[pattern]}" for ` +
+                                                `${assetType.tagName} does not ` +
+                                                'satisfy the specified pattern "' +
+                                                `${regularExpressionPattern}".`
+                                            )
+                                        const domNode:HTMLElement|null =
+                                            window.document.querySelector(match[2])
+                                        if (!domNode)
+                                            throw new Error(
+                                                `Specified dom node "${match[2]}` +
+                                                '" could not be found to in ' +
+                                                `place "${pattern}".`)
+                                        if (match[1] === 'in')
+                                            domNode.appendChild(inPlaceDomNode)
+                                        else if (match[1] === 'before')
+                                            domNode.insertAdjacentElement(
+                                                'beforebegin', inPlaceDomNode)
+                                        else
+                                            domNode.insertAdjacentElement(
+                                                'afterend', inPlaceDomNode)
+                                    }
+                                    domNode.parentNode.removeChild(domNode)
+                                    /*
+                                        NOTE: This doesn't prevent webpack from
+                                        creating this file if present in another chunk
+                                        so removing it (and a potential source map
+                                        file) later in the "done" hook.
+                                    */
+                                    filePathsToRemove.push(Helper.stripLoader(path))
+                                    delete assets[path]
+                                } else
+                                    throw new Error(
+                                        'Given in place specification "' +
+                                        `${assetType.pattern[pattern]}" for ` +
+                                        `${assetType.tagName} is not ` +
+                                        'possible because of missing parent node.'
+                                    )
                             } else
                                 throw new Error(
                                     'Given in place specification "' +
                                     `${assetType.pattern[pattern]}" for ` +
                                     `${assetType.tagName} is not ` +
-                                    'possible because of missing parent node.'
+                                    'possible because of missing attribute "' +
+                                    `${assetType.attributeName}".`
                                 )
                         }
                     else
@@ -594,7 +605,9 @@ export class Helper {
      * determined.
      */
     static determineAssetType(
-        filePath:string, buildConfiguration:BuildConfiguration, paths:Path
+        filePath:string,
+        buildConfiguration:BuildConfiguration,
+        paths:PathConfiguration
     ):null|string {
         let result:null|string = null
         for (const type in buildConfiguration)
@@ -606,15 +619,17 @@ export class Helper {
                 break
             }
         if (!result)
-            for (const type of ['source', 'target'])
-                for (const assetType in paths[type].asset)
+            for (const type of [paths.source, paths.target])
+                for (const assetType in type.asset)
                     if (
                         Object.prototype.hasOwnProperty.call(
-                            paths[type].asset, assetType
+                            type.asset, assetType
                         ) &&
                         assetType !== 'base' &&
-                        paths[type].asset[assetType] &&
-                        filePath.startsWith(paths[type].asset[assetType])
+                        type.asset[
+                            assetType as keyof AssetPathConfiguration] &&
+                        filePath.startsWith(type.asset[
+                            assetType as keyof AssetPathConfiguration])
                     )
                         return assetType
         return result
@@ -931,12 +946,14 @@ export class Helper {
                 referencePath,
                 pathsToIgnore
             ).filePaths
-        for (const type of ['entry', 'external'])
+        for (const name of ['entry', 'external']) {
+            const injectionType:GivenInjection =
+                injection[name as keyof GivenInjectionConfiguration]
             /* eslint-disable curly */
-            if (typeof injection[type] === 'object') {
-                for (const chunkName in injection[type])
-                    if (injection[type][chunkName] === '__auto__') {
-                        injection[type][chunkName] = []
+            if (Tools.isPlainObject(injectionType)) {
+                for (let [chunkName, chunk] of Object.entries(injectionType))
+                    if (chunk === '__auto__') {
+                        chunk = injectionType[chunkName] = []
                         const modules:{[key:string]:string} =
                             Helper.getAutoInjection(
                                 buildConfigurations,
@@ -947,18 +964,20 @@ export class Helper {
                             if (Object.prototype.hasOwnProperty.call(
                                 modules, subChunkName
                             ))
-                                injection[type][chunkName].push(
-                                    modules[subChunkName])
+                                chunk.push(modules[subChunkName])
                         /*
                             Reverse array to let javaScript and main files be
                             the last ones to export them rather.
                         */
-                        injection[type][chunkName].reverse()
+                        chunk.reverse()
                     }
-            } else if (injection[type] === '__auto__')
+            } else if (injectionType === '__auto__')
             /* eslint-enable curly */
-                injection[type] = Helper.getAutoInjection(
+                (injection[
+                    name as keyof GivenInjectionConfiguration
+                ] as Mapping) = Helper.getAutoInjection(
                     buildConfigurations, moduleFilePathsToExclude, context)
+        }
         return injection
     }
     /**
@@ -974,7 +993,7 @@ export class Helper {
         buildConfigurations:ResolvedBuildConfiguration,
         moduleFilePathsToExclude:Array<string>,
         context:string
-    ):{[key:string]:string} {
+    ):Mapping {
         const result:{[key:string]:string} = {}
         const injectedModuleIDs:{[key:string]:Array<string>} = {}
         for (const buildConfiguration of buildConfigurations) {

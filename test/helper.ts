@@ -13,7 +13,7 @@ import {
     GivenInjection,
     GivenInjectionConfiguration,
     NormalizedGivenInjection,
-    Path,
+    PathConfiguration,
     Replacements,
     ResolvedBuildConfiguration
 } from '../type'
@@ -410,7 +410,7 @@ describe('helper', ():void => {
     test.each([['./', null], ['a.js', 'javaScript'], ['a.css', null]])(
         `.determineAssetType('%s', %p, %p)`,
         (filePath:string, expected:null|string):void => {
-            const paths:Path = {
+            const paths:PathConfiguration = {
                 apiDocumentation: '',
                 base: '',
                 configuration: {
@@ -564,7 +564,7 @@ describe('helper', ():void => {
             './',
             '',
             ['.git', 'node_modules']
-        ]/* TODO,
+        ],
         [
             {
                 autoExclude: [],
@@ -648,7 +648,7 @@ describe('helper', ():void => {
             './',
             '',
             ['.git', 'node_modules']
-        ]*/
+        ]
     ])(
         `%p === .resolveAutoInjection(%p, %p, %p, ...%p)`,
         (

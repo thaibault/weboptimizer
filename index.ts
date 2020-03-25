@@ -31,6 +31,8 @@ import removeDirectoryRecursively from 'rimraf'
 import configuration from './configurator'
 import Helper from './helper'
 import {
+    Command,
+    CommandLineArguments,
     GivenInjection,
     ResolvedConfiguration,
     ResolvedBuildConfiguration,
@@ -407,7 +409,11 @@ const main = async ():Promise<void> => {
                         configuration.path.source.asset.base,
                         configuration.path.ignore
                     ).filePaths
-                for (const buildConfiguration of buildConfigurations)
+                for (const buildConfiguration of buildConfigurations) {
+                    const expression:string = (buildConfiguration[
+                        configuration.givenCommandLineArguments[2] as keyof
+                            ResolvedBuildConfigurationItem
+                    ] as string).trim()
                     for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
                             const evaluationFunction = (
@@ -425,12 +431,7 @@ const main = async ():Promise<void> => {
                                     'path',
                                     'additionalArguments',
                                     'filePath',
-                                    'return `' +
-                                    buildConfiguration[
-                                        configuration
-                                            .givenCommandLineArguments[2]
-                                    ].trim() +
-                                    '`'
+                                    `return \`${expression}\``
                                 )(
                                     global,
                                     self,
@@ -459,15 +460,15 @@ const main = async ():Promise<void> => {
                                 )
                             )))
                         }
+                }
             }
             // endregion
             // region handle remaining tasks
-            const handleTask = (type:string):void => {
-                let tasks:Array<Record<string, any>>
-                if (Array.isArray(configuration.commandLine[type]))
-                    tasks = configuration.commandLine[type]
-                else
-                    tasks = [configuration.commandLine[type]]
+            const handleTask = (type:keyof CommandLineArguments):void => {
+                const tasks:Array<Command> =
+                    Array.isArray(configuration.commandLine[type]) ?
+                    (configuration.commandLine[type] as Array<Command>) :
+                    [configuration.commandLine[type] as Command]
                 for (const task of tasks) {
                     const evaluationFunction = (
                         global:Record<string, any>,
@@ -518,11 +519,15 @@ const main = async ():Promise<void> => {
                 configuration.givenCommandLineArguments[2]
             )) {
                 await Promise.all(processPromises)
-                handleTask(configuration.givenCommandLineArguments[2])
+                handleTask(
+                    configuration.givenCommandLineArguments[2] as keyof
+                        CommandLineArguments)
             } else if ([
                 'check:types', 'lint', 'serve', 'test:browser'
             ].includes(configuration.givenCommandLineArguments[2]))
-                handleTask(configuration.givenCommandLineArguments[2])
+                handleTask(
+                    configuration.givenCommandLineArguments[2] as keyof
+                        CommandLineArguments)
             // / endregion
             // endregion
         }

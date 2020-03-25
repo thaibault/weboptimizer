@@ -15,6 +15,13 @@
 */
 // region imports
 import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import {
+    DefinePlugin as WebpackDefinePlugin,
+    Configuration as BaseWebpackConfiguration,
+    Entry as WebpackEntry,
+    Output as WebpackOutput
+} from 'webpack'
 // endregion
 // region exports
 // / region generic
@@ -82,7 +89,7 @@ export type InjectionConfiguration = {
 // / endregion
 // / region configuration
 // // region path
-export type AssetPath = {
+export type AssetPathConfiguration = {
     base:string;
     cascadingStyleSheet:string;
     data:string;
@@ -91,7 +98,7 @@ export type AssetPath = {
     javaScript:string;
     template:string;
 }
-export type Path = {
+export type PathConfiguration = {
     apiDocumentation:string;
     base:string;
     configuration:{
@@ -102,11 +109,11 @@ export type Path = {
     context:string;
     ignore:Array<string>;
     source:{
-        asset:AssetPath;
+        asset:AssetPathConfiguration;
         base:string;
     };
     target:{
-        asset:AssetPath;
+        asset:AssetPathConfiguration;
         base:string;
         manifest:string;
         public:string;
@@ -122,6 +129,10 @@ export type BuildConfigurationItem = {
     filePathPattern:string;
 }
 export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
+export const SubConfigurationTypes = [
+    'debug', 'document', 'test', 'test:browser'
+] as const
+export const TaskTypes = ['build', 'serve', ...SubConfigurationTypes] as const
 // // endregion
 // // region loader
 export type AdditionalLoaderConfiguration = {
@@ -167,7 +178,15 @@ export type Command = {
     command:string;
     indicator?:string;
 }
-
+export type CommandLineArguments = {
+    build:Command;
+    document:Array<Command>|Command;
+    lint:Array<Command>|Command;
+    serve:Array<Command>|Command;
+    test:Array<Command>|Command;
+    'test:browser':Array<Command>|Command;
+    'check:types':Array<Command>|Command;
+}
 export type NodeEnvironment = {'#':string;[key:string]:boolean|string}
 export type PluginConfiguration = {
     name:{
@@ -225,6 +244,15 @@ export type SpecificExtensions = {
     file:Array<string>;
     module:Array<string>;
 }
+export type InPlaceConfiguration = {
+    cascadingStyleSheet:{[key:string]:'body'|'head'|'in'|string};
+    externalLibrary:{
+        normal:boolean;
+        dynamic:boolean;
+    };
+    javaScript:{[key:string]:'body'|'head'|'in'|string};
+    otherMaximumFileSizeLimitInByte:number;
+}
 export type ResolvedConfiguration = {
     assetPattern:{
         [key:string]:{
@@ -233,22 +261,14 @@ export type ResolvedConfiguration = {
         }
     };
     buildContext:{
-        definitions:PlainObject;
+        definitions:{[key:string]:WebpackDefinePlugin.CodeValueObject};
         types:BuildConfiguration;
     };
     cache:{
         main:boolean;
         unsafe:boolean;
     };
-    commandLine:{
-        build:Command;
-        document:Command;
-        lint:Command;
-        serve:Command;
-        test:Command;
-        'test:browser':Command;
-        'check:types':Command;
-    };
+    commandLine:CommandLineArguments;
     contextType:string;
     debug:boolean;
     development:{
@@ -281,15 +301,7 @@ export type ResolvedConfiguration = {
     givenCommandLineArguments:Array<string>;
     hashAlgorithm:string;
     injection:InjectionConfiguration;
-    inPlace:{
-        cascadingStyleSheet:{[key:string]:'body'|'head'|'in'|string};
-        externalLibrary:{
-            normal:boolean;
-            dynamic:boolean;
-        };
-        javaScript:{[key:string]:'body'|'head'|'in'|string};
-        otherMaximumFileSizeLimitInByte:number;
-    };
+    inPlace:InPlaceConfiguration;
     library:boolean;
     libraryName:string;
     loader:{
@@ -373,7 +385,7 @@ export type ResolvedConfiguration = {
             propertyNames:Array<string>;
         };
     };
-    path:Path;
+    path:PathConfiguration;
     performanceHints:{hints:false|string;};
     plugins:Array<PluginConfiguration>;
     showConfiguration:boolean;
@@ -386,57 +398,27 @@ export type ResolvedConfiguration = {
     webpack:WebpackConfiguration;
 }
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
-export type WebpackConfiguration = {
-    cache:boolean;
-    context:string;
-    devtool:false|string;
-    devServer:PlainObject;
+export type WebpackConfiguration = BaseWebpackConfiguration & {
     // region input
-    entry:PlainObject;
-    externals:ExternalInjection;
-    resolve:{
-        alias:Mapping;
-        extensions:Array<string>;
-        moduleExtensions:Array<string>;
-        modules:Array<string>;
-        unsafeCache:boolean;
-        aliasFields:Array<string>;
-        mainFields:Array<string>;
-        mainFiles:Array<string>;
-    };
-    resolveLoader:{
-        alias:Mapping;
-        extensions:Array<string>;
-        moduleExtensions:Array<string>;
-        modules:Array<string>;
-        aliasFields:Array<string>;
-        mainFields:Array<string>;
-        mainFiles:Array<string>;
-    };
+    entry:WebpackEntry;
     // endregion
     // region output
-    output:{
-        filename:string;
-        hashFunction:string;
-        library:string;
-        libraryTarget:string;
-        path:string;
-        publicPath:string;
-        umdNamedDefine:boolean;
-    };
-    target:string;
+    output:WebpackOutput;
     // endregion
-    module:{
-        noParse?:RegExp|Array<RegExp>;
-        rules:Array<PlainObject>;
-    };
-    performance:{
-        hints:false|string;
-    };
-    plugins:Array<PlainObject>;
     replaceWebOptimizer:WebpackConfiguration;
 }
 // / endregion
+export type HTMLWebpackPluginAssetTagGroupsData = {
+    bodyTags: HtmlWebpackPlugin.HtmlTagObject[];
+    headTags: HtmlWebpackPlugin.HtmlTagObject[];
+    outputName: string;
+    plugin: HtmlWebpackPlugin;
+}
+export type HTMLWebpackPluginBeforeEmitData = {
+    html: string;
+    outputName: string;
+    plugin: HtmlWebpackPlugin;
+}
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
