@@ -414,6 +414,11 @@ export type HTMLWebpackPluginAssetTagGroupsData = {
     outputName: string;
     plugin: HtmlWebpackPlugin;
 }
+export type HTMLWebpackPluginBeforeEmitData = {
+    html: string;
+    outputName: string;
+    plugin: HtmlWebpackPlugin;
+}
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

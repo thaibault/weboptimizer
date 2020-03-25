@@ -70,6 +70,7 @@ import {
     AssetPathConfiguration,
     HTMLConfiguration,
     HTMLWebpackPluginAssetTagGroupsData,
+    HTMLWebpackPluginBeforeEmitData,
     InPlaceConfiguration,
     PackageDescriptor,
     PluginConfiguration,
@@ -592,9 +593,9 @@ if (htmlAvailable)
                 for (const tags of [data.bodyTags, data.headTags]) {
                     let index = 0
                     for (const tag of tags) {
-                        if (/^\.__dummy__(\..*)?$/.test(path.basename(
+                        if (/^\.__dummy__(\..*)?$/.test(path.basename((
                             tag.attributes.src || tag.attributes.href || ''
-                        )))
+                        ) as string)))
                             tags.splice(index, 1)
                         index += 1
                     }
@@ -614,7 +615,7 @@ if (htmlAvailable)
             })
         plugins.HTML.getHooks(compilation).beforeEmit.tapAsync(
             'WebOptimizerPostProcessHTML',
-            (data:HTMLWebpackPluginHooks.beforeEmit, callback:Function):void => {
+            (data:HTMLWebpackPluginBeforeEmitData, callback:Function):void => {
                 /*
                     NOTE: We have to prevent creating native "style" dom nodes
                     to prevent jsdom from parsing the entire cascading style
@@ -669,6 +670,8 @@ if (htmlAvailable)
                             */
                             domNode.setAttribute(
                                 linkables[tagName],
+                                // @ts-ignore: Typescripts wrongly considers
+                                // "null".
                                 domNode
                                     .getAttribute(linkables[tagName])
                                     .replace(

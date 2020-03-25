@@ -564,7 +564,7 @@ describe('helper', ():void => {
             './',
             '',
             ['.git', 'node_modules']
-        ]/* TODO,
+        ],
         [
             {
                 autoExclude: [],
@@ -648,7 +648,7 @@ describe('helper', ():void => {
             './',
             '',
             ['.git', 'node_modules']
-        ]*/
+        ]
     ])(
         `%p === .resolveAutoInjection(%p, %p, %p, ...%p)`,
         (
