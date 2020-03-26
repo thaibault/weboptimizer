@@ -753,16 +753,19 @@ if (plugins.Imagemin)
 // // endregion
 // // region context replacements
 for (const contextReplacement of configuration.module.replacements.context)
-    pluginInstances.push(new webpack.ContextReplacementPlugin(
-        ...contextReplacement.map((value:string):any => (new Function(
+    pluginInstances.push(new webpack.ContextReplacementPlugin(...(
+        contextReplacement.map((value:string):any => (new Function(
             'configuration', '__dirname', '__filename', `return ${value}`
-        ))(configuration, __dirname, __filename))))
+        ))(configuration, __dirname, __filename))
+    ) as [string, string]))
 // // endregion
 // // region consolidate duplicated module requests
 pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
     /((?:^|\/)node_modules\/.+){2}/,
     (resource:{request:string;resource:string}):void => {
-        const targetName:string = resource.request ? 'request' : 'resource'
+        const targetName:'request'|'resource' = resource.request ?
+            'request' :
+            'resource'
         const targetPath:string = resource[targetName]
         if (Tools.isFileSync(targetPath)) {
             const packageDescriptor:null|PackageDescriptor =
