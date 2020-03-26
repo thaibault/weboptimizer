@@ -20,6 +20,7 @@ import {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
     Entry as WebpackEntry,
+    Module as WebpackModule,
     Output as WebpackOutput
 } from 'webpack'
 // endregion
@@ -368,7 +369,7 @@ export type ResolvedConfiguration = {
         };
         provide:{[key:string]:string};
         replacements:{
-            context:Array<Array<string>>;
+            context:Array<[string, string]>;
             normal:Replacements;
         };
         skipParseRegularExpressions:RegExp|Array<RegExp>;
@@ -402,6 +403,7 @@ export type WebpackConfiguration = BaseWebpackConfiguration & {
     // region input
     entry:WebpackEntry;
     // endregion
+    module:WebpackModule;
     // region output
     output:WebpackOutput;
     // endregion
