@@ -696,7 +696,7 @@
           "loader": "html",
           "options": {
             "#": "Configure to resolve artefacts referenced by image or link tags.",
-            "__evaluate__": "Tools.extend({}, self.module.optimizer.htmlMinifier || {}, {attrs: ['img:src', 'link:href'], minimize: self.module.optimizer.htmlMinifier})"
+            "__evaluate__": "Tools.extend({}, self.module.optimizer.htmlMinifier || {}, {attributes: ['img:src', 'link:href'], minimize: self.module.optimizer.htmlMinifier})"
           }
         },
         "optimizer": {
@@ -1275,7 +1275,7 @@
       "module": {
         "html": {
           "options": {
-            "attrs": [
+            "attributes": [
               "img:src",
               "link:href"
             ],
