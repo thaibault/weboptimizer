@@ -1352,7 +1352,7 @@
             "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['test:browser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, `index${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '.compiled' : ''}.css`)}?${self.hashAlgorithm}=[hash]`"
           },
           "javaScript": {
-            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, `[name]${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`)}?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, `[name]${!self.needed.typeScript && self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`)}?${self.hashAlgorithm}=[hash]`"
           }
         },
         "defaultHTML": {
