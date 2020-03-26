@@ -14,8 +14,7 @@
     endregion
 */
 // region imports
-import Tools from 'clientnode'
-import {ConsoleOutputMethods} from 'clientnode/type'
+import Tools, {ConsoleOutputMethods} from 'clientnode'
 import {DOMWindow} from 'jsdom'
 
 import {Browser} from './type'
