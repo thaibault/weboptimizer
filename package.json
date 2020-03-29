@@ -58,8 +58,8 @@
     "check:types": "tsc",
     "collect:coverage": "jest --collect-coverage",
     "document": "yarn build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.js",
-    "prettify": "eslint --fix --ignore-pattern '*.js' '*.compiled.*' '*.ts' 'test/*.ts' || true",
-    "lint": "eslint --ignore-pattern '*.js' '*.compiled.*' '*.ts' 'test/*.ts' || true",
+    "prettify": "eslint --fix --ignore-pattern '*.js' --ignore-pattern '*.compiled.*' '*.ts' 'test/*.ts' || true",
+    "lint": "eslint --ignore-pattern '*.js' --ignore-pattern '*.compiled.*' '*.ts' 'test/*.ts' || true",
     "prepare": "yarn build",
     "report:coverage": "shx cat ./test/coverage/lcov.info | coveralls",
     "test": "yarn build:test && jest --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/helper.js test/ejsLoader.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
@@ -696,7 +696,7 @@
           "loader": "html",
           "options": {
             "#": "Configure to resolve artefacts referenced by image or link tags.",
-            "__evaluate__": "Tools.extend({}, self.module.optimizer.htmlMinifier || {}, {attributes: ['img:src', 'link:href'], minimize: self.module.optimizer.htmlMinifier})"
+            "__evaluate__": "{minimize: self.module.optimizer.htmlMinifier}"
           }
         },
         "optimizer": {
@@ -1275,10 +1275,6 @@
       "module": {
         "html": {
           "options": {
-            "attributes": [
-              "img:src",
-              "link:href"
-            ],
             "minimize": false
           }
         },
