@@ -1492,8 +1492,7 @@
         "error",
         4,
         {
-          "flatTernaryExpressions": true,
-          "VariableDeclarator": 0
+          "ignoreComments": true
         }
       ],
       "max-nested-callbacks": [
