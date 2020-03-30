@@ -53,17 +53,19 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             virtualConsole.on(name, console[name].bind(console))
         virtualConsole.on(
             'error',
-            (error:{type:string;stack:any;detail:any}):void => {
+            (error:Error & {detail:string;type:string}):void => {
                 if (
                     !browser.debug &&
                     ['XMLHttpRequest', 'resource loading'].includes(error.type)
                 )
-                    console.warn(`Loading resource failed: ${error.toString()}.`)
+                    console.warn(
+                        `Loading resource failed: ${error.toString()}.`
+                    )
                 else
                     console.error(error.stack, error.detail)
             }
         )
-        const render:Function = (template:string):void => {
+        const render = (template:string):void => {
             browser.DOM = JSDOM
             browser.initialized = true
             browser.instance = new JSDOM(
@@ -83,7 +85,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                                 NOTE: Maybe we have miss the "DOMContentLoaded"
                                 event caused by a race condition.
                             */
-                            browser.domContentLoaded = browser.windowLoaded = true
+                            browser.domContentLoaded =
+                                browser.windowLoaded =
+                                true
                         })
                         for (const callback of onCreatedListener)
                             callback()
@@ -113,7 +117,6 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 )
             )
         } else
-            // @ts-ignore: Will be available at runtime.
             import('webOptimizerDefaultTemplateFilePath').then(render)
     }))
     // endregion
