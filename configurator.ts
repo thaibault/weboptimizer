@@ -26,10 +26,8 @@ import {
     GivenInjection,
     GivenInjectionConfiguration,
     InjectionConfiguration,
-    MetaConfiguration,
     ResolvedConfiguration,
-    SubConfigurationTypes,
-    WebpackLoader
+    SubConfigurationTypes
 } from './type'
 /*
     To assume to go two folder up from this file until there is no
@@ -153,7 +151,7 @@ while (true) {
     count += 1
 }
 let runtimeInformation:PlainObject & {
-    givenCommandLineArguments:Array<string>
+    givenCommandLineArguments:Array<string>;
 } = {givenCommandLineArguments: process.argv}
 if (filePath) {
     runtimeInformation = JSON.parse(fileSystem.readFileSync(
@@ -487,19 +485,19 @@ for (const htmlConfiguration of resolvedConfiguration.files.html) {
             resolvedConfiguration.files.defaultHTML.template.filePath &&
         htmlConfiguration.template.options
     ) {
-        const requestString:String = new String(
+        const requestString:string = new String(
             htmlConfiguration.template.request +
             Tools.convertCircularObjectToJSON(
                 htmlConfiguration.template.options
             )
-        )
+        ) as string
         /* eslint-disable @typescript-eslint/unbound-method */
         // @ts-ignore: Monkeypatching is not allowed by typescript.
         requestString.replace = (
             (value:string):Function => ():string => value
         )(htmlConfiguration.template.filePath)
         /* eslint-enable @typescript-eslint/unbound-method */
-        htmlConfiguration.template.request = requestString as string
+        htmlConfiguration.template.request = requestString
     }
 }
 // endregion
