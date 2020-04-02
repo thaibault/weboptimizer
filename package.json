@@ -226,12 +226,12 @@
         "types": {
           "default": {
             "filePathPattern": {
-              "__evaluate__": "`^${Tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+              "__evaluate__": "`^${Tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
             },
             "outputExtension": "js",
             "preinstall": {
               "#": "Create dummy file before building to let build artefacts created on install correctly be set their needed executable bits.",
-              "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.compiled.\\${buildConfiguration.outputExtension}'`"
+              "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.\\${buildConfiguration.outputExtension}'`"
             }
           },
           "typeScript": {
@@ -302,7 +302,7 @@
               },
               "--config",
               {
-                "__evaluate__": "path.relative(self.path.context, path.resolve(webOptimizerPath, 'stylelintConfigurator.compiled.js'))"
+                "__evaluate__": "path.relative(self.path.context, path.resolve(webOptimizerPath, 'stylelintConfigurator.js'))"
               }
             ],
             "command": "stylelint",
@@ -316,7 +316,7 @@
               },
               "--ignore-pattern",
               {
-                "__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? path.relative(currentPath, self.path.target.base, '**') : \"*.compiled.js\"}'`"
+                "__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? path.relative(currentPath, self.path.target.base, '**') : \"*.compiled.*\"}'`"
               },
               "--ignore-pattern",
               {
@@ -1195,7 +1195,7 @@
         "files": {
           "compose": {
             "javaScript": {
-              "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, `testBundle${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`)}?${self.hashAlgorithm}=[hash]`"
+              "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 'testBundle.js')}?${self.hashAlgorithm}=[hash]`"
             }
           },
           "defaultHTML": {
@@ -1310,7 +1310,7 @@
             "node"
           ],
           "command": {
-            "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --test-environment ${environment} --test-regex 'test.*\\\\.compiled\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
+            "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --test-environment ${environment} --test-regex 'test.*\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
           }
         }
       },
@@ -1327,7 +1327,7 @@
                 "__evaluate__": "self.path.apiDocumentation"
               },
               {
-                "__evaluate__": "`'${self.path.target.asset.javaScript}'*${self.path.target.asset.javaScript === self.path.source.asset.javaScript ? '.compiled' : ''}.js`"
+                "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '*.js')"
               }
             ]
           }
