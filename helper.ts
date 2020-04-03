@@ -86,6 +86,9 @@ export class Helper {
      * In-places given assets types in given dom nodes found in given assets.
      * @param assetType - Asset type integration configuration.
      * @param assets - Pool of assets to integrate.
+     * @param domNodes - Dom nodes with asset references to include.
+     * @param assetPositionPattern - Specifies where current asset content
+     * should be placed.
      * @returns Files to remove (caused be integration) and styles to
      * integrate.
      */
@@ -185,9 +188,9 @@ export class Helper {
      * In places each matching cascading style sheet or javaScript file
      * reference.
      * @param content - Markup content to process.
-     * @param cascadingStyleSheetPattern - Pattern to match cascading style
+     * @param cascadingStyleSheetPatterns - Pattern to match cascading style
      * sheet asset references again.
-     * @param javaScriptPattern - Pattern to match javaScript asset references
+     * @param javaScriptPatterns - Pattern to match javaScript asset references
      * again.
      * @param basePath - Base path to use as prefix for file references.
      * @param cascadingStyleSheetChunkNameTemplate - Cascading style sheet
@@ -281,7 +284,7 @@ export class Helper {
                             inPlaceStyleContents:Array<string>;
                         } = Helper.inPlaceAssetReferences(
                             assetType as AssetTypeIntegration & {
-                                patterns:AssetPositionPatterns
+                                patterns:AssetPositionPatterns;
                             },
                             assets,
                             domNodes,
@@ -315,13 +318,17 @@ export class Helper {
                             startTag:string,
                             endTag:string
                         ):string => {
-                            if (startTag.includes(' weboptimizerinplace="true"'))
+                            if (startTag.includes(
+                                ' weboptimizerinplace="true"'
+                            ))
                                 return (
                                     startTag.replace(
                                         ' weboptimizerinplace="true"', '') +
                                     `${inPlaceStyleContents.shift()}${endTag}`
                                 )
-                            return `${startTag}${styleContents.shift()}${endTag}`
+                            return (
+                                `${startTag}${styleContents.shift()}${endTag}`
+                            )
                         }
                     ),
             filePathsToRemove
@@ -699,9 +706,7 @@ export class Helper {
                     if (
                         file.stats &&
                         file.stats.isFile() &&
-                        path.extname(file.path).substring(
-                            1
-                        ) === newItem.extension &&
+                        path.extname(file.path).endsWith(newItem.extension) &&
                         !(new RegExp(newItem.filePathPattern)).test(file.path)
                     )
                         newItem.filePaths.push(file.path)
@@ -936,8 +941,6 @@ export class Helper {
      * @param givenInjection - Given entry and external injection to take
      * into account.
      * @param buildConfigurations - Resolved build configuration.
-     * @param modulesToExclude - A list of modules to exclude (specified by
-     * path or id) or a mapping from chunk names to module ids.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
      * account.
@@ -1033,7 +1036,7 @@ export class Helper {
                 injectedModuleIDs[buildConfiguration.outputExtension] = []
             for (const moduleFilePath of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
-                    const relativeModuleFilePath:string =
+                    const relativeModuleFilePath =
                         `./${path.relative(context, moduleFilePath)}`
                     const directoryPath:string = path.dirname(
                         relativeModuleFilePath)
@@ -1071,6 +1074,70 @@ export class Helper {
                         ].push(moduleID)
                     }
                 }
+        }
+        return result
+    }
+    // TODO test
+    /**
+     * Determines a resolved module file path in given package path.
+     * @param packagePath - Path to package to resolve in.
+     * @param packageMainPropertyNames - List of package file main property
+     * names to search for package representing entry module definitions.
+     * @param packageAliasPropertyNames - List of package file alias property
+     * names to search for package specific module aliases.
+     * @param encoding - Encoding to use for file names during file traversing.
+     * @returns Path if found and / or additional package aliases to consider.
+     */
+    static determineModuleFilePathInPackage(
+        packagePath:string,
+        packageMainPropertyNames:Array<string> = ['main'],
+        packageAliasPropertyNames:Array<string> = [],
+        encoding = 'utf-8'
+    ):{fileName:null|string;packageAliases:Mapping|null} {
+        const result:{fileName:null|string;packageAliases:Mapping|null} = {
+            fileName: null,
+            packageAliases: null
+        }
+        if (Tools.isDirectorySync(packagePath)) {
+            const pathToPackageJSON:string = path.resolve(
+                packagePath, 'package.json')
+            if (Tools.isFileSync(pathToPackageJSON)) {
+                let localConfiguration:PlainObject = {}
+                try {
+                    localConfiguration = JSON.parse(
+                        fileSystem.readFileSync(pathToPackageJSON, {encoding}))
+                } catch (error) {
+                    console.warn(
+                        `Package configuration file "${pathToPackageJSON}" ` +
+                        `could not parsed: ${Tools.represent(error)}`
+                    )
+                }
+                for (const propertyName of packageMainPropertyNames)
+                    if (
+                        Object.prototype.hasOwnProperty.call(
+                            localConfiguration, propertyName
+                        ) &&
+                        typeof localConfiguration[propertyName] === 'string' &&
+                        localConfiguration[propertyName]
+                    ) {
+                        result.fileName = localConfiguration[
+                            propertyName
+                        ] as string
+                        break
+                    }
+                for (const propertyName of packageAliasPropertyNames)
+                    if (
+                        Object.prototype.hasOwnProperty.call(
+                            localConfiguration, propertyName
+                        ) &&
+                        Tools.isPlainObject(localConfiguration[propertyName])
+                    ) {
+                        result.packageAliases = localConfiguration[
+                            propertyName
+                        ] as Mapping
+                        break
+                    }
+            }
         }
         return result
     }
@@ -1153,56 +1220,19 @@ export class Helper {
                                 moduleLocation, moduleFilePath)
                         let packageAliases:Mapping = {}
                         if (fileName === '__package__') {
-                            if (Tools.isDirectorySync(currentModuleFilePath)) {
-                                const pathToPackageJSON:string = path.resolve(
-                                    currentModuleFilePath, 'package.json')
-                                if (Tools.isFileSync(pathToPackageJSON)) {
-                                    let localConfiguration:PlainObject = {}
-                                    try {
-                                        localConfiguration = JSON.parse(
-                                            fileSystem.readFileSync(
-                                                pathToPackageJSON, {encoding}))
-                                    } catch (error) {}
-                                    for (
-                                        const propertyName of
-                                        packageMainPropertyNames
-                                    )
-                                        if (
-                                            Object.prototype.hasOwnProperty.call(
-                                                localConfiguration,
-                                                propertyName
-                                            ) &&
-                                            typeof localConfiguration[
-                                                propertyName
-                                            ] === 'string' &&
-                                            localConfiguration[propertyName]
-                                        ) {
-                                            fileName = localConfiguration[
-                                                propertyName
-                                            ] as string
-                                            break
-                                        }
-                                    for (
-                                        const propertyName of
-                                        packageAliasPropertyNames
-                                    )
-                                        if (
-                                            Object.prototype.hasOwnProperty.call(
-                                                localConfiguration,
-                                                propertyName
-                                            ) &&
-                                            Tools.isPlainObject(
-                                                localConfiguration[
-                                                    propertyName])
-                                        ) {
-                                            packageAliases =
-                                                localConfiguration[
-                                                    propertyName
-                                                ] as Mapping
-                                            break
-                                        }
-                                }
-                            }
+                            const result:{
+                                fileName:null|string;
+                                packageAliases:Mapping|null;
+                            } = Helper.determineModuleFilePathInPackage(
+                                currentModuleFilePath,
+                                packageMainPropertyNames,
+                                packageAliasPropertyNames,
+                                encoding
+                            )
+                            if (result.fileName)
+                                fileName = result.fileName
+                            if (result.packageAliases)
+                                packageAliases = result.packageAliases
                             if (fileName === '__package__')
                                 continue
                         }
@@ -1274,7 +1304,7 @@ export class Helper {
         start:Array<string>|string, fileName = 'package.json'
     ):null|string {
         if (typeof start === 'string') {
-            if (start[start.length - 1] !== path.sep)
+            if (!start.endsWith(path.sep))
                 start += path.sep
             start = start.split(path.sep)
         }
@@ -1286,7 +1316,9 @@ export class Helper {
         try {
             if (fileSystem.existsSync(result))
                 return result
+        /* eslint-disable no-empty */
         } catch (error) {}
+        /* eslint-enable no-empty */
         return Helper.findPackageDescriptorFilePath(start, fileName)
     }
     /**
