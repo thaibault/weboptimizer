@@ -169,10 +169,19 @@ export type WebpackLoaderConfiguration = {
 export type WebpackLoaderIndicator =
     Array<WebpackLoaderIndicator>|Function|string
 // // endregion
-export type AssetPositionPattern = {[key:string]:'body'|'head'|'in'|string}|null
 export type AssetInPlaceInjectionResult = {
     content:string;
     filePathsToRemove:Array<string>;
+}
+export type AssetPositionPatterns = {[key:string]:'body'|'head'|'in'|string}
+export type AssetTypeIntegration = {
+    attributeName:string;
+    hash:string;
+    linkTagName:string;
+    patterns:AssetPositionPatterns|null;
+    selector:string;
+    tagName:string;
+    template:string;
 }
 export type Command = {
     arguments:Array<string>;
@@ -410,6 +419,8 @@ export type WebpackConfiguration = BaseWebpackConfiguration & {
     replaceWebOptimizer:WebpackConfiguration;
 }
 // / endregion
+// NOTE: Not yet defined in webpack types.
+export type WebpackAssets = {[key:string]:{source:() => string}}
 export type HTMLWebpackPluginAssetTagGroupsData = {
     bodyTags: HtmlWebpackPlugin.HtmlTagObject[];
     headTags: HtmlWebpackPlugin.HtmlTagObject[];

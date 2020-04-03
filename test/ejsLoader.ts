@@ -3,32 +3,26 @@
 'use strict'
 // region imports
 import Tools from 'clientnode'
+import {loader} from 'webpack'
 
 import ejsLoader from '../ejsLoader'
 // endregion
 // region mockup
-const context:{
-    addDependency:() => void;
-    query:string;
-    debug:boolean;
-    loaders:Array<Record<string, Function>>;
-    loaderIndex:number;
-} = {
-    addDependency: Tools.noop,
-    query: '',
+const context:loader.LoaderContext = {
     debug: false,
-    loaders: [],
-    loaderIndex: 0
-}
+    resourcePath: '',
+    query: ''
+} as loader.LoaderContext
 // endregion
 describe('ejsLoader', ():void => {
     // region tests
     test('loader', ():void => {
         expect(ejsLoader.call(context, '<a></a>')).toStrictEqual('<a></a>')
-        const complexContext = Tools.extend(
+        const complexContext:loader.LoaderContext = Tools.extend(
             true,
             {},
-            context, {
+            context,
+            {
                 cacheable: Tools.noop,
                 query: {
                     locals: {test: 'hans'},
