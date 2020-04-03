@@ -19,7 +19,7 @@
 import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
-import Tools from 'clientnode'
+import Tools, {CloseEventNames} from 'clientnode'
 import {
     File, PlainObject, ProcedureFunction, ProcessHandler
 } from 'clientnode/type'
@@ -379,7 +379,7 @@ const main = async ():Promise<void> => {
                             copyAdditionalFilesAndTidyUp :
                             tidyUp
                     )
-                    for (const closeEventName of Tools.closeEventNames)
+                    for (const closeEventName of CloseEventNames)
                         childProcess.on(closeEventName, closeHandler)
                     childProcesses.push(childProcess)
                 }))
@@ -508,7 +508,7 @@ const main = async ():Promise<void> => {
                                     childProcessOptions)
                             const closeHandler:ProcedureFunction =
                                 Tools.getProcessCloseHandler(resolve, reject)
-                            for (const closeEventName of Tools.closeEventNames)
+                            for (const closeEventName of CloseEventNames)
                                 childProcess.on(closeEventName, closeHandler)
                             childProcesses.push(childProcess)
                         }))
@@ -538,7 +538,7 @@ const main = async ():Promise<void> => {
                     closeEventHandler(...parameter)
             finished = true
         }
-        for (const closeEventName of Tools.closeEventNames)
+        for (const closeEventName of CloseEventNames)
             // @ts-ignore: Accepts only "NodeSignals" but other strings are
             // available.
             process.on(closeEventName, closeHandler)
