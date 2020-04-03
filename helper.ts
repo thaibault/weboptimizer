@@ -23,7 +23,8 @@ import path from 'path'
 import {
     AssetInPlaceInjectionResult,
     AssetPathConfiguration,
-    AssetPositionPattern,
+    AssetPositionPatterns,
+    AssetTypeIntegration,
     BuildConfiguration,
     Extensions,
     GivenInjection,
@@ -35,7 +36,8 @@ import {
     Replacements,
     ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem,
-    SpecificExtensions
+    SpecificExtensions,
+    WebpackAssets
 } from './type'
 // endregion
 // region constants
@@ -79,13 +81,116 @@ export class Helper {
     }
     // endregion
     // region string
+    // TODO test
+    /**
+     * In-places given assets types in given dom nodes found in given assets.
+     * @param assetType - Asset type integration configuration.
+     * @param assets - Pool of assets to integrate.
+     * @param domNodes - Dom nodes with asset references to include.
+     * @param assetPositionPattern - Specifies where current asset content
+     * should be placed.
+     * @returns Files to remove (caused be integration) and styles to
+     * integrate.
+     */
+    static inPlaceAssetReferences(
+        assetType:AssetTypeIntegration & {patterns:AssetPositionPatterns},
+        assets:WebpackAssets,
+        domNodes:Array<HTMLElement>,
+        assetPositionPattern:keyof AssetPositionPatterns
+    ):{filePathsToRemove:Array<string>;inPlaceStyleContents:Array<string>} {
+        const filePathsToRemove:Array<string> = []
+        const inPlaceStyleContents:Array<string> = []
+
+        for (const domNode of domNodes) {
+            let path:null|string = domNode.getAttribute(
+                assetType.attributeName)
+            if (typeof path === 'string') {
+                path = path.replace(/&.*/g, '')
+                if (!Object.prototype.hasOwnProperty.call(assets, path))
+                    continue
+                const inPlaceDomNode:HTMLElement =
+                    window.document.createElement(assetType.tagName)
+                if (assetType.tagName === 'style') {
+                    inPlaceDomNode.setAttribute('weboptimizerinplace', 'true')
+                    inPlaceStyleContents.push(assets[path].source())
+                } else
+                    inPlaceDomNode.textContent = assets[path].source()
+                if (domNode.parentNode) {
+                    if (assetType.patterns[assetPositionPattern] === 'body')
+                        window.document.body.appendChild(inPlaceDomNode)
+                    else if (assetType.patterns[assetPositionPattern] === 'in')
+                        domNode.parentNode.insertBefore(
+                            inPlaceDomNode, domNode)
+                    else if (
+                        assetType.patterns[assetPositionPattern] === 'head'
+                    )
+                        window.document.head.appendChild(inPlaceDomNode)
+                    else {
+                        const regularExpressionPattern =
+                            '(after|before|in):(.+)'
+                        const testMatch:Array<string>|null =
+                            (new RegExp(regularExpressionPattern))
+                                .exec(assetType.patterns[assetPositionPattern])
+                        let match:Array<string>
+                        if (testMatch)
+                            match = testMatch
+                        else
+                            throw new Error(
+                                'Given in place specification "' +
+                                `${assetType.patterns[assetPositionPattern]}` +
+                                `" for ${assetType.tagName} does not satisfy` +
+                                ' the specified pattern "' +
+                                `${regularExpressionPattern}".`
+                            )
+                        const domNode:HTMLElement|null =
+                            window.document.querySelector(match[2])
+                        if (!domNode)
+                            throw new Error(
+                                `Specified dom node "${match[2]}" could not ` +
+                                'be found to in place "' +
+                                `${assetPositionPattern}".`
+                            )
+                        if (match[1] === 'in')
+                            domNode.appendChild(inPlaceDomNode)
+                        else if (match[1] === 'before')
+                            domNode.insertAdjacentElement(
+                                'beforebegin', inPlaceDomNode)
+                        else
+                            domNode.insertAdjacentElement(
+                                'afterend', inPlaceDomNode)
+                    }
+                    domNode.parentNode.removeChild(domNode)
+                    /*
+                        NOTE: This doesn't prevent webpack from creating this
+                        file if present in another chunk so removing it (and a
+                        potential source map file) later in the "done" hook.
+                    */
+                    filePathsToRemove.push(Helper.stripLoader(path))
+                    delete assets[path]
+                } else
+                    throw new Error(
+                        'Given in place specification "' +
+                        `${assetType.patterns[assetPositionPattern]}" for ` +
+                        `${assetType.tagName} is not possible because of ` +
+                        'missing parent node.'
+                    )
+            } else
+                throw new Error(
+                    'Given in place specification "' +
+                    `${assetType.patterns[assetPositionPattern]}" for ` +
+                    `${assetType.tagName} is not possible because of missing` +
+                    ` attribute "${assetType.attributeName}".`
+                )
+        }
+        return {filePathsToRemove, inPlaceStyleContents}
+    }
     /**
      * In places each matching cascading style sheet or javaScript file
      * reference.
      * @param content - Markup content to process.
-     * @param cascadingStyleSheetPattern - Pattern to match cascading style
+     * @param cascadingStyleSheetPatterns - Pattern to match cascading style
      * sheet asset references again.
-     * @param javaScriptPattern - Pattern to match javaScript asset references
+     * @param javaScriptPatterns - Pattern to match javaScript asset references
      * again.
      * @param basePath - Base path to use as prefix for file references.
      * @param cascadingStyleSheetChunkNameTemplate - Cascading style sheet
@@ -97,12 +202,12 @@ export class Helper {
      */
     static inPlaceCSSAndJavaScriptAssetReferences(
         content:string,
-        cascadingStyleSheetPattern:AssetPositionPattern,
-        javaScriptPattern:AssetPositionPattern,
+        cascadingStyleSheetPatterns:AssetPositionPatterns|null,
+        javaScriptPatterns:AssetPositionPatterns|null,
         basePath:string,
         cascadingStyleSheetChunkNameTemplate:string,
         javaScriptChunkNameTemplate:string,
-        assets:{[key:string]:Record<string, any>}
+        assets:WebpackAssets
     ):AssetInPlaceInjectionResult {
         /*
             NOTE: We have to prevent creating native "style" dom nodes to
@@ -130,14 +235,14 @@ export class Helper {
                 .replace(/<%/g, '##+#+#+##')
                 .replace(/%>/g, '##-#-#-##')
         )).window
-        const inPlaceStyleContents:Array<string> = []
-        const filePathsToRemove:Array<string> = []
+        let inPlaceStyleContents:Array<string> = []
+        let filePathsToRemove:Array<string> = []
         for (const assetType of [
             {
                 attributeName: 'href',
                 hash: 'hash',
                 linkTagName: 'link',
-                pattern: cascadingStyleSheetPattern,
+                patterns: cascadingStyleSheetPatterns,
                 selector: '[href*=".css"]',
                 tagName: 'style',
                 template: cascadingStyleSheetChunkNameTemplate
@@ -146,16 +251,16 @@ export class Helper {
                 attributeName: 'src',
                 hash: 'hash',
                 linkTagName: 'script',
-                pattern: javaScriptPattern,
+                patterns: javaScriptPatterns,
                 selector: '[href*=".js"]',
                 tagName: 'script',
                 template: javaScriptChunkNameTemplate
             }
         ])
-            if (assetType.pattern)
-                for (const pattern in assetType.pattern) {
+            if (assetType.patterns)
+                for (const pattern in assetType.patterns) {
                     if (!Object.prototype.hasOwnProperty.call(
-                        assetType.pattern, pattern
+                        assetType.patterns, pattern
                     ))
                         continue
                     let selector:string = assetType.selector
@@ -173,96 +278,23 @@ export class Helper {
                         window.document.querySelectorAll<HTMLElement>(
                             `${assetType.linkTagName}${selector}`)
                     )
-                    if (domNodes.length)
-                        for (const domNode of domNodes) {
-                            let path:null|string = domNode.getAttribute(
-                                assetType.attributeName)
-                            if (typeof path === 'string') {
-                                path = path.replace(/&.*/g, '')
-                                if (!Object.prototype.hasOwnProperty.call(
-                                    assets, path
-                                ))
-                                    continue
-                                const inPlaceDomNode:HTMLElement =
-                                    window.document.createElement(
-                                        assetType.tagName)
-                                if (assetType.tagName === 'style') {
-                                    inPlaceDomNode.setAttribute(
-                                        'weboptimizerinplace', 'true')
-                                    inPlaceStyleContents.push(
-                                        assets[path].source())
-                                } else
-                                    inPlaceDomNode.textContent =
-                                        assets[path].source()
-                                if (domNode.parentNode) {
-                                    if (assetType.pattern[pattern] === 'body')
-                                        window.document.body.appendChild(
-                                            inPlaceDomNode)
-                                    else if (assetType.pattern[pattern] === 'in')
-                                        domNode.parentNode.insertBefore(
-                                            inPlaceDomNode, domNode)
-                                    else if (assetType.pattern[pattern] === 'head')
-                                        window.document.head.appendChild(
-                                            inPlaceDomNode)
-                                    else {
-                                        const regularExpressionPattern =
-                                            '(after|before|in):(.+)'
-                                        const testMatch:Array<string>|null =
-                                            (new RegExp(regularExpressionPattern))
-                                                .exec(assetType.pattern[pattern])
-                                        let match:Array<string>
-                                        if (testMatch)
-                                            match = testMatch
-                                        else
-                                            throw new Error(
-                                                'Given in place specification "' +
-                                                `${assetType.pattern[pattern]}" for ` +
-                                                `${assetType.tagName} does not ` +
-                                                'satisfy the specified pattern "' +
-                                                `${regularExpressionPattern}".`
-                                            )
-                                        const domNode:HTMLElement|null =
-                                            window.document.querySelector(match[2])
-                                        if (!domNode)
-                                            throw new Error(
-                                                `Specified dom node "${match[2]}` +
-                                                '" could not be found to in ' +
-                                                `place "${pattern}".`)
-                                        if (match[1] === 'in')
-                                            domNode.appendChild(inPlaceDomNode)
-                                        else if (match[1] === 'before')
-                                            domNode.insertAdjacentElement(
-                                                'beforebegin', inPlaceDomNode)
-                                        else
-                                            domNode.insertAdjacentElement(
-                                                'afterend', inPlaceDomNode)
-                                    }
-                                    domNode.parentNode.removeChild(domNode)
-                                    /*
-                                        NOTE: This doesn't prevent webpack from
-                                        creating this file if present in another chunk
-                                        so removing it (and a potential source map
-                                        file) later in the "done" hook.
-                                    */
-                                    filePathsToRemove.push(Helper.stripLoader(path))
-                                    delete assets[path]
-                                } else
-                                    throw new Error(
-                                        'Given in place specification "' +
-                                        `${assetType.pattern[pattern]}" for ` +
-                                        `${assetType.tagName} is not ` +
-                                        'possible because of missing parent node.'
-                                    )
-                            } else
-                                throw new Error(
-                                    'Given in place specification "' +
-                                    `${assetType.pattern[pattern]}" for ` +
-                                    `${assetType.tagName} is not ` +
-                                    'possible because of missing attribute "' +
-                                    `${assetType.attributeName}".`
-                                )
-                        }
-                    else
+                    if (domNodes.length) {
+                        const result:{
+                            filePathsToRemove:Array<string>;
+                            inPlaceStyleContents:Array<string>;
+                        } = Helper.inPlaceAssetReferences(
+                            assetType as AssetTypeIntegration & {
+                                patterns:AssetPositionPatterns;
+                            },
+                            assets,
+                            domNodes,
+                            pattern
+                        )
+                        filePathsToRemove = filePathsToRemove.concat(
+                            result.filePathsToRemove)
+                        inPlaceStyleContents = inPlaceStyleContents.concat(
+                            result.inPlaceStyleContents)
+                    } else
                         console.warn(
                             `No referenced ${assetType.tagName} file in ` +
                             'resulting markup found with selector: "' +
@@ -271,27 +303,34 @@ export class Helper {
                 }
         // NOTE: We have to restore template delimiter and style contents.
         return {
-            content: content
-                .replace(/^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1') +
-                window.document.documentElement.outerHTML
-                .replace(/##\+#\+#\+##/g, '<%')
-                .replace(/##-#-#-##/g, '%>')
-                .replace(
-                    /(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi,
-                    (
-                        match:string,
-                        startTag:string,
-                        endTag:string
-                    ):string => {
-                        if (startTag.includes(' weboptimizerinplace="true"'))
+            content:
+                (
+                    content
+                        .replace(/^(\s*<!doctype [^>]+?>\s*)[\s\S]*$/i, '$1') +
+                    window.document.documentElement.outerHTML
+                )
+                    .replace(/##\+#\+#\+##/g, '<%')
+                    .replace(/##-#-#-##/g, '%>')
+                    .replace(
+                        /(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi,
+                        (
+                            match:string,
+                            startTag:string,
+                            endTag:string
+                        ):string => {
+                            if (startTag.includes(
+                                ' weboptimizerinplace="true"'
+                            ))
+                                return (
+                                    startTag.replace(
+                                        ' weboptimizerinplace="true"', '') +
+                                    `${inPlaceStyleContents.shift()}${endTag}`
+                                )
                             return (
-                                startTag.replace(
-                                    ' weboptimizerinplace="true"', '') +
-                                `${inPlaceStyleContents.shift()}${endTag}`
+                                `${startTag}${styleContents.shift()}${endTag}`
                             )
-                        return `${startTag}${styleContents.shift()}${endTag}`
-                    }
-                ),
+                        }
+                    ),
             filePathsToRemove
         }
     }
@@ -667,9 +706,7 @@ export class Helper {
                     if (
                         file.stats &&
                         file.stats.isFile() &&
-                        path.extname(file.path).substring(
-                            1
-                        ) === newItem.extension &&
+                        path.extname(file.path).endsWith(newItem.extension) &&
                         !(new RegExp(newItem.filePathPattern)).test(file.path)
                     )
                         newItem.filePaths.push(file.path)
@@ -904,8 +941,6 @@ export class Helper {
      * @param givenInjection - Given entry and external injection to take
      * into account.
      * @param buildConfigurations - Resolved build configuration.
-     * @param modulesToExclude - A list of modules to exclude (specified by
-     * path or id) or a mapping from chunk names to module ids.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
      * account.
@@ -1001,7 +1036,7 @@ export class Helper {
                 injectedModuleIDs[buildConfiguration.outputExtension] = []
             for (const moduleFilePath of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
-                    const relativeModuleFilePath:string =
+                    const relativeModuleFilePath =
                         `./${path.relative(context, moduleFilePath)}`
                     const directoryPath:string = path.dirname(
                         relativeModuleFilePath)
@@ -1039,6 +1074,70 @@ export class Helper {
                         ].push(moduleID)
                     }
                 }
+        }
+        return result
+    }
+    // TODO test
+    /**
+     * Determines a resolved module file path in given package path.
+     * @param packagePath - Path to package to resolve in.
+     * @param packageMainPropertyNames - List of package file main property
+     * names to search for package representing entry module definitions.
+     * @param packageAliasPropertyNames - List of package file alias property
+     * names to search for package specific module aliases.
+     * @param encoding - Encoding to use for file names during file traversing.
+     * @returns Path if found and / or additional package aliases to consider.
+     */
+    static determineModuleFilePathInPackage(
+        packagePath:string,
+        packageMainPropertyNames:Array<string> = ['main'],
+        packageAliasPropertyNames:Array<string> = [],
+        encoding = 'utf-8'
+    ):{fileName:null|string;packageAliases:Mapping|null} {
+        const result:{fileName:null|string;packageAliases:Mapping|null} = {
+            fileName: null,
+            packageAliases: null
+        }
+        if (Tools.isDirectorySync(packagePath)) {
+            const pathToPackageJSON:string = path.resolve(
+                packagePath, 'package.json')
+            if (Tools.isFileSync(pathToPackageJSON)) {
+                let localConfiguration:PlainObject = {}
+                try {
+                    localConfiguration = JSON.parse(
+                        fileSystem.readFileSync(pathToPackageJSON, {encoding}))
+                } catch (error) {
+                    console.warn(
+                        `Package configuration file "${pathToPackageJSON}" ` +
+                        `could not parsed: ${Tools.represent(error)}`
+                    )
+                }
+                for (const propertyName of packageMainPropertyNames)
+                    if (
+                        Object.prototype.hasOwnProperty.call(
+                            localConfiguration, propertyName
+                        ) &&
+                        typeof localConfiguration[propertyName] === 'string' &&
+                        localConfiguration[propertyName]
+                    ) {
+                        result.fileName = localConfiguration[
+                            propertyName
+                        ] as string
+                        break
+                    }
+                for (const propertyName of packageAliasPropertyNames)
+                    if (
+                        Object.prototype.hasOwnProperty.call(
+                            localConfiguration, propertyName
+                        ) &&
+                        Tools.isPlainObject(localConfiguration[propertyName])
+                    ) {
+                        result.packageAliases = localConfiguration[
+                            propertyName
+                        ] as Mapping
+                        break
+                    }
+            }
         }
         return result
     }
@@ -1121,56 +1220,19 @@ export class Helper {
                                 moduleLocation, moduleFilePath)
                         let packageAliases:Mapping = {}
                         if (fileName === '__package__') {
-                            if (Tools.isDirectorySync(currentModuleFilePath)) {
-                                const pathToPackageJSON:string = path.resolve(
-                                    currentModuleFilePath, 'package.json')
-                                if (Tools.isFileSync(pathToPackageJSON)) {
-                                    let localConfiguration:PlainObject = {}
-                                    try {
-                                        localConfiguration = JSON.parse(
-                                            fileSystem.readFileSync(
-                                                pathToPackageJSON, {encoding}))
-                                    } catch (error) {}
-                                    for (
-                                        const propertyName of
-                                        packageMainPropertyNames
-                                    )
-                                        if (
-                                            Object.prototype.hasOwnProperty.call(
-                                                localConfiguration,
-                                                propertyName
-                                            ) &&
-                                            typeof localConfiguration[
-                                                propertyName
-                                            ] === 'string' &&
-                                            localConfiguration[propertyName]
-                                        ) {
-                                            fileName = localConfiguration[
-                                                propertyName
-                                            ] as string
-                                            break
-                                        }
-                                    for (
-                                        const propertyName of
-                                        packageAliasPropertyNames
-                                    )
-                                        if (
-                                            Object.prototype.hasOwnProperty.call(
-                                                localConfiguration,
-                                                propertyName
-                                            ) &&
-                                            Tools.isPlainObject(
-                                                localConfiguration[
-                                                    propertyName])
-                                        ) {
-                                            packageAliases =
-                                                localConfiguration[
-                                                    propertyName
-                                                ] as Mapping
-                                            break
-                                        }
-                                }
-                            }
+                            const result:{
+                                fileName:null|string;
+                                packageAliases:Mapping|null;
+                            } = Helper.determineModuleFilePathInPackage(
+                                currentModuleFilePath,
+                                packageMainPropertyNames,
+                                packageAliasPropertyNames,
+                                encoding
+                            )
+                            if (result.fileName)
+                                fileName = result.fileName
+                            if (result.packageAliases)
+                                packageAliases = result.packageAliases
                             if (fileName === '__package__')
                                 continue
                         }
@@ -1242,7 +1304,7 @@ export class Helper {
         start:Array<string>|string, fileName = 'package.json'
     ):null|string {
         if (typeof start === 'string') {
-            if (start[start.length - 1] !== path.sep)
+            if (!start.endsWith(path.sep))
                 start += path.sep
             start = start.split(path.sep)
         }
@@ -1254,7 +1316,9 @@ export class Helper {
         try {
             if (fileSystem.existsSync(result))
                 return result
+        /* eslint-disable no-empty */
         } catch (error) {}
+        /* eslint-enable no-empty */
         return Helper.findPackageDescriptorFilePath(start, fileName)
     }
     /**

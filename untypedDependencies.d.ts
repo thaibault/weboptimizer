@@ -1,5 +1,6 @@
 #!/usr/bin/env ts-node
 // -*- coding: utf-8 -*-
+declare module 'babel-preset-minify'
 declare module 'html-loader'
 declare module 'webOptimizerDefaultTemplateFilePath'
 // region vim modline

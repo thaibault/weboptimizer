@@ -17,7 +17,6 @@
 import {
     BabelFileResult, transformSync as babelTransformSync
 } from '@babel/core'
-// @ts-ignore: Not possible to declare as module yet.
 import babelMinifyPreset from 'babel-preset-minify'
 /*
     NOTE: Would result in error: "TypeError:
@@ -32,6 +31,7 @@ import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import {getOptions, getRemainingRequest} from 'loader-utils'
 import path from 'path'
+import {loader} from 'webpack'
 
 import configuration from './configurator'
 import Helper from './helper'
@@ -68,46 +68,52 @@ export type EJSLoaderConfiguration = {
     [key:string]:unknown;
 }
 // endregion
-export default function(this:any, source:string):string {
-    if ('cachable' in this && this.cacheable)
-        this.cacheable()
-    const query:EJSLoaderConfiguration = Tools.convertSubstringInPlainObject(
-        Tools.extend(
-            true,
-            {
-                compileSteps: 2,
-                compress: {
-                    html: {},
-                    javaScript: {}
-                },
-                context: './',
-                extensions: {
-                    file: {
-                        external: [],
-                        internal: [
-                            '.js', '.json',
-                            '.css',
-                            '.svg', '.png', '.jpg', '.gif', '.ico',
-                            '.html',
-                            '.eot', '.ttf', '.woff', '.woff2'
-                        ]
+/**
+ * Main transformation function.
+ * @param this - Loader context.
+ * @param source - Input string to transform.
+ * @returns Transformed string.
+ */
+export default function(this:loader.LoaderContext, source:string):string {
+    if ('cacheable' in this)
+        this.cacheable(!this.debug)
+    const givenOptions:EJSLoaderConfiguration =
+        Tools.convertSubstringInPlainObject(
+            Tools.extend(
+                true,
+                {
+                    compileSteps: 2,
+                    compress: {
+                        html: {},
+                        javaScript: {}
                     },
-                    module: []
+                    context: './',
+                    extensions: {
+                        file: {
+                            external: [],
+                            internal: [
+                                '.js', '.json',
+                                '.css',
+                                '.svg', '.png', '.jpg', '.gif', '.ico',
+                                '.html',
+                                '.eot', '.ttf', '.woff', '.woff2'
+                            ]
+                        },
+                        module: []
+                    },
+                    module: {
+                        aliases: {},
+                        replacements: {}
+                    }
                 },
-                module: {
-                    aliases: {},
-                    replacements: {}
-                }
-            },
-            this.options || {},
-            'query' in this ? getOptions(this) || {} : {}
-        ),
-        /#%%%#/g,
-        '!'
-    ) as EJSLoaderConfiguration
+                'query' in this ? getOptions(this) || {} : {}
+            ),
+            /#%%%#/g,
+            '!'
+        ) as EJSLoaderConfiguration
     const compile:CompileFunction = (
         template:string,
-        options:EJSCompilerConfiguration = query.compiler,
+        options:EJSCompilerConfiguration = givenOptions.compiler,
         compileSteps = 2
     ):TemplateFunction => (locals:Record<string, unknown> = {}):string => {
         options = Tools.extend(true, {filename: template}, options)
@@ -149,13 +155,13 @@ export default function(this:any, source:string):string {
                 return compile(template, nestedOptions)(nestedLocals)
             const templateFilePath:null|string = Helper.determineModuleFilePath(
                 template,
-                query.module.aliases,
-                query.module.replacements,
+                givenOptions.module.aliases,
+                givenOptions.module.replacements,
                 {
-                    file: query.extensions.file.internal,
-                    module: query.extensions.module
+                    file: givenOptions.extensions.file.internal,
+                    module: givenOptions.extensions.module
                 },
-                query.context,
+                givenOptions.context,
                 configuration.path.source.asset.base,
                 configuration.path.ignore,
                 configuration.module.directoryNames,
@@ -165,7 +171,7 @@ export default function(this:any, source:string):string {
                 configuration.encoding
             )
             if (templateFilePath) {
-                if ('query' in this)
+                if ('addDependency' in this)
                     this.addDependency(templateFilePath)
                 /*
                     NOTE: If there aren't any locals options or variables and
@@ -175,13 +181,15 @@ export default function(this:any, source:string):string {
                 if (queryMatch || templateFilePath.endsWith('.ejs'))
                     return compile(templateFilePath, nestedOptions)(
                         nestedLocals)
-                return fileSystem.readFileSync(templateFilePath, nestedOptions) as unknown as string
+                return fileSystem.readFileSync(
+                    templateFilePath, nestedOptions
+                ) as unknown as string
             }
             throw new Error(
                 `Given template file "${template}" couldn't be resolved.`)
         }
         const compressHTML:Function = (content:string):string =>
-            query.compress.html ?
+            givenOptions.compress.html ?
                 minifyHTML(
                     content,
                     Tools.extend(
@@ -211,7 +219,7 @@ export default function(this:any, source:string):string {
                             trimCustomFragments: true,
                             useShortDoctype: true
                         },
-                        query.compress.html
+                        givenOptions.compress.html
                     )
                 ) :
                 content
@@ -221,7 +229,7 @@ export default function(this:any, source:string):string {
         delete options.isString
         while (remainingSteps > 0) {
             if (typeof result === 'string') {
-                const filePath:string = isString && options.filename || result
+                const filePath:string = isString ? options.filename : result
                 if (filePath && path.extname(filePath) === '.js')
                     result = eval('require')(filePath)
                 else {
@@ -232,8 +240,10 @@ export default function(this:any, source:string):string {
                         result = fileSystem.readFileSync(result, {encoding})
                     }
                     if (remainingSteps === 1)
-                        result = compressHTML(result as string)
-                    result = ejs.compile(result as string, options) as TemplateFunction
+                        result = compressHTML(result)
+                    result = ejs.compile(
+                        result as string, options
+                    ) as TemplateFunction
                 }
             } else
                 result = compressHTML(result(Tools.extend(
@@ -244,22 +254,24 @@ export default function(this:any, source:string):string {
             remainingSteps -= 1
         }
         if (compileSteps % 2) {
-            let code:string = `module.exports = ${result.toString()};`
+            let code = `module.exports = ${result.toString()};`
             const processed:BabelFileResult|null = babelTransformSync(
                 code,
                 {
                     ast: false,
                     babelrc: false,
-                    comments: !query.compress.javaScript,
-                    compact: Boolean(query.compress.javaScript),
+                    comments: !givenOptions.compress.javaScript,
+                    compact: Boolean(givenOptions.compress.javaScript),
                     filename: options.filename || 'unknown',
-                    minified: Boolean(query.compress.javaScript),
+                    minified: Boolean(givenOptions.compress.javaScript),
                     /*
                         NOTE: See corresponding import statement.
                     plugins: [transformWith],
                     */
-                    presets: query.compress.javaScript ?
-                        [[babelMinifyPreset, query.compress.javaScript]] :
+                    presets: givenOptions.compress.javaScript ?
+                        [[
+                            babelMinifyPreset, givenOptions.compress.javaScript
+                        ]] :
                         [],
                     sourceMaps: false,
                     sourceType: 'script'
@@ -294,17 +306,17 @@ export default function(this:any, source:string):string {
     return compile(
         source,
         {
-            client: Boolean(query.compileSteps % 2),
+            client: Boolean(givenOptions.compileSteps % 2),
             compileDebug: this.debug || false,
             debug: this.debug || false,
             filename:
                 'query' in this ?
                     getRemainingRequest(this).replace(/^!/, '') :
-                    this.filename || null,
+                    (this as loader.LoaderContext).resourcePath || 'unknown',
             isString: true
         },
-        query.compileSteps
-    )(query.locals || {})
+        givenOptions.compileSteps
+    )(givenOptions.locals || {})
 }
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

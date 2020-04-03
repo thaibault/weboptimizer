@@ -491,12 +491,18 @@ for (const htmlConfiguration of resolvedConfiguration.files.html) {
                 htmlConfiguration.template.options
             )
         ) as string
-        /* eslint-disable @typescript-eslint/unbound-method */
+        /* eslint-disable
+            @typescript-eslint/unbound-method,
+            @typescript-eslint/ban-ts-ignore
+        */
         // @ts-ignore: Monkeypatching is not allowed by typescript.
         requestString.replace = (
             (value:string):Function => ():string => value
         )(htmlConfiguration.template.filePath)
-        /* eslint-enable @typescript-eslint/unbound-method */
+        /* eslint-enable
+            @typescript-eslint/unbound-method,
+            @typescript-eslint/ban-ts-ignore
+        */
         htmlConfiguration.template.request = requestString
     }
 }

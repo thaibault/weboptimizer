@@ -7,7 +7,7 @@ import path from 'path'
 
 import {
     AssetInPlaceInjectionResult,
-    AssetPositionPattern,
+    AssetPositionPatterns,
     BuildConfiguration,
     Extensions,
     GivenInjection,
@@ -15,7 +15,8 @@ import {
     NormalizedGivenInjection,
     PathConfiguration,
     Replacements,
-    ResolvedBuildConfiguration
+    ResolvedBuildConfiguration,
+    WebpackAssets
 } from '../type'
 import Helper from '../helper'
 // endregion
@@ -94,12 +95,12 @@ describe('helper', ():void => {
             expected:AssetInPlaceInjectionResult,
             ...parameter:[
                 string,
-                AssetPositionPattern,
-                AssetPositionPattern,
+                null|AssetPositionPatterns,
+                null|AssetPositionPatterns,
                 string,
                 string,
                 string,
-                Record<string, Record<string, any>>
+                WebpackAssets
             ]
         ):void =>
             expect(Helper.inPlaceCSSAndJavaScriptAssetReferences(...parameter))

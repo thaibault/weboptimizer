@@ -284,7 +284,8 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(
                     )
                         try {
                             const result:{
-                                content:string; filePathsToRemove:Array<string>;
+                                content:string;
+                                filePathsToRemove:Array<string>;
                             } = Helper.inPlaceCSSAndJavaScriptAssetReferences(
                                 data.html,
                                 configuration.inPlace.cascadingStyleSheet,
