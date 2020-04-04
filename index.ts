@@ -15,11 +15,12 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports
+// region imports 
 import {
     ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
 import Tools, {CloseEventNames} from 'clientnode'
+import {ChildProcessOptions} from 'clientnode/type'
 import {
     File, PlainObject, ProcedureFunction, ProcessHandler
 } from 'clientnode/type'
@@ -49,7 +50,7 @@ process.env.UV_THREADPOOL_SIZE = '128'
 const main = async ():Promise<void> => {
     try {
         // region controller
-        const childProcessOptions:Record<string, any> = {
+        const childProcessOptions:ChildProcessOptions = {
             cwd: configuration.path.context,
             env: process.env,
             shell: true,
