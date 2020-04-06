@@ -22,17 +22,19 @@ export class BrowserEnvironment {
     /**
      * @returns Nothing.
      */
-    setup() {
+    setup():Promise<void> {
         return Promise.resolve()
     }
     /**
      * @returns Nothing.
      */
-    teardown() {}
+    teardown():void {
+        return
+    }
     /**
      * @returns Null.
      */
-    runScript() {
+    runScript():null {
         return null
     }
 }

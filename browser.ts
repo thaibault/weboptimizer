@@ -69,7 +69,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
         const render = (template:string):void => {
             browser.DOM = JSDOM
             browser.initialized = true
-            browser.instance = new JSDOM(
+            browser.instance = new browser.DOM(
                 template,
                 {
                     beforeParse: (window:DOMWindow):void => {
