@@ -15,12 +15,15 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports 
+// region imports
 import {
-    ChildProcess, exec as execChildProcess, spawn as spawnChildProcess
+    ChildProcess,
+    CommonSpawnOptions,
+    exec as execChildProcess,
+    ExecOptions,
+    spawn as spawnChildProcess
 } from 'child_process'
 import Tools, {CloseEventNames} from 'clientnode'
-import {ChildProcessOptions} from 'clientnode/type'
 import {
     File, PlainObject, ProcedureFunction, ProcessHandler
 } from 'clientnode/type'
@@ -50,14 +53,19 @@ process.env.UV_THREADPOOL_SIZE = '128'
 const main = async ():Promise<void> => {
     try {
         // region controller
-        const childProcessOptions:ChildProcessOptions = {
+        const processOptions:ExecOptions = {
             cwd: configuration.path.context,
-            env: process.env,
-            shell: true,
-            stdio: 'inherit'
+            env: process.env
         }
+        const childProcessOptions:CommonSpawnOptions = Tools.extend(
+            {
+                shell: true,
+                stdio: 'inherit'
+            },
+            processOptions
+        )
         const childProcesses:Array<ChildProcess> = []
-        const processPromises:Array<Promise<any>> = []
+        const processPromises:Array<Promise<Array<ChildProcess>>> = []
         const possibleArguments:Array<string> = [
             'build', 'build:dll',
             'clear',
@@ -253,9 +261,9 @@ const main = async ():Promise<void> => {
                         const chunkName in
                         configuration.injection.entry.normalized
                     )
-                        if (configuration.injection.entry.normalized
-                            .hasOwnProperty(chunkName)
-                        )
+                        if (Object.prototype.hasOwnProperty.call(
+                            configuration.injection.entry.normalized, chunkName
+                        ))
                             for (const moduleID of
                                 configuration.injection.entry.normalized[
                                     chunkName]
@@ -330,9 +338,9 @@ const main = async ():Promise<void> => {
                     Triggers complete asset compiling and bundles them into the
                     final productive output.
                 */
-                processPromises.push(new Promise((
+                processPromises.push(new Promise<Array<ChildProcess>>((
                     resolve:Function, reject:Function
-                ):void => {
+                ):Array<ChildProcess> => {
                     const commandLineArguments:Array<string> = (
                         configuration.commandLine.build.arguments || []
                     ).concat(additionalArguments)
@@ -349,7 +357,7 @@ const main = async ():Promise<void> => {
                         commandLineArguments,
                         childProcessOptions
                     )
-                    const copyAdditionalFilesAndTidyUp:Function = (
+                    const copyAdditionalFilesAndTidyUp:ProcedureFunction = (
                         ...parameter:Array<any>
                     ):void => {
                         for (
@@ -372,17 +380,19 @@ const main = async ():Promise<void> => {
                         }
                         tidyUp(...parameter)
                     }
-                    const closeHandler:ProcessHandler = Tools.getProcessCloseHandler(
-                        resolve,
-                        reject,
-                        null,
-                        (process.argv[2] === 'build') ?
-                            copyAdditionalFilesAndTidyUp :
-                            tidyUp
-                    )
+                    const closeHandler:ProcessHandler =
+                        Tools.getProcessCloseHandler(
+                            resolve,
+                            reject,
+                            null,
+                            process.argv[2] === 'build' ?
+                                copyAdditionalFilesAndTidyUp :
+                                tidyUp
+                        )
                     for (const closeEventName of CloseEventNames)
                         childProcess.on(closeEventName, closeHandler)
                     childProcesses.push(childProcess)
+                    return childProcesses
                 }))
             // endregion
             // region handle pre-install
@@ -399,7 +409,8 @@ const main = async ():Promise<void> => {
                     configuration['test:browser'].injection.entry
                 )
                     testModuleFilePaths = Helper.determineModuleLocations(
-                        configuration['test:browser'].injection.entry as GivenInjection,
+                        configuration['test:browser'].injection.entry as
+                            GivenInjection,
                         configuration.module.aliases,
                         configuration.module.replacements.normal,
                         {
@@ -418,7 +429,7 @@ const main = async ():Promise<void> => {
                     for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
                             const evaluationFunction = (
-                                global:Record<string, any>,
+                                global:NodeJS.Global,
                                 self:ResolvedConfiguration,
                                 buildConfiguration:ResolvedBuildConfigurationItem,
                                 path:PathModule,
@@ -450,16 +461,28 @@ const main = async ():Promise<void> => {
                                 filePath
                             )
                             console.info(`Running "${command}"`)
-                            processPromises.push(new Promise((
-                                resolve:Function, reject:Function
-                            ):ChildProcess => Tools.handleChildProcess(
-                                execChildProcess(
-                                    command,
-                                    childProcessOptions,
-                                    (error:Error|null):void =>
-                                        error ? reject(error) : resolve()
-                                )
-                            )))
+                            processPromises.push(
+                                new Promise<Array<ChildProcess>>((
+                                    resolve:Function, reject:Function
+                                ):Array<ChildProcess> => [
+                                    Tools.handleChildProcess(
+                                        execChildProcess(
+                                            command,
+                                            Tools.extend(
+                                                {
+                                                    encoding:
+                                                        configuration.encoding
+                                                },
+                                                processOptions
+                                            ),
+                                            (error:Error|null):void =>
+                                                error ?
+                                                    reject(error) :
+                                                    resolve()
+                                        )
+                                    )
+                                ])
+                            )
                         }
                 }
             }
@@ -468,11 +491,11 @@ const main = async ():Promise<void> => {
             const handleTask = (type:keyof CommandLineArguments):void => {
                 const tasks:Array<Command> =
                     Array.isArray(configuration.commandLine[type]) ?
-                    (configuration.commandLine[type] as Array<Command>) :
-                    [configuration.commandLine[type] as Command]
+                        (configuration.commandLine[type] as Array<Command>) :
+                        [configuration.commandLine[type] as Command]
                 for (const task of tasks) {
                     const evaluationFunction = (
-                        global:Record<string, any>,
+                        global:NodeJS.Global,
                         self:ResolvedConfiguration,
                         path:PathModule
                     ):boolean =>
@@ -482,15 +505,17 @@ const main = async ():Promise<void> => {
                             'path',
                             'return ' +
                             (
-                                task.hasOwnProperty('indicator') ?
+                                Object.prototype.hasOwnProperty.call(
+                                    task, 'indicator'
+                                ) ?
                                     task.indicator :
                                     'true'
                             )
                         )(global, self, path)
                     if (evaluationFunction(global, configuration, path))
-                        processPromises.push(new Promise((
+                        processPromises.push(new Promise<Array<ChildProcess>>((
                             resolve:Function, reject:Function
-                        ):void => {
+                        ):Array<ChildProcess> => {
                             const commandLineArguments:Array<string> = (
                                 task.arguments || []
                             ).concat(additionalArguments)
@@ -506,12 +531,14 @@ const main = async ():Promise<void> => {
                                 spawnChildProcess(
                                     task.command,
                                     commandLineArguments,
-                                    childProcessOptions)
-                            const closeHandler:ProcedureFunction =
+                                    childProcessOptions
+                                )
+                            const closeHandler:ProcessHandler =
                                 Tools.getProcessCloseHandler(resolve, reject)
                             for (const closeEventName of CloseEventNames)
                                 childProcess.on(closeEventName, closeHandler)
                             childProcesses.push(childProcess)
+                            return childProcesses
                         }))
                 }
             }
@@ -533,7 +560,7 @@ const main = async ():Promise<void> => {
             // endregion
         }
         let finished = false
-        const closeHandler = (...parameter:Array<any>):void => {
+        const closeHandler:ProcessHandler = (...parameter:Array<any>):void => {
             if (!finished)
                 for (const closeEventHandler of closeEventHandlers)
                     closeEventHandler(...parameter)

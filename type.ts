@@ -15,6 +15,7 @@
 */
 // region imports
 import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
+import {JSDOM} from 'jsdom'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import {
     DefinePlugin as WebpackDefinePlugin,
@@ -29,9 +30,9 @@ import {
 export type Browser = {
     debug:boolean;
     domContentLoaded:boolean;
-    DOM:null|Object;
+    DOM:typeof JSDOM|null;
     initialized:boolean;
-    instance:null|Object;
+    instance:JSDOM|null;
     window:null|Window;
     windowLoaded:boolean;
 }
@@ -43,8 +44,8 @@ export type PackageDescriptor = {
     configuration:PackageConfiguration;
     filePath:string;
 }
-export type Replacement = ((
-    substring:string, ...parameter:Array<any>
+export type Replacement<T=any> = ((
+    substring:string, ...parameter:Array<T>
 ) => string)|string
 export type Replacements = {[key:string]:Replacement}
 export type Resolvable = {
@@ -268,7 +269,7 @@ export type ResolvedConfiguration = {
         [key:string]:{
             excludeFilePathRegularExpression:string;
             pattern:string;
-        }
+        };
     };
     buildContext:{
         definitions:{[key:string]:WebpackDefinePlugin.CodeValueObject};
@@ -396,7 +397,7 @@ export type ResolvedConfiguration = {
         };
     };
     path:PathConfiguration;
-    performanceHints:{hints:false|string;};
+    performanceHints:{hints:false|string};
     plugins:Array<PluginConfiguration>;
     showConfiguration:boolean;
     stylelint:PlainObject;
@@ -422,15 +423,15 @@ export type WebpackConfiguration = BaseWebpackConfiguration & {
 // NOTE: Not yet defined in webpack types.
 export type WebpackAssets = {[key:string]:{source:() => string}}
 export type HTMLWebpackPluginAssetTagGroupsData = {
-    bodyTags: HtmlWebpackPlugin.HtmlTagObject[];
-    headTags: HtmlWebpackPlugin.HtmlTagObject[];
-    outputName: string;
-    plugin: HtmlWebpackPlugin;
+    bodyTags:HtmlWebpackPlugin.HtmlTagObject[];
+    headTags:HtmlWebpackPlugin.HtmlTagObject[];
+    outputName:string;
+    plugin:HtmlWebpackPlugin;
 }
 export type HTMLWebpackPluginBeforeEmitData = {
-    html: string;
-    outputName: string;
-    plugin: HtmlWebpackPlugin;
+    html:string;
+    outputName:string;
+    plugin:HtmlWebpackPlugin;
 }
 // endregion
 // region vim modline

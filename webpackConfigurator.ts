@@ -15,7 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
-import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
+import {PlainObject, ProcedureFunction} from 'clientnode/type'
 /* eslint-disable no-var */
 try {
     var postcssCSSnano:Function = require('cssnano')
@@ -73,7 +73,6 @@ import {
     HTMLWebpackPluginBeforeEmitData,
     InPlaceConfiguration,
     PackageDescriptor,
-    PluginConfiguration,
     WebpackConfiguration,
     WebpackLoader,
     WebpackLoaderConfiguration
@@ -109,7 +108,7 @@ if (
     require.cache[require.resolve('loader-utils')].exports.isUrlRequest = (
         url:string, ...parameter:Array<any>
     ):boolean => {
-        if (url.match(/^[a-z]+:.+/))
+        if (/^[a-z]+:.+/.exec(url))
             return false
         return loaderUtilsIsUrlRequestBackup.call(
             loaderUtilsModuleBackup, url, ...parameter
