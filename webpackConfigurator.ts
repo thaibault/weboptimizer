@@ -60,7 +60,7 @@ for (const name in pluginNameResourceMapping)
         try {
             plugins[name] = require(pluginNameResourceMapping[name])
         } catch (error) {
-            console.warn(`Missing webpack plugin "${name}".`)
+            console.debug(`Missing webpack plugin "${name}".`)
         }
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
