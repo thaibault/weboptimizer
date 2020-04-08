@@ -14,8 +14,6 @@
         "strict": true,
         "target": "esnext"
     },
-    "exclude": [
-        "node_modules"
-    ],
-    "files": ["../../index.ts"]
+    "exclude": ["node_modules"],
+    "files": ["../../*.ts"]
 }
