@@ -339,7 +339,6 @@
               "--ignore-pattern",
               "'**/plugins/*'",
               "`'**/*.{jsx,ts}'`"
-              }
             ],
             "command": "eslint",
             "indicator": "self.needed.javaScript || self.needed.typeScript"
