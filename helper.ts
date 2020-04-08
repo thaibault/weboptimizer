@@ -787,7 +787,7 @@ export class Helper {
         packageMainPropertyNames:Array<string> = ['main', 'module'],
         packageAliasPropertyNames:Array<string> = [],
         encoding = 'utf-8'
-    ):{filePaths:Array<string>;directoryPaths:Array<string>} {
+    ):{directoryPaths:Array<string>;filePaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
         const normalizedGivenInjection:NormalizedGivenInjection =

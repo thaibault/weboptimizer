@@ -55,7 +55,6 @@ describe('helper', ():void => {
     )
     // / endregion
     // / region string
-    // TODO use as template for other cases.
     test.each([
         [
             {
@@ -161,48 +160,47 @@ describe('helper', ():void => {
     test.each([
         ['', ''],
         ['a', 'a'],
-        ['a', './', 'a'],
-        ['./a', './', './a'],
-        ['./a', './', './', './a'],
-        ['./a', './a', './', 'a/a'],
+        ['a', 'a', './'],
+        ['./a', './a', './'],
+        ['./a', './a', './', './'],
+        ['a/a', './a', './a', './'],
         ['./a', './a', './a', './a'],
-        ['./a', './a', './a', {a: 'b'}, './a'],
-        ['./a', './a/a', './', {a: 'b'}, {}, ['a'], 'b/a']
+        ['./a', './a', './a', './a', {a: 'b'}],
+        ['b/a', './a', './a/a', './', {a: 'b'}, {}, ['a']]
     ])(
         `.applyContext('%s', ...parameter)`,
-        (request:string, ...parameter:Array<any>):void => {
-            const expected:string = parameter.pop()
+        (expected:string, request:string, ...parameter:Array<any>):void =>
             expect(Helper.applyContext(request, ...parameter))
                 .toStrictEqual(expected)
-        }
     )
     test.each([
         ['', ''],
         ['a', 'a'],
         ['path', 'path'],
-        ['./helper', null],
-        ['./helper', './', null],
-        ['./helper', '../', null],
-        ['./helper', './a', './helper'],
-        ['./helper', './', './', null],
-        ['./a', './', './node_modules/a', 'a/a'],
+        [null, './helper'],
+        [null, './helper', './'],
+        [null, './helper', '../'],
+        ['./helper', './helper', './a'],
+        [null, './helper', './', './'],
+        ['a/a', './a', './', './node_modules/a'],
         ['a', './', './', 'a'],
-        ['path', './', './', {}, [], 'path'],
-        ['path', './', './', {}, [], {path: './main.js'}, './main.js'],
-        ['path', './', './', {}, [], {path: 'main.js'}, 'main.js'],
-        ['path', './', './', {}, [], {path: './helper.ts'}, null],
+        ['path', 'path', './', './', {}, []],
+        ['./main.js', 'path', './', './', {}, [], {path: './main.js'}],
+        ['main.js', 'path', './', './', {}, [], {path: 'main.js'}],
+        [null, 'path', './', './', {}, [], {path: './helper.ts'}],
         ['webpack', 'webpack'],
-        ['a', './', './', {}, ['node_modules'], {a$: 'webpack'}, 'webpack'],
+        ['webpack', 'a', './', './', {}, ['node_modules'], {a$: 'webpack'}],
         [
+            null,
             'a',
             './',
             './',
             {a: ['webpack']},
             ['node_modules'],
             {a$: 'webpack'},
-            null
         ],
         [
+            'webpack',
             'a',
             '../',
             './',
@@ -211,9 +209,9 @@ describe('helper', ():void => {
             {a$: 'webpack'},
             {},
             {file: {external: [], internal: []}, module: []},
-            'webpack'
         ],
         [
+            'webpack',
             'a',
             '../',
             './',
@@ -223,10 +221,23 @@ describe('helper', ():void => {
             {},
             {file: {external: ['.js'], internal: ['.js']}, module: []},
             './',
-            ['./'],
-            'webpack'
+            ['./']
         ],
         [
+            null,
+            'a',
+            './',
+            './',
+            {a: ['webpack']},
+            ['node_modules'],
+            {a$: 'webpack'},
+            {},
+            {file: {external: ['.js'], internal: ['.js']}, module: []},
+            './',
+            ['.git']
+        ],
+        [
+            'webpack',
             'a',
             './',
             './',
@@ -237,27 +248,33 @@ describe('helper', ():void => {
             {file: {external: ['.js'], internal: ['.js']}, module: []},
             './',
             ['.git'],
-            null
+            [],
+            [],
+            [],
+            [],
+            ['webpack']
         ],
         [
-            'a',
+            'webpack',
+            'webpack',
             './',
-            './',
-            {a: ['webpack']},
+            '../',
+            {},
             ['node_modules'],
-            {a$: 'webpack'},
+            {},
             {},
             {file: {external: ['.js'], internal: ['.js']}, module: []},
             './',
             ['.git'],
+            ['node_modules'],
+            ['main'],
+            ['main'],
             [],
             [],
-            [],
-            [],
-            ['webpack'],
-            'webpack'
+            []
         ],
         [
+            'webpack',
             'webpack',
             './',
             '../',
@@ -274,9 +291,10 @@ describe('helper', ():void => {
             [],
             [],
             [],
-            'webpack'
+            false
         ],
         [
+            null,
             'webpack',
             './',
             '../',
@@ -293,11 +311,11 @@ describe('helper', ():void => {
             [],
             [],
             [],
-            false,
-            'webpack'
+            true
         ],
         [
-            'webpack',
+            null,
+            'a!webpack',
             './',
             '../',
             {},
@@ -313,10 +331,10 @@ describe('helper', ():void => {
             [],
             [],
             [],
-            true,
-            null
+            false
         ],
         [
+            null,
             'a!webpack',
             './',
             '../',
@@ -334,9 +352,10 @@ describe('helper', ():void => {
             [],
             [],
             false,
-            null
+            true
         ],
         [
+            'webpack',
             'a!webpack',
             './',
             '../',
@@ -354,31 +373,10 @@ describe('helper', ():void => {
             [],
             [],
             false,
-            true,
-            null
+            false
         ],
         [
-            'a!webpack',
-            './',
-            '../',
-            {},
-            ['node_modules'],
-            {},
-            {},
-            {file: {external: ['.js'], internal: ['.js']}, module: []},
-            './',
-            ['.git'],
-            ['node_modules'],
-            ['main'],
-            ['main'],
-            [],
-            [],
-            [],
-            false,
-            false,
-            'webpack'
-        ],
-        [
+            null,
             'a!webpack',
             './',
             '../',
@@ -396,16 +394,15 @@ describe('helper', ():void => {
             [],
             [],
             false,
-            false,
-            null
+            false
         ]
     ])(
         `.determineExternalRequest('%s', ...parameter)`,
-        (request:string, ...parameter:Array<any>):void => {
-            const expected:null|string = parameter.pop()
+        (
+            expected:null|string, request:string, ...parameter:Array<any>
+        ):void =>
             expect(Helper.determineExternalRequest(request, ...parameter))
                 .toStrictEqual(expected)
-        }
     )
     test.each([['./', null], ['a.js', 'javaScript'], ['a.css', null]])(
         `.determineAssetType('%s', %p, %p)`,
@@ -485,23 +482,23 @@ describe('helper', ():void => {
         [
             'helper',
             {
-                filePaths: [path.resolve(__dirname, '../helper.js')],
-                directoryPaths: [path.resolve(__dirname, '../')]
+                directoryPaths: [path.resolve(__dirname, '../')],
+                filePaths: [path.resolve(__dirname, '../helper.js')]
             }
         ],
         [{example: 'example'}, {filePaths: [], directoryPaths: []}],
         [
             {example: 'helper'},
             {
-                filePaths: [path.resolve(__dirname, '../helper.js')],
-                directoryPaths: [path.resolve(__dirname, '../')]
+                directoryPaths: [path.resolve(__dirname, '../')],
+                filePaths: [path.resolve(__dirname, '../helper.js')]
             }
         ],
         [
             {helper: ['helper.ts']},
             {
-                filePaths: [path.resolve(__dirname, '../', 'helper.ts')],
-                directoryPaths: [path.resolve(__dirname, '../')]
+                directoryPaths: [path.resolve(__dirname, '../')],
+                filePaths: [path.resolve(__dirname, '../', 'helper.ts')]
             }
         ]
     ])(
@@ -675,44 +672,47 @@ describe('helper', ():void => {
         )).toStrictEqual({})
     )
     test.each([
-        ['', null],
-        ['a', {}, {}, {file: [], module: []}, './', '', [], null],
-        ['a', {a: 'b'}, {}, {file: [], module: []}, './', '', [], null],
+        [null, ''],
+        [null, 'a', {}, {}, {file: [], module: []}, './', '', []],
+        [null, 'a', {a: 'b'}, {}, {file: [], module: []}, './', '', []],
         [
+            null,
             'bba',
             {a: 'b'},
             {},
             {file: [], module: []},
             './',
             '',
-            [],
-            null
+            []
         ],
-        ['helper', 'helper.js'],
-        ['helper', {}, {}, {file: [], module: []}, './', '', [], null],
+        ['helper.js', 'helper'],
+        [null, 'helper', {}, {}, {file: [], module: []}, './', '', []],
         [
+            null,
             './helper',
             {},
             {},
             {file: ['.ts'], module: []},
             '',
             'a',
-            [],
-            null
+            []
         ],
         [
+            'helper.ts',
             'helper',
             {},
             {},
             {file: ['.ts'], module: []},
             './',
-            './',
-            'helper.ts'
+            './'
         ]
     ])(
         `.determineModuleFilePath('%s', ...parameter)`,
-        (moduleName:string, ...parameter:Array<any>):void => {
-            const expected:unknown = parameter.pop()
+        (
+            expected:null|string,
+            moduleName:string,
+            ...parameter:Array<any>
+        ):void => {
             let result:null|string = Helper.determineModuleFilePath(
                 moduleName, ...parameter)
             if (result)

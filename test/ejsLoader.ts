@@ -10,9 +10,10 @@ import ejsLoader from '../ejsLoader'
 // region mockup
 const context:loader.LoaderContext = {
     debug: false,
+    loaders: [],
     resourcePath: '',
     query: ''
-} as loader.LoaderContext
+} as unknown as loader.LoaderContext
 // endregion
 describe('ejsLoader', ():void => {
     // region tests
