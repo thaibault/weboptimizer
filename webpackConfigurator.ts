@@ -16,15 +16,15 @@
 // region imports
 import Tools from 'clientnode'
 import {PlainObject, ProcedureFunction} from 'clientnode/type'
-/* eslint-disable no-var */
+/* eslint-disable no-empty,no-var,@typescript-eslint/no-var-requires */
 try {
     var postcssCSSnano:Function = require('cssnano')
 } catch (error) {}
-/* eslint-enable no-var */
+/* eslint-enable no-empty,no-var,@typescript-eslint/no-var-requires */
 import {JSDOM as DOM} from 'jsdom'
 import {promises as fileSystem} from 'fs'
 import path from 'path'
-/* eslint-disable no-var */
+/* eslint-disable no-empty,no-var,@typescript-eslint/no-var-requires */
 try {
     var postcssPresetENV:Function = require('postcss-preset-env')
 } catch (error) {}
@@ -40,7 +40,7 @@ try {
 try {
     var postcssURL:Function = require('postcss-url')
 } catch (error) {}
-/* eslint-enable no-var */
+/* eslint-enable no-empty,no-var,@typescript-eslint/no-var-requires */
 import util from 'util'
 import webpack from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
@@ -59,7 +59,9 @@ for (const name in pluginNameResourceMapping)
     if (Object.prototype.hasOwnProperty.call(pluginNameResourceMapping, name))
         try {
             plugins[name] = require(pluginNameResourceMapping[name])
-        } catch (error) {}
+        } catch (error) {
+            console.warn(`Missing webpack plugin "${name}".`)
+        }
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
 
@@ -381,12 +383,13 @@ if (configuration.injection.external.modules === '__implicit__')
     /*
         We only want to process modules from local context in library mode,
         since a concrete project using this library should combine all assets
-        (and de-duplicate them) for optimal bundling results. NOTE: Only native
-        javaScript and json modules will be marked as external dependency.
+        (and de-duplicate them) for optimal bundling results.
+        NOTE: Only native java script and json modules will be marked as
+        external dependency.
     */
-    configuration.injection.external.modules = async (
+    configuration.injection.external.modules = (
         context:string, request:string, callback:Function
-    ):Promise<void> => {
+    ):void => {
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
@@ -589,7 +592,9 @@ if (htmlAvailable)
     ):void => {
         plugins.HTML.getHooks(compilation).alterAssetTagGroups.tapAsync(
             'WebOptimizerRemoveDummyHTMLTags',
-            (data:HTMLWebpackPluginAssetTagGroupsData, callback:Function):void => {
+            (
+                data:HTMLWebpackPluginAssetTagGroupsData, callback:Function
+            ):void => {
                 for (const tags of [data.bodyTags, data.headTags]) {
                     let index = 0
                     for (const tag of tags) {
@@ -882,11 +887,11 @@ Tools.extend(loader, {
     ejs: {
         exclude: (filePath:string):boolean =>
             Helper.normalizePaths(
-                configuration.files.html.concat(
-                    configuration.files.defaultHTML)
-                .map((htmlConfiguration:HTMLConfiguration):string =>
-                    htmlConfiguration.template.filePath
-                )
+                configuration.files.html
+                    .concat(configuration.files.defaultHTML)
+                    .map((htmlConfiguration:HTMLConfiguration):string =>
+                        htmlConfiguration.template.filePath
+                    )
             ).includes(filePath) ||
             (configuration.module.preprocessor.ejs.exclude === null) ?
                 false :
@@ -1019,7 +1024,8 @@ Tools.extend(loader, {
                         Tools.isPlainObject(
                             configuration.module.preprocessor.html.options
                         ) ?
-                            configuration.module.preprocessor.html.options as EJSLoaderConfiguration :
+                            configuration.module.preprocessor.html.options as
+                                EJSLoaderConfiguration :
                             {compileSteps: 2}
                     ).compileSteps % 2 ?
                         [] :
