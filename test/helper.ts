@@ -9,7 +9,6 @@ import {
     AssetInPlaceInjectionResult,
     AssetPositionPatterns,
     BuildConfiguration,
-    Extensions,
     GivenInjection,
     GivenInjectionConfiguration,
     NormalizedGivenInjection,
