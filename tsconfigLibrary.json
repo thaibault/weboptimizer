@@ -17,5 +17,5 @@
     "exclude": [
         "node_modules"
     ],
-    "files": ["../../index"]
+    "files": ["../../index.ts"]
 }
