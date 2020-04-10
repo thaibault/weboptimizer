@@ -43,7 +43,6 @@
     "webpackConfigurator.ts"
   ],
   "main": "index.js",
-  "types": "untypedDependencies.d.ts",
   "bin": {
     "webOptimizer": "index.js"
   },
