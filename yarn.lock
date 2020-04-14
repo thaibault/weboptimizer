@@ -3711,9 +3711,9 @@ cli-width@^2.0.0:
   integrity sha512-GRMWDxpOB6Dgk2E5Uo+3eEBvtOOlimMmpbFiKuLFnQzYDavtLFY3K5ona41jgN/WdRZtG7utuVSVTL4HbZHGkw==
 
 clientnode@*:
-  version "3.0.400"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.400.tgz#fca89986eb412cd1f42d08b18f492b98de025d12"
-  integrity sha512-PsxS2/5dPVfUE8JlVoZRv0+5wNBXiazIQVaMendDG+C2s930qqa7ZoIGq04SgoXMZG6e0JJgvaNMwwgmCUZJmw==
+  version "3.0.401"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.401.tgz#9116ab9324cbc89723dfef030bcbdc10052c51fa"
+  integrity sha512-hcF22XWFUc8jye3by7RShQ/okYkbhC1i1IDtae0i1RKtxzzIpvpVwvO5frrPdzT8mJz8uwL7ZRD/Xb5k42qOPQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -8963,9 +8963,9 @@ object-inspect@^1.7.0:
   integrity sha512-a7pEHdh1xKIAgTySUGgLMx/xwDZskN1Ud6egYYN3EdRW4ZMPNEDUTF+hwy2LUC+Bl+SyLXANnwz/jyh/qutKUw==
 
 object-is@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/object-is/-/object-is-1.0.2.tgz#6b80eb84fe451498f65007982f035a5b445edec4"
-  integrity sha512-Epah+btZd5wrrfjkJZq1AOB9O6OxUQto45hzFd7lXGrpHPGE0W1k+426yrZV+k6NJOzLNNW/nVsmZdIWsAqoOQ==
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/object-is/-/object-is-1.1.0.tgz#57e5e236f2831066c82948cbd735c24a9e54084d"
+  integrity sha512-wznR5+ya11MdnkLq+oYePGjW2ge4RY5DVSwa3iKuDCpvLsYGnp24Qy5EzVRgyMHEuEkKd+dX/1JpAT6QxZXq2g==
 
 object-keys@^1.0.11, object-keys@^1.0.12, object-keys@^1.1.1:
   version "1.1.1"
