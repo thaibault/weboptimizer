@@ -797,13 +797,13 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                     const alternateTargetPath:string = path.resolve(
                         pathPrefix, pathSuffix)
                     if (Tools.isFileSync(alternateTargetPath)) {
-                        const alternatePackageDescriptor:null|PackageDescriptor =
+                        const otherPackageDescriptor:null|PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
                                 alternateTargetPath)
-                        if (alternatePackageDescriptor)
+                        if (otherPackageDescriptor)
                             if (
                                 packageDescriptor.configuration.version ===
-                                alternatePackageDescriptor.configuration.version
+                                otherPackageDescriptor.configuration.version
                             ) {
                                 console.info(
                                     'Consolidate module request "' +
@@ -815,8 +815,9 @@ pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
                             } else
                                 redundantRequest = {
                                     path: alternateTargetPath,
-                                    version: alternatePackageDescriptor
-                                        .configuration.version
+                                    version:
+                                        otherPackageDescriptor.configuration
+                                            .version
                                 }
                     }
                 }
@@ -1103,88 +1104,99 @@ Tools.extend(loader, {
         test: /\.s?css(?:\?.*)?$/i,
         use:
             configuration.module.preprocessor.cascadingStyleSheet.additional
-            .pre.map(evaluateLoaderConfiguration).concat(
-                {
-                    loader: configuration.module.style.loader,
-                    options: configuration.module.style.options || {}
-                },
-                {
-                    loader: configuration.module.cascadingStyleSheet.loader,
-                    options:
-                        configuration.module.cascadingStyleSheet.options || {}
-                },
-                {
-                    loader:
-                        configuration.module.preprocessor.cascadingStyleSheet
-                            .loader,
-                    options: Tools.extend(true, {
-                        ident: 'postcss',
-                        plugins: ():Array<Record<string, any>> => [
-                            postcssImport({
-                                addDependencyTo: webpack,
-                                root: configuration.path.context
-                            })
-                        ].concat(
+                .pre
+                .map(evaluateLoaderConfiguration)
+                .concat(
+                    {
+                        loader: configuration.module.style.loader,
+                        options: configuration.module.style.options || {}
+                    },
+                    {
+                        loader:
+                            configuration.module.cascadingStyleSheet.loader,
+                        options:
+                            configuration.module.cascadingStyleSheet.options ||
+                            {}
+                    },
+                    {
+                        loader:
                             configuration.module.preprocessor
-                                .cascadingStyleSheet.additional
-                                .plugins.pre.map(evaluateLoaderConfiguration),
-                            postcssPresetENV(
+                                .cascadingStyleSheet.loader,
+                        options: Tools.extend(true, {
+                            ident: 'postcss',
+                            plugins: ():Array<Record<string, any>> => [
+                                postcssImport({
+                                    addDependencyTo: webpack,
+                                    root: configuration.path.context
+                                })
+                            ].concat(
                                 configuration.module.preprocessor
-                                    .cascadingStyleSheet.postcssPresetEnv),
-                            /*
-                                NOTE: Checking path doesn't work if fonts are
-                                referenced in libraries provided in another
-                                location than the project itself like the
-                                "node_modules" folder.
-                            */
-                            postcssFontPath({
-                                checkPath: false,
-                                formats: [
-                                    {type: 'woff2', ext: 'woff2'},
-                                    {type: 'woff', ext: 'woff'}
-                                ]
-                            }),
-                            postcssURL({url: 'rebase'}),
-                            postcssSprites({
-                                filterBy: ():Promise<null> =>
-                                    new Promise((
-                                        resolve:Function, reject:Function
-                                    ):Promise<null> => (
-                                        configuration.files.compose.image ?
-                                            resolve : reject
-                                    )()),
-                                hooks: {
-                                    onSaveSpritesheet: (image:Record<string, any>):string =>
+                                    .cascadingStyleSheet.additional.plugins.pre
+                                    .map(evaluateLoaderConfiguration),
+                                postcssPresetENV(
+                                    configuration.module.preprocessor
+                                        .cascadingStyleSheet.postcssPresetEnv
+                                ),
+                                /*
+                                    NOTE: Checking path doesn't work if fonts
+                                    are referenced in libraries provided in
+                                    another location than the project itself
+                                    like the "node_modules" folder.
+                                */
+                                postcssFontPath({
+                                    checkPath: false,
+                                    formats: [
+                                        {type: 'woff2', ext: 'woff2'},
+                                        {type: 'woff', ext: 'woff'}
+                                    ]
+                                }),
+                                postcssURL({url: 'rebase'}),
+                                postcssSprites({
+                                    filterBy: ():Promise<void> =>
+                                        new Promise((
+                                            resolve:Function, reject:Function
+                                        ):void => (
+                                            configuration.files.compose.image ?
+                                                resolve :
+                                                reject
+                                        )()),
+                                    hooks: {onSaveSpritesheet: (
+                                        image:Record<string, any>
+                                    ):string =>
                                         path.join(
                                             image.spritePath,
                                             path.relative(
                                                 configuration.path.target.asset
                                                     .image,
                                                 configuration.files.compose
-                                                    .image))
-                                },
-                                stylesheetPath:
-                                    configuration.path.source.asset
-                                        .cascadingStyleSheet,
-                                spritePath:
-                                    configuration.path.source.asset.image
-                            }),
-                            configuration.module.preprocessor
-                                .cascadingStyleSheet.additional.plugins.post
-                                .map(evaluateLoaderConfiguration),
-                            configuration.module.optimizer.cssnano ?
-                                postcssCSSnano(
-                                    configuration.module.optimizer.cssnano
-                                ) :
-                                []
-                        )
+                                                    .image
+                                            )
+                                        )
+                                    },
+                                    stylesheetPath:
+                                        configuration.path.source.asset
+                                            .cascadingStyleSheet,
+                                    spritePath:
+                                        configuration.path.source.asset.image
+                                }),
+                                configuration.module.preprocessor
+                                    .cascadingStyleSheet.additional.plugins
+                                    .post
+                                    .map(evaluateLoaderConfiguration),
+                                configuration.module.optimizer.cssnano ?
+                                    postcssCSSnano(
+                                        configuration.module.optimizer.cssnano
+                                    ) :
+                                    []
+                            )
+                        },
+                        configuration.module.preprocessor.cascadingStyleSheet
+                            .options || {})
                     },
                     configuration.module.preprocessor.cascadingStyleSheet
-                        .options || {})
-                },
-                configuration.module.preprocessor.cascadingStyleSheet
-                    .additional.post.map(evaluateLoaderConfiguration)
-            )
+                        .additional.post
+                        .map(evaluateLoaderConfiguration)
+                )
     },
     // endregion
     // Optimize loaded assets.
@@ -1352,7 +1364,13 @@ let customConfiguration:PlainObject = {}
 if (configuration.path.configuration && configuration.path.configuration.json)
     try {
         customConfiguration = require(configuration.path.configuration.json)
-    } catch (error) {}
+    } catch (error) {
+        console.debug(
+            'Importing provided json webpack configuration file path under "' +
+            `${configuration.path.configuration.json}" failed: ` +
+            Tools.represent(error)
+        )
+    }
 export let webpackConfiguration:WebpackConfiguration = Tools.extend(
     true,
     {
@@ -1444,7 +1462,9 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                         chunks: 'all',
                         cacheGroups: {
                             vendors: {
-                                chunks: (module:Record<string, any>):boolean => {
+                                chunks: (
+                                    module:Record<string, any>
+                                ):boolean => {
                                     if (
                                         typeof configuration.inPlace
                                             .javaScript ===
@@ -1487,15 +1507,22 @@ if (
     configuration.path.configuration &&
     configuration.path.configuration.javaScript
 ) {
-    let result:any
+    let result:PlainObject|undefined
     try {
         result = require(configuration.path.configuration.javaScript)
-    } catch (error) {}
-    if (result)
+    } catch (error) {
+        console.debug(
+            'Failed to load given JavaScript configuration file path "' +
+            `${configuration.path.configuration.javaScript}": ` +
+            Tools.represent(error)
+        )
+    }
+    if (Tools.isPlainObject(result))
         if (Object.prototype.hasOwnProperty.call(
             result, 'replaceWebOptimizer'
         ))
-            webpackConfiguration = result.replaceWebOptimizer
+            webpackConfiguration =
+                result.replaceWebOptimizer as unknown as WebpackConfiguration
         else
             Tools.extend(true, webpackConfiguration, result)
 }
