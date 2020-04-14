@@ -428,10 +428,12 @@ const main = async ():Promise<void> => {
                     ] as string).trim()
                     for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
+                            type buildConfigItem =
+                                ResolvedBuildConfigurationItem
                             const evaluationFunction = (
                                 global:NodeJS.Global,
                                 self:ResolvedConfiguration,
-                                buildConfiguration:ResolvedBuildConfigurationItem,
+                                buildConfiguration:buildConfigItem,
                                 path:PathModule,
                                 additionalArguments:Array<string>,
                                 filePath:string

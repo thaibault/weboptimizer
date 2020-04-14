@@ -2,10 +2,14 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import Tools from 'clientnode'
 import webpack from 'webpack'
 
 import {WebpackConfiguration} from '../type'
 // endregion
+// Suppress log output.
+console.debug = Tools.noop
+
 test('webpackConfigurator', async ():Promise<void> => {
     const webpackConfiguration:WebpackConfiguration = (await import(
         '../webpackConfigurator'

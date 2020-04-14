@@ -197,7 +197,7 @@ describe('helper', ():void => {
             './',
             {a: ['webpack']},
             ['node_modules'],
-            {a$: 'webpack'},
+            {a$: 'webpack'}
         ],
         [
             'webpack',
@@ -208,7 +208,7 @@ describe('helper', ():void => {
             ['node_modules'],
             {a$: 'webpack'},
             {},
-            {file: {external: [], internal: []}, module: []},
+            {file: {external: [], internal: []}, module: []}
         ],
         [
             'webpack',
