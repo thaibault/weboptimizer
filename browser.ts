@@ -18,7 +18,7 @@ import Tools, {ConsoleOutputMethods} from 'clientnode'
 import {DOMWindow} from 'jsdom'
 import {loader} from 'webpack'
 
-import {Browser} from './type'
+import {Browser, InitializedBrowser} from './type'
 // endregion
 // region declaration
 declare const NAME:string
@@ -146,11 +146,13 @@ else {
  */
 export const getInitializedBrowser = async (
     replaceWindow = true
-):Promise<Browser> => {
+):Promise<InitializedBrowser> => {
     let resolvePromise:Function
-    const promise:Promise<Browser> = new Promise((resolve:Function):void => {
-        resolvePromise = resolve
-    })
+    const promise:Promise<InitializedBrowser> = new Promise(
+        (resolve:Function):void => {
+            resolvePromise = resolve
+        }
+    )
     /*
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.

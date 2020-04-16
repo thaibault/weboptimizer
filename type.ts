@@ -27,7 +27,7 @@ import {
 // endregion
 // region exports
 // / region generic
-export type Browser = {
+export interface Browser {
     debug:boolean;
     domContentLoaded:boolean;
     DOM:typeof JSDOM|null;
@@ -35,6 +35,11 @@ export type Browser = {
     instance:JSDOM|null;
     window:null|Window;
     windowLoaded:boolean;
+}
+export interface InitializedBrowser extends Browser {
+    DOM:typeof JSDOM;
+    instance:JSDOM;
+    window:Window;
 }
 export type PackageConfiguration = {
     name:string;
