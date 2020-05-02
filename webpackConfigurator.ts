@@ -91,12 +91,11 @@ if (
     require.cache &&
     require.resolve('html-loader') in require.cache
 )
-    require.cache[require.resolve('html-loader')].exports = function<A, B>(
-        this:WebpackLoader, ...parameter:Array<A>
-    ):B {
-        Tools.extend(true, this.options, module, this.options)
-        return htmlLoaderModuleBackup.call(this, ...parameter)
-    }
+    (require.cache[require.resolve('html-loader')] as NodeModule).exports =
+        function<A, B>(this:WebpackLoader, ...parameter:Array<A>):B {
+            Tools.extend(true, this.options, module, this.options)
+            return htmlLoaderModuleBackup.call(this, ...parameter)
+        }
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
 const loaderUtilsIsUrlRequestBackup:(
@@ -107,15 +106,16 @@ if (
     require.cache &&
     require.resolve('loader-utils') in require.cache
 )
-    require.cache[require.resolve('loader-utils')].exports.isUrlRequest = (
-        url:string, ...parameter:Array<any>
-    ):boolean => {
-        if (/^[a-z]+:.+/.exec(url))
-            return false
-        return loaderUtilsIsUrlRequestBackup.call(
-            loaderUtilsModuleBackup, url, ...parameter
-        )
-    }
+    (require.cache[require.resolve('loader-utils')] as NodeModule)
+        .exports
+        .isUrlRequest =
+            (url:string, ...parameter:Array<any>):boolean => {
+                if (/^[a-z]+:.+/.exec(url))
+                    return false
+                return loaderUtilsIsUrlRequestBackup.call(
+                    loaderUtilsModuleBackup, url, ...parameter
+                )
+            }
 // / endregion
 // endregion
 // region initialisation
