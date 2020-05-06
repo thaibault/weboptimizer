@@ -3697,9 +3697,9 @@ cli-width@^2.0.0:
   integrity sha512-GRMWDxpOB6Dgk2E5Uo+3eEBvtOOlimMmpbFiKuLFnQzYDavtLFY3K5ona41jgN/WdRZtG7utuVSVTL4HbZHGkw==
 
 clientnode@*:
-  version "3.0.413"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.413.tgz#32d1d7f245198204a547f42944f3ab2c50a272e4"
-  integrity sha512-v6ISe28D0Eu5N6attnohn2tO5bAdLEjGTSHec+AsvnQy/adCoLbKM5qTAde5dJEA+1N/uJKbDVrZxP8wXw2sjA==
+  version "3.0.414"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.414.tgz#f4f73836e170baf29043835b055ebf1b0938e214"
+  integrity sha512-RCwPDNOCQ2LKq0V3+L1MOhFLfiow7euOHQo7o+FXtzd6/TjT9DGWatDG/rmdxyVFiqbWOY13FTLTBYUsWeiCkQ==
 
 cliui@^4.0.0:
   version "4.1.0"
