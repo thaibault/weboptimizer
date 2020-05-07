@@ -60,7 +60,7 @@ for (const name in pluginNameResourceMapping)
         try {
             plugins[name] = require(pluginNameResourceMapping[name])
         } catch (error) {
-            console.debug(`Missing webpack plugin "${name}".`)
+            console.debug(`Optional webpack plugin "${name}" not available.`)
         }
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
@@ -1375,7 +1375,12 @@ if (configuration.path.configuration && configuration.path.configuration.json)
                 Tools.represent(error)
             )
         }
-    } catch (error) {}
+    } catch (error) {
+        console.debug(
+            'Optional configuration file "' +
+            `${configuration.path.configuration.json}" not available.`
+        )
+    }
 export let webpackConfiguration:WebpackConfiguration = Tools.extend(
     true,
     {
@@ -1534,7 +1539,12 @@ if (
                         WebpackConfiguration
             else
                 Tools.extend(true, webpackConfiguration, result)
-    } catch (error) {}
+    } catch (error) {
+        console.debug(
+            'Optional configuration file script "' +
+            `${configuration.path.configuration.javaScript}" not available.`
+        )
+    }
 if (configuration.showConfiguration) {
     console.info(
         'Using internal configuration:',
