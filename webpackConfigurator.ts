@@ -1511,26 +1511,30 @@ if (
 if (
     configuration.path.configuration &&
     configuration.path.configuration.javaScript
-) {
-    let result:PlainObject|undefined
+)
     try {
-        result = require(configuration.path.configuration.javaScript)
-    } catch (error) {
-        console.debug(
-            'Failed to load given JavaScript configuration file path "' +
-            `${configuration.path.configuration.javaScript}": ` +
-            Tools.represent(error)
-        )
-    }
-    if (Tools.isPlainObject(result))
-        if (Object.prototype.hasOwnProperty.call(
-            result, 'replaceWebOptimizer'
-        ))
-            webpackConfiguration =
-                result.replaceWebOptimizer as unknown as WebpackConfiguration
-        else
-            Tools.extend(true, webpackConfiguration, result)
-}
+        require.resolve(configuration.path.configuration.javaScript)
+        let result:PlainObject|undefined
+        try {
+            result = require(configuration.path.configuration.javaScript)
+        } catch (error) {
+            console.debug(
+                'Failed to load given JavaScript configuration file path "' +
+                `${configuration.path.configuration.javaScript}": ` +
+                Tools.represent(error)
+            )
+        }
+        if (Tools.isPlainObject(result))
+            if (Object.prototype.hasOwnProperty.call(
+                result, 'replaceWebOptimizer'
+            ))
+                webpackConfiguration =
+                    result.replaceWebOptimizer as
+                        unknown as
+                        WebpackConfiguration
+            else
+                Tools.extend(true, webpackConfiguration, result)
+    } catch (error) {}
 if (configuration.showConfiguration) {
     console.info(
         'Using internal configuration:',
