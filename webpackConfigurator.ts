@@ -1363,14 +1363,19 @@ for (const pluginConfiguration of configuration.plugins)
 let customConfiguration:PlainObject = {}
 if (configuration.path.configuration && configuration.path.configuration.json)
     try {
-        customConfiguration = require(configuration.path.configuration.json)
-    } catch (error) {
-        console.debug(
-            'Importing provided json webpack configuration file path under "' +
-            `${configuration.path.configuration.json}" failed: ` +
-            Tools.represent(error)
-        )
-    }
+        require.resolve(configuration.path.configuration.json)
+        try {
+            customConfiguration = require(
+                configuration.path.configuration.json
+            )
+        } catch (error) {
+            console.debug(
+                'Importing provided json webpack configuration file path ' +
+                `under "${configuration.path.configuration.json}" failed: ` +
+                Tools.represent(error)
+            )
+        }
+    } catch (error) {}
 export let webpackConfiguration:WebpackConfiguration = Tools.extend(
     true,
     {
