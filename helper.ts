@@ -15,7 +15,7 @@
 */
 // region imports
 import Tools from 'clientnode'
-import {File, Mapping, PlainObject} from 'clientnode/type'
+import {Encoding, File, Mapping, PlainObject} from 'clientnode/type'
 import {DOMWindow, JSDOM as DOM} from 'jsdom'
 import fileSystem from 'fs'
 import path from 'path'
@@ -518,7 +518,7 @@ export class Helper {
         excludePattern:Array<string|RegExp> = [],
         inPlaceNormalLibrary = false,
         inPlaceDynamicLibrary = true,
-        encoding = 'utf-8'
+        encoding:Encoding = 'utf-8'
     ):null|string {
         context = path.resolve(context)
         requestContext = path.resolve(requestContext)
@@ -786,7 +786,7 @@ export class Helper {
         ],
         packageMainPropertyNames:Array<string> = ['main', 'module'],
         packageAliasPropertyNames:Array<string> = [],
-        encoding = 'utf-8'
+        encoding:Encoding = 'utf-8'
     ):{directoryPaths:Array<string>;filePaths:Array<string>} {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
@@ -1092,7 +1092,7 @@ export class Helper {
         packagePath:string,
         packageMainPropertyNames:Array<string> = ['main'],
         packageAliasPropertyNames:Array<string> = [],
-        encoding = 'utf-8'
+        encoding:Encoding = 'utf-8'
     ):{fileName:null|string;packageAliases:Mapping|null} {
         const result:{fileName:null|string;packageAliases:Mapping|null} = {
             fileName: null,
@@ -1182,7 +1182,7 @@ export class Helper {
         packageEntryFileNames:Array<string> = ['index'],
         packageMainPropertyNames:Array<string> = ['main'],
         packageAliasPropertyNames:Array<string> = [],
-        encoding = 'utf-8'
+        encoding:Encoding = 'utf-8'
     ):null|string {
         moduleID = Helper.applyModuleReplacements(
             Helper.applyAliases(Helper.stripLoader(moduleID), aliases),

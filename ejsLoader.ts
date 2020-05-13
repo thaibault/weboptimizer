@@ -26,6 +26,7 @@ import babelMinifyPreset from 'babel-preset-minify'
     import transformWith from 'babel-plugin-transform-with'
 */
 import Tools from 'clientnode'
+import {Encoding} from 'clientnode/type'
 import ejs from 'ejs'
 import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
@@ -47,7 +48,7 @@ export type EJSCompilerConfiguration = {
     client:boolean;
     compileDebug:boolean;
     debug:boolean;
-    encoding?:string;
+    encoding?:Encoding;
     filename:string;
     isString:boolean;
 }
@@ -234,7 +235,7 @@ export default function(this:loader.LoaderContext, source:string):string {
                     result = eval('require')(filePath)
                 else {
                     if (!isString) {
-                        let encoding:string = configuration.encoding
+                        let encoding:Encoding = configuration.encoding
                         if (typeof options.encoding === 'string')
                             encoding = options.encoding
                         result = fileSystem.readFileSync(result, {encoding})

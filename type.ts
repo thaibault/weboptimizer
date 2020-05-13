@@ -14,7 +14,9 @@
     endregion
 */
 // region imports
-import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
+import {
+    Encoding, Mapping, PlainObject, ProcedureFunction
+} from 'clientnode/type'
 import {JSDOM} from 'jsdom'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import {
@@ -216,7 +218,7 @@ export type DefaultConfiguration = {
     debug:boolean;
     dllManifestFilePaths:Array<string>;
     document:PlainObject;
-    encoding:string;
+    encoding:Encoding;
     givenCommandLineArguments:Array<string>;
     library:boolean;
     nodeEnvironment:NodeEnvironment;
@@ -294,7 +296,7 @@ export type ResolvedConfiguration = {
     };
     dllManifestFilePaths:Array<string>;
     document:PlainObject;
-    encoding:string;
+    encoding:Encoding;
     exportFormat:{
         external:ExportFormat;
         self:ExportFormat;
