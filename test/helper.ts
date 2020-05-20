@@ -758,7 +758,7 @@ describe('helper', ():void => {
         ['../', 'index.ts']
     ])(
         `findPackageDescriptorFilePath('%s', '%s') === "` +
-        `${(path.resolve(__dirname, '../'}..."`,
+        `${path.resolve(__dirname, '../')}..."`,
         (start:string, fileName:string):void =>
             expect(Helper.findPackageDescriptorFilePath(start, fileName))
                 .toStrictEqual(path.resolve(__dirname, '../', fileName))
