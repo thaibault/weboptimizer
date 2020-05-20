@@ -46,7 +46,7 @@ describe('helper', ():void => {
         ['./', ['../'], true],
         ['../', ['./'], false]
     ])(
-        `.isFilePathInLocation('%s', '%s', %p)`,
+        `isFilePathInLocation('%s', %p) === %p`,
         (
             filePath:string, locationsToCheck:Array<string>, expected:boolean
         ):void =>
@@ -85,7 +85,7 @@ describe('helper', ():void => {
         ]
     ])(
         `
-            %p === .inPlaceCSSAndJavaScriptAssetReferences(
+            %p === inPlaceCSSAndJavaScriptAssetReferences(
                 '%s', '%s', '%s', '%s', '%s', '%s', %p
             )
         `,
@@ -116,7 +116,7 @@ describe('helper', ():void => {
         ['aa!b!c?abb?a', 'c'],
         ['imports?$=library!moduleName', 'moduleName']
     ])(
-        `.stripLoader('%s', '%s')`,
+        `stripLoader('%s') === '%s'`,
         (moduleID:string, expected:string):void =>
             expect(Helper.stripLoader(moduleID)).toStrictEqual(expected)
     )
@@ -132,7 +132,7 @@ describe('helper', ():void => {
         [['a/', 'a/', 'b'], ['a', 'b']],
         [['a/', 'a/', 'b', '', '.'], ['a', 'b', '.']]
     ])(
-        '.normalizePaths(%p) === %p',
+        'normalizePaths(%p) === %p',
         (paths:Array<string>, expected:Array<string>):void =>
             expect(Helper.normalizePaths(paths)).toStrictEqual(expected)
     )
@@ -148,7 +148,7 @@ describe('helper', ():void => {
         ['a[id]b[hash]', {'[id]': 1, '[hash]': 2}, 'a1b2'],
         ['a[id]b[hash]', {'[id]': '[id]', '[hash]': '[hash]'}, 'a[id]b[hash]']
     ])(
-        `.renderFilePathTemplate('%s', %p) === %p`,
+        `renderFilePathTemplate('%s', %p) === %p`,
         (
             template:string,
             scope:{[key:string]:number|string},
@@ -168,7 +168,7 @@ describe('helper', ():void => {
         ['./a', './a', './a', './a', {a: 'b'}],
         ['b/a', './a', './a/a', './', {a: 'b'}, {}, ['a']]
     ])(
-        `.applyContext('%s', ...parameter)`,
+        `%p === applyContext('%s', ...%p)`,
         (expected:string, request:string, ...parameter:Array<any>):void =>
             expect(Helper.applyContext(request, ...parameter))
                 .toStrictEqual(expected)
@@ -397,7 +397,7 @@ describe('helper', ():void => {
             false
         ]
     ])(
-        `.determineExternalRequest('%s', ...parameter)`,
+        `%p === determineExternalRequest('%s', ...%p)`,
         (
             expected:null|string, request:string, ...parameter:Array<any>
         ):void =>
@@ -405,7 +405,7 @@ describe('helper', ():void => {
                 .toStrictEqual(expected)
     )
     test.each([['./', null], ['a.js', 'javaScript'], ['a.css', null]])(
-        `.determineAssetType('%s', %p, %p)`,
+        `determineAssetType('%s') === %p`,
         (filePath:string, expected:null|string):void => {
             const paths:PathConfiguration = {
                 apiDocumentation: '',
@@ -502,7 +502,7 @@ describe('helper', ():void => {
             }
         ]
     ])(
-        '.determineModuleLocations(%p)',
+        'determineModuleLocations(%p) === %p',
         (
             givenInjection:GivenInjection,
             expected:{filePaths:Array<string>;directoryPaths:Array<string>}
@@ -511,7 +511,7 @@ describe('helper', ():void => {
                 .toStrictEqual(expected)
     )
     test.each([[{}, {}], [{index: []}, {index: []}]])(
-        '.resolveModulesInFolders(%p)',
+        'resolveModulesInFolders(%p) === %p',
         (
             normalizedGivenInjection:NormalizedGivenInjection,
             expected:NormalizedGivenInjection
@@ -533,7 +533,7 @@ describe('helper', ():void => {
         [{a: ['example'], b: []}, {a: ['example']}],
         [{a: [], b: []}, {index: []}]
     ])(
-        '.normalizeGivenInjection(%p)',
+        'normalizeGivenInjection(%p) === %p',
         (
             givenInjection:GivenInjection, expected:NormalizedGivenInjection
         ):void =>
@@ -647,7 +647,7 @@ describe('helper', ():void => {
             ['.git', 'node_modules']
         ]
     ])(
-        `%p === .resolveAutoInjection(%p, %p, %p, ...%p)`,
+        `%p === resolveAutoInjection(%p, %p, %p, ...%p)`,
         (
             expected:GivenInjectionConfiguration,
             givenInjection:GivenInjectionConfiguration,
@@ -707,7 +707,7 @@ describe('helper', ():void => {
             './'
         ]
     ])(
-        `.determineModuleFilePath('%s', ...parameter)`,
+        `%p === determineModuleFilePath('%s', ...parameter)`,
         (
             expected:null|string,
             moduleName:string,
@@ -731,7 +731,7 @@ describe('helper', ():void => {
         ['bba', {a: 'b'}, 'bbb'],
         ['helper', {}, 'helper']
     ])(
-        `.applyAliases('%s', %p) === '%s'`,
+        `applyAliases('%s', %p) === '%s'`,
         (moduleID:string, aliases:Mapping, expected:string):void =>
             expect(Helper.applyAliases(moduleID, aliases))
                 .toStrictEqual(expected)
@@ -746,7 +746,7 @@ describe('helper', ():void => {
         ['aa', {a: 'b'}, 'ba'],
         ['helper', {}, 'helper']
     ])(
-        `.applyModuleReplacements('%s', %p) === '%s'`,
+        `applyModuleReplacements('%s', %p) === '%s'`,
         (moduleID:string, replacements:Replacements, expected:string):void =>
             expect(Helper.applyModuleReplacements(moduleID, replacements))
                 .toStrictEqual(expected)
@@ -757,13 +757,14 @@ describe('helper', ():void => {
         ['../', 'package.json'],
         ['../', 'index.ts']
     ])(
-        `.findPackageDescriptorFilePath('%s', '%s')`,
+        `findPackageDescriptorFilePath('%s', '%s') === "` +
+        `${(path.resolve(__dirname, '../'}..."`,
         (start:string, fileName:string):void =>
             expect(Helper.findPackageDescriptorFilePath(start, fileName))
                 .toStrictEqual(path.resolve(__dirname, '../', fileName))
     )
     test.each([['./'], ['../']])(
-        `.getClosestPackageDescriptor('%s')`,
+        `getClosestPackageDescriptor('%s') === {configuration: ...}`,
         (modulePath:string):void => {
             const filePath:string = path.resolve(
                 __dirname, '../', 'package.json')
