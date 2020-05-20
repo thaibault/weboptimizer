@@ -542,10 +542,11 @@ if (configuration.injection.external.modules === '__implicit__')
                 typeof result !== 'string' &&
                 Object.prototype.hasOwnProperty.call(result, 'root')
             )
-                // @ts-ignore: Workaround to ensure having an array.
-                result.root = [].concat(result.root).map((
-                    name:string
-                ):string => Tools.stringConvertToValidVariableName(name))
+                result.root = ([] as Array<string>)
+                    .concat(result.root as Array<string>)
+                    .map((name:string):string =>
+                        Tools.stringConvertToValidVariableName(name)
+                    )
             const exportFormat:string = (
                 configuration.exportFormat.external ||
                 configuration.exportFormat.self
