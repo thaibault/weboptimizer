@@ -210,8 +210,8 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         configuration, 'configuration')
 if (typeof result === 'object' && result !== null) {
     if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
-        // @ts-ignore: Workaround to ensure having an array.
-        const referenceNames:Array<string> = [].concat(result.__reference__)
+        const referenceNames:Array<string> =
+            ([] as Array<string>).concat(result.__reference__ as string)
         delete result.__reference__
         for (const name of referenceNames)
             Tools.extend(
