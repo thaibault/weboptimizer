@@ -289,7 +289,7 @@ const now:Date = new Date()
     in place in the following lines of code.
 */
 export const resolvedConfiguration:ResolvedConfiguration =
-    Tools.evaluateDynamicDataStructure(
+    Tools.evaluateDynamicData(
         configuration,
         {
             currentPath: process.cwd(),
