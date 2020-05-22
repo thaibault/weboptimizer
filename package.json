@@ -367,7 +367,7 @@
         },
         "test": {
           "environments": {
-            "__evaluate__": "['node'].concat(self.targetTechnology === 'node' ? [] : 'jsdom')"
+            "__evaluate__": "['node'].concat(self.targetTechnology === 'web' ? 'jsdom' : [])"
           },
           "command": {
             "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --test-environment ${environment} --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
