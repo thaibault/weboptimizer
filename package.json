@@ -1072,7 +1072,7 @@
       },
       "package": {
         "aliasPropertyNames": {
-          "__evaluate__": "(self.targetTechnology === 'web' ? ['browser'] : [])"
+          "__evaluate__": "self.targetTechnology === 'web' ? ['browser'] : []"
         },
         "main": {
           "fileNames": [
