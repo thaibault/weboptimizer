@@ -3744,9 +3744,9 @@ cli-width@^2.0.0:
   integrity sha512-GRMWDxpOB6Dgk2E5Uo+3eEBvtOOlimMmpbFiKuLFnQzYDavtLFY3K5ona41jgN/WdRZtG7utuVSVTL4HbZHGkw==
 
 clientnode@*:
-  version "3.0.442"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.442.tgz#d3f1ec59e3e17fa99b5b2ba5170299a2a05b4699"
-  integrity sha512-OoVxZ64/GQIHgwUVmMR9yGP9oEOaTlVtcX3maANRpXLcZUkYNA0QtMEb8tViM1a5tV1ym+ONeFeEhBhJuOwxXA==
+  version "3.0.443"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.443.tgz#7164ccaf678e769811b014037e8c8f5aaa7c7a3d"
+  integrity sha512-gIsYURGyeTFDA1CZT5OoTZZO3XRAPrOv9PUUIlt6mEjNIjOKkJHK5OUZynPrXjlnYRsF1BSuCj9Bb/DS+MBCag==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -8426,9 +8426,9 @@ min-document@^2.19.0:
     dom-walk "^0.1.0"
 
 min-indent@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/min-indent/-/min-indent-1.0.0.tgz#cfc45c37e9ec0d8f0a0ec3dd4ef7f7c3abe39256"
-  integrity sha1-z8RcN+nsDY8KDsPdTvf3w6vjklY=
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/min-indent/-/min-indent-1.0.1.tgz#a63f681673b30571fbe8bc25686ae746eefa9869"
+  integrity sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==
 
 mini-css-extract-plugin@*:
   version "0.9.0"
