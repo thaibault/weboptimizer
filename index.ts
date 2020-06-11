@@ -28,8 +28,8 @@ import {
     File,
     PlainObject,
     ProcedureFunction,
-    ProcessCloseReason,
-    ProcessError,
+    ProcessCloseCallback,
+    ProcessErrorCallback,
     ProcessHandler
 } from 'clientnode/type'
 import synchronousFileSystem from 'fs'
@@ -387,8 +387,8 @@ const main = async ():Promise<void> => {
                     }
                     const closeHandler:ProcessHandler =
                         Tools.getProcessCloseHandler(
-                            resolve as (reason:ProcessCloseReason) => void,
-                            reject as (error:ProcessError) => void,
+                            resolve as ProcessCloseCallback,
+                            reject as ProcessErrorCallback,
                             null,
                             process.argv[2] === 'build' ?
                                 copyAdditionalFilesAndTidyUp :
@@ -542,9 +542,8 @@ const main = async ():Promise<void> => {
                                 )
                             const closeHandler:ProcessHandler =
                                 Tools.getProcessCloseHandler(
-                                    resolve as
-                                        (reason:ProcessCloseReason) => void,
-                                    reject as (error:ProcessError) => void
+                                    resolve as ProcessCloseCallback,
+                                    reject as ProcessErrorCallback
                                 )
                             for (const closeEventName of CloseEventNames)
                                 childProcess.on(closeEventName, closeHandler)
