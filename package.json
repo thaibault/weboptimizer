@@ -3,9 +3,9 @@
   "version": "2.0.681",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
-  "homepage": "https://torben.website/webOptimizer",
+  "homepage": "https://torben.website/weboptimizer",
   "documentationWebsite": {
-    "name": "webOptimizer",
+    "name": "weboptimizer",
     "trackingCode": "UA-40192634-11"
   },
   "keywords": [
@@ -48,7 +48,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thaibault/webOptimizer.git"
+    "url": "https://github.com/thaibault/weboptimizer.git"
   },
   "scripts": {
     "build": "command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --out-file' && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestEnvironmentBrowser.js jestEnvironmentBrowser.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && chmod +x index.js",
