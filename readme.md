@@ -15,12 +15,12 @@ Project status
 
 [![npm version](https://badge.fury.io/js/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
 [![downloads](https://img.shields.io/npm/dy/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
-[![build status](https://travis-ci.org/thaibault/webOptimizer.svg?branch=master)](https://travis-ci.org/thaibault/webOptimizer)
-[![code coverage](https://coveralls.io/repos/github/thaibault/webOptimizer/badge.svg)](https://coveralls.io/github/thaibault/webOptimizer)
+[![build status](https://travis-ci.org/thaibault/weboptimizer.svg?branch=master)](https://travis-ci.org/thaibault/weboptimizer)
+[![code coverage](https://coveralls.io/repos/github/thaibault/weboptimizer/badge.svg)](https://coveralls.io/github/thaibault/weboptimizer)
 [![dependencies](https://img.shields.io/david/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer)
 [![development dependencies](https://img.shields.io/david/dev/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=dev)
 [![peer dependencies](https://img.shields.io/david/peer/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=peer)
-[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/webOptimizer.svg?label=documentation-website)](https://torben.website/webOptimizer)> regionendregion
+[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website)](https://torben.website/weboptimizer)> regionendregion
 
 Use case
 --------
@@ -119,23 +119,23 @@ compositions are listed below:
     ...
     "scripts": {
         ...
-        "build": "webOptimizer build",
-        "build:dll": "webOptimizer build:dll",
-        "build:dll:debug": "webOptimizer build:dll -debug && webOptimizer build -debug",
-        "build:stats": "webOptimizer build --profile --json >/tmp/stat.json && echo 'Results successfully written to \"/tmp/stat.json\".'",
+        "build": "weboptimizer build",
+        "build:dll": "weboptimizer build:dll",
+        "build:dll:debug": "weboptimizer build:dll -debug && weboptimizer build -debug",
+        "build:stats": "weboptimizer build --profile --json >/tmp/stat.json && echo 'Results successfully written to \"/tmp/stat.json\".'",
         "check": "yarn check:types; yarn lint",
-        "check:types": "webOptimizer check:types",
-        "clear": "webOptimizer clear",
-        "document": "webOptimizer document",
-        "lint": "webOptimizer lint",
-        "postinstall": "webOptimizer build",
-        "preinstall": "webOptimizer preinstall",
-        "serve": "webOptimizer serve",
+        "check:types": "weboptimizer check:types",
+        "clear": "weboptimizer clear",
+        "document": "weboptimizer document",
+        "lint": "weboptimizer lint",
+        "postinstall": "weboptimizer build",
+        "preinstall": "weboptimizer preinstall",
+        "serve": "weboptimizer serve",
         "start": "npm run serve",
-        "test": "webOptimizer test",
-        "test:browser": "webOptimizer test:browser",
-        "watch": "webOptimizer build --watch",
-        "watch:dll": "webOptimizer build:dll --watch"
+        "test": "weboptimizer test",
+        "test:browser": "weboptimizer test:browser",
+        "watch": "weboptimizer build --watch",
+        "watch:dll": "weboptimizer build:dll --watch"
         ...
     },
     ...
@@ -288,7 +288,7 @@ behavior. Any javaScript will be supported:
 
     npm run build '{module:{preprocessor:{javaScript:{loader:"babel"}}}}'
 
-If you're using webOptimizer in a toolchain were none printable or none unicode
+If you're using weboptimizer in a toolchain were none printable or none unicode
 compatible symbols should be used (for example content which should replace
 placeholder) you can encode your javaScript expression as base64 code:
 
