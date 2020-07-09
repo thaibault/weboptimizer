@@ -44,7 +44,7 @@
   ],
   "main": "index.js",
   "bin": {
-    "webOptimizer": "index.js"
+    "weboptimizer": "index.js"
   },
   "repository": {
     "type": "git",
