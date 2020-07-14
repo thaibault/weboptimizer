@@ -3765,9 +3765,9 @@ clean-css@^4.2.1, clean-css@^4.2.3:
     source-map "~0.6.0"
 
 clientnode@*:
-  version "3.0.479"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.479.tgz#3f699af87b5ddb9d0861283758ef85d4f0cce31f"
-  integrity sha512-f2cLlDHi9y12yYjWQOVVt5ERR3uEHGEDM8pOodxIkDhzEl+ZClpu1gRyOlYzqgjmW6F/M8pktqgUu/BWKYIALw==
+  version "3.0.481"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.481.tgz#8c6e64f3099ab0600bec7b54904afb95731f6fca"
+  integrity sha512-3saVr2iO+0cvSm0JsezQQ4dG4CcBBVJzo0vQVMK8XqYkcMJfKHDMkTgAIKQ6nfx4RV7KCEhFGkn3twHvFFY/uA==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -4883,9 +4883,9 @@ ejs@^2.3.4:
   integrity sha512-7vmuyh5+kuUyJKePhQfRQBhXV5Ce+RnaeeQArKu1EAMpL3WbgMt5WG6uQZpEVvYSSsxMXRKOewtDk9RaTKXRlA==
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.488:
-  version "1.3.496"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.496.tgz#3f43d32930481d82ad3663d79658e7c59a58af0b"
-  integrity sha512-TXY4mwoyowwi4Lsrq9vcTUYBThyc1b2hXaTZI13p8/FRhY2CTaq5lK+DVjhYkKiTLsKt569Xes+0J5JsVXFurQ==
+  version "1.3.497"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.497.tgz#de00f2f2f44c258c4577fbfbd5124b94c18bfa44"
+  integrity sha512-sPdW5bUDZwiFtoonuZCUwRGzsZmKzcLM0bMVhp6SMCfUG+B3faENLx3cE+o+K0Jl+MPuNA9s9cScyFjOlixZpQ==
 
 elliptic@^6.0.0, elliptic@^6.5.2:
   version "6.5.3"
