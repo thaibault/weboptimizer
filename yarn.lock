@@ -3763,9 +3763,9 @@ clean-css@^4.2.1, clean-css@^4.2.3:
     source-map "~0.6.0"
 
 clientnode@*:
-  version "3.0.482"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.482.tgz#f8c2e37a4a7c964d9b85b19cd48a11d82ddd671b"
-  integrity sha512-vKHXWsG9DWTo1V/OOndA2gZiYq5pXrtkyfj4AfJ92jvCWIf5dSXBpOr1RXqD/4gaXczgLSB1M1Vv4000VTSlzA==
+  version "3.0.483"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.483.tgz#11ae9a87632639f3644121bf120361e37aadf3cd"
+  integrity sha512-IABiDFF1ml0zmUk4ZnRpctr0jPQfNXfGc/09duIb/74ly1SQL1Unm8m/O1cjSmr2OK3y/TFzMt3fNRzo4lOpcw==
 
 cliui@^4.0.0:
   version "4.1.0"
