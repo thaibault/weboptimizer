@@ -142,6 +142,7 @@
     "webpack-dev-server": "*"
   },
   "peerDependencies": {
+    "@babel/preset-react": "*",
     "@types/ejs": "*",
     "@types/html-minifier": "*",
     "@types/jest": "*",
@@ -444,7 +445,9 @@
           },
           "internal": [
             ".js",
+            ".jsx",
             ".ts",
+            ".tsx",
             ".json",
             ".css",
             ".eot",
@@ -1011,7 +1014,7 @@
                 "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}], '@babel/typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             },
-            "regularExpression": "\\.[jt]s(?:\\?.*)?$"
+            "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"
           }
         },
         "provide": {
