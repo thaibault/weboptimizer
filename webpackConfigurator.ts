@@ -351,9 +351,9 @@ if (configuration.givenCommandLineArguments[2] !== 'build:dll')
             )) {
                 delete configuration.injection.entry.normalized[chunkName]
                 const filePath:string = Helper.renderFilePathTemplate(
-                    Helper.stripLoader(
-                        configuration.files.compose.javaScript
-                    ), {'[name]': chunkName})
+                    Helper.stripLoader(configuration.files.compose.javaScript),
+                    {'[name]': chunkName}
+                )
                 pluginInstances.push(new plugins.AddAssetHTMLPlugin({
                     filepath: filePath,
                     hash: true,
@@ -361,14 +361,21 @@ if (configuration.givenCommandLineArguments[2] !== 'build:dll')
                 }))
                 pluginInstances.push(new webpack.DllReferencePlugin({
                     context: configuration.path.context,
-                    manifest: require(manifestFilePath)}))
+                    manifest: require(manifestFilePath)
+                }))
             }
         }
 // /// endregion
 // /// region mark empty javaScript modules as dummy
-if (!(configuration.needed.javaScript || configuration.needed.typeScript))
+if (!(
+    configuration.needed.javaScript ||
+    configuration.needed.javaScriptExtension ||
+    configuration.needed.typeScript ||
+    configuration.needed.typeScriptExtension
+))
     configuration.files.compose.javaScript = path.resolve(
-        configuration.path.target.asset.javaScript, '.__dummy__.compiled.js')
+        configuration.path.target.asset.javaScript, '.__dummy__.compiled.js'
+    )
 // /// endregion
 // /// region extract cascading style sheets
 if (configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract)
@@ -1418,7 +1425,8 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
         output: {
             filename: path.relative(
                 configuration.path.target.base,
-                configuration.files.compose.javaScript),
+                configuration.files.compose.javaScript
+            ),
             hashFunction: configuration.hashAlgorithm,
             library: libraryName,
             libraryTarget: (
