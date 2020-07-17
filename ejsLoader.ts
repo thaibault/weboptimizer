@@ -1,5 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
+/** @module ejsLoader */
 'use strict'
 /* !
     region header
@@ -26,7 +27,7 @@ import babelMinifyPreset from 'babel-preset-minify'
     import transformWith from 'babel-plugin-transform-with'
 */
 import Tools from 'clientnode'
-import {Encoding} from 'clientnode/type'
+import {Encoding, Mapping} from 'clientnode/type'
 import ejs from 'ejs'
 import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
@@ -52,7 +53,7 @@ export type EJSCompilerConfiguration = {
     filename:string;
     isString:boolean;
 }
-export type EJSLoaderConfiguration = {
+export type EJSLoaderConfiguration = Mapping<unknown> & {
     compiler:EJSCompilerConfiguration;
     compileSteps:number;
     compress:{
@@ -66,7 +67,6 @@ export type EJSLoaderConfiguration = {
         aliases:Record<string, string>;
         replacements:Record<string, string>;
     };
-    [key:string]:unknown;
 }
 // endregion
 /**

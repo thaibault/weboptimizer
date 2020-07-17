@@ -1,5 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
+/** @module weboptimizer */
 'use strict'
 /* !
     region header

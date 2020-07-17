@@ -1,4 +1,5 @@
 // -*- coding: utf-8 -*-
+/** @module untyptedDependencies */
 declare module 'babel-preset-minify'
 declare module 'html-loader'
 declare module 'webOptimizerDefaultTemplateFilePath'
