@@ -232,8 +232,14 @@
           "typeScript": {
             "extension": "ts"
           },
+          "typeScriptExtension": {
+            "extension": "tsx"
+          },
           "javaScript": {
             "extension": "js"
+          },
+          "javaScriptExtension": {
+            "extension": "jsx"
           },
           "cascadingStyleSheet": {
             "extension": "css",

@@ -55,19 +55,19 @@ export type PackageDescriptor = {
 export type Replacement<T=any> = ((
     substring:string, ...parameter:Array<T>
 ) => string)|string
-export type Replacements = {[key:string]:Replacement}
+export type Replacements = Mapping<Replacement>
 export type Resolvable = {
     [TYPE in '__evaluate__'|'__execute__'|string]:any|Resolvable|string
 }
 // / endregion
 // / region injection
-export type ExternalAliases = {[key:string]:{[key:string]:Function|string}}
+export type ExternalAliases = Mapping<Mapping<Function|string>>
 export type ExternalInjection = string|((
     context:string, request:string, callback:ProcedureFunction
 ) => void)|RegExp|Array<ExternalInjection>
 export type GivenInjection =
-    Function|string|Array<string>|{[key:string]:string|Array<string>}
-export type NormalizedGivenInjection = {[key:string]:Array<string>}
+    Function|string|Array<string>|Mapping<string|Array<string>>
+export type NormalizedGivenInjection = Mapping<Array<string>>
 export type GivenInjectionConfiguration = {
     autoExclude:Array<string>;
     entry:GivenInjection;
@@ -138,7 +138,7 @@ export type BuildConfigurationItem = {
     outputExtension:string;
     filePathPattern:string;
 }
-export type BuildConfiguration = {[key:string]:BuildConfigurationItem}
+export type BuildConfiguration = Mapping<BuildConfigurationItem>
 export const SubConfigurationTypes = [
     'debug', 'document', 'test', 'test:browser'
 ] as const
@@ -182,7 +182,7 @@ export type AssetInPlaceInjectionResult = {
     content:string;
     filePathsToRemove:Array<string>;
 }
-export type AssetPositionPatterns = {[key:string]:'body'|'head'|'in'|string}
+export type AssetPositionPatterns = Mapping<'body'|'head'|'in'|string>
 export type AssetTypeIntegration = {
     attributeName:string;
     hash:string;
@@ -206,7 +206,7 @@ export type CommandLineArguments = {
     'test:browser':Array<Command>|Command;
     'check:types':Array<Command>|Command;
 }
-export type NodeEnvironment = {'#':string;[key:string]:boolean|string}
+export type NodeEnvironment = Mapping<boolean|string> & {'#':string}
 export type PluginConfiguration = {
     name:{
         initializer:string;
@@ -264,23 +264,21 @@ export type SpecificExtensions = {
     module:Array<string>;
 }
 export type InPlaceConfiguration = {
-    cascadingStyleSheet:{[key:string]:'body'|'head'|'in'|string};
+    cascadingStyleSheet:Mapping<'body'|'head'|'in'|string>;
     externalLibrary:{
         normal:boolean;
         dynamic:boolean;
     };
-    javaScript:{[key:string]:'body'|'head'|'in'|string};
+    javaScript:Mapping<'body'|'head'|'in'|string>;
     otherMaximumFileSizeLimitInByte:number;
 }
 export type ResolvedConfiguration = {
-    assetPattern:{
-        [key:string]:{
-            excludeFilePathRegularExpression:string;
-            pattern:string;
-        };
-    };
+    assetPattern:Mapping<{
+        excludeFilePathRegularExpression:string;
+        pattern:string;
+    }>;
     buildContext:{
-        definitions:{[key:string]:WebpackDefinePlugin.CodeValueObject};
+        definitions:Mapping<WebpackDefinePlugin.CodeValueObject>;
         types:BuildConfiguration;
     };
     cache:{
@@ -303,10 +301,7 @@ export type ResolvedConfiguration = {
         self:ExportFormat;
     };
     extensions:Extensions;
-    favicon:{
-        logo:string;
-        [key:string]:any;
-    };
+    favicon:Mapping<any> & {logo:string};
     files:{
         additionalPaths:Array<string>;
         compose:{
@@ -385,7 +380,7 @@ export type ResolvedConfiguration = {
                 loader:string;
             };
         };
-        provide:{[key:string]:string};
+        provide:Mapping;
         replacements:{
             context:Array<[string, string]>;
             normal:Replacements;
@@ -394,7 +389,7 @@ export type ResolvedConfiguration = {
         style:WebpackLoader;
     };
     name:string;
-    needed:{[key:string]:boolean};
+    needed:Mapping<boolean>;
     nodeEnvironment:NodeEnvironment;
     offline:PlainObject & {excludes:Array<string>};
     package:{
@@ -429,7 +424,7 @@ export type WebpackConfiguration = BaseWebpackConfiguration & {
 }
 // / endregion
 // NOTE: Not yet defined in webpack types.
-export type WebpackAssets = {[key:string]:{source:() => string}}
+export type WebpackAssets = Mapping<{source:() => string}>
 export type HTMLWebpackPluginAssetTagGroupsData = {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[];
     headTags:HtmlWebpackPlugin.HtmlTagObject[];

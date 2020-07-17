@@ -16,7 +16,7 @@
 */
 // region imports
 import Tools from 'clientnode'
-import {PlainObject, ProcedureFunction} from 'clientnode/type'
+import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
 /* eslint-disable no-empty,no-var,@typescript-eslint/no-var-requires */
 try {
     var postcssCSSnano:Function = require('cssnano')
@@ -46,7 +46,7 @@ import util from 'util'
 import webpack from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 
-const pluginNameResourceMapping:{[key:string]:string} = {
+const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
     AddAssetHTMLPlugin: 'add-asset-html-webpack-plugin',
@@ -655,10 +655,7 @@ if (htmlAvailable)
                 } catch (error) {
                     return callback(error, data)
                 }
-                const linkables:{[key:string]:string} = {
-                    link: 'href',
-                    script: 'src'
-                }
+                const linkables:Mapping = {link: 'href', script: 'src'}
                 for (const tagName in linkables)
                     if (Object.prototype.hasOwnProperty.call(
                         linkables, tagName

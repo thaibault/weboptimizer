@@ -375,7 +375,7 @@ export class Helper {
      * @returns Processed file path.
      */
     static renderFilePathTemplate(
-        template:string, scope:{[key:string]:number|string} = {}
+        template:string, scope:Mapping<number|string> = {}
     ):string {
         scope = Tools.extend(
             {
@@ -697,7 +697,8 @@ export class Helper {
                 const newItem:ResolvedBuildConfigurationItem =
                     Tools.extend(true, {filePaths: []}, configuration[type])
                 for (const file of Tools.walkDirectoryRecursivelySync(
-                    entryPath, (file:File):false|undefined => {
+                    entryPath,
+                    (file:File):false|void => {
                         if (Helper.isFilePathInLocation(
                             file.path, pathsToIgnore
                         ))
@@ -990,12 +991,11 @@ export class Helper {
                 for (let [chunkName, chunk] of Object.entries(injectionType))
                     if (chunk === '__auto__') {
                         chunk = injectionType[chunkName] = []
-                        const modules:{[key:string]:string} =
-                            Helper.getAutoInjection(
-                                buildConfigurations,
-                                moduleFilePathsToExclude,
-                                referencePath
-                            )
+                        const modules:Mapping = Helper.getAutoInjection(
+                            buildConfigurations,
+                            moduleFilePathsToExclude,
+                            referencePath
+                        )
                         for (const subChunkName in modules)
                             if (Object.prototype.hasOwnProperty.call(
                                 modules, subChunkName
@@ -1009,10 +1009,12 @@ export class Helper {
                     }
             } else if (injectionType === '__auto__')
             /* eslint-enable curly */
-                (injection[
-                    name as keyof GivenInjectionConfiguration
-                ] as Mapping) = Helper.getAutoInjection(
-                    buildConfigurations, moduleFilePathsToExclude, context)
+                (
+                    injection[name as keyof GivenInjectionConfiguration] as
+                        Mapping
+                ) = Helper.getAutoInjection(
+                    buildConfigurations, moduleFilePathsToExclude, context
+                )
         }
         return injection
     }
@@ -1030,8 +1032,8 @@ export class Helper {
         moduleFilePathsToExclude:Array<string>,
         context:string
     ):Mapping {
-        const result:{[key:string]:string} = {}
-        const injectedModuleIDs:{[key:string]:Array<string>} = {}
+        const result:Mapping = {}
+        const injectedModuleIDs:Mapping<Array<string>> = {}
         for (const buildConfiguration of buildConfigurations) {
             if (!injectedModuleIDs[buildConfiguration.outputExtension])
                 injectedModuleIDs[buildConfiguration.outputExtension] = []
