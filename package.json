@@ -1015,6 +1015,7 @@
               },
               "plugins": [
                 "@babel/proposal-class-properties",
+                "@babel/proposal-optional-chaining",
                 [
                   "transform-modern-regexp",
                   {
@@ -1024,8 +1025,7 @@
                     ]
                   }
                 ],
-                "transform-optional-chaining",
-                "transform-runtime"
+                "@babel/transform-runtime"
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transformation to allow tree shaking by the final (minimizer).",
