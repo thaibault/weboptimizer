@@ -51,7 +51,7 @@
     "url": "https://github.com/thaibault/weboptimizer.git"
   },
   "scripts": {
-    "build": "command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --out-file' && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestEnvironmentBrowser.js jestEnvironmentBrowser.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && chmod +x index.js && sed --in-place --regexp-extended 's:(#!/usr/bin/env )babel-(node):\\1\\2:' index.js",
+    "build": "command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-proposal-optional-chaining,@babel/plugin-transform-runtime,babel-plugin-transform-modern-regexp --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --out-file' && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestEnvironmentBrowser.js jestEnvironmentBrowser.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && chmod +x index.js && sed --in-place --regexp-extended 's:(#!/usr/bin/env )babel-(node):\\1\\2:' index.js",
     "build:test": "yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --source-root ../ --out-file' && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.ts *.js *.json *.ejs node_modules/weboptimizer/ && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
     "clear": "rimraf apiDocumentation *.js *.compiled.* *.compiled test/*.js test/*.compiled.* *.html *.log node_modules/weboptimizer .nyc_output || true",
     "check": "yarn check:types; yarn lint",
@@ -71,6 +71,7 @@
   },
   "dependencies": {
     "@babel/core": "*",
+    "@babel/plugin-proposal-optional-chaining": "*",
     "@babel/plugin-proposal-class-properties": "*",
     "@babel/plugin-transform-runtime": "*",
     "@babel/preset-env": "*",
@@ -79,7 +80,6 @@
     "add-asset-html-webpack-plugin": "*",
     "babel-loader": "*",
     "babel-plugin-transform-modern-regexp": "*",
-    "babel-plugin-transform-optional-chaining": "*",
     "babel-plugin-transform-with": "*",
     "babel-preset-minify": "*",
     "clientnode": "*",
@@ -1014,7 +1014,7 @@
                 "__evaluate__": "!self.debug"
               },
               "plugins": [
-                "proposal-class-properties",
+                "@babel/proposal-class-properties",
                 [
                   "transform-modern-regexp",
                   {
