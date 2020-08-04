@@ -87,11 +87,7 @@ import Helper from './helper'
 // Monkey-Patch html loader to retrieve html loader options since the
 // "webpack-html-plugin" doesn't preserve the original loader interface.
 import htmlLoaderModuleBackup from 'html-loader'
-if (
-    'cache' in require &&
-    require.cache &&
-    require.resolve('html-loader') in require.cache
-)
+if (require.cache && require.resolve('html-loader') in require.cache)
     (require.cache[require.resolve('html-loader')] as NodeModule).exports =
         function<A, B>(this:WebpackLoader, ...parameter:Array<A>):B {
             Tools.extend(true, this.options, module, this.options)
@@ -102,11 +98,7 @@ import loaderUtilsModuleBackup from 'loader-utils'
 const loaderUtilsIsUrlRequestBackup:(
     url:string, ...parameter:Array<any>
 ) => boolean = loaderUtilsModuleBackup.isUrlRequest
-if (
-    'cache' in require &&
-    require.cache &&
-    require.resolve('loader-utils') in require.cache
-)
+if (require.cache && require.resolve('loader-utils') in require.cache)
     (require.cache[require.resolve('loader-utils')] as NodeModule)
         .exports
         .isUrlRequest =
@@ -122,7 +114,7 @@ if (
 // region initialisation
 // / region determine library name
 let libraryName:string
-if ('libraryName' in configuration && configuration.libraryName)
+if (configuration.libraryName)
     libraryName = configuration.libraryName
 else if (Object.keys(configuration.injection.entry.normalized).length > 1)
     libraryName = '[name]'
@@ -212,9 +204,15 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
 }
 // // endregion
 // // region opens browser automatically
-if (configuration.development.openBrowser && (htmlAvailable && [
-    'serve', 'test:browser'
-].includes(configuration.givenCommandLineArguments[2])))
+if (
+    configuration.development.openBrowser &&
+    (
+        htmlAvailable &&
+        ['serve', 'test:browser'].includes(
+            configuration.givenCommandLineArguments[2]
+        )
+    )
+)
     pluginInstances.push(new plugins.OpenBrowser(
         configuration.development.openBrowser))
 // // endregion
@@ -265,9 +263,12 @@ pluginInstances.push({apply: (compiler:Record<string, any>):void => {
 }})
 // /// endregion
 // /// region in-place configured assets in the main html file
-if (htmlAvailable && !['serve', 'test:browser'].includes(
-    configuration.givenCommandLineArguments[2]
-))
+if (
+    htmlAvailable &&
+    !['serve', 'test:browser'].includes(
+        configuration.givenCommandLineArguments[2]
+    )
+)
     pluginInstances.push({apply: (compiler:Record<string, any>):void => {
         const filePathsToRemove:Array<string> = []
         compiler.hooks.compilation.tap('inPlaceHTMLAssets', (
@@ -727,11 +728,9 @@ if (htmlAvailable)
                                 [htmlFileSpecification.template.use]
                         )
                             if (
-                                loaderConfiguration.options &&
-                                loaderConfiguration.options.compileSteps &&
+                                loaderConfiguration.options?.compileSteps &&
                                 typeof loaderConfiguration.options
-                                    .compileSteps ===
-                                'number'
+                                    .compileSteps === 'number'
                             )
                                 data.html = ejsLoader.bind(
                                     Tools.extend(
@@ -1367,7 +1366,7 @@ for (const pluginConfiguration of configuration.plugins)
     ])(...pluginConfiguration.parameter))
 // region configuration
 let customConfiguration:PlainObject = {}
-if (configuration.path.configuration && configuration.path.configuration.json)
+if (configuration.path.configuration?.json)
     try {
         require.resolve(configuration.path.configuration.json)
         try {
@@ -1520,10 +1519,7 @@ if (
 )
     webpackConfiguration.module.noParse =
         configuration.module.skipParseRegularExpressions
-if (
-    configuration.path.configuration &&
-    configuration.path.configuration.javaScript
-)
+if (configuration.path.configuration?.javaScript)
     try {
         require.resolve(configuration.path.configuration.javaScript)
         let result:PlainObject|undefined

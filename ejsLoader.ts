@@ -278,7 +278,7 @@ export default function(this:loader.LoaderContext, source:string):string {
                     sourceType: 'script'
                 }
             )
-            if (processed && typeof processed.code === 'string')
+            if (typeof processed?.code === 'string')
                 code = processed.code
             return `'use strict';\n${code}`
         }

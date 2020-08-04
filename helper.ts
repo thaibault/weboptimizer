@@ -609,18 +609,17 @@ export class Helper {
                 extensions.file.external.length === 0 ||
                 filePath &&
                 extensions.file.external.includes(path.extname(filePath)) ||
-                !filePath &&
-                extensions.file.external.includes('')
+                !filePath && extensions.file.external.includes('')
             ) &&
             !(inPlaceDynamicLibrary && request.includes('!')) &&
             (
-                !filePath &&
-                inPlaceDynamicLibrary ||
+                !filePath && inPlaceDynamicLibrary ||
                 filePath &&
                 (
                     !filePath.startsWith(context) ||
                     Helper.isFilePathInLocation(
-                        filePath, externalModuleLocations)
+                        filePath, externalModuleLocations
+                    )
                 )
             )
         )
@@ -667,9 +666,13 @@ export class Helper {
                         ) &&
                         assetType !== 'base' &&
                         type.asset[
-                            assetType as keyof AssetPathConfiguration] &&
-                        filePath.startsWith(type.asset[
-                            assetType as keyof AssetPathConfiguration])
+                            assetType as keyof AssetPathConfiguration
+                        ] &&
+                        filePath.startsWith(
+                            type.asset[
+                                assetType as keyof AssetPathConfiguration
+                            ]
+                        )
                     )
                         return assetType
         return result
@@ -706,8 +709,7 @@ export class Helper {
                     }
                 ))
                     if (
-                        file.stats &&
-                        file.stats.isFile() &&
+                        file.stats?.isFile() &&
                         path.extname(file.path).endsWith(newItem.extension) &&
                         !(new RegExp(newItem.filePathPattern)).test(file.path)
                     )
@@ -876,11 +878,14 @@ export class Helper {
                                     return false
                             }
                         ))
-                            if (file.stats && file.stats.isFile())
+                            if (file.stats?.isFile())
                                 normalizedGivenInjection[chunkName].push(
-                                    './' + path.relative(
-                                        referencePath, path.resolve(
-                                            resolvedPath, file.path)))
+                                    './' +
+                                    path.relative(
+                                        referencePath,
+                                        path.resolve(resolvedPath, file.path)
+                                    )
+                                )
                     } else if (
                         moduleID.startsWith('./') &&
                         !moduleID.startsWith(

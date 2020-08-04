@@ -124,18 +124,10 @@ if (typeof configuration.library === 'object')
         Tools.modifyObject(libraryConfiguration, configuration.library),
         configuration.library
     )
-if (
-    'library' in specificConfiguration &&
-    specificConfiguration.library === true ||
-    (
-        'library' in specificConfiguration &&
-        specificConfiguration.library === undefined ||
-        !('library' in specificConfiguration)
-    ) &&
-    configuration.library
-)
+if (configuration.library && specificConfiguration?.library !== false)
     configuration = Tools.extend(
-        true, Tools.modifyObject(configuration, libraryConfiguration),
+        true,
+        Tools.modifyObject(configuration, libraryConfiguration),
         libraryConfiguration
     )
 // endregion
@@ -209,7 +201,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         runtimeInformation.givenCommandLineArguments[runtimeInformation
             .givenCommandLineArguments.length - 1],
         configuration, 'configuration')
-if (typeof result === 'object' && result !== null) {
+if (result !== null && typeof result === 'object') {
     if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
         const referenceNames:Array<string> =
             ([] as Array<string>).concat(result.__reference__ as string)
@@ -254,7 +246,8 @@ for (const key in configuration.path)
         for (const subKey in configuration.path[key])
             if (
                 Object.prototype.hasOwnProperty.call(
-                    configuration.path[key], subKey) &&
+                    configuration.path[key], subKey
+                ) &&
                 !['base', 'public'].includes(subKey) &&
                 typeof configuration.path[key][subKey] === 'string'
             )

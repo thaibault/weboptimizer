@@ -14,9 +14,12 @@
 <html class="no-javascript" lang="en">
     <head>
         <meta charset="utf-8">
-        <%_ if (2 < configuration.givenCommandLineArguments.length && [
-            'serve', 'test', 'test:browser'
-        ].includes(configuration.givenCommandLineArguments[2])) { _%>
+        <%_ if (
+            2 < configuration.givenCommandLineArguments.length &&
+            ['serve', 'test', 'test:browser'].includes(
+                configuration.givenCommandLineArguments[2]
+            )
+        ) { _%>
             <!--Prevent browser caching-->
             <meta http-equiv="cache-control" content="no-cache">
             <meta http-equiv="expires" content="0">
