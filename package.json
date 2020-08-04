@@ -78,6 +78,8 @@
     "@babel/runtime": "*",
     "add-asset-html-webpack-plugin": "*",
     "babel-loader": "*",
+    "babel-plugin-transform-modern-regexp": "*",
+    "babel-plugin-transform-optional-chaining": "*",
     "babel-plugin-transform-with": "*",
     "babel-preset-minify": "*",
     "clientnode": "*",
@@ -1012,8 +1014,18 @@
                 "__evaluate__": "!self.debug"
               },
               "plugins": [
-                "@babel/plugin-proposal-class-properties",
-                "@babel/plugin-transform-runtime"
+                "proposal-class-properties",
+                [
+                  "transform-modern-regexp",
+                  {
+                    "features": [
+                      "dotAll",
+                      "namedCapturingGroups"
+                    ]
+                  }
+                ],
+                "transform-optional-chaining",
+                "transform-runtime"
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transformation to allow tree shaking by the final (minimizer).",
