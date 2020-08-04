@@ -95,8 +95,11 @@ const main = async ():Promise<void> => {
                 configuration.givenCommandLineArguments.length > 3 &&
                 Tools.stringParseEncodedObject(
                     configuration.givenCommandLineArguments[
-                        configuration.givenCommandLineArguments.length - 1],
-                    configuration, 'configuration')
+                        configuration.givenCommandLineArguments.length - 1
+                    ],
+                    configuration,
+                    'configuration'
+                )
             )
                 configuration.givenCommandLineArguments.pop()
             let count = 0
@@ -168,10 +171,7 @@ const main = async ():Promise<void> => {
                                         type
                                     ].filePathPattern
                                 ).test(file.path)) {
-                                    if (
-                                        file.stats &&
-                                        file.stats.isDirectory()
-                                    ) {
+                                    if (file.stats?.isDirectory()) {
                                         await new Promise((
                                             resolve:Function, reject:Function
                                         ):void => removeDirectoryRecursively(
@@ -327,7 +327,8 @@ const main = async ():Promise<void> => {
                                         Tools.isFileSync(filePath)
                                     )
                                         synchronousFileSystem.chmodSync(
-                                            filePath, '755')
+                                            filePath, '755'
+                                        )
                                 }
                             }
                     for (const filePath of configuration.path.tidyUp)
@@ -586,7 +587,8 @@ const main = async ():Promise<void> => {
             (
                 configuration.givenCommandLineArguments.length < 3 ||
                 !possibleArguments.includes(
-                    configuration.givenCommandLineArguments[2])
+                    configuration.givenCommandLineArguments[2]
+                )
             )
         )
             console.info(
