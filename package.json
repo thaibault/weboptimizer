@@ -1013,7 +1013,7 @@
               "minified": {
                 "__evaluate__": "!self.debug"
               },
-              "#": "NOTE: @babel/proposal-optional-chaining does not yet work so using the old transformer.",
+              "#": "NOTE: \"@babel/proposal-optional-chaining\" does not yet work so using the old transformer.",
               "plugins": [
                 "@babel/proposal-class-properties",
                 [
