@@ -28,7 +28,7 @@ import babelMinifyPreset from 'babel-preset-minify'
 */
 import Tools from 'clientnode'
 import {Encoding, Mapping} from 'clientnode/type'
-import ejs from 'ejs'
+import ejs, {Options, TemplateFunction} from 'ejs'
 import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import {getOptions, getRemainingRequest} from 'loader-utils'
@@ -40,21 +40,14 @@ import Helper from './helper'
 import {Extensions} from './type'
 // endregion
 // region types
-export type TemplateFunction = (locals:Record<string, unknown>) => string
+export type CompilerOptions = Options & {isString:boolean}
 export type CompileFunction = (
-    template:string, options:EJSCompilerConfiguration, compileSteps?:number
+    template:string,
+    options:CompilerOptions,
+    compileSteps:number
 ) => TemplateFunction
-export type EJSCompilerConfiguration = {
-    cache?:boolean;
-    client:boolean;
-    compileDebug:boolean;
-    debug:boolean;
-    encoding?:Encoding;
-    filename:string;
-    isString:boolean;
-}
-export type EJSLoaderConfiguration = Mapping<unknown> & {
-    compiler:EJSCompilerConfiguration;
+export type LoaderConfiguration = Mapping<unknown> & {
+    compiler:CompilerOptions;
     compileSteps:number;
     compress:{
         html:Record<string, unknown>;
@@ -78,7 +71,7 @@ export type EJSLoaderConfiguration = Mapping<unknown> & {
 export default function(this:loader.LoaderContext, source:string):string {
     if ('cacheable' in this)
         this.cacheable(!this.debug)
-    const givenOptions:EJSLoaderConfiguration =
+    const givenOptions:LoaderConfiguration =
         Tools.convertSubstringInPlainObject(
             Tools.extend(
                 true,
@@ -111,10 +104,10 @@ export default function(this:loader.LoaderContext, source:string):string {
             ),
             /#%%%#/g,
             '!'
-        ) as EJSLoaderConfiguration
+        ) as LoaderConfiguration
     const compile:CompileFunction = (
         template:string,
-        options:EJSCompilerConfiguration = givenOptions.compiler,
+        options:CompilerOptions = givenOptions.compiler,
         compileSteps = 2
     ):TemplateFunction => (locals:Record<string, unknown> = {}):string => {
         options = Tools.extend(true, {filename: template}, options)
@@ -144,7 +137,7 @@ export default function(this:loader.LoaderContext, source:string):string {
                     evaluationFunction(
                         request, template, source, compile, locals))
             }
-            let nestedOptions:EJSCompilerConfiguration = Tools.copy(options)
+            let nestedOptions:CompilerOptions = Tools.copy(options)
             delete nestedOptions.client
             nestedOptions = Tools.extend(
                 true,
@@ -152,8 +145,10 @@ export default function(this:loader.LoaderContext, source:string):string {
                 nestedOptions,
                 nestedLocals.options || {}
             )
-            if (nestedOptions.isString)
+            if (nestedOptions.isString) {
+                delete nestedOptions.isString
                 return compile(template, nestedOptions)(nestedLocals)
+            }
             const templateFilePath:null|string = Helper.determineModuleFilePath(
                 template,
                 givenOptions.module.aliases,
