@@ -3845,9 +3845,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.499"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.499.tgz#bf94e8d5f044a87675525a6dcf46de036bd1de79"
-  integrity sha512-96FlbUlpJ6TyK9WXpNmdDkcQrSgVHAPB/+Vv3zyU+ydD/6Ioub7yI+1xJEAPB8q4hRSiCkcDn9u0P2Av7mB4lA==
+  version "3.0.500"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.500.tgz#cd1d89b092bdaea4265d233b7e6fb3f97a800908"
+  integrity sha512-l1zIoyhnzy+kSWn+jY8olWLF80+TQdWx+KhlHOwxjQo/7/R/nxrs3p03oNn6XTQExI70QF1r9iMfi5V/XV7u6Q==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -13253,9 +13253,9 @@ whatwg-mimetype@^2.3.0:
   integrity sha512-M4yMwr6mAnQz76TbJm914+gPpB/nCwvZbJU28cUD6dR004SAxDLOOSUaB1JDRqLtaOV/vi0IC5lEAGFgrjGv/g==
 
 whatwg-url@^8.0.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-8.2.0.tgz#89383f80ea3888734d1cf29526c135d52e60166d"
-  integrity sha512-Sl4svq71j4kzaFD13uxkVl2AIsbj/xwp8NTM1VMhFRyNT1ZMTWaV6+Pva0fQs7y8+cAEPrDGfCAFLvJejhT79g==
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-8.2.1.tgz#ed73417230784b281fb2a32c3c501738b46167c3"
+  integrity sha512-ZmVCr6nfBeaMxEHALLEGy0LszYjpJqf6PVNQUQ1qd9Et+q7Jpygd4rGGDXgHjD8e99yLFseD69msHDM4YwPZ4A==
   dependencies:
     lodash.sortby "^4.7.0"
     tr46 "^2.0.2"
