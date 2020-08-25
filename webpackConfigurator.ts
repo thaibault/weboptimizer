@@ -66,7 +66,9 @@ for (const name in pluginNameResourceMapping)
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
 
-import ejsLoader, {EJSLoaderConfiguration} from './ejsLoader'
+import ejsLoader, {
+    LoaderConfiguration as EJSLoaderConfiguration
+} from './ejsLoader'
 /* eslint-disable no-unused-vars */
 import {
     AdditionalLoaderConfiguration,
