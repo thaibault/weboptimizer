@@ -40,11 +40,14 @@ import Helper from './helper'
 import {Extensions} from './type'
 // endregion
 // region types
-export type CompilerOptions = Options & {isString:boolean}
+export type CompilerOptions = Options & {
+    encoding:Encoding;
+    isString?:boolean;
+}
 export type CompileFunction = (
     template:string,
-    options:CompilerOptions,
-    compileSteps:number
+    options?:Partial<CompilerOptions>,
+    compileSteps?:number
 ) => TemplateFunction
 export type LoaderConfiguration = Mapping<unknown> & {
     compiler:CompilerOptions;
@@ -107,7 +110,7 @@ export default function(this:loader.LoaderContext, source:string):string {
         ) as LoaderConfiguration
     const compile:CompileFunction = (
         template:string,
-        options:CompilerOptions = givenOptions.compiler,
+        options:Partial<CompilerOptions> = givenOptions.compiler,
         compileSteps = 2
     ):TemplateFunction => (locals:Record<string, unknown> = {}):string => {
         options = Tools.extend(true, {filename: template}, options)
@@ -137,18 +140,17 @@ export default function(this:loader.LoaderContext, source:string):string {
                     evaluationFunction(
                         request, template, source, compile, locals))
             }
-            let nestedOptions:CompilerOptions = Tools.copy(options)
+            let nestedOptions:CompilerOptions = Tools.copy(options) as CompilerOptions
             delete nestedOptions.client
             nestedOptions = Tools.extend(
                 true,
                 {encoding: configuration.encoding},
                 nestedOptions,
-                nestedLocals.options || {}
+                nestedLocals.options || {},
+                options
             )
-            if (nestedOptions.isString) {
-                delete nestedOptions.isString
+            if (nestedOptions.isString)
                 return compile(template, nestedOptions)(nestedLocals)
-            }
             const templateFilePath:null|string = Helper.determineModuleFilePath(
                 template,
                 givenOptions.module.aliases,
@@ -176,13 +178,15 @@ export default function(this:loader.LoaderContext, source:string):string {
                 */
                 if (queryMatch || templateFilePath.endsWith('.ejs'))
                     return compile(templateFilePath, nestedOptions)(
-                        nestedLocals)
+                        nestedLocals
+                    )
                 return fileSystem.readFileSync(
-                    templateFilePath, nestedOptions
+                    templateFilePath, {encoding: nestedOptions.encoding}
                 ) as unknown as string
             }
             throw new Error(
-                `Given template file "${template}" couldn't be resolved.`)
+                `Given template file "${template}" couldn't be resolved.`
+            )
         }
         const compressHTML:Function = (content:string):string =>
             givenOptions.compress.html ?
@@ -221,11 +225,13 @@ export default function(this:loader.LoaderContext, source:string):string {
                 content
         let remainingSteps:number = compileSteps
         let result:string|TemplateFunction = template
-        const isString:boolean = options.isString
+        const isString:boolean = Boolean(options.isString)
         delete options.isString
         while (remainingSteps > 0) {
             if (typeof result === 'string') {
-                const filePath:string = isString ? options.filename : result
+                const filePath:string|undefined = isString ?
+                    options.filename :
+                    result
                 if (filePath && path.extname(filePath) === '.js')
                     result = eval('require')(filePath)
                 else {
