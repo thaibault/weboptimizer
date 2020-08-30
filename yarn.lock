@@ -3845,9 +3845,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.503"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.503.tgz#a257416da2058fc7f4ca1a7d597768a9e489e307"
-  integrity sha512-lOO5AdRF1Jt76c1vT2avd/kws80zK6NpW7M+p5Qk5sv53eU5lxc7BSUUY6kQsHvUYgB4ovr9kf5jJemgBp+wZQ==
+  version "3.0.505"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.505.tgz#67aa457f3a7c479a504c8a23d504ae531c5bb6ff"
+  integrity sha512-ML4Qt3zHVd9u25detfxEktNh1+rYpk8IyuXfvJOOEGhD2L53836G5oUcPbxXq3/vaXwT1WiTu+C16JbephkZeQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -6458,9 +6458,9 @@ html-tags@^3.1.0:
   integrity sha512-1qYz89hW3lFDEazhjW0yVAV87lw8lVkrJocr72XmBkMKsoSVJCQx3W8BXsC7hO2qAt8BoVjYjtAcZ9perqGnNg==
 
 html-webpack-plugin@*, "html-webpack-plugin@>=4.0.0 || ^4.0.0-beta.11":
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/html-webpack-plugin/-/html-webpack-plugin-4.4.0.tgz#ed6ab2b5e4e476ffa3c5ce52505aa31a42075029"
-  integrity sha512-FHeg2JN9ar1kaR0SLgbF07w46o/n1nGszyByYlPxqEymSpl82vA8EX0leE67kZr3GJnOBh8BbBzmCLO6O1YTIQ==
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/html-webpack-plugin/-/html-webpack-plugin-4.4.1.tgz#61ab85aa1a84ba181443345ebaead51abbb84149"
+  integrity sha512-nEtdEIsIGXdXGG7MjTTZlmhqhpHU9pJFc1OYxcP36c5/ZKP6b0BJMww2QTvJGQYA9aMxUnjDujpZdYcVOXiBCQ==
   dependencies:
     "@types/html-minifier-terser" "^5.0.0"
     "@types/tapable" "^1.0.5"
