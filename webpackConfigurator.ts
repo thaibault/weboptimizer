@@ -1098,114 +1098,6 @@ Tools.extend(loader, {
     },
     // endregion
     // Load dependencies.
-    // region style
-    style: {
-        exclude: (filePath:string):boolean =>
-            (configuration.module.cascadingStyleSheet.exclude === null) ?
-                isFilePathInDependencies(filePath) :
-                evaluate(
-                    configuration.module.cascadingStyleSheet.exclude,
-                    filePath
-                ),
-        include: includingPaths,
-        test: /\.s?css(?:\?.*)?$/i,
-        use:
-            configuration.module.preprocessor.cascadingStyleSheet.additional
-                .pre
-                .map(evaluateLoaderConfiguration)
-                .concat(
-                    {
-                        loader: configuration.module.style.loader,
-                        options: configuration.module.style.options || {}
-                    },
-                    {
-                        loader:
-                            configuration.module.cascadingStyleSheet.loader,
-                        options:
-                            configuration.module.cascadingStyleSheet.options ||
-                            {}
-                    },
-                    {
-                        loader:
-                            configuration.module.preprocessor
-                                .cascadingStyleSheet.loader,
-                        options: Tools.extend(true, {
-                            ident: 'postcss',
-                            plugins: ():Array<Record<string, any>> => [
-                                postcssImport({
-                                    addDependencyTo: webpack,
-                                    root: configuration.path.context
-                                })
-                            ].concat(
-                                configuration.module.preprocessor
-                                    .cascadingStyleSheet.additional.plugins.pre
-                                    .map(evaluateLoaderConfiguration),
-                                postcssPresetENV(
-                                    configuration.module.preprocessor
-                                        .cascadingStyleSheet.postcssPresetEnv
-                                ),
-                                /*
-                                    NOTE: Checking path doesn't work if fonts
-                                    are referenced in libraries provided in
-                                    another location than the project itself
-                                    like the "node_modules" folder.
-                                */
-                                postcssFontPath({
-                                    checkPath: false,
-                                    formats: [
-                                        {type: 'woff2', ext: 'woff2'},
-                                        {type: 'woff', ext: 'woff'}
-                                    ]
-                                }),
-                                postcssURL({url: 'rebase'}),
-                                postcssSprites({
-                                    filterBy: ():Promise<void> =>
-                                        new Promise((
-                                            resolve:Function, reject:Function
-                                        ):void => (
-                                            configuration.files.compose.image ?
-                                                resolve :
-                                                reject
-                                        )()),
-                                    hooks: {onSaveSpritesheet: (
-                                        image:Record<string, any>
-                                    ):string =>
-                                        path.join(
-                                            image.spritePath,
-                                            path.relative(
-                                                configuration.path.target.asset
-                                                    .image,
-                                                configuration.files.compose
-                                                    .image
-                                            )
-                                        )
-                                    },
-                                    stylesheetPath:
-                                        configuration.path.source.asset
-                                            .cascadingStyleSheet,
-                                    spritePath:
-                                        configuration.path.source.asset.image
-                                }),
-                                configuration.module.preprocessor
-                                    .cascadingStyleSheet.additional.plugins
-                                    .post
-                                    .map(evaluateLoaderConfiguration),
-                                configuration.module.optimizer.cssnano ?
-                                    postcssCSSnano(
-                                        configuration.module.optimizer.cssnano
-                                    ) :
-                                    []
-                            )
-                        },
-                        configuration.module.preprocessor.cascadingStyleSheet
-                            .options || {})
-                    },
-                    configuration.module.preprocessor.cascadingStyleSheet
-                        .additional.post
-                        .map(evaluateLoaderConfiguration)
-                )
-    },
-    // endregion
     // Optimize loaded assets.
     // region font
     font: {
@@ -1350,16 +1242,134 @@ Tools.extend(loader, {
     }
     // endregion
 })
-if (
-    configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract
-) {
-    /*
-        NOTE: We have to remove the client side javascript hmr style loader
-        first.
-    */
-    loader.style.use.shift()
-    loader.style.use.unshift(plugins.MiniCSSExtract.loader)
+// // region style
+for (const name of ['style', 'styleModule']) {
+    loader[name] = {
+        exclude: (filePath:string):boolean =>
+            (configuration.module.cascadingStyleSheet.exclude === null) ?
+                isFilePathInDependencies(filePath) :
+                evaluate(
+                    configuration.module.cascadingStyleSheet.exclude,
+                    filePath
+                ),
+        include: includingPaths,
+        test: name === 'style' ?
+            /\.s?css(?:\?.*)?$/i :
+            /\.module\.s?css(?:\?.*)?$/i,
+        use:
+            configuration.module.preprocessor.cascadingStyleSheet.additional
+                .pre
+                .map(evaluateLoaderConfiguration)
+                .concat(
+                    {
+                        loader: configuration.module.style.loader,
+                        options: configuration.module.style.options || {}
+                    },
+                    {
+                        loader:
+                            configuration.module.cascadingStyleSheet.loader,
+                        options: {
+                            modules: name === 'styleModule',
+                            ...(
+                                configuration.module.cascadingStyleSheet
+                                    .options ||
+                                {}
+                            )
+                        }
+                    },
+                    {
+                        loader:
+                            configuration.module.preprocessor
+                                .cascadingStyleSheet.loader,
+                        options: Tools.extend(true, {
+                            ident: 'postcss',
+                            plugins: ():Array<Record<string, any>> => [
+                                postcssImport({
+                                    addDependencyTo: webpack,
+                                    root: configuration.path.context
+                                })
+                            ].concat(
+                                configuration.module.preprocessor
+                                    .cascadingStyleSheet.additional.plugins.pre
+                                    .map(evaluateLoaderConfiguration),
+                                postcssPresetENV(
+                                    configuration.module.preprocessor
+                                        .cascadingStyleSheet.postcssPresetEnv
+                                ),
+                                /*
+                                    NOTE: Checking path doesn't work if fonts
+                                    are referenced in libraries provided in
+                                    another location than the project itself
+                                    like the "node_modules" folder.
+                                */
+                                postcssFontPath({
+                                    checkPath: false,
+                                    formats: [
+                                        {type: 'woff2', ext: 'woff2'},
+                                        {type: 'woff', ext: 'woff'}
+                                    ]
+                                }),
+                                postcssURL({url: 'rebase'}),
+                                postcssSprites({
+                                    filterBy: ():Promise<void> =>
+                                        new Promise((
+                                            resolve:Function, reject:Function
+                                        ):void => (
+                                            configuration.files.compose.image ?
+                                                resolve :
+                                                reject
+                                        )()),
+                                    hooks: {onSaveSpritesheet: (
+                                        image:Record<string, any>
+                                    ):string =>
+                                        path.join(
+                                            image.spritePath,
+                                            path.relative(
+                                                configuration.path.target.asset
+                                                    .image,
+                                                configuration.files.compose
+                                                    .image
+                                            )
+                                        )
+                                    },
+                                    stylesheetPath:
+                                        configuration.path.source.asset
+                                            .cascadingStyleSheet,
+                                    spritePath:
+                                        configuration.path.source.asset.image
+                                }),
+                                configuration.module.preprocessor
+                                    .cascadingStyleSheet.additional.plugins
+                                    .post
+                                    .map(evaluateLoaderConfiguration),
+                                configuration.module.optimizer.cssnano ?
+                                    postcssCSSnano(
+                                        configuration.module.optimizer.cssnano
+                                    ) :
+                                    []
+                            )
+                        },
+                        configuration.module.preprocessor.cascadingStyleSheet
+                            .options || {})
+                    },
+                    configuration.module.preprocessor.cascadingStyleSheet
+                        .additional.post
+                        .map(evaluateLoaderConfiguration)
+                )
+    }
+    if (
+        configuration.files.compose.cascadingStyleSheet &&
+        plugins.MiniCSSExtract
+    ) {
+        /*
+            NOTE: We have to remove the client side javascript hmr style loader
+            first.
+        */
+        loader[name].use.shift()
+        loader[name].use.unshift(plugins.MiniCSSExtract.loader)
+    }
 }
+// // endregion
 // / endregion
 // endregion
 for (const pluginConfiguration of configuration.plugins)
@@ -1448,7 +1458,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                 loader.ejs,
                 loader.script,
                 loader.html.main, loader.html.ejs, loader.html.html,
-                loader.style,
+                loader.styleModule, loader.style,
                 loader.font.eot, loader.font.svg, loader.font.ttf,
                 loader.font.woff,
                 loader.image,
