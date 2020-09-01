@@ -470,7 +470,9 @@
             ".woff",
             ".woff2",
             ".html.ejs",
-            ".ejs"
+            ".ejs",
+            ".compiled.js",
+            ".compiled.css"
           ]
         },
         "module": []
