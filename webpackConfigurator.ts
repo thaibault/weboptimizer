@@ -1129,8 +1129,7 @@ Tools.extend(loader, {
                         loader:
                             configuration.module.preprocessor
                                 .cascadingStyleSheet.loader,
-                        options: Tools.extend(true, {
-                            ident: 'postcss',
+                        options: Tools.extend(true, {postcssOptions: {
                             plugins: ():Array<Record<string, any>> => [
                                 postcssImport({
                                     addDependencyTo: webpack,
@@ -1196,7 +1195,7 @@ Tools.extend(loader, {
                                     ) :
                                     []
                             )
-                        },
+                        }},
                         configuration.module.preprocessor.cascadingStyleSheet
                             .options || {})
                     },

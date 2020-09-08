@@ -3871,9 +3871,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.511"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.511.tgz#c36de9bb4b77c941c13293af0f5b6f19a8ec2c42"
-  integrity sha512-ybl1Cxo6m4yuIhqxNG0PkSLsW9ybhBNv6ZQhC7aJbsLP3zujDwFaKRjGRPi9lDg7PiZ7JFBeJEY2g3Mo3rvRzw==
+  version "3.0.512"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.512.tgz#cbd228a2054c4e4561f462f5e08c49b5e85c3759"
+  integrity sha512-B6QtrP2m/7afPfkNm4ux3eNsBoVWTHVLPk2mJXMa7oHiq7VuU6iK/kIMZ40l7WhoR/RhVCo6G/kozroL1SC0EQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -9924,9 +9924,9 @@ postcss-less@^3.1.4:
     postcss "^7.0.14"
 
 postcss-loader@*:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/postcss-loader/-/postcss-loader-4.0.0.tgz#bfd04521d2a2db69cb9e8a7cee0a5ae704e751dc"
-  integrity sha512-LdpfM9yCVFeJzofnaFvLf3g9oMuH2mIIqOcu81n6JHxzRNBl78GHiYWUJ5gf4c7A7VZiBCeWwfVAMw/mQCAM3Q==
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/postcss-loader/-/postcss-loader-4.0.1.tgz#d1a2cf443005bcd65e856d3881204886646398d4"
+  integrity sha512-m+2fe21cs/1Oz4Yds90al5uqVSc0yJRhYSfCRnsnVLt3z0QoNPpqLdgW7CGVWmlUlKEGL9vmq+P4hHS6Orb5DA==
   dependencies:
     cosmiconfig "^7.0.0"
     klona "^2.0.3"
