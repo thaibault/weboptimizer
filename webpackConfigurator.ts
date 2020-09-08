@@ -1127,7 +1127,7 @@ Tools.extend(loader, {
                             configuration.module.preprocessor
                                 .cascadingStyleSheet.loader,
                         options: Tools.extend(true, {postcssOptions: {
-                            plugins: ():Array<Record<string, any>> => [
+                            plugins: [
                                 postcssImport({
                                     addDependencyTo: webpack,
                                     root: configuration.path.context
