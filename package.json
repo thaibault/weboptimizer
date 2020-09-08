@@ -912,19 +912,23 @@
             "additional": {
               "plugins": {
                 "post": [],
-                "pre": []
+                "pre": [
+                  [
+                    "postcss-preset-env",
+                    {
+                      "browsers": {
+                        "__evaluate__": "self.supportedBrowsers"
+                      },
+                      "stage": 0
+                    }
+                  ]
+                ]
               },
               "post": [],
               "pre": []
             },
             "loader": "postcss",
-            "options": {},
-            "postcssPresetEnv": {
-              "browsers": {
-                "__evaluate__": "self.supportedBrowsers"
-              },
-              "stage": 0
-            }
+            "options": {}
           },
           "ejs": {
             "additional": {
@@ -1303,10 +1307,6 @@
           "minimize": false
         },
         "preprocessor": {
-          "cascadingStyleSheet": {
-            "loader": "postcss",
-            "options": {}
-          },
           "html": {
             "options": {
               "compiler": {
