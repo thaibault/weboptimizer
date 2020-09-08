@@ -27,9 +27,6 @@ import {promises as fileSystem} from 'fs'
 import path from 'path'
 /* eslint-disable no-empty,no-var,@typescript-eslint/no-var-requires */
 try {
-    var postcssPresetENV:Function = require('postcss-preset-env')
-} catch (error) {}
-try {
     var postcssFontPath:Function = require('postcss-fontpath')
 } catch (error) {}
 try {
@@ -1139,10 +1136,6 @@ Tools.extend(loader, {
                                 configuration.module.preprocessor
                                     .cascadingStyleSheet.additional.plugins.pre
                                     .map(evaluateLoaderConfiguration),
-                                postcssPresetENV(
-                                    configuration.module.preprocessor
-                                        .cascadingStyleSheet.postcssPresetEnv
-                                ),
                                 /*
                                     NOTE: Checking path doesn't work if fonts
                                     are referenced in libraries provided in
