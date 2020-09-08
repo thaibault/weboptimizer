@@ -918,9 +918,7 @@
               "pre": []
             },
             "loader": "postcss",
-            "options": {
-              "sourceMap": "inline"
-            },
+            "options": {},
             "postcssPresetEnv": {
               "browsers": {
                 "__evaluate__": "self.supportedBrowsers"
@@ -1307,9 +1305,7 @@
         "preprocessor": {
           "cascadingStyleSheet": {
             "loader": "postcss",
-            "options": {
-              "sourceMap": false
-            }
+            "options": {}
           },
           "html": {
             "options": {
