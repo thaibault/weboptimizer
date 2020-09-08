@@ -863,13 +863,13 @@ const scope:Record<string, any> = {
     require: eval('require')
 }
 const evaluate = (
-    code:string, filePath:string = configuration.path.context
+    object:any, filePath:string = configuration.path.context
 ):any =>
-    (new Function('filePath', ...Object.keys(scope), `return ${code}`))(
-        filePath, ...Object.values(scope)
-    )
-const evaluateLoaderConfiguration = (loader:string):WebpackLoader =>
-    evaluate(loader)
+    typeof object === 'string' ?
+        (new Function('filePath', ...Object.keys(scope), `return ${object}`))(
+            filePath, ...Object.values(scope)
+        ) :
+        object
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration:AdditionalLoaderConfiguration
 ):WebpackLoaderConfiguration => ({
@@ -905,32 +905,32 @@ Tools.extend(loader, {
                 ),
         include: includingPaths,
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
-        use: configuration.module.preprocessor.ejs.additional.pre.map(
-            evaluateLoaderConfiguration
-        ).concat(
-            {
-                loader: 'file?name=[path][name]' +
-                    (
+        use: configuration.module.preprocessor.ejs.additional.pre
+            .map(evaluate)
+            .concat(
+                {
+                    loader: 'file?name=[path][name]' +
                         (
-                            Tools.isPlainObject(
-                                configuration.module.preprocessor.ejs.options
-                            ) ?
-                                configuration.module.preprocessor.ejs
-                                    .options as EJSLoaderConfiguration :
-                                {compileSteps: 2}
-                        ).compileSteps % 2 ? '.js' : ''
-                    ) +
-                    `?${configuration.hashAlgorithm}=[hash]`
-            },
-            {loader: 'extract'},
-            {
-                loader: configuration.module.preprocessor.ejs.loader,
-                options: configuration.module.preprocessor.ejs.options || {}
-            },
-            configuration.module.preprocessor.ejs.additional.post.map(
-                evaluateLoaderConfiguration
+                            (
+                                Tools.isPlainObject(
+                                    configuration.module.preprocessor.ejs
+                                        .options
+                                ) ?
+                                    configuration.module.preprocessor.ejs
+                                        .options as EJSLoaderConfiguration :
+                                    {compileSteps: 2}
+                            ).compileSteps % 2 ? '.js' : ''
+                        ) +
+                        `?${configuration.hashAlgorithm}=[hash]`
+                },
+                {loader: 'extract'},
+                {
+                    loader: configuration.module.preprocessor.ejs.loader,
+                    options: configuration.module.preprocessor.ejs.options || {}
+                },
+                configuration.module.preprocessor.ejs.additional.post
+                    .map(evaluate)
             )
-        )
     },
     // endregion
     // region script
@@ -957,16 +957,15 @@ Tools.extend(loader, {
             configuration.module.preprocessor.javaScript.regularExpression, 'i'
         ),
         use: configuration.module.preprocessor.javaScript.additional.pre.map(
-            evaluateLoaderConfiguration
+            evaluate
         ).concat(
             {
                 loader: configuration.module.preprocessor.javaScript.loader,
                 options:
                     configuration.module.preprocessor.javaScript.options || {}
             },
-            configuration.module.preprocessor.javaScript.additional.post.map(
-                evaluateLoaderConfiguration
-            )
+            configuration.module.preprocessor.javaScript.additional.post
+                .map(evaluate)
         )
     },
     // endregion
@@ -997,7 +996,7 @@ Tools.extend(loader, {
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
             use: configuration.module.preprocessor.html.additional.pre.map(
-                evaluateLoaderConfiguration
+                evaluate
             ).concat(
                 {
                     loader:
@@ -1049,7 +1048,7 @@ Tools.extend(loader, {
                         configuration.module.preprocessor.html.options || {}
                 },
                 configuration.module.preprocessor.html.additional.post.map(
-                    evaluateLoaderConfiguration
+                    evaluate
                 )
             )
         },
@@ -1068,9 +1067,7 @@ Tools.extend(loader, {
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
-            use: configuration.module.html.additional.pre.map(
-                evaluateLoaderConfiguration
-            ).concat(
+            use: configuration.module.html.additional.pre.map(evaluate).concat(
                 {
                     loader:
                        'file?name=' +
@@ -1087,9 +1084,7 @@ Tools.extend(loader, {
                     loader: configuration.module.html.loader,
                     options: configuration.module.html.options || {}
                 },
-                configuration.module.html.additional.post.map(
-                    evaluateLoaderConfiguration
-                )
+                configuration.module.html.additional.post.map(evaluate)
             )
         }
     },
@@ -1109,7 +1104,7 @@ Tools.extend(loader, {
         use:
             configuration.module.preprocessor.cascadingStyleSheet.additional
                 .pre
-                .map(evaluateLoaderConfiguration)
+                .map(evaluate)
                 .concat(
                     {
                         loader: configuration.module.style.loader,
@@ -1135,7 +1130,7 @@ Tools.extend(loader, {
                             ].concat(
                                 configuration.module.preprocessor
                                     .cascadingStyleSheet.additional.plugins.pre
-                                    .map(evaluateLoaderConfiguration),
+                                    .map(evaluate),
                                 /*
                                     NOTE: Checking path doesn't work if fonts
                                     are referenced in libraries provided in
@@ -1181,7 +1176,7 @@ Tools.extend(loader, {
                                 configuration.module.preprocessor
                                     .cascadingStyleSheet.additional.plugins
                                     .post
-                                    .map(evaluateLoaderConfiguration),
+                                    .map(evaluate),
                                 configuration.module.optimizer.cssnano ?
                                     postcssCSSnano(
                                         configuration.module.optimizer.cssnano
@@ -1194,7 +1189,7 @@ Tools.extend(loader, {
                     },
                     configuration.module.preprocessor.cascadingStyleSheet
                         .additional.post
-                        .map(evaluateLoaderConfiguration)
+                        .map(evaluate)
                 )
     },
     // endregion
@@ -1211,16 +1206,15 @@ Tools.extend(loader, {
                     ),
             test: /\.eot(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.eot.additional.pre.map(
-                evaluateLoaderConfiguration
+                evaluate
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.eot.loader,
                     options: configuration.module.optimizer.font.eot.options ||
                         {}
                 },
-                configuration.module.optimizer.font.eot.additional.post.map(
-                    evaluateLoaderConfiguration
-                )
+                configuration.module.optimizer.font.eot.additional.post
+                    .map(evaluate)
             )
         },
         svg: {
@@ -1233,16 +1227,15 @@ Tools.extend(loader, {
                     ),
             test: /\.svg(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.svg.additional.pre.map(
-                evaluateLoaderConfiguration
+                evaluate
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.svg.loader,
                     options: configuration.module.optimizer.font.svg.options ||
                         {}
                 },
-                configuration.module.optimizer.font.svg.additional.post.map(
-                    evaluateLoaderConfiguration
-                )
+                configuration.module.optimizer.font.svg.additional.post
+                    .map(evaluate)
             )
         },
         ttf: {
@@ -1255,16 +1248,15 @@ Tools.extend(loader, {
                     ),
             test: /\.ttf(?:\?.*)?$/i,
             use: configuration.module.optimizer.font.ttf.additional.pre.map(
-                evaluateLoaderConfiguration
+                evaluate
             ).concat(
                 {
                     loader: configuration.module.optimizer.font.ttf.loader,
                     options: configuration.module.optimizer.font.ttf.options ||
                         {}
                 },
-                configuration.module.optimizer.font.ttf.additional.post.map(
-                    evaluateLoaderConfiguration
-                )
+                configuration.module.optimizer.font.ttf.additional.post
+                    .map(evaluate)
             )
         },
         woff: {
@@ -1276,18 +1268,17 @@ Tools.extend(loader, {
                         filePath
                     ),
             test: /\.woff2?(?:\?.*)?$/i,
-            use: configuration.module.optimizer.font.woff.additional.pre.map(
-                evaluateLoaderConfiguration
-            ).concat(
-                {
-                    loader: configuration.module.optimizer.font.woff.loader,
-                    options:
-                        configuration.module.optimizer.font.woff.options || {}
-                },
-                configuration.module.optimizer.font.woff.additional.post.map(
-                    evaluateLoaderConfiguration
+            use: configuration.module.optimizer.font.woff.additional.pre
+                .map(evaluate)
+                .concat(
+                    {
+                        loader: configuration.module.optimizer.font.woff.loader,
+                        options:
+                            configuration.module.optimizer.font.woff.options || {}
+                    },
+                    configuration.module.optimizer.font.woff.additional.post
+                        .map(evaluate)
                 )
-            )
         }
     },
     // endregion
@@ -1302,15 +1293,13 @@ Tools.extend(loader, {
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
         use: configuration.module.optimizer.image.additional.pre.map(
-            evaluateLoaderConfiguration
+            evaluate
         ).concat(
             {
                 loader: configuration.module.optimizer.image.loader,
                 options: configuration.module.optimizer.image.file || {}
             },
-            configuration.module.optimizer.image.additional.post.map(
-                evaluateLoaderConfiguration
-            )
+            configuration.module.optimizer.image.additional.post.map(evaluate)
         )
     },
     // endregion
@@ -1329,15 +1318,13 @@ Tools.extend(loader, {
             ),
         test: /.+/,
         use: configuration.module.optimizer.data.additional.pre.map(
-            evaluateLoaderConfiguration
+            evaluate
         ).concat(
             {
                 loader: configuration.module.optimizer.data.loader,
                 options: configuration.module.optimizer.data.options || {}
             },
-            configuration.module.optimizer.data.additional.post.map(
-                evaluateLoaderConfiguration
-            )
+            configuration.module.optimizer.data.additional.post.map(evaluate)
         )
     }
     // endregion
