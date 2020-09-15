@@ -103,7 +103,6 @@
   },
   "devDependencies": {
     "@babel/cli": "*",
-    "@teamsupercell/typings-for-css-modules-loader": "*",
     "@types/ejs": "*",
     "@types/html-minifier": "*",
     "@types/html-minifier-terser": "*",
@@ -148,7 +147,6 @@
   },
   "peerDependencies": {
     "@babel/preset-react": "*",
-    "@teamsupercell/typings-for-css-modules-loader": "*",
     "@types/ejs": "*",
     "@types/html-minifier": "*",
     "@types/jest": "*",
@@ -695,10 +693,8 @@
         "aliases": {},
         "cascadingStyleSheet": {
           "exclude": null,
-          "loader": "@teamsupercell/typings-for-css-modules-loader",
-          "options": {
-            "loader": "css"
-          }
+          "loader": "css",
+          "options": {}
         },
         "directoryNames": [
           "node_modules"
