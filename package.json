@@ -140,6 +140,7 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
+    "typescript-plugin-css-modules": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*"
@@ -175,6 +176,7 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
+    "typescript-plugin-css-modules": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*"

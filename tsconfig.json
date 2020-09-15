@@ -11,6 +11,7 @@
         "module": "esnext",
         "moduleResolution": "node",
         "noEmit": true,
+        "plugins": [{"name": "typescript-plugin-css-modules"}],
         "resolveJsonModule": true,
         "strict": true,
         "target": "esnext"
