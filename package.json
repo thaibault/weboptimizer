@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.727",
+  "version": "2.0.728",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "https://torben.website/weboptimizer",
@@ -103,6 +103,7 @@
   },
   "devDependencies": {
     "@babel/cli": "*",
+    "@teamsupercell/typings-for-css-modules-loader": "*",
     "@types/ejs": "*",
     "@types/html-minifier": "*",
     "@types/html-minifier-terser": "*",
@@ -141,13 +142,13 @@
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "typescript-plugin-css-modules": "*",
-    "@teamsupercell/typings-for-css-modules-loader": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*"
   },
   "peerDependencies": {
     "@babel/preset-react": "*",
+    "@teamsupercell/typings-for-css-modules-loader": "*",
     "@types/ejs": "*",
     "@types/html-minifier": "*",
     "@types/jest": "*",
@@ -178,7 +179,6 @@
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "typescript-plugin-css-modules": "*",
-    "@teamsupercell/typings-for-css-modules-loader": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*"
