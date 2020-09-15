@@ -141,7 +141,7 @@
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "typescript-plugin-css-modules": "*",
-    "typings-for-css-modules-loader": "*",
+    "@teamsupercell/typings-for-css-modules-loader": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*"
@@ -178,7 +178,7 @@
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "typescript-plugin-css-modules": "*",
-    "typings-for-css-modules-loader": "*",
+    "@teamsupercell/typings-for-css-modules-loader": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-dev-server": "*"
@@ -695,9 +695,10 @@
         "aliases": {},
         "cascadingStyleSheet": {
           "exclude": null,
-          "loader-plain-not-active": "css",
-          "loader": "typings-for-css-modules-loader",
-          "options": {}
+          "loader": "@teamsupercell/typings-for-css-modules-loader",
+          "options": {
+            "loader": "css"
+          }
         },
         "directoryNames": [
           "node_modules"
