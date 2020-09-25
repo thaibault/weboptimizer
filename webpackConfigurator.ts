@@ -23,6 +23,7 @@ try {
     postcssCSSnano = require('cssnano')
 } catch (error) {}
 /* eslint-enable no-empty,@typescript-eslint/no-var-requires */
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {promises as fileSystem} from 'fs'
 import path from 'path'
@@ -619,8 +620,9 @@ if (htmlAvailable)
                         index += 1
                     }
                 }
-                const assets:Array<string> = JSON.parse(
-                    data.plugin.assetJson)
+                const assets:Array<string> = JSON.parse((
+                    data.plugin as unknown as {assetJson:string}
+                ).assetJson)
                 let index = 0
                 for (const assetRequest of assets) {
                     if (/^\.__dummy__(\..*)?$/.test(path.basename(
@@ -629,9 +631,11 @@ if (htmlAvailable)
                         assets.splice(index, 1)
                     index += 1
                 }
-                data.plugin.assetJson = JSON.stringify(assets)
+                (data.plugin as unknown as {assetJson:string}).assetJson =
+                    JSON.stringify(assets)
                 callback(null, data)
-            })
+            }
+        )
         plugins.HTML.getHooks(compilation).beforeEmit.tapAsync(
             'WebOptimizerPostProcessHTML',
             (data:HTMLWebpackPluginBeforeEmitData, callback:Function):void => {
@@ -716,14 +720,12 @@ if (htmlAvailable)
                             `${startTag}${styleContents.shift()}${endTag}`
                     )
                 // region post compilation
-                for (
-                    const htmlFileSpecification of
-                    configuration.files.html
-                )
-                    if (
-                        htmlFileSpecification.filename ===
-                        data.plugin.options.filename
-                    ) {
+                for (const htmlFileSpecification of configuration.files.html)
+                    if (htmlFileSpecification.filename === (
+                        data.plugin as
+                            unknown as
+                            {options: HtmlWebpackPlugin.ProcessedOptions}
+                    ).options.filename) {
                         for (
                             const loaderConfiguration of Array.isArray(
                                 htmlFileSpecification.template.use
