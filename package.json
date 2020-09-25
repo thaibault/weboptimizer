@@ -80,7 +80,6 @@
     "add-asset-html-webpack-plugin": "*",
     "babel-loader": "*",
     "babel-plugin-transform-modern-regexp": "*",
-    "babel-plugin-transform-optional-chaining": "7.0.0-beta.3",
     "babel-plugin-transform-with": "*",
     "babel-preset-minify": "*",
     "clientnode": "*",
