@@ -41,8 +41,8 @@ import {Extensions} from './type'
 // endregion
 // region types
 export type CompilerOptions = Options & {
-    encoding:Encoding;
-    isString?:boolean;
+    encoding:Encoding
+    isString?:boolean
 }
 export type CompileFunction = (
     template:string,
@@ -50,19 +50,19 @@ export type CompileFunction = (
     compileSteps?:number
 ) => TemplateFunction
 export type LoaderConfiguration = Mapping<unknown> & {
-    compiler:CompilerOptions;
-    compileSteps:number;
+    compiler:CompilerOptions
+    compileSteps:number
     compress:{
-        html:Record<string, unknown>;
-        javaScript:Record<string, unknown>;
-    };
-    context:string;
-    extensions:Extensions;
-    locals?:Record<string, unknown>;
+        html:Record<string, unknown>
+        javaScript:Record<string, unknown>
+    }
+    context:string
+    extensions:Extensions
+    locals?:Record<string, unknown>
     module:{
-        aliases:Record<string, string>;
-        replacements:Record<string, string>;
-    };
+        aliases:Record<string, string>
+        replacements:Record<string, string>
+    }
 }
 // endregion
 /**

@@ -98,7 +98,10 @@ export class Helper {
         assets:WebpackAssets,
         domNodes:Array<HTMLElement>,
         assetPositionPattern:keyof AssetPositionPatterns
-    ):{filePathsToRemove:Array<string>;inPlaceStyleContents:Array<string>} {
+    ):{
+        filePathsToRemove:Array<string>
+        inPlaceStyleContents:Array<string>
+    } {
         const filePathsToRemove:Array<string> = []
         const inPlaceStyleContents:Array<string> = []
 
@@ -281,11 +284,11 @@ export class Helper {
                     )
                     if (domNodes.length) {
                         const result:{
-                            filePathsToRemove:Array<string>;
-                            inPlaceStyleContents:Array<string>;
+                            filePathsToRemove:Array<string>
+                            inPlaceStyleContents:Array<string>
                         } = Helper.inPlaceAssetReferences(
                             assetType as AssetTypeIntegration & {
-                                patterns:AssetPositionPatterns;
+                                patterns:AssetPositionPatterns
                             },
                             assets,
                             domNodes,
@@ -791,7 +794,10 @@ export class Helper {
         packageMainPropertyNames:Array<string> = ['main', 'module'],
         packageAliasPropertyNames:Array<string> = [],
         encoding:Encoding = 'utf-8'
-    ):{directoryPaths:Array<string>;filePaths:Array<string>} {
+    ):{
+        directoryPaths:Array<string>
+        filePaths:Array<string>
+    } {
         const filePaths:Array<string> = []
         const directoryPaths:Array<string> = []
         const normalizedGivenInjection:NormalizedGivenInjection =
@@ -1101,8 +1107,14 @@ export class Helper {
         packageMainPropertyNames:Array<string> = ['main'],
         packageAliasPropertyNames:Array<string> = [],
         encoding:Encoding = 'utf-8'
-    ):{fileName:null|string;packageAliases:Mapping|null} {
-        const result:{fileName:null|string;packageAliases:Mapping|null} = {
+    ):{
+        fileName:null|string
+        packageAliases:Mapping|null
+    } {
+        const result:{
+            fileName:null|string
+            packageAliases:Mapping|null
+        } = {
             fileName: null,
             packageAliases: null
         }
@@ -1229,8 +1241,8 @@ export class Helper {
                         let packageAliases:Mapping = {}
                         if (fileName === '__package__') {
                             const result:{
-                                fileName:null|string;
-                                packageAliases:Mapping|null;
+                                fileName:null|string
+                                packageAliases:Mapping|null
                             } = Helper.determineModuleFilePathInPackage(
                                 currentModuleFilePath,
                                 packageMainPropertyNames,
