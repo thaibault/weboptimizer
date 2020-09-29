@@ -505,7 +505,10 @@ describe('helper', ():void => {
         'determineModuleLocations(%p) === %p',
         (
             givenInjection:GivenInjection,
-            expected:{filePaths:Array<string>;directoryPaths:Array<string>}
+            expected:{
+                directoryPaths:Array<string>
+                filePaths:Array<string>
+            }
         ):void =>
             expect(Helper.determineModuleLocations(givenInjection))
                 .toStrictEqual(expected)
