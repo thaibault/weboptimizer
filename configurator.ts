@@ -144,7 +144,7 @@ while (true) {
     count += 1
 }
 let runtimeInformation:PlainObject & {
-    givenCommandLineArguments:Array<string>;
+    givenCommandLineArguments:Array<string>
 } = {givenCommandLineArguments: process.argv}
 if (filePath) {
     runtimeInformation = JSON.parse(fileSystem.readFileSync(
