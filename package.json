@@ -1019,7 +1019,11 @@
               "minified": {
                 "__evaluate__": "!self.debug"
               },
+              "#": "NOTE: \"@babel/plugin-proposal-nullish-coalescing-operator\" and \"@babel/plugin-proposal-optional-chaining\" is needed to let typescript be able to parse result. \"@babel/plugin-transform-parameters\" is needed caused by a bug when transforming parameters coming from the preceding transformer.",
               "plugins": [
+                "@babel/plugin-proposal-nullish-coalescing-operator",
+                "@babel/plugin-proposal-optional-chaining",
+                "@babel/plugin-transform-parameters",
                 "@babel/proposal-class-properties",
                 [
                   "transform-modern-regexp",
