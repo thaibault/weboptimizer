@@ -1034,7 +1034,7 @@
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transformation to allow tree shaking by the final (minimizer).",
-                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}], '@babel/typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
+                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             },
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"
