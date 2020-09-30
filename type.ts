@@ -275,6 +275,7 @@ export type InPlaceConfiguration = {
 export type ResolvedConfiguration = {
     assetPattern:Mapping<{
         excludeFilePathRegularExpression:string
+        includeFilePathRegularExpression:string
         pattern:string
     }>
     buildContext:{

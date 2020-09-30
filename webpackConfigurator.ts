@@ -243,10 +243,15 @@ pluginInstances.push({apply: (compiler:Record<string, any>):void => {
                     const type:null|string = Helper.determineAssetType(
                         filePath,
                         configuration.buildContext.types,
-                        configuration.path)
+                        configuration.path
+                    )
                     if (
                         type &&
                         configuration.assetPattern[type] &&
+                        (new RegExp(
+                            configuration.assetPattern[type]
+                                .includeFilePathRegularExpression
+                        )).test(filePath) &&
                         !(new RegExp(
                             configuration.assetPattern[type]
                                 .excludeFilePathRegularExpression
