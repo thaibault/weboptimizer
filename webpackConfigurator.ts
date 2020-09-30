@@ -778,7 +778,10 @@ for (const contextReplacement of configuration.module.replacements.context)
 // // region consolidate duplicated module requests
 pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
     /((?:^|\/)node_modules\/.+){2}/,
-    (resource:{request:string;resource:string}):void => {
+    (resource:{
+        request:string
+        resource:string
+    }):void => {
         const targetName:'request'|'resource' = resource.request ?
             'request' :
             'resource'

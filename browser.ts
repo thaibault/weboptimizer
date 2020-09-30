@@ -55,7 +55,10 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             virtualConsole.on(name, console[name].bind(console))
         virtualConsole.on(
             'error',
-            (error:Error & {detail:string;type:string}):void => {
+            (error:Error & {
+                detail:string
+                type:string
+            }):void => {
                 if (
                     !browser.debug &&
                     ['XMLHttpRequest', 'resource loading'].includes(error.type)
