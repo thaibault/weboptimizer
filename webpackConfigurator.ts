@@ -1405,7 +1405,8 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             mainFiles: configuration.package.main.fileNames,
             moduleExtensions: configuration.extensions.module,
             modules: Helper.normalizePaths(
-                configuration.module.directoryNames),
+                configuration.module.directoryNames
+            ),
             symlinks: false,
             unsafeCache: configuration.cache.unsafe
         },
