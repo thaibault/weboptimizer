@@ -3675,9 +3675,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001135:
-  version "1.0.30001144"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001144.tgz#bca0fffde12f97e1127a351fec3bfc1971aa3b3d"
-  integrity sha512-4GQTEWNMnVZVOFG3BK0xvGeaDAtiPAbG2N8yuMXuXzx/c2Vd4XoMPO8+E918zeXn5IF0FRVtGShBfkfQea2wHQ==
+  version "1.0.30001146"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001146.tgz#c61fcb1474520c1462913689201fb292ba6f447c"
+  integrity sha512-VAy5RHDfTJhpxnDdp2n40GPPLp3KqNrXz1QqFv4J64HvArKs8nuNMOWkB3ICOaBTU/Aj4rYAo/ytdQDDFF/Pug==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -3856,9 +3856,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.538"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.538.tgz#3621956b0087eb7460d4d38269d6c13776fc853a"
-  integrity sha512-kgkf+eXRImXXXPF4Edvlmh3OBQXe42P4Jl+sZsnq35xRqAI79tIf+slCHs6RMxx3vIGJ/TSrdn+neMsZM/P7jQ==
+  version "3.0.539"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.539.tgz#a9e37dd939e1c04619739a125ac4796665c43a51"
+  integrity sha512-oAJn2+fPkZzlxfPS4d1S8WipW5qAkdkeAh/G00pU98IB/oouHSA2Uu6ohBKQcZFykZX4xJEH0BafvecbUagXdQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -11420,9 +11420,9 @@ sane@^4.0.3:
     walker "~1.0.5"
 
 sass@^1.26.5:
-  version "1.26.12"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.26.12.tgz#79eddaa1773fff32ccf19e00d1ce380fc2afc7d0"
-  integrity sha512-hmSwtBOWoS9zwe0yAS+QmaseVCUELiGV22gXHDR7+9stEsVuEuxfY1GhC8XmUpC+Ir3Hwq7NxSUNbnmkznnF7g==
+  version "1.27.0"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.27.0.tgz#0657ff674206b95ec20dc638a93e179c78f6ada2"
+  integrity sha512-0gcrER56OkzotK/GGwgg4fPrKuiFlPNitO7eUJ18Bs+/NBlofJfMxmxqpqJxjae9vu0Wq8TZzrSyxZal00WDig==
   dependencies:
     chokidar ">=2.0.0 <4.0.0"
 
