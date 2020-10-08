@@ -155,10 +155,7 @@ export default function(this:loader.LoaderContext, source:string):string {
                 template,
                 givenOptions.module.aliases,
                 givenOptions.module.replacements,
-                {
-                    file: givenOptions.extensions.file.internal,
-                    module: givenOptions.extensions.module
-                },
+                {file: givenOptions.extensions.file.internal},
                 givenOptions.context,
                 configuration.path.source.asset.base,
                 configuration.path.ignore,

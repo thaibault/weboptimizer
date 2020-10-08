@@ -454,14 +454,16 @@
       "extensions": {
         "file": {
           "external": {
-            "__evaluate__": "['.compiled.js'].concat(self.targetTechnology === 'node' ? ['.js', '.json'] : self.extensions.file.internal.reverse())"
+            "__evaluate__": "['.compiled.js'].concat(self.targetTechnology === 'node' ? ['.js', '.json'] : self.extensions.file.internal)"
           },
           "internal": [
-            ".tsx",
-            ".ts",
-            ".jsx",
+            ".compiled.js",
             ".js",
+            ".jsx",
+            ".ts",
+            ".tsx",
             ".json",
+            ".compiled.css",
             ".css",
             ".eot",
             ".gif",
@@ -474,12 +476,9 @@
             ".woff",
             ".woff2",
             ".html.ejs",
-            ".ejs",
-            ".compiled.js",
-            ".compiled.css"
+            ".ejs"
           ]
-        },
-        "module": []
+        }
       },
       "favicon": {
         "background": "white",
@@ -672,15 +671,12 @@
       "library": true,
       "loader": {
         "aliases": {
-          "ejs": "weboptimizer/ejsLoader"
+          "ejs-loader": "weboptimizer/ejsLoader"
         },
         "extensions": {
           "file": [
             ".compiled.js",
             ".js"
-          ],
-          "module": [
-            "-loader"
           ]
         },
         "directoryNames": [
@@ -695,7 +691,7 @@
         "aliases": {},
         "cascadingStyleSheet": {
           "exclude": null,
-          "loader": "css",
+          "loader": "css-loader",
           "options": {}
         },
         "directoryNames": [
@@ -707,7 +703,7 @@
             "pre": []
           },
           "exclude": null,
-          "loader": "html",
+          "loader": "html-loader",
           "options": {
             "#": "Configure to resolve artefacts referenced by image or link tags (minimize configuration object has to be \"false\" in case it resolves to \"null\").",
             "__evaluate__": "{minimize: self.module.optimizer.htmlMinifier || false}"
@@ -750,7 +746,7 @@
               "pre": []
             },
             "exclude": null,
-            "loader": "url",
+            "loader": "url-loader",
             "options": {
               "limit": {
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
@@ -767,7 +763,7 @@
                 "pre": []
               },
               "exclude": null,
-              "loader": "url",
+              "loader": "url-loader",
               "options": {
                 "limit": {
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
@@ -783,7 +779,7 @@
                 "pre": []
               },
               "exclude": null,
-              "loader": "url",
+              "loader": "url-loader",
               "options": {
                 "limit": {
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
@@ -800,7 +796,7 @@
                 "pre": []
               },
               "exclude": null,
-              "loader": "url",
+              "loader": "url-loader",
               "options": {
                 "limit": {
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
@@ -817,7 +813,7 @@
                 "pre": []
               },
               "exclude": null,
-              "loader": "url",
+              "loader": "url-loader",
               "options": {
                 "limit": {
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
@@ -903,7 +899,7 @@
                 "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, '[name].[ext]'))}?${self.hashAlgorithm}=[hash]`"
               }
             },
-            "loader": "url"
+            "loader": "url-loader"
           },
           "minimize": true,
           "minimizer": {
@@ -931,7 +927,7 @@
               "post": [],
               "pre": []
             },
-            "loader": "postcss",
+            "loader": "postcss-loader",
             "options": {}
           },
           "ejs": {
@@ -940,7 +936,7 @@
               "pre": []
             },
             "exclude": null,
-            "loader": "ejs",
+            "loader": "ejs-loader",
             "options": {
               "compiler": {
                 "cache": true,
@@ -1013,7 +1009,7 @@
             },
             "exclude": "isFilePathInDependencies(filePath)",
             "include": "null",
-            "loader": "babel",
+            "loader": "babel-loader",
             "options": {
               "cacheDirectory": true,
               "compact": {
@@ -1060,7 +1056,7 @@
         },
         "style": {
           "#": "Includes referenced (hot module replaced) css files in-place into the html header to dynamically migrate them on changes without browser refresh.",
-          "loader": "style",
+          "loader": "style-loader",
           "options": {
             "injectType": "singletonStyleTag",
             "insert": "head"

@@ -337,10 +337,7 @@ resolvedConfiguration.module.locations = Helper.determineModuleLocations(
     resolvedConfiguration.injection.entry.normalized,
     resolvedConfiguration.module.aliases,
     resolvedConfiguration.module.replacements.normal,
-    {
-        file: resolvedConfiguration.extensions.file.internal,
-        module: resolvedConfiguration.extensions.module
-    },
+    {file: resolvedConfiguration.extensions.file.internal},
     resolvedConfiguration.path.context,
     resolvedConfiguration.path.source.asset.base
 )
@@ -407,10 +404,7 @@ for (const chunkName in resolvedConfiguration.injection.entry.normalized)
                 moduleID,
                 resolvedConfiguration.module.aliases,
                 resolvedConfiguration.module.replacements.normal,
-                {
-                    file: resolvedConfiguration.extensions.file.internal,
-                    module: resolvedConfiguration.extensions.module
-                },
+                {file: resolvedConfiguration.extensions.file.internal},
                 resolvedConfiguration.path.context,
                 /*
                     NOTE: We doesn't use

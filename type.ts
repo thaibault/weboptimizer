@@ -257,12 +257,8 @@ export type Extensions = {
         external:Array<string>
         internal:Array<string>
     }
-    module:Array<string>
 }
-export type SpecificExtensions = {
-    file:Array<string>
-    module:Array<string>
-}
+export type SpecificExtensions = {file:Array<string>}
 export type InPlaceConfiguration = {
     cascadingStyleSheet:Mapping<'body'|'head'|'in'|string>
     externalLibrary:{
@@ -324,7 +320,6 @@ export type ResolvedConfiguration = {
         directoryNames:Array<string>
         extensions:{
             file:Array<string>
-            module:Array<string>
         }
     }
     module:{
