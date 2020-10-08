@@ -282,9 +282,7 @@ const main = async ():Promise<void> => {
                                             .normal,
                                         {
                                             file: configuration.extensions.file
-                                                .internal,
-                                            module: configuration.extensions
-                                                .module
+                                                .internal
                                         },
                                         configuration.path.context,
                                         configuration.path.source.asset.base,
@@ -420,10 +418,7 @@ const main = async ():Promise<void> => {
                             GivenInjection,
                         configuration.module.aliases,
                         configuration.module.replacements.normal,
-                        {
-                            file: configuration.extensions.file.internal,
-                            module: configuration.extensions.module
-                        },
+                        {file: configuration.extensions.file.internal},
                         configuration.path.context,
                         configuration.path.source.asset.base,
                         configuration.path.ignore

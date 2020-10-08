@@ -503,15 +503,12 @@ export class Helper {
         relativeExternalModuleLocations:Array<string> = ['node_modules'],
         aliases:Mapping = {},
         moduleReplacements:Replacements = {},
-        extensions:Extensions = {
-            file: {
-                external: ['.compiled.js', '.js', '.json'],
-                internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
-                    `.${suffix}`
-                )
-            },
-            module: []
-        },
+        extensions:Extensions = {file: {
+            external: ['.compiled.js', '.js', '.json'],
+            internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                `.${suffix}`
+            )
+        }},
         referencePath = './',
         pathsToIgnore:Array<string> = ['.git'],
         relativeModuleLocations:Array<string> = ['node_modules'],
@@ -543,7 +540,7 @@ export class Helper {
             resolvedRequest,
             {},
             {},
-            {file: extensions.file.external, module: extensions.module},
+            {file: extensions.file.external},
             context,
             requestContext,
             pathsToIgnore,
@@ -578,10 +575,7 @@ export class Helper {
                         moduleID,
                         aliases,
                         moduleReplacements,
-                        {
-                            file: extensions.file.internal,
-                            module: extensions.module
-                        },
+                        {file: extensions.file.internal},
                         context,
                         requestContext,
                         pathsToIgnore,
@@ -781,8 +775,7 @@ export class Helper {
         extensions:SpecificExtensions = {
             file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
                 `.${suffix}`
-            ),
-            module: []
+            )
         },
         context = './',
         referencePath = '',
@@ -970,15 +963,12 @@ export class Helper {
         buildConfigurations:ResolvedBuildConfiguration,
         aliases:Mapping = {},
         moduleReplacements:Replacements = {},
-        extensions:Extensions = {
-            file: {
-                external: ['compiled.js', '.js', '.json'],
-                internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
-                    `.${suffix}`
-                )
-            },
-            module: []
-        },
+        extensions:Extensions = {file: {
+            external: ['compiled.js', '.js', '.json'],
+            internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+                `.${suffix}`
+            )
+        }},
         context = './',
         referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
@@ -989,7 +979,7 @@ export class Helper {
                 givenInjection.autoExclude,
                 aliases,
                 moduleReplacements,
-                {file: extensions.file.internal, module: extensions.module},
+                {file: extensions.file.internal},
                 context,
                 referencePath,
                 pathsToIgnore
@@ -1192,8 +1182,7 @@ export class Helper {
         extensions:SpecificExtensions = {
             file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
                 `.${suffix}`
-            ),
-            module: []
+            )
         },
         context = './',
         referencePath = '',
@@ -1215,66 +1204,66 @@ export class Helper {
             moduleFilePath = path.join(referencePath, moduleFilePath)
         const moduleLocations = [referencePath].concat(
             relativeModuleLocations.map((filePath:string):string =>
-                path.resolve(context, filePath))
+                path.resolve(context, filePath)
+            )
         )
         const parts = context.split('/')
         parts.splice(-1, 1)
         while (parts.length > 0) {
             for (const relativePath of relativeModuleLocations)
                 moduleLocations.push(path.join(
-                    '/', parts.join('/'), relativePath))
+                    '/', parts.join('/'), relativePath
+                ))
             parts.splice(-1, 1)
         }
         for (const moduleLocation of [referencePath].concat(moduleLocations))
             for (let fileName of ['', '__package__'].concat(
                 packageEntryFileNames
             ))
-                for (const moduleExtension of extensions.module.concat(['']))
-                    for (const fileExtension of [''].concat(extensions.file)) {
-                        let currentModuleFilePath:string
-                        if (moduleFilePath.startsWith('/'))
-                            currentModuleFilePath = path.resolve(
-                                moduleFilePath)
-                        else
-                            currentModuleFilePath = path.resolve(
-                                moduleLocation, moduleFilePath)
-                        let packageAliases:Mapping = {}
-                        if (fileName === '__package__') {
-                            const result:{
-                                fileName:null|string
-                                packageAliases:Mapping|null
-                            } = Helper.determineModuleFilePathInPackage(
-                                currentModuleFilePath,
-                                packageMainPropertyNames,
-                                packageAliasPropertyNames,
-                                encoding
-                            )
-                            if (result.fileName)
-                                fileName = result.fileName
-                            if (result.packageAliases)
-                                packageAliases = result.packageAliases
-                            if (fileName === '__package__')
-                                continue
-                        }
-                        fileName = Helper.applyModuleReplacements(
-                            Helper.applyAliases(fileName, packageAliases),
-                            moduleReplacements
+                for (const fileExtension of [''].concat(extensions.file)) {
+                    let currentModuleFilePath:string
+                    if (moduleFilePath.startsWith('/'))
+                        currentModuleFilePath = path.resolve(moduleFilePath)
+                    else
+                        currentModuleFilePath = path.resolve(
+                            moduleLocation, moduleFilePath
                         )
-                        if (fileName)
-                            currentModuleFilePath = path.resolve(
-                                currentModuleFilePath,
-                                `${fileName}${moduleExtension}${fileExtension}`
-                            )
-                        else
-                            currentModuleFilePath +=
-                                `${fileName}${moduleExtension}${fileExtension}`
-                        if (Helper.isFilePathInLocation(
-                            currentModuleFilePath, pathsToIgnore
-                        ))
+                    let packageAliases:Mapping = {}
+                    if (fileName === '__package__') {
+                        const result:{
+                            fileName:null|string
+                            packageAliases:Mapping|null
+                        } = Helper.determineModuleFilePathInPackage(
+                            currentModuleFilePath,
+                            packageMainPropertyNames,
+                            packageAliasPropertyNames,
+                            encoding
+                        )
+                        if (result.fileName)
+                            fileName = result.fileName
+                        if (result.packageAliases)
+                            packageAliases = result.packageAliases
+                        if (fileName === '__package__')
                             continue
-                        if (Tools.isFileSync(currentModuleFilePath))
-                            return currentModuleFilePath
                     }
+                    fileName = Helper.applyModuleReplacements(
+                        Helper.applyAliases(fileName, packageAliases),
+                        moduleReplacements
+                    )
+                    if (fileName)
+                        currentModuleFilePath = path.resolve(
+                            currentModuleFilePath,
+                            `${fileName}${fileExtension}`
+                        )
+                    else
+                        currentModuleFilePath += `${fileName}${fileExtension}`
+                    if (Helper.isFilePathInLocation(
+                        currentModuleFilePath, pathsToIgnore
+                    ))
+                        continue
+                    if (Tools.isFileSync(currentModuleFilePath))
+                        return currentModuleFilePath
+                }
         return null
     }
     // endregion

@@ -424,10 +424,7 @@ if (configuration.injection.external.modules === '__implicit__')
             request,
             {},
             {},
-            {
-                file: configuration.extensions.file.external,
-                module: configuration.extensions.module
-            },
+            {file: configuration.extensions.file.external},
             configuration.path.context,
             context,
             configuration.path.ignore,
@@ -468,8 +465,7 @@ if (configuration.injection.external.modules === '__implicit__')
                                     {},
                                     {
                                         file: configuration.extensions.file
-                                            .external,
-                                        module: configuration.extensions.module
+                                            .external
                                     },
                                     configuration.path.context,
                                     context,
@@ -1403,7 +1399,6 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             extensions: configuration.extensions.file.internal,
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,
-            moduleExtensions: configuration.extensions.module,
             modules: Helper.normalizePaths(
                 configuration.module.directoryNames
             ),
@@ -1416,7 +1411,6 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             extensions: configuration.loader.extensions.file,
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,
-            moduleExtensions: configuration.loader.extensions.module,
             modules: configuration.loader.directoryNames,
             symlinks: false
         },
