@@ -454,13 +454,13 @@
       "extensions": {
         "file": {
           "external": {
-            "__evaluate__": "['.compiled.js'].concat(self.targetTechnology === 'node' ? ['.js', '.json'] : self.extensions.file.internal)"
+            "__evaluate__": "['.compiled.js'].concat(self.targetTechnology === 'node' ? ['.js', '.json'] : self.extensions.file.internal.reverse())"
           },
           "internal": [
-            ".js",
-            ".jsx",
-            ".ts",
             ".tsx",
+            ".ts",
+            ".jsx",
+            ".js",
             ".json",
             ".css",
             ".eot",
