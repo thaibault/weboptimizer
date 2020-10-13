@@ -93,7 +93,6 @@
     "imports-loader": "*",
     "jsdom": "*",
     "loader-utils": "*",
-    "open-browser-webpack-plugin": "*",
     "rimraf": "*",
     "script-loader": "*",
     "typescript": "*",
@@ -393,7 +392,6 @@
       "contextType": "main",
       "debug": false,
       "development": {
-        "openBrowser": null,
         "server": {
           "contentBase": [
             {
@@ -1275,9 +1273,10 @@
     "debug": {
       "debug": true,
       "development": {
-        "openBrowser": {
-          "url": {
-            "__evaluate__": "`http${self.development.server.cert ? 's' : ''}://${self.development.server.host}:${self.development.server.port}${path.join('/', self.path.target.public, self.files.defaultHTML.filename)}`"
+        "server": {
+          "openBrowser": true,
+          "openPage": {
+            "__evaluate__": "`${path.join('/', self.path.target.public, self.files.defaultHTML.filename)}`"
           }
         }
       },
