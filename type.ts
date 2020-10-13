@@ -280,9 +280,9 @@ export type ResolvedConfiguration = {
         definitions:WebpackDefinePlugin['definitions']
         types:BuildConfiguration
     }
-    cache:{
-        main:WebpackOptionsNormalized['cache']
-        unsafe:WebpackModuleOptions['unsafeCache']
+    cache?:{
+        main?:WebpackOptionsNormalized['cache']
+        unsafe?:WebpackModuleOptions['unsafeCache']
     }
     commandLine:CommandLineArguments
     contextType:string
