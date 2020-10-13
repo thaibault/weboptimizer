@@ -288,9 +288,8 @@ export type ResolvedConfiguration = {
     contextType:string
     debug:boolean
     development:{
-        openBrowser:PlainObject
-        server:PlainObject
-        tool:false|string
+        server:WebpackOptionsNormalized['devServer']
+        tool:WebpackOptionsNormalized['devtool']
     }
     dllManifestFilePaths:Array<string>
     document:PlainObject

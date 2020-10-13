@@ -561,8 +561,9 @@ const main = async ():Promise<void> => {
                 'check:types', 'lint', 'serve', 'test:browser'
             ].includes(configuration.givenCommandLineArguments[2]))
                 handleTask(
-                    configuration.givenCommandLineArguments[2] as keyof
-                        CommandLineArguments)
+                    configuration.givenCommandLineArguments[2] as
+                        keyof CommandLineArguments
+                )
             // / endregion
             // endregion
         }

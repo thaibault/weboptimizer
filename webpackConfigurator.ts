@@ -216,19 +216,6 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
     pluginInstances.push(new plugins.Offline(configuration.offline))
 }
 // // endregion
-// // region opens browser automatically
-if (
-    configuration.development.openBrowser &&
-    (
-        htmlAvailable &&
-        ['serve', 'test:browser'].includes(
-            configuration.givenCommandLineArguments[2]
-        )
-    )
-)
-    pluginInstances.push(new plugins.OpenBrowser(
-        configuration.development.openBrowser))
-// // endregion
 // // region provide build environment
 if (configuration.buildContext.definitions)
     pluginInstances.push(
