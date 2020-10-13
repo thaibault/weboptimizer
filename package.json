@@ -441,7 +441,7 @@
       "encoding": "utf-8",
       "exportFormat": {
         "external": "umd",
-        "globalOject": "this",
+        "globalObject": "this",
         "self": "umd"
       },
       "extensions": {
