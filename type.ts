@@ -26,7 +26,8 @@ import {
     Entry as WebpackEntry,
     IgnorePlugin as WebpackIgnorePlugin,
     Module as WebpackModule,
-    ModuleOptions as WebpackModuleOptions
+    ModuleOptions as WebpackModuleOptions,
+    WebpackOptionsNormalized
 } from 'webpack'
 // endregion
 // region exports
@@ -280,8 +281,8 @@ export type ResolvedConfiguration = {
         types:BuildConfiguration
     }
     cache:{
-        main:boolean
-        unsafe:boolean
+        main:WebpackOptionsNormalized['cache']
+        unsafe:WebpackModuleOptions['unsafeCache']
     }
     commandLine:CommandLineArguments
     contextType:string
