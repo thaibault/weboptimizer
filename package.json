@@ -273,9 +273,6 @@
             {
               "__evaluate__": "`${webOptimizerPath}/webpackConfigurator.js`"
             },
-            "--display-chunks",
-            "--display-reasons",
-            "--display-error-details",
             "--mode",
             {
               "__evaluate__": "self.debug ? 'development' : 'production'"
