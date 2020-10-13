@@ -260,10 +260,6 @@
           }
         }
       },
-      "cache": {
-        "main": true,
-        "unsafe": true
-      },
       "commandLine": {
         "#": "Configures how to trigger corresponding project livecycle tasks from the command line.",
         "build": {

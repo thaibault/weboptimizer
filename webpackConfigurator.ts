@@ -1394,7 +1394,6 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
     true,
     {
         bail: true,
-        cache: configuration.cache.main,
         context: configuration.path.context,
         devtool: configuration.development.tool,
         devServer: configuration.development.server,
@@ -1411,7 +1410,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                 configuration.module.directoryNames
             ),
             symlinks: false,
-            unsafeCache: configuration.cache.unsafe
+            unsafeCache: Boolean(configuration.cache?.unsafe)
         },
         resolveLoader: {
             alias: configuration.loader.aliases,
@@ -1513,6 +1512,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
         },
         plugins: pluginInstances
     },
+    configuration.cache?.main ? {cache: configuration.cache.main} : {},
     configuration.webpack,
     customConfiguration
 )
