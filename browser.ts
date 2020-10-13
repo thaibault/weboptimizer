@@ -17,7 +17,6 @@
 // region imports
 import Tools, {ConsoleOutputMethods} from 'clientnode'
 import {DOMWindow} from 'jsdom'
-import {loader} from 'webpack'
 
 import {Browser, InitializedBrowser} from './type'
 // endregion
@@ -117,9 +116,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     (error:Error|null, content:string):void => {
                         if (error)
                             throw error
-                        render(ejsLoader.bind(
-                            {resourcePath: filePath} as loader.LoaderContext
-                        )(content))
+                        render(
+                            ejsLoader.bind({resourcePath: filePath})(content)
+                        )
                     }
                 )
             )

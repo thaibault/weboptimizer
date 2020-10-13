@@ -24,8 +24,9 @@ import {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
     Entry as WebpackEntry,
+    IgnorePlugin as WebpackIgnorePlugin,
     Module as WebpackModule,
-    Output as WebpackOutput
+    ModuleOptions as WebpackModuleOptions
 } from 'webpack'
 // endregion
 // region exports
@@ -92,7 +93,7 @@ export type InjectionConfiguration = {
         modules:ExternalInjection
     }
     externalAliases:Mapping
-    ignorePattern:Array<string>
+    ignorePattern:Array<WebpackIgnorePlugin['options']>
     implicitExternalExcludePattern:Array<RegExp|string>
     implicitExternalIncludePattern:Array<RegExp|string>
 }
@@ -275,7 +276,7 @@ export type ResolvedConfiguration = {
         pattern:string
     }>
     buildContext:{
-        definitions:Mapping<WebpackDefinePlugin.CodeValueObject>
+        definitions:WebpackDefinePlugin['definitions']
         types:BuildConfiguration
     }
     cache:{
@@ -381,7 +382,7 @@ export type ResolvedConfiguration = {
             context:Array<[string, string]>
             normal:Replacements
         }
-        skipParseRegularExpressions:RegExp|Array<RegExp>
+        skipParseRegularExpressions:WebpackModuleOptions['noParse']
         style:WebpackLoader
     }
     name:string
@@ -414,7 +415,7 @@ export type WebpackConfiguration = BaseWebpackConfiguration & {
     // endregion
     module:WebpackModule
     // region output
-    output:WebpackOutput
+    output:PlainObject
     // endregion
     replaceWebOptimizer:WebpackConfiguration
 }

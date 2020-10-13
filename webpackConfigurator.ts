@@ -46,7 +46,17 @@ try {
 } catch (error) {}
 /* eslint-enable no-empty,@typescript-eslint/no-var-requires */
 import util from 'util'
-import webpack from 'webpack'
+import webpack, {
+    Compiler,
+    Compilation,
+    ContextReplacementPlugin,
+    DefinePlugin,
+    DllPlugin,
+    DllReferencePlugin,
+    IgnorePlugin,
+    NormalModuleReplacementPlugin,
+    ProvidePlugin
+} from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 
 const pluginNameResourceMapping:Mapping = {
@@ -132,12 +142,10 @@ else {
 }
 // / endregion
 // / region plugins
-const pluginInstances:Array<Record<string, any>> = [
-    new webpack.optimize.OccurrenceOrderPlugin(true)
-]
+const pluginInstances:Array<Record<string, any>> = []
 // // region define modules to ignore
 for (const ignorePattern of configuration.injection.ignorePattern)
-    pluginInstances.push(new webpack.IgnorePlugin(new RegExp(ignorePattern)))
+    pluginInstances.push(new IgnorePlugin(ignorePattern))
 // // endregion
 // // region define modules to replace
 for (const source in configuration.module.replacements.normal)
@@ -145,7 +153,7 @@ for (const source in configuration.module.replacements.normal)
         configuration.module.replacements.normal, source
     )) {
         const search = new RegExp(source)
-        pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
+        pluginInstances.push(new NormalModuleReplacementPlugin(
             search,
             (resource:{request:string}):void => {
                 resource.request = resource.request.replace(
@@ -223,11 +231,11 @@ if (
 // // endregion
 // // region provide build environment
 if (configuration.buildContext.definitions)
-    pluginInstances.push(new webpack.DefinePlugin(
-        configuration.buildContext.definitions))
+    pluginInstances.push(
+        new DefinePlugin(configuration.buildContext.definitions)
+    )
 if (configuration.module.provide)
-    pluginInstances.push(new webpack.ProvidePlugin(
-        configuration.module.provide))
+    pluginInstances.push(new ProvidePlugin(configuration.module.provide))
 // // endregion
 // // region modules/assets
 // /// region apply module pattern
@@ -370,7 +378,7 @@ if (configuration.givenCommandLineArguments[2] !== 'build:dll')
                     hash: true,
                     includeSourcemap: Tools.isFileSync(`${filePath}.map`)
                 }))
-                pluginInstances.push(new webpack.DllReferencePlugin({
+                pluginInstances.push(new DllReferencePlugin({
                     context: configuration.path.context,
                     manifest: require(manifestFilePath)
                 }))
@@ -590,7 +598,7 @@ if (configuration.givenCommandLineArguments[2] === 'build:dll') {
                 delete configuration.injection.entry.normalized[chunkName]
     if (dllChunkExists) {
         libraryName = '[name]DLLPackage'
-        pluginInstances.push(new webpack.DllPlugin({
+        pluginInstances.push(new DllPlugin({
             path: `${configuration.path.target.base}/[name].dll-manifest.json`,
             name: libraryName
         }))
@@ -602,9 +610,9 @@ if (configuration.givenCommandLineArguments[2] === 'build:dll') {
 // // region apply final dom/javaScript/cascadingStyleSheet modifications/fixes
 if (htmlAvailable)
     pluginInstances.push({apply: (
-        compiler:webpack.Compiler
+        compiler:Compiler
     ):void => compiler.hooks.compilation.tap('WebOptimizer', (
-        compilation:webpack.compilation.Compilation
+        compilation:Compilation
     ):void => {
         plugins.HTML.getHooks(compilation).alterAssetTagGroups.tapAsync(
             'WebOptimizerRemoveDummyHTMLTags',
@@ -621,9 +629,9 @@ if (htmlAvailable)
                         index += 1
                     }
                 }
-                const assets:Array<string> = JSON.parse((
-                    data.plugin as unknown as {assetJson:string}
-                ).assetJson)
+                const assets:Array<string> = JSON.parse(
+                    (data.plugin as unknown as {assetJson:string}).assetJson
+                )
                 let index = 0
                 for (const assetRequest of assets) {
                     if (/^\.__dummy__(\..*)?$/.test(path.basename(
@@ -770,14 +778,14 @@ if (plugins.Imagemin)
 // // endregion
 // // region context replacements
 for (const contextReplacement of configuration.module.replacements.context)
-    pluginInstances.push(new webpack.ContextReplacementPlugin(...(
+    pluginInstances.push(new ContextReplacementPlugin(...(
         contextReplacement.map((value:string):any => (new Function(
             'configuration', '__dirname', '__filename', `return ${value}`
         ))(configuration, __dirname, __filename))
     ) as [string, string]))
 // // endregion
 // // region consolidate duplicated module requests
-pluginInstances.push(new webpack.NormalModuleReplacementPlugin(
+pluginInstances.push(new NormalModuleReplacementPlugin(
     /((?:^|\/)node_modules\/.+){2}/,
     (resource:{
         request:string

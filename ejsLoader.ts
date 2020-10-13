@@ -33,7 +33,6 @@ import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import {getOptions, getRemainingRequest} from 'loader-utils'
 import path from 'path'
-import {loader} from 'webpack'
 
 import configuration from './configurator'
 import Helper from './helper'
@@ -71,7 +70,7 @@ export type LoaderConfiguration = Mapping<unknown> & {
  * @param source - Input string to transform.
  * @returns Transformed string.
  */
-export default function(this:loader.LoaderContext, source:string):string {
+export default function(this:any, source:string):string {
     if ('cacheable' in this)
         this.cacheable(!this.debug)
     const givenOptions:LoaderConfiguration =
@@ -311,7 +310,7 @@ export default function(this:loader.LoaderContext, source:string):string {
             filename:
                 'query' in this ?
                     getRemainingRequest(this).replace(/^!/, '') :
-                    (this as loader.LoaderContext).resourcePath || 'unknown',
+                    this.resourcePath || 'unknown',
             isString: true
         },
         givenOptions.compileSteps
