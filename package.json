@@ -1274,8 +1274,8 @@
       "debug": true,
       "development": {
         "server": {
-          "openBrowser": true,
-          "open": {
+          "open": true,
+          "openPage": {
             "__evaluate__": "`${path.join('/', self.path.target.public, self.files.defaultHTML.filename)}`"
           }
         }
