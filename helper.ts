@@ -382,7 +382,9 @@ export class Helper {
     ):string {
         scope = Tools.extend(
             {
-                '[hash]': '.__dummy__',
+                '[chunkhash]': '.__dummy__',
+                '[contenthash]': '.__dummy__',
+                '[fullhash]': '.__dummy__',
                 '[id]': '.__dummy__',
                 '[name]': '.__dummy__'
             },

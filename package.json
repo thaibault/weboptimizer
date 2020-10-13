@@ -493,7 +493,7 @@
         },
         "persistentCache": true,
         "prefix": {
-          "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, 'favicons-[hash]'))}/`"
+          "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, 'favicons-[chunkhash]'))}/`"
         },
         "statsFilename": "iconStats.json",
         "title": {
@@ -512,13 +512,13 @@
         ],
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug || self.targetTechnology === 'node' ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "self.debug || self.targetTechnology === 'node' ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[chunkhash]`"
           },
           "image": {
             "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
           },
           "javaScript": {
-            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name]')}.js?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name]')}.js?${self.hashAlgorithm}=[chunkhash]`"
           }
         },
         "defaultHTML": {
@@ -744,7 +744,7 @@
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
               },
               "name": {
-                "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.data), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.data), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
               }
             }
           },
@@ -761,7 +761,7 @@
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                 },
                 "name": {
-                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
                 }
               }
             },
@@ -778,7 +778,7 @@
                 },
                 "mimetype": "image/svg+xml",
                 "name": {
-                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
                 }
               }
             },
@@ -795,7 +795,7 @@
                 },
                 "mimetype": "application/octet-stream",
                 "name": {
-                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
                 }
               }
             },
@@ -811,7 +811,7 @@
                   "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
                 },
                 "name": {
-                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[hash]`"
+                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
                 }
               }
             }
@@ -888,7 +888,7 @@
                 "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
               },
               "name": {
-                "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, '[name].[ext]'))}?${self.hashAlgorithm}=[hash]`"
+                "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, '[name].[ext]'))}?${self.hashAlgorithm}=[chunkhash]`"
               }
             },
             "loader": "url-loader"
@@ -1094,7 +1094,7 @@
           }
         },
         "updateStrategy": "changed",
-        "version": "[hash]"
+        "version": "[chunkhash]"
       },
       "package": {
         "aliasPropertyNames": {
@@ -1215,7 +1215,7 @@
         "files": {
           "compose": {
             "javaScript": {
-              "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 'testBundle.js')}?${self.hashAlgorithm}=[hash]`"
+              "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 'testBundle.js')}?${self.hashAlgorithm}=[chunkhash]`"
             }
           },
           "defaultHTML": {
@@ -1283,7 +1283,7 @@
       "files": {
         "compose": {
           "javaScript": {
-            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name].js')}?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name].js')}?${self.hashAlgorithm}=[chunkhash]`"
           }
         }
       },
@@ -1355,10 +1355,10 @@
       "files": {
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['test:browser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, `index${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '.compiled' : ''}.css`)}?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['test:browser', 'serve'].includes(self.givenCommandLineArguments[2]) ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, `index${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '.compiled' : ''}.css`)}?${self.hashAlgorithm}=[chunkhash]`"
           },
           "javaScript": {
-            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, `[name].js`)}?${self.hashAlgorithm}=[hash]`"
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, `[name].js`)}?${self.hashAlgorithm}=[chunkhash]`"
           }
         },
         "defaultHTML": {

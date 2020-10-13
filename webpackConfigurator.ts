@@ -941,7 +941,7 @@ Tools.extend(loader, {
                                     {compileSteps: 2}
                             ).compileSteps % 2 ? '.js' : ''
                         ) +
-                        `?${configuration.hashAlgorithm}=[hash]`
+                        `?${configuration.hashAlgorithm}=[chunkhash]`
                 },
                 {loader: 'extract'},
                 {
@@ -1040,7 +1040,7 @@ Tools.extend(loader, {
                                     '.js' :
                                     ''
                             ) +
-                            `?${configuration.hashAlgorithm}=[hash]`
+                            `?${configuration.hashAlgorithm}=[chunkhash]`
                         )
                 },
                 (
@@ -1097,7 +1097,8 @@ Tools.extend(loader, {
                                 configuration.path.target.base,
                                 configuration.path.target.asset.template
                             ),
-                            `[name].[ext]?${configuration.hashAlgorithm}=[hash]`
+                            `[name].[ext]?${configuration.hashAlgorithm}=` +
+                            '[chunkhash]'
                         )
                 },
                 {loader: 'extract'},

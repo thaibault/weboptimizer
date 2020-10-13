@@ -144,9 +144,12 @@ describe('helper', ():void => {
         ['path', {}, 'path'],
         ['a[name]b', {}, 'a.__dummy__b'],
         ['a[name]b[name]', {}, 'a.__dummy__b.__dummy__'],
-        ['a[id]b[hash]', {}, 'a.__dummy__b.__dummy__'],
-        ['a[id]b[hash]', {'[id]': 1, '[hash]': 2}, 'a1b2'],
-        ['a[id]b[hash]', {'[id]': '[id]', '[hash]': '[hash]'}, 'a[id]b[hash]']
+        ['a[id]b[chunkhash]', {}, 'a.__dummy__b.__dummy__'],
+        ['a[id]b[chunkhash]', {'[id]': 1, '[chunkhash]': 2}, 'a1b2'],
+        [
+            'a[id]b[chunkhash]',
+            {'[id]': '[id]', '[chunkhash]': '[chunkhash]'}, 'a[id]b[chunkhash]'
+        ]
     ])(
         `renderFilePathTemplate('%s', %p) === %p`,
         (
