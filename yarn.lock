@@ -4008,9 +4008,9 @@ cli-width@^3.0.0:
   integrity sha512-FxqpkPPwu1HjuN93Omfm4h8uIanXofW0RxVEW3k5RKx+mJJYSthzNhp32Kzxxy3YAEZ/Dc/EWN1vZRY0+kOhbw==
 
 clientnode@*:
-  version "3.0.540"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.540.tgz#47284e9e7b7efe443d1eb888c16912c50eff83ce"
-  integrity sha512-v6Qf3C4lMK2ErxsWuUmNuFFrth5vC59lyJu8YLTHkJvqznN3bYNKfWo1a36RkBu7UqVvfIbP7lztETxa4iCUXA==
+  version "3.0.541"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.541.tgz#322f9327bbad59a46c834a7b30f6c90ac15a7018"
+  integrity sha512-m6YhdF8G4O24f/ZIXCdo0cD95Xq/5uCFYDkLrD2xRPR9WoYWlxwLwV3Oyj581G4Ghpf5WjA10DXUvDW7LnI7VA==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -9193,9 +9193,9 @@ mute-stream@0.0.8:
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
 nan@^2.12.1:
-  version "2.14.1"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.1.tgz#d7be34dfa3105b91494c3147089315eff8874b01"
-  integrity sha512-isWHgVjnFjh2x2yuJ/tj3JbwoHu3UC2dX5G/88Cm24yB6YopVgxvBObDY7n5xW6ExmFhJpSEQqFPvq9zaXc8Jw==
+  version "2.14.2"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.2.tgz#f5376400695168f4cc694ac9393d0c9585eeea19"
+  integrity sha512-M2ufzIiINKCuDfBSAUr1vWQ+vuVcA9kqx8JJUsbQi6yf1uGRyb7HfpdfUr5qLXf3B/t8dPvcjhKMmlfnP47EzQ==
 
 nanomatch@^1.2.9:
   version "1.2.13"

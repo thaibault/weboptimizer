@@ -1429,6 +1429,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                 configuration.path.target.base,
                 configuration.files.compose.javaScript
             ),
+            globalObject: configuration.exportFormat.globalObject,
             hashFunction: configuration.hashAlgorithm,
             library: libraryName,
             libraryTarget: (

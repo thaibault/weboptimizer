@@ -297,6 +297,7 @@ export type ResolvedConfiguration = {
     encoding:Encoding
     exportFormat:{
         external:ExportFormat
+        globalObject:string
         self:ExportFormat
     }
     extensions:Extensions
