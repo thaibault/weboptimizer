@@ -111,7 +111,6 @@
     "@types/node": "*",
     "@types/rimraf": "*",
     "@types/vfile-message": "*",
-    "@types/webpack": "*",
     "@types/webpack-env": "*",
     "@types/webpack-sources": "*",
     "@typescript-eslint/eslint-plugin": "*",
@@ -1065,12 +1064,15 @@
       },
       "nodeEnvironment": {
         "#": "Indicates which node environment variables should be included in built artefacts.",
+        "global": true,
+        "__filename": "mock",
+        "__dirname": "mock"
+      },
+      "#": "Not yet working in webpack 5 but in webpack 4.",
+      "nodeEnvironmentBackup": {
         "console": false,
         "fs": "empty",
-        "global": true,
         "process": true,
-        "__filename": "mock",
-        "__dirname": "mock",
         "Buffer": true,
         "setImmediate": true
       },
