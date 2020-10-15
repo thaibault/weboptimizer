@@ -3986,9 +3986,9 @@ cli-width@^3.0.0:
   integrity sha512-FxqpkPPwu1HjuN93Omfm4h8uIanXofW0RxVEW3k5RKx+mJJYSthzNhp32Kzxxy3YAEZ/Dc/EWN1vZRY0+kOhbw==
 
 clientnode@*:
-  version "3.0.546"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.546.tgz#6ad9fe617d1fbcaccddec15bf04fc07b18d62084"
-  integrity sha512-q1JYkROO6rgvM7ZwrkfmJH0jkm4qLgfl9Ll+IXRSaFCxcSYQ+1b3PLcdRftvq982YCDDkf/7sz/542ZOhO7uaQ==
+  version "3.0.547"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.547.tgz#8cd401bc5db571f10dd2c24f8ab709ee823c56b4"
+  integrity sha512-mPmEe1yLu3ubRiCBW1guv1HmVtCZMkM8tMdyYapQPKOygXwGh7JTzn1t1b5HwBBsY/y09UR08oEG4NXIfbIdvQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -13689,9 +13689,9 @@ webpack-sources@^1.1.0:
     source-map "~0.6.1"
 
 webpack@*:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.1.1.tgz#bebea801519bcc5c37e647a01953b0e33a31f4da"
-  integrity sha512-rv96mVkYz+mwEsEq+DV1PaG3XNiGHOkJxjpuEL+V9U8EJyw1kJyvRobs/fN8aA82lWFaPGD96oopks2y1C/ZTw==
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.1.2.tgz#00146bb721119398ecf903b38ee4fda1a81593e1"
+  integrity sha512-R0DKsyNS9/jkzOTkEZ7gzEKhEQZtkD5wcHGL5Z8cwpb0l+f5PgaxLlmh60od0fSu9Wk/9w+5SIJ6sZrWyzyg9w==
   dependencies:
     "@types/eslint-scope" "^3.7.0"
     "@types/estree" "^0.0.45"

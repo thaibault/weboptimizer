@@ -908,7 +908,7 @@
                     "postcss-preset-env",
                     {
                       "browsers": {
-                        "__evaluate__": "self.supportedBrowsers"
+                        "__evaluate__": "self.generic.supportedBrowsers"
                       },
                       "stage": 0
                     }
