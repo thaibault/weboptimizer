@@ -1461,14 +1461,15 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                 {
                     cacheGroups: {
                         default: false,
-                        vendors: false
+                        defaultVendors: false
                     }
-                } : Tools.extend(
+                } :
+                Tools.extend(
                     true,
                     {
                         chunks: 'all',
                         cacheGroups: {
-                            vendors: {
+                            defaultVendors: {
                                 chunks: (
                                     module:Record<string, any>
                                 ):boolean => {
