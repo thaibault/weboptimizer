@@ -1276,7 +1276,7 @@
         "server": {
           "open": true,
           "openPage": {
-            "__evaluate__": "`${path.join('/', self.path.target.public, self.files.defaultHTML.filename)}`"
+            "__evaluate__": "`${path.join(self.path.target.public, self.files.defaultHTML.filename)}`"
           }
         }
       },
