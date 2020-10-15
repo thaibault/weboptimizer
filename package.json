@@ -1378,7 +1378,7 @@
         "chunks": {
           "cacheGroups": {
             "default": false,
-            "vendors": false
+            "defaultVendors": false
           }
         }
       },
