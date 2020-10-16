@@ -188,7 +188,7 @@
         "javaScript": {
           "excludeFilePathRegularExpression": {
             "#": "Only ensure globals for exported modules.",
-            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\\\.html|preboot|vendor${self.debug && ['web', 'webworker'].includes(self.targetTechnology) && resolve(self.inPlace.externalLibrary.normal) ? '|index' : ''})(?:\\\\.compiled)?\\\\.js$`"
+            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\\\.html|preboot|vendor${self.debug && self.targetTechnology !== 'node' && resolve(self.inPlace.externalLibrary.normal) ? '|index' : ''})(?:\\\\.compiled)?\\\\.js$`"
           },
           "includeFilePathRegularExpression": "^.*$",
           "pattern": {
@@ -373,7 +373,7 @@
         },
         "test": {
           "environments": {
-            "__evaluate__": "['node'].concat(self.targetTechnology === 'web' ? 'jsdom' : [])"
+            "__evaluate__": "['node'].concat(self.targetTechnology === 'node' ? [] : 'jsdom')"
           },
           "command": {
             "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --moduleNameMapper '{\"\\\\\\\\.((css)|(less)|(sass)|(scss))$\": \"identity-obj-proxy\"}' --test-environment ${environment} --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
@@ -1098,14 +1098,14 @@
       },
       "package": {
         "aliasPropertyNames": {
-          "__evaluate__": "self.targetTechnology === 'web' ? ['browser'] : []"
+          "__evaluate__": "self.targetTechnology === 'node' ? [] : ['browser']"
         },
         "main": {
           "fileNames": [
             "index"
           ],
           "propertyNames": {
-            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesmnext', 'esmnext', 'fesnext', 'esnext', 'fesm2015', 'esm2015', 'fesnext', 'esnext', 'es2015', 'module').concat(self.targetTechnology === 'web' ? 'browser' : []).concat('main')"
+            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesmnext', 'esmnext', 'fesnext', 'esnext', 'fesm2015', 'esm2015', 'fesnext', 'esnext', 'es2015', 'module').concat(self.targetTechnology === 'node' ? [] : 'browser').concat('main')"
           }
         }
       },
@@ -1198,7 +1198,9 @@
           "indentation": 4
         }
       },
-      "targetTechnology": "web",
+      "targetTechnology": {
+        "__evaluate__": "self.generic.supportedBrowsers.map((query) => `browserslist:${query}`)"
+      },
       "test": {
         "assetPattern": {
           "javaScript": {
