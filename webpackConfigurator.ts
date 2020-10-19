@@ -1453,7 +1453,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             // region common chunks
             splitChunks: (
                 !configuration.injection.chunks ||
-                configuration.targetTechnology !== 'web' ||
+                configuration.targetTechnology === 'node' ||
                 ['build:dll', 'test'].includes(
                     configuration.givenCommandLineArguments[2]
                 )
