@@ -394,7 +394,7 @@
           "host": "0.0.0.0",
           "hot": {
             "#": "Indicates whether to activate the developments hot module replacement feature.",
-            "__evaluate__": "self.debug"
+            "__evaluate__": "self.debug && !'Shadows currently all playground exports'"
           },
           "index": "playground.html",
           "inline": true,
