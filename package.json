@@ -351,16 +351,6 @@
             {
               "__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.js'`"
             },
-            "--host",
-            {
-              "__evaluate__": "self.development.server.host"
-            },
-            "--port",
-            {
-              "__evaluate__": "self.development.server.port"
-            },
-            "--compress",
-            "--history-api-fallback",
             "--progress"
           ],
           "command": "webpack"
@@ -388,6 +378,9 @@
       "debug": false,
       "development": {
         "server": {
+          "compress": {
+            "__evaluate__": "!self.debug"
+          },
           "contentBase": [
             {
               "__evaluate__": "self.path.target.base"
