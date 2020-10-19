@@ -351,12 +351,6 @@
             {
               "__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.js'`"
             },
-            {
-              "__evaluate__": "self.debug ? '--hot' : ''"
-            },
-            {
-              "__evaluate__": "self.debug ? '--inline' : ''"
-            },
             "--host",
             {
               "__evaluate__": "self.development.server.host"
@@ -409,6 +403,7 @@
             "#": "Indicates whether to activate the developments hot module replacement feature.",
             "__evaluate__": "self.debug"
           },
+          "inline": true,
           "port": 8080,
           "publicPath": {
             "__evaluate__": "self.path.target.public"
