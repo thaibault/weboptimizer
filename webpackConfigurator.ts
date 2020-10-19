@@ -1443,13 +1443,16 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                 loader.image,
                 loader.data,
                 configuration.module.additional.post.map(
-                    evaluateAdditionalLoaderConfiguration)
+                    evaluateAdditionalLoaderConfiguration
+                )
             )
         },
         node: configuration.nodeEnvironment,
         optimization: {
+            chunkIds: configuration.debug ? 'named' : 'total-size',
             minimize: configuration.module.optimizer.minimize,
             minimizer: configuration.module.optimizer.minimizer,
+            moduleIds: configuration.debug ? 'named' : 'size',
             // region common chunks
             splitChunks: (
                 !configuration.injection.chunks ||
