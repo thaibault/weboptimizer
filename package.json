@@ -403,6 +403,7 @@
             "#": "Indicates whether to activate the developments hot module replacement feature.",
             "__evaluate__": "self.debug"
           },
+          "index": "playground.html",
           "inline": true,
           "port": 8080,
           "publicPath": {
