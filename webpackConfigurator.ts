@@ -586,8 +586,8 @@ if (configuration.givenCommandLineArguments[2] === 'build:dll') {
     if (dllChunkExists) {
         libraryName = '[name]DLLPackage'
         pluginInstances.push(new DllPlugin({
-            path: `${configuration.path.target.base}/[name].dll-manifest.json`,
-            name: libraryName
+            name: libraryName,
+            path: `${configuration.path.target.base}/[name].dll-manifest.json`
         }))
     } else
         console.warn('No dll chunk id found.')
