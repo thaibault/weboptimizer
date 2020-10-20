@@ -1772,9 +1772,9 @@
     source-map "^0.7.3"
 
 "@types/webpack@*", "@types/webpack@^4.41.8":
-  version "4.41.22"
-  resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-4.41.22.tgz#ff9758a17c6bd499e459b91e78539848c32d0731"
-  integrity sha512-JQDJK6pj8OMV9gWOnN1dcLCyU9Hzs6lux0wBO4lr1+gyEhIBR9U3FMrz12t2GPkg110XAxEAw2WHF6g7nZIbRQ==
+  version "4.41.23"
+  resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-4.41.23.tgz#1925f42a7325be4ae0fce38329f1cc27768fcda7"
+  integrity sha512-ojA4CupZg8RCzVJLugWlvqrHpT59GWhqFxbinlsnvk10MjQCWB+ot7XDACctbWhnhtdhYK7+HOH1JxkVLiZhMg==
   dependencies:
     "@types/anymatch" "*"
     "@types/node" "*"
@@ -3730,9 +3730,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.558"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.558.tgz#75ffd39bd91ae4c90806b7fa3fbd35a8d8f9dfee"
-  integrity sha512-Lk4ctRt3LfkVgBS5YMSCwtg/1nbzCbewnev5YYZFRTqk9C1rbpJitbDoTOosXVmjTJZBp96Fme2B6vPzNvlLhQ==
+  version "3.0.559"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.559.tgz#e935298c24d1a2509c7aff16a5584f6f8b3cd740"
+  integrity sha512-a+wNpUMov4lk+NKddVDWcWa+2e9MNNsoRiIrQisSUN1zXnYf1zoFOv7U+Ekk+W4GDC4XT9dWOiCY2hL7oe33DQ==
 
 cliui@^4.0.0:
   version "4.1.0"
