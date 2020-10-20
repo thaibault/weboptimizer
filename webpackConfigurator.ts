@@ -779,7 +779,7 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
             'request' :
             'resource'
         const targetPath:string = resource.createData[targetName]
-        if (Tools.isFileSync(targetPath)) {
+        if (targetPath && Tools.isFileSync(targetPath)) {
             const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
