@@ -774,14 +774,11 @@ for (const contextReplacement of configuration.module.replacements.context)
 // // region consolidate duplicated module requests
 pluginInstances.push(new NormalModuleReplacementPlugin(
     /((?:^|\/)node_modules\/.+){2}/,
-    (resource:{
-        request:string
-        resource:string
-    }):void => {
-        const targetName:'request'|'resource' = resource.request ?
+    (resource):void => {
+        const targetName:'request'|'resource' = resource.createData.request ?
             'request' :
             'resource'
-        const targetPath:string = resource[targetName]
+        const targetPath:string = resource.createData[targetName]
         if (Tools.isFileSync(targetPath)) {
             const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
@@ -796,20 +793,21 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
                 let index = 0
                 for (const pathPrefix of pathPrefixes) {
                     if (index > 0)
-                        pathPrefixes[index] = path.resolve(
-                            pathPrefixes[index - 1], pathPrefix)
+                        pathPrefixes[index] =
+                            path.resolve(pathPrefixes[index - 1], pathPrefix)
                     index += 1
                 }
-                const pathSuffix:string = targetPath.replace(
-                    /(?:^|.*\/)node_modules\/(.+$)/, '$1')
+                const pathSuffix:string =
+                    targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1')
                 let redundantRequest:null|PlainObject = null
                 for (const pathPrefix of pathPrefixes) {
-                    const alternateTargetPath:string = path.resolve(
-                        pathPrefix, pathSuffix)
+                    const alternateTargetPath:string =
+                        path.resolve(pathPrefix, pathSuffix)
                     if (Tools.isFileSync(alternateTargetPath)) {
                         const otherPackageDescriptor:null|PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
-                                alternateTargetPath)
+                                alternateTargetPath
+                            )
                         if (otherPackageDescriptor)
                             if (
                                 packageDescriptor.configuration.version ===
