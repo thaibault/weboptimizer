@@ -774,12 +774,12 @@ for (const contextReplacement of configuration.module.replacements.context)
 // // region consolidate duplicated module requests
 pluginInstances.push(new NormalModuleReplacementPlugin(
     /((?:^|\/)node_modules\/.+){2}/,
-    (resource):void => {
-        const targetName:'request'|'resource' = resource.createData.request ?
-            'request' :
-            'resource'
-        const targetPath:string = resource.createData[targetName]
-        if (targetPath && Tools.isFileSync(targetPath)) {
+    (result:{createData:{resource:string}}):void => {
+        if (
+            result.createData.resource &&
+            Tools.isFileSync(result.createData.resource)
+        ) {
+            const targetPath:string = result.createData.resource
             const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
@@ -818,7 +818,8 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
                                     `${targetPath}" to "` +
                                     `${alternateTargetPath}".`
                                 )
-                                resource[targetName] = alternateTargetPath
+                                result.createData.resource =
+                                    alternateTargetPath
                                 return
                             } else
                                 redundantRequest = {
