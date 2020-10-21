@@ -766,9 +766,9 @@ if (plugins.Imagemin)
 // // region context replacements
 for (const contextReplacement of configuration.module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
-        contextReplacement.map((value:string):any => (new Function(
-            'configuration', '__dirname', '__filename', `return ${value}`
-        ))(configuration, __dirname, __filename))
+        contextReplacement.map((value:string):any => (Tools.stringEvaluate(
+            value, {configuration, __dirname, __filename}
+        ) as {result:any}).result)
     ) as [string, string]))
 // // endregion
 // // region consolidate duplicated module requests
@@ -871,9 +871,7 @@ const evaluate = (
     object:any, filePath:string = configuration.path.context
 ):any =>
     typeof object === 'string' ?
-        (new Function('filePath', ...Object.keys(scope), `return ${object}`))(
-            filePath, ...Object.values(scope)
-        ) :
+        Tools.stringEvaluate(object, {filePath, ...scope}) :
         object
 const evaluateMapper = (value:any):any => evaluate(value)
 const evaluateAdditionalLoaderConfiguration = (

@@ -121,23 +121,20 @@ export default function(this:any, source:string):string {
             if (queryMatch) {
                 const evaluationFunction = (
                     request:string,
-                    template:string, source:string,
+                    template:string,
+                    source:string,
                     compile:CompileFunction,
                     locals:Record<string, unknown>
-                ):Record<string, unknown> =>
-                    (new Function(
-                        'request',
-                        'template',
-                        'source',
-                        'compile',
-                        'locals',
-                        `return ${queryMatch[1]}`
-                    ))(request, template, source, compile, locals)
+                ):Record<string, unknown> => (Tools.stringEvaluate(
+                    queryMatch[1], {request, template, source, compile, locals}
+                ) as {result:any}).result
                 nestedLocals = Tools.extend(
                     true,
                     nestedLocals,
                     evaluationFunction(
-                        request, template, source, compile, locals))
+                        request, template, source, compile, locals
+                    )
+                )
             }
             let nestedOptions:CompilerOptions = Tools.copy(options) as CompilerOptions
             delete nestedOptions.client
