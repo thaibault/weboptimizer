@@ -439,23 +439,17 @@ const main = async ():Promise<void> => {
                                 path:PathModule,
                                 additionalArguments:Array<string>,
                                 filePath:string
-                            ):string =>
-                                new Function(
-                                    'global',
-                                    'self',
-                                    'buildConfiguration',
-                                    'path',
-                                    'additionalArguments',
-                                    'filePath',
-                                    `return \`${expression}\``
-                                )(
+                            ):string => (Tools.stringEvaluate(
+                                `\`${expression}\``,
+                                {
                                     global,
                                     self,
                                     buildConfiguration,
                                     path,
                                     additionalArguments,
                                     filePath
-                                )
+                                }
+                            ) as {result:string}).result
                             const command:string = evaluationFunction(
                                 global,
                                 configuration,
@@ -502,20 +496,16 @@ const main = async ():Promise<void> => {
                         global:NodeJS.Global,
                         self:ResolvedConfiguration,
                         path:PathModule
-                    ):boolean =>
-                        new Function(
-                            'global',
-                            'self',
-                            'path',
-                            'return ' +
-                            (
-                                Object.prototype.hasOwnProperty.call(
-                                    task, 'indicator'
-                                ) ?
-                                    task.indicator :
-                                    'true'
-                            )
-                        )(global, self, path)
+                    ):boolean => (Tools.stringEvaluate(
+                        (
+                            Object.prototype.hasOwnProperty.call(
+                                task, 'indicator'
+                            ) ?
+                                task.indicator as string :
+                                'true'
+                        ),
+                        {global, self, path}
+                    ) as {result:boolean}).result
                     if (evaluationFunction(global, configuration, path))
                         processPromises.push(new Promise<Array<ChildProcess>>((
                             resolve:Function, reject:Function
