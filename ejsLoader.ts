@@ -27,7 +27,7 @@ import babelMinifyPreset from 'babel-preset-minify'
     import transformWith from 'babel-plugin-transform-with'
 */
 import Tools from 'clientnode'
-import {Encoding, Mapping} from 'clientnode/type'
+import {EvaluationResult, Encoding, Mapping} from 'clientnode/type'
 import ejs, {Options, TemplateFunction} from 'ejs'
 import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
@@ -119,24 +119,30 @@ export default function(this:any, source:string):string {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
             const queryMatch:Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
             if (queryMatch) {
-                const evaluationFunction = (
-                    request:string,
-                    template:string,
-                    source:string,
-                    compile:CompileFunction,
-                    locals:Record<string, unknown>
-                ):Record<string, unknown> => (Tools.stringEvaluate(
-                    queryMatch[1], {request, template, source, compile, locals}
-                ) as {result:any}).result
-                nestedLocals = Tools.extend(
-                    true,
-                    nestedLocals,
-                    evaluationFunction(
-                        request, template, source, compile, locals
-                    )
+                const evaluated:EvaluationResult = Tools.stringEvaluate(
+                    queryMatch[1],
+                    {request, template, source, compile, locals}
                 )
+                if (
+                    (evaluated as {compileError:string}).compileError ||
+                    (evaluated as {runtimeError:string}).runtimeError
+                )
+                    console.warn(
+                        'Error occurred during processing given query: ' +
+                        (
+                            evaluated as {compileError:string}
+                        ).compileError ||
+                        (
+                            evaluated as {runtimeError:string}
+                        ).runtimeError
+                    )
+                else
+                    Tools.extend(
+                        true, nestedLocals, (evaluated as {result:any}).result
+                    )
             }
-            let nestedOptions:CompilerOptions = Tools.copy(options) as CompilerOptions
+            let nestedOptions:CompilerOptions =
+                Tools.copy(options) as CompilerOptions
             delete nestedOptions.client
             nestedOptions = Tools.extend(
                 true,
