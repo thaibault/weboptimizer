@@ -26,6 +26,7 @@ import {
 } from 'child_process'
 import Tools, {CloseEventNames} from 'clientnode'
 import {
+    EvaluationResult,
     File,
     PlainObject,
     ProcedureFunction,
@@ -432,44 +433,46 @@ const main = async ():Promise<void> => {
                         if (!testModuleFilePaths.includes(filePath)) {
                             type buildConfigItem =
                                 ResolvedBuildConfigurationItem
-                            const evaluationFunction = (
-                                global:NodeJS.Global,
-                                self:ResolvedConfiguration,
-                                buildConfiguration:buildConfigItem,
-                                path:PathModule,
-                                additionalArguments:Array<string>,
-                                filePath:string
-                            ):string => (Tools.stringEvaluate(
-                                `\`${expression}\``,
-                                {
-                                    global,
-                                    self,
-                                    buildConfiguration,
-                                    path,
-                                    additionalArguments,
-                                    filePath
-                                }
-                            ) as {result:string}).result
-                            const command:string = evaluationFunction(
-                                global,
-                                configuration,
-                                buildConfiguration,
-                                path,
-                                additionalArguments,
-                                filePath
+                            const evaluated:EvaluationResult =
+                                Tools.stringEvaluate(
+                                    `\`${expression}\``,
+                                    {
+                                        global,
+                                        self,
+                                        buildConfiguration,
+                                        path,
+                                        additionalArguments,
+                                        filePath
+                                    }
+                                )
+                            if (
+                                (evaluated as {compileError:string})
+                                    .compileError ||
+                                (evaluated as {runtimeError:string})
+                                    .runtimeError
                             )
-                            console.info(`Running "${command}"`)
+                                throw new Error(
+                                    'Error occurred during processing given ' +
+                                    'command: ' +
+                                    (evaluated as {compileError:string})
+                                        .compileError ||
+                                    (evaluated as {runtimeError:string})
+                                        .runtimeError
+                                )
+                            console.info(
+                                'Running "' +
+                                `${(evaluated as {result:any}).result}"`
+                            )
                             processPromises.push(
                                 new Promise<Array<ChildProcess>>((
                                     resolve:Function, reject:Function
                                 ):Array<ChildProcess> => [
                                     Tools.handleChildProcess(
                                         execChildProcess(
-                                            command,
+                                            (evaluated as {result:any}).result,
                                             Tools.extend(
-                                                {
-                                                    encoding:
-                                                        configuration.encoding
+                                                {encoding:
+                                                    configuration.encoding
                                                 },
                                                 processOptions
                                             ),
@@ -492,11 +495,7 @@ const main = async ():Promise<void> => {
                         (configuration.commandLine[type] as Array<Command>) :
                         [configuration.commandLine[type] as Command]
                 for (const task of tasks) {
-                    const evaluationFunction = (
-                        global:NodeJS.Global,
-                        self:ResolvedConfiguration,
-                        path:PathModule
-                    ):boolean => (Tools.stringEvaluate(
+                    const evaluated:EvaluationResult = Tools.stringEvaluate(
                         (
                             Object.prototype.hasOwnProperty.call(
                                 task, 'indicator'
@@ -505,8 +504,19 @@ const main = async ():Promise<void> => {
                                 'true'
                         ),
                         {global, self, path}
-                    ) as {result:boolean}).result
-                    if (evaluationFunction(global, configuration, path))
+                    )
+                    if (
+                        (evaluated as {compileError:string}).compileError ||
+                        (evaluated as {runtimeError:string}).runtimeError
+                    )
+                        throw new Error(
+                            'Error occurred during processing given task: ' +
+                            (evaluated as {compileError:string})
+                                .compileError ||
+                            (evaluated as {runtimeError:string})
+                                .runtimeError
+                        )
+                    if ((evaluated as {result:boolean}).result)
                         processPromises.push(new Promise<Array<ChildProcess>>((
                             resolve:Function, reject:Function
                         ):Array<ChildProcess> => {

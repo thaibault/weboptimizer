@@ -16,7 +16,9 @@
 */
 // region imports
 import Tools from 'clientnode'
-import {Mapping, PlainObject, ProcedureFunction} from 'clientnode/type'
+import {
+    EvaluationResult, Mapping, PlainObject, ProcedureFunction
+} from 'clientnode/type'
 /* eslint-disable no-empty,@typescript-eslint/no-var-requires */
 let postcssCSSnano:Function = Tools.noop
 try {
@@ -766,10 +768,23 @@ if (plugins.Imagemin)
 // // region context replacements
 for (const contextReplacement of configuration.module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
-        contextReplacement.map((value:string):any => (Tools.stringEvaluate(
-            value, {configuration, __dirname, __filename}
-        ) as {result:any}).result)
-    ) as [string, string]))
+        contextReplacement.map((value:string):any => {
+            const evaluated:EvaluationResult = Tools.stringEvaluate(
+                value, {configuration, __dirname, __filename}
+            )
+            if (
+                (evaluated as {compileError:string}).compileError ||
+                (evaluated as {runtimeError:string}).runtimeError
+            )
+                throw new Error(
+                    'Error occurred during processing given context ' +
+                    'replacement: ' +
+                    (evaluated as {compileError:string}).compileError ||
+                    (evaluated as {runtimeError:string}).runtimeError
+                )
+            return (evaluated as {result:any}).result
+        }) as [string, string]
+    )))
 // // endregion
 // // region consolidate duplicated module requests
 pluginInstances.push(new NormalModuleReplacementPlugin(
@@ -869,10 +884,23 @@ const scope:Record<string, any> = {
 }
 const evaluate = (
     object:any, filePath:string = configuration.path.context
-):any =>
-    typeof object === 'string' ?
-        Tools.stringEvaluate(object, {filePath, ...scope}).result :
-        object
+):any => {
+    if (typeof object === 'string') {
+        const evaluated:EvaluationResult =
+            Tools.stringEvaluate(object, {filePath, ...scope})
+        if (
+            (evaluated as {compileError:string}).compileError ||
+            (evaluated as {runtimeError:string}).runtimeError
+        )
+            throw new Error(
+                'Error occurred during processing given expression: ' +
+                (evaluated as {compileError:string}).compileError ||
+                (evaluated as {runtimeError:string}).runtimeError
+            )
+        return (evaluated as {result:any}).result
+    }
+    return object
+}
 const evaluateMapper = (value:any):any => evaluate(value)
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration:AdditionalLoaderConfiguration
