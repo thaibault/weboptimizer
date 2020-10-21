@@ -871,7 +871,7 @@ const evaluate = (
     object:any, filePath:string = configuration.path.context
 ):any =>
     typeof object === 'string' ?
-        Tools.stringEvaluate(object, {filePath, ...scope}) :
+        Tools.stringEvaluate(object, {filePath, ...scope}).result :
         object
 const evaluateMapper = (value:any):any => evaluate(value)
 const evaluateAdditionalLoaderConfiguration = (
