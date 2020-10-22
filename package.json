@@ -1385,7 +1385,7 @@
         "otherMaximumFileSizeLimitInByte": 1
       },
       "libraryName": {
-        "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [Tools.stringConvertToValidVariableName(self.name), '[name]']: null"
+        "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [Tools.stringConvertToValidVariableName(self.name), '[name]'] : '*'"
       },
       "offline": null,
       "path": {

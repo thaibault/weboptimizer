@@ -1443,7 +1443,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             ),
             globalObject: configuration.exportFormat.globalObject,
             hashFunction: configuration.hashAlgorithm,
-            library: libraryName,
+            library: libraryName === '*' ? undefined : libraryName,
             libraryTarget: (
                 configuration.givenCommandLineArguments[2] === 'build:dll'
             ) ? 'var' : configuration.exportFormat.self,
