@@ -438,7 +438,7 @@ const main = async ():Promise<void> => {
                                     `\`${expression}\``,
                                     {
                                         global,
-                                        self,
+                                        self: configuration,
                                         buildConfiguration,
                                         path,
                                         additionalArguments,
@@ -503,7 +503,7 @@ const main = async ():Promise<void> => {
                                 task.indicator as string :
                                 'true'
                         ),
-                        {global, self, path}
+                        {global, self: configuration, path}
                     )
                     if (
                         (evaluated as {compileError:string}).compileError ||
