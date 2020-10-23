@@ -1132,6 +1132,7 @@ Tools.extend(loader, {
                             configuration.module.cascadingStyleSheet.options ||
                             {}
                     },
+                    configuration.module.preprocessor.cascadingStyleSheet.loader ?
                     {
                         loader:
                             configuration.module.preprocessor
@@ -1224,7 +1225,8 @@ Tools.extend(loader, {
                                 {},
                         configuration.module.preprocessor.cascadingStyleSheet
                             .options || {})
-                    },
+                    } :
+                    [],
                     configuration.module.preprocessor.cascadingStyleSheet
                         .additional.post
                         .map(evaluateMapper)

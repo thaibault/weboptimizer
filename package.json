@@ -908,7 +908,9 @@
               "post": [],
               "pre": []
             },
-            "loader": "postcss-loader",
+            "loader": {
+              "__evaluate__": "optionalRequire('postcss-loader') ? 'postcss-loader' : null"
+            },
             "options": {}
           },
           "ejs": {
