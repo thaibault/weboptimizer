@@ -987,7 +987,7 @@
               "pre": []
             },
             "exclude": "isFilePathInDependencies(filePath)",
-            "include": "null",
+            "include": null,
             "loader": "babel-loader",
             "options": {
               "cacheDirectory": true,

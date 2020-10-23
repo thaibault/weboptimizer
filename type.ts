@@ -167,8 +167,8 @@ export type WebpackLoader = {
 }
 export type LoaderConfiguration = WebpackLoader & {
     additional:AdditionalLoader
-    exclude:string
-    include:string
+    exclude:null|string
+    include:null|string
     regularExpression:string
 }
 export type WebpackLoaderConfiguration = {
