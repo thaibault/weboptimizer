@@ -15,38 +15,19 @@
     endregion
 */
 // region imports
-import Tools from 'clientnode'
+import Tools, {optionalRequire} from 'clientnode'
 import {
     EvaluationResult, Mapping, PlainObject, ProcedureFunction
 } from 'clientnode/type'
-/* eslint-disable no-empty,@typescript-eslint/no-var-requires */
-let postcssCSSnano:Function = Tools.noop
-try {
-    postcssCSSnano = require('cssnano')
-} catch (error) {}
-/* eslint-enable no-empty,@typescript-eslint/no-var-requires */
+const postcssCSSnano:Function = optionalRequire('cssnano')
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {promises as fileSystem} from 'fs'
 import path from 'path'
-/* eslint-disable no-empty,@typescript-eslint/no-var-requires */
-let postcssFontPath:Function = Tools.noop
-try {
-    postcssFontPath = require('postcss-fontpath')
-} catch (error) {}
-let postcssImport:Function = Tools.noop
-try {
-    postcssImport = require('postcss-import')
-} catch (error) {}
-let postcssSprites:Function = Tools.noop
-try {
-    postcssSprites = require('postcss-sprites')
-} catch (error) {}
-let postcssURL:Function = Tools.noop
-try {
-    postcssURL = require('postcss-url')
-} catch (error) {}
-/* eslint-enable no-empty,@typescript-eslint/no-var-requires */
+const postcssFontPath:Function = optionalRequire('postcss-fontpath')
+const postcssImport:Function = optionalRequire('postcss-import')
+const postcssSprites:Function = optionalRequire('postcss-sprites')
+const postcssURL:Function = optionalRequire('postcss-url')
 import util from 'util'
 import webpack, {
     Compiler,
@@ -1155,69 +1136,92 @@ Tools.extend(loader, {
                         loader:
                             configuration.module.preprocessor
                                 .cascadingStyleSheet.loader,
-                        options: Tools.extend(true, {postcssOptions: {
-                            plugins: [
-                                postcssImport({
-                                    addDependencyTo: webpack,
-                                    root: configuration.path.context
-                                })
-                            ].concat(
-                                configuration.module.preprocessor
-                                    .cascadingStyleSheet.additional.plugins.pre
-                                    .map(evaluateMapper),
-                                /*
-                                    NOTE: Checking path doesn't work if fonts
-                                    are referenced in libraries provided in
-                                    another location than the project itself
-                                    like the "node_modules" folder.
-                                */
-                                postcssFontPath({
-                                    checkPath: false,
-                                    formats: [
-                                        {type: 'woff2', ext: 'woff2'},
-                                        {type: 'woff', ext: 'woff'}
-                                    ]
-                                }),
-                                postcssURL({url: 'rebase'}),
-                                postcssSprites({
-                                    filterBy: ():Promise<void> =>
-                                        new Promise((
-                                            resolve:Function, reject:Function
-                                        ):void => (
-                                            configuration.files.compose.image ?
-                                                resolve :
-                                                reject
-                                        )()),
-                                    hooks: {onSaveSpritesheet: (
-                                        image:Record<string, any>
-                                    ):string =>
-                                        path.join(
-                                            image.spritePath,
-                                            path.relative(
-                                                configuration.path.target.asset
-                                                    .image,
-                                                configuration.files.compose
-                                                    .image
-                                            )
-                                        )
-                                    },
-                                    stylesheetPath:
-                                        configuration.path.source.asset
-                                            .cascadingStyleSheet,
-                                    spritePath:
-                                        configuration.path.source.asset.image
-                                }),
-                                configuration.module.preprocessor
-                                    .cascadingStyleSheet.additional.plugins
-                                    .post
-                                    .map(evaluateMapper),
-                                configuration.module.optimizer.cssnano ?
-                                    postcssCSSnano(
-                                        configuration.module.optimizer.cssnano
-                                    ) :
-                                    []
-                            )
-                        }},
+                        options: Tools.extend(
+                            true,
+                            optionalRequire('postcss') ?
+                                {postcssOptions: {
+                                    plugins: ([] as Array<any>).concat(
+                                        postcssImport ?
+                                            postcssImport({
+                                                addDependencyTo: webpack,
+                                                root:
+                                                    configuration.path.context
+                                            }) :
+                                            [],
+                                        configuration.module.preprocessor
+                                            .cascadingStyleSheet.additional
+                                            .plugins.pre.map(evaluateMapper),
+                                        /*
+                                            NOTE: Checking path doesn't work if
+                                            fonts are referenced in libraries
+                                            provided in another location than
+                                            the project itself like the
+                                            "node_modules" folder.
+                                        */
+                                        postcssFontPath ?
+                                            postcssFontPath({
+                                                checkPath: false,
+                                                formats: [
+                                                    {type: 'woff2', ext: 'woff2'},
+                                                    {type: 'woff', ext: 'woff'}
+                                                ]
+                                            }) :
+                                            [],
+                                        postcssURL ?
+                                            postcssURL({url: 'rebase'}) :
+                                            [],
+                                        postcssSprites ?
+                                            postcssSprites({
+                                                filterBy: ():Promise<void> =>
+                                                    new Promise((
+                                                        resolve:Function,
+                                                        reject:Function
+                                                    ):void => (
+                                                        configuration.files
+                                                            .compose.image ?
+                                                                resolve :
+                                                                reject
+                                                    )()),
+                                                hooks: {onSaveSpritesheet: (
+                                                    image:Record<string, any>
+                                                ):string =>
+                                                    path.join(
+                                                        image.spritePath,
+                                                        path.relative(
+                                                            configuration.path
+                                                                .target.asset
+                                                                .image,
+                                                            configuration.files
+                                                                .compose.image
+                                                        )
+                                                    )
+                                                },
+                                                stylesheetPath:
+                                                    configuration.path.source
+                                                        .asset
+                                                        .cascadingStyleSheet,
+                                                spritePath:
+                                                    configuration.path.source
+                                                        .asset.image
+                                            }) :
+                                            [],
+                                        configuration.module.preprocessor
+                                            .cascadingStyleSheet.additional
+                                            .plugins.post
+                                            .map(evaluateMapper),
+                                        (
+                                            configuration.module.optimizer
+                                                .cssnano &&
+                                            postcssCSSnano
+                                        ) ?
+                                            postcssCSSnano(
+                                                configuration.module.optimizer
+                                                    .cssnano
+                                            ) :
+                                            []
+                                    )
+                                }} :
+                                {},
                         configuration.module.preprocessor.cascadingStyleSheet
                             .options || {})
                     },

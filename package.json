@@ -140,8 +140,7 @@
     "stylelint-config-standard": "*",
     "typescript-plugin-css-modules": "*",
     "webpack": "*",
-    "webpack-cli": "*",
-    "webpack-dev-server": "*"
+    "webpack-cli": "*"
   },
   "peerDependencies": {
     "@babel/preset-react": "*",
@@ -178,8 +177,7 @@
     "stylelint-config-standard": "*",
     "typescript-plugin-css-modules": "*",
     "webpack": "*",
-    "webpack-cli": "*",
-    "webpack-dev-server": "*"
+    "webpack-cli": "*"
   },
   "sideEffects": true,
   "configuration": {
