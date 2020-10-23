@@ -1114,7 +1114,20 @@ Tools.extend(loader, {
                     configuration.module.cascadingStyleSheet.exclude,
                     filePath
                 ),
-        include: includingPaths,
+        include: (filePath:string):boolean => {
+            const result:any =
+                evaluate(
+                    configuration.module.cascadingStyleSheet.include,
+                    filePath
+                )
+            if ([null, undefined].includes(result)) {
+                for (const includePath of includingPaths)
+                    if (filePath.startsWith(includePath))
+                        return true
+                return false
+            }
+            return Boolean(result)
+        },
         test: /\.s?css(?:\?.*)?$/i,
         use:
             configuration.module.preprocessor.cascadingStyleSheet.additional
