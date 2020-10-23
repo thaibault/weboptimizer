@@ -262,14 +262,9 @@
         "#": "Configures how to trigger corresponding project livecycle tasks from the command line.",
         "build": {
           "arguments": [
-            "--bail",
             "--config",
             {
               "__evaluate__": "`${webOptimizerPath}/webpackConfigurator.js`"
-            },
-            "--mode",
-            {
-              "__evaluate__": "self.debug ? 'development' : 'production'"
             },
             "--progress"
           ],
