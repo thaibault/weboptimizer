@@ -147,11 +147,12 @@ export const SubConfigurationTypes = [
 export const TaskTypes = ['build', 'serve', ...SubConfigurationTypes] as const
 // // endregion
 // // region loader
+export type BooleanExpression = boolean|null|string
 export type AdditionalLoaderConfiguration = {
-    exclude?:string
-    include?:string
+    exclude?:BooleanExpression
+    include?:BooleanExpression
     test:string
-    use:string
+    use:any
 }
 export type AdditionalLoaderConfigurations = {
     post:Array<AdditionalLoaderConfiguration>
@@ -167,8 +168,8 @@ export type WebpackLoader = {
 }
 export type LoaderConfiguration = WebpackLoader & {
     additional:AdditionalLoader
-    exclude:null|string
-    include:null|string
+    exclude:BooleanExpression
+    include:BooleanExpression
     regularExpression:string
 }
 export type WebpackLoaderConfiguration = {

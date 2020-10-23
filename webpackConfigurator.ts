@@ -887,7 +887,7 @@ const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration:AdditionalLoaderConfiguration
 ):WebpackLoaderConfiguration => ({
     exclude: (filePath:string):boolean =>
-        evaluate(loaderConfiguration.exclude || 'false', filePath),
+        evaluate(loaderConfiguration.exclude || false, filePath),
     include:
         loaderConfiguration.include &&
         evaluate(loaderConfiguration.include) ||
