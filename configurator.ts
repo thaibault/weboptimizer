@@ -15,7 +15,7 @@
     endregion
 */
 // region imports
-import Tools from 'clientnode'
+import Tools, {currentRequire, optionalRequire} from 'clientnode'
 import {PlainObject} from 'clientnode/type'
 import fileSystem from 'fs'
 import path from 'path'
@@ -300,10 +300,9 @@ export const resolvedConfiguration:ResolvedConfiguration =
                         configuration.givenCommandLineArguments[2]
                     )
                 ),
+            optionalRequire,
             path,
-            /* eslint-disable no-eval */
-            require: eval('require'),
-            /* eslint-enable no-eval */
+            require: currentRequire,
             Tools,
             webOptimizerPath: __dirname,
             now,
