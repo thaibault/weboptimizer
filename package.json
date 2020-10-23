@@ -667,6 +667,7 @@
         "aliases": {},
         "cascadingStyleSheet": {
           "exclude": null,
+          "include": null,
           "loader": "css-loader",
           "options": {}
         },
