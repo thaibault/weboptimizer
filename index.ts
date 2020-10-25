@@ -445,31 +445,19 @@ const main = async ():Promise<void> => {
                                         filePath
                                     }
                                 )
-                            if (
-                                (evaluated as {compileError:string})
-                                    .compileError ||
-                                (evaluated as {runtimeError:string})
-                                    .runtimeError
-                            )
+                            if (evaluated.error)
                                 throw new Error(
                                     'Error occurred during processing given ' +
-                                    'command: ' +
-                                    (evaluated as {compileError:string})
-                                        .compileError ||
-                                    (evaluated as {runtimeError:string})
-                                        .runtimeError
+                                    `command: ${evaluated.error}`
                                 )
-                            console.info(
-                                'Running "' +
-                                `${(evaluated as {result:any}).result}"`
-                            )
+                            console.info(`Running "${evaluated.result}"`)
                             processPromises.push(
                                 new Promise<Array<ChildProcess>>((
                                     resolve:Function, reject:Function
                                 ):Array<ChildProcess> => [
                                     Tools.handleChildProcess(
                                         execChildProcess(
-                                            (evaluated as {result:any}).result,
+                                            evaluated.result,
                                             Tools.extend(
                                                 {encoding:
                                                     configuration.encoding
@@ -499,24 +487,16 @@ const main = async ():Promise<void> => {
                         (
                             Object.prototype.hasOwnProperty.call(
                                 task, 'indicator'
-                            ) ?
-                                task.indicator as string :
-                                'true'
+                            ) ? task.indicator as string : 'true'
                         ),
                         {global, self: configuration, path}
                     )
-                    if (
-                        (evaluated as {compileError:string}).compileError ||
-                        (evaluated as {runtimeError:string}).runtimeError
-                    )
+                    if (evaluated.error)
                         throw new Error(
                             'Error occurred during processing given task: ' +
-                            (evaluated as {compileError:string})
-                                .compileError ||
-                            (evaluated as {runtimeError:string})
-                                .runtimeError
+                            evaluated.error
                         )
-                    if ((evaluated as {result:boolean}).result)
+                    if (evaluated.result)
                         processPromises.push(new Promise<Array<ChildProcess>>((
                             resolve:Function, reject:Function
                         ):Array<ChildProcess> => {
