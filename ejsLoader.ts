@@ -120,26 +120,15 @@ export default function(this:any, source:string):string {
             const queryMatch:Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
             if (queryMatch) {
                 const evaluated:EvaluationResult = Tools.stringEvaluate(
-                    queryMatch[1],
-                    {request, template, source, compile, locals}
+                    queryMatch[1], {request, template, source, compile, locals}
                 )
-                if (
-                    (evaluated as {compileError:string}).compileError ||
-                    (evaluated as {runtimeError:string}).runtimeError
-                )
+                if (evaluated.error)
                     console.warn(
                         'Error occurred during processing given query: ' +
-                        (
-                            evaluated as {compileError:string}
-                        ).compileError ||
-                        (
-                            evaluated as {runtimeError:string}
-                        ).runtimeError
+                        evaluated.error
                     )
                 else
-                    Tools.extend(
-                        true, nestedLocals, (evaluated as {result:any}).result
-                    )
+                    Tools.extend(true, nestedLocals, evaluated.result)
             }
             let nestedOptions:CompilerOptions =
                 Tools.copy(options) as CompilerOptions
