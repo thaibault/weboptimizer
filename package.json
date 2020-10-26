@@ -89,7 +89,7 @@
     "file-loader": "*",
     "html-loader": "*",
     "html-minifier": "*",
-    "html-webpack-plugin": "*",
+    "html-webpack-plugin": "^5.0.0-alpha.7",
     "imports-loader": "*",
     "jsdom": "*",
     "loader-utils": "*",

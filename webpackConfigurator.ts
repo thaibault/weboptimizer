@@ -46,7 +46,6 @@ const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
     AddAssetHTMLPlugin: 'add-asset-html-webpack-plugin',
-    OpenBrowser: 'open-browser-webpack-plugin',
     Favicon: 'favicons-webpack-plugin',
     Imagemin: 'imagemin-webpack-plugin',
     Offline: 'offline-plugin'
@@ -153,11 +152,10 @@ let htmlAvailable = false
 if (configuration.givenCommandLineArguments[2] !== 'build:dll')
     for (const htmlConfiguration of configuration.files.html)
         if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
-            pluginInstances.push(new plugins.HTML(Tools.extend(
-                {},
-                htmlConfiguration,
-                {template: htmlConfiguration.template.request}
-            )))
+            pluginInstances.push(new plugins.HTML({
+                ...htmlConfiguration,
+                template: htmlConfiguration.template.request
+            }))
             htmlAvailable = true
         }
 // // endregion
