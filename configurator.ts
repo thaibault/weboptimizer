@@ -308,7 +308,7 @@ export const resolvedConfiguration:ResolvedConfiguration =
             now,
             nowUTCTimestamp: Tools.numberGetUTCTimestamp(now)
         }
-    )
+    ) as ResolvedConfiguration
 // region consolidate file specific build configuration
 // Apply default file level build configurations to all file type specific
 // ones.

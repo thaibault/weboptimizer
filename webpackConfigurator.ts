@@ -152,11 +152,10 @@ let htmlAvailable = false
 if (configuration.givenCommandLineArguments[2] !== 'build:dll')
     for (const htmlConfiguration of configuration.files.html)
         if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
-            pluginInstances.push(new plugins.HTML(Tools.extend(
-                {},
-                htmlConfiguration,
-                {template: htmlConfiguration.template.request}
-            )))
+            pluginInstances.push(new plugins.HTML({
+                ...htmlConfiguration,
+                template: htmlConfiguration.template.request
+            }))
             htmlAvailable = true
         }
 // // endregion
