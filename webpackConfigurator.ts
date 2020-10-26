@@ -46,7 +46,6 @@ const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
     AddAssetHTMLPlugin: 'add-asset-html-webpack-plugin',
-    OpenBrowser: 'open-browser-webpack-plugin',
     Favicon: 'favicons-webpack-plugin',
     Imagemin: 'imagemin-webpack-plugin',
     Offline: 'offline-plugin'
