@@ -71,8 +71,6 @@ export type LoaderConfiguration = Mapping<unknown> & {
  * @returns Transformed string.
  */
 export default function(this:any, source:string):string {
-    if ('cacheable' in this)
-        this.cacheable(!this.debug)
     const givenOptions:LoaderConfiguration =
         Tools.convertSubstringInPlainObject(
             Tools.extend(

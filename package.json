@@ -186,7 +186,7 @@
         "javaScript": {
           "excludeFilePathRegularExpression": {
             "#": "Only ensure globals for exported modules.",
-            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\\\.html|preboot|vendor${self.debug && self.targetTechnology !== 'node' && resolve(self.inPlace.externalLibrary.normal) ? '|index' : ''})(?:\\\\.compiled)?\\\\.js$`"
+            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\\\.html|preboot|vendor${self.debug && self.targetTechnology.payload !== 'node' && resolve(self.inPlace.externalLibrary.normal) ? '|index' : ''})(?:\\\\.compiled)?\\\\.js$`"
           },
           "includeFilePathRegularExpression": "^.*$",
           "pattern": {
@@ -219,7 +219,7 @@
             "__evaluate__": "`'${self.exportFormat.self}'`"
           },
           "TARGET_TECHNOLOGY": {
-            "__evaluate__": "`'${self.targetTechnology}'`"
+            "__evaluate__": "`'${self.targetTechnology.payload}'`"
           }
         },
         "types": {
@@ -350,7 +350,7 @@
         },
         "test": {
           "environments": {
-            "__evaluate__": "['node'].concat(self.targetTechnology === 'node' ? [] : 'jsdom')"
+            "__evaluate__": "['node'].concat(self.targetTechnology.payload === 'node' ? [] : 'jsdom')"
           },
           "command": {
             "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --moduleNameMapper '{\"\\\\\\\\.((css)|(less)|(sass)|(scss))$\": \"identity-obj-proxy\"}' --test-environment ${environment} --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
@@ -400,8 +400,11 @@
           },
           "watchContentBase": true,
           "watchOptions": {
-            "#": "Webpack's default ignores \"node_modules\" folder.",
-            "ignored": []
+            "watch": true,
+            "#": "Webpack's default ignores \"node_modules\" folder. Leads to not live reload if array is empty.",
+            "ignored": [
+              "dummy"
+            ]
           }
         },
         "tool": false
@@ -430,7 +433,7 @@
       "extensions": {
         "file": {
           "external": {
-            "__evaluate__": "['.compiled.js'].concat(self.targetTechnology === 'node' ? ['.js', '.json'] : self.extensions.file.internal)"
+            "__evaluate__": "self.targetTechnology.payload === 'node' ? ['.compiled.js', '.js', '.json'] : self.extensions.file.internal"
           },
           "internal": [
             ".compiled.js",
@@ -496,7 +499,7 @@
         ],
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug || self.targetTechnology === 'node' ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[chunkhash]`"
+            "__evaluate__": "self.debug || self.targetTechnology.payload === 'node' ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[chunkhash]`"
           },
           "image": {
             "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
@@ -1016,7 +1019,7 @@
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transformation to allow tree shaking by the final (minimizer).",
-                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.targetTechnology === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
+                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.targetTechnology.payload === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             },
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"
@@ -1085,14 +1088,14 @@
       },
       "package": {
         "aliasPropertyNames": {
-          "__evaluate__": "self.targetTechnology === 'node' ? [] : ['browser']"
+          "__evaluate__": "self.targetTechnology.payload === 'node' ? [] : ['browser']"
         },
         "main": {
           "fileNames": [
             "index"
           ],
           "propertyNames": {
-            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesmnext', 'esmnext', 'fesnext', 'esnext', 'fesm2015', 'esm2015', 'fesnext', 'esnext', 'es2015', 'module').concat(self.targetTechnology === 'node' ? [] : 'browser').concat('main')"
+            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesmnext', 'esmnext', 'fesnext', 'esnext', 'fesm2015', 'esm2015', 'fesnext', 'esnext', 'es2015', 'module').concat(self.targetTechnology.payload === 'node' ? [] : 'browser').concat('main')"
           }
         }
       },
@@ -1186,7 +1189,11 @@
         }
       },
       "targetTechnology": {
-        "__evaluate__": "self.generic.supportedBrowsers.map((query) => `browserslist:${query}`)"
+        "#": "NOTE: Live-reload is not working if target technology is not set to web. Webpack boilerplate code may not support target technologies.",
+        "boilerplate": "web",
+        "payload": {
+          "__evaluate__": "self.generic.supportedBrowsers.map((query) => `browserslist:${query}`)"
+        }
       },
       "test": {
         "assetPattern": {
@@ -1232,7 +1239,10 @@
             }
           }
         },
-        "targetTechnology": "node"
+        "targetTechnology": {
+          "boilerplate": "node",
+          "payload": "node"
+        }
       },
       "test:browser": {
         "files": {
@@ -1335,7 +1345,10 @@
         "exportFormat": {
           "self": "var"
         },
-        "targetTechnology": "node"
+        "targetTechnology": {
+          "boilerplate": "node",
+          "payload": "node"
+        }
       },
       "exportFormat": {
         "self": {

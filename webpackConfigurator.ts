@@ -597,19 +597,6 @@ if (htmlAvailable)
                         index += 1
                     }
                 }
-                const assets:Array<string> = JSON.parse(
-                    (data.plugin as unknown as {assetJson:string}).assetJson
-                )
-                let index = 0
-                for (const assetRequest of assets) {
-                    if (/^\.__dummy__(\..*)?$/.test(path.basename(
-                        assetRequest
-                    )))
-                        assets.splice(index, 1)
-                    index += 1
-                }
-                (data.plugin as unknown as {assetJson:string}).assetJson =
-                    JSON.stringify(assets)
                 callback(null, data)
             }
         )
@@ -1469,25 +1456,39 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             umdNamedDefine: true
         },
         performance: configuration.performanceHints,
-        target: configuration.targetTechnology,
+        /*
+            NOTE: Live-reload is not working if target technology is not set to
+            "web". Webpack boilerplate code may not support target
+            technologies.
+        */
+        target: configuration.targetTechnology.boilerplate,
         // endregion
         mode: configuration.debug ? 'development' : 'production',
         module: {
-            rules: configuration.module.additional.pre.map(
-                evaluateAdditionalLoaderConfiguration
-            ).concat(
-                loader.ejs,
-                loader.script,
-                loader.html.main, loader.html.ejs, loader.html.html,
-                loader.style,
-                loader.font.eot, loader.font.svg, loader.font.ttf,
-                loader.font.woff,
-                loader.image,
-                loader.data,
-                configuration.module.additional.post.map(
-                    evaluateAdditionalLoaderConfiguration
+            rules: configuration.module.additional.pre
+                .map(evaluateAdditionalLoaderConfiguration)
+                .concat(
+                    loader.ejs,
+
+                    loader.script,
+
+                    loader.html.main,
+                    loader.html.ejs,
+                    loader.html.html,
+
+                    loader.style,
+
+                    loader.font.eot,
+                    loader.font.svg,
+                    loader.font.ttf,
+                    loader.font.woff,
+
+                    loader.image,
+                    loader.data,
+
+                    configuration.module.additional.post
+                        .map(evaluateAdditionalLoaderConfiguration)
                 )
-            )
         },
         node: configuration.nodeEnvironment,
         optimization: {
@@ -1498,7 +1499,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             // region common chunks
             splitChunks: (
                 !configuration.injection.chunks ||
-                configuration.targetTechnology === 'node' ||
+                configuration.targetTechnology.payload === 'node' ||
                 ['build:dll', 'test'].includes(
                     configuration.givenCommandLineArguments[2]
                 )
@@ -1574,10 +1575,9 @@ if (configuration.path.configuration?.javaScript)
             if (Object.prototype.hasOwnProperty.call(
                 result, 'replaceWebOptimizer'
             ))
-                webpackConfiguration =
-                    result.replaceWebOptimizer as
-                        unknown as
-                        WebpackConfiguration
+                webpackConfiguration = result.replaceWebOptimizer as
+                    unknown as
+                    WebpackConfiguration
             else
                 Tools.extend(true, webpackConfiguration, result)
     } catch (error) {

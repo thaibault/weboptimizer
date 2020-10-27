@@ -403,9 +403,10 @@ export type ResolvedConfiguration = {
     plugins:Array<PluginConfiguration>
     showConfiguration:boolean
     stylelint:PlainObject
-    /* eslint-disable max-len */
-    targetTechnology:'web'|'webworker'|'node'|'async-node'|'node-webkit'|'electron'|'electron-renderer'
-    /* eslint-enable max-len */
+    targetTechnology: {
+        boilerplate:string
+        payload:string
+    }
     test:PlainObject
     'test:browser':PlainObject
     webpack:WebpackConfiguration
