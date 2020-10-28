@@ -289,7 +289,16 @@ export type ResolvedConfiguration = {
     contextType:string
     debug:boolean
     development:{
-        server:WebpackOptionsNormalized['devServer']
+        server:WebpackOptionsNormalized['devServer'] & {
+            /*
+                NOTE: We need these values mandatory to inject development
+                handler beforehand.
+            */
+            host:string
+            liveReload:boolean
+            port:number|string
+            secure:boolean
+        }
         tool:WebpackOptionsNormalized['devtool']
     }
     dllManifestFilePaths:Array<string>

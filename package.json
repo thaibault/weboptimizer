@@ -387,14 +387,19 @@
           "host": "0.0.0.0",
           "hot": {
             "#": "Indicates whether to activate the developments hot module replacement feature.",
-            "__evaluate__": "self.debug && !'Shadows currently all playground exports'"
+            "__evaluate__": "self.debug"
           },
           "index": "playground.html",
+          "#": "Disable automatic injection to avoid injection in all chunks and as last module which would shadow main module (e.g. index).",
+          "injectClient": false,
+          "injectHot": false,
           "inline": true,
+          "liveReload": true,
           "port": 8080,
           "publicPath": {
             "__evaluate__": "self.path.target.public"
           },
+          "secure": false,
           "stats": {
             "colors": true
           },
