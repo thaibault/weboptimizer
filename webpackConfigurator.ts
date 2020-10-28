@@ -1392,7 +1392,7 @@ if (
 ) {
     configuration.injection.entry.normalized.developmentHandler = [
         'webpack-dev-server/client/index.js?http' +
-        (configuration.development.server.secure ? 's' : '') +
+        (configuration.development.server.https ? 's' : '') +
         `://${configuration.development.server.host}:` +
         configuration.development.server.port
     ]
