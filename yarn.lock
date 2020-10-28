@@ -3649,9 +3649,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.578"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.578.tgz#d513b4e02c436f15ced572235c8635ab444bea3b"
-  integrity sha512-Ry1USbQpD+HGEwzbColbYOapgvb6UtKtM+3vMcU+UB8PUwoYoRKZuUiXNUlkhF6Ts4jjKrUk5RzEwrPUnZAqfw==
+  version "3.0.579"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.579.tgz#fc5e946269aa5b6787c19b093a6b62dcc971515d"
+  integrity sha512-E0ylXQvBPl1OoOJqZwPrKywYjnF6o78MsSX/aQ4xB61tl2G/jymubnqWNWN/Xg6XQcsXAEFxKcvtys86F9S0AA==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -11086,9 +11086,9 @@ terminal-link@^2.0.0:
     supports-hyperlinks "^2.0.0"
 
 terser-webpack-plugin@^5.0.0:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-5.0.2.tgz#dc771be6e5f161eda2b553d996db55e44859f21c"
-  integrity sha512-adg+JLykDi9HkouHqmVg+qbSGyKSJXioNQl7v79xqyaFbv6a/pCd5nVj4HcTDaFNxt6CzDuUrMEnAEbKA/w/QQ==
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-5.0.3.tgz#ec60542db2421f45735c719d2e17dabfbb2e3e42"
+  integrity sha512-zFdGk8Lh9ZJGPxxPE6jwysOlATWB8GMW8HcfGULWA/nPal+3VdATflQvSBSLQJRCmYZnfFJl6vkRTiwJGNgPiQ==
   dependencies:
     jest-worker "^26.6.1"
     p-limit "^3.0.2"
