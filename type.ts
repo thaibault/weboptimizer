@@ -295,9 +295,9 @@ export type ResolvedConfiguration = {
                 handler beforehand.
             */
             host:string
+            https:boolean
             liveReload:boolean
-            port:number|string
-            secure:boolean
+            port:number
         }
         tool:WebpackOptionsNormalized['devtool']
     }
