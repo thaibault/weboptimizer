@@ -1380,6 +1380,22 @@ if (
     loader.style.use.unshift(plugins.MiniCSSExtract.loader)
 }
 // / endregion
+// / region apply runtime dev helper
+if (
+    configuration.development.server.liveReload &&
+    !configuration.injection.entry.normalized.developmentHandler
+) {
+    configuration.injection.entry.normalized.developmentHandler = [
+        'webpack-dev-server/client/index.js?http' +
+        (configuration.development.server.secure ? 's' : '') +
+        `://${configuration.development.server.host}:` +
+        configuration.development.server.port
+    ]
+    if (configuration.development.server.hot)
+        configuration.injection.entry.normalized.developmentHandler
+            .push('webpack/hot/dev-server.js')
+}
+// / endregion
 // endregion
 for (const pluginConfiguration of configuration.plugins)
     pluginInstances.push(new (eval('require')(pluginConfiguration.name.module)[
