@@ -1382,8 +1382,13 @@ if (
 // / endregion
 // / region apply runtime dev helper
 if (
+    htmlAvailable &&
+    configuration.debug &&
     configuration.development.server.liveReload &&
-    !configuration.injection.entry.normalized.developmentHandler
+    !configuration.injection.entry.normalized.developmentHandler &&
+    ['serve', 'test:browser'].includes(
+        configuration.givenCommandLineArguments[2]
+    )
 ) {
     configuration.injection.entry.normalized.developmentHandler = [
         'webpack-dev-server/client/index.js?http' +
