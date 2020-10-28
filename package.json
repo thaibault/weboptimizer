@@ -389,6 +389,7 @@
             "#": "Indicates whether to activate the developments hot module replacement feature.",
             "__evaluate__": "self.debug"
           },
+          "https": false,
           "index": "playground.html",
           "#": "Disable automatic injection to avoid injection in all chunks and as last module which would shadow main module (e.g. index).",
           "injectClient": false,
@@ -399,7 +400,6 @@
           "publicPath": {
             "__evaluate__": "self.path.target.public"
           },
-          "secure": false,
           "stats": {
             "colors": true
           },
