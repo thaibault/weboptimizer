@@ -175,7 +175,8 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
-    "typescript-plugin-css-modules": "*"
+    "typescript-plugin-css-modules": "*",
+    "webpack-dev-server": "*"
   },
   "sideEffects": true,
   "configuration": {
