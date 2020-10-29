@@ -186,7 +186,7 @@
         "javaScript": {
           "excludeFilePathRegularExpression": {
             "#": "Only ensure globals for exported modules.",
-            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\\\.html|preboot|vendor${self.debug && self.targetTechnology.payload !== 'node' && resolve(self.inPlace.externalLibrary.normal) ? '|index' : ''})(?:\\\\.compiled)?\\\\.js$`"
+            "__evaluate__": "`^(?:.*/)?(?:developmentHelper|errorreporter|.+\\\\.html|preboot|vendor${self.debug && !([].concat(self.targetTechnology.payload))[0].startsWith('node') && resolve(self.inPlace.externalLibrary.normal) ? '|index' : ''})(?:\\\\.compiled)?\\\\.js$`"
           },
           "includeFilePathRegularExpression": "^.*$",
           "pattern": {
@@ -350,7 +350,7 @@
         },
         "test": {
           "environments": {
-            "__evaluate__": "['node'].concat(self.targetTechnology.payload === 'node' ? [] : 'jsdom')"
+            "__evaluate__": "['node'].concat([].concat(self.targetTechnology.payload)[0].startsWith('node') ? [] : 'jsdom')"
           },
           "command": {
             "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --moduleNameMapper '{\"\\\\\\\\.((css)|(less)|(sass)|(scss))$\": \"identity-obj-proxy\"}' --test-environment ${environment} --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
@@ -438,7 +438,7 @@
       "extensions": {
         "file": {
           "external": {
-            "__evaluate__": "self.targetTechnology.payload === 'node' ? ['.compiled.js', '.js', '.json'] : self.extensions.file.internal"
+            "__evaluate__": "[].concat(self.targetTechnology.payload)[0].startsWith('node') ? ['.compiled.js', '.js', '.json'] : self.extensions.file.internal"
           },
           "internal": [
             ".compiled.js",
@@ -504,7 +504,7 @@
         ],
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug || self.targetTechnology.payload === 'node' ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[chunkhash]`"
+            "__evaluate__": "self.debug || [].concat(self.targetTechnology.payload)[0].startsWith('node') ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[chunkhash]`"
           },
           "image": {
             "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
@@ -1024,7 +1024,7 @@
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transformation to allow tree shaking by the final (minimizer).",
-                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.targetTechnology.payload === 'node' ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
+                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: [].concat(self.targetTechnology.payload)[0].startsWith('node') ? {node: 'current'} : {browsers: self.generic.supportedBrowsers, node: 'current'}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             },
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"
@@ -1093,14 +1093,14 @@
       },
       "package": {
         "aliasPropertyNames": {
-          "__evaluate__": "self.targetTechnology.payload === 'node' ? [] : ['browser']"
+          "__evaluate__": "[].concat(self.targetTechnology.payload)[0].startsWith('node') ? [] : ['browser']"
         },
         "main": {
           "fileNames": [
             "index"
           ],
           "propertyNames": {
-            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesmnext', 'esmnext', 'fesnext', 'esnext', 'fesm2015', 'esm2015', 'fesnext', 'esnext', 'es2015', 'module').concat(self.targetTechnology.payload === 'node' ? [] : 'browser').concat('main')"
+            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesmnext', 'esmnext', 'fesnext', 'esnext', 'fesm2015', 'esm2015', 'fesnext', 'esnext', 'es2015', 'module').concat([].concat(self.targetTechnology.payload)[0].startsWith('node') ? [] : 'browser').concat('main')"
           }
         }
       },
