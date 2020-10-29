@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.810",
+  "version": "2.0.811",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "https://torben.website/weboptimizer",
@@ -1195,7 +1195,10 @@
       },
       "targetTechnology": {
         "#": "NOTE: Live-reload is not working if target technology is not set to web. Webpack boilerplate code may not support target technologies.",
-        "boilerplate": ["web", "es5"],
+        "boilerplate": [
+          "web",
+          "es5"
+        ],
         "payload": {
           "__evaluate__": "self.generic.supportedBrowsers.map((query) => `browserslist:${query}`)"
         }
