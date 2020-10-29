@@ -1195,7 +1195,7 @@
       },
       "targetTechnology": {
         "#": "NOTE: Live-reload is not working if target technology is not set to web. Webpack boilerplate code may not support target technologies.",
-        "boilerplate": "web",
+        "boilerplate": ["web", "es5"],
         "payload": {
           "__evaluate__": "self.generic.supportedBrowsers.map((query) => `browserslist:${query}`)"
         }
