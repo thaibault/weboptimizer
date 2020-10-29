@@ -97,6 +97,8 @@
     "script-loader": "*",
     "typescript": "*",
     "url-loader": "*",
+    "webpack": "*",
+    "webpack-cli": "*",
     "webpack-sources": "*"
   },
   "devDependencies": {
@@ -138,9 +140,7 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
-    "typescript-plugin-css-modules": "*",
-    "webpack": "*",
-    "webpack-cli": "*"
+    "typescript-plugin-css-modules": "*"
   },
   "peerDependencies": {
     "@babel/preset-react": "*",
@@ -175,9 +175,7 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
-    "typescript-plugin-css-modules": "*",
-    "webpack": "*",
-    "webpack-cli": "*"
+    "typescript-plugin-css-modules": "*"
   },
   "sideEffects": true,
   "configuration": {

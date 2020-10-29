@@ -3649,9 +3649,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.581"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.581.tgz#b5eb92c2f204ca7334d1a99c7ea52c5986cab640"
-  integrity sha512-FdwcMb7smyeurBO+ae/eQY7oYwh/PC9AS79prp24KSJ/cG8o1ehYPx7kDX3kDcyJ9aaDctZgtpni79eyjy4ZoA==
+  version "3.0.582"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.582.tgz#a7558d5b3ae235e37051113c8644dc61b52bb914"
+  integrity sha512-GSchSS2a3NemreLmhjZAnF9mhiB7cOcZvnsUqvGxyFKDo4xAMXM6MVdbbHVabh23rgxX3pSIRxZVwo9iBU36MA==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -11773,9 +11773,9 @@ webpack-merge@^4.2.2:
     lodash "^4.17.15"
 
 webpack-sources@*, webpack-sources@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-2.1.1.tgz#6922dc1bf7f7f95aab56675535b6e20f87b9147f"
-  integrity sha512-hraq9n99K564zuZUsE61iATO3jvzxOmGo20UlOe3zgdHOBp8inTJgv7EY4RgvCv7Ywx0/vpQTyYSjnFpv4gNtQ==
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-2.2.0.tgz#058926f39e3d443193b6c31547229806ffd02bac"
+  integrity sha512-bQsA24JLwcnWGArOKUxYKhX3Mz/nK1Xf6hxullKERyktjNMC4x8koOeaDNTA2fEJ09BdWLbM/iTW0ithREUP0w==
   dependencies:
     source-list-map "^2.0.1"
     source-map "^0.6.1"
