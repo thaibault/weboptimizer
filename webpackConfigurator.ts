@@ -367,10 +367,10 @@ if (!(
 // /// region extract cascading style sheets
 if (configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract)
     pluginInstances.push(new plugins.MiniCSSExtract({
-        chunks: '[name].css',
         filename: path.relative(
             configuration.path.target.base,
-            configuration.files.compose.cascadingStyleSheet)
+            configuration.files.compose.cascadingStyleSheet
+        )
     }))
 // /// endregion
 // /// region performs implicit external logic
@@ -484,8 +484,8 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.encoding
         )
         if (resolvedRequest) {
-            const keys:Array<string> = [
-                'amd', 'commonjs', 'commonjs2', 'root']
+            const keys:Array<string> =
+                ['amd', 'commonjs', 'commonjs2', 'root']
             let result:PlainObject|string = resolvedRequest
             if (Object.prototype.hasOwnProperty.call(
                 configuration.injection.external.aliases, request
@@ -522,7 +522,8 @@ if (configuration.injection.external.modules === '__implicit__')
                 )
                     Tools.extend(
                         result,
-                        configuration.injection.external.aliases[request])
+                        configuration.injection.external.aliases[request]
+                    )
                 if (Object.prototype.hasOwnProperty.call(result, 'default'))
                     for (const key of keys)
                         if (!Object.prototype.hasOwnProperty.call(result, key))
