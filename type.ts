@@ -94,7 +94,7 @@ export type InjectionConfiguration = {
         modules:ExternalInjection
     }
     externalAliases:Mapping
-    ignorePattern:Array<WebpackIgnorePlugin['options']>
+    ignorePattern:Array<WebpackIgnorePlugin['options']>|WebpackIgnorePlugin['options']
     implicitExternalExcludePattern:Array<RegExp|string>
     implicitExternalIncludePattern:Array<RegExp|string>
 }
