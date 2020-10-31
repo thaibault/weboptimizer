@@ -333,6 +333,7 @@ export type ResolvedConfiguration = {
         extensions:{
             file:Array<string>
         }
+        resolveSymlinks:boolean
     }
     module:{
         additional:AdditionalLoaderConfigurations
@@ -393,11 +394,13 @@ export type ResolvedConfiguration = {
             context:Array<[string, string]>
             normal:Replacements
         }
+        resolveSymlinks:boolean
         skipParseRegularExpressions:WebpackModuleOptions['noParse']
         style:WebpackLoader
     }
     name:string
     needed:Mapping<boolean>
+    nodeENV:false|null|string
     nodeEnvironment:NodeEnvironment
     offline:PlainObject & {excludes:Array<string>}
     package:{

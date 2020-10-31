@@ -1445,10 +1445,9 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             extensions: configuration.extensions.file.internal,
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,
-            modules: Helper.normalizePaths(
-                configuration.module.directoryNames
-            ),
-            symlinks: false,
+            modules:
+                Helper.normalizePaths(configuration.module.directoryNames),
+            symlinks: configuration.module.resolveSymlinks,
             unsafeCache: Boolean(configuration.cache?.unsafe)
         },
         resolveLoader: {
@@ -1458,7 +1457,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,
             modules: configuration.loader.directoryNames,
-            symlinks: false
+            symlinks: configuration.loader.resolveSymlinks
         },
         // endregion
         // region output
@@ -1574,6 +1573,8 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
     configuration.webpack,
     customConfiguration
 )
+if (configuration.nodeENV !== null)
+    webpackConfiguration.optimization!.nodeEnv = configuration.nodeENV
 if (
     !Array.isArray(configuration.module.skipParseRegularExpressions) ||
     configuration.module.skipParseRegularExpressions.length

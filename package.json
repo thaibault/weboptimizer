@@ -349,7 +349,7 @@
         },
         "test": {
           "environments": {
-            "__evaluate__": "['node'].concat([].concat(self.generic.isWeb ? 'jsdom' : [])"
+            "__evaluate__": "['node'].concat(self.generic.isWeb ? 'jsdom' : [])"
           },
           "command": {
             "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --moduleNameMapper '{\"\\\\\\\\.((css)|(less)|(sass)|(scss))$\": \"identity-obj-proxy\"}' --test-environment ${environment} --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
@@ -665,7 +665,8 @@
         },
         "directoryNames": [
           "node_modules"
-        ]
+        ],
+        "resolveSymlinks": false
       },
       "module": {
         "additional": {
@@ -1038,6 +1039,7 @@
           "context": [],
           "normal": {}
         },
+        "resolveSymlinks": false,
         "skipParseRegularExpressions": {
           "__evaluate__": "/(?:^|\\/)(?:(?:jquery\\/dist\\/jquery))(?:\\.min)?\\.js(?:\\?.+|$)/"
         },
@@ -1050,6 +1052,7 @@
           }
         }
       },
+      "nodeENV": null,
       "nodeEnvironment": {
         "#": "Indicates which node environment variables should be included in built artefacts.",
         "global": true,
