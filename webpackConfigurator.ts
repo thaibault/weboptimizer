@@ -756,11 +756,14 @@ for (const contextReplacement of configuration.module.replacements.context)
 // // region consolidate duplicated module requests
 pluginInstances.push(new NormalModuleReplacementPlugin(
     /.+/,
-    (result:{createData:{resource:string}}):void => {
+    (result:{
+        context:string
+        createData:{resource:string}
+        request:string
+    }):void => {
         const targetPath:string =
             result.createData.resource ||
             path.resolve(result.context, result.request)
-        console.log('\n\nA:', targetPath, '\n')
         if (
             targetPath &&
             /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
@@ -776,7 +779,7 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
                     return
                 // Avoid finding the same artefact.
                 pathPrefixes.pop()
-                let index = 0
+                let index:number = 0
                 for (const pathPrefix of pathPrefixes) {
                     if (index > 0)
                         pathPrefixes[index] =
@@ -800,7 +803,7 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
                                 otherPackageDescriptor.configuration.version
                             ) {
                                 console.info(
-                                    '\n\nConsolidate module request "' +
+                                    '\nConsolidate module request "' +
                                     `${targetPath}" to "` +
                                     `${alternateTargetPath}".\n`
                                 )
@@ -818,7 +821,7 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
                 }
                 if (redundantRequest)
                     console.warn(
-                        '\n\nIncluding different versions of same package "' +
+                        '\nIncluding different versions of same package "' +
                         `${packageDescriptor.configuration.name}". Module "` +
                         `${targetPath}" (version ` +
                         `${packageDescriptor.configuration.version}) has ` +
