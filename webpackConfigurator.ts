@@ -367,10 +367,10 @@ if (!(
 // /// region extract cascading style sheets
 if (configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract)
     pluginInstances.push(new plugins.MiniCSSExtract({
-        chunks: '[name].css',
         filename: path.relative(
             configuration.path.target.base,
-            configuration.files.compose.cascadingStyleSheet)
+            configuration.files.compose.cascadingStyleSheet
+        )
     }))
 // /// endregion
 // /// region performs implicit external logic
@@ -484,8 +484,8 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.encoding
         )
         if (resolvedRequest) {
-            const keys:Array<string> = [
-                'amd', 'commonjs', 'commonjs2', 'root']
+            const keys:Array<string> =
+                ['amd', 'commonjs', 'commonjs2', 'root']
             let result:PlainObject|string = resolvedRequest
             if (Object.prototype.hasOwnProperty.call(
                 configuration.injection.external.aliases, request
@@ -522,7 +522,8 @@ if (configuration.injection.external.modules === '__implicit__')
                 )
                     Tools.extend(
                         result,
-                        configuration.injection.external.aliases[request])
+                        configuration.injection.external.aliases[request]
+                    )
                 if (Object.prototype.hasOwnProperty.call(result, 'default'))
                     for (const key of keys)
                         if (!Object.prototype.hasOwnProperty.call(result, key))
@@ -754,13 +755,17 @@ for (const contextReplacement of configuration.module.replacements.context)
 // // endregion
 // // region consolidate duplicated module requests
 pluginInstances.push(new NormalModuleReplacementPlugin(
-    /((?:^|\/)node_modules\/.+){2}/,
+    /.+/,
     (result:{createData:{resource:string}}):void => {
+        const targetPath:string =
+            result.createData.resource ||
+            path.resolve(result.context, result.request)
+        console.log('\n\nA:', targetPath, '\n')
         if (
-            result.createData.resource &&
-            Tools.isFileSync(result.createData.resource)
+            targetPath &&
+            /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
+            Tools.isFileSync(targetPath)
         ) {
-            const targetPath:string = result.createData.resource
             const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
@@ -795,9 +800,9 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
                                 otherPackageDescriptor.configuration.version
                             ) {
                                 console.info(
-                                    'Consolidate module request "' +
+                                    '\n\nConsolidate module request "' +
                                     `${targetPath}" to "` +
-                                    `${alternateTargetPath}".`
+                                    `${alternateTargetPath}".\n`
                                 )
                                 result.createData.resource =
                                     alternateTargetPath
@@ -813,12 +818,12 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
                 }
                 if (redundantRequest)
                     console.warn(
-                        'Including different versions of same package "' +
+                        '\n\nIncluding different versions of same package "' +
                         `${packageDescriptor.configuration.name}". Module "` +
                         `${targetPath}" (version ` +
                         `${packageDescriptor.configuration.version}) has ` +
                         `redundancies with "${redundantRequest.path}" (` +
-                        `version ${redundantRequest.version}).`
+                        `version ${redundantRequest.version}).\n`
                     )
             }
         }
@@ -1444,10 +1449,9 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             extensions: configuration.extensions.file.internal,
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,
-            modules: Helper.normalizePaths(
-                configuration.module.directoryNames
-            ),
-            symlinks: false,
+            modules:
+                Helper.normalizePaths(configuration.module.directoryNames),
+            symlinks: configuration.module.resolveSymlinks,
             unsafeCache: Boolean(configuration.cache?.unsafe)
         },
         resolveLoader: {
@@ -1457,7 +1461,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,
             modules: configuration.loader.directoryNames,
-            symlinks: false
+            symlinks: configuration.loader.resolveSymlinks
         },
         // endregion
         // region output
@@ -1573,6 +1577,8 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
     configuration.webpack,
     customConfiguration
 )
+if (configuration.nodeENV !== null)
+    webpackConfiguration.optimization!.nodeEnv = configuration.nodeENV
 if (
     !Array.isArray(configuration.module.skipParseRegularExpressions) ||
     configuration.module.skipParseRegularExpressions.length
