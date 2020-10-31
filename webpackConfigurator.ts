@@ -126,7 +126,9 @@ else {
 // / region plugins
 const pluginInstances:Array<Record<string, any>> = []
 // // region define modules to ignore
-for (const pattern of [].concat(configuration.injection.ignorePattern)) {
+for (const pattern of ([] as Array<IgnorePlugin['options']>).concat(
+    configuration.injection.ignorePattern
+)) {
     if (typeof pattern.contextRegExp === 'string')
         pattern.contextRegExp = new RegExp(pattern.contextRegExp)
     if (typeof pattern.resourceRegExp === 'string')
