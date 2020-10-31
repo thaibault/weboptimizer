@@ -755,13 +755,17 @@ for (const contextReplacement of configuration.module.replacements.context)
 // // endregion
 // // region consolidate duplicated module requests
 pluginInstances.push(new NormalModuleReplacementPlugin(
-    /((?:^|\/)node_modules\/.+){2}/,
+    /.+/,
     (result:{createData:{resource:string}}):void => {
+        const targetPath:string =
+            result.createData.resource ||
+            path.resolve(result.context, result.request)
+        console.log('\n\nA:', targetPath, '\n')
         if (
-            result.createData.resource &&
-            Tools.isFileSync(result.createData.resource)
+            targetPath &&
+            /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
+            Tools.isFileSync(targetPath)
         ) {
-            const targetPath:string = result.createData.resource
             const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
@@ -796,9 +800,9 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
                                 otherPackageDescriptor.configuration.version
                             ) {
                                 console.info(
-                                    'Consolidate module request "' +
+                                    '\n\nConsolidate module request "' +
                                     `${targetPath}" to "` +
-                                    `${alternateTargetPath}".`
+                                    `${alternateTargetPath}".\n`
                                 )
                                 result.createData.resource =
                                     alternateTargetPath
@@ -814,12 +818,12 @@ pluginInstances.push(new NormalModuleReplacementPlugin(
                 }
                 if (redundantRequest)
                     console.warn(
-                        'Including different versions of same package "' +
+                        '\n\nIncluding different versions of same package "' +
                         `${packageDescriptor.configuration.name}". Module "` +
                         `${targetPath}" (version ` +
                         `${packageDescriptor.configuration.version}) has ` +
                         `redundancies with "${redundantRequest.path}" (` +
-                        `version ${redundantRequest.version}).`
+                        `version ${redundantRequest.version}).\n`
                     )
             }
         }
