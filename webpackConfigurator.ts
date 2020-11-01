@@ -129,10 +129,12 @@ const pluginInstances:Array<Record<string, any>> = []
 for (const pattern of ([] as Array<IgnorePlugin['options']>).concat(
     configuration.injection.ignorePattern
 )) {
-    if (typeof pattern.contextRegExp === 'string')
-        pattern.contextRegExp = new RegExp(pattern.contextRegExp)
-    if (typeof pattern.resourceRegExp === 'string')
-        pattern.resourceRegExp = new RegExp(pattern.resourceRegExp)
+    if (typeof (pattern as PlainObject).contextRegExp === 'string')
+        (pattern as {contextRegExp:RegExp}).contextRegExp =
+            new RegExp((pattern as {contextRegExp:string}).contextRegExp)
+    if (typeof (pattern as PlainObject).resourceRegExp === 'string')
+        (pattern as {resourceRegExp:RegExp}).resourceRegExp =
+            new RegExp((pattern as {resourceRegExp:string}).resourceRegExp)
     pluginInstances.push(new IgnorePlugin(pattern))
 }
 // // endregion
