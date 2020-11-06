@@ -252,7 +252,7 @@
             "outputExtension": "css"
           },
           "additional": {
-            "filePathPattern": "^.+\\.compiled(?:\\.map)?$",
+            "filePathPattern": "^.+\\.((bundle)|(compiled))(?:\\.map)?$",
             "outputExtension": ""
           }
         }
@@ -308,7 +308,7 @@
               },
               "--ignore-pattern",
               {
-                "__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? path.relative(currentPath, self.path.target.base, '**') : \"*.compiled.*\"}'`"
+                "__evaluate__": "`'${self.path.target.base.substring(currentPath.length + 1) ? path.relative(currentPath, self.path.target.base, '**') : \"*.((bundle)|(compiled)).*\"}'`"
               },
               "--ignore-pattern",
               {
@@ -1157,10 +1157,16 @@
         },
         "tidyUp": [
           {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.bundle.js')"
+          },
+          {
             "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js')"
           },
           {
             "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.js')"
+          },
+          {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.bundle.js.map')"
           },
           {
             "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.compiled.js.map')"
