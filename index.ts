@@ -154,14 +154,23 @@ const main = async ():Promise<void> => {
                         configuration.path.target.base,
                         async (file:File):Promise<false|undefined> => {
                             if (Helper.isFilePathInLocation(
-                                file.path, configuration.path.ignore.concat(
-                                    configuration.module.directoryNames,
-                                    configuration.loader.directoryNames
-                                ).map((filePath:string):string => path.resolve(
-                                    configuration.path.context, filePath)
-                                ).filter((filePath:string):boolean =>
-                                    !configuration.path.context.startsWith(
-                                        filePath))
+                                file.path,
+                                configuration.path.ignore
+                                    .concat(
+                                        configuration.module.directoryNames,
+                                        configuration.loader.directoryNames
+                                    )
+                                    .map((filePath:string):string =>
+                                        path.resolve(
+                                            configuration.path.context,
+                                            filePath
+                                        )
+                                    )
+                                    .filter((filePath:string):boolean =>
+                                        !configuration.path.context.startsWith(
+                                            filePath
+                                        )
+                                    )
                             ))
                                 return false
                             for (
