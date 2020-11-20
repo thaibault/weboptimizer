@@ -1546,6 +1546,9 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
         context: configuration.path.context,
         devtool: configuration.development.tool,
         devServer: configuration.development.server,
+        experiments: {
+          topLevelAwait: true
+        },
         // region input
         entry: configuration.injection.entry.normalized,
         externals: configuration.injection.external.modules,

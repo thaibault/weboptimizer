@@ -16,6 +16,7 @@
 */
 // region imports
 import Tools, {ConsoleOutputMethods} from 'clientnode'
+import {ProcedureFunction} from 'clientnode/type'
 import {DOMWindow} from 'jsdom'
 
 import {Browser, InitializedBrowser} from './type'
@@ -25,7 +26,7 @@ declare const NAME:string
 declare const TARGET_TECHNOLOGY:string
 // endregion
 // region variables
-const onCreatedListener:Array<Function> = []
+const onCreatedListener:Array<ProcedureFunction> = []
 export const browser:Browser = {
     debug: false,
     domContentLoaded: false,
@@ -38,17 +39,14 @@ export const browser:Browser = {
 // endregion
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
-    // region mock browser environment
     /*
-    NOTE: This syntax cannot be interpret by typescript currently.
-
-    Promise.all([import('path'), import('jsdom')]).then((
-        [path, {JSDOM, VirtualConsole}]
-    ):void => {
+        NOTE: We use an asynchronous wrapper method to initialize
+        "browser.initialized" at module loading time.
     */
-    import('path').then((path) => import('jsdom').then(({
-        JSDOM, VirtualConsole
-    }) => {
+    (async ():Promise<void> => {
+        // region mock browser environment
+        const [path, {JSDOM, VirtualConsole}] =
+            await Promise.all([import('path'), import('jsdom')])
         const virtualConsole = new VirtualConsole()
         for (const name of ConsoleOutputMethods)
             virtualConsole.on(name, console[name].bind(console))
@@ -90,7 +88,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                                 event caused by a race condition.
                             */
                             browser.domContentLoaded =
-                                browser.windowLoaded =
+                            browser.windowLoaded =
                                 true
                         })
                         for (const callback of onCreatedListener)
@@ -109,23 +107,15 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 NOTE: We load dependencies now to avoid having file imports
                 after test runner has finished to isolate the environment.
             */
-            import('./ejsLoader').then(({default: ejsLoader}):void =>
-                require('fs').readFile(
-                    filePath,
-                    {encoding: 'utf-8'},
-                    (error:Error|null, content:string):void => {
-                        if (error)
-                            throw error
-                        render(
-                            ejsLoader.bind({resourcePath: filePath})(content)
-                        )
-                    }
-                )
-            )
+            const ejsLoader:((source:string) => string) =
+                (await import('./ejsLoader')).default
+            const content:string = await (await import('fs')).promises
+                .readFile(filePath, {encoding: 'utf-8'})
+            render(ejsLoader.bind({resourcePath: filePath})(content))
         } else
-            import('webOptimizerDefaultTemplateFilePath').then(render)
-    }))
-    // endregion
+            render(await import('webOptimizerDefaultTemplateFilePath'))
+        // endregion
+    })()
 else {
     browser.initialized = true
     browser.window = window
@@ -160,7 +150,7 @@ export const getInitializedBrowser = async (
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.
     */
-    const wrappedCallback:Function = ():void => {
+    const wrappedCallback:ProcedureFunction = ():void => {
         if (
             replaceWindow &&
             typeof global !== 'undefined' &&
@@ -180,4 +170,4 @@ export default getInitializedBrowser
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
-// endregion
+// endregioun
