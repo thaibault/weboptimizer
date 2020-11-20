@@ -150,7 +150,7 @@ export const getInitializedBrowser = async (
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.
     */
-    const wrappedCallback:Function = ():void => {
+    const wrappedCallback:ProcedureFunction = ():void => {
         if (
             replaceWindow &&
             typeof global !== 'undefined' &&
