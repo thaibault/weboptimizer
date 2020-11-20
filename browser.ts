@@ -15,7 +15,8 @@
     endregion
 */
 // region imports
-import Tools, {ConsoleOutputMethods, ProcedureFunction} from 'clientnode'
+import Tools, {ConsoleOutputMethods} from 'clientnode'
+import {ProcedureFunction} from 'clientnode/type'
 import {DOMWindow} from 'jsdom'
 
 import {Browser, InitializedBrowser} from './type'
@@ -37,80 +38,85 @@ export const browser:Browser = {
 }
 // endregion
 // region ensure presence of common browser environment
-if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
-    // region mock browser environment
-    const [path, {JSDOM, VirtualConsole}] =
-        await Promise.all([import('path'), import('jsdom')])
-    const virtualConsole = new VirtualConsole()
-    for (const name of ConsoleOutputMethods)
-        virtualConsole.on(name, console[name].bind(console))
-    virtualConsole.on(
-        'error',
-        (error:Error & {
-            detail:string
-            type:string
-        }):void => {
-            if (
-                !browser.debug &&
-                ['XMLHttpRequest', 'resource loading'].includes(error.type)
-            )
-                console.warn(`Loading resource failed: ${error.toString()}.`)
-            else
-                console.error(error.stack, error.detail)
-        }
-    )
-    const render = (template:string):void => {
-        browser.DOM = JSDOM
-        browser.initialized = true
-        browser.instance = new browser.DOM(
-            template,
-            {
-                beforeParse: (window:DOMWindow):void => {
-                    // We want to use it in a polymorphic way.
-                    browser.window = window as unknown as Window
-                    window.document.addEventListener(
-                        'DOMContentLoaded',
-                        ():void => {
-                            browser.domContentLoaded = true
-                        }
+if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
+    /*
+        NOTE: We use an asynchronous wrapper method to initialize
+        "browser.initialized" at module loading time.
+    */
+    (async ():Promise<void> => {
+        // region mock browser environment
+        const [path, {JSDOM, VirtualConsole}] =
+            await Promise.all([import('path'), import('jsdom')])
+        const virtualConsole = new VirtualConsole()
+        for (const name of ConsoleOutputMethods)
+            virtualConsole.on(name, console[name].bind(console))
+        virtualConsole.on(
+            'error',
+            (error:Error & {
+                detail:string
+                type:string
+            }):void => {
+                if (
+                    !browser.debug &&
+                    ['XMLHttpRequest', 'resource loading'].includes(error.type)
+                )
+                    console.warn(
+                        `Loading resource failed: ${error.toString()}.`
                     )
-                    window.addEventListener('load', ():void => {
-                        /*
-                            NOTE: Maybe we have miss the "DOMContentLoaded"
-                            event caused by a race condition.
-                        */
-                        browser.domContentLoaded = browser.windowLoaded = true
-                    })
-                    for (const callback of onCreatedListener)
-                        callback()
-                },
-                resources: 'usable',
-                runScripts: 'dangerously',
-                url: 'http://localhost',
-                virtualConsole
+                else
+                    console.error(error.stack, error.detail)
             }
         )
-    }
-    if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
-        const filePath:string = path.join(__dirname, 'index.html.ejs')
-        /*
-            NOTE: We load dependencies now to avoid having file imports after
-            test runner has finished to isolate the environment.
-        */
-        const ejsLoader:Module = (await import('./ejsLoader')).default
-        require('fs').readFile(
-            filePath,
-            {encoding: 'utf-8'},
-            (error:Error|null, content:string):void => {
-                if (error)
-                    throw error
-                render(ejsLoader.bind({resourcePath: filePath})(content))
-            }
-        )
-    } else
-        render(await import('webOptimizerDefaultTemplateFilePath'))
-    // endregion
-} else {
+        const render = (template:string):void => {
+            browser.DOM = JSDOM
+            browser.initialized = true
+            browser.instance = new browser.DOM(
+                template,
+                {
+                    beforeParse: (window:DOMWindow):void => {
+                        // We want to use it in a polymorphic way.
+                        browser.window = window as unknown as Window
+                        window.document.addEventListener(
+                            'DOMContentLoaded',
+                            ():void => {
+                                browser.domContentLoaded = true
+                            }
+                        )
+                        window.addEventListener('load', ():void => {
+                            /*
+                                NOTE: Maybe we have miss the "DOMContentLoaded"
+                                event caused by a race condition.
+                            */
+                            browser.domContentLoaded =
+                            browser.windowLoaded =
+                                true
+                        })
+                        for (const callback of onCreatedListener)
+                            callback()
+                    },
+                    resources: 'usable',
+                    runScripts: 'dangerously',
+                    url: 'http://localhost',
+                    virtualConsole
+                }
+            )
+        }
+        if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
+            const filePath:string = path.join(__dirname, 'index.html.ejs')
+            /*
+                NOTE: We load dependencies now to avoid having file imports
+                after test runner has finished to isolate the environment.
+            */
+            const ejsLoader:((source:string) => string) =
+                (await import('./ejsLoader')).default
+            const content:string = await (await import('fs')).promises
+                .readFile(filePath, {encoding: 'utf-8'})
+            render(ejsLoader.bind({resourcePath: filePath})(content))
+        } else
+            render(await import('webOptimizerDefaultTemplateFilePath'))
+        // endregion
+    })()
+else {
     browser.initialized = true
     browser.window = window
     window.document.addEventListener('DOMContentLoaded', ():void => {
