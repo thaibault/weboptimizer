@@ -3637,9 +3637,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.608"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.608.tgz#609558feb0d8a2013da9262558938af2f707e821"
-  integrity sha512-uviE8PVauTCB29bVIRc3j+6nbC1sC1lQqiAfjO1rH946u1CHLNx+u1IuXRC7qwDFxx7CFe4Rv+ryKqFFifyOCg==
+  version "3.0.609"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.609.tgz#8fcfa01b496d4a03be00dad99fe209265d608eb8"
+  integrity sha512-4gScvqj3YCzLJJc+uLt+VzL/lTdIB3Mnqq5CnBzqH60jWMXTC4aqT5Pcsgx8hRunHp46cMbvGapUT51zCCW3Ag==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -3728,9 +3728,6 @@ collection-visit@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/collection-visit/-/collection-visit-1.0.0.tgz#4bc0373c164bc3291b4d368c829cf1a80a59dca0"
   integrity sha1-S8A3PBZLwykbTTaMgpzxqApZ3KA=
-  dependencies:
-    map-visit "^1.0.0"
-    object-visit "^1.0.0"
 
 color-convert@^1.9.0, color-convert@^1.9.1:
   version "1.9.3"
@@ -11334,9 +11331,9 @@ uc.micro@^1.0.1, uc.micro@^1.0.5:
   integrity sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==
 
 uglify-js@^3.5.1:
-  version "3.11.6"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.11.6.tgz#144b50d3e05eadd3ad4dd047c60ca541a8cd4e9c"
-  integrity sha512-oASI1FOJ7BBFkSCNDZ446EgkSuHkOZBuqRFrwXIKWCoXw8ZXQETooTQjkAcBS03Acab7ubCKsXnwuV2svy061g==
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.12.0.tgz#b943f129275c41d435eb54b643bbffee71dccf57"
+  integrity sha512-8lBMSkFZuAK7gGF8LswsXmir8eX8d2AAMOnxSDWjKBx/fBR6MypQjs78m6ML9zQVp1/hD4TBdfeMZMC7nW1TAA==
 
 underscore@~1.10.2:
   version "1.10.2"
