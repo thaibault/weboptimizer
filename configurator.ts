@@ -101,7 +101,8 @@ else if (
 )
     debug = true
 if (debug)
-    process.env.NODE_ENV = 'development'
+    // NOTE: We have to avoid that some pre-processor removes this assignment.
+    eval("process.env.NODE_ENV = 'development'")
 // endregion
 // region loading default configuration
 metaConfiguration.default.path.context += '/'
