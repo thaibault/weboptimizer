@@ -10,10 +10,12 @@ test('browser', async (done:Function):Promise<void> => {
     expect(browser.domContentLoaded).toStrictEqual(false)
     expect(browser.initialized).toStrictEqual(false)
     expect(browser.windowLoaded).toStrictEqual(false)
+
     const initializedBrowser:Browser = await getInitializedBrowser()
     expect(initializedBrowser).toStrictEqual(browser)
     expect(browser.initialized).toStrictEqual(true)
     expect(browser.window).toHaveProperty('document')
+
     if (browser.window)
         expect(browser.window.document).toHaveProperty('location')
     const onWindowLoaded = (event:Event):void => {
@@ -25,6 +27,7 @@ test('browser', async (done:Function):Promise<void> => {
         expect(browser.windowLoaded).toStrictEqual(true)
         done()
     }
+
     if (browser.windowLoaded)
         onWindowLoaded(new Event('load'))
     else if (browser.window)
