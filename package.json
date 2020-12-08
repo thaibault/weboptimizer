@@ -270,6 +270,13 @@
           ],
           "command": "webpack"
         },
+        "check:types": {
+          "arguments": [
+            "--project",
+            "node_modules/weboptimizer/tsconfig.json"
+          ],
+          "command": "tsc"
+        },
         "document": {
           "arguments": [
             "--package",
@@ -358,13 +365,6 @@
         },
         "test:browser": {
           "__evaluate__": "self.commandLine.serve"
-        },
-        "check:types": {
-          "arguments": [
-            "--project",
-            "node_modules/weboptimizer/tsconfigLibrary.json"
-          ],
-          "command": "tsc"
         }
       },
       "contextType": "main",
@@ -1339,6 +1339,12 @@
     },
     "library": {
       "commandLine": {
+        "check:types": {
+          "arguments": [
+            "--project",
+            "node_modules/weboptimizer/tsconfigLibrary.json"
+          ]
+        },
         "test": {
           "command": {
             "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --moduleNameMapper '{\"\\\\\\\\.((css)|(less)|(sass)|(scss))$\": \"identity-obj-proxy\"}' --test-environment ${environment} --test-regex 'test.*\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
