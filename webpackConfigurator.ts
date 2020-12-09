@@ -300,9 +300,12 @@ if (
                             return callback(error, data)
                         }
                     callback(null, data)
-                }))
+                }
+            )
+        )
         compiler.hooks.afterEmit.tapAsync(
-            'removeInPlaceHTMLAssetFiles', async (
+            'removeInPlaceHTMLAssetFiles',
+            async (
                 data:Record<string, any>, callback:ProcedureFunction
             ):Promise<void> => {
                 let promises:Array<Promise<void>> = []
@@ -318,9 +321,8 @@ if (
                     configuration.path.target.asset.cascadingStyleSheet
                 ])
                     promises.push(
-                        fileSystem.readdir(
-                            type, {encoding: configuration.encoding}
-                        )
+                        fileSystem
+                            .readdir(type, {encoding: configuration.encoding})
                             .then(async (
                                 files:Array<Buffer>|Array<string>
                             ):Promise<void> => {
@@ -330,7 +332,8 @@ if (
                     )
                 await Promise.all(promises)
                 callback()
-            })
+            }
+        )
     }})
 // /// endregion
 // /// region remove chunks if a corresponding dll package exists
