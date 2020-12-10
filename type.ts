@@ -181,20 +181,6 @@ export type WebpackLoaderConfiguration = {
 export type WebpackLoaderIndicator =
     Array<WebpackLoaderIndicator>|Function|string
 // // endregion
-export type AssetInPlaceInjectionResult = {
-    content:string
-    filePathsToRemove:Array<string>
-}
-export type AssetPositionPatterns = Mapping<'body'|'head'|'in'|string>
-export type AssetTypeIntegration = {
-    attributeName:string
-    hash:string
-    linkTagName:string
-    patterns:AssetPositionPatterns|null
-    selector:string
-    tagName:string
-    template:string
-}
 export type Command = {
     arguments:Array<string>
     command:string
@@ -262,13 +248,17 @@ export type Extensions = {
     }
 }
 export type SpecificExtensions = {file:Array<string>}
+export type InPlaceAssetConfiguration = {
+    body?:Array<RegExp|string>|RegExp|string
+    head?:Array<RegExp|string>|RegExp|string
+}
 export type InPlaceConfiguration = {
-    cascadingStyleSheet:Mapping<'body'|'head'|'in'|string>
+    cascadingStyleSheet:InPlaceAssetConfiguration
     externalLibrary:{
         normal:boolean
         dynamic:boolean
     }
-    javaScript:Mapping<'body'|'head'|'in'|string>
+    javaScript:InPlaceAssetConfiguration
     otherMaximumFileSizeLimitInByte:number
 }
 export type ResolvedConfiguration = {

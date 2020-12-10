@@ -35,6 +35,7 @@
     "stylelintConfigurator.js",
     "stylelintConfigurator.ts",
     "tsconfig.json",
+    "tsconfigApplication.json",
     "tsconfigLibrary.json",
     "type.js",
     "type.ts",
@@ -273,7 +274,7 @@
         "check:types": {
           "arguments": [
             "--project",
-            "node_modules/weboptimizer/tsconfig.json"
+            "node_modules/weboptimizer/tsconfigApplication.json"
           ],
           "command": "tsc"
         },
@@ -642,14 +643,14 @@
       "inPlace": {
         "#": "Indicates whether to include the corresponding artefacts into build target artefact or reference them to dynamically include them during runtime.",
         "cascadingStyleSheet": {
-          "*": "in"
+          "head": ".+"
         },
         "externalLibrary": {
           "dynamic": true,
           "normal": true
         },
         "javaScript": {
-          "errorreporter": "head"
+          "head": "(^|/)errorreporter(/index)?\\.js([?#]|$)"
         },
         "otherMaximumFileSizeLimitInByte": 40960
       },

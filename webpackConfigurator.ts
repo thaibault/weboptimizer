@@ -20,7 +20,7 @@ import {
     EvaluationResult, Mapping, PlainObject, ProcedureFunction
 } from 'clientnode/type'
 const postcssCSSnano:Function = optionalRequire('cssnano')
-import HtmlWebpackPlugin from 'html-webpack-plugin'
+import HTMLPlugin from 'html-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {promises as fileSystem} from 'fs'
 import path from 'path'
@@ -71,8 +71,10 @@ import {
     HTMLConfiguration,
     HTMLWebpackPluginAssetTagGroupsData,
     HTMLWebpackPluginBeforeEmitData,
+    InPlaceAssetConfiguration,
     InPlaceConfiguration,
     PackageDescriptor,
+    WebpackAssets,
     WebpackConfiguration,
     WebpackLoader,
     WebpackLoaderConfiguration
@@ -258,80 +260,99 @@ pluginInstances.push({apply: (compiler:Record<string, any>):void => {
 }})
 // /// endregion
 // /// region in-place configured assets in the main html file
+
+/*
+    TODO
+
+    /
+        NOTE: We have to translate template delimiter to html compatible
+        sequences and translate it back later to avoid unexpected escape
+        sequences in resulting html.
+    /
+    const window:DOMWindow = (new DOM(
+        content
+            .replace(/<%/g, '##+#+#+##')
+            .replace(/%>/g, '##-#-#-##')
+    )).window
+
+    ->
+
+    .replace(/##\+#\+#\+##/g, '<%')
+    .replace(/##-#-#-##/g, '%>')
+*/
+
 if (
     htmlAvailable &&
-    !['serve', 'test:browser'].includes(
-        configuration.givenCommandLineArguments[2]
-    )
+    !['serve', 'test:browser']
+        .includes(configuration.givenCommandLineArguments[2]) &&
+    configuration.inPlace.cascadingStyleSheet &&
+    Object.keys(configuration.inPlace.cascadingStyleSheet).length ||
+    configuration.inPlace.javaScript &&
+    Object.keys(configuration.inPlace.javaScript).length
 )
     pluginInstances.push({apply: (compiler:Record<string, any>):void => {
-        const filePathsToRemove:Array<string> = []
-        compiler.hooks.compilation.tap('inPlaceHTMLAssets', (
-            compilation:Record<string, any>
-        ):void =>
-            compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync(
-                'inPlaceHTMLAssets',
-                (data:{html:string}, callback:Function):void => {
-                    if (
-                        configuration.inPlace.cascadingStyleSheet &&
-                        Object.keys(
-                            configuration.inPlace.cascadingStyleSheet
-                        ).length ||
-                        configuration.inPlace.javaScript &&
-                        Object.keys(configuration.inPlace.javaScript).length
-                    )
-                        try {
-                            const result:{
-                                content:string
-                                filePathsToRemove:Array<string>
-                            } = Helper.inPlaceCSSAndJavaScriptAssetReferences(
-                                data.html,
-                                configuration.inPlace.cascadingStyleSheet,
-                                configuration.inPlace.javaScript,
-                                configuration.path.target.base,
-                                configuration.files.compose
-                                    .cascadingStyleSheet,
-                                configuration.files.compose.javaScript,
-                                compilation.assets
-                            )
-                            data.html = result.content
-                            filePathsToRemove.concat(result.filePathsToRemove)
-                        } catch (error) {
-                            return callback(error, data)
+        let publicPath:string = compiler.options.output.publicPath || ''
+        if (publicPath && !publicPath.endsWith('/'))
+            publicPath += '/'
+
+        compiler.hooks.compilation.tap(
+            'inPlaceHTMLAssets',
+            (compilation:Record<string, any>):void => {
+                const hooks:HTMLPlugin.Hooks =
+                    plugins.HTML.getHooks(compilation)
+                const inPlacedAssetNames:Array<string> = []
+
+                hooks.alterAssetTagGroups.tap(
+                    'inPlaceHTMLAssets',
+                    (assets:WebpackAssets) => {
+                        const inPlace = (
+                            type:keyof InPlaceAssetConfiguration,
+                            tag:HTMLPlugin.HtmlTagObject
+                        ):HTMLPlugin.HtmlTagObject => {
+                            if (!['script', 'style'].includes(tag.tagName))
+                                return tag
+
+                            const settings:InPlaceAssetConfiguration =
+                                tag.tagName === 'script' ?
+                                    configuration.inPlace.javaScript :
+                                    configuration.inPlace.cascadingStyleSheet
+
+                            const name:string = publicPath ?
+                                tag.attributes.src.replace(publicPath, '') :
+                                tag.attributes.src
+
+                            if (
+                                compilation.assets[name] &&
+                                settings[type] &&
+                                ([] as Array<RegExp|string>)
+                                    .concat(settings[type] as Array<RegExp|string>)
+                                    .some((pattern:RegExp|string):boolean =>
+                                        (new RegExp(pattern)).test(name)
+                                    )
+                            ) {
+                                inPlacedAssetNames.push(name)
+                                return {
+                                    closeTag: true,
+                                    innerHTML:
+                                        compilation.assets[name].source(),
+                                    tagName: 'script'
+                                }
+                            }
+
+                            return tag
                         }
-                    callback(null, data)
-                }
-            )
-        )
-        compiler.hooks.afterEmit.tapAsync(
-            'removeInPlaceHTMLAssetFiles',
-            async (
-                data:Record<string, any>, callback:ProcedureFunction
-            ):Promise<void> => {
-                let promises:Array<Promise<void>> = []
-                for (const path of filePathsToRemove)
-                    if (await Tools.isFile(path))
-                        promises.push(fileSystem.unlink(path).catch(
-                            console.error
-                        ))
-                await Promise.all(promises)
-                promises = []
-                for (const type of [
-                    configuration.path.target.asset.javaScript,
-                    configuration.path.target.asset.cascadingStyleSheet
-                ])
-                    promises.push(
-                        fileSystem
-                            .readdir(type, {encoding: configuration.encoding})
-                            .then(async (
-                                files:Array<Buffer>|Array<string>
-                            ):Promise<void> => {
-                                if (files.length === 0)
-                                    await fileSystem.rmdir(type)
-                            })
-                    )
-                await Promise.all(promises)
-                callback()
+                        assets.headTags =
+                            assets.headTags.map(inPlace.bind(this, 'head'))
+                        assets.bodyTags =
+                            assets.bodyTags.map(inPlace.bind(this, 'body'))
+                    }
+                )
+
+                // NOTE: Avoid if you still want to emit the runtime chunks:
+                hooks.afterEmit.tap('inPlaceHTMLAssets', ():void => {
+                    for (const name of inPlacedAssetNames)
+                        delete compilation.assets[name]
+                })
             }
         )
     }})
@@ -595,24 +616,6 @@ if (htmlAvailable)
     ):void => compiler.hooks.compilation.tap('WebOptimizer', (
         compilation:Compilation
     ):void => {
-        plugins.HTML.getHooks(compilation).alterAssetTagGroups.tapAsync(
-            'WebOptimizerRemoveDummyHTMLTags',
-            (
-                data:HTMLWebpackPluginAssetTagGroupsData, callback:Function
-            ):void => {
-                for (const tags of [data.bodyTags, data.headTags]) {
-                    let index = 0
-                    for (const tag of tags) {
-                        if (/^\.__dummy__(\..*)?$/.test(path.basename((
-                            tag.attributes.src || tag.attributes.href || ''
-                        ) as string)))
-                            tags.splice(index, 1)
-                        index += 1
-                    }
-                }
-                callback(null, data)
-            }
-        )
         plugins.HTML.getHooks(compilation).beforeEmit.tapAsync(
             'WebOptimizerPostProcessHTML',
             (data:HTMLWebpackPluginBeforeEmitData, callback:Function):void => {
@@ -701,7 +704,7 @@ if (htmlAvailable)
                     if (htmlFileSpecification.filename === (
                         data.plugin as
                             unknown as
-                            {options: HtmlWebpackPlugin.ProcessedOptions}
+                            {options: HTMLPlugin.ProcessedOptions}
                     ).options.filename) {
                         for (
                             const loaderConfiguration of Array.isArray(
