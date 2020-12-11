@@ -217,15 +217,6 @@ if (result !== null && typeof result === 'object') {
 // Removing comments (default key name to delete is "#").
 configuration = Tools.removeKeys(configuration)
 // endregion
-// / region determine existing pre compiled dll manifests file paths
-if (Tools.isDirectorySync(configuration.path.target.base))
-    for (const fileName of fileSystem.readdirSync(
-        configuration.path.target.base
-    ))
-        if (/^.*\.dll-manifest\.json$/.exec(fileName))
-            configuration.dllManifestFilePaths.push(path.resolve(
-                configuration.path.target.base, fileName))
-// / endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
     configuration.path.context, configuration.path.base)
@@ -290,17 +281,6 @@ export const resolvedConfiguration:ResolvedConfiguration =
             currentPath: process.cwd(),
             fileSystem,
             Helper,
-            isDLLUseful:
-                2 < configuration.givenCommandLineArguments.length &&
-                (
-                    ['build:dll', 'watch:dll'].includes(
-                        configuration.givenCommandLineArguments[2]
-                    ) ||
-                    configuration.dllManifestFilePaths.length &&
-                    ['build', 'serve', 'test:browser'].includes(
-                        configuration.givenCommandLineArguments[2]
-                    )
-                ),
             optionalRequire,
             path,
             require: currentRequire,
