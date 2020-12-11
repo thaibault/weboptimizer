@@ -426,7 +426,14 @@ export type WebpackConfiguration = BaseWebpackConfiguration & {
 }
 // / endregion
 // NOTE: Not yet defined in webpack types.
-export type WebpackAssets = Mapping<{source:() => string}>
+export type WebpackBaseAssets = {
+    outputName:string
+    plugin:HtmlWebpackPlugin
+}
+export type WebpackAssets = WebpackBaseAssets & {
+    bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
+    headTags:HtmlWebpackPlugin.HtmlTagObject[]
+}
 export type HTMLWebpackPluginAssetTagGroupsData = {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
     headTags:HtmlWebpackPlugin.HtmlTagObject[]

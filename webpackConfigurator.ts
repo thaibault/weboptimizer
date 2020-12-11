@@ -75,6 +75,7 @@ import {
     InPlaceConfiguration,
     PackageDescriptor,
     WebpackAssets,
+    WebpackBaseAssets,
     WebpackConfiguration,
     WebpackLoader,
     WebpackLoaderConfiguration
@@ -304,38 +305,49 @@ if (
 
                 hooks.alterAssetTagGroups.tap(
                     'inPlaceHTMLAssets',
-                    (assets:WebpackAssets) => {
+                    (assets:WebpackAssets):WebpackAssets => {
                         const inPlace = (
                             type:keyof InPlaceAssetConfiguration,
                             tag:HTMLPlugin.HtmlTagObject
                         ):HTMLPlugin.HtmlTagObject => {
-                            if (!['script', 'style'].includes(tag.tagName))
+                            let settings:InPlaceAssetConfiguration|undefined
+                            let url:boolean|string = false
+                            if (tag.tagName === 'script') {
+                                settings = configuration.inPlace.javaScript
+                                url = tag.attributes.src
+                            } else if (tag.tagName === 'style') {
+                                settings =
+                                    configuration.inPlace.cascadingStyleSheet
+                                url = tag.attributes.href
+                            }
+                            if (!(url && typeof url === 'string'))
                                 return tag
 
-                            const settings:InPlaceAssetConfiguration =
-                                tag.tagName === 'script' ?
-                                    configuration.inPlace.javaScript :
-                                    configuration.inPlace.cascadingStyleSheet
-
-                            const name:string = publicPath ?
-                                tag.attributes.src.replace(publicPath, '') :
-                                tag.attributes.src
+                            const name:string =
+                                publicPath ? url.replace(publicPath, '') : url
 
                             if (
                                 compilation.assets[name] &&
-                                settings[type] &&
+                                settings![type] &&
                                 ([] as Array<RegExp|string>)
-                                    .concat(settings[type] as Array<RegExp|string>)
+                                    .concat(settings![type] as Array<RegExp|string>)
                                     .some((pattern:RegExp|string):boolean =>
                                         (new RegExp(pattern)).test(name)
                                     )
                             ) {
+                                const newAttributes:HTMLPlugin.HtmlTagObject[
+                                    'attributes'
+                                ] = {...tag.attributes}
+                                delete newAttributes.href
+                                delete newAttributes.src
+
                                 inPlacedAssetNames.push(name)
                                 return {
-                                    closeTag: true,
+                                    ...tag,
+                                    attributes: newAttributes,
                                     innerHTML:
                                         compilation.assets[name].source(),
-                                    tagName: 'script'
+                                    tagName: 'script',
                                 }
                             }
 
@@ -345,14 +357,20 @@ if (
                             assets.headTags.map(inPlace.bind(this, 'head'))
                         assets.bodyTags =
                             assets.bodyTags.map(inPlace.bind(this, 'body'))
+
+                        return assets
                     }
                 )
 
                 // NOTE: Avoid if you still want to emit the runtime chunks:
-                hooks.afterEmit.tap('inPlaceHTMLAssets', ():void => {
-                    for (const name of inPlacedAssetNames)
-                        delete compilation.assets[name]
-                })
+                hooks.afterEmit.tap(
+                    'inPlaceHTMLAssets',
+                    (asset:WebpackBaseAssets):WebpackBaseAssets => {
+                        for (const name of inPlacedAssetNames)
+                            delete compilation.assets[name]
+                        return asset
+                    }
+                )
             }
         )
     }})
