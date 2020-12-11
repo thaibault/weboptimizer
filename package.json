@@ -196,9 +196,6 @@
       },
       "buildContext": {
         "definitions": {
-          "UTC_BUILD_TIMESTAMP": {
-            "__evaluate__": "nowUTCTimestamp"
-          },
           "CONTEXT_TYPE": {
             "__evaluate__": "`'${self.contextType}'`"
           },
@@ -220,6 +217,9 @@
           },
           "TARGET_TECHNOLOGY": {
             "__evaluate__": "`'${self.targetTechnology.payload}'`"
+          },
+          "UTC_BUILD_TIMESTAMP": {
+            "__evaluate__": "nowUTCTimestamp"
           }
         },
         "types": {
