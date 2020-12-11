@@ -685,10 +685,9 @@ if (htmlAvailable)
                                 data.html = ejsLoader.bind(
                                     Tools.extend(
                                         true,
-                                        {},
-                                        {options:
-                                            loaderConfiguration.options || {}
-                                        },
+                                        {options: Tools.copy(
+                                            loaderConfiguration.options
+                                        ) || {}},
                                         {options: {
                                             compileSteps:
                                                 htmlFileSpecification.template
