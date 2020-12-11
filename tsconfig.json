@@ -16,6 +16,5 @@
         "resolveJsonModule": true,
         "strict": true,
         "target": "esnext"
-    },
-    "include": ["../../source/*.ts", "../../source/*.tsx"]
+    }
 }

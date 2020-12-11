@@ -7,16 +7,13 @@ import {testEach, testEachAgainstSameExpectation} from 'clientnode/testHelper'
 import path from 'path'
 
 import {
-    AssetInPlaceInjectionResult,
-    AssetPositionPatterns,
     BuildConfiguration,
     GivenInjection,
     GivenInjectionConfiguration,
     NormalizedGivenInjection,
     PathConfiguration,
     Replacements,
-    ResolvedBuildConfiguration,
-    WebpackAssets
+    ResolvedBuildConfiguration
 } from '../type'
 import Helper from '../helper'
 // endregion
@@ -52,38 +49,6 @@ describe('helper', ():void => {
     )
     // / endregion
     // / region string
-    testEach<typeof Helper.inPlaceCSSAndJavaScriptAssetReferences>(
-        'inPlaceCSSAndJavaScriptAssetReferences',
-        Helper.inPlaceCSSAndJavaScriptAssetReferences,
-
-        [
-            {
-                content: '<html><head></head><body></body></html>',
-                filePathsToRemove: []
-            },
-            '',
-            null,
-            null,
-            '',
-            '',
-            '',
-            {}
-        ],
-        [
-            {
-                content:
-                    '<!doctype html><html><head></head><body></body></html>',
-                filePathsToRemove: []
-            },
-            '<!doctype html><html><head></head><body></body></html>',
-            null,
-            null,
-            '',
-            '',
-            '',
-            {}
-        ]
-    )
     testEach<typeof Helper.stripLoader>(
         'stripLoader',
         Helper.stripLoader,
