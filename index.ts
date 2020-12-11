@@ -74,7 +74,7 @@ const main = async ():Promise<void> => {
         const childProcesses:Array<ChildProcess> = []
         const processPromises:Array<Promise<Array<ChildProcess>>> = []
         const possibleArguments:Array<string> = [
-            'build', 'build:dll',
+            'build',
             'clear',
             'document',
             'lint',
@@ -208,11 +208,7 @@ const main = async ():Promise<void> => {
                             )
                         )
                     )
-                        if (
-                            file.name.length > '.dll-manifest.json'.length &&
-                            file.name.endsWith('.dll-manifest.json') ||
-                            file.name.startsWith('npm-debug')
-                        )
+                        if (file.name.startsWith('npm-debug'))
                             await fileSystem.unlink(file.path)
                 } else
                     await new Promise((
@@ -261,7 +257,7 @@ const main = async ():Promise<void> => {
                     ),
                     configuration.package.main.fileNames
                 )
-            if (['build', 'build:dll', 'document', 'test'].includes(
+            if (['build', 'document', 'test'].includes(
                 process.argv[2]
             )) {
                 let tidiedUp = false

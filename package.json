@@ -79,7 +79,6 @@
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "*",
     "@babel/runtime": "*",
-    "add-asset-html-webpack-plugin": "*",
     "babel-loader": "*",
     "babel-plugin-transform-modern-regexp": "*",
     "babel-plugin-transform-with": "*",
@@ -126,7 +125,7 @@
     "eslint": "*",
     "eslint-config-google": "*",
     "eslint-plugin-jsdoc": "*",
-    "favicons-webpack-plugin": "*",
+    "favicons-webpack-plugin": "next",
     "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
@@ -161,7 +160,7 @@
     "eslint": "*",
     "eslint-config-google": "*",
     "eslint-plugin-jsdoc": "*",
-    "favicons-webpack-plugin": "*",
+    "favicons-webpack-plugin": "next",
     "identity-obj-proxy": "*",
     "imagemin-webpack-plugin": "*",
     "jest": "*",
@@ -415,7 +414,6 @@
         },
         "tool": false
       },
-      "dllManifestFilePaths": [],
       "document": {
         "inPlace": {
           "externalLibrary": {
@@ -600,10 +598,6 @@
           "./untypedDependencies.d.ts"
         ],
         "chunks": {},
-        "dllChunkNames": [
-          "developmentHelper",
-          "vendor"
-        ],
         "entry": {
           "index": "__auto__"
         },
@@ -1419,7 +1413,7 @@
       "inPlace": {
         "externalLibrary": {
           "normal": {
-            "__evaluate__": "2 < self.givenCommandLineArguments.length && ['build:dll', 'serve', 'watch:dll'].includes(self.givenCommandLineArguments[2])"
+            "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve'"
           }
         },
         "otherMaximumFileSizeLimitInByte": 1

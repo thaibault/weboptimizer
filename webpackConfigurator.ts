@@ -34,8 +34,6 @@ import webpack, {
     Compilation,
     ContextReplacementPlugin,
     DefinePlugin,
-    DllPlugin,
-    DllReferencePlugin,
     IgnorePlugin,
     NormalModuleReplacementPlugin,
     ProvidePlugin
@@ -45,7 +43,6 @@ import {RawSource as WebpackRawSource} from 'webpack-sources'
 const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
-    AddAssetHTMLPlugin: 'add-asset-html-webpack-plugin',
     Favicon: 'favicons-webpack-plugin',
     Imagemin: 'imagemin-webpack-plugin',
     Offline: 'offline-plugin'
@@ -161,15 +158,14 @@ for (const source in configuration.module.replacements.normal)
 // // endregion
 // // region generate html file
 let htmlAvailable = false
-if (configuration.givenCommandLineArguments[2] !== 'build:dll')
-    for (const htmlConfiguration of configuration.files.html)
-        if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
-            pluginInstances.push(new plugins.HTML({
-                ...htmlConfiguration,
-                template: htmlConfiguration.template.request
-            }))
-            htmlAvailable = true
-        }
+for (const htmlConfiguration of configuration.files.html)
+    if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
+        pluginInstances.push(new plugins.HTML({
+            ...htmlConfiguration,
+            template: htmlConfiguration.template.request
+        }))
+        htmlAvailable = true
+    }
 // // endregion
 // // region generate favicons
 if (
@@ -375,35 +371,6 @@ if (
         )
     }})
 // /// endregion
-// /// region remove chunks if a corresponding dll package exists
-if (configuration.givenCommandLineArguments[2] !== 'build:dll')
-    for (const chunkName in configuration.injection.entry.normalized)
-        if (Object.prototype.hasOwnProperty.call(
-            configuration.injection.entry.normalized, chunkName
-        )) {
-            const manifestFilePath:string =
-                `${configuration.path.target.base}/${chunkName}.` +
-                `dll-manifest.json`
-            if (configuration.dllManifestFilePaths.includes(
-                manifestFilePath
-            )) {
-                delete configuration.injection.entry.normalized[chunkName]
-                const filePath:string = Helper.renderFilePathTemplate(
-                    Helper.stripLoader(configuration.files.compose.javaScript),
-                    {'[name]': chunkName}
-                )
-                pluginInstances.push(new plugins.AddAssetHTMLPlugin({
-                    filepath: filePath,
-                    hash: true,
-                    includeSourcemap: Tools.isFileSync(`${filePath}.map`)
-                }))
-                pluginInstances.push(new DllReferencePlugin({
-                    context: configuration.path.context,
-                    manifest: require(manifestFilePath)
-                }))
-            }
-        }
-// /// endregion
 // /// region mark empty javaScript modules as dummy
 if (!(
     configuration.needed.javaScript ||
@@ -604,27 +571,6 @@ if (configuration.injection.external.modules === '__implicit__')
         }
         return callback()
     }
-// /// endregion
-// /// region build dll packages
-if (configuration.givenCommandLineArguments[2] === 'build:dll') {
-    let dllChunkExists = false
-    for (const chunkName in configuration.injection.entry.normalized)
-        if (Object.prototype.hasOwnProperty.call(
-            configuration.injection.entry.normalized, chunkName
-        ))
-            if (configuration.injection.dllChunkNames.includes(chunkName))
-                dllChunkExists = true
-            else
-                delete configuration.injection.entry.normalized[chunkName]
-    if (dllChunkExists) {
-        libraryName = '[name]DLLPackage'
-        pluginInstances.push(new DllPlugin({
-            name: libraryName,
-            path: `${configuration.path.target.base}/[name].dll-manifest.json`
-        }))
-    } else
-        console.warn('No dll chunk id found.')
-}
 // /// endregion
 // // endregion
 // // region apply final dom/javaScript/cascadingStyleSheet modifications/fixes
@@ -1606,9 +1552,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             globalObject: configuration.exportFormat.globalObject,
             hashFunction: configuration.hashAlgorithm,
             library: libraryName === '*' ? undefined : libraryName,
-            libraryTarget: (
-                configuration.givenCommandLineArguments[2] === 'build:dll'
-            ) ? 'var' : configuration.exportFormat.self,
+            libraryTarget: configuration.exportFormat.self,
             path: configuration.path.target.base,
             publicPath: configuration.path.target.public,
             umdNamedDefine: true
@@ -1658,9 +1602,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             splitChunks: (
                 !configuration.injection.chunks ||
                 configuration.targetTechnology.payload === 'node' ||
-                ['build:dll', 'test'].includes(
-                    configuration.givenCommandLineArguments[2]
-                )
+                configuration.givenCommandLineArguments[2] === 'test'
             ) ?
                 {
                     cacheGroups: {

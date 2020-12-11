@@ -68,9 +68,6 @@ Features
     - Support for building and **shimming** a whole package managed application
       structure to build for various target environments like browsers or node
       (preconfigured extendable weback configuration)
-    - Generic management for dealing with **DLL-Bundles** to speed up any
-      workflows: Each (pre-)defined chunk can be outsourced to a DLL-Bundle in
-      a complete delclarative and generic way.
     - Generic support for all known **favicon** types using only one png file as
       source (watching, compressing and auto-generating integrated)
     - Brings **offline** support though service worker and/or html5 manifest to
@@ -120,8 +117,6 @@ compositions are listed below:
     "scripts": {
         ...
         "build": "weboptimizer build",
-        "build:dll": "weboptimizer build:dll",
-        "build:dll:debug": "weboptimizer build:dll -debug && weboptimizer build -debug",
         "build:stats": "weboptimizer build --profile --json >/tmp/stat.json && echo 'Results successfully written to \"/tmp/stat.json\".'",
         "check": "yarn check:types; yarn lint",
         "check:types": "weboptimizer check:types",
@@ -135,7 +130,6 @@ compositions are listed below:
         "test": "weboptimizer test",
         "test:browser": "weboptimizer test:browser",
         "watch": "weboptimizer build --watch",
-        "watch:dll": "weboptimizer build:dll --watch"
         ...
     },
     ...

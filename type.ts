@@ -78,7 +78,6 @@ export type GivenInjectionConfiguration = {
 export type InjectionConfiguration = {
     autoExclude:Array<string>
     chunks:PlainObject
-    dllChunkNames:Array<string>
     entry:{
         given:GivenInjection
         normalized:NormalizedGivenInjection
@@ -206,7 +205,6 @@ export type PluginConfiguration = {
 export type DefaultConfiguration = {
     contextType:string
     debug:boolean
-    dllManifestFilePaths:Array<string>
     document:PlainObject
     encoding:Encoding
     givenCommandLineArguments:Array<string>
@@ -291,7 +289,6 @@ export type ResolvedConfiguration = {
         }
         tool:WebpackOptionsNormalized['devtool']
     }
-    dllManifestFilePaths:Array<string>
     document:PlainObject
     encoding:Encoding
     exportFormat:{
