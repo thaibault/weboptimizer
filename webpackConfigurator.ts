@@ -580,9 +580,9 @@ if (htmlAvailable)
     ):void => compiler.hooks.compilation.tap('WebOptimizer', (
         compilation:Compilation
     ):void => {
-        plugins.HTML.getHooks(compilation).beforeEmit.tapAsync(
+        plugins.HTML.getHooks(compilation).beforeEmit.tap(
             'WebOptimizerPostProcessHTML',
-            (data:HTMLWebpackPluginBeforeEmitData, callback:Function):void => {
+            (data:HTMLWebpackPluginBeforeEmitData):HTMLWebpackPluginBeforeEmitData => {
                 /*
                     NOTE: We have to prevent creating native "style" dom nodes
                     to prevent jsdom from parsing the entire cascading style
@@ -613,7 +613,7 @@ if (htmlAvailable)
                             .replace(/%>/g, '##-#-#-##')
                     )
                 } catch (error) {
-                    return callback(error, data)
+                    return data
                 }
                 const linkables:Mapping = {link: 'href', script: 'src'}
                 for (const tagName in linkables)
@@ -670,13 +670,9 @@ if (htmlAvailable)
                             unknown as
                             {options: HTMLPlugin.ProcessedOptions}
                     ).options.filename) {
-                        for (
-                            const loaderConfiguration of Array.isArray(
-                                htmlFileSpecification.template.use
-                            ) ?
-                                htmlFileSpecification.template.use :
-                                [htmlFileSpecification.template.use]
-                        )
+                        for (const loaderConfiguration of (
+                            [] as Array<WebpackLoader>
+                        ).concat(htmlFileSpecification.template.use))
                             if (
                                 loaderConfiguration.options?.compileSteps &&
                                 typeof loaderConfiguration.options
@@ -685,20 +681,22 @@ if (htmlAvailable)
                                 data.html = ejsLoader.bind(
                                     Tools.extend(
                                         true,
-                                        {options: Tools.copy(
-                                            loaderConfiguration.options
-                                        ) || {}},
-                                        {options: {
-                                            compileSteps:
-                                                htmlFileSpecification.template
-                                                    .postCompileSteps
+                                        {query:
+                                            Tools.copy(
+                                                loaderConfiguration.options
+                                            ) ||
+                                            {}
+                                        },
+                                        {query: {compileSteps:
+                                            htmlFileSpecification.template
+                                                .postCompileSteps
                                         }}
                                     )
                                 )(data.html)
                         break
                     }
                 // endregion
-                callback(null, data)
+                return data
             }
         )
     })})

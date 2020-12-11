@@ -298,7 +298,7 @@ export default function(this:any, source:string):string {
             compileDebug: this.debug || false,
             debug: this.debug || false,
             filename:
-                'query' in this ?
+                'remainingRequest' in this ?
                     getRemainingRequest(this).replace(/^!/, '') :
                     this.resourcePath || 'unknown',
             isString: true
