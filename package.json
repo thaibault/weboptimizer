@@ -1077,6 +1077,7 @@
         },
         "updateStrategy": "changed",
         "version": "[chunkhash]",
+
         "serviceWorker": {
           "babelPresetEnvTargets": {
             "__evaluate__": "self.generic.supportedBrowsers"
