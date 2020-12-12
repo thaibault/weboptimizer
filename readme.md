@@ -70,8 +70,8 @@ Features
       (preconfigured extendable weback configuration)
     - Generic support for all known **favicon** types using only one png file as
       source (watching, compressing and auto-generating integrated)
-    - Brings **offline** support though service worker and/or html5 manifest to
-      your application without any manual intervention needed!
+    - Brings **offline** support though service worker to your application
+      without any needed manual intervention!
     - Many development helper:
         - Automatic watching and (re-)building on any assets through cross
           platform **file watching**
