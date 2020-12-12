@@ -61,7 +61,6 @@ for (const name in pluginNameResourceMapping)
 if (plugins.Offline) {
     plugins.GenerateServiceWorker = plugins.Offline.GenerateSW
     plugins.InjectManifest = plugins.Offline.InjectManifest
-    delete plugins.Offline
 }
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
@@ -185,7 +184,7 @@ if (
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
 // // endregion
 // // region provide offline functionality
-if (htmlAvailable && configuration.offline && plugins.GenerateServiceWorker) {
+if (htmlAvailable && configuration.offline && plugins.Offline) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
     ))
@@ -210,9 +209,15 @@ if (htmlAvailable && configuration.offline && plugins.GenerateServiceWorker) {
                     )
             }
         }
-    pluginInstances.push(
-        new plugins.GenerateServiceWorker(configuration.offline.serviceWorker)
-    )
+
+    if ([].concat(configuration.offline.use).includes('injectionManifest'))
+        pluginInstances.push(
+            new plugins.InjectManifest(configuration.offline.injectionManifest)
+        )
+    if ([].concat(configuration.offline.use).includes('serviceWorker'))
+        pluginInstances.push(new plugins.GenerateServiceWorker(
+            configuration.offline.serviceWorker
+        ))
 }
 // // endregion
 // // region provide build environment

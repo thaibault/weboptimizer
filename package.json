@@ -1078,6 +1078,19 @@
         "updateStrategy": "changed",
         "version": "[chunkhash]",
 
+        "injectionManifest": {
+          "excludes": [
+            "#: Source mapping files.",
+            {
+              "__evaluate__": "new RegExp(`^(.*/*)?.+\\.map?(${self.hashAlgorithm}=.*)?$`)"
+            },
+            "#: Hidden files with leading dot.",
+            {
+              "__evaluate__": "/^(.*/)?\\..*$/"
+            }
+          ],
+          "swSrc": "serviceWorker.js"
+        },
         "serviceWorker": {
           "babelPresetEnvTargets": {
             "__evaluate__": "self.generic.supportedBrowsers"
@@ -1101,7 +1114,8 @@
           ],
           "inlineWorkboxRuntime": true,
           "swDest": "serviceWorker.js"
-        }
+        },
+        "use": "serviceWorker"
       },
       "package": {
         "aliasPropertyNames": {
