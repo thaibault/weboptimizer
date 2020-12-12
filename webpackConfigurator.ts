@@ -45,16 +45,24 @@ const pluginNameResourceMapping:Mapping = {
     MiniCSSExtract: 'mini-css-extract-plugin',
     Favicon: 'favicons-webpack-plugin',
     Imagemin: 'imagemin-webpack-plugin',
-    Offline: 'offline-plugin'
+    Offline: 'workbox-webpack-plugin'
 }
 const plugins:Record<string, any> = {}
 for (const name in pluginNameResourceMapping)
-    if (Object.prototype.hasOwnProperty.call(pluginNameResourceMapping, name))
-        try {
-            plugins[name] = require(pluginNameResourceMapping[name])
-        } catch (error) {
+    if (
+        Object.prototype.hasOwnProperty.call(pluginNameResourceMapping, name)
+    ) {
+        plugins[name] = optionalRequire(pluginNameResourceMapping[name])
+        if (plugins[name] === null) {
+            delete plugins[name]
             console.debug(`Optional webpack plugin "${name}" not available.`)
         }
+    }
+if (plugins.Offline) {
+    plugins.GenerateServiceWorker = plugins.Offline.GenerateSW
+    plugins.InjectManifest = plugins.Offline.InjectManifest
+    delete plugins.Offline
+}
 if (plugins.Imagemin)
     plugins.Imagemin = plugins.Imagemin.default
 
@@ -177,7 +185,7 @@ if (
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
 // // endregion
 // // region provide offline functionality
-if (htmlAvailable && configuration.offline && plugins.Offline) {
+if (htmlAvailable && configuration.offline && plugins.GenerateServiceWorker) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
     ))
@@ -202,7 +210,9 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
                     )
             }
         }
-    pluginInstances.push(new plugins.Offline(configuration.offline))
+    pluginInstances.push(
+        new plugins.GenerateServiceWorker(configuration.offline.serviceWorker)
+    )
 }
 // // endregion
 // // region provide build environment

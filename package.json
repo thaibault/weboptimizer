@@ -130,7 +130,6 @@
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
     "mkdirp": "*",
-    "offline-plugin": "*",
     "postcss-fontpath": "*",
     "postcss-import": "*",
     "postcss-loader": "*",
@@ -141,7 +140,8 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
-    "typescript-plugin-css-modules": "*"
+    "typescript-plugin-css-modules": "*",
+    "workbox-webpack-plugin": "*"
   },
   "peerDependencies": {
     "@babel/preset-react": "*",
@@ -166,7 +166,6 @@
     "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
-    "offline-plugin": "*",
     "postcss-fontpath": "*",
     "postcss-import": "*",
     "postcss-loader": "*",
@@ -177,7 +176,8 @@
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "typescript-plugin-css-modules": "*",
-    "webpack-dev-server": "*"
+    "webpack-dev-server": "*",
+    "workbox-webpack-plugin": "*"
   },
   "sideEffects": true,
   "configuration": {
@@ -1065,31 +1065,42 @@
         "setImmediate": true
       },
       "offline": {
-        "AppCache": {
-          "output": "./"
-        },
+        "#": "TODO other than serviceWorker key",
         "autoUpdate": true,
-        "excludes": [
-          {
-            "__evaluate__": "`**/*.map?${self.hashAlgorithm}=*`"
-          },
-          "**/.*"
-        ],
         "externals": [
           "index.html"
         ],
-        "publicPath": "/",
-        "relativePaths": false,
         "ServiceWorker": {
           "events": true,
           "minify": false,
-          "navigateFallbackURL": null,
-          "output": {
-            "__evaluate__": "path.relative(self.path.target.base, path.resolve(self.path.target.asset.javaScript, 'serviceWorker.js'))"
-          }
+          "navigateFallbackURL": null
         },
         "updateStrategy": "changed",
-        "version": "[chunkhash]"
+        "version": "[chunkhash]",
+        "serviceWorker": {
+          "babelPresetEnvTargets": {
+            "__evaluate__": "self.generic.supportedBrowsers"
+          },
+          "cleanupOutdatedCaches": true,
+          "directoryIndex": "index.html",
+          "excludes": [
+            "#: Source mapping files.",
+            {
+              "__evaluate__": "new RegExp(`^(.*/*)?.+\\.map?(${self.hashAlgorithm}=.*)?$`)"
+            },
+            "#: Hidden files with leading dot.",
+            {
+              "__evaluate__": "/^(.*/)?\\..*$/"
+            }
+          ],
+          "ignoreURLParametersMatching": [
+            {
+              "__evaluate__": "/^.*$/"
+            }
+          ],
+          "inlineWorkboxRuntime": true,
+          "swDest": "serviceWorker.js"
+        }
       },
       "package": {
         "aliasPropertyNames": {
