@@ -1077,7 +1077,6 @@
         },
         "updateStrategy": "changed",
         "version": "[chunkhash]",
-
         "injectionManifest": {
           "excludes": [
             "#: Source mapping files.",
