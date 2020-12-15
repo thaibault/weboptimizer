@@ -5889,10 +5889,10 @@ html-tags@^3.1.0:
   resolved "https://registry.yarnpkg.com/html-tags/-/html-tags-3.1.0.tgz#7b5e6f7e665e9fb41f30007ed9e0d41e97fb2140"
   integrity sha512-1qYz89hW3lFDEazhjW0yVAV87lw8lVkrJocr72XmBkMKsoSVJCQx3W8BXsC7hO2qAt8BoVjYjtAcZ9perqGnNg==
 
-"html-webpack-plugin@>=5.0.0 || ^5.0.0-alpha.7", html-webpack-plugin@next:
-  version "5.0.0-alpha.15"
-  resolved "https://registry.yarnpkg.com/html-webpack-plugin/-/html-webpack-plugin-5.0.0-alpha.15.tgz#4562c3afa9d79e2ee0cf0c8e1a43ed47487d6115"
-  integrity sha512-SFnpxiOo8EZ37fPUG4elnii78E7WBlv6pqJl0rwK5knWRpvzQbbPGmn/hNrnBvgPbKi5RHwoaEdsQkLvHk+AzA==
+"html-webpack-plugin@>=5.0.0 || ^5.0.0-alpha.7", html-webpack-plugin@^5.0.0-alpha.16:
+  version "5.0.0-alpha.16"
+  resolved "https://registry.yarnpkg.com/html-webpack-plugin/-/html-webpack-plugin-5.0.0-alpha.16.tgz#0e47f394ce17b3c59cfc1cb2f243940fac937709"
+  integrity sha512-b5kfqsms2GLg1g9Y3+xKqmGSSFc69xoGWvmrm6vETvhNYVam7LAGbVssP1ifOPazAJTCAg93/FfwSqbTA5dbUw==
   dependencies:
     "@types/html-minifier-terser" "^5.0.0"
     html-minifier-terser "^5.0.1"
@@ -11821,9 +11821,9 @@ webpack-sources@^1.1.0, webpack-sources@^1.4.3:
     source-map "~0.6.1"
 
 webpack@*:
-  version "5.10.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.10.1.tgz#81d1853d34bef5d6e5bfa119b98a43764b26c100"
-  integrity sha512-mHu4iM2mW7d/8R91VPPNtUCNd1D8k51TTb4e0XjylapIR6WEmW8XUTBZq8TqmShj9XYxVXJn6AzKlWnrlty6DA==
+  version "5.10.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.10.2.tgz#990ad134b8a6406b5e40e63da1870e0de40215dc"
+  integrity sha512-KpYTJerfb2KGxcOJNA1SMWXAf8/dxCDaQOhPIrfoV5rYceqet7OY/h3941/kuapx0noMcpTiVoNN3EHXsTYlsg==
   dependencies:
     "@types/eslint-scope" "^3.7.0"
     "@types/estree" "^0.0.45"
