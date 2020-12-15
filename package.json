@@ -90,7 +90,7 @@
     "file-loader": "*",
     "html-loader": "*",
     "html-minifier": "*",
-    "html-webpack-plugin": "next",
+    "html-webpack-plugin": "^5.0.0-alpha.16",
     "imports-loader": "*",
     "jsdom": "*",
     "loader-utils": "*",
