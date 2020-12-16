@@ -1480,7 +1480,9 @@ if (
         first.
     */
     loader.style.use.shift()
-    loader.style.use.unshift(plugins.MiniCSSExtract.loader)
+    loader.style.use.unshift(
+        {loader: plugins.MiniCSSExtract.loader, options: {esModule: true}}
+    )
 }
 // / endregion
 // / region apply runtime dev helper
