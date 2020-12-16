@@ -1447,8 +1447,10 @@ Tools.extend(loader, {
     // endregion
     // region data
     data: {
-        exclude: (filePath:string):boolean =>
-            configuration.extensions.file.internal.includes(
+        exclude: (filePath:string):boolean => {
+            if (typeof filePath !== 'string')
+                return false
+            return configuration.extensions.file.internal.includes(
                 path.extname(Helper.stripLoader(filePath))
             ) ||
             (
@@ -1457,7 +1459,7 @@ Tools.extend(loader, {
                     evaluate(
                         configuration.module.optimizer.data.exclude, filePath
                     )
-            ),
+            )},
         test: /.+/,
         use: configuration.module.optimizer.data.additional.pre.map(
             evaluateMapper
