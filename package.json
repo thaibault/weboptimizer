@@ -1191,6 +1191,12 @@
             "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '.__dummy__.js.map')"
           },
           {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, 'styles.bundle.js')"
+          },
+          {
+            "__evaluate__": "path.resolve(self.path.target.asset.javaScript, 'styles.bundle.js.map')"
+          },
+          {
             "__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"
           }
         ],
