@@ -84,13 +84,13 @@ export class Helper {
      * @param moduleID - Module request to strip.
      * @returns Given module id stripped.
      */
-    static stripLoader(moduleID:string|string):string {
-        moduleID = moduleID.toString()
-        const moduleIDWithoutLoader:string = moduleID.substring(
-            moduleID.lastIndexOf('!') + 1)
+    static stripLoader(moduleID:string):string {
+        const moduleIDWithoutLoader:string =
+            moduleID.substring(moduleID.lastIndexOf('!') + 1)
         return moduleIDWithoutLoader.includes('?') ?
             moduleIDWithoutLoader.substring(
-                0, moduleIDWithoutLoader.indexOf('?')) :
+                0, moduleIDWithoutLoader.indexOf('?')
+            ) :
             moduleIDWithoutLoader
     }
     // endregion
