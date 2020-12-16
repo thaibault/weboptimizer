@@ -115,6 +115,7 @@
     "@types/vfile-message": "*",
     "@types/webpack-env": "*",
     "@types/webpack-sources": "*",
+    "@types/workbox-webpack-plugin": "*",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
     "babel-eslint": "*",
@@ -152,6 +153,7 @@
     "@types/loader-utils": "*",
     "@types/node": "*",
     "@types/webpack-env": "*",
+    "@types/workbox-webpack-plugin": "*",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
     "babel-eslint": "*",
@@ -1077,7 +1079,7 @@
         },
         "updateStrategy": "changed",
         "version": "[chunkhash]",
-        "injectionManifest": {
+        "common": {
           "excludes": [
             "#: Source mapping files.",
             {
@@ -1088,6 +1090,9 @@
               "__evaluate__": "/^(.*/)?\\..*$/"
             }
           ],
+          "swDest": "serviceWorker.js"
+        },
+        "injectionManifest": {
           "swSrc": "serviceWorker.js"
         },
         "serviceWorker": {
@@ -1096,23 +1101,12 @@
           },
           "cleanupOutdatedCaches": true,
           "directoryIndex": "index.html",
-          "excludes": [
-            "#: Source mapping files.",
-            {
-              "__evaluate__": "new RegExp(`^(.*/*)?.+\\.map?(${self.hashAlgorithm}=.*)?$`)"
-            },
-            "#: Hidden files with leading dot.",
-            {
-              "__evaluate__": "/^(.*/)?\\..*$/"
-            }
-          ],
           "ignoreURLParametersMatching": [
             {
               "__evaluate__": "/^.*$/"
             }
           ],
-          "inlineWorkboxRuntime": true,
-          "swDest": "serviceWorker.js"
+          "inlineWorkboxRuntime": true
         },
         "use": "serviceWorker"
       },
