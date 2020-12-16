@@ -132,8 +132,9 @@ const main = async ():Promise<void> => {
             // endregion
             // region handle clear
             /*
-                NOTE: Some tasks could depend on previously created dll
-                packages so a clean should not be performed in that case.
+                NOTE: Some tasks could depend on previously created artefacts
+                packages so a preceding clear should not be performed in that
+                cases.
                 NOTE: If we have a dependency cycle we need to preserve files
                 during pre-install phase.
             */

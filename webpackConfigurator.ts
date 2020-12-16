@@ -195,10 +195,12 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             const type:keyof InPlaceConfiguration =
                 name as keyof InPlaceConfiguration
             if (configuration.inPlace[type]) {
-                const matches:Array<string> = Object.keys(
-                    configuration.inPlace[type])
+                const matches:Array<string> =
+                    Object.keys(configuration.inPlace[type])
+                if (!Array.isArray(configuration.offline.common.exclude))
+                    configuration.offline.common.exclude = []
                 for (const name of matches)
-                    configuration.offline.excludes.push(
+                    configuration.offline.common.exclude.push(
                         path.relative(
                             configuration.path.target.base,
                             configuration.path.target.asset[
@@ -210,14 +212,22 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             }
         }
 
-    if ([].concat(configuration.offline.use).includes('injectionManifest'))
-        pluginInstances.push(
-            new plugins.InjectManifest(configuration.offline.injectionManifest)
-        )
-    if ([].concat(configuration.offline.use).includes('serviceWorker'))
-        pluginInstances.push(new plugins.GenerateServiceWorker(
+    if (([] as Array<string>).concat(configuration.offline.use).includes(
+        'injectionManifest'
+    ))
+        pluginInstances.push(new plugins.InjectManifest(Tools.extend(
+            true,
+            configuration.offline.common,
+            configuration.offline.injectionManifest
+        )))
+    if (([] as Array<string>).concat(configuration.offline.use).includes(
+        'serviceWorker'
+    ))
+        pluginInstances.push(new plugins.GenerateServiceWorker(Tools.extend(
+            true,
+            configuration.offline.common,
             configuration.offline.serviceWorker
-        ))
+        )))
 }
 // // endregion
 // // region provide build environment

@@ -29,6 +29,11 @@ import {
     ModuleOptions as WebpackModuleOptions,
     WebpackOptionsNormalized
 } from 'webpack'
+import {
+    CommonOptions as WorkboxCommonOptions,
+    GenerateSWOptions as WorkboxGenerateSWOptions,
+    InjectManifestOptions as WorkboxInjectManifestOptions
+} from 'workbox-webpack-plugin'
 // endregion
 // region exports
 // / region generic
@@ -389,7 +394,12 @@ export type ResolvedConfiguration = {
     needed:Mapping<boolean>
     nodeENV:false|null|string
     nodeEnvironment:NodeEnvironment
-    offline:PlainObject & {excludes:Array<string>}
+    offline:{
+        common:WorkboxCommonOptions
+        injectionManifest:WorkboxInjectManifestOptions
+        serviceWorker:WorkboxGenerateSWOptions
+        use:'injectionManifest'|'serviceWorker'
+    }
     package:{
         aliasPropertyNames:Array<string>
         main:{
