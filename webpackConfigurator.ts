@@ -29,6 +29,7 @@ const postcssImport:Function = optionalRequire('postcss-import')
 const postcssSprites:Function = optionalRequire('postcss-sprites')
 const postcssURL:Function = optionalRequire('postcss-url')
 import util from 'util'
+import 'webpack'
 import webpack, {
     Compiler,
     Compilation,
@@ -40,6 +41,10 @@ import webpack, {
 } from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 
+// NOTE: Hack to retrieve needed types.
+type WebpackResolveData = Parameters<IgnorePlugin['checkIgnore']>[0] & {
+    createData:any
+}
 const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
@@ -759,9 +764,9 @@ pluginInstances.push({apply: (
     compiler:Compiler
 ) => compiler.hooks.normalModuleFactory.tap(
     'WebOptimizerModuleConsolidation',
-    (nmf) => nmf.hooks.afterResolve.tap(
+    (nmf:ReturnType<Compiler['createNormalModuleFactory']>):void => nmf.hooks.afterResolve.tap(
         'WebOptimizerModuleConsolidation',
-        (result) => {
+        (result:WebpackResolveData):void => {
             const targetPath:string = result.createData.resource
             if (
                 targetPath &&
