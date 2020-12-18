@@ -2,8 +2,8 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import {FirstParameter, Mapping} from 'clientnode/type'
 import {testEach, testEachAgainstSameExpectation} from 'clientnode/testHelper'
+import {FirstParameter, Mapping} from 'clientnode/type'
 import path from 'path'
 
 import {
