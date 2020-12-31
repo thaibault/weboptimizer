@@ -1545,7 +1545,7 @@ if (configuration.path.configuration?.json)
 export let webpackConfiguration:WebpackConfiguration = Tools.extend(
     true,
     {
-        bail: true,
+        bail: 'watch' !== configuration.givenCommandLineArguments[2],
         context: configuration.path.context,
         devtool: configuration.development.tool,
         devServer: configuration.development.server,

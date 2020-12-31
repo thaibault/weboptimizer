@@ -1307,7 +1307,16 @@
             "cssnano": null
           }
         },
-        "offline": null
+        "offline": null,
+        "webpack": {
+          "watchOptions": {
+            "ignored": [
+              "**/node_modules/**",
+              "**/package.json",
+              {"__evaluate__": "path.resolve(self.path.target.base, '*.js')"}
+            ]
+          }
+        }
       },
       "webpack": {}
     },
