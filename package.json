@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.863",
+  "version": "2.0.864",
   "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "homepage": "https://torben.website/weboptimizer",
@@ -1313,7 +1313,9 @@
             "ignored": [
               "**/node_modules/**",
               "**/package.json",
-              {"__evaluate__": "path.resolve(self.path.target.base, '*.js')"}
+              {
+                "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
+              }
             ]
           }
         }
