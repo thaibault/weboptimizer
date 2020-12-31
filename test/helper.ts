@@ -584,12 +584,12 @@ describe('helper', ():void => {
         Helper.applyModuleReplacements,
 
         ['', '', {}],
-        ['', '', {a: 'b'}],
+        ['', '', {a: 'b'} as unknown as Replacements],
         ['a', 'a', {}],
-        ['b', 'a', {a: 'b'}],
-        ['b', 'a', {a$: 'b'}],
-        ['b', 'a', {'^a$': 'b'}],
-        ['ba', 'aa', {a: 'b'}],
+        ['b', 'a', {a: 'b'} as unknown as Replacements],
+        ['b', 'a', {a$: 'b'} as unknown as Replacements],
+        ['b', 'a', {'^a$': 'b'} as unknown as Replacements],
+        ['ba', 'aa', {a: 'b'} as unknown as Replacements],
         ['helper', 'helper', {}]
     )
     testEachAgainstSameExpectation<

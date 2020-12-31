@@ -16,7 +16,7 @@
 */
 // region imports
 import {
-    Encoding, Mapping, PlainObject, ProcedureFunction
+    Encoding, Mapping, PlainObject, ProcedureFunction, SecondParameter
 } from 'clientnode/type'
 import {JSDOM} from 'jsdom'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
@@ -59,10 +59,7 @@ export type PackageDescriptor = {
     configuration:PackageConfiguration
     filePath:string
 }
-export type Replacement<T=any> = ((
-    substring:string, ...parameter:Array<T>
-) => string)|string
-export type Replacements = Mapping<Replacement>
+export type Replacements = Mapping<SecondParameter<String['replace']>>
 export type Resolvable = {
     [TYPE in '__evaluate__'|'__execute__'|string]:any|Resolvable|string
 }
