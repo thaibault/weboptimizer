@@ -17,7 +17,7 @@
 // region imports
 import Tools, {optionalRequire} from 'clientnode'
 import {
-    EvaluationResult, Mapping, PlainObject, ProcedureFunction
+    EvaluationResult, Mapping, PlainObject, ProcedureFunction, SecondParameter
 } from 'clientnode/type'
 const postcssCSSnano:Function = optionalRequire('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
@@ -160,9 +160,9 @@ for (const source in configuration.module.replacements.normal)
             search,
             (resource:{request:string}):void => {
                 resource.request = resource.request.replace(
-                    // @ts-ignore: https://github.com/microsoft/TypeScript/
-                    // issues/22378
-                    search, configuration.module.replacements.normal[source]
+                    search,
+                    configuration.module.replacements.normal[source] as
+                        SecondParameter<String['replace']>
                 )
             }
         ))
@@ -650,13 +650,12 @@ if (htmlAvailable)
                     if (Object.prototype.hasOwnProperty.call(
                         linkables, tagName
                     ))
-                        for (
-                            const domNode of
-                            Array.from(dom.window.document.querySelectorAll(
+                        for (const domNode of Array.from<HTMLElement>(
+                            dom.window.document.querySelectorAll<HTMLElement>(
                                 `${tagName}[${linkables[tagName]}*="?` +
                                 `${configuration.hashAlgorithm}="]`
-                            ))
-                        )
+                            )
+                        ))
                             /*
                                 NOTE: Removing symbols after a "&" in hash
                                 string is necessary to match the generated
@@ -665,7 +664,7 @@ if (htmlAvailable)
                             domNode.setAttribute(
                                 linkables[tagName],
                                 // @ts-ignore: Typescripts wrongly considers
-                                // "null".
+                                // "null" even when we cast explicitly.
                                 domNode
                                     .getAttribute(linkables[tagName])
                                     .replace(
@@ -939,14 +938,17 @@ const isFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
     return Helper.isFilePathInLocation(
         filePath,
-        configuration.path.ignore.concat(
-            configuration.module.directoryNames,
-            configuration.loader.directoryNames
-        ).map((filePath:string):string => path.resolve(
-            configuration.path.context, filePath)
-        ).filter((filePath:string):boolean =>
-            !configuration.path.context.startsWith(filePath)
-        )
+        configuration.path.ignore
+            .concat(
+                configuration.module.directoryNames,
+                configuration.loader.directoryNames
+            )
+            .map((filePath:string):string =>
+                path.resolve(configuration.path.context, filePath)
+            )
+            .filter((filePath:string):boolean =>
+                !configuration.path.context.startsWith(filePath)
+            )
     )
 }
 const loader:Record<string, any> = {}

@@ -36,7 +36,7 @@ import path from 'path'
 
 import configuration from './configurator'
 import Helper from './helper'
-import {Extensions} from './type'
+import {Extensions, Replacements} from './type'
 // endregion
 // region types
 export type CompilerOptions = Options & {
@@ -52,15 +52,15 @@ export type LoaderConfiguration = Mapping<unknown> & {
     compiler:CompilerOptions
     compileSteps:number
     compress:{
-        html:Record<string, unknown>
-        javaScript:Record<string, unknown>
+        html:Mapping<unknown>
+        javaScript:Mapping<unknown>
     }
     context:string
     extensions:Extensions
-    locals?:Record<string, unknown>
+    locals?:Mapping<unknown>
     module:{
-        aliases:Record<string, string>
-        replacements:Record<string, string>
+        aliases:Mapping<string>
+        replacements:Replacements
     }
 }
 // endregion
@@ -109,10 +109,10 @@ export default function(this:any, source:string):string {
         template:string,
         options:Partial<CompilerOptions> = givenOptions.compiler,
         compileSteps = 2
-    ):TemplateFunction => (locals:Record<string, unknown> = {}):string => {
+    ):TemplateFunction => (locals:Mapping<unknown> = {}):string => {
         options = Tools.extend(true, {filename: template}, options)
         const require:Function = (
-            request:string, nestedLocals:Record<string, unknown> = {}
+            request:string, nestedLocals:Mapping<unknown> = {}
         ):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
             const queryMatch:Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
