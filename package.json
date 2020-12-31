@@ -407,11 +407,7 @@
           },
           "watchContentBase": true,
           "watchOptions": {
-            "watch": true,
-            "#": "Webpack's default ignores \"node_modules\" folder. Leads to not live reload if array is empty.",
-            "ignored": [
-              "dummy"
-            ]
+            "__evaluate__": "self.webpack.watchOptions || {}"
           }
         },
         "tool": false
