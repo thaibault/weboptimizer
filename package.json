@@ -407,11 +407,7 @@
           },
           "watchContentBase": true,
           "watchOptions": {
-            "watch": true,
-            "#": "Webpack's default ignores \"node_modules\" folder. Leads to not live reload if array is empty.",
-            "ignored": [
-              "dummy"
-            ]
+            "__evaluate__": "self.webpack.watchOptions || {}"
           }
         },
         "tool": false
@@ -1307,18 +1303,7 @@
             "cssnano": null
           }
         },
-        "offline": null,
-        "webpack": {
-          "watchOptions": {
-            "ignored": [
-              "**/node_modules/**",
-              "**/package.json",
-              {
-                "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
-              }
-            ]
-          }
-        }
+        "offline": null
       },
       "webpack": {}
     },
@@ -1494,6 +1479,19 @@
           "entry": {
             "index": "./test"
           }
+        }
+      },
+      "webpack": {
+        "watchOptions": {
+          "ignored": [
+            "**/node_modules/**",
+            "**/node_modules/**/package.json",
+            "**/node_modules/**/*.ts",
+            "**/package.json",
+            {
+              "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
+            }
+          ]
         }
       }
     }
