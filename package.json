@@ -1484,9 +1484,8 @@
       "webpack": {
         "watchOptions": {
           "ignored": [
+            "./*.js",
             "**/node_modules/**",
-            "**/node_modules/**/package.json",
-            "**/node_modules/**/*.ts",
             "**/package.json",
             {
               "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
