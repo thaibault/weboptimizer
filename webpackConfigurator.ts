@@ -602,7 +602,7 @@ if (configuration.injection.external.modules === '__implicit__')
     }
 // /// endregion
 // // endregion
-// // region apply final dom/javaScript/cascadingStyleSheet modifications/fixes
+// // region apply final cascadingStyleSheet/dom/javaScript modifications/fixes
 if (htmlAvailable)
     pluginInstances.push({apply: (
         compiler:Compiler
@@ -734,7 +734,8 @@ if (htmlAvailable)
 // ran through.
 if (plugins.Imagemin)
     pluginInstances.push(new plugins.Imagemin(
-        configuration.module.optimizer.image.content))
+        configuration.module.optimizer.image.content
+    ))
 // // endregion
 // // region context replacements
 for (const contextReplacement of configuration.module.replacements.context)
@@ -1544,7 +1545,7 @@ if (configuration.path.configuration?.json)
 export let webpackConfiguration:WebpackConfiguration = Tools.extend(
     true,
     {
-        bail: 'watch' !== configuration.givenCommandLineArguments[2],
+        bail: !configuration.givenCommandLineArguments.includes('--watch'),
         context: configuration.path.context,
         devtool: configuration.development.tool,
         devServer: configuration.development.server,
@@ -1562,7 +1563,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             mainFiles: configuration.package.main.fileNames,
             modules:
                 Helper.normalizePaths(configuration.module.directoryNames),
-            symlinks: configuration.module.resolveSymlinks,
+            symlinks: configuration.module.resolveSymlinks || Boolean('TODO'),
             unsafeCache: Boolean(configuration.cache?.unsafe)
         },
         resolveLoader: {

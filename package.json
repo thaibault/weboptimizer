@@ -1026,9 +1026,8 @@
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"
           }
         },
-        "provide": {
-          "#": "Defines resources which should be mapped to given variables without referencing them explicitly."
-        },
+        "#": "Defines resources which should be mapped to given variables without referencing them explicitly.",
+        "provide": null,
         "replacements": {
           "#": "Defines referenced resources or contexts to be replaced.",
           "context": [],
