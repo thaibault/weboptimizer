@@ -1485,7 +1485,7 @@
         "watchOptions": {
           "ignored": [
             "./*.js",
-            "**/node_modules/**",
+            "**/node_modules",
             "**/package.json",
             {
               "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
