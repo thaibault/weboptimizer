@@ -431,7 +431,7 @@ if (configuration.injection.external.modules === '__implicit__')
         external dependency.
     */
     configuration.injection.external.modules = (
-        context:string, request:string, callback:Function
+        {context, request}, callback:Function
     ):void => {
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
@@ -532,8 +532,7 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.encoding
         )
         if (resolvedRequest) {
-            const keys:Array<string> =
-                ['amd', 'commonjs', 'commonjs2', 'root']
+            const keys:Array<string> = ['amd', 'commonjs', 'commonjs2', 'root']
             let result:PlainObject|string = resolvedRequest
             if (Object.prototype.hasOwnProperty.call(
                 configuration.injection.external.aliases, request

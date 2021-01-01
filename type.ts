@@ -66,9 +66,17 @@ export type Resolvable = {
 // / endregion
 // / region injection
 export type ExternalAliases = Mapping<Mapping<Function|string>>
-export type ExternalInjection = string|((
-    context:string, request:string, callback:ProcedureFunction
-) => void)|RegExp|Array<ExternalInjection>
+export type ExternalInjection =
+    string|
+    ((
+        parameter:{
+            context:string
+            request:string
+        },
+        callback:ProcedureFunction
+    ) => void)|
+    RegExp|
+    Array<ExternalInjection>
 export type GivenInjection =
     Function|string|Array<string>|Mapping<string|Array<string>>
 export type NormalizedGivenInjection = Mapping<Array<string>>
