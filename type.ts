@@ -386,7 +386,7 @@ export type ResolvedConfiguration = {
                 loader:string
             }
         }
-        provide:Mapping
+        provide:Mapping|null
         replacements:{
             context:Array<[string, string]>
             normal:Replacements

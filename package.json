@@ -1026,15 +1026,15 @@
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"
           }
         },
-        "provide": {
-          "#": "Defines resources which should be mapped to given variables without referencing them explicitly."
-        },
+        "#": "Defines resources which should be mapped to given variables without referencing them explicitly.",
+        "provide": null,
         "replacements": {
           "#": "Defines referenced resources or contexts to be replaced.",
           "context": [],
           "normal": {}
         },
-        "resolveSymlinks": false,
+        "#1": "NOTE: Breaks linked files live reloading when disabled.",
+        "resolveSymlinks": true,
         "skipParseRegularExpressions": {
           "__evaluate__": "/(?:^|\\/)(?:(?:jquery\\/dist\\/jquery))(?:\\.min)?\\.js(?:\\?.+|$)/"
         },
@@ -1485,7 +1485,7 @@
         "watchOptions": {
           "ignored": [
             "./*.js",
-            "**/node_modules/**",
+            "**/node_modules",
             "**/package.json",
             {
               "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
