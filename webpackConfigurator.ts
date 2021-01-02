@@ -760,96 +760,103 @@ for (const contextReplacement of configuration.module.replacements.context)
     )))
 // // endregion
 // // region consolidate duplicated module requests
-pluginInstances.push({apply: (
-    compiler:Compiler
-) => compiler.hooks.normalModuleFactory.tap(
-    'WebOptimizerModuleConsolidation',
-    (nmf:ReturnType<Compiler['createNormalModuleFactory']>):void => nmf.hooks.afterResolve.tap(
-        'WebOptimizerModuleConsolidation',
-        (result:WebpackResolveData):void => {
-            const targetPath:string = result.createData.resource
-            if (
-                targetPath &&
-                /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
-                Tools.isFileSync(targetPath)
-            ) {
-                const packageDescriptor:null|PackageDescriptor =
-                    Helper.getClosestPackageDescriptor(targetPath)
-                if (packageDescriptor) {
-                    const pathPrefixes:null|RegExpMatchArray = targetPath.match(
-                        /((?:^|.*?\/)node_modules\/)/g
-                    )
-                    if (pathPrefixes === null)
-                        return
-                    // Avoid finding the same artefact.
-                    pathPrefixes.pop()
-                    let index:number = 0
-                    for (const pathPrefix of pathPrefixes) {
-                        if (index > 0)
-                            pathPrefixes[index] =
-                                path.resolve(pathPrefixes[index - 1], pathPrefix)
-                        index += 1
-                    }
-                    const pathSuffix:string =
-                        targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1')
-                    let redundantRequest:null|PlainObject = null
-                    for (const pathPrefix of pathPrefixes) {
-                        const alternateTargetPath:string =
-                            path.resolve(pathPrefix, pathSuffix)
-                        if (Tools.isFileSync(alternateTargetPath)) {
-                            const otherPackageDescriptor:null|PackageDescriptor =
-                                Helper.getClosestPackageDescriptor(
-                                    alternateTargetPath
+/*
+    NOTE: Redundancies only exists when symlinks aren't converted to their real
+    paths since real paths can be de-duplicated by webpack.
+*/
+if (!configuration.module.resolveSymlinks) {
+    const consolidator:ProcedureFunction = (
+        result:WebpackResolveData
+    ):void => {
+        const targetPath:string = result.createData.resource
+        if (
+            targetPath &&
+            /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
+            Tools.isFileSync(targetPath)
+        ) {
+            const packageDescriptor:null|PackageDescriptor =
+                Helper.getClosestPackageDescriptor(targetPath)
+            if (packageDescriptor) {
+                const pathPrefixes:null|RegExpMatchArray =
+                    targetPath.match(/((?:^|.*?\/)node_modules\/)/g)
+                if (pathPrefixes === null)
+                    return
+                // Avoid finding the same artefact.
+                pathPrefixes.pop()
+                let index:number = 0
+                for (const pathPrefix of pathPrefixes) {
+                    if (index > 0)
+                        pathPrefixes[index] =
+                            path.resolve(pathPrefixes[index - 1], pathPrefix)
+                    index += 1
+                }
+                const pathSuffix:string =
+                    targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1')
+                let redundantRequest:null|PlainObject = null
+                for (const pathPrefix of pathPrefixes) {
+                    const alternateTargetPath:string =
+                        path.resolve(pathPrefix, pathSuffix)
+                    if (Tools.isFileSync(alternateTargetPath)) {
+                        const otherPackageDescriptor:null|PackageDescriptor =
+                            Helper.getClosestPackageDescriptor(
+                                alternateTargetPath
+                            )
+                        if (otherPackageDescriptor) {
+                            if (
+                                packageDescriptor.configuration.version ===
+                                otherPackageDescriptor.configuration.version
+                            ) {
+                                console.info(
+                                    '\nConsolidate module request "' +
+                                    `${targetPath}" to "` +
+                                    `${alternateTargetPath}".`
                                 )
-                            if (otherPackageDescriptor) {
-                                if (
-                                    packageDescriptor.configuration.version ===
-                                    otherPackageDescriptor.configuration.version
-                                ) {
-                                    console.info(
-                                        '\nConsolidate module request "' +
-                                        `${targetPath}" to "` +
-                                        `${alternateTargetPath}".`
-                                    )
-                                    /*
-                                        NOTE: Only overwriting
-                                        "result.createData.resource" like
-                                        implemented in
-                                        "NormaleModuleReplacementPlugin" does
-                                        not always work.
-                                    */
-                                    result.request =
-                                    result.createData.request =
-                                    result.createData.resource =
-                                    result.createData.userRequest =
-                                    result.createData.rawRequest =
-                                        alternateTargetPath
-                                    return
-                                }
-                                redundantRequest = {
-                                    path: alternateTargetPath,
-                                    version:
-                                        otherPackageDescriptor.configuration
-                                            .version
-                                }
+                                /*
+                                    NOTE: Only overwriting
+                                    "result.createData.resource" like
+                                    implemented in
+                                    "NormaleModuleReplacementPlugin" does
+                                    not always work.
+                                */
+                                result.request =
+                                result.createData.request =
+                                result.createData.resource =
+                                result.createData.userRequest =
+                                result.createData.rawRequest =
+                                    alternateTargetPath
+                                return
+                            }
+                            redundantRequest = {
+                                path: alternateTargetPath,
+                                version:
+                                    otherPackageDescriptor.configuration
+                                        .version
                             }
                         }
                     }
-                    if (redundantRequest)
-                        console.warn(
-                            '\nIncluding different versions of same package "' +
-                            `${packageDescriptor.configuration.name}". Module "` +
-                            `${targetPath}" (version ` +
-                            `${packageDescriptor.configuration.version}) has ` +
-                            `redundancies with "${redundantRequest.path}" (` +
-                            `version ${redundantRequest.version}).`
-                        )
                 }
+                if (redundantRequest)
+                    console.warn(
+                        '\nIncluding different versions of same package "' +
+                        `${packageDescriptor.configuration.name}". Module "` +
+                        `${targetPath}" (version ` +
+                        `${packageDescriptor.configuration.version}) has ` +
+                        `redundancies with "${redundantRequest.path}" (` +
+                        `version ${redundantRequest.version}).`
+                    )
             }
         }
-    )
-)})
-
+    }
+    pluginInstances.push({apply: (compiler:Compiler) =>
+        compiler.hooks.normalModuleFactory.tap(
+            'WebOptimizerModuleConsolidation',
+            (nmf:ReturnType<Compiler['createNormalModuleFactory']>):void =>
+                nmf.hooks.afterResolve.tap(
+                    'WebOptimizerModuleConsolidation', consolidator
+                )
+        )
+    })
+}
 /*
 new NormalModuleReplacementPlugin(
     /.+/,
