@@ -287,7 +287,6 @@ pluginInstances.push({apply: (compiler:Record<string, any>):void => {
 }})
 // /// endregion
 // /// region in-place configured assets in the main html file
-
 /*
     TODO
 
@@ -1563,7 +1562,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
             mainFiles: configuration.package.main.fileNames,
             modules:
                 Helper.normalizePaths(configuration.module.directoryNames),
-            symlinks: configuration.module.resolveSymlinks || Boolean('TODO'),
+            symlinks: configuration.module.resolveSymlinks,
             unsafeCache: Boolean(configuration.cache?.unsafe)
         },
         resolveLoader: {

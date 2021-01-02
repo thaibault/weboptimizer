@@ -1033,7 +1033,8 @@
           "context": [],
           "normal": {}
         },
-        "resolveSymlinks": false,
+        "#1": "NOTE: Breaks linked files live reloading when disabled.",
+        "resolveSymlinks": true,
         "skipParseRegularExpressions": {
           "__evaluate__": "/(?:^|\\/)(?:(?:jquery\\/dist\\/jquery))(?:\\.min)?\\.js(?:\\?.+|$)/"
         },
