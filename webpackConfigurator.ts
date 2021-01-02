@@ -432,6 +432,8 @@ if (configuration.injection.external.modules === '__implicit__')
     configuration.injection.external.modules = (
         {context, request}, callback:Function
     ):void => {
+        if (typeof request !== 'string')
+            return callback()
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
