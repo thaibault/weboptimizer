@@ -164,13 +164,12 @@ export class Helper {
     ):string {
         referencePath = path.resolve(referencePath)
         if (
-            request.startsWith('./') &&
-            path.resolve(context) !== referencePath
+            request.startsWith('./') && path.resolve(context) !== referencePath
         ) {
             request = path.resolve(context, request)
             for (const modulePath of relativeModuleLocations) {
-                const pathPrefix:string = path.resolve(
-                    referencePath, modulePath)
+                const pathPrefix:string =
+                    path.resolve(referencePath, modulePath)
                 if (request.startsWith(pathPrefix)) {
                     request = request.substring(pathPrefix.length)
                     if (request.startsWith('/'))
@@ -269,7 +268,8 @@ export class Helper {
         // NOTE: We apply alias on externals additionally.
         const resolvedRequest:string = Helper.applyModuleReplacements(
             Helper.applyAliases(
-                request.substring(request.lastIndexOf('!') + 1), aliases),
+                request.substring(request.lastIndexOf('!') + 1), aliases
+            ),
             moduleReplacements
         )
         if (Tools.isAnyMatching(resolvedRequest, excludePattern))
@@ -603,7 +603,8 @@ export class Helper {
                 for (let moduleID of normalizedGivenInjection[chunkName]) {
                     moduleID = Helper.applyModuleReplacements(
                         Helper.applyAliases(
-                            Helper.stripLoader(moduleID), aliases),
+                            Helper.stripLoader(moduleID), aliases
+                        ),
                         moduleReplacements
                     )
                     const resolvedPath:string = path.resolve(
@@ -851,8 +852,8 @@ export class Helper {
             packageAliases: null
         }
         if (Tools.isDirectorySync(packagePath)) {
-            const pathToPackageJSON:string = path.resolve(
-                packagePath, 'package.json')
+            const pathToPackageJSON:string =
+                path.resolve(packagePath, 'package.json')
             if (Tools.isFileSync(pathToPackageJSON)) {
                 let localConfiguration:PlainObject = {}
                 try {
@@ -918,7 +919,7 @@ export class Helper {
      * wasn't necessary.
      */
     static determineModuleFilePath(
-        moduleID:string,
+        moduleID:false|string,
         aliases:Mapping = {},
         moduleReplacements:Replacements = {},
         extensions:SpecificExtensions = {
@@ -935,6 +936,8 @@ export class Helper {
         packageAliasPropertyNames:Array<string> = [],
         encoding:Encoding = 'utf-8'
     ):null|string {
+        if (!moduleID)
+            return null
         moduleID = Helper.applyModuleReplacements(
             Helper.applyAliases(Helper.stripLoader(moduleID), aliases),
             moduleReplacements
@@ -1017,11 +1020,12 @@ export class Helper {
      */
     static applyAliases(moduleID:string, aliases:Mapping):string {
         for (const alias in aliases)
-            if (alias.endsWith('$')) {
-                if (moduleID === alias.substring(0, alias.length - 1))
-                    moduleID = aliases[alias]
-            } else
-                moduleID = moduleID.replace(alias, aliases[alias])
+            if (Object.prototype.hasOwnProperty.call(aliases, alias))
+                if (alias.endsWith('$')) {
+                    if (moduleID === alias.substring(0, alias.length - 1))
+                        moduleID = aliases[alias]
+                } else if (typeof moduleID === 'string')
+                    moduleID = moduleID.replace(alias, aliases[alias])
         return moduleID
     }
     /**
