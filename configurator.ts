@@ -173,7 +173,8 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
                     Tools.extend(
                         true,
                         Tools.modifyObject(
-                            configurationTarget, configurationTarget[type]),
+                            configurationTarget, configurationTarget[type]
+                        ),
                         configurationTarget[type]
                     )
 // /// endregion
@@ -192,7 +193,8 @@ Tools.extend(
     true,
     Tools.modifyObject(
         Tools.modifyObject(configuration, specificConfiguration),
-        runtimeInformation),
+        runtimeInformation
+    ),
     specificConfiguration,
     runtimeInformation
 )
@@ -302,8 +304,7 @@ for (const type in resolvedConfiguration.buildContext.types)
     ))
         resolvedConfiguration.buildContext.types[type] = Tools.extend(
             true,
-            {},
-            defaultConfiguration,
+            Tools.copy(defaultConfiguration),
             Tools.extend(
                 true,
                 {extension: type},
@@ -446,7 +447,8 @@ resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath =
 */
 for (const htmlConfiguration of resolvedConfiguration.files.html) {
     Tools.extend(
-        true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)
+        true, htmlConfiguration, resolvedConfiguration.files.defaultHTML
+    )
     htmlConfiguration.template.request = htmlConfiguration.template.filePath
     if (
         htmlConfiguration.template.filePath !==

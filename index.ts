@@ -64,13 +64,11 @@ const main = async ():Promise<void> => {
             cwd: configuration.path.context,
             env: process.env
         }
-        const childProcessOptions:CommonSpawnOptions = Tools.extend(
-            {
-                shell: true,
-                stdio: 'inherit'
-            },
-            processOptions
-        )
+        const childProcessOptions:CommonSpawnOptions = {
+            shell: true,
+            stdio: 'inherit',
+            ...processOptions
+        }
         const childProcesses:Array<ChildProcess> = []
         const processPromises:Array<Promise<Array<ChildProcess>>> = []
         const possibleArguments:Array<string> = [
@@ -464,12 +462,11 @@ const main = async ():Promise<void> => {
                                     Tools.handleChildProcess(
                                         execChildProcess(
                                             evaluated.result,
-                                            Tools.extend(
-                                                {encoding:
-                                                    configuration.encoding
-                                                },
-                                                processOptions
-                                            ),
+                                            {
+                                                encoding:
+                                                    configuration.encoding,
+                                                ...processOptions
+                                            },
                                             (error:Error|null):void =>
                                                 error ?
                                                     reject(error) :
