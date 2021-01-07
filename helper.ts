@@ -120,15 +120,14 @@ export class Helper {
     static renderFilePathTemplate(
         template:string, scope:Mapping<number|string> = {}
     ):string {
-        scope = Tools.extend(
-            {
-                '[chunkhash]': '.__dummy__',
-                '[contenthash]': '.__dummy__',
-                '[fullhash]': '.__dummy__',
-                '[id]': '.__dummy__',
-                '[name]': '.__dummy__'
-            },
-            scope)
+        scope = {
+            '[chunkhash]': '.__dummy__',
+            '[contenthash]': '.__dummy__',
+            '[fullhash]': '.__dummy__',
+            '[id]': '.__dummy__',
+            '[name]': '.__dummy__',
+            ...scope
+        }
         let filePath:string = template
         for (const placeholderName in scope)
             if (Object.prototype.hasOwnProperty.call(scope, placeholderName))
@@ -716,7 +715,7 @@ export class Helper {
         referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
     ):T {
-        const injection:T = Tools.extend(true, {}, givenInjection)
+        const injection:T = Tools.copy(givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
                 givenInjection.autoExclude,

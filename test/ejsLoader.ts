@@ -24,8 +24,7 @@ describe('ejsLoader', ():void => {
             query:PlainObject
         } = Tools.extend(
             true,
-            {},
-            context,
+            Tools.copy(context),
             {
                 cacheable: Tools.noop,
                 query: {
