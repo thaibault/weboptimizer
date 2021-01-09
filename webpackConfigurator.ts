@@ -245,7 +245,7 @@ if (configuration.module.provide)
 // // endregion
 // // region modules/assets
 // /// region apply module pattern
-pluginInstances.push({apply: (compiler:Record<string, any>):void => {
+pluginInstances.push({apply: (compiler:Compiler):void => {
     compiler.hooks.emit.tap(
         'applyModulePattern',
         (compilation:Record<string, any>):void => {
@@ -316,8 +316,9 @@ if (
     configuration.inPlace.javaScript &&
     Object.keys(configuration.inPlace.javaScript).length
 )
-    pluginInstances.push({apply: (compiler:Record<string, any>):void => {
-        let publicPath:string = compiler.options.output.publicPath || ''
+    pluginInstances.push({apply: (compiler:Compiler):void => {
+        let publicPath:string =
+            compiler.options.output.publicPath as string || ''
         if (publicPath && !publicPath.endsWith('/'))
             publicPath += '/'
 
