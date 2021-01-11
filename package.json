@@ -1083,7 +1083,7 @@
             },
             "#: Hidden files with leading dot.",
             {
-              "__evaluate__": "/^(.*/)?\\..*$/"
+              "__evaluate__": "/^(.*\\/)?\\..*$/"
             }
           ],
           "swDest": "serviceWorker.js"
