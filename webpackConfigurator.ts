@@ -762,10 +762,10 @@ for (const contextReplacement of configuration.module.replacements.context)
 // // endregion
 // // region consolidate duplicated module requests
 /*
-    NOTE: Redundancies only exists when symlinks aren't converted to their real
-    paths since real paths can be de-duplicated by webpack.
+    NOTE: Redundancies usually occur when symlinks aren't converted to their
+    real paths since real paths can be de-duplicated by webpack.
 */
-if (!configuration.module.resolveSymlinks) {
+if (configuration.module.enforceDeduplication) {
     const consolidator:ProcedureFunction = (
         result:WebpackResolveData
     ):void => {
