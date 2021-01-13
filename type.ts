@@ -337,6 +337,7 @@ export type ResolvedConfiguration = {
         aliases:Mapping
         cascadingStyleSheet:LoaderConfiguration
         directoryNames:Array<string>
+        enforceDeduplication:boolean
         html:LoaderConfiguration
         locations:{
             directoryPaths:Array<string>
