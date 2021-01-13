@@ -1228,9 +1228,9 @@
     picomatch "^2.2.2"
 
 "@sinonjs/commons@^1.7.0":
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.1.tgz#e7df00f98a203324f6dc7cc606cad9d4a8ab2217"
-  integrity sha512-892K+kWUUi3cl+LlqEWIDrhvLgdL79tECi8JZUyq6IviKy/DNhuzCRlbHUjxK89f4ypPMMaFnFuR9Ie6DoIMsw==
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.2.tgz#858f5c4b48d80778fde4b9d541f27edc0d56488b"
+  integrity sha512-sruwd86RJHdsVf/AtBoijDmUqJp3B6hF/DGC23C+JaegnDHaZyewCjoVGTdg3J0uz3Zs7NnIT05OBOmML72lQw==
   dependencies:
     type-detect "4.0.8"
 
@@ -3275,9 +3275,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.648"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.648.tgz#68ae5358275b5b9f73e102b833828b5cddb30cfd"
-  integrity sha512-sDa1CTRE/MAHmV7tNo3GQcdgdS1+qj+chv0A+97zqMzJ2dJdCC3kWGwyVkcw586337af9ZvdiNRhVbGdJvLNYA==
+  version "3.0.649"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.649.tgz#399e33624798be46a2de6b193edf4fe55fc26588"
+  integrity sha512-f0coJQkTW83GX6iqjuNshz1fvq10Wxnnr6ttJtexhX1riOlVMt3l74rl22MsJpqQd1lOvXpZu8JjZ9pFCWeq/A==
 
 cliui@^4.0.0:
   version "4.1.0"
