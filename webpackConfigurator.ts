@@ -763,36 +763,69 @@ for (const contextReplacement of configuration.module.replacements.context)
 // // region consolidate duplicated module requests
 /*
     NOTE: Redundancies usually occur when symlinks aren't converted to their
-    real paths since real paths can be de-duplicated by webpack.
+    real paths since real paths can be de-duplicated by webpack but if two
+    linked modules share the same transitive dependency webpack wont recognize
+    them as same dependency.
 */
 if (configuration.module.enforceDeduplication) {
+    const absoluteContextPath:string = path.resolve(configuration.path.context)
     const consolidator:ProcedureFunction = (
         result:WebpackResolveData
     ):void => {
         const targetPath:string = result.createData.resource
+
         if (
             targetPath &&
-            /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
+            /((?:^|\/)node_modules\/.+)/.test(targetPath) &&
+            (
+                !targetPath.startsWith(absoluteContextPath) ||
+                /((?:^|\/)node_modules\/.+){2}/.test(targetPath)
+            ) &&
             Tools.isFileSync(targetPath)
         ) {
             const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
-                const pathPrefixes:null|RegExpMatchArray =
-                    targetPath.match(/((?:^|.*?\/)node_modules\/)/g)
-                if (pathPrefixes === null)
-                    return
-                // Avoid finding the same artefact.
-                pathPrefixes.pop()
-                let index:number = 0
-                for (const pathPrefix of pathPrefixes) {
-                    if (index > 0)
-                        pathPrefixes[index] =
-                            path.resolve(pathPrefixes[index - 1], pathPrefix)
-                    index += 1
+                let pathPrefixes:Array<string>
+                let pathSuffix:string
+                if (targetPath.startsWith(absoluteContextPath)) {
+                    const matches:null|RegExpMatchArray =
+                        targetPath.match(/((?:^|.*?\/)node_modules\/)/g)
+                    if (matches === null)
+                        return
+                    pathPrefixes = Array.from(matches)
+                    /*
+                        Remove last one to avoid replacing with the already set
+                        path.
+                    */
+                    pathPrefixes.pop()
+                    let index:number = 0
+                    for (const pathPrefix of pathPrefixes) {
+                        if (index > 0)
+                            pathPrefixes[index] = path.resolve(
+                                pathPrefixes[index - 1], pathPrefix
+                            )
+                        index += 1
+                    }
+                    pathSuffix = targetPath.replace(
+                        /(?:^|.*\/)node_modules\/(.+$)/, '$1'
+                    )
+                } else {
+                    pathPrefixes = [
+                        path.resolve(absoluteContextPath, 'node_modules')
+                    ]
+                    // Find longest common prefix.
+                    let index:number = 0
+                    while (
+                        index < absoluteContextPath.length &&
+                        absoluteContextPath.charAt(index) ===
+                            targetPath.charAt(index)
+                    )
+                        index += 1
+                    pathSuffix = targetPath
+                        .substring(index)
+                        .replace(/^.*\/node_modules\//, '')
                 }
-                const pathSuffix:string =
-                    targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1')
                 let redundantRequest:null|PlainObject = null
                 for (const pathPrefix of pathPrefixes) {
                     const alternateTargetPath:string =
