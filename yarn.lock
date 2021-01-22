@@ -3149,9 +3149,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001173:
-  version "1.0.30001178"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001178.tgz#3ad813b2b2c7d585b0be0a2440e1e233c6eabdbc"
-  integrity sha512-VtdZLC0vsXykKni8Uztx45xynytOi71Ufx9T8kHptSw9AL4dpqailUJJHavttuzUe1KYuBYtChiWv+BAb7mPmQ==
+  version "1.0.30001179"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001179.tgz#b0803883b4471a6c62066fb1752756f8afc699c8"
+  integrity sha512-blMmO0QQujuUWZKyVrD1msR4WNDAqb/UPO1Sw2WWsQ7deoM5bJiicKnWJ1Y0NS/aGINSnKPIWBMw5luX+NDUCA==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -3280,9 +3280,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.654"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.654.tgz#0b256e3945907e84ef6b5feae1148af1bff0b1c1"
-  integrity sha512-kcs6Y5rHonQLEbOlTHfNPZGCYSHh01VV9+WI2ZyQRTewalj1eoByKblO1G208WkyLV6oFYEQqvBC5c1dqW3V5g==
+  version "3.0.658"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.658.tgz#ed3dbe89777b6ee685d7414fab8fa1f399585f9c"
+  integrity sha512-1u7wlRveqQKodH2TBzmiYxVbZH4vpGH47cd1KTkmNUDO0slX2sRqNDLUinbCRCiW5ANJ4UEITWsiNJqGdxx1ow==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -8225,15 +8225,15 @@ postcss-load-config@^2.1.0:
     import-cwd "^2.0.0"
 
 postcss-loader@*:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/postcss-loader/-/postcss-loader-4.1.0.tgz#4647a6c8dad3cb6b253fbfaa21d62201086f6e39"
-  integrity sha512-vbCkP70F3Q9PIk6d47aBwjqAMI4LfkXCoyxj+7NPNuVIwfTGdzv2KVQes59/RuxMniIgsYQCFSY42P3+ykJfaw==
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/postcss-loader/-/postcss-loader-4.2.0.tgz#f6993ea3e0f46600fb3ee49bbd010448123a7db4"
+  integrity sha512-mqgScxHqbiz1yxbnNcPdKYo/6aVt+XExURmEbQlviFVWogDbM4AJ0A/B+ZBpYsJrTRxKw7HyRazg9x0Q9SWwLA==
   dependencies:
     cosmiconfig "^7.0.0"
     klona "^2.0.4"
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
-    semver "^7.3.2"
+    semver "^7.3.4"
 
 postcss-logical@^3.0.0:
   version "3.0.0"
