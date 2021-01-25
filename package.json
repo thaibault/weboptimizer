@@ -1010,6 +1010,7 @@
                 "@babel/plugin-proposal-optional-chaining",
                 "@babel/plugin-syntax-top-level-await",
                 "@babel/plugin-transform-parameters",
+                "@babel/plugin-proposal-decorators",
                 "@babel/proposal-class-properties",
                 [
                   "transform-modern-regexp",
