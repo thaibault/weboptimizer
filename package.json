@@ -74,6 +74,7 @@
   "dependencies": {
     "@babel/core": "*",
     "@babel/plugin-proposal-class-properties": "*",
+    "@babel/plugin-proposal-decorators": "*",
     "@babel/plugin-syntax-top-level-await": "*",
     "@babel/plugin-transform-runtime": "*",
     "@babel/preset-env": "*",
