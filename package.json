@@ -1013,10 +1013,16 @@
                 [
                   "@babel/plugin-proposal-decorators",
                   {
-                    "decoratorsBeforeExport": false
+                    "decoratorsBeforeExport": false,
+                    "legacy": true
                   }
                 ],
-                "@babel/proposal-class-properties",
+                [
+                  "@babel/proposal-class-properties",
+                  {
+                    "loose": true
+                  }
+                ],
                 [
                   "transform-modern-regexp",
                   {
