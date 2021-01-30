@@ -268,7 +268,8 @@ export default function(this:any, source:string):string {
             let code =
                 'module.exports = ' +
                 (new Function(
-                    ...scopeNames, `return ${result.toString()}(locals)`
+                    // TODO name locals is configurable.
+                    ...scopeNames, 'locals', `return ${result.toString()}(locals)`
                 )).toString() +
                 ';'
 
