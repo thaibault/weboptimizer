@@ -110,7 +110,7 @@ export default function(this:any, source:string):string {
         options:Partial<CompilerOptions> = givenOptions.compiler,
         compileSteps = 2
     ):TemplateFunction => (locals:Mapping<unknown> = {}):string => {
-        options = Tools.extend(true, {filename: template}, options)
+        options = {filename: template, ...options}
         const require:Function = (
             request:string, nestedLocals:Mapping<unknown> = {}
         ):string => {
@@ -118,7 +118,7 @@ export default function(this:any, source:string):string {
             const queryMatch:Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
             if (queryMatch) {
                 const evaluated:EvaluationResult = Tools.stringEvaluate(
-                    queryMatch[1], {request, template, source, compile, locals}
+                    queryMatch[1], {compile, locals, request, source, template}
                 )
                 if (evaluated.error)
                     console.warn(
@@ -234,11 +234,14 @@ export default function(this:any, source:string):string {
                     ) as TemplateFunction
                 }
             } else
-                result = compressHTML(result(Tools.extend(
-                    true,
-                    {configuration, Helper, include: require, require, Tools},
-                    locals
-                )))
+                result = compressHTML(result({
+                    configuration,
+                    Helper,
+                    include: require,
+                    require,
+                    Tools,
+                    ...locals
+                }))
             remainingSteps -= 1
         }
         if (compileSteps % 2) {
@@ -294,6 +297,7 @@ export default function(this:any, source:string):string {
     return compile(
         source,
         {
+            ...givenOptions.compiler,
             client: Boolean(givenOptions.compileSteps % 2),
             compileDebug: this.debug || false,
             debug: this.debug || false,

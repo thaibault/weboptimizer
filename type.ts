@@ -446,6 +446,9 @@ export type WebpackBaseAssets = {
 export type WebpackAssets = WebpackBaseAssets & {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
     headTags:HtmlWebpackPlugin.HtmlTagObject[]
+    outputName:string
+    publicPath:string
+    plugin:HtmlWebpackPlugin
 }
 export type HTMLWebpackPluginAssetTagGroupsData = {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
