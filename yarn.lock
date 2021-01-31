@@ -2723,13 +2723,6 @@ babel-plugin-transform-undefined-to-void@^6.9.4:
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-undefined-to-void/-/babel-plugin-transform-undefined-to-void-6.9.4.tgz#be241ca81404030678b748717322b89d0c8fe280"
   integrity sha1-viQcqBQEAwZ4t0hxcyK4nQyP4oA=
 
-babel-plugin-transform-with@*:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-transform-with/-/babel-plugin-transform-with-1.0.0.tgz#00dd254022fa587c381bfa66ce7538124cc3ae25"
-  integrity sha1-AN0lQCL6WHw4G/pmznU4EkzDriU=
-  dependencies:
-    babel-runtime "^6.11.6"
-
 babel-preset-current-node-syntax@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/babel-preset-current-node-syntax/-/babel-preset-current-node-syntax-1.0.1.tgz#b4399239b89b2a011f9ddbe3e4f401fc40cff73b"
@@ -2834,7 +2827,7 @@ babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.26.0:
+babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
@@ -3291,9 +3284,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.665"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.665.tgz#9e55bb4a8e0b45a16dbf6668463b089b2aee88e6"
-  integrity sha512-cdlZ+8T0oJeWtCErRWK38RlEEppO0pGtaETKgtF2Om4mE5vT1whueABmVyedg8fzHXf2mytzAIXO9jKPsW1/vg==
+  version "3.0.667"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.667.tgz#b9c8d08e9c41ebac5d9d8a819ccfcda003146b3a"
+  integrity sha512-3nspH4K29dIDrdD0utoyp+I8Yv9Fh7dart4MeMYYs1tjbwk/Or8hkYEuDJmxnmQixL0W9iwRyGGCYUfjSPHZ0w==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -4338,9 +4331,9 @@ eslint-config-google@*:
   integrity sha512-WsbX4WbjuMvTdeVL6+J3rK1RGhCTqjsFjX7UMSMgZiyxxaNLkoJENbrGExzERFeoTpGw3F3FypTiWAP9ZXzkEw==
 
 eslint-plugin-jsdoc@*:
-  version "31.4.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-31.4.0.tgz#70e00f5f8f7cc695de36319d0e761e1a784ae10e"
-  integrity sha512-NX387IVQrA/ZE9F1tpeEFzZDsXb/BJS4HdT1ZH0RME3O/4DJF8GNQnjMSia8O3gFx/kjfASsdmK5LglVs+xGLA==
+  version "31.5.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-31.5.0.tgz#53b38f81f9ed57aeacd9ea1ebd5beac2bcf05b21"
+  integrity sha512-168SrL9KIHov9V8M6fss6ai3ozZmx8e28HLg3D+sXsCC2bk1pqNf3my6KzbqWdt6v7aqbYYWXdkEA4dr/N4dKg==
   dependencies:
     comment-parser "1.1.1"
     debug "^4.3.1"
@@ -4376,9 +4369,9 @@ eslint-visitor-keys@^2.0.0:
   integrity sha512-QudtT6av5WXels9WjIM7qz1XD1cWGvX4gGXvp/zBn9nXG02D0utdU3Em2m/QjTnrsk6bBjmCygl3rmj118msQQ==
 
 eslint@*:
-  version "7.18.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.18.0.tgz#7fdcd2f3715a41fe6295a16234bd69aed2c75e67"
-  integrity sha512-fbgTiE8BfUJZuBeq2Yi7J3RB3WGUQ9PNuNbmgi6jt9Iv8qrkxfy19Ds3OpL1Pm7zg3BtTVhvcUZbIRQ0wmSjAQ==
+  version "7.19.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.19.0.tgz#6719621b196b5fad72e43387981314e5d0dc3f41"
+  integrity sha512-CGlMgJY56JZ9ZSYhJuhow61lMPPjUzWmChFya71Z/jilVos7mR/jPgaEfVGgMBY5DshbKdG8Ezb8FDCHcoMEMg==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     "@eslint/eslintrc" "^0.3.0"
@@ -9317,9 +9310,9 @@ rollup-plugin-terser@^7.0.0:
     terser "^5.0.0"
 
 rollup@^2.25.0:
-  version "2.38.1"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.38.1.tgz#ecea0f7ce6ef2c1f023fdb79524eb7aeb670ea79"
-  integrity sha512-q07T6vU/V1kqM8rGRRyCgEvIQcIAXoKIE5CpkYAlHhfiWM1Iuh4dIPWpIbqFngCK6lwAB2aYHiUVhIbSWHQWhw==
+  version "2.38.2"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.38.2.tgz#ac5feef9e3b5f1c4386a0578f3add52b8b66759f"
+  integrity sha512-3Sg65zfgqsnI2LUFsOmhJDvTWXwio+taySq/dsyvel8+GW+AxeW9V6YZG8BpVGQk/TS4uvGLARRH5T3ygDyyNQ==
   optionalDependencies:
     fsevents "~2.1.2"
 

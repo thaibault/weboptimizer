@@ -244,9 +244,14 @@ export default function(this:any, source:string):string {
                     }
                     if (remainingSteps === 1)
                         result = compressHTML(result)
-                    result = ejs.compile(
-                        result as string, options
-                    ) as TemplateFunction
+                    result = ejs.compile(result as string, options) as
+                        TemplateFunction
+                    result = new Function(
+                        ...scopeNames,
+                        options.localsName,
+                        `return ${result.toString()}(${options.localsName})`
+                    )
+                    console.log('TODO', result)
                 }
             } else
                 result = compressHTML(result(
@@ -265,15 +270,8 @@ export default function(this:any, source:string):string {
         }
 
         if (compileSteps % 2) {
-            let code =
-                'module.exports = ' +
-                (new Function(
-                    // TODO name locals is configurable.
-                    ...scopeNames, 'locals', `return ${result.toString()}(locals)`
-                )).toString() +
-                ';'
+            let code = `module.exports = ${result.toString()}`
 
-            console.log('TODO', code)
 
             const processed:BabelFileResult|null = babelTransformSync(
                 code,
@@ -331,7 +329,8 @@ export default function(this:any, source:string):string {
                 'remainingRequest' in this ?
                     getRemainingRequest(this).replace(/^!/, '') :
                     this.resourcePath || 'unknown',
-            isString: true
+            isString: true,
+            localsName: 'scope'
         },
         givenOptions.compileSteps
     )(givenOptions.locals || {})
