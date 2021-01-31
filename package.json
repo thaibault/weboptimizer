@@ -82,7 +82,6 @@
     "@babel/runtime": "*",
     "babel-loader": "*",
     "babel-plugin-transform-modern-regexp": "*",
-    "babel-plugin-transform-with": "*",
     "babel-preset-minify": "*",
     "clientnode": "*",
     "ejs": "*",

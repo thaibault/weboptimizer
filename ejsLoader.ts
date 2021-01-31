@@ -19,13 +19,6 @@ import {
     BabelFileResult, transformSync as babelTransformSync
 } from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
-/*
-    NOTE: Would result in error: "TypeError:
-    ../webOptimizer/unknown: Cannot read property
-    'contextVariables' of undefined
-
-    import transformWith from 'babel-plugin-transform-with'
-*/
 import Tools from 'clientnode'
 import {EvaluationResult, Encoding, Mapping} from 'clientnode/type'
 import ejs, {Options, TemplateFunction} from 'ejs'
@@ -105,12 +98,14 @@ export default function(this:any, source:string):string {
             /#%%%#/g,
             '!'
         ) as LoaderConfiguration
+
     const compile:CompileFunction = (
         template:string,
         options:Partial<CompilerOptions> = givenOptions.compiler,
         compileSteps = 2
     ):TemplateFunction => (locals:Mapping<unknown> = {}):string => {
         options = {filename: template, ...options}
+
         const require:Function = (
             request:string, nestedLocals:Mapping<unknown> = {}
         ):string => {
@@ -174,6 +169,7 @@ export default function(this:any, source:string):string {
                 `Given template file "${template}" couldn't be resolved.`
             )
         }
+
         const compressHTML:Function = (content:string):string =>
             givenOptions.compress.html ?
                 minifyHTML(
@@ -209,15 +205,34 @@ export default function(this:any, source:string):string {
                     )
                 ) :
                 content
-        let remainingSteps:number = compileSteps
+
         let result:string|TemplateFunction = template
         const isString:boolean = Boolean(options.isString)
         delete options.isString
+        const scope:Mapping<any> = {
+            configuration,
+            Helper,
+            include: require,
+            require,
+            Tools,
+            ...locals
+        }
+
+        const scopeNameMapping:Array<[string, string]> = []
+        const scopeNames:Array<string> = Object.keys(scope).map(
+            (name:string):string => {
+                const newName:string =
+                    Tools.stringConvertToValidVariableName(name)
+                scopeNameMapping.push([name, newName])
+                return newName
+            }
+        )
+
+        let remainingSteps:number = compileSteps
         while (remainingSteps > 0) {
             if (typeof result === 'string') {
-                const filePath:string|undefined = isString ?
-                    options.filename :
-                    result
+                const filePath:string|undefined =
+                    isString ? options.filename : result
                 if (filePath && path.extname(filePath) === '.js')
                     result = eval('require')(filePath)
                 else {
@@ -229,23 +244,44 @@ export default function(this:any, source:string):string {
                     }
                     if (remainingSteps === 1)
                         result = compressHTML(result)
-                    result = ejs.compile(
-                        result as string, options
-                    ) as TemplateFunction
+
+                    if (!options._with)
+                        // NOTE: Needed to manipulate code after compiling.
+                        options.client = true
+
+                    result = ejs.compile(result as string, options) as
+                        TemplateFunction
+
+                    /*
+                        Provide all scope names when "_with" options isn't
+                        enabled
+                    */
+                    if (!options._with)
+                        result = new Function(
+                            ...scopeNames,
+                            options.localsName || 'locals',
+                            `return ${result.toString()}(` +
+                            `${options.localsName})`
+                        ) as TemplateFunction
                 }
             } else
-                result = compressHTML(result({
-                    configuration,
-                    Helper,
-                    include: require,
-                    require,
-                    Tools,
-                    ...locals
-                }))
+                result = compressHTML(result(
+                    /*
+                        NOTE: We want to be ensure to have same ordering as we
+                        have for the scope names and to call internal
+                        registered getter by retrieving values. So simple using
+                        "...Object.values(scope)" is not appreciate here.
+                    */
+                    ...scopeNameMapping
+                        .map(([originalName]):any => scope[originalName])
+                        .concat(options._with ? [] : scope)
+                ))
             remainingSteps -= 1
         }
+
         if (compileSteps % 2) {
-            let code = `module.exports = ${result.toString()};`
+            let code = `module.exports = ${result.toString()}`
+
             const processed:BabelFileResult|null = babelTransformSync(
                 code,
                 {
@@ -255,10 +291,6 @@ export default function(this:any, source:string):string {
                     compact: Boolean(givenOptions.compress.javaScript),
                     filename: options.filename || 'unknown',
                     minified: Boolean(givenOptions.compress.javaScript),
-                    /*
-                        NOTE: See corresponding import statement.
-                    plugins: [transformWith],
-                    */
                     presets: givenOptions.compress.javaScript ?
                         [[
                             babelMinifyPreset, givenOptions.compress.javaScript
@@ -272,6 +304,7 @@ export default function(this:any, source:string):string {
                 code = processed.code
             return `'use strict';\n${code}`
         }
+
         if (typeof result === 'string') {
             result = result
                 .replace(
@@ -305,7 +338,8 @@ export default function(this:any, source:string):string {
                 'remainingRequest' in this ?
                     getRemainingRequest(this).replace(/^!/, '') :
                     this.resourcePath || 'unknown',
-            isString: true
+            isString: true,
+            localsName: 'scope'
         },
         givenOptions.compileSteps
     )(givenOptions.locals || {})
