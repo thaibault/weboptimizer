@@ -217,6 +217,7 @@ export default function(this:any, source:string):string {
             Tools,
             ...locals
         }
+
         const scopeNameMapping:Array<[string, string]> = []
         const scopeNames:Array<string> = Object.keys(scope).map(
             (name:string):string => {
@@ -230,9 +231,8 @@ export default function(this:any, source:string):string {
         let remainingSteps:number = compileSteps
         while (remainingSteps > 0) {
             if (typeof result === 'string') {
-                const filePath:string|undefined = isString ?
-                    options.filename :
-                    result
+                const filePath:string|undefined =
+                    isString ? options.filename : result
                 if (filePath && path.extname(filePath) === '.js')
                     result = eval('require')(filePath)
                 else {
@@ -244,14 +244,25 @@ export default function(this:any, source:string):string {
                     }
                     if (remainingSteps === 1)
                         result = compressHTML(result)
+
+                    if (!options._with)
+                        // NOTE: Needed to manipulate code after compiling.
+                        options.client = true
+
                     result = ejs.compile(result as string, options) as
                         TemplateFunction
-                    result = new Function(
-                        ...scopeNames,
-                        options.localsName,
-                        `return ${result.toString()}(${options.localsName})`
-                    )
-                    console.log('TODO', result)
+
+                    /*
+                        Provide all scope names when "_with" options isn't
+                        enabled
+                    */
+                    if (!options._with)
+                        result = new Function(
+                            ...scopeNames,
+                            options.localsName || 'locals',
+                            `return ${result.toString()}(` +
+                            `${options.localsName})`
+                        ) as TemplateFunction
                 }
             } else
                 result = compressHTML(result(
@@ -261,17 +272,15 @@ export default function(this:any, source:string):string {
                         registered getter by retrieving values. So simple using
                         "...Object.values(scope)" is not appreciate here.
                     */
-                    ...scopeNameMapping.map(
-                        ([originalName]):any => scope[originalName]
-                    ),
-                    scope
+                    ...scopeNameMapping
+                        .map(([originalName]):any => scope[originalName])
+                        .concat(options._with ? [] : scope)
                 ))
             remainingSteps -= 1
         }
 
         if (compileSteps % 2) {
             let code = `module.exports = ${result.toString()}`
-
 
             const processed:BabelFileResult|null = babelTransformSync(
                 code,
