@@ -233,7 +233,7 @@ export type HTMLConfiguration = {
     template:{
         filePath:string
         options?:PlainObject
-        postCompileSteps:number
+        postCompileOptions:PlainObject
         request:string|string
         use:Array<WebpackLoader>|WebpackLoader
     }

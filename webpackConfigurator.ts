@@ -708,21 +708,14 @@ if (htmlAvailable)
                                 typeof loaderConfiguration.options
                                     .compileSteps === 'number'
                             )
-                                data.html = ejsLoader.bind(
-                                    Tools.extend(
+                                data.html = ejsLoader.bind({
+                                    query: Tools.extend(
                                         true,
-                                        {query:
-                                            Tools.copy(
-                                                loaderConfiguration.options
-                                            ) ||
-                                            {}
-                                        },
-                                        {query: {compileSteps:
-                                            htmlFileSpecification.template
-                                                .postCompileSteps
-                                        }}
+                                        loaderConfiguration.options || {},
+                                        htmlFileSpecification.template
+                                            .postCompileOptions
                                     )
-                                )(data.html)
+                                })(data.html)
                         break
                     }
                 // endregion
