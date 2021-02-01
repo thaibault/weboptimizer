@@ -278,7 +278,7 @@ export default function(this:any, source:string):string {
                     */
                     if (!options._with) {
                         let localsName:string = options.localsName || 'locals'
-                        while (scopeNames.includes(localsName))
+                        while (scopeNames!.includes(localsName))
                             localsName = `_${localsName}`
                         result = new Function(
                             ...scopeNames!,
@@ -326,7 +326,7 @@ export default function(this:any, source:string):string {
             )
             if (typeof processed?.code === 'string')
                 code = processed.code
-            return `'use strict';\n${code}`
+            return `'${options.strict ? 'use strict' : ''}';\n${code}`
         }
 
         if (typeof result === 'string') {
