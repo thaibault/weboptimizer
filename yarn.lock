@@ -5466,12 +5466,11 @@ import-local@^3.0.2:
     resolve-cwd "^3.0.0"
 
 imports-loader@*:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/imports-loader/-/imports-loader-1.2.0.tgz#b06823d0bb42e6f5ff89bc893829000eda46693f"
-  integrity sha512-zPvangKEgrrPeqeUqH0Uhc59YqK07JqZBi9a9cQ3v/EKUIqrbJHY4CvUrDus2lgQa5AmPyXuGrWP8JJTqzE5RQ==
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/imports-loader/-/imports-loader-2.0.0.tgz#f2f5152c6d8798a286b28a44eeae62142b60aa2c"
+  integrity sha512-ZwEx0GfsJ1QckGqHSS1uu1sjpUgT3AYFOr3nT07dVnfeyc/bOICSw48067hr0u7DW8TZVzNVvdnvA62U9lG8nQ==
   dependencies:
     loader-utils "^2.0.0"
-    schema-utils "^3.0.0"
     source-map "^0.6.1"
     strip-comments "^2.0.1"
 
@@ -10878,9 +10877,9 @@ webpack@*:
     webpack-sources "^2.1.1"
 
 website-utilities@*:
-  version "1.0.231"
-  resolved "https://registry.yarnpkg.com/website-utilities/-/website-utilities-1.0.231.tgz#1e8d08546070f172972817139d2776f0c9428466"
-  integrity sha512-TBe2NV+ajPLq21hhWrhHzPgSpLn4RORrezHMSuY672SS/edoQ/g7vazH/yVjxDwHgi3ARctpjuSgjlnj025iUw==
+  version "1.0.232"
+  resolved "https://registry.yarnpkg.com/website-utilities/-/website-utilities-1.0.232.tgz#0f28fd892899584d0022ea7d7ecec280b49dbe0a"
+  integrity sha512-a+E0+QS7HrIk01aaZbvUuFsswv4vVcP8g1y8aeURuXBE6DTVVFimfxfD4mbgt8id1zaRe8JgoY4f9MljKgN6og==
 
 whatwg-encoding@^1.0.5:
   version "1.0.5"

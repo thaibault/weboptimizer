@@ -252,13 +252,17 @@ export default function(this:any, source:string):string {
                         Provide all scope names when "_with" options isn't
                         enabled
                     */
-                    if (!options._with)
+                    if (!options._with) {
+                        const localsName:string =
+                            options.localsName || 'locals'
                         result = new Function(
                             ...scopeNames,
-                            options.localsName || 'locals',
+                            localsName,
                             `return ${result.toString()}(` +
-                            `${options.localsName || 'locals'})`
+                            `${localsName},${localsName}.escapeFn,include,` +
+                            `${localsName}.rethrow)`
                         ) as TemplateFunction
+                    }
                 }
             } else
                 result = compressHTML(result(
