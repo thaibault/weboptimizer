@@ -290,17 +290,23 @@ export default function(this:any, source:string):string {
                     }
                 }
             } else
-                result = compressHTML(result(
-                    /*
-                        NOTE: We want to be ensure to have same ordering as we
-                        have for the scope names and to call internal
-                        registered getter by retrieving values. So simple using
-                        "...Object.values(scope)" is not appreciate here.
-                    */
-                    ...originalScopeNames!
-                        .map((name:string):any => scope[name])
-                        .concat(!options.strict && options._with ? [] : scope!)
-                ))
+                result = compressHTML(!options.strict && options._with ?
+                    result(
+                        /*
+                            NOTE: We want to be ensure to have same ordering as
+                            we have for the scope names and to call internal
+                            registered getter by retrieving values. So simple
+                            using "...Object.values(scope)" is not appreciate
+                            here.
+                        */
+                        ...originalScopeNames!
+                            .map((name:string):any => scope[name])
+                            .concat(
+                                !options.strict && options._with ? [] : scope!
+                            )
+                    ) :
+                    result(scope)
+                )
         }
 
         if (compileSteps % 2) {
