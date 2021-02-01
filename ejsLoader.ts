@@ -103,8 +103,13 @@ export default function(this:any, source:string):string {
         template:string,
         options:Partial<CompilerOptions> = givenOptions.compiler,
         compileSteps = 2
-    ):TemplateFunction => (locals:Mapping<unknown> = {}):string => {
+    ):TemplateFunction => (
+        locals:Array<Array<string>>|Array<Mapping<unknown>>|Mapping<unknown> =
+            {}
+    ):string => {
         options = {filename: template, ...options}
+        const givenLocals:Array<unknown> =
+            ([] as Array<unknown>).concat(locals)
 
         const require:Function = (
             request:string, nestedLocals:Mapping<unknown> = {}
@@ -209,23 +214,41 @@ export default function(this:any, source:string):string {
         let result:string|TemplateFunction = template
         const isString:boolean = Boolean(options.isString)
         delete options.isString
-        const scope:Mapping<any> = {
-            configuration,
-            Helper,
-            include: require,
-            require,
-            Tools,
-            ...locals
-        }
 
-        const originalScopeNames:Array<string> = Object.keys(scope)
-        const scopeNames:Array<string> = originalScopeNames.map(
-            (name:string):string =>
-                Tools.stringConvertToValidVariableName(name)
-        )
+        let stepLocals:Array<string>|Mapping<unknown>
+        let scope:Mapping<any>
+        let originalScopeNames:Array<string>
+        let scopeNames:Array<string>
 
-        let remainingSteps:number = compileSteps
-        while (remainingSteps > 0) {
+        for (let step:number = 1; step <= compileSteps; step += 1) {
+            // On every odd compile step we have to determine the environment.
+            if (step % 2) {
+                // region determine scope
+                const localsIndex:number = Math.round(step / 2) - 1
+                stepLocals = (localsIndex < givenLocals.length) ?
+                    givenLocals[localsIndex] as
+                        Array<string>|Mapping<unknown> :
+                    {}
+                scope = {}
+                if (step < 3 && 1 < compileSteps)
+                    scope = {
+                        configuration,
+                        Helper,
+                        include: require,
+                        require,
+                        Tools,
+                        ...(Array.isArray(stepLocals) ? {} : stepLocals)
+                    }
+                else if (!Array.isArray(stepLocals))
+                    scope = stepLocals
+
+                originalScopeNames =
+                    Array.isArray(stepLocals) ? stepLocals : Object.keys(scope)
+                scopeNames = originalScopeNames.map((name:string):string =>
+                    Tools.stringConvertToValidVariableName(name)
+                )
+                // endregion
+            }
             if (typeof result === 'string') {
                 const filePath:string|undefined =
                     isString ? options.filename : result
@@ -238,7 +261,7 @@ export default function(this:any, source:string):string {
                             encoding = options.encoding
                         result = fileSystem.readFileSync(result, {encoding})
                     }
-                    if (remainingSteps === 1)
+                    if (step === compileSteps)
                         result = compressHTML(result)
 
                     if (!options._with)
@@ -256,7 +279,7 @@ export default function(this:any, source:string):string {
                         const localsName:string =
                             options.localsName || 'locals'
                         result = new Function(
-                            ...scopeNames,
+                            ...scopeNames!,
                             localsName,
                             `return ${result.toString()}(` +
                             `${localsName},${localsName}.escapeFn,include,` +
@@ -272,11 +295,10 @@ export default function(this:any, source:string):string {
                         registered getter by retrieving values. So simple using
                         "...Object.values(scope)" is not appreciate here.
                     */
-                    ...originalScopeNames
+                    ...originalScopeNames!
                         .map((name:string):any => scope[name])
-                        .concat(options._with ? [] : scope)
+                        .concat(options._with ? [] : scope!)
                 ))
-            remainingSteps -= 1
         }
 
         if (compileSteps % 2) {
