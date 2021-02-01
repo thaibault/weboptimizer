@@ -218,14 +218,10 @@ export default function(this:any, source:string):string {
             ...locals
         }
 
-        const scopeNameMapping:Array<[string, string]> = []
-        const scopeNames:Array<string> = Object.keys(scope).map(
-            (name:string):string => {
-                const newName:string =
-                    Tools.stringConvertToValidVariableName(name)
-                scopeNameMapping.push([name, newName])
-                return newName
-            }
+        const originalScopeNames:Array<string> = Object.keys(scope)
+        const scopeNames:Array<string> = originalScopeNames.map(
+            (name:string):string =>
+                Tools.stringConvertToValidVariableName(name)
         )
 
         let remainingSteps:number = compileSteps
@@ -256,13 +252,17 @@ export default function(this:any, source:string):string {
                         Provide all scope names when "_with" options isn't
                         enabled
                     */
-                    if (!options._with)
+                    if (!options._with) {
+                        const localsName:string =
+                            options.localsName || 'locals'
                         result = new Function(
                             ...scopeNames,
-                            options.localsName || 'locals',
+                            localsName,
                             `return ${result.toString()}(` +
-                            `${options.localsName})`
+                            `${localsName},${localsName}.escapeFn,include,` +
+                            `${localsName}.rethrow)`
                         ) as TemplateFunction
+                    }
                 }
             } else
                 result = compressHTML(result(
@@ -272,8 +272,8 @@ export default function(this:any, source:string):string {
                         registered getter by retrieving values. So simple using
                         "...Object.values(scope)" is not appreciate here.
                     */
-                    ...scopeNameMapping
-                        .map(([originalName]):any => scope[originalName])
+                    ...originalScopeNames
+                        .map((name:string):any => scope[name])
                         .concat(options._with ? [] : scope)
                 ))
             remainingSteps -= 1
