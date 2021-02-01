@@ -265,7 +265,7 @@ export default function(this:any, source:string):string {
                     if (step === compileSteps)
                         result = compressHTML(result)
 
-                    if (!options._with)
+                    if (options.strict || !options._with)
                         // NOTE: Needed to manipulate code after compiling.
                         options.client = true
 
@@ -276,7 +276,7 @@ export default function(this:any, source:string):string {
                         Provide all scope names when "_with" options isn't
                         enabled
                     */
-                    if (!options._with) {
+                    if (options.strict || !options._with) {
                         let localsName:string = options.localsName || 'locals'
                         while (scopeNames!.includes(localsName))
                             localsName = `_${localsName}`
@@ -299,7 +299,7 @@ export default function(this:any, source:string):string {
                     */
                     ...originalScopeNames!
                         .map((name:string):any => scope[name])
-                        .concat(options._with ? [] : scope!)
+                        .concat(!options.strict && options._with ? [] : scope!)
                 ))
         }
 
@@ -326,7 +326,7 @@ export default function(this:any, source:string):string {
             )
             if (typeof processed?.code === 'string')
                 code = processed.code
-            return `'${options.strict ? 'use strict' : ''}';\n${code}`
+            return `${options.strict ? "'use strict';\n" : ''}${code}`
         }
 
         if (typeof result === 'string') {
