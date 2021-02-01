@@ -28,8 +28,8 @@ describe('ejsLoader', ():void => {
             {
                 cacheable: Tools.noop,
                 query: {
-                    locals: {test: 'hans'},
-                    compiler: {pretty: true}
+                    compiler: {pretty: true},
+                    locals: {test: 'hans'}
                 }
             }
         )
