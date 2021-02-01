@@ -291,6 +291,7 @@ export default function(this:any, source:string):string {
                 }
             } else
                 result = compressHTML(!options.strict && options._with ?
+                    result(scope!) :
                     result(
                         /*
                             NOTE: We want to be ensure to have same ordering as
@@ -304,8 +305,7 @@ export default function(this:any, source:string):string {
                             .concat(
                                 !options.strict && options._with ? [] : scope!
                             )
-                    ) :
-                    result(scope)
+                    )
                 )
         }
 
