@@ -926,7 +926,9 @@
               "compiler": {
                 "cache": true,
                 "compileDebug": false,
-                "debug": false
+                "debug": false,
+                "strict": true,
+                "_with": false
               },
               "compress": {
                 "html": {
