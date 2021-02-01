@@ -257,7 +257,7 @@ export default function(this:any, source:string):string {
                             ...scopeNames,
                             options.localsName || 'locals',
                             `return ${result.toString()}(` +
-                            `${options.localsName})`
+                            `${options.localsName || 'locals'})`
                         ) as TemplateFunction
                 }
             } else
