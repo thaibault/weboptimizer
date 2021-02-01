@@ -712,14 +712,15 @@ if (htmlAvailable)
                                     Tools.extend(
                                         true,
                                         {query:
-                                            Tools.copy(
-                                                loaderConfiguration.options
-                                            ) ||
-                                            {}
+                                            loaderConfiguration.options || {}
                                         },
-                                        {query: {compileSteps:
-                                            htmlFileSpecification.template
-                                                .postCompileSteps
+                                        {query: {
+                                            compileSteps:
+                                                htmlFileSpecification.template
+                                                    .postCompileSteps,
+                                            locals:
+                                                htmlFileSpecification.template
+                                                    .postCompileLocals
                                         }}
                                     )
                                 )(data.html)

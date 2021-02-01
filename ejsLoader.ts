@@ -140,20 +140,21 @@ export default function(this:any, source:string):string {
             )
             if (nestedOptions.isString)
                 return compile(template, nestedOptions)(nestedLocals)
-            const templateFilePath:null|string = Helper.determineModuleFilePath(
-                template,
-                givenOptions.module.aliases,
-                givenOptions.module.replacements,
-                {file: givenOptions.extensions.file.internal},
-                givenOptions.context,
-                configuration.path.source.asset.base,
-                configuration.path.ignore,
-                configuration.module.directoryNames,
-                configuration.package.main.fileNames,
-                configuration.package.main.propertyNames,
-                configuration.package.aliasPropertyNames,
-                configuration.encoding
-            )
+            const templateFilePath:null|string =
+                Helper.determineModuleFilePath(
+                    template,
+                    givenOptions.module.aliases,
+                    givenOptions.module.replacements,
+                    {file: givenOptions.extensions.file.internal},
+                    givenOptions.context,
+                    configuration.path.source.asset.base,
+                    configuration.path.ignore,
+                    configuration.module.directoryNames,
+                    configuration.package.main.fileNames,
+                    configuration.package.main.propertyNames,
+                    configuration.package.aliasPropertyNames,
+                    configuration.encoding
+                )
             if (templateFilePath) {
                 if ('addDependency' in this)
                     this.addDependency(templateFilePath)
@@ -276,8 +277,9 @@ export default function(this:any, source:string):string {
                         enabled
                     */
                     if (!options._with) {
-                        const localsName:string =
-                            options.localsName || 'locals'
+                        let localsName:string = options.localsName || 'locals'
+                        while (scopeNames.includes(localsName))
+                            localsName = `_${localsName}`
                         result = new Function(
                             ...scopeNames!,
                             localsName,

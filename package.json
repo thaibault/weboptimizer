@@ -522,6 +522,7 @@
             "filePath": {
               "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, 'index.html.ejs')) ? path.resolve(self.path.source.base, 'index.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
             },
+            "postCompileLocals": {},
             "postCompileSteps": 0,
             "use": [
               {

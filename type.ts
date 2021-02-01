@@ -233,6 +233,7 @@ export type HTMLConfiguration = {
     template:{
         filePath:string
         options?:PlainObject
+        postCompileLocals:Array<Mapping<unknown>>|Array<string>|Mapping<unknown>
         postCompileSteps:number
         request:string|string
         use:Array<WebpackLoader>|WebpackLoader
