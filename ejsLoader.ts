@@ -291,7 +291,9 @@ export default function(this:any, source:string):string {
                 }
             } else
                 result = compressHTML(!options.strict && options._with ?
-                    result(scope!, scope!.escapeFn, scope!.include) :
+                    (result as Function)(
+                        scope!, scope!.escapeFn, scope!.include
+                    ) :
                     result(
                         /*
                             NOTE: We want to be ensure to have same ordering as
