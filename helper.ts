@@ -160,7 +160,7 @@ export class Helper {
         aliases:Mapping = {},
         moduleReplacements:Replacements = {},
         relativeModuleLocations:Array<string> = ['node_modules']
-    ):string {
+    ):false|string {
         referencePath = path.resolve(referencePath)
         if (
             request.startsWith('./') && path.resolve(context) !== referencePath
@@ -200,6 +200,7 @@ export class Helper {
     /**
      * Check if given request points to an external dependency not maintained
      * by current package context.
+     *
      * @param request - Request to determine.
      * @param context - Context of current project.
      * @param requestContext - Context of given request to resolve relative to.
@@ -232,6 +233,7 @@ export class Helper {
      * @param inPlaceDynamicLibrary - Indicates whether requests with
      * integrated loader configurations should be marked as external or not.
      * @param encoding - Encoding for file names to use during file traversing.
+     *
      * @returns A new resolved request indicating whether given request is an
      * external one.
      */
@@ -265,13 +267,16 @@ export class Helper {
         requestContext = path.resolve(requestContext)
         referencePath = path.resolve(referencePath)
         // NOTE: We apply alias on externals additionally.
-        const resolvedRequest:string = Helper.applyModuleReplacements(
+        const resolvedRequest:false|string = Helper.applyModuleReplacements(
             Helper.applyAliases(
                 request.substring(request.lastIndexOf('!') + 1), aliases
             ),
             moduleReplacements
         )
-        if (Tools.isAnyMatching(resolvedRequest, excludePattern))
+        if (
+            resolvedRequest === false ||
+            Tools.isAnyMatching(resolvedRequest, excludePattern)
+        )
             return null
         /*
             NOTE: Aliases and module replacements doesn't have to be forwarded
@@ -299,13 +304,16 @@ export class Helper {
             !(filePath || inPlaceNormalLibrary) ||
             Tools.isAnyMatching(resolvedRequest, includePattern)
         )
-            return Helper.applyContext(
-                resolvedRequest,
-                requestContext,
-                referencePath,
-                aliases,
-                moduleReplacements,
-                relativeModuleLocations
+            return (
+                Helper.applyContext(
+                    resolvedRequest,
+                    requestContext,
+                    referencePath,
+                    aliases,
+                    moduleReplacements,
+                    relativeModuleLocations
+                ) ||
+                null
             )
         for (const chunkName in normalizedGivenInjection)
             if (Object.prototype.hasOwnProperty.call(
@@ -361,13 +369,16 @@ export class Helper {
                 )
             )
         )
-            return Helper.applyContext(
-                resolvedRequest,
-                requestContext,
-                referencePath,
-                aliases,
-                moduleReplacements,
-                relativeModuleLocations
+            return (
+                Helper.applyContext(
+                    resolvedRequest,
+                    requestContext,
+                    referencePath,
+                    aliases,
+                    moduleReplacements,
+                    relativeModuleLocations
+                ) ||
+                null
             )
         return null
     }
@@ -600,14 +611,21 @@ export class Helper {
             )) {
                 let index = 0
                 for (let moduleID of normalizedGivenInjection[chunkName]) {
-                    moduleID = Helper.applyModuleReplacements(
-                        Helper.applyAliases(
-                            Helper.stripLoader(moduleID), aliases
-                        ),
-                        moduleReplacements
-                    )
-                    const resolvedPath:string = path.resolve(
-                        referencePath, moduleID)
+                    const resolvedModuleID:false|string =
+                        Helper.applyModuleReplacements(
+                            Helper.applyAliases(
+                                Helper.stripLoader(moduleID), aliases
+                            ),
+                            moduleReplacements
+                        )
+                    if (resolvedModuleID === false) {
+                        normalizedGivenInjection[chunkName].splice(index, 1)
+                        continue
+                    }
+
+                    const resolvedPath:string =
+                        path.resolve(referencePath, resolvedModuleID)
+
                     if (Tools.isDirectorySync(resolvedPath)) {
                         normalizedGivenInjection[chunkName].splice(index, 1)
                         for (const file of Tools.walkDirectoryRecursivelySync(
@@ -628,8 +646,8 @@ export class Helper {
                                     )
                                 )
                     } else if (
-                        moduleID.startsWith('./') &&
-                        !moduleID.startsWith(
+                        resolvedModuleID.startsWith('./') &&
+                        !resolvedModuleID.startsWith(
                             `./${path.relative(context, referencePath)}`
                         )
                     )
@@ -990,21 +1008,28 @@ export class Helper {
                         if (fileName === '__package__')
                             continue
                     }
-                    fileName = Helper.applyModuleReplacements(
-                        Helper.applyAliases(fileName, packageAliases),
-                        moduleReplacements
-                    )
-                    if (fileName)
+                    const resolvedFileName:false|string =
+                        Helper.applyModuleReplacements(
+                            Helper.applyAliases(fileName, packageAliases),
+                            moduleReplacements
+                        )
+                    if (resolvedFileName === false)
+                        continue
+
+                    if (resolvedFileName)
                         currentModuleFilePath = path.resolve(
                             currentModuleFilePath,
-                            `${fileName}${fileExtension}`
+                            `${resolvedFileName}${fileExtension}`
                         )
                     else
-                        currentModuleFilePath += `${fileName}${fileExtension}`
+                        currentModuleFilePath +=
+                            `${resolvedFileName}${fileExtension}`
+
                     if (Helper.isFilePathInLocation(
                         currentModuleFilePath, pathsToIgnore
                     ))
                         continue
+
                     if (Tools.isFileSync(currentModuleFilePath))
                         return currentModuleFilePath
                 }
@@ -1035,8 +1060,10 @@ export class Helper {
      * @returns The replacement applied given module id.
      */
     static applyModuleReplacements(
-        moduleID:string, replacements:Replacements
-    ):string {
+        moduleID:false|string, replacements:Replacements
+    ):false|string {
+        if (moduleID === false)
+            return moduleID
         for (const replacement in replacements)
             if (Object.prototype.hasOwnProperty.call(
                 replacements, replacement
