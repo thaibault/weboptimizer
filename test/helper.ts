@@ -116,7 +116,7 @@ describe('helper', ():void => {
         'determineExternalRequest',
         Helper.determineExternalRequest,
 
-        ['', ''],
+        [null, ''],
         ['a', 'a'],
         ['path', 'path'],
         [null, './helper'],
