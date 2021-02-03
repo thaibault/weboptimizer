@@ -235,12 +235,14 @@ export default function(this:any, source:string):string {
                     scope = {
                         configuration,
                         Helper,
+                        include: require,
                         require,
                         Tools,
                         ...(Array.isArray(stepLocals) ? {} : stepLocals)
                     }
                 else if (!Array.isArray(stepLocals))
                     scope = stepLocals
+
 
                 originalScopeNames =
                     Array.isArray(stepLocals) ? stepLocals : Object.keys(scope)
@@ -291,10 +293,7 @@ export default function(this:any, source:string):string {
             } else
                 result = compressHTML(!options.strict && options._with ?
                     (result as Function)(
-                        scope!,
-                        ...[].concat(
-                            scope!.escapeFn ?? [], scope!.include ?? []
-                        )
+                        scope!, scope!.escapeFn, scope!.include
                     ) :
                     result(
                         /*
