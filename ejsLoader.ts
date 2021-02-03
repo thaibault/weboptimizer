@@ -235,7 +235,6 @@ export default function(this:any, source:string):string {
                     scope = {
                         configuration,
                         Helper,
-                        include: require,
                         require,
                         Tools,
                         ...(Array.isArray(stepLocals) ? {} : stepLocals)
