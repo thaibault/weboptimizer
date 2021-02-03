@@ -292,7 +292,10 @@ export default function(this:any, source:string):string {
             } else
                 result = compressHTML(!options.strict && options._with ?
                     (result as Function)(
-                        scope!, scope!.escapeFn, scope!.include
+                        scope!,
+                        ...[].concat(
+                            scope!.escapeFn ?? [], scope!.include ?? []
+                        )
                     ) :
                     result(
                         /*
