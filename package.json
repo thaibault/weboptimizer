@@ -1083,20 +1083,8 @@
         "setImmediate": true
       },
       "offline": {
-        "#": "TODO other than serviceWorker key",
-        "autoUpdate": true,
-        "externals": [
-          "index.html"
-        ],
-        "ServiceWorker": {
-          "events": true,
-          "minify": false,
-          "navigateFallbackURL": null
-        },
-        "updateStrategy": "changed",
-        "version": "[chunkhash]",
         "common": {
-          "excludes": [
+          "excludeChunks": [
             "#: Source mapping files.",
             {
               "__evaluate__": "new RegExp(`^(.*/*)?.+\\.map?(${self.hashAlgorithm}=.*)?$`)"
@@ -1108,10 +1096,7 @@
           ],
           "swDest": "serviceWorker.js"
         },
-        "injectionManifest": {
-          "swSrc": "serviceWorker.js"
-        },
-        "serviceWorker": {
+        "generateServiceWorker": {
           "babelPresetEnvTargets": {
             "__evaluate__": "self.generic.supportedBrowsers"
           },
@@ -1122,9 +1107,15 @@
               "__evaluate__": "/^.*$/"
             }
           ],
-          "inlineWorkboxRuntime": true
+          "inlineWorkboxRuntime": true,
+          "navigateFallback": {
+            "__evaluate__": "path.join(self.path.target.public, self.files.defaultHTML.filename)"
+          }
         },
-        "use": "serviceWorker"
+        "injectionManifest": {
+          "swSrc": "serviceWorker.js"
+        },
+        "use": "generateServiceWorker"
       },
       "package": {
         "aliasPropertyNames": {

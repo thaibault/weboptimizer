@@ -202,10 +202,10 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             if (configuration.inPlace[type]) {
                 const matches:Array<string> =
                     Object.keys(configuration.inPlace[type])
-                if (!Array.isArray(configuration.offline.common.exclude))
-                    configuration.offline.common.exclude = []
+                if (!Array.isArray(configuration.offline.common.excludeChunks))
+                    configuration.offline.common.excludeChunks = []
                 for (const name of matches)
-                    configuration.offline.common.exclude.push(
+                    configuration.offline.common.excludeChunks.push(
                         path.relative(
                             configuration.path.target.base,
                             configuration.path.target.asset[
@@ -217,17 +217,21 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             }
         }
 
-    if (([] as Array<string>).concat(configuration.offline.use).includes(
-        'injectionManifest'
-    ))
+    if (
+        ([] as Array<string>)
+            .concat(configuration.offline.use)
+            .includes('injectionManifest')
+    )
         pluginInstances.push(new plugins.InjectManifest(Tools.extend(
             true,
             configuration.offline.common,
             configuration.offline.injectionManifest
         )))
-    if (([] as Array<string>).concat(configuration.offline.use).includes(
-        'serviceWorker'
-    ))
+    if (
+        ([] as Array<string>)
+            .concat(configuration.offline.use)
+            .includes('generateServiceWorker')
+    )
         pluginInstances.push(new plugins.GenerateServiceWorker(Tools.extend(
             true,
             configuration.offline.common,
