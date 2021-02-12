@@ -1361,8 +1361,7 @@
             }
           }
         }
-      },
-      "offline": null
+      }
     },
     "library": {
       "commandLine": {
