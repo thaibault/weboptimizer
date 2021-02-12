@@ -132,6 +132,11 @@ if (configuration.library && specificConfiguration?.library !== false)
         libraryConfiguration
     )
 // endregion
+console.log(
+    'A',
+    configuration.offline,
+    configuration.offline?.common?.excludeChunks
+)
 // region merging and evaluating task specific and dynamic configurations
 // / region load additional dynamically given configuration
 let count = 0
@@ -201,9 +206,12 @@ Tools.extend(
 let result:null|PlainObject = null
 if (runtimeInformation.givenCommandLineArguments.length > 3)
     result = Tools.stringParseEncodedObject(
-        runtimeInformation.givenCommandLineArguments[runtimeInformation
-            .givenCommandLineArguments.length - 1],
-        configuration, 'configuration')
+        runtimeInformation.givenCommandLineArguments[
+            runtimeInformation.givenCommandLineArguments.length - 1
+        ],
+        configuration,
+        'configuration'
+    )
 if (result !== null && typeof result === 'object') {
     if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
         const referenceNames:Array<string> =
