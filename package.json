@@ -435,10 +435,11 @@
       "extensions": {
         "file": {
           "external": {
-            "__evaluate__": "self.generic.isWeb ? self.extensions.file.internal : ['.compiled.js', '.js', '.json']"
+            "__evaluate__": "self.generic.isWeb ? self.extensions.file.internal : ['.compiled.js', '.js', '.json', '.mjs']"
           },
           "internal": [
             ".compiled.js",
+            ".mjs",
             ".js",
             ".jsx",
             ".ts",
@@ -658,6 +659,7 @@
         "extensions": {
           "file": [
             ".compiled.js",
+            ".mjs",
             ".js"
           ]
         },
