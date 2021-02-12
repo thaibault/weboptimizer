@@ -132,11 +132,6 @@ if (configuration.library && specificConfiguration?.library !== false)
         libraryConfiguration
     )
 // endregion
-console.log(
-    'A',
-    configuration.offline,
-    configuration.offline?.common?.excludeChunks
-)
 // region merging and evaluating task specific and dynamic configurations
 // / region load additional dynamically given configuration
 let count = 0
