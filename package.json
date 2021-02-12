@@ -1084,7 +1084,7 @@
       },
       "offline": {
         "common": {
-          "excludeChunks": [
+          "exclude": [
             "#: Source mapping files.",
             {
               "__evaluate__": "new RegExp(`^(.*/*)?.+\\.map?(${self.hashAlgorithm}=.*)?$`)"
