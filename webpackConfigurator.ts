@@ -341,7 +341,7 @@ if (
                             tag:HTMLPlugin.HtmlTagObject
                         ):HTMLPlugin.HtmlTagObject => {
                             let settings:InPlaceAssetConfiguration|undefined
-                            let url:boolean|string = false
+                            let url:boolean|null|string|undefined = false
                             if (tag.tagName === 'script') {
                                 settings = configuration.inPlace.javaScript
                                 url = tag.attributes.src
