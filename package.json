@@ -694,8 +694,17 @@
           "exclude": null,
           "loader": "html-loader",
           "options": {
-            "#": "Configure to resolve artefacts referenced by image or link tags (minimize configuration object has to be \"false\" in case it resolves to \"null\").",
-            "__evaluate__": "{minimize: self.module.optimizer.htmlMinifier || false}"
+            "minimize": {
+              "__evaluate__": "self.module.optimizer.htmlMinifier || false"
+            },
+            "sources": {
+              "list": [
+                "..."
+              ],
+              "urlFilter": {
+                "__evaluate__": "(attributeName, reference) => !reference.endsWith('.js')"
+              }
+            }
           }
         },
         "optimizer": {
