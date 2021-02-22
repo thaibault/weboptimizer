@@ -80,6 +80,7 @@
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "*",
     "@babel/runtime": "*",
+    "@types/webpack": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz",
     "babel-loader": "*",
     "babel-plugin-transform-modern-regexp": "*",
     "babel-preset-minify": "*",
@@ -126,11 +127,13 @@
     "eslint": "*",
     "eslint-config-google": "*",
     "eslint-plugin-jsdoc": "*",
+    "favicons": "*",
     "favicons-webpack-plugin": "*",
     "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
     "mkdirp": "*",
+    "postcss": "*",
     "postcss-fontpath": "*",
     "postcss-import": "*",
     "postcss-loader": "*",
@@ -150,7 +153,6 @@
     "@types/html-minifier": "*",
     "@types/jest": "*",
     "@types/jsdom": "*",
-    "@types/loader-utils": "*",
     "@types/node": "*",
     "@types/webpack-env": "*",
     "@types/workbox-webpack-plugin": "*",
@@ -180,6 +182,9 @@
     "typescript-plugin-css-modules": "*",
     "webpack-dev-server": "*",
     "workbox-webpack-plugin": "*"
+  },
+  "resolutions": {
+    "@types/webpack": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
   },
   "sideEffects": true,
   "configuration": {
