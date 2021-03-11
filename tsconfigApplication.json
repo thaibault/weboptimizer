@@ -1,4 +1,9 @@
 {
+    "compilerOptions": {
+        "paths": {
+            "@source/*": ["source/*"]
+        }
+    },
     "extends": "./tsconfig.json",
     "include": ["../../source/*.ts", "../../source/*.tsx"]
 }
