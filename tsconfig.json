@@ -2,6 +2,7 @@
     "compilerOptions": {
         "allowJs": true,
         "allowUmdGlobalAccess": true,
+        "baseUrl": "../../",
         "checkJs": true,
         "declaration": true,
         "esModuleInterop": true,
@@ -12,9 +13,13 @@
         "module": "esnext",
         "moduleResolution": "node",
         "noEmit": true,
+        "paths": {
+            "@root/*": ["*"]
+        },
         "plugins": [{"name": "typescript-plugin-css-modules"}],
         "resolveJsonModule": true,
         "strict": true,
         "target": "esnext"
-    }
+    },
+    "include": ["*.ts", "*.tsx"]
 }
