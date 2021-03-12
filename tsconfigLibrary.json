@@ -1,7 +1,15 @@
 {
     "compilerOptions": {
         "paths": {
-            "@source/*": ["*"]
+            "@asset/*": ["*"],
+            "@cascadingStyleSheet/*": ["*"],
+            "@data/*": ["*"],
+            "@font/*": ["*"],
+            "@image/*": ["*"],
+            "@javaScript/*": ["*"],
+            "@root/*": ["*"],
+            "@source/*": ["*"],
+            "@template/*": ["*"]
         }
     },
     "extends": "./tsconfig.json",
