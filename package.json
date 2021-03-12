@@ -681,31 +681,31 @@
         "aliases": {
           "#": "Local references to avoid relative paths in complex file structures.",
           "@asset": {
-            "__evaluate__": "path.join(self.path.base, self.path.source.base, self.path.source.asset.base)"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base)))"
           },
           "@cascadingStyleSheet": {
-            "__evaluate__": "path.join(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.cascadingStyleSheet)"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.cascadingStyleSheet)))"
           },
           "@data": {
-            "__evaluate__": "path.join(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.data)"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.data)))"
           },
           "@font": {
-            "__evaluate__": "path.join(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.font)"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.font)))"
           },
           "@image": {
-            "__evaluate__": "path.join(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.image)"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.image)))"
           },
           "@javaScript": {
-            "__evaluate__": "path.join(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.javaScript)"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.javaScript)))"
           },
           "@root": {
-            "__evaluate__": "self.path.base"
+            "__evaluate__": "path.join('/', path.relative(self.path.context, self.path.base))"
           },
           "@source": {
-            "__evaluate__": "path.join(self.path.base, self.path.source.base)"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base)))"
           },
           "@template": {
-            "__evaluate__": "path.join(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.template)"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.template)))"
           }
         },
         "cascadingStyleSheet": {
