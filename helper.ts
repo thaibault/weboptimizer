@@ -744,9 +744,8 @@ export class Helper {
                 referencePath,
                 pathsToIgnore
             ).filePaths
-        for (const name of ['entry', 'external']) {
-            const injectionType:GivenInjection =
-                injection[name as keyof GivenInjectionConfiguration]
+        for (const name of ['entry', 'external'] as const) {
+            const injectionType:GivenInjection = injection[name]
             /* eslint-disable curly */
             if (Tools.isPlainObject(injectionType)) {
                 for (let [chunkName, chunk] of Object.entries(injectionType))
