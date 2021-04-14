@@ -1656,9 +1656,9 @@
     "@types/estree" "*"
 
 "@types/eslint@*":
-  version "7.2.9"
-  resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.2.9.tgz#5d26eadbb6d04a225967176399a18eff622da982"
-  integrity sha512-SdAAXZNvWfhtf3X3y1cbbCZhP3xyPh7mfTvzV6CgfWc/ZhiHpyr9bVroe2/RCHIf7gczaNcprhaBLsx0CCJHQA==
+  version "7.2.10"
+  resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.2.10.tgz#4b7a9368d46c0f8cd5408c23288a59aa2394d917"
+  integrity sha512-kUEPnMKrqbtpCq/KTaGFFKAcz6Ethm2EjCoKIDaCmfRBWLbFuTcOJfTlorwbnboXBzahqWLgUp1BQeKHiJzPUQ==
   dependencies:
     "@types/estree" "*"
     "@types/json-schema" "*"
@@ -1786,9 +1786,9 @@
   integrity sha512-fZQQafSREFyuZcdWFAExYjBiCL7AUCdgsk80iO0q4yihYYdcIiH28CcuPTGFgLOCC8RlW49GSQxdHwZP+I7CNg==
 
 "@types/node@*":
-  version "14.14.37"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.37.tgz#a3dd8da4eb84a996c36e331df98d82abd76b516e"
-  integrity sha512-XYmBiy+ohOR4Lh5jE379fV2IU+6Jn4g5qASinhitfyO71b/sCo6MKsMLF5tc7Zf2CE8hViVQyYSobJNke8OvUw==
+  version "14.14.39"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.39.tgz#9ef394d4eb52953d2890e4839393c309aa25d2d1"
+  integrity sha512-Qipn7rfTxGEDqZiezH+wxqWYR8vcXq5LRpZrETD19Gs4o8LbklbmqotSUsMU+s5G3PJwMRDfNEYoxrcBwIxOuw==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -4247,14 +4247,13 @@ cssnano-utils@^2.0.0:
   integrity sha512-xvxmTszdrvSyTACdPe8VU5J6p4sm3egpgw54dILvNqt5eBUv6TFjACLhSxtRuEsxYrgy8uDy269YjScO5aKbGA==
 
 cssnano@*:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/cssnano/-/cssnano-5.0.0.tgz#6d6c19074a17b11601f2a15f5b1488ae64eab528"
-  integrity sha512-beaqJEU9aI0B2PpKWXy+UJdtw+Q2J2c2f2nHVphL/gb2wvkuQV+Zxf5Q5SsNXiPUb9Djo/+ja+UOelQWhHnVow==
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/cssnano/-/cssnano-5.0.1.tgz#ed4822c4a9212f22f6820717859c52a6b7f9cf5c"
+  integrity sha512-5WubEmKcK2cqw43DUAayRBiIlTdX7iX3ZowrWDVxSVcW3hyohVnbJ4K4mbnWtJp5rfJnUwHg5H4mDAGzmuCM3g==
   dependencies:
     cosmiconfig "^7.0.0"
     cssnano-preset-default "^5.0.0"
     is-resolvable "^1.1.0"
-    opencollective-postinstall "^2.0.2"
 
 csso@^4.0.2, csso@^4.2.0:
   version "4.2.0"
@@ -4598,9 +4597,9 @@ ejs@^2.6.1:
   integrity sha512-7vmuyh5+kuUyJKePhQfRQBhXV5Ce+RnaeeQArKu1EAMpL3WbgMt5WG6uQZpEVvYSSsxMXRKOewtDk9RaTKXRlA==
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.712:
-  version "1.3.713"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.713.tgz#4583efb17f2d1e9ec07a44c8004ea73c013ad146"
-  integrity sha512-HWgkyX4xTHmxcWWlvv7a87RHSINEcpKYZmDMxkUlHcY+CJcfx7xEfBHuXVsO1rzyYs1WQJ7EgDp2CoErakBIow==
+  version "1.3.717"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.717.tgz#78d4c857070755fb58ab64bcc173db1d51cbc25f"
+  integrity sha512-OfzVPIqD1MkJ7fX+yTl2nKyOE4FReeVfMCzzxQS+Kp43hZYwHwThlGP+EGIZRXJsxCM7dqo8Y65NOX/HP12iXQ==
 
 emittery@^0.7.1:
   version "0.7.2"
@@ -8284,11 +8283,6 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-opencollective-postinstall@^2.0.2:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz#7a0fff978f6dbfa4d006238fbac98ed4198c3259"
-  integrity sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
-
 optionator@^0.8.1:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.8.3.tgz#84fa1d036fe9d3c7e21d99884b601167ec8fb495"
@@ -10977,9 +10971,9 @@ symbol-tree@^3.2.4:
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
 table@^6.0.4, table@^6.0.7:
-  version "6.0.9"
-  resolved "https://registry.yarnpkg.com/table/-/table-6.0.9.tgz#790a12bf1e09b87b30e60419bafd6a1fd85536fb"
-  integrity sha512-F3cLs9a3hL1Z7N4+EkSscsel3z55XT950AvB05bwayrNg5T1/gykXtigioTAjbltvbMSJvvhFCbnf6mX+ntnJQ==
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/table/-/table-6.1.0.tgz#676a0cfb206008b59e783fcd94ef8ba7d67d966c"
+  integrity sha512-T4G5KMmqIk6X87gLKWyU5exPpTjLjY5KyrFWaIjv3SvgaIUGXV7UEzGEnZJdTA38/yUS6f9PlKezQ0bYXG3iIQ==
   dependencies:
     ajv "^8.0.1"
     is-boolean-object "^1.1.0"
@@ -11755,9 +11749,9 @@ webpack-sources@^1.1.0, webpack-sources@^1.4.3:
     source-map "~0.6.1"
 
 webpack@*:
-  version "5.32.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.32.0.tgz#f013932d778dad81bd51292d0ea00865056dc22c"
-  integrity sha512-jB9PrNMFnPRiZGnm/j3qfNqJmP3ViRzkuQMIf8za0dgOYvSLi/cgA+UEEGvik9EQHX1KYyGng5PgBTTzGrH9xg==
+  version "5.33.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.33.2.tgz#c049717c9b038febf5a72fd2f53319ad59a8c1fc"
+  integrity sha512-X4b7F1sYBmJx8mlh2B7mV5szEkE0jYNJ2y3akgAP0ERi0vLCG1VvdsIxt8lFd4st6SUy0lf7W0CCQS566MBpJg==
   dependencies:
     "@types/eslint-scope" "^3.7.0"
     "@types/estree" "^0.0.46"
