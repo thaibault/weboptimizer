@@ -3733,9 +3733,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.727"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.727.tgz#4b0cb99c9148e86c5bfe5927d1347b8e400c9cce"
-  integrity sha512-fFd+t4G1LvewsLRaaMNlupoedKJJUI88rg+crnHUI5cYSIPflCC02QYah3QeSry9P9IsuHr5/32Z5kbjr7AjKw==
+  version "3.0.728"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.728.tgz#944604932053d5e11dda2b676675f0af19b0b937"
+  integrity sha512-T6VkzbfqI6qUdta3+F0q9vuoGCntPXwHRKKq2D2T1Won9rChr320hwm+g6APbLpHjgkobnwsMIYa67e/gGIzNA==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
 
@@ -6213,9 +6213,9 @@ is-color-stop@^1.1.0:
     rgba-regex "^1.0.0"
 
 is-core-module@^2.2.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.3.0.tgz#d341652e3408bca69c4671b79a0954a3d349f887"
-  integrity sha512-xSphU2KG9867tsYdLD4RWQ1VqdFl4HTO9Thf3I/3dLEfr0dbPTWKsuCKrgqMljg4nPE+Gq0VCnzT3gr0CyBmsw==
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.4.0.tgz#8e9fc8e15027b011418026e98f0e6f4d86305cc1"
+  integrity sha512-6A2fkfq1rfeQZjxrZJGerpLCTHRNEBiSgnu0+obeJpEPZRUooHgsizvzv0ZjJwOz3iWIHdJtVWJ/tmPr3D21/A==
   dependencies:
     has "^1.0.3"
 
