@@ -3733,9 +3733,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.734"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.734.tgz#037d29d1f049b509ec47cacbb4e35825ccdecf4e"
-  integrity sha512-J2QyoIXmr9Et7uEpz5zCstIoNfzDS6Eika1h4vlXUa9SRtTGFlGfhua/CBhHxT6b52yXumaLP1Y/OCaiCrjeCw==
+  version "3.0.735"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.735.tgz#299ec3e3f51a03bff2b5acfa0b79ec4d4dab0745"
+  integrity sha512-8RC2n4U8yrIwutISAcX6wItcXARWXL9Goe6fQVXBYiQ0yxi5wgwsPMccFMia9YdmCKmvRg0Zt2qQa7DqHtJWKA==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
 
@@ -4822,9 +4822,9 @@ eslint-config-google@*:
   integrity sha512-WsbX4WbjuMvTdeVL6+J3rK1RGhCTqjsFjX7UMSMgZiyxxaNLkoJENbrGExzERFeoTpGw3F3FypTiWAP9ZXzkEw==
 
 eslint-plugin-jsdoc@*:
-  version "35.3.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-35.3.1.tgz#82e678d0ab5b2336e08fe5a6aa29b7449bfe1475"
-  integrity sha512-/eJ6BjBRZ/dCqbh4C7UdK4UqFzw3Is22Zp1/AN1xxTtnNrrxd/oGkYmnebeXmsS1PKqZpuDczW63DUYHmZdNYA==
+  version "35.3.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-35.3.2.tgz#b4115c5c2505e2c7e1e94f1cdf0b698b7dc70f68"
+  integrity sha512-r3qfbByMZ4O5Y8O6aHxo1AdgdpwTQSD72anIZuhjNI6ZkMtjhpSkkPN3cY/tsZtmWeMH+1pB/nblWIAr3F0lxA==
   dependencies:
     "@es-joy/jsdoccomment" "^0.8.0-alpha.2"
     comment-parser "1.1.5"
