@@ -175,11 +175,14 @@ export type WebpackLoader = {
     loader:string
     options?:PlainObject
 }
-export type LoaderConfiguration = WebpackLoader & {
-    additional:AdditionalLoader
+export type ResourceLoaderConfiguration = WebpackLoader & {
     exclude:BooleanExpression
     include:BooleanExpression
+    loader:Array<string>
     regularExpression:string
+}
+export type LoaderConfiguration = ResourceLoaderConfiguration & {
+    additional:AdditionalLoaderConfigurations
 }
 export type WebpackLoaderConfiguration = {
     exclude:WebpackLoaderIndicator
@@ -335,7 +338,7 @@ export type ResolvedConfiguration = {
     module:{
         additional:AdditionalLoaderConfigurations
         aliases:Mapping
-        cascadingStyleSheet:LoaderConfiguration
+        cascadingStyleSheet:ResourceLoaderConfiguration
         directoryNames:Array<string>
         enforceDeduplication:boolean
         html:LoaderConfiguration
@@ -352,20 +355,18 @@ export type ResolvedConfiguration = {
                 module?:PlainObject
             }
             cssnano:PlainObject
-            data:LoaderConfiguration
+            data:ResourceLoaderConfiguration
             font:{
-                eot:LoaderConfiguration
-                svg:LoaderConfiguration
-                ttf:LoaderConfiguration
-                woff:LoaderConfiguration
+                eot:ResourceLoaderConfiguration
+                svg:ResourceLoaderConfiguration
+                ttf:ResourceLoaderConfiguration
+                woff:ResourceLoaderConfiguration
             }
             htmlMinifier?:PlainObject
             image:{
-                additional:AdditionalLoader
                 content:PlainObject
                 exclude:string
-                file:PlainObject
-                loader:string
+                loader:Array<string>
             }
             minimize:boolean
             minimizer:Array<PlainObject>

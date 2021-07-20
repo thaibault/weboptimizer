@@ -88,7 +88,6 @@
     "ejs": "*",
     "exports-loader": "*",
     "extract-loader": "*",
-    "file-loader": "*",
     "html-loader": "*",
     "html-minifier": "*",
     "html-webpack-plugin": "*",
@@ -98,7 +97,6 @@
     "rimraf": "*",
     "script-loader": "*",
     "typescript": "*",
-    "url-loader": "*",
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-sources": "*"
@@ -773,87 +771,25 @@
             }
           },
           "data": {
-            "additional": {
-              "post": [],
-              "pre": []
-            },
             "exclude": null,
-            "loader": "url-loader",
-            "options": {
-              "limit": {
-                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-              },
-              "name": {
-                "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.data), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
-              }
-            }
+            "loader": []
           },
           "font": {
             "eot": {
-              "additional": {
-                "post": [],
-                "pre": []
-              },
               "exclude": null,
-              "loader": "url-loader",
-              "options": {
-                "limit": {
-                  "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                },
-                "name": {
-                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
-                }
-              }
+              "loader": []
             },
             "svg": {
-              "additional": {
-                "post": [],
-                "pre": []
-              },
               "exclude": null,
-              "loader": "url-loader",
-              "options": {
-                "limit": {
-                  "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                },
-                "mimetype": "image/svg+xml",
-                "name": {
-                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
-                }
-              }
+              "loader": []
             },
             "ttf": {
-              "additional": {
-                "post": [],
-                "pre": []
-              },
               "exclude": null,
-              "loader": "url-loader",
-              "options": {
-                "limit": {
-                  "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                },
-                "mimetype": "application/octet-stream",
-                "name": {
-                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
-                }
-              }
+              "loader": []
             },
             "woff": {
-              "additional": {
-                "post": [],
-                "pre": []
-              },
               "exclude": null,
-              "loader": "url-loader",
-              "options": {
-                "limit": {
-                  "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-                },
-                "name": {
-                  "__evaluate__": "`${path.join(path.relative(self.path.target.base, self.path.target.asset.font), '[name].[ext]')}?${self.hashAlgorithm}=[chunkhash]`"
-                }
-              }
+              "loader": []
             }
           },
           "htmlMinifier": {
@@ -899,10 +835,6 @@
             "useShortDoctype": false
           },
           "image": {
-            "additional": {
-              "post": [],
-              "pre": []
-            },
             "content": {
               "disable": {
                 "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? true : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{disable:false}}}}}\" to enable it.`) || true"
@@ -923,15 +855,7 @@
               "pngquant": null,
               "svgo": {}
             },
-            "file": {
-              "limit": {
-                "__evaluate__": "self.inPlace.otherMaximumFileSizeLimitInByte"
-              },
-              "name": {
-                "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, '[name].[ext]'))}?${self.hashAlgorithm}=[chunkhash]`"
-              }
-            },
-            "loader": "url-loader"
+            "loader": []
           },
           "minimize": true,
           "minimizer": {

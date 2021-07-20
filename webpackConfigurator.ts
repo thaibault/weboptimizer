@@ -1392,16 +1392,15 @@ Tools.extend(loader, {
                         filePath
                     ),
             test: /\.eot(?:\?.*)?$/i,
-            use: configuration.module.optimizer.font.eot.additional.pre.map(
+            type: 'asset/resource',
+            parser: {
+                dataUrlCondition: {
+                    maxSize:
+                        configuration.inPlace.otherMaximumFileSizeLimitInByte
+                }
+            },
+            use: configuration.module.optimizer.font.eot.loader.map(
                 evaluateMapper
-            ).concat(
-                {
-                    loader: configuration.module.optimizer.font.eot.loader,
-                    options: configuration.module.optimizer.font.eot.options ||
-                        {}
-                },
-                configuration.module.optimizer.font.eot.additional.post
-                    .map(evaluateMapper)
             )
         },
         svg: {
@@ -1412,17 +1411,17 @@ Tools.extend(loader, {
                         configuration.module.optimizer.font.svg.exclude,
                         filePath
                     ),
+            mimetype: 'image/svg+xml',
+            parser: {
+                dataUrlCondition: {
+                    maxSize:
+                        configuration.inPlace.otherMaximumFileSizeLimitInByte
+                }
+            },
             test: /\.svg(?:\?.*)?$/i,
-            use: configuration.module.optimizer.font.svg.additional.pre.map(
+            type: 'asset/resource',
+            use: configuration.module.optimizer.font.svg.loader.map(
                 evaluateMapper
-            ).concat(
-                {
-                    loader: configuration.module.optimizer.font.svg.loader,
-                    options: configuration.module.optimizer.font.svg.options ||
-                        {}
-                },
-                configuration.module.optimizer.font.svg.additional.post
-                    .map(evaluateMapper)
             )
         },
         ttf: {
@@ -1434,16 +1433,16 @@ Tools.extend(loader, {
                         filePath
                     ),
             test: /\.ttf(?:\?.*)?$/i,
-            use: configuration.module.optimizer.font.ttf.additional.pre.map(
+            type: 'asset/resource',
+            mimetype: 'application/octet-stream',
+            parser: {
+                dataUrlCondition: {
+                    maxSize:
+                        configuration.inPlace.otherMaximumFileSizeLimitInByte
+                }
+            },
+            use: configuration.module.optimizer.font.ttf.loader.map(
                 evaluateMapper
-            ).concat(
-                {
-                    loader: configuration.module.optimizer.font.ttf.loader,
-                    options: configuration.module.optimizer.font.ttf.options ||
-                        {}
-                },
-                configuration.module.optimizer.font.ttf.additional.post
-                    .map(evaluateMapper)
             )
         },
         woff: {
@@ -1455,17 +1454,16 @@ Tools.extend(loader, {
                         filePath
                     ),
             test: /\.woff2?(?:\?.*)?$/i,
-            use: configuration.module.optimizer.font.woff.additional.pre
-                .map(evaluateMapper)
-                .concat(
-                    {
-                        loader: configuration.module.optimizer.font.woff.loader,
-                        options:
-                            configuration.module.optimizer.font.woff.options || {}
-                    },
-                    configuration.module.optimizer.font.woff.additional.post
-                        .map(evaluateMapper)
-                )
+            type: 'asset/resource',
+            parser: {
+                dataUrlCondition: {
+                    maxSize:
+                        configuration.inPlace.otherMaximumFileSizeLimitInByte
+                }
+            },
+            use: configuration.module.optimizer.font.woff.loader.map(
+                evaluateMapper
+            )
         }
     },
     // endregion
@@ -1479,16 +1477,13 @@ Tools.extend(loader, {
                 ),
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
-        use: configuration.module.optimizer.image.additional.pre.map(
-            evaluateMapper
-        ).concat(
-            {
-                loader: configuration.module.optimizer.image.loader,
-                options: configuration.module.optimizer.image.file || {}
-            },
-            configuration.module.optimizer.image.additional.post
-                .map(evaluateMapper)
-        )
+        type: 'asset/resource',
+        parser: {
+            dataUrlCondition: {
+                maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
+            }
+        },
+        use: configuration.module.optimizer.image.loader.map(evaluateMapper)
     },
     // endregion
     // region data
@@ -1507,16 +1502,13 @@ Tools.extend(loader, {
                     )
             )},
         test: /.+/,
-        use: configuration.module.optimizer.data.additional.pre.map(
-            evaluateMapper
-        ).concat(
-            {
-                loader: configuration.module.optimizer.data.loader,
-                options: configuration.module.optimizer.data.options || {}
-            },
-            configuration.module.optimizer.data.additional.post
-                .map(evaluateMapper)
-        )
+        type: 'asset/resource',
+        parser: {
+            dataUrlCondition: {
+                maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
+            }
+        },
+        use: configuration.module.optimizer.data.loader.map(evaluateMapper)
     }
     // endregion
 })
