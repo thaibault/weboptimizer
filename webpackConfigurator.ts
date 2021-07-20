@@ -1531,7 +1531,7 @@ Tools.extend(loader, {
                 `?${configuration.hashAlgorithm}=[chunkhash]`
         },
         include: configuration.path.source.asset.image,
-        test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
+        test: /\.(?:gif|ico|jpg|png|)(?:\?.*)?$/i,
         type: 'asset/resource',
         parser: {
             dataUrlCondition: {
