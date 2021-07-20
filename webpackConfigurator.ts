@@ -1391,6 +1391,17 @@ Tools.extend(loader, {
                         configuration.module.optimizer.font.eot.exclude,
                         filePath
                     ),
+            generator: {
+                filename:
+                    path.join(
+                        path.relative(
+                            configuration.path.target.base,
+                            configuration.path.target.asset.font
+                        ),
+                        '[name].[ext]'
+                    ) +
+                    `?${configuration.hashAlgorithm}=[chunkhash]`
+            },
             test: /\.eot(?:\?.*)?$/i,
             type: 'asset/resource',
             parser: {
@@ -1411,6 +1422,17 @@ Tools.extend(loader, {
                         configuration.module.optimizer.font.svg.exclude,
                         filePath
                     ),
+            generator: {
+                filename:
+                    path.join(
+                        path.relative(
+                            configuration.path.target.base,
+                            configuration.path.target.asset.font
+                        ),
+                        '[name].[ext]'
+                    ) +
+                    `?${configuration.hashAlgorithm}=[chunkhash]`
+            },
             mimetype: 'image/svg+xml',
             parser: {
                 dataUrlCondition: {
@@ -1432,6 +1454,17 @@ Tools.extend(loader, {
                         configuration.module.optimizer.font.ttf.exclude,
                         filePath
                     ),
+            generator: {
+                filename:
+                    path.join(
+                        path.relative(
+                            configuration.path.target.base,
+                            configuration.path.target.asset.font
+                        ),
+                        '[name].[ext]'
+                    ) +
+                    `?${configuration.hashAlgorithm}=[chunkhash]`
+            },
             test: /\.ttf(?:\?.*)?$/i,
             type: 'asset/resource',
             mimetype: 'application/octet-stream',
@@ -1453,6 +1486,17 @@ Tools.extend(loader, {
                         configuration.module.optimizer.font.woff.exclude,
                         filePath
                     ),
+            generator: {
+                filename:
+                    path.join(
+                        path.relative(
+                            configuration.path.target.base,
+                            configuration.path.target.asset.font
+                        ),
+                        '[name].[ext]'
+                    ) +
+                    `?${configuration.hashAlgorithm}=[chunkhash]`
+            },
             test: /\.woff2?(?:\?.*)?$/i,
             type: 'asset/resource',
             parser: {
@@ -1475,6 +1519,17 @@ Tools.extend(loader, {
                 evaluate(
                     configuration.module.optimizer.image.exclude, filePath
                 ),
+        generator: {
+            filename:
+                path.join(
+                    path.relative(
+                        configuration.path.target.base,
+                        configuration.path.target.asset.image
+                    ),
+                    '[name].[ext]'
+                ) +
+                `?${configuration.hashAlgorithm}=[chunkhash]`
+        },
         include: configuration.path.source.asset.image,
         test: /\.(?:png|jpg|ico|gif)(?:\?.*)?$/i,
         type: 'asset/resource',
@@ -1501,6 +1556,17 @@ Tools.extend(loader, {
                         configuration.module.optimizer.data.exclude, filePath
                     )
             )},
+        generator: {
+            filename:
+                path.join(
+                    path.relative(
+                        configuration.path.target.base,
+                        configuration.path.target.asset.data
+                    ),
+                    '[name].[ext]'
+                ) +
+                `?${configuration.hashAlgorithm}=[chunkhash]`
+        },
         test: /.+/,
         type: 'asset/resource',
         parser: {
@@ -1609,6 +1675,14 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
         // endregion
         // region output
         output: {
+            assetModuleFilename: path.join(
+                path.relative(
+                    configuration.path.target.base,
+                    configuration.path.target.asset.base
+                ),
+                '[name].[ext]'
+            ) +
+            `?${configuration.hashAlgorithm}=[chunkhash]`,
             filename: path.relative(
                 configuration.path.target.base,
                 configuration.files.compose.javaScript
