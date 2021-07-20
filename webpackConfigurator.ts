@@ -1422,6 +1422,7 @@ Tools.extend(loader, {
                         configuration.module.optimizer.font.svg.exclude,
                         filePath
                     ),
+            include: configuration.path.source.asset.font,
             generator: {
                 filename:
                     path.join(
@@ -1531,7 +1532,7 @@ Tools.extend(loader, {
                 `?${configuration.hashAlgorithm}=[chunkhash]`
         },
         include: configuration.path.source.asset.image,
-        test: /\.(?:gif|ico|jpg|png|)(?:\?.*)?$/i,
+        test: /\.(?:gif|ico|jpg|png|svg)(?:\?.*)?$/i,
         type: 'asset/resource',
         parser: {
             dataUrlCondition: {

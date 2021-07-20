@@ -1427,7 +1427,6 @@
           "asset": {
             "cascadingStyleSheet": "./",
             "javaScript": "./",
-            "font": "./",
             "image": "./",
             "template": "./",
             "data": "./"
@@ -1438,7 +1437,6 @@
           "asset": {
             "cascadingStyleSheet": "./",
             "javaScript": "./",
-            "font": "./",
             "image": "./",
             "template": "./",
             "data": "./"
