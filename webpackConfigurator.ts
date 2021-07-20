@@ -1224,7 +1224,7 @@ Tools.extend(loader, {
                                 configuration.path.target.base,
                                 configuration.path.target.asset.template
                             ),
-                            `[name].[ext]?${configuration.hashAlgorithm}=` +
+                            `[name][ext]?${configuration.hashAlgorithm}=` +
                             '[chunkhash]'
                         )
                 },
@@ -1398,7 +1398,7 @@ Tools.extend(loader, {
                             configuration.path.target.base,
                             configuration.path.target.asset.font
                         ),
-                        '[name].[ext]'
+                        '[name][ext]'
                     ) +
                     `?${configuration.hashAlgorithm}=[chunkhash]`
             },
@@ -1429,7 +1429,7 @@ Tools.extend(loader, {
                             configuration.path.target.base,
                             configuration.path.target.asset.font
                         ),
-                        '[name].[ext]'
+                        '[name][ext]'
                     ) +
                     `?${configuration.hashAlgorithm}=[chunkhash]`
             },
@@ -1461,7 +1461,7 @@ Tools.extend(loader, {
                             configuration.path.target.base,
                             configuration.path.target.asset.font
                         ),
-                        '[name].[ext]'
+                        '[name][ext]'
                     ) +
                     `?${configuration.hashAlgorithm}=[chunkhash]`
             },
@@ -1493,7 +1493,7 @@ Tools.extend(loader, {
                             configuration.path.target.base,
                             configuration.path.target.asset.font
                         ),
-                        '[name].[ext]'
+                        '[name][ext]'
                     ) +
                     `?${configuration.hashAlgorithm}=[chunkhash]`
             },
@@ -1526,7 +1526,7 @@ Tools.extend(loader, {
                         configuration.path.target.base,
                         configuration.path.target.asset.image
                     ),
-                    '[name].[ext]'
+                    '[name][ext]'
                 ) +
                 `?${configuration.hashAlgorithm}=[chunkhash]`
         },
@@ -1563,7 +1563,7 @@ Tools.extend(loader, {
                         configuration.path.target.base,
                         configuration.path.target.asset.data
                     ),
-                    '[name].[ext]'
+                    '[name][ext]'
                 ) +
                 `?${configuration.hashAlgorithm}=[chunkhash]`
         },
@@ -1680,7 +1680,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                     configuration.path.target.base,
                     configuration.path.target.asset.base
                 ),
-                '[name].[ext]'
+                '[name][ext]'
             ) +
             `?${configuration.hashAlgorithm}=[chunkhash]`,
             filename: path.relative(
