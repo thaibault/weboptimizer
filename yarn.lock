@@ -3736,9 +3736,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.744"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.744.tgz#29c0d52fd406eb692d3fb23b0c583a79aae67956"
-  integrity sha512-HpfVW1PTzbu6XxGlLeZL2jYpH83/XF+yRtZPFxeoOjRE7g25J8K94hlDJmoWgCTc3fdAcudRQG7v/7A0gbg9mg==
+  version "3.0.746"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.746.tgz#285294da69dc77850073897398fadf96342b8f96"
+  integrity sha512-CwI9EPYt1SfT83r5N4HeiRzV518njha/Rju2RMCCQt8n/Q5HQ2CWjiLKihcy+5fnghH4IdGdRuMRpq9WA5NVFQ==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
 
@@ -4519,10 +4519,11 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation-website@*:
-  version "1.0.234"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.234.tgz#bc90958f5c416b676a68c26544cfba91cc28b7d9"
-  integrity sha512-o7EzV0SnbfYFTvcJ+jbH9mOOaGnzDMKRmsZQBsKwiaQa/msysV9kJiDj20jtBuNnFdU0LJr8a1XcXTYYeOBNCg==
+  version "1.0.237"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.237.tgz#bd8a685bef8e8ad7949af583a7dab13f3f0c0589"
+  integrity sha512-wq1Zsp06tRaEnk1EOgbIUxhuH92PkplX6+DTNra6kDJ3J3mzRTj0VRw4PVBuIXpoxKr19dXljq1rwGZMKaehLA==
   dependencies:
+    "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
     boostnode "*"
     bootstrap "^3.3.7"
     website-utilities "*"
@@ -10689,9 +10690,9 @@ strip-json-comments@~2.0.1:
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
 style-loader@*:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.1.0.tgz#e52a22ca2fd1f54c03f2c3e69b10182e68120908"
-  integrity sha512-HYVvBMX3RX7zx71pquZV6EcnPN7Deba+zQteSxCLqt3bxYRphmeMr+2mZMrIZjZ7IMa6aOUhNGn8cXGvWMjClw==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.2.0.tgz#fa801af2c67141d3858d9d1ebf1c928e30319cdd"
+  integrity sha512-rNMY2FlUalfQT40wfCM0qNywjnz+lCNLOAsg0pci3Cw9M7A+r1wMepcuDHcApnFiFmt/AJSF1yTUPK9RMDQgGQ==
 
 style-search@^0.1.0:
   version "0.1.0"
@@ -11676,9 +11677,9 @@ webpack-merge@^5.7.3:
     wildcard "^2.0.0"
 
 webpack-sources@*, webpack-sources@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-2.3.0.tgz#9ed2de69b25143a4c18847586ad9eccb19278cfa"
-  integrity sha512-WyOdtwSvOML1kbgtXbTDnEW0jkJ7hZr/bDByIwszhWd/4XX1A3XMkrbFMsuH4+/MfLlZCUzlAdg4r7jaGKEIgQ==
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-2.3.1.tgz#570de0af163949fe272233c2cefe1b56f74511fd"
+  integrity sha512-y9EI9AO42JjEcrTJFOYmVywVZdKVUfOvDUPsJea5GIr1JOEGFVqwlY2K098fFoIjOkDzHn2AjRvM8dsBZu+gCA==
   dependencies:
     source-list-map "^2.0.1"
     source-map "^0.6.1"
@@ -11721,9 +11722,9 @@ webpack@*:
     webpack-sources "^2.3.0"
 
 website-utilities@*:
-  version "1.0.237"
-  resolved "https://registry.yarnpkg.com/website-utilities/-/website-utilities-1.0.237.tgz#68d79696f0dc5b4f6e455aaba46b10356d039b55"
-  integrity sha512-XLurKYNnNBY9jlZUSCwMTEAf2apxzwE7sT7mgL8WVB/sqYmj2muI0zXLsCir1f43W6rESv9vylTO6Wl5L424NQ==
+  version "1.0.239"
+  resolved "https://registry.yarnpkg.com/website-utilities/-/website-utilities-1.0.239.tgz#8cd3642f9a9e204f2611215303a3dc61fa39d64c"
+  integrity sha512-ij5EjY8yXUiliz4YM8oFQ3hIkPMWxTDctHDtn/qbuS/fkQJiupTn8hmkr2KQO6YJVXuVdpwszRrpPpD6D0zfaQ==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
 
