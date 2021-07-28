@@ -3736,9 +3736,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.751"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.751.tgz#f5529248e946d24b2d19d60090cbb69524aa6e8a"
-  integrity sha512-V0Dtj6AK/MkH8uvMa5bsP/l2FVcMa2K5AcCAe9Lj9A5feFOm1JgsyorlrsOvdbeFEbGHiYDo32ynDTXyE8qY1A==
+  version "3.0.753"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.753.tgz#592c577c1906e5e0c4aab1834e451074f91b6cd6"
+  integrity sha512-Yc+SCop9nTlp4sYUbNjoUXu896IHBvBSbIL/bVXk3GcpfdaJR2CWF/tYZrSzVO7dDku4iM38BtP63BklhTqV9A==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
 
@@ -11678,9 +11678,9 @@ webpack-merge@^5.7.3:
     wildcard "^2.0.0"
 
 webpack-sources@*, webpack-sources@^3.0.1:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.0.2.tgz#29942415daf201a06278f8e2b92e44e564a9288e"
-  integrity sha512-XQ6aGLmqoxZtmpbgwySGhYLNFav1W6+qgMWPGgn6qScxfGrQgMdigkUqZXQ7oB0ydUrvfs9RRyHaSfV153K8Xg==
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.0.3.tgz#33c478e1f67bf5577d3ec5ced4bded0a06ec88d0"
+  integrity sha512-/Qgfp3i1FT2z/tpNj+d/ZeDTbdOWG5V6DdTjIvMLVhrhtpFxmMTZrGnEQEa0J7HF8Plls5kGa7TZ7IsvgnFdtA==
 
 webpack-sources@^1.4.3:
   version "1.4.3"
