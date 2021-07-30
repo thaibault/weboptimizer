@@ -108,7 +108,6 @@
     "@types/html-minifier-terser": "*",
     "@types/jest": "*",
     "@types/jsdom": "*",
-    "@types/loader-utils": "*",
     "@types/node": "*",
     "@types/rimraf": "*",
     "@types/vfile-message": "*",
