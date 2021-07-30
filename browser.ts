@@ -16,8 +16,8 @@
 */
 // region imports
 import Tools, {ConsoleOutputMethods} from 'clientnode'
-import {ProcedureFunction} from 'clientnode/type'
-import {DOMWindow} from 'jsdom'
+import {ProcedureFunction, SynchronousProcedureFunction} from 'clientnode/type'
+import {DOMWindow, VirtualConsole} from 'jsdom'
 
 import {Browser, InitializedBrowser} from './type'
 // endregion
@@ -45,9 +45,11 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
     */
     (async ():Promise<void> => {
         // region mock browser environment
-        const [path, {JSDOM, VirtualConsole}] =
-            await Promise.all([import('path'), import('jsdom')])
-        const virtualConsole = new VirtualConsole()
+        const [{JSDOM, VirtualConsole: VirtualConsoleImplementation}, path] =
+            await Promise.all([import('jsdom'), import('path')])
+
+        const virtualConsole:VirtualConsole =
+            new VirtualConsoleImplementation()
         for (const name of ConsoleOutputMethods)
             virtualConsole.on(name, console[name].bind(console))
         virtualConsole.on(
@@ -67,6 +69,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     console.error(error.stack, error.detail)
             }
         )
+
         const render = (template:string):void => {
             browser.DOM = JSDOM
             browser.initialized = true
@@ -92,7 +95,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                                 true
                         })
                         for (const callback of onCreatedListener)
-                            callback()
+                            (callback as SynchronousProcedureFunction)()
                     },
                     resources: 'usable',
                     runScripts: 'dangerously',
@@ -115,7 +118,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
         } else
             render(await import('webOptimizerDefaultTemplateFilePath'))
         // endregion
-    })()
+    })().catch(console.error)
 else {
     browser.initialized = true
     browser.window = window

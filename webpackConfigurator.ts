@@ -17,7 +17,11 @@
 // region imports
 import Tools, {optionalRequire} from 'clientnode'
 import {
-    EvaluationResult, Mapping, PlainObject, ProcedureFunction, SecondParameter
+    EvaluationResult,
+    Mapping,
+    PlainObject,
+    SecondParameter,
+    SynchronousProcedureFunction
 } from 'clientnode/type'
 const postcssCSSnano:Function = optionalRequire('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
@@ -766,9 +770,8 @@ for (const contextReplacement of configuration.module.replacements.context)
 */
 if (configuration.module.enforceDeduplication) {
     const absoluteContextPath:string = path.resolve(configuration.path.context)
-    const consolidator:ProcedureFunction = (
-        result:WebpackResolveData
-    ):void => {
+
+    const consolidator = (result:WebpackResolveData):void => {
         const targetPath:string = result.createData.resource
 
         if (
