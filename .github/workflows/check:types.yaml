@@ -15,8 +15,11 @@ jobs:
 
       # Runs a set of commands using the runners shell
 
-      - name: Run install packages
-        run: npm install
+      - name: Install yarn
+        run: sudo npm install --global yarn
 
-      - name: Run check-types
-        run: npm run check:types
+      - name: Install packages marked as dependencies
+        run: yarn
+
+      - name: Check-types
+        run: yarn check:types
