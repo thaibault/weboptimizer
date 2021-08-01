@@ -110,8 +110,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 NOTE: We load dependencies now to avoid having file imports
                 after test runner has finished to isolate the environment.
             */
-            const ejsLoader:((source:string) => string) =
-                (await import('./ejsLoader')).default
+            const ejsLoader = (await import('./ejsLoader')).default
             const content:string = await (await import('fs')).promises
                 .readFile(filePath, {encoding: 'utf-8'})
             render(ejsLoader.bind({resourcePath: filePath})(content))
@@ -130,7 +129,7 @@ else {
     })
     Tools.timeout(():void => {
         for (const callback of onCreatedListener)
-            callback()
+            (callback as SynchronousProcedureFunction)()
     })
 }
 // endregion
@@ -143,9 +142,9 @@ else {
 export const getInitializedBrowser = async (
     replaceWindow = true
 ):Promise<InitializedBrowser> => {
-    let resolvePromise:Function
-    const promise:Promise<InitializedBrowser> = new Promise(
-        (resolve:Function):void => {
+    let resolvePromise:(_browser:InitializedBrowser) => void
+    const promise = new Promise<InitializedBrowser>(
+        (resolve:(_browser:InitializedBrowser) => void):void => {
             resolvePromise = resolve
         }
     )

@@ -1,13 +1,7 @@
 {
   "name": "weboptimizer",
   "version": "2.0.986",
-  "license": "CC-BY-3.0",
   "description": "A generic web optimizer, (module) bundler and development environment.",
-  "homepage": "https://torben.website/weboptimizer",
-  "documentationWebsite": {
-    "name": "weboptimizer",
-    "trackingCode": "UA-40192634-11"
-  },
   "keywords": [
     "webpack",
     "optimizer",
@@ -19,6 +13,17 @@
     "document",
     "mock"
   ],
+  "homepage": "https://torben.website/weboptimizer",
+  "bugs": {
+    "email": "info@torben.website",
+    "url": "https://github.com/thaibault/weboptimizer/issues"
+  },
+  "license": "CC-BY-3.0",
+  "author": {
+    "name" : "Torben Sickert",
+    "email" : "info@torben.website",
+    "url" : "https://torben.website"
+  },
   "files": [
     "browser.js",
     "browser.ts",
@@ -180,10 +185,125 @@
     "webpack-dev-server": "*",
     "workbox-webpack-plugin": "*"
   },
+  "peerDependenciesMeta": {
+    "@babel/preset-react": {
+      "optional": true
+    },
+    "@types/ejs": {
+      "optional": true
+    },
+    "@types/html-minifier": {
+      "optional": true
+    },
+    "@types/jest": {
+      "optional": true
+    },
+    "@types/jsdom": {
+      "optional": true
+    },
+    "@types/node": {
+      "optional": true
+    },
+    "@types/webpack-env": {
+      "optional": true
+    },
+    "@types/workbox-webpack-plugin": {
+      "optional": true
+    },
+    "@typescript-eslint/eslint-plugin": {
+      "optional": true
+    },
+    "@typescript-eslint/parser": {
+      "optional": true
+    },
+    "babel-eslint": {
+      "optional": true
+    },
+    "css-loader": {
+      "optional": true
+    },
+    "cssnano": {
+      "optional": true
+    },
+    "eslint": {
+      "optional": true
+    },
+    "eslint-config-google": {
+      "optional": true
+    },
+    "eslint-plugin-jsdoc": {
+      "optional": true
+    },
+    "favicons-webpack-plugin": {
+      "optional": true
+    },
+    "identity-obj-proxy": {
+      "optional": true
+    },
+    "imagemin-webpack-plugin": {
+      "optional": true
+    },
+    "jest": {
+      "optional": true
+    },
+    "jsdoc": {
+      "optional": true
+    },
+    "mini-css-extract-plugin": {
+      "optional": true
+    },
+    "postcss-fontpath": {
+      "optional": true
+    },
+    "postcss-import": {
+      "optional": true
+    },
+    "postcss-loader": {
+      "optional": true
+    },
+    "postcss-preset-env": {
+      "optional": true
+    },
+    "postcss-sprites": {
+      "optional": true
+    },
+    "postcss-url": {
+      "optional": true
+    },
+    "style-loader": {
+      "optional": true
+    },
+    "stylelint": {
+      "optional": true
+    },
+    "stylelint-config-standard": {
+      "optional": true
+    },
+    "typescript-plugin-css-modules": {
+      "optional": true
+    },
+    "webpack-dev-server": {
+      "optional": true
+    },
+    "workbox-webpack-plugin": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=16",
+    "npm": ">=7"
+  },
+
   "resolutions": {
     "@types/webpack": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
   },
   "sideEffects": true,
+
+  "documentationWebsite": {
+    "name": "weboptimizer",
+    "trackingCode": "UA-40192634-11"
+  },
+
   "configuration": {
     "default": {
       "assetPattern": {
