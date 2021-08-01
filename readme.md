@@ -16,10 +16,10 @@ Project status
 [![npm version](https://badge.fury.io/js/weboptimizer.svg)](https://badge.fury.io/js/weboptimizer)
 [![npm downloads](https://img.shields.io/npm/dy/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
 
-[![build status](https://github.com/thaibault/weboptimizer/actions/workflows/build/badge.svg)
-[![build test status](https://github.com/thaibault/weboptimizer/actions/workflows/test/badge.svg)
-[![build check types status](https://github.com/thaibault/weboptimizer/actions/workflows/check:types/badge.svg)
-[![build lint status](https://github.com/thaibault/weboptimizer/actions/workflows/lint/badge.svg)
+![build status](https://github.com/thaibault/weboptimizer/actions/workflows/build/badge.svg)
+![build test status](https://github.com/thaibault/weboptimizer/actions/workflows/test/badge.svg)
+![build check types status](https://github.com/thaibault/weboptimizer/actions/workflows/check:types/badge.svg)
+![build lint status](https://github.com/thaibault/weboptimizer/actions/workflows/lint/badge.svg)
 
 [![code coverage](https://coveralls.io/repos/github/thaibault/weboptimizer/badge.svg)](https://coveralls.io/github/thaibault/weboptimizer)
 
