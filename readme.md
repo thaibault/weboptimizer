@@ -13,8 +13,9 @@ endregion -->
 Project status
 --------------
 
-[![npm version](https://badge.fury.io/js/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
-[![downloads](https://img.shields.io/npm/dy/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
+[![npm version](https://badge.fury.io/js/weboptimizer.svg)](https://badge.fury.io/js/weboptimizer)
+[![npm downloads](https://img.shields.io/npm/dy/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
+
 [![build status](https://travis-ci.org/thaibault/weboptimizer.svg?branch=master)](https://travis-ci.org/thaibault/weboptimizer)
 [![code coverage](https://coveralls.io/repos/github/thaibault/weboptimizer/badge.svg)](https://coveralls.io/github/thaibault/weboptimizer)
 [![dependencies](https://img.shields.io/david/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer)
