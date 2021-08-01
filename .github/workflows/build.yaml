@@ -16,16 +16,7 @@ jobs:
       # Runs a set of commands using the runners shell
 
       - name: Run install packages
-        run: npm install
+        run: npm install --only=production
 
       - name: Run build
-        run: npm build
-
-          #- name: Run check-types
-          #run: npm run check:types
-
-          #- name: Run lint
-          #run: npm run lint
-
-          #- name: Run tests
-          #run: npm test
+        run: npm run build
