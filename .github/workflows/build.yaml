@@ -15,8 +15,8 @@ jobs:
 
       # Runs a set of commands using the runners shell
 
-      - name: Install yarn
-        run: npm install --global yarn
+      #- name: Install yarn
+      #  run: npm install --global yarn
 
       - name: Install packages marked as dependencies
         run: yarn
