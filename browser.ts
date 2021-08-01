@@ -160,7 +160,7 @@ export const getInitializedBrowser = async (
         )
             (global as unknown as {window:Window}).window =
                 browser.window as Window
-        resolvePromise(browser)
+        resolvePromise(browser as InitializedBrowser)
     }
     if (browser.initialized)
         wrappedCallback()
