@@ -66,7 +66,7 @@
     "collect:coverage": "jest --collect-coverage",
     "document": "yarn build && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.js",
     "prettify": "yarn lint:base --fix || true",
-    "lint": "yarn lint:base || true",
+    "lint": "yarn lint:base",
     "lint:base": "eslint --ignore-pattern '*.js' --ignore-pattern '*.compiled.*' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
     "prepare": "yarn build",
     "report:coverage": "shx cat ./test/coverage/lcov.info | coveralls",
