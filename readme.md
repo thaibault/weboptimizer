@@ -18,6 +18,7 @@ Project status
 
 [![build status](https://travis-ci.org/thaibault/weboptimizer.svg?branch=master)](https://travis-ci.org/thaibault/weboptimizer)
 [![code coverage](https://coveralls.io/repos/github/thaibault/weboptimizer/badge.svg)](https://coveralls.io/github/thaibault/weboptimizer)
+
 [![dependencies](https://img.shields.io/david/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer)
 [![development dependencies](https://img.shields.io/david/dev/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=dev)
 [![peer dependencies](https://img.shields.io/david/peer/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=peer)
