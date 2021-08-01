@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.986",
+  "version": "2.0.987",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -20,9 +20,9 @@
   },
   "license": "CC-BY-3.0",
   "author": {
-    "name" : "Torben Sickert",
-    "email" : "info@torben.website",
-    "url" : "https://torben.website"
+    "name": "Torben Sickert",
+    "email": "info@torben.website",
+    "url": "https://torben.website"
   },
   "files": [
     "browser.js",
@@ -293,17 +293,14 @@
     "node": ">=16",
     "npm": ">=7"
   },
-
   "resolutions": {
     "@types/webpack": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
   },
   "sideEffects": true,
-
   "documentationWebsite": {
     "name": "weboptimizer",
     "trackingCode": "UA-40192634-11"
   },
-
   "configuration": {
     "default": {
       "assetPattern": {
