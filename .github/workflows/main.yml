@@ -27,7 +27,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run build
-        run: npm run build
+        run: npm build
 
       # Runs a set of commands using the runners shell
       - name: Run check-types
@@ -36,7 +36,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run lint
         run: npm run lint
-        
+
       # Runs a set of commands using the runners shell
       - name: Run tests
-        run: npm run test
+        run: npm test
