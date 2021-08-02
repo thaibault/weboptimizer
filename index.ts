@@ -254,12 +254,12 @@ const main = async ():Promise<void> => {
                             )
 
                 for (
-                    const filePath of
+                    const filePathPattern of
                         configuration.path.tidyUpOnClearGlobs.pattern
                 )
-                    if (filePath)
+                    if (filePathPattern)
                         removeDirectoryRecursively.sync(
-                            filePath,
+                            filePathPattern,
                             configuration.path.tidyUpOnClearGlobs.options
                         )
             }
