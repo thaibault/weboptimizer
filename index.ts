@@ -271,6 +271,7 @@ const main = async ():Promise<void> => {
                     */
                     if (tidiedUp)
                         return
+
                     tidiedUp = true
                     for (
                         const chunkName in
@@ -338,6 +339,7 @@ const main = async ():Promise<void> => {
                                         )
                                 }
                             }
+
                     for (const filePath of configuration.path.tidyUp)
                         if (filePath)
                             if (Tools.isFileSync(filePath))
@@ -347,7 +349,9 @@ const main = async ():Promise<void> => {
                                 removeDirectoryRecursively.sync(
                                     filePath, {glob: false})
                 }
+
                 closeEventHandlers.push(tidyUp)
+
                 /*
                     Triggers complete asset compiling and bundles them into the
                     final productive output.
@@ -379,21 +383,27 @@ const main = async ():Promise<void> => {
                             configuration.files.additionalPaths
                         ) {
                             const sourcePath:string = path.join(
-                                configuration.path.source.base, filePath)
+                                configuration.path.source.base, filePath
+                            )
                             const targetPath:string = path.join(
-                                configuration.path.target.base, filePath)
+                                configuration.path.target.base, filePath
+                            )
                             // NOTE: Close handler have to be synchronous.
                             if (Tools.isDirectorySync(sourcePath)) {
                                 if (Tools.isDirectorySync(targetPath))
                                     removeDirectoryRecursively.sync(
                                         targetPath, {glob: false})
+
                                 Tools.copyDirectoryRecursiveSync(
-                                    sourcePath, targetPath)
+                                    sourcePath, targetPath
+                                )
                             } else if (Tools.isFileSync(sourcePath))
                                 Tools.copyFileSync(sourcePath, targetPath)
                         }
+
                         tidyUp(...parameter)
                     }
+
                     const closeHandler:ProcessHandler =
                         Tools.getProcessCloseHandler(
                             resolve as ProcessCloseCallback,
@@ -402,10 +412,14 @@ const main = async ():Promise<void> => {
                             process.argv[2] === 'build' ?
                                 copyAdditionalFilesAndTidyUp :
                                 tidyUp
+
                         )
+
                     for (const closeEventName of CloseEventNames)
                         childProcess.on(closeEventName, closeHandler)
+
                     childProcesses.push(childProcess)
+
                     return childProcesses
                 }))
             // endregion
@@ -543,9 +557,10 @@ const main = async ():Promise<void> => {
                 await Promise.all(processPromises)
                 handleTask(
                     configuration.givenCommandLineArguments[2] as keyof
-                        CommandLineArguments)
+                        CommandLineArguments
+                )
             } else if ([
-                'check:types', 'lint', 'serve', 'test:browser'
+                'build:types', 'check:types', 'lint', 'serve', 'test:browser'
             ].includes(configuration.givenCommandLineArguments[2]))
                 handleTask(
                     configuration.givenCommandLineArguments[2] as
