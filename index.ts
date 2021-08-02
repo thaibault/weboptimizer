@@ -178,6 +178,7 @@ const main = async ():Promise<void> => {
                                     )
                             ))
                                 return false
+
                             for (
                                 const type in configuration.buildContext.types
                             )
@@ -204,6 +205,7 @@ const main = async ():Promise<void> => {
                                 }
                         }
                     )
+
                     for (
                         const file of (
                             await Tools.walkDirectoryRecursively(
@@ -215,6 +217,7 @@ const main = async ():Promise<void> => {
                     )
                         if (file.name.startsWith('npm-debug'))
                             await fileSystem.unlink(file.path)
+
                 } else
                     await new Promise((
                         resolve:Function, reject:Function
@@ -223,9 +226,11 @@ const main = async ():Promise<void> => {
                         {glob: false},
                         (error:Error):void => error ? reject(error) : resolve()
                     ))
+
                 if (
                     await Tools.isDirectory(
-                        configuration.path.apiDocumentation)
+                        configuration.path.apiDocumentation
+                    )
                 )
                     await new Promise((
                         resolve:Function, reject:Function
@@ -237,6 +242,7 @@ const main = async ():Promise<void> => {
                                 error ? reject(error) : resolve()
                         )
                     )
+
                 for (const filePath of configuration.path.tidyUpOnClear)
                     if (filePath)
                         if (Tools.isFileSync(filePath))
@@ -244,7 +250,8 @@ const main = async ():Promise<void> => {
                             synchronousFileSystem.unlinkSync(filePath)
                         else if (Tools.isDirectorySync(filePath))
                             removeDirectoryRecursively.sync(
-                                filePath, {glob: false})
+                                filePath, {glob: false}
+                            )
             }
             // endregion
             // region handle build
