@@ -225,21 +225,25 @@ configuration = Tools.removeKeys(configuration)
 // / region build absolute paths
 configuration.path.base = path.resolve(
     configuration.path.context, configuration.path.base)
+
 for (const key in configuration.path)
     if (
         Object.prototype.hasOwnProperty.call(configuration.path, key) &&
         key !== 'base' &&
         typeof configuration.path[key] === 'string'
     )
-        configuration.path[key] = path.resolve(
-            configuration.path.base, configuration.path[key]
-        ) + '/'
+        configuration.path[key] =
+            path.resolve(configuration.path.base, configuration.path[key]) +
+            '/'
     else if (
         key !== 'configuration' &&
         Tools.isPlainObject(configuration.path[key])
     ) {
-        configuration.path[key].base = path.resolve(
-            configuration.path.base, configuration.path[key].base)
+        if (key !== 'tidyUpOnClearGlobs')
+            configuration.path[key].base = path.resolve(
+                configuration.path.base, configuration.path[key].base
+            )
+
         for (const subKey in configuration.path[key])
             if (
                 Object.prototype.hasOwnProperty.call(
@@ -248,14 +252,21 @@ for (const key in configuration.path)
                 !['base', 'public'].includes(subKey) &&
                 typeof configuration.path[key][subKey] === 'string'
             )
-                configuration.path[key][subKey] = path.resolve(
-                    configuration.path[key].base,
-                    configuration.path[key][subKey]
-                ) + '/'
-            else if (Tools.isPlainObject(configuration.path[key][subKey])) {
+                configuration.path[key][subKey] =
+                    path.resolve(
+                        configuration.path[key].base,
+                        configuration.path[key][subKey]
+                    ) +
+                    '/'
+            else if (
+                subKey !== 'options' &&
+                Tools.isPlainObject(configuration.path[key][subKey])
+            ) {
                 configuration.path[key][subKey].base = path.resolve(
                     configuration.path[key].base,
-                    configuration.path[key][subKey].base)
+                    configuration.path[key][subKey].base
+                )
+
                 for (const subSubKey in configuration.path[key][subKey])
                     if (
                         Object.prototype.hasOwnProperty.call(
@@ -270,7 +281,8 @@ for (const key in configuration.path)
                             path.resolve(
                                 configuration.path[key][subKey].base,
                                 configuration.path[key][subKey][subSubKey]
-                            ) + '/'
+                            ) +
+                            '/'
             }
     }
 // / endregion
