@@ -29,7 +29,7 @@
     "browser.d.ts",
     "configurator.js",
     "configurator.d.ts",
-    "declarations.ts",
+    "declarations.d.ts",
     "ejsLoader.js",
     "ejsLoader.d.ts",
     "helper.js",
@@ -61,7 +61,7 @@
     "build:test": "yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-syntax-top-level-await,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-root ../ --out-file' && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.ts *.js *.json *.ejs node_modules/weboptimizer/ && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
     "build:test:source-map": "yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-syntax-top-level-await,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --source-root ../ --out-file' && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.ts *.js *.json *.ejs node_modules/weboptimizer/ && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
     "build:types": "tsc --emitDeclarationOnly",
-    "clear": "rimraf apiDocumentation *.d.ts *.js *.compiled.* *.compiled test/*.js test/*.compiled.* *.html *.log node_modules/weboptimizer .nyc_output || true",
+    "clear": "rimraf apiDocumentation browser.d.ts configurator.d.ts ejsLoader.d.ts helper.d.ts index.d.ts jestEnvironmentBrowser.d.ts stylelintConfigurator.d.ts type.d.ts webpackConfigurator.d.ts *.js *.compiled.* *.compiled test/*.js test/*.compiled.* *.html *.log node_modules/weboptimizer .nyc_output || true",
     "check": "yarn check:types; yarn lint",
     "check:types": "tsc --noEmit",
     "collect:coverage": "jest --collect-coverage",
@@ -358,7 +358,7 @@
           "typeScript": {
             "extension": "ts",
             "filePathPattern": {
-              "__evaluate__": "`^${Tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.(?:(?:js)|(?:d\\\\.ts))$`"
+              "__evaluate__": "`^${Tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.js$`"
             }
           },
           "typeScriptExtension": {
@@ -722,6 +722,7 @@
       "hashAlgorithm": "md5",
       "injection": {
         "autoExclude": [
+          "./declarations.d.ts",
           "./dummy",
           "./dummyPlugin",
           "./test",
@@ -729,8 +730,7 @@
           "./test.ts",
           "./type",
           "./type.js",
-          "./type.ts",
-          "./untypedDependencies.d.ts"
+          "./type.ts"
         ],
         "chunks": {},
         "entry": {

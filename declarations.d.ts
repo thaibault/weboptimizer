@@ -1,5 +1,5 @@
 // -*- coding: utf-8 -*-
-/** @module untyptedDependencies */
+/** @module declarations */
 declare module 'babel-preset-minify'
 declare module 'html-loader'
 declare module 'loader-utils'
