@@ -23,5 +23,3 @@ jobs:
 
       - name: Build package contents
         run: yarn build
-        with:
-          LABEL: Build state
