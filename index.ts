@@ -73,6 +73,7 @@ const main = async ():Promise<void> => {
         const processPromises:Array<Promise<Array<ChildProcess>>> = []
         const possibleArguments:Array<string> = [
             'build',
+            'build:types',
             'clear',
             'document',
             'lint',
@@ -138,7 +139,12 @@ const main = async ():Promise<void> => {
             */
             if (
                 ![
-                    'build', 'preinstall', 'serve', 'test', 'test:browser'
+                    'build',
+                    'build:types',
+                    'preinstall',
+                    'serve',
+                    'test',
+                    'test:browser'
                 ].includes(configuration.givenCommandLineArguments[2]) &&
                 possibleArguments.includes(
                     configuration.givenCommandLineArguments[2]
@@ -256,7 +262,7 @@ const main = async ():Promise<void> => {
                     ),
                     configuration.package.main.fileNames
                 )
-            if (['build', 'document', 'test'].includes(
+            if (['build', 'build:types', 'document', 'test'].includes(
                 process.argv[2]
             )) {
                 let tidiedUp = false
