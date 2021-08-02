@@ -26,19 +26,26 @@
   },
   "files": [
     "browser.js",
+    "browser.d.ts",
     "configurator.js",
+    "configurator.d.ts",
+    "declarations.ts",
     "ejsLoader.js",
+    "ejsLoader.d.ts",
     "helper.js",
+    "helper.d.ts",
     "index.html.ejs",
     "jestEnvironmentBrowser.js",
+    "jestEnvironmentBrowser.d.ts",
     "stylelintConfigurator.js",
+    "stylelintConfigurator.d.ts",
     "tsconfig.json",
     "tsconfigApplication.json",
     "tsconfigLibrary.json",
     "type.js",
-    "types",
-    "untypedDependencies.d.ts",
-    "webpackConfigurator.js"
+    "type.d.ts",
+    "webpackConfigurator.js",
+    "webpackConfigurator.d.ts"
   ],
   "main": "index.js",
   "bin": {
@@ -49,11 +56,12 @@
     "url": "https://github.com/thaibault/weboptimizer.git"
   },
   "scripts": {
-    "build": "yarn build:types && command=\"babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-syntax-top-level-await,@babel/plugin-transform-runtime,babel-plugin-transform-modern-regexp --presets @babel/preset-env,@babel/preset-typescript --out-file\" && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestEnvironmentBrowser.js jestEnvironmentBrowser.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && chmod +x index.js && sed --in-place --regexp-extended 's:(#!/usr/bin/env )babel-(node):\\1\\2:' index.js",
+    "build": "yarn build:types && yarn build:plain",
+    "build:plain": "command=\"babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-syntax-top-level-await,@babel/plugin-transform-runtime,babel-plugin-transform-modern-regexp --presets @babel/preset-env,@babel/preset-typescript --out-file\" && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestEnvironmentBrowser.js jestEnvironmentBrowser.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && chmod +x index.js && sed --in-place --regexp-extended 's:(#!/usr/bin/env )babel-(node):\\1\\2:' index.js",
     "build:test": "yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-syntax-top-level-await,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-root ../ --out-file' && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.ts *.js *.json *.ejs node_modules/weboptimizer/ && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
     "build:test:source-map": "yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-proposal-class-properties,@babel/plugin-syntax-top-level-await,@babel/plugin-transform-runtime --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --source-root ../ --out-file' && rimraf node_modules/weboptimizer && mkdir node_modules/weboptimizer && cp *.ts *.js *.json *.ejs node_modules/weboptimizer/ && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
     "build:types": "tsc --emitDeclarationOnly",
-    "clear": "rimraf apiDocumentation types/*.d.ts *.js *.compiled.* *.compiled test/*.js test/*.compiled.* *.html *.log node_modules/weboptimizer .nyc_output || true",
+    "clear": "rimraf apiDocumentation *.d.ts *.js *.compiled.* *.compiled test/*.js test/*.compiled.* *.html *.log node_modules/weboptimizer .nyc_output || true",
     "check": "yarn check:types; yarn lint",
     "check:types": "tsc --noEmit",
     "collect:coverage": "jest --collect-coverage",
@@ -290,7 +298,6 @@
     "@types/webpack": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
   },
   "sideEffects": true,
-  "types": "./types",
   "documentationWebsite": {
     "name": "weboptimizer",
     "trackingCode": "UA-40192634-11"
@@ -340,7 +347,7 @@
         "types": {
           "default": {
             "filePathPattern": {
-              "__evaluate__": "`^(?:${Tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.js)|(?:(?:.*/)?types/.+\\\\.d\\\\.ts)$`"
+              "__evaluate__": "`^${Tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.js$`"
             },
             "outputExtension": "js",
             "preinstall": {
@@ -349,7 +356,10 @@
             }
           },
           "typeScript": {
-            "extension": "ts"
+            "extension": "ts",
+            "filePathPattern": {
+              "__evaluate__": "`^${Tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.(?:(?:js)|(?:d\\\\.ts))$`"
+            }
           },
           "typeScriptExtension": {
             "extension": "tsx"

@@ -12,7 +12,6 @@
         "lib": ["dom", "esnext"],
         "module": "esnext",
         "moduleResolution": "node",
-        "outDir": "types",
         "paths": {
             "@root/*": ["*"]
         },
@@ -21,5 +20,6 @@
         "strict": true,
         "target": "esnext"
     },
+    "exclude": ["declarations.ts"],
     "include": ["*.ts", "*.tsx"]
 }
