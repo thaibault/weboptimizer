@@ -1321,7 +1321,7 @@
           },
           "pattern": [
             {
-              "__evaluate__": "path.resolve(self.path.target.base, '**/*.d.ts')"
+              "__evaluate__": "path.resolve(self.path.target.base, '*.d.ts')"
             }
           ]
         }
