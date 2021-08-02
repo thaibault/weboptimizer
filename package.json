@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.998",
+  "version": "2.0.999",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -1313,7 +1313,9 @@
             "__evaluate__": "path.resolve(self.path.target.base, '.nyc_output')"
           }
         ],
-        "tidyUpOnClearGlobs": ["*.d.ts"]
+        "tidyUpOnClearGlobs": [
+          "*.d.ts"
+        ]
       },
       "performanceHints": {
         "hints": false
