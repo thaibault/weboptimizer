@@ -141,6 +141,7 @@ export type PathConfiguration = {
     }
     tidyUp:Array<string>
     tidyUpOnClear:Array<string>
+    tidyUpOnClearGlobs:Array<string>
 }
 // // endregion
 // // region build

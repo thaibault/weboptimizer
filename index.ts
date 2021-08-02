@@ -255,9 +255,7 @@ const main = async ():Promise<void> => {
 
                 for (const filePath of configuration.path.tidyUpOnClearGlobs)
                     if (filePath && Tools.isDirectorySync(filePath))
-                        removeDirectoryRecursively.sync(
-                            filePath, {glob: true}
-                        )
+                        removeDirectoryRecursively.sync(filePath)
             }
             // endregion
             // region handle build
