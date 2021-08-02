@@ -20,6 +20,5 @@
         "strict": true,
         "target": "esnext"
     },
-    "exclude": ["declarations.ts"],
     "include": ["*.ts", "*.tsx"]
 }
