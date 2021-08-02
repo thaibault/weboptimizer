@@ -44,6 +44,7 @@
     "tsconfigLibrary.json",
     "type.js",
     "type.ts",
+    "types",
     "untypedDependencies.d.ts",
     "webpackConfigurator.js",
     "webpackConfigurator.ts"
@@ -298,6 +299,7 @@
     "@types/webpack": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
   },
   "sideEffects": true,
+  "types": "./types",
   "documentationWebsite": {
     "name": "weboptimizer",
     "trackingCode": "UA-40192634-11"
@@ -392,8 +394,17 @@
           ],
           "command": "webpack"
         },
+        "build:types": {
+          "arguments": [
+            "--emitDeclarationOnly",
+            "--project",
+            "node_modules/weboptimizer/tsconfigApplication.json"
+          ],
+          "command": "tsc"
+        },
         "check:types": {
           "arguments": [
+            "--noEmit",
             "--project",
             "node_modules/weboptimizer/tsconfigApplication.json"
           ],
@@ -1451,8 +1462,16 @@
     },
     "library": {
       "commandLine": {
+        "build:types": {
+          "arguments": [
+            "--emitDeclarationOnly",
+            "--project",
+            "node_modules/weboptimizer/tsconfigLibrary.json"
+          ]
+        },
         "check:types": {
           "arguments": [
+            "--noEmit",
             "--project",
             "node_modules/weboptimizer/tsconfigLibrary.json"
           ]
