@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.1002",
+  "version": "2.0.1003",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -1314,7 +1314,9 @@
           }
         ],
         "tidyUpOnClearGlobs": {
-          "options": {"ignore": "**/declarations.d.ts"},
+          "options": {
+            "ignore": "**/declarations.d.ts"
+          },
           "pattern": [
             {
               "__evaluate__": "path.resolve(self.path.target.base, '**/*.d.ts')"
