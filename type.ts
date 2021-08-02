@@ -18,8 +18,8 @@
 import {
     Encoding, Mapping, PlainObject, ProcedureFunction, SecondParameter
 } from 'clientnode/type'
-import {JSDOM} from 'jsdom'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import {JSDOM} from 'jsdom'
 import {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
@@ -29,6 +29,7 @@ import {
     ModuleOptions as WebpackModuleOptions,
     WebpackOptionsNormalized
 } from 'webpack'
+import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
 import {
     CommonOptions as WorkboxCommonOptions,
     GenerateSWOptions as WorkboxGenerateSWOptions,
@@ -141,7 +142,10 @@ export type PathConfiguration = {
     }
     tidyUp:Array<string>
     tidyUpOnClear:Array<string>
-    tidyUpOnClearGlobs:Array<string>
+    tidyUpOnClearGlobs:{
+        options:RemoveDirectoryRecursivelyOptions
+        pattern:Array<string>
+    }
 }
 // // endregion
 // // region build
