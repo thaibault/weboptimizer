@@ -1314,7 +1314,9 @@
           }
         ],
         "tidyUpOnClearGlobs": [
-          "*.d.ts"
+          {
+            "__evaluate__": "path.resolve(self.path.target.base, '*.d.ts')"
+          }
         ]
       },
       "performanceHints": {
