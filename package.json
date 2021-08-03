@@ -501,10 +501,14 @@
           "__evaluate__": "self.commandLine.serve"
         },
         "test:coverage": {
-          "__evaluate__": "self.commandLine.test.command + ' --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults'"
+          "command": {
+            "__evaluate__": "self.commandLine.test.command + ' --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults'"
+          }
         },
         "test:coverage:report": {
-          "__evaluate__": "self.commandLine['test:coverage'].command + ' --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info'"
+          "command": {
+            "__evaluate__": "self.commandLine['test:coverage'].command + ' --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info'"
+          }
         }
       },
       "contextType": "main",
