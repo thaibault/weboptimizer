@@ -81,6 +81,8 @@ const main = async ():Promise<void> => {
             'serve',
             'test',
             'test:browser',
+            'test:coverage',
+            'test:coverage:report',
             'check:types'
         ]
         const closeEventHandlers:Array<Function> = []
@@ -144,7 +146,9 @@ const main = async ():Promise<void> => {
                     'preinstall',
                     'serve',
                     'test',
-                    'test:browser'
+                    'test:browser',
+                    'test:coverage',
+                    'test:coverage:report'
                 ].includes(configuration.givenCommandLineArguments[2]) &&
                 possibleArguments.includes(
                     configuration.givenCommandLineArguments[2]
@@ -484,12 +488,15 @@ const main = async ():Promise<void> => {
                                         filePath
                                     }
                                 )
+
                             if (evaluated.error)
                                 throw new Error(
                                     'Error occurred during processing given ' +
                                     `command: ${evaluated.error}`
                                 )
+
                             console.info(`Running "${evaluated.result}"`)
+
                             processPromises.push(
                                 new Promise<Array<ChildProcess>>((
                                     resolve:Function, reject:Function
@@ -577,7 +584,13 @@ const main = async ():Promise<void> => {
                         CommandLineArguments
                 )
             } else if ([
-                'build:types', 'check:types', 'lint', 'serve', 'test:browser'
+                'build:types',
+                'check:types',
+                'lint',
+                'serve',
+                'test:browser',
+                'test:coverage',
+                'test:coverage:report'
             ].includes(configuration.givenCommandLineArguments[2]))
                 handleTask(
                     configuration.givenCommandLineArguments[2] as
