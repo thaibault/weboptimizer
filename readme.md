@@ -18,7 +18,7 @@ Project status
 
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml)
-[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage.yaml)
+[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage:report.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage:report.yaml)
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/check:types.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/check:types.yaml)
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml)
 
