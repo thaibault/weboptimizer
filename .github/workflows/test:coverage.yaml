@@ -16,13 +16,13 @@ jobs:
 
       # Runs a set of commands using the runners shell
 
-      - name: Install packages marked as dependencies
-        run: yarn
+        #- name: Install packages marked as dependencies
+        #run: yarn
 
       - uses: artiomtr/jest-coverage-report-action@v2.0-rc.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           package-manager: yarn
-          skip-step: install
+            #skip-step: install
           threshold: 1
           test-script: yarn test:coverage
