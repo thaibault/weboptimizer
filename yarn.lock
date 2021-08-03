@@ -1832,6 +1832,14 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
+"@types/node-fetch@*":
+  version "2.5.12"
+  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.5.12.tgz#8a6f779b1d4e60b7a57fb6fd48d84fb545b9cc66"
+  integrity sha512-MKgC4dlq4kKNa/mYrwpKfzQMB5X3ee5U6fSprkKpToBqBmX4nFZL9cW5jl6sWn+xpRJ7ypWh2yyqqr8UUCstSw==
+  dependencies:
+    "@types/node" "*"
+    form-data "^3.0.0"
+
 "@types/node@*":
   version "16.4.10"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.4.10.tgz#e57e2a54fc6da58da94b3571b1cb456d39f88597"
@@ -3733,9 +3741,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.768"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.768.tgz#5e4304671b2c0b7516820ddb17dfc8813a08c60a"
-  integrity sha512-FRfRRPjK8mVQ/t2PX7Tl/F57ozV9wMqzYdZR+T9Cjek8ozimIgJXlfu/5mBuA06JyP1aDrihkJeXwOoz8Eysnw==
+  version "3.0.769"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.769.tgz#0b4e84d6ef6ecdb29006926ca18ce499cb491907"
+  integrity sha512-eLlRn4+RvSkfeO6Rb6OGmeyjEoHglewAjMFw0ae3ULUQS0upYpCLLe8v8DdAQZ112LEURmkv4mlInWelsQy3JA==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
 

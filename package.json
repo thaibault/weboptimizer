@@ -115,6 +115,7 @@
     "@types/jest": "*",
     "@types/jsdom": "*",
     "@types/node": "*",
+    "@types/node-fetch": "*",
     "@types/rimraf": "*",
     "@types/vfile-message": "*",
     "@types/webpack-env": "*",
