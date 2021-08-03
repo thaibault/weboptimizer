@@ -19,7 +19,7 @@ jobs:
         #- name: Install packages marked as dependencies
         #run: yarn
 
-      - uses: artiomtr/jest-coverage-report-action@v2.0-rc.3
+      - uses: artiomtr/jest-coverage-report-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           package-manager: yarn
