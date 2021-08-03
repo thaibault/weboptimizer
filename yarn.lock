@@ -1932,7 +1932,6 @@
 
 "@types/webpack@https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz":
   version "1.1.0"
-  uid "7ff0adb2a0e32b1a0a48f432cf31c16b53f7f4ea"
   resolved "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz#7ff0adb2a0e32b1a0a48f432cf31c16b53f7f4ea"
 
 "@types/workbox-webpack-plugin@*":
@@ -3734,9 +3733,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.756"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.756.tgz#d2d9f01b57ac38fc7e375248c00f1929393c84de"
-  integrity sha512-ZHZ6r/C2VO5rHRaYAbm6dFznTOVKOSoeQF+KraPbkjWrjiYtuQBYlDfUbz3rtiDe7CsCVR23D4nBqhMAYAGcIQ==
+  version "3.0.764"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.764.tgz#df3b81750752f3adefea102739a7bb7b3d1af832"
+  integrity sha512-yYArOHJCgpBsRd9uf+8b6f5D11ZwKBXkrQPMi6H0BpSmigMOHamKfvPc87jLKfSF+2Hc2mkjxvRXI/UrQIA15g==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
 
@@ -4638,9 +4637,9 @@ ejs@^2.6.1:
   integrity sha512-7vmuyh5+kuUyJKePhQfRQBhXV5Ce+RnaeeQArKu1EAMpL3WbgMt5WG6uQZpEVvYSSsxMXRKOewtDk9RaTKXRlA==
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.723:
-  version "1.3.792"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.792.tgz#791b0d8fcf7411885d086193fb49aaef0c1594ca"
-  integrity sha512-RM2O2xrNarM7Cs+XF/OE2qX/aBROyOZqqgP+8FXMXSuWuUqCfUUzg7NytQrzZU3aSqk1Qq6zqnVkJsbfMkIatg==
+  version "1.3.793"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.793.tgz#c10dff5f3126238004de344db458f1da3641d554"
+  integrity sha512-l9NrGV6Mr4ov5mayYPvIWcwklNw5ROmy6rllzz9dCACw9nKE5y+s5uQk+CBJMetxrWZ6QJFsvEfG6WDcH2IGUg==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -10068,9 +10067,9 @@ safe-regex@^1.1.0:
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
 sass@^1.32.13:
-  version "1.37.0"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.37.0.tgz#f1b03a9d072ee9053a29d125c8130c78e92827c2"
-  integrity sha512-B+Tu6cSAG8ffs/cqsZl/bgSH2pCmavDaPTYAoW8QA1qNHh/RqndNfVKuABKYkLjUQ5aq/BnCENVpE80cqdSM1w==
+  version "1.37.2"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.37.2.tgz#eb87c01a1e6ec12e50fa69571b69628ea043a372"
+  integrity sha512-+XMg8QOg7OGLo4F5R3fLYEti/3MxFkyX0NxYbqWycU8xYMAhPDN5FuCO2ZJudnM1wcnZ3CeJRnpqUBZpLOitCQ==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
 
