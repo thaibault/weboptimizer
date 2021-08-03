@@ -9,7 +9,8 @@ on:
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
-    container: node:latest
+    # NOTE: Not yet working in container:
+    # container: node:latest
     steps:
       - uses: actions/checkout@v2
 
