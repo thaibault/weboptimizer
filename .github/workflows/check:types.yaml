@@ -1,4 +1,4 @@
-name: CI
+name: Check types
 on:
   push:
     branches: [ master ]
@@ -7,7 +7,7 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 jobs:
-  build:
+  check-types:
     runs-on: ubuntu-latest
     container: node:latest
     steps:
