@@ -1,4 +1,4 @@
-name: Test coverage
+name: Test coverage and report
 on:
   push:
     branches: [ master ]
@@ -7,18 +7,16 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 jobs:
-  test-coverage:
+  test-coverage-report:
     runs-on: ubuntu-latest
-    # NOTE: Not yet working in container:
-    # container: node:latest
+    container: node:latest
     steps:
       - uses: actions/checkout@v2
 
       # Runs a set of commands using the runners shell
 
-      - uses: artiomtr/jest-coverage-report-action@v2.0-rc.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          package-manager: yarn
-          threshold: 1
-          test-script: yarn test:coverage
+      - name: Install packages marked as dependencies
+        run: yarn
+
+      - name: Run tests
+        run: yarn test:coverage:report

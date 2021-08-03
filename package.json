@@ -64,14 +64,14 @@
     "clear": "rimraf apiDocumentation browser.d.ts configurator.d.ts ejsLoader.d.ts helper.d.ts index.d.ts jestEnvironmentBrowser.d.ts stylelintConfigurator.d.ts type.d.ts webpackConfigurator.d.ts *.js *.compiled.* *.compiled test/*.js test/*.compiled.* *.html *.log node_modules/weboptimizer .nyc_output || true",
     "check": "yarn check:types; yarn lint",
     "check:types": "tsc --noEmit",
-    "collect:coverage": "jest --collect-coverage",
     "document": "yarn build:plain && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.js",
     "prettify": "yarn lint:base --fix || true",
     "lint": "yarn lint:base",
     "lint:base": "eslint --ignore-pattern '*.js' --ignore-pattern '*.compiled.*' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
     "prepare": "yarn build",
     "test": "yarn build:test && jest --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/helper.js test/ejsLoader.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
-    "test:coverage": "yarn test --ci --coverage --coverageReporters=json --json --outputFile=report.json --silent --testLocationInResults",
+    "test:coverage": "yarn test --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults",
+    "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info && coveralls < ./.coverage/lcov.info",
     "test:watch": "yarn test --watch",
     "test:watch:all": "yarn test --watchAll",
     "update": "yarn version --patch && yarn publish",
@@ -292,7 +292,7 @@
     }
   },
   "engines": {
-    "node": ">=14",
+    "node": ">=16",
     "npm": ">=7"
   },
   "resolutions": {
