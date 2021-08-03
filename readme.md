@@ -17,7 +17,8 @@ Project status
 [![npm downloads](https://img.shields.io/npm/dy/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
 
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
-[![CI](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml)
+[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml)
+[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage.yaml)
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/check:types.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/check:types.yaml)
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml)
 
