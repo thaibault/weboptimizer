@@ -13,7 +13,7 @@ endregion -->
 Project status
 --------------
 
-[![npm version](https://img.shields.io/npm/v/weboptimizer?color=%23d55e5d&logoColor=%23d55e5d)](https://www.npmjs.com/package/weboptimizer)
+[![npm](https://img.shields.io/npm/v/weboptimizer?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d)](https://www.npmjs.com/package/weboptimizer)
 [![npm downloads](https://img.shields.io/npm/dy/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
 
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
