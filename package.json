@@ -1326,12 +1326,19 @@
         "tidyUpOnClearGlobs": {
           "options": {
             "glob": {
-              "ignore": "**/declarations.d.ts"
+              "ignore": [
+                "node_modules/**/*.d.ts",
+                "**/node_modules/**/*.d.ts",
+                "**/declarations.d.ts"
+              ]
             }
           },
           "pattern": [
             {
               "__evaluate__": "path.resolve(self.path.target.base, '*.d.ts')"
+            },
+            {
+              "__evaluate__": "path.resolve(self.path.target.base, '**/*.d.ts')"
             }
           ]
         }
