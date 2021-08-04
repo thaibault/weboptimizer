@@ -109,6 +109,7 @@
   },
   "devDependencies": {
     "@babel/cli": "*",
+    "@babel/eslint-parser": "*",
     "@types/ejs": "*",
     "@types/html-minifier": "*",
     "@types/html-minifier-terser": "*",
@@ -123,7 +124,6 @@
     "@types/workbox-webpack-plugin": "*",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
-    "babel-eslint": "*",
     "css-loader": "*",
     "cssnano": "*",
     "documentation-website": "*",
@@ -151,6 +151,7 @@
     "workbox-webpack-plugin": "*"
   },
   "peerDependencies": {
+    "@babel/eslint-parser": "*",
     "@babel/preset-react": "*",
     "@types/ejs": "*",
     "@types/html-minifier": "*",
@@ -161,7 +162,6 @@
     "@types/workbox-webpack-plugin": "*",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
-    "babel-eslint": "*",
     "css-loader": "*",
     "cssnano": "*",
     "eslint": "*",
@@ -187,6 +187,9 @@
     "workbox-webpack-plugin": "*"
   },
   "peerDependenciesMeta": {
+    "@babel/eslint-parser": {
+      "optional": true
+    },
     "@babel/preset-react": {
       "optional": true
     },
@@ -215,9 +218,6 @@
       "optional": true
     },
     "@typescript-eslint/parser": {
-      "optional": true
-    },
-    "babel-eslint": {
       "optional": true
     },
     "css-loader": {
