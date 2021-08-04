@@ -461,12 +461,10 @@ export class Helper {
                 ))
                     if (
                         file.stats?.isFile() &&
-                        path.extname(file.path).endsWith(newItem.extension) &&
+                        file.path.endsWith(`.${newItem.extension}`) &&
                         !(
                             newItem.ignoredExtension &&
-                            path.extname(file.path).endsWith(
-                                newItem.ignoredExtension
-                            )
+                            file.path.endsWith(`.${newItem.ignoredExtension}`)
                         ) &&
                         !(new RegExp(newItem.filePathPattern)).test(file.path)
                     )
