@@ -311,7 +311,7 @@ export const resolvedConfiguration:ResolvedConfiguration =
 // Apply default file level build configurations to all file type specific
 // ones.
 const defaultConfiguration:PlainObject =
-    resolvedConfiguration.buildContext.types.default as PlainObject
+    resolvedConfiguration.buildContext.types.default as unknown as PlainObject
 delete resolvedConfiguration.buildContext.types.default
 for (const type in resolvedConfiguration.buildContext.types)
     if (Object.prototype.hasOwnProperty.call(

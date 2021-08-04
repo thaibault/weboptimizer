@@ -357,12 +357,11 @@
           },
           "typeScript": {
             "extension": "ts",
-            "filePathPattern": {
-              "__evaluate__": "`^${Tools.stringGetRegularExpressionValidated(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.js$`"
-            }
+            "ignoredExtension": "d.ts"
           },
           "typeScriptExtension": {
-            "extension": "tsx"
+            "extension": "tsx",
+            "ignoredExtension": "d.ts"
           },
           "javaScript": {
             "extension": "js"

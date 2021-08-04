@@ -444,10 +444,12 @@ export class Helper {
         mainFileBasenames:Array<string> = ['index', 'main']
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
+
         for (const type in configuration)
             if (Object.prototype.hasOwnProperty.call(configuration, type)) {
                 const newItem:ResolvedBuildConfigurationItem =
                     Tools.extend(true, {filePaths: []}, configuration[type])
+
                 for (const file of Tools.walkDirectoryRecursivelySync(
                     entryPath,
                     (file:File):false|void => {
@@ -460,9 +462,16 @@ export class Helper {
                     if (
                         file.stats?.isFile() &&
                         path.extname(file.path).endsWith(newItem.extension) &&
+                        !(
+                            newItem.ignoredExtension &&
+                            path.extname(file.path).endsWith(
+                                newItem.ignoredExtension
+                            )
+                        ) &&
                         !(new RegExp(newItem.filePathPattern)).test(file.path)
                     )
                         newItem.filePaths.push(file.path)
+
                 newItem.filePaths.sort((
                     firstFilePath:string, secondFilePath:string
                 ):number => {
@@ -477,8 +486,10 @@ export class Helper {
                         secondFilePath, path.extname(secondFilePath)
                     )))
                         return 1
+
                     return 0
                 })
+
                 buildConfiguration.push(newItem)
             }
         return buildConfiguration.sort((
@@ -488,10 +499,13 @@ export class Helper {
             if (first.outputExtension !== second.outputExtension) {
                 if (first.outputExtension === 'js')
                     return -1
+
                 if (second.outputExtension === 'js')
                     return 1
+
                 return first.outputExtension < second.outputExtension ? -1 : 1
             }
+
             return 0
         })
     }
@@ -794,9 +808,11 @@ export class Helper {
     ):Mapping {
         const result:Mapping = {}
         const injectedModuleIDs:Mapping<Array<string>> = {}
+
         for (const buildConfiguration of buildConfigurations) {
             if (!injectedModuleIDs[buildConfiguration.outputExtension])
                 injectedModuleIDs[buildConfiguration.outputExtension] = []
+
             for (const moduleFilePath of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
                     const relativeModuleFilePath =
@@ -807,9 +823,11 @@ export class Helper {
                         relativeModuleFilePath,
                         `.${buildConfiguration.extension}`
                     )
+
                     let moduleID:string = baseName
                     if (directoryPath !== '.')
                         moduleID = path.join(directoryPath, baseName)
+
                     /*
                         Ensure that each output type has only one source
                         representation.
@@ -832,6 +850,7 @@ export class Helper {
                                 relativeModuleFilePath
                         else
                             result[moduleID] = relativeModuleFilePath
+
                         injectedModuleIDs[
                             buildConfiguration.outputExtension
                         ].push(moduleID)

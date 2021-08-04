@@ -52,11 +52,11 @@ export interface InitializedBrowser extends Browser {
     instance:JSDOM
     window:Window
 }
-export type PackageConfiguration = {
+export interface PackageConfiguration {
     name:string
     version:string
 }
-export type PackageDescriptor = {
+export interface PackageDescriptor {
     configuration:PackageConfiguration
     filePath:string
 }
@@ -81,12 +81,12 @@ export type ExternalInjection =
 export type GivenInjection =
     Function|string|Array<string>|Mapping<string|Array<string>>
 export type NormalizedGivenInjection = Mapping<Array<string>>
-export type GivenInjectionConfiguration = {
+export interface GivenInjectionConfiguration {
     autoExclude:Array<string>
     entry:GivenInjection
     external:GivenInjection
 }
-export type InjectionConfiguration = {
+export interface InjectionConfiguration {
     autoExclude:Array<string>
     chunks:PlainObject
     entry:{
@@ -111,7 +111,7 @@ export type InjectionConfiguration = {
 // / endregion
 // / region configuration
 // // region path
-export type AssetPathConfiguration = {
+export interface AssetPathConfiguration {
     base:string
     cascadingStyleSheet:string
     data:string
@@ -120,7 +120,7 @@ export type AssetPathConfiguration = {
     javaScript:string
     template:string
 }
-export type PathConfiguration = {
+export interface PathConfiguration {
     apiDocumentation:string
     base:string
     configuration:{
@@ -149,10 +149,11 @@ export type PathConfiguration = {
 }
 // // endregion
 // // region build
-export type BuildConfigurationItem = {
+export interface BuildConfigurationItem {
     extension:string
-    outputExtension:string
+    ignoredExtension:string
     filePathPattern:string
+    outputExtension:string
 }
 export type BuildConfiguration = Mapping<BuildConfigurationItem>
 export const SubConfigurationTypes = [
@@ -162,21 +163,21 @@ export const TaskTypes = ['build', 'serve', ...SubConfigurationTypes] as const
 // // endregion
 // // region loader
 export type BooleanExpression = boolean|null|string
-export type AdditionalLoaderConfiguration = {
+export interface AdditionalLoaderConfiguration {
     exclude?:BooleanExpression
     include?:BooleanExpression
     test:string
     use:any
 }
-export type AdditionalLoaderConfigurations = {
+export interface AdditionalLoaderConfigurations {
     post:Array<AdditionalLoaderConfiguration>
     pre:Array<AdditionalLoaderConfiguration>
 }
-export type AdditionalLoader = {
+export interface AdditionalLoader {
     post:Array<string>
     pre:Array<string>
 }
-export type WebpackLoader = {
+export interface WebpackLoader {
     loader:string
     options?:PlainObject
 }
@@ -186,10 +187,10 @@ export type ResourceLoaderConfiguration = WebpackLoader & {
     loader:Array<string>
     regularExpression:string
 }
-export type LoaderConfiguration = ResourceLoaderConfiguration & {
+export interface LoaderConfiguration extends ResourceLoaderConfiguration {
     additional:AdditionalLoaderConfigurations
 }
-export type WebpackLoaderConfiguration = {
+export interface WebpackLoaderConfiguration {
     exclude:WebpackLoaderIndicator
     include:WebpackLoaderIndicator
     test:RegExp
@@ -198,12 +199,12 @@ export type WebpackLoaderConfiguration = {
 export type WebpackLoaderIndicator =
     Array<WebpackLoaderIndicator>|Function|string
 // // endregion
-export type Command = {
+export interface Command {
     arguments:Array<string>
     command:string
     indicator?:string
 }
-export type CommandLineArguments = {
+export interface CommandLineArguments {
     build:Command
     document:Array<Command>|Command
     lint:Array<Command>|Command
@@ -213,14 +214,14 @@ export type CommandLineArguments = {
     'check:types':Array<Command>|Command
 }
 export type NodeEnvironment = Mapping<boolean|string> & {'#':string}
-export type PluginConfiguration = {
+export interface PluginConfiguration {
     name:{
         initializer:string
         module:string
     }
     parameter:Array<any>
 }
-export type DefaultConfiguration = {
+export interface DefaultConfiguration {
     contextType:string
     debug:boolean
     document:PlainObject
@@ -236,7 +237,7 @@ export type DefaultConfiguration = {
 /* eslint-disable max-len */
 export type ExportFormat = 'amd'|'amd-require'|'assign'|'global'|'jsonp'|'var'|'this'|'commonjs'|'commonjs2'|'umd'
 /* eslint-enable max-len */
-export type HTMLConfiguration = {
+export interface HTMLConfiguration {
     filename:string
     template:{
         filePath:string
@@ -246,29 +247,26 @@ export type HTMLConfiguration = {
         use:Array<WebpackLoader>|WebpackLoader
     }
 }
-export type MetaConfiguration = {
+export interface MetaConfiguration {
     default:DefaultConfiguration
     debug:Resolvable
     library:Resolvable
 }
-export type ResolvedBuildConfigurationItem = {
+export interface ResolvedBuildConfigurationItem extends BuildConfigurationItem {
     filePaths:Array<string>
-    extension:string
-    outputExtension:string
-    filePathPattern:string
 }
-export type Extensions = {
+export interface Extensions {
     file:{
         external:Array<string>
         internal:Array<string>
     }
 }
-export type SpecificExtensions = {file:Array<string>}
-export type InPlaceAssetConfiguration = {
+export interface SpecificExtensions {file:Array<string>}
+export interface InPlaceAssetConfiguration {
     body?:Array<RegExp|string>|RegExp|string
     head?:Array<RegExp|string>|RegExp|string
 }
-export type InPlaceConfiguration = {
+export interface InPlaceConfiguration {
     cascadingStyleSheet:InPlaceAssetConfiguration
     externalLibrary:{
         normal:boolean
@@ -277,7 +275,7 @@ export type InPlaceConfiguration = {
     javaScript:InPlaceAssetConfiguration
     otherMaximumFileSizeLimitInByte:number
 }
-export type ResolvedConfiguration = {
+export interface ResolvedConfiguration {
     assetPattern:Mapping<{
         excludeFilePathRegularExpression:string
         includeFilePathRegularExpression:string
@@ -445,24 +443,24 @@ export type WebpackConfiguration = BaseWebpackConfiguration & {
 }
 // / endregion
 // NOTE: Not yet defined in webpack types.
-export type WebpackBaseAssets = {
+export interface WebpackBaseAssets {
     outputName:string
     plugin:HtmlWebpackPlugin
 }
-export type WebpackAssets = WebpackBaseAssets & {
+export interface WebpackAssets extends WebpackBaseAssets {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
     headTags:HtmlWebpackPlugin.HtmlTagObject[]
     outputName:string
     publicPath:string
     plugin:HtmlWebpackPlugin
 }
-export type HTMLWebpackPluginAssetTagGroupsData = {
+export interface HTMLWebpackPluginAssetTagGroupsData {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
     headTags:HtmlWebpackPlugin.HtmlTagObject[]
     outputName:string
     plugin:HtmlWebpackPlugin
 }
-export type HTMLWebpackPluginBeforeEmitData = {
+export interface HTMLWebpackPluginBeforeEmitData {
     html:string
     outputName:string
     plugin:HtmlWebpackPlugin
