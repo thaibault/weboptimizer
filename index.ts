@@ -575,7 +575,12 @@ const main = async ():Promise<void> => {
                 }
             }
             // / region a-/synchronous
-            if (['document', 'test'].includes(
+            if ([
+                'document',
+                'test',
+                'test:coverage',
+                'test:coverage:report'
+            ].includes(
                 configuration.givenCommandLineArguments[2]
             )) {
                 await Promise.all(processPromises)
@@ -588,9 +593,7 @@ const main = async ():Promise<void> => {
                 'check:types',
                 'lint',
                 'serve',
-                'test:browser',
-                'test:coverage',
-                'test:coverage:report'
+                'test:browser'
             ].includes(configuration.givenCommandLineArguments[2]))
                 handleTask(
                     configuration.givenCommandLineArguments[2] as
