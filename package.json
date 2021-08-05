@@ -493,7 +493,7 @@
             "__evaluate__": "['node'].concat(self.generic.isWeb ? 'jsdom' : [])"
           },
           "command": {
-            "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --moduleNameMapper '{\"\\\\\\\\.((css)|(less)|(sass)|(scss))$\": \"identity-obj-proxy\"}' --test-environment ${environment} --test-path-ignore-patterns '^(.*[/])?testHelper([./].*)?$' --test-regex '/test/.+\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
+            "__evaluate__": "self.commandLine.test.environments.map((environment) => `${self.generic.testCommandLine} --test-environment ${environment} '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
           }
         },
         "test:browser": {
@@ -501,12 +501,12 @@
         },
         "test:coverage": {
           "command": {
-            "__evaluate__": "self.commandLine.test.command + ' --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults'"
+            "__evaluate__": "self.commandLine.test.environments.map((environment) => `${self.generic.testCommandLine} ${self.generic.testCommandLineCoverageArguments} --test-environment ${environment} '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
           }
         },
         "test:coverage:report": {
           "command": {
-            "__evaluate__": "self.commandLine['test:coverage'].command + ' --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info'"
+            "__evaluate__": "self.commandLine.test.environments.map((environment) => `${self.generic.testCommandLine} ${self.generic.testCommandLineCoverageArguments} --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info --test-environment ${environment} '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
           }
         }
       },
@@ -725,7 +725,9 @@
         "supportedBrowsers": [
           "last 2 versions",
           "> 5%"
-        ]
+        ],
+        "testCommandLine": "jest --moduleNameMapper '{\"\\\\.((css)|(less)|(sass)|(scss))$\": \"identity-obj-proxy\"}' --test-path-ignore-patterns '^(.*[/])?testHelper([./].*)?$' --test-regex '/test/.+\\.js$'",
+        "testCommandLineCoverageArgumnets": "--ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults"
       },
       "givenCommandLineArguments": [],
       "hashAlgorithm": "md5",
@@ -1504,11 +1506,6 @@
             "--project",
             "node_modules/weboptimizer/tsconfigLibrary.json"
           ]
-        },
-        "test": {
-          "command": {
-            "__evaluate__": "self.commandLine.test.environments.map((environment) => `jest --moduleNameMapper '{\"\\\\\\\\.((css)|(less)|(sass)|(scss))$\": \"identity-obj-proxy\"}' --test-environment ${environment} --test-path-ignore-patterns '^(.*[/])?testHelper([./].*)?$' --test-regex 'test.*\\\\.js$' '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
-          }
         }
       },
       "document": {
