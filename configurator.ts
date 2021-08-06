@@ -162,7 +162,12 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
     for (const type of SubConfigurationTypes)
         if (
             runtimeInformation.givenCommandLineArguments[2] === type ||
-            debug && type === 'debug'
+            debug && type === 'debug' ||
+            type === 'test' &&
+            runtimeInformation.givenCommandLineArguments[2].startsWith(
+                'test:'
+            ) &&
+            runtimeInformation.givenCommandLineArguments[2] !== 'test:browser'
         )
             for (const configurationTarget of [
                 configuration, specificConfiguration
