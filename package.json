@@ -727,7 +727,7 @@
           "> 5%"
         ],
         "testCommandLine": "jest --moduleNameMapper '{\"\\\\.((css)|(less)|(sass)|(scss))$\": \"identity-obj-proxy\"}' --test-path-ignore-patterns '^(.*[/])?testHelper([./].*)?$' --test-regex",
-        "testCommandLineCoverageArgumnets": "--ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults"
+        "testCommandLineCoverageArguments": "--ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults"
       },
       "givenCommandLineArguments": [],
       "hashAlgorithm": "md5",
