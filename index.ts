@@ -283,7 +283,13 @@ const main = async ():Promise<void> => {
                     ),
                     configuration.package.main.fileNames
                 )
-            if (['build', 'document', 'test'].includes(process.argv[2])) {
+            if ([
+                'build',
+                'document',
+                'test',
+                'test:coverage',
+                'test:coverage:report'
+            ].includes(process.argv[2])) {
                 let tidiedUp = false
                 const tidyUp:Function = ():void => {
                     /*
