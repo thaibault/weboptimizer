@@ -1597,7 +1597,8 @@
             "default": false,
             "defaultVendors": false
           }
-        }
+        },
+        "entry": "__auto__"
       },
       "inPlace": {
         "externalLibrary": {
