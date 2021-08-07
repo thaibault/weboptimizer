@@ -70,7 +70,7 @@
     "lint": "yarn lint:base",
     "lint:base": "eslint --ignore-pattern '*.js' --ignore-pattern '*.compiled.*' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
     "prepare": "yarn build",
-    "test": "yarn build:test && jest --config ./jest.json --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/helper.js test/ejsLoader.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
+    "test": "yarn build:test && jest --config ./jest.json --root-dir './' --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/helper.js test/ejsLoader.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
     "test:coverage": "yarn test --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults",
     "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info",
     "test:watch": "yarn test --watch",
