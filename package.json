@@ -745,7 +745,8 @@
           "./test.ts",
           "./type",
           "./type.js",
-          "./type.ts"
+          "./type.ts",
+          ".coverage"
         ],
         "chunks": {},
         "entry": {
