@@ -398,7 +398,9 @@
           "arguments": [
             "--emitDeclarationOnly",
             "--project",
-            "node_modules/weboptimizer/tsconfigApplication.json"
+            {
+              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfigApplication.json`"
+            }
           ],
           "command": "tsc"
         },
@@ -406,7 +408,9 @@
           "arguments": [
             "--noEmit",
             "--project",
-            "node_modules/weboptimizer/tsconfigApplication.json"
+            {
+              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfigApplication.json`"
+            }
           ],
           "command": "tsc"
         },
@@ -1497,14 +1501,18 @@
           "arguments": [
             "--emitDeclarationOnly",
             "--project",
-            "node_modules/weboptimizer/tsconfigLibrary.json"
+            {
+              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfigLibrary.json`"
+            }
           ]
         },
         "check:types": {
           "arguments": [
             "--noEmit",
             "--project",
-            "node_modules/weboptimizer/tsconfigLibrary.json"
+            {
+              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfigLibrary.json`"
+            }
           ]
         },
         "test": {
