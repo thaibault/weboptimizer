@@ -48,7 +48,6 @@
     "webpackConfigurator.d.ts",
     "webpackConfigurator.js"
   ],
-  "main": "index.js",
   "bin": {
     "weboptimizer": "index.js"
   },
