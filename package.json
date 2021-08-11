@@ -34,6 +34,7 @@
     "ejsLoader.js",
     "helper.d.ts",
     "helper.js",
+    "index.d.ts",
     "index.html.ejs",
     "index.js",
     "jest.json",
