@@ -35,6 +35,7 @@
     "helper.d.ts",
     "helper.js",
     "index.html.ejs",
+    "index.js",
     "jest.json",
     "jestEnvironmentBrowser.d.ts",
     "jestEnvironmentBrowser.js",
