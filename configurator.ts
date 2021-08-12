@@ -74,9 +74,9 @@ if (
 let specificConfiguration:PlainObject = {}
 try {
     /* eslint-disable no-eval */
-    specificConfiguration = eval('require')(path.join(
+    specificConfiguration = (eval('require') as typeof require)(path.join(
         metaConfiguration.default.path.context, 'package'
-    ))
+    )) as PlainObject
     /* eslint-enable no-eval */
 } catch (error) {
     metaConfiguration.default.path.context = process.cwd()
