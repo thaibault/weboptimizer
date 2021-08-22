@@ -127,7 +127,7 @@ else {
     window.addEventListener('load', ():void => {
         browser.windowLoaded = true
     })
-    Tools.timeout(():void => {
+    void Tools.timeout(():void => {
         for (const callback of onCreatedListener)
             (callback as SynchronousProcedureFunction)()
     })
