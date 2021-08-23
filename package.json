@@ -100,7 +100,7 @@
     "html-minifier": "*",
     "html-webpack-plugin": "*",
     "imports-loader": "*",
-    "jsdom": "*",
+    "jsdom": "^16.6.0",
     "loader-utils": "*",
     "rimraf": "*",
     "script-loader": "*",
