@@ -111,9 +111,11 @@ metaConfiguration.default.path.context += '/'
 const libraryConfiguration:PlainObject = metaConfiguration.library
 let configuration:DefaultConfiguration
 if (debug)
-    configuration = Tools.extend(
+    configuration = Tools.extend<DefaultConfiguration>(
         true,
-        Tools.modifyObject(metaConfiguration.default, metaConfiguration.debug),
+        Tools.modifyObject<DefaultConfiguration>(
+            metaConfiguration.default, metaConfiguration.debug
+        ),
         metaConfiguration.debug
     )
 else
