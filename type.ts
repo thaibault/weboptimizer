@@ -254,6 +254,7 @@ export interface MetaConfiguration {
 }
 export interface ResolvedBuildConfigurationItem extends BuildConfigurationItem {
     filePaths:Array<string>
+    type:string
 }
 export interface Extensions {
     file:{

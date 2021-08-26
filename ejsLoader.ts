@@ -59,8 +59,10 @@ export type LoaderConfiguration = Mapping<unknown> & {
 // endregion
 /**
  * Main transformation function.
+ *
  * @param this - Loader context.
  * @param source - Input string to transform.
+ *
  * @returns Transformed string.
  */
 export default function(this:any, source:string):string {
@@ -69,6 +71,7 @@ export default function(this:any, source:string):string {
             Tools.extend(
                 true,
                 {
+                    compiler: {},
                     compileSteps: 2,
                     compress: {
                         html: {},
@@ -116,6 +119,7 @@ export default function(this:any, source:string):string {
         ):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
             const queryMatch:Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
+
             if (queryMatch) {
                 const evaluated:EvaluationResult = Tools.stringEvaluate(
                     queryMatch[1], {compile, locals, request, source, template}
@@ -128,9 +132,12 @@ export default function(this:any, source:string):string {
                 else
                     Tools.extend(true, nestedLocals, evaluated.result)
             }
+
             let nestedOptions:CompilerOptions =
                 Tools.copy(options) as CompilerOptions
+
             delete nestedOptions.client
+
             nestedOptions = Tools.extend(
                 true,
                 {encoding: configuration.encoding},
@@ -138,8 +145,10 @@ export default function(this:any, source:string):string {
                 nestedLocals.options || {},
                 options
             )
+
             if (nestedOptions.isString)
                 return compile(template, nestedOptions)(nestedLocals)
+
             const templateFilePath:null|string =
                 Helper.determineModuleFilePath(
                     template,
@@ -155,6 +164,7 @@ export default function(this:any, source:string):string {
                     configuration.package.aliasPropertyNames,
                     configuration.encoding
                 )
+
             if (templateFilePath) {
                 if ('addDependency' in this)
                     this.addDependency(templateFilePath)
@@ -167,6 +177,7 @@ export default function(this:any, source:string):string {
                     return compile(templateFilePath, nestedOptions)(
                         nestedLocals
                     )
+
                 return fileSystem.readFileSync(
                     templateFilePath, {encoding: nestedOptions.encoding}
                 ) as unknown as string
@@ -251,6 +262,7 @@ export default function(this:any, source:string):string {
                 )
                 // endregion
             }
+
             if (typeof result === 'string') {
                 const filePath:string|undefined =
                     isString ? options.filename : result
@@ -333,8 +345,10 @@ export default function(this:any, source:string):string {
                     sourceType: 'script'
                 }
             )
+
             if (typeof processed?.code === 'string')
                 code = processed.code
+
             return `${options.strict ? "'use strict';\n" : ''}${code}`
         }
 
@@ -356,10 +370,13 @@ export default function(this:any, source:string):string {
                     ),
                     '<script processing$1workaround>$2</script>'
                 )
+
             return result
         }
+
         return ''
     }
+
     return compile(
         source,
         {
