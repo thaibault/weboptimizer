@@ -42,7 +42,7 @@ export type CompileFunction = (
     compileSteps?:number
 ) => TemplateFunction
 export type LoaderConfiguration = Mapping<unknown> & {
-    compiler:CompilerOptions
+    compiler:Partial<CompilerOptions>
     compileSteps:number
     compress:{
         html:Mapping<unknown>
@@ -142,7 +142,7 @@ export default function(this:any, source:string):string {
                 true,
                 {encoding: configuration.encoding},
                 nestedOptions,
-                nestedLocals.options || {},
+                nestedLocals.options as Partial<CompilerOptions> || {},
                 options
             )
 
