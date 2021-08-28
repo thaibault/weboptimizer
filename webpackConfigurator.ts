@@ -1749,8 +1749,6 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
         node: configuration.nodeEnvironment,
         optimization: {
             chunkIds: configuration.debug ? 'named' : 'total-size',
-            minimize: configuration.module.optimizer.minimize,
-            minimizer: configuration.module.optimizer.minimizer,
             moduleIds: configuration.debug ? 'named' : 'size',
             // region common chunks
             splitChunks: (
@@ -1764,7 +1762,9 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
                         defaultVendors: false
                     }
                 } :
-                Tools.extend(
+                Tools.extend<NonNullable<
+                    WebpackConfiguration['optimization']
+                >['splitChunks']>(
                     true,
                     {
                         chunks: 'all',
@@ -1797,7 +1797,8 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
                         }
                     },
                     configuration.injection.chunks
-                )
+                ),
+            ...configuration.module.optimizer
             // endregion
         },
         plugins: pluginInstances

@@ -67,17 +67,6 @@ export type Resolvable = {
 // / endregion
 // / region injection
 export type ExternalAliases = Mapping<Mapping<Function|string>>
-export type ExternalInjection =
-    string|
-    ((
-        parameter:{
-            context:string
-            request:string
-        },
-        callback:ProcedureFunction
-    ) => void)|
-    RegExp|
-    Array<ExternalInjection>
 export type GivenInjection =
     Function|string|Array<string>|Mapping<string|Array<string>>
 export type NormalizedGivenInjection = Mapping<Array<string>>
@@ -88,7 +77,7 @@ export interface GivenInjectionConfiguration {
 }
 export interface InjectionConfiguration {
     autoExclude:Array<string>
-    chunks:PlainObject
+    chunks:NonNullable<BaseWebpackConfiguration['optimization']>['splitChunks']
     entry:{
         given:GivenInjection
         normalized:NormalizedGivenInjection
@@ -101,7 +90,7 @@ export interface InjectionConfiguration {
                 include:Array<RegExp|string>
             }
         }
-        modules:ExternalInjection
+        modules:BaseWebpackConfiguration['externals']
     }
     externalAliases:Mapping
     ignorePattern:Array<WebpackIgnorePlugin['options']>|WebpackIgnorePlugin['options']
@@ -213,7 +202,7 @@ export interface CommandLineArguments {
     'test:browser':Array<Command>|Command
     'check:types':Array<Command>|Command
 }
-export type NodeEnvironment = Mapping<boolean|string> & {'#':string}
+export type NodeEnvironment = BaseWebpackConfiguration['node'] & {'#':string}
 export interface PluginConfiguration {
     name:{
         initializer:string
@@ -350,7 +339,7 @@ export interface ResolvedConfiguration {
             directoryPaths:Array<string>
             filePaths:Array<string>
         }
-        optimizer:{
+        optimizer:BaseWebpackConfiguration['optimization'] & {
             babelMinify?:{
                 bundle?:{
                     plugin?:PlainObject
@@ -372,8 +361,6 @@ export interface ResolvedConfiguration {
                 exclude:string
                 loader:Array<string>
             }
-            minimize:boolean
-            minimizer:Array<PlainObject>
         }
         preprocessor:{
             cascadingStyleSheet:WebpackLoader & {
@@ -419,7 +406,7 @@ export interface ResolvedConfiguration {
         }
     }
     path:PathConfiguration
-    performanceHints:{hints:false|string}
+    performanceHints:BaseWebpackConfiguration['performance']
     plugins:Array<PluginConfiguration>
     showConfiguration:boolean
     stylelint:PlainObject
