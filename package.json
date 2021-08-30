@@ -551,9 +551,8 @@
           "stats": {
             "colors": true
           },
-          "watchContentBase": true,
           "watchFiles": {
-            "__evaluate__": "self.webpack.watchOptions || {}"
+            "__evaluate__": "self.webpack.watchOptions ? {options: self.webpack.watchOptions} : {}"
           }
         },
         "tool": false
