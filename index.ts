@@ -197,7 +197,7 @@ const main = async ():Promise<void> => {
                                         ):void => removeDirectoryRecursively(
                                             file.path,
                                             {glob: false},
-                                            (error:Error):void =>
+                                            (error?:Error|null):void =>
                                                 error ?
                                                     reject(error) :
                                                     resolve()
@@ -228,7 +228,8 @@ const main = async ():Promise<void> => {
                     ):void => removeDirectoryRecursively(
                         configuration.path.target.base,
                         {glob: false},
-                        (error:Error):void => error ? reject(error) : resolve()
+                        (error?:Error|null):void =>
+                            error ? reject(error) : resolve()
                     ))
 
                 if (
@@ -242,7 +243,7 @@ const main = async ():Promise<void> => {
                         removeDirectoryRecursively(
                             configuration.path.apiDocumentation,
                             {glob: false},
-                            (error:Error):void =>
+                            (error?:Error|null):void =>
                                 error ? reject(error) : resolve()
                         )
                     )

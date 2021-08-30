@@ -27,6 +27,7 @@ import {
     GivenInjection,
     GivenInjectionConfiguration,
     InjectionConfiguration,
+    ResolvedBuildConfigurationItem,
     ResolvedConfiguration,
     SubConfigurationTypes
 } from './type'
@@ -111,9 +112,12 @@ metaConfiguration.default.path.context += '/'
 const libraryConfiguration:PlainObject = metaConfiguration.library
 let configuration:DefaultConfiguration
 if (debug)
-    configuration = Tools.extend(
+    configuration = Tools.extend<DefaultConfiguration>(
         true,
-        Tools.modifyObject(metaConfiguration.default, metaConfiguration.debug),
+        Tools.modifyObject<DefaultConfiguration>(
+            metaConfiguration.default as DefaultConfiguration,
+            metaConfiguration.debug
+        )!,
         metaConfiguration.debug
     )
 else
@@ -122,13 +126,13 @@ configuration.debug = debug
 if (typeof configuration.library === 'object')
     Tools.extend(
         true,
-        Tools.modifyObject(libraryConfiguration, configuration.library),
+        Tools.modifyObject(libraryConfiguration, configuration.library)!,
         configuration.library
     )
 if (configuration.library && specificConfiguration?.library !== false)
     configuration = Tools.extend(
         true,
-        Tools.modifyObject(configuration, libraryConfiguration),
+        Tools.modifyObject(configuration, libraryConfiguration)!,
         libraryConfiguration
     )
 // endregion
@@ -177,10 +181,11 @@ if (runtimeInformation.givenCommandLineArguments.length > 2)
                 ]))
                     Tools.extend(
                         true,
-                        Tools.modifyObject(
-                            configurationTarget, configurationTarget[type]
-                        ),
-                        configurationTarget[type]
+                        Tools.modifyObject<DefaultConfiguration>(
+                            configurationTarget as DefaultConfiguration,
+                            configurationTarget[type]
+                        )!,
+                        configurationTarget[type] as PlainObject
                     )
 // /// endregion
 // /// region clear task type specific configurations
@@ -199,7 +204,7 @@ Tools.extend(
     Tools.modifyObject(
         Tools.modifyObject(configuration, specificConfiguration),
         runtimeInformation
-    ),
+    )!,
     specificConfiguration,
     runtimeInformation
 )
@@ -219,13 +224,16 @@ if (result !== null && typeof result === 'object') {
         delete result.__reference__
         for (const name of referenceNames)
             Tools.extend(
-                true, result, configuration[name as keyof DefaultConfiguration]
+                true,
+                result,
+                configuration[name as keyof DefaultConfiguration] as
+                    PlainObject
             )
     }
-    Tools.extend(true, Tools.modifyObject(configuration, result), result)
+    Tools.extend(true, Tools.modifyObject(configuration, result)!, result)
 }
 // Removing comments (default key name to delete is "#").
-configuration = Tools.removeKeys(configuration)
+configuration = Tools.removeKeyPrefixes(configuration)
 // endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
@@ -322,16 +330,17 @@ for (const type in resolvedConfiguration.buildContext.types)
     if (Object.prototype.hasOwnProperty.call(
         resolvedConfiguration.buildContext.types, type
     ))
-        resolvedConfiguration.buildContext.types[type] = Tools.extend(
-            true,
-            Tools.copy(defaultConfiguration),
-            Tools.extend(
+        resolvedConfiguration.buildContext.types[type] =
+            Tools.extend<ResolvedBuildConfigurationItem>(
                 true,
-                {extension: type},
-                resolvedConfiguration.buildContext.types[type],
-                {type}
+                Tools.copy(defaultConfiguration),
+                Tools.extend<ResolvedBuildConfigurationItem>(
+                    true,
+                    {extension: type},
+                    resolvedConfiguration.buildContext.types[type],
+                    {type}
+                )
             )
-        )
 // endregion
 // region resolve module location and determine which asset types are needed
 resolvedConfiguration.module.locations = Helper.determineModuleLocations(

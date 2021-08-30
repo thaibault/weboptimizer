@@ -102,9 +102,17 @@ import Helper from './helper'
 import htmlLoaderModuleBackup from 'html-loader'
 if (require.cache && require.resolve('html-loader') in require.cache)
     (require.cache[require.resolve('html-loader')] as NodeModule).exports =
-        function<A, B>(this:WebpackLoader, ...parameter:Array<A>):B {
-            Tools.extend(true, this.options, module, this.options)
-            return htmlLoaderModuleBackup.call(this, ...parameter)
+        function<Type, Result>(
+            this:WebpackLoader, ...parameters:Array<Type>
+        ):Result {
+            Tools.extend<NodeModule>(
+                true,
+                this.options,
+                module,
+                this.options as unknown as NodeModule
+            )
+
+            return htmlLoaderModuleBackup.call(this, ...parameters)
         }
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
@@ -140,7 +148,7 @@ else {
 }
 // / endregion
 // / region plugins
-const pluginInstances:Array<Record<string, any>> = []
+const pluginInstances:WebpackConfiguration['plugins'] = []
 // // region define modules to ignore
 for (const pattern of ([] as Array<IgnorePlugin['options']>).concat(
     configuration.injection.ignorePattern
@@ -577,10 +585,12 @@ if (configuration.injection.external.modules === '__implicit__')
                         request
                     ] === 'object'
                 )
-                    Tools.extend(
-                        result,
-                        configuration.injection.external.aliases[request]
+                    Tools.extend<Mapping>(
+                        result as Mapping,
+                        configuration.injection.external.aliases[request] as
+                            Mapping
                     )
+
                 if (Object.prototype.hasOwnProperty.call(result, 'default'))
                     for (const key of keys)
                         if (!Object.prototype.hasOwnProperty.call(result, key))
@@ -1643,7 +1653,9 @@ if (configuration.path.configuration?.json)
             `${configuration.path.configuration.json}" not available.`
         )
     }
-export let webpackConfiguration:WebpackConfiguration = Tools.extend(
+export let webpackConfiguration:WebpackConfiguration = Tools.extend<
+    WebpackConfiguration
+>(
     true,
     {
         bail: !configuration.givenCommandLineArguments.includes('--watch'),
@@ -1651,7 +1663,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
         devtool: configuration.development.tool,
         devServer: configuration.development.server,
         experiments: {
-          topLevelAwait: true
+            topLevelAwait: true
         },
         // region input
         entry: configuration.injection.entry.normalized,
@@ -1737,8 +1749,6 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
         node: configuration.nodeEnvironment,
         optimization: {
             chunkIds: configuration.debug ? 'named' : 'total-size',
-            minimize: configuration.module.optimizer.minimize,
-            minimizer: configuration.module.optimizer.minimizer,
             moduleIds: configuration.debug ? 'named' : 'size',
             // region common chunks
             splitChunks: (
@@ -1752,7 +1762,9 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                         defaultVendors: false
                     }
                 } :
-                Tools.extend(
+                Tools.extend<NonNullable<
+                    WebpackConfiguration['optimization']
+                >['splitChunks']>(
                     true,
                     {
                         chunks: 'all',
@@ -1785,8 +1797,21 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend(
                         }
                     },
                     configuration.injection.chunks
-                )
+                ),
             // endregion
+            ...Tools.mask(
+                configuration.module.optimizer,
+                {
+                    exclude: {
+                        babelMinify: true,
+                        cssnano: true,
+                        data: true,
+                        font: true,
+                        htmlMinifier: true,
+                        image: true
+                    }
+                }
+            )
         },
         plugins: pluginInstances
     },
@@ -1800,7 +1825,7 @@ if (
     !Array.isArray(configuration.module.skipParseRegularExpressions) ||
     configuration.module.skipParseRegularExpressions.length
 )
-    webpackConfiguration.module.noParse =
+    webpackConfiguration.module!.noParse =
         configuration.module.skipParseRegularExpressions
 if (configuration.path.configuration?.javaScript)
     try {

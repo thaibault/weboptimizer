@@ -447,8 +447,9 @@ export class Helper {
 
         for (const type in configuration)
             if (Object.prototype.hasOwnProperty.call(configuration, type)) {
-                const newItem:ResolvedBuildConfigurationItem =
-                    Tools.extend(true, {filePaths: []}, configuration[type])
+                const newItem:ResolvedBuildConfigurationItem = Tools.extend<
+                    ResolvedBuildConfigurationItem
+                >(true, {filePaths: []}, configuration[type])
 
                 for (const file of Tools.walkDirectoryRecursivelySync(
                     entryPath,
