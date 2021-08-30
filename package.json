@@ -120,7 +120,6 @@
     "@types/node": "*",
     "@types/node-fetch": "*",
     "@types/rimraf": "*",
-    "@types/vfile-message": "*",
     "@types/webpack-env": "*",
     "@types/webpack-sources": "*",
     "@types/workbox-webpack-plugin": "*",
