@@ -23,10 +23,9 @@ import {JSDOM} from 'jsdom'
 import {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
-    Entry as WebpackEntry,
     IgnorePlugin as WebpackIgnorePlugin,
-    Module as WebpackModule,
     ModuleOptions as WebpackModuleOptions,
+    RuleSetRule as WebpackRuleSetRule,
     WebpackOptionsNormalized
 } from 'webpack'
 import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
@@ -185,8 +184,7 @@ export interface WebpackLoaderConfiguration {
     test:RegExp
     use:Array<WebpackLoader>|WebpackLoader
 }
-export type WebpackLoaderIndicator =
-    Array<WebpackLoaderIndicator>|Function|string
+export type WebpackLoaderIndicator = WebpackRuleSetRule['include']
 // // endregion
 export interface Command {
     arguments:Array<string>
@@ -364,11 +362,7 @@ export interface ResolvedConfiguration {
         }
         preprocessor:{
             cascadingStyleSheet:WebpackLoader & {
-                additional:{
-                    plugins:AdditionalLoader
-                    post:Array<string>
-                    pre:Array<string>
-                }
+                additional:AdditionalLoader & {plugins:AdditionalLoader}
                 postcssPresetEnv:PlainObject
             }
             ejs:LoaderConfiguration
@@ -419,14 +413,8 @@ export interface ResolvedConfiguration {
     webpack:WebpackConfiguration
 }
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
-export type WebpackConfiguration = BaseWebpackConfiguration & {
-    // region input
-    entry:WebpackEntry
-    // endregion
-    module:WebpackModule
-    // region output
-    output:PlainObject
-    // endregion
+export interface WebpackConfiguration extends BaseWebpackConfiguration {
+    devServer:Mapping<unknown>
     replaceWebOptimizer:WebpackConfiguration
 }
 // / endregion

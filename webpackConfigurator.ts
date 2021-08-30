@@ -148,7 +148,7 @@ else {
 }
 // / endregion
 // / region plugins
-const pluginInstances:Array<Record<string, any>> = []
+const pluginInstances:WebpackConfiguration['plugins'] = []
 // // region define modules to ignore
 for (const pattern of ([] as Array<IgnorePlugin['options']>).concat(
     configuration.injection.ignorePattern
@@ -1798,8 +1798,20 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
                     },
                     configuration.injection.chunks
                 ),
-            ...configuration.module.optimizer
             // endregion
+            ...Tools.mask(
+                configuration.module.optimizer,
+                {
+                    exclude: {
+                        babelMinify: true,
+                        cssnano: true,
+                        data: true,
+                        font: true,
+                        htmlMinifier: true,
+                        image: true
+                    }
+                }
+            )
         },
         plugins: pluginInstances
     },
@@ -1813,7 +1825,7 @@ if (
     !Array.isArray(configuration.module.skipParseRegularExpressions) ||
     configuration.module.skipParseRegularExpressions.length
 )
-    webpackConfiguration.module.noParse =
+    webpackConfiguration.module!.noParse =
         configuration.module.skipParseRegularExpressions
 if (configuration.path.configuration?.javaScript)
     try {

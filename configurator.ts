@@ -233,7 +233,7 @@ if (result !== null && typeof result === 'object') {
     Tools.extend(true, Tools.modifyObject(configuration, result)!, result)
 }
 // Removing comments (default key name to delete is "#").
-configuration = Tools.removeKeys(configuration)
+configuration = Tools.removeKeyPrefixes(configuration)
 // endregion
 // / region build absolute paths
 configuration.path.base = path.resolve(
