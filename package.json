@@ -548,9 +548,6 @@
           "publicPath": {
             "__evaluate__": "self.path.target.public"
           },
-          "stats": {
-            "colors": true
-          },
           "watchFiles": {
             "__evaluate__": "self.webpack.watchOptions ? {options: self.webpack.watchOptions} : {}"
           }
