@@ -552,7 +552,7 @@
             "colors": true
           },
           "watchContentBase": true,
-          "watchOptions": {
+          "watchFiles": {
             "__evaluate__": "self.webpack.watchOptions || {}"
           }
         },
