@@ -1460,7 +1460,7 @@
       "development": {
         "server": {
           "open": true,
-          "openPage": {
+          "open": {
             "__evaluate__": "`${path.join(self.path.target.public, self.files.defaultHTML.filename)}`"
           }
         }
