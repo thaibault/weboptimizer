@@ -519,18 +519,14 @@
       "debug": false,
       "development": {
         "server": {
+          "client": {
+            "#": "Disable automatic injection to avoid injection in all chunks and as last module which would shadow main module (e.g. index).",
+            "needClientEntry": false,
+            "needHotEntry": false
+          },
           "compress": {
             "__evaluate__": "!self.debug"
           },
-          "contentBase": [
-            {
-              "__evaluate__": "self.path.target.base"
-            },
-            {
-              "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames[0])"
-            }
-          ],
-          "disableHostCheck": true,
           "historyApiFallback": true,
           "host": "0.0.0.0",
           "hot": {
@@ -538,15 +534,18 @@
             "__evaluate__": "self.debug"
           },
           "https": false,
-          "index": "playground.html",
-          "#": "Disable automatic injection to avoid injection in all chunks and as last module which would shadow main module (e.g. index).",
-          "injectClient": false,
-          "injectHot": false,
-          "inline": true,
           "liveReload": true,
           "port": 8080,
-          "publicPath": {
-            "__evaluate__": "self.path.target.public"
+          "static": {
+            "directory": [
+              {
+                "__evaluate__": "self.path.target.base"
+              },
+              {
+                "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames[0])"
+              }
+            ],
+            "watch": true
           },
           "watchFiles": {
             "__evaluate__": "self.webpack.watchOptions ? {options: self.webpack.watchOptions} : {}"
