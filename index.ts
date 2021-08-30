@@ -31,6 +31,7 @@ import {
     PlainObject,
     ProcedureFunction,
     ProcessCloseCallback,
+    ProcessError,
     ProcessErrorCallback,
     ProcessHandler
 } from 'clientnode/type'
@@ -614,6 +615,7 @@ const main = async ():Promise<void> => {
             if (!finished)
                 for (const closeEventHandler of closeEventHandlers)
                     closeEventHandler(...parameter)
+
             finished = true
         }
         for (const closeEventName of CloseEventNames)
@@ -639,7 +641,7 @@ const main = async ():Promise<void> => {
         try {
             await Promise.all(processPromises)
         } catch (error) {
-            process.exit(error.returnCode)
+            process.exit((error as ProcessError).returnCode)
         }
         // endregion
     } catch (error) {
