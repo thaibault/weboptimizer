@@ -1627,7 +1627,6 @@ if (
         `${configuration.development.server.host}:` +
         configuration.development.server.port
     ]
-    configuration.development.server.liveReload = false
 
     if (configuration.development.server.hot) {
         configuration.injection.entry.normalized.developmentHandler
