@@ -519,11 +519,6 @@
       "debug": false,
       "development": {
         "server": {
-          "client": {
-            "#": "Disable automatic injection to avoid injection in all chunks and as last module which would shadow main module (e.g. index).",
-            "needClientEntry": false,
-            "needHotEntry": false
-          },
           "compress": {
             "__evaluate__": "!self.debug"
           },
@@ -536,17 +531,20 @@
           "https": false,
           "liveReload": true,
           "port": 8080,
-          "static": {
-            "directory": [
-              {
+          "static": [
+            {
+              "directory": {
                 "__evaluate__": "self.path.target.base"
               },
-              {
+              "watch": true
+            },
+            {
+              "directory": {
                 "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames[0])"
-              }
-            ],
-            "watch": true
-          },
+              },
+              "watch": true
+            }
+          ],
           "watchFiles": {
             "__evaluate__": "self.webpack.watchOptions ? {options: self.webpack.watchOptions} : {}"
           }
