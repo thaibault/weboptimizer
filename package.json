@@ -519,6 +519,7 @@
       "debug": false,
       "development": {
         "server": {
+          "client": false,
           "compress": {
             "__evaluate__": "!self.debug"
           },

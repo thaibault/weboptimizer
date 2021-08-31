@@ -1621,19 +1621,20 @@ if (
     )
 ) {
     configuration.injection.entry.normalized.developmentHandler = [
-        'webpack-dev-server/client/index.js?http' +
-        (configuration.development.server.https ? 's' : '') +
-        `://${configuration.development.server.host}:` +
+        'webpack-dev-server/client/index.js?live-reload=true&hot=' +
+        `${configuration.development.server.hot ? 'true' : 'false'}&http` +
+        `${configuration.development.server.https ? 's' : ''}://` +
+        `${configuration.development.server.host}:` +
         configuration.development.server.port
     ]
+    configuration.development.server.liveReload = false
 
     if (configuration.development.server.hot) {
         configuration.injection.entry.normalized.developmentHandler
             .push('webpack/hot/dev-server.js')
+        configuration.development.server.hot = false
 
         pluginInstances.push(new HotModuleReplacementPlugin())
-
-        configuration.development.server.hot = false
     }
 }
 // / endregion
