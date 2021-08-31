@@ -33,12 +33,12 @@ const postcssImport:Function = optionalRequire('postcss-import')
 const postcssSprites:Function = optionalRequire('postcss-sprites')
 const postcssURL:Function = optionalRequire('postcss-url')
 import util from 'util'
-import 'webpack'
 import webpack, {
     Compiler,
     Compilation,
     ContextReplacementPlugin,
     DefinePlugin,
+    HotModuleReplacementPlugin,
     IgnorePlugin,
     NormalModuleReplacementPlugin,
     ProvidePlugin
@@ -1606,6 +1606,11 @@ if (
 }
 // / endregion
 // / region apply runtime dev helper
+/*
+    NOTE: Disable automatic injection to avoid injection in all chunks and as
+    last module which would shadow main module (e.g. index).
+    So we inject live reload and hot module replacement manually.
+*/
 if (
     htmlAvailable &&
     configuration.debug &&
@@ -1621,9 +1626,17 @@ if (
         `://${configuration.development.server.host}:` +
         configuration.development.server.port
     ]
-    if (configuration.development.server.hot)
+
+    configuration.development.server.liveReload = false
+
+    if (configuration.development.server.hot) {
         configuration.injection.entry.normalized.developmentHandler
             .push('webpack/hot/dev-server.js')
+
+        pluginInstances.push(new HotModuleReplacementPlugin())
+
+        configuration.development.server.hot = false
+    }
 }
 // / endregion
 // endregion
