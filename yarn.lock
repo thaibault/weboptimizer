@@ -2306,12 +2306,12 @@ aproba@^1.0.3:
   integrity sha512-Y9J6ZjXtoYh8RnXVCMOU/ttDmk1aBjunq9vO0ta5x85WDQiQfUF9sIPBITdbiiIVcBo03Hi3jMxigBtsddlXRw==
 
 are-we-there-yet@~1.1.2:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/are-we-there-yet/-/are-we-there-yet-1.1.6.tgz#bc9101d19670c7bdb1546ed036568a6c9879ee79"
-  integrity sha512-+1byPnimWdGcKFRS48zG73nxM08kamPFReUYvEmRXI3E8E4YhF4voMRDaGlfGD1UeRHEgs4NhQCE28KI8JVj1A==
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/are-we-there-yet/-/are-we-there-yet-1.1.7.tgz#b15474a932adab4ff8a50d9adfa7e4e926f21146"
+  integrity sha512-nxwy40TuMiUGqMyRHgCSWZ9FM4VAoRP4xUYSTv5ImRog+h9yISPbVH7H8fASCIzYn9wlEv4zvFL7uKDMCFQm3g==
   dependencies:
     delegates "^1.0.0"
-    readable-stream "^3.6.0"
+    readable-stream "^2.0.6"
 
 argparse@^1.0.7:
   version "1.0.10"
@@ -3687,9 +3687,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.800"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.800.tgz#4ebdc65a5196e17d6417eea8e3295e79d4f2756b"
-  integrity sha512-e3YZ49Wdd63wQqWFf5KDR4Ku4Ukfd3WgMXJEtW9h5l0ms6WPYyR9MnGlr/sTNsiv2XukQJ425NOBekNoj+rBnw==
+  version "3.0.801"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.801.tgz#4b8cb3e5089d15d6bfa1870f09d3bf8b61d06681"
+  integrity sha512-cyG7XucjaeFilPDz54BWd9eWR7wPttg0rkDCxiDTqG0s+tQXqUqN0Wxzr3RWNxanF+AxkgZH//XlrtoOSGKmHw==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
 
@@ -9265,7 +9265,7 @@ read-pkg@^5.2.0:
     parse-json "^5.0.0"
     type-fest "^0.6.0"
 
-readable-stream@3, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
+readable-stream@3, readable-stream@^3.1.1, readable-stream@^3.4.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.6.0.tgz#337bbda3adc0706bd3e024426a286d4b4b2c9198"
   integrity sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==
@@ -9274,7 +9274,7 @@ readable-stream@3, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stre
     string_decoder "^1.1.1"
     util-deprecate "^1.0.1"
 
-readable-stream@^2.0.2, readable-stream@^2.2.2, readable-stream@^2.3.5, readable-stream@^2.3.7, readable-stream@~2.3.6:
+readable-stream@^2.0.2, readable-stream@^2.0.6, readable-stream@^2.2.2, readable-stream@^2.3.5, readable-stream@^2.3.7, readable-stream@~2.3.6:
   version "2.3.7"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.7.tgz#1eca1cf711aef814c04f62252a36a62f6cb23b57"
   integrity sha512-Ebho8K4jIbHAxnuxi7o42OrZgF/ZTNcsZj6nRKyUmkhLFq8CHItp/fy6hQZuZmP/n3yZ9VBUbp4zz/mX8hmYPw==
@@ -10591,9 +10591,9 @@ terminal-link@^2.0.0:
     supports-hyperlinks "^2.0.0"
 
 terser-webpack-plugin@^5.1.3:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-5.2.0.tgz#694c54fcdfa5f5cb2ceaf31929e7535b32a8a50c"
-  integrity sha512-FpR4Qe0Yt4knSQ5u2bA1wkM0R8VlVsvhyfSHvomXRivS4vPLk0dJV2IhRBIHRABh7AFutdMeElIA5y1dETwMBg==
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-5.2.1.tgz#7baa96287ca8f29d22814d57c809cbae6be4de3c"
+  integrity sha512-mUAWsS2RDNL3rEr0ZTr7hm/R1DDxNwrED7Kf59F2rgFTfy+LrnciwA51MNWhGGQcqHnqvbPHgkW9LYr5HGBhfw==
   dependencies:
     jest-worker "^27.0.6"
     p-limit "^3.1.0"
@@ -11282,9 +11282,9 @@ webpack-sources@^1.4.3:
     source-map "~0.6.1"
 
 webpack@*:
-  version "5.51.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.51.1.tgz#41bebf38dccab9a89487b16dbe95c22e147aac57"
-  integrity sha512-xsn3lwqEKoFvqn4JQggPSRxE4dhsRcysWTqYABAZlmavcoTmwlOb9b1N36Inbt/eIispSkuHa80/FJkDTPos1A==
+  version "5.51.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.51.2.tgz#f765d258b0bf6abda3c5f21bf855a25720e9796f"
+  integrity sha512-odydxP4WA3XYYzwSQUivPxywdzMlY42bbfxMwCaEtHb+i/N9uzKSHcLgWkXo/Gsa+4Zlzf3Jg0hEHn1FnZpk2Q==
   dependencies:
     "@types/eslint-scope" "^3.7.0"
     "@types/estree" "^0.0.50"
