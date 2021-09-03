@@ -3686,9 +3686,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.805"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.805.tgz#a81a36bb01246c80173ccea2f23231fd37f0e46e"
-  integrity sha512-4M6Mg+Ayq39U5DrCglMflokYDvSfcHh1mXYIp9DSe+on+lhHIpP+b6rSsESjbJfM4wl9O7fFJ8drvi1zoZh3+A==
+  version "3.0.806"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.806.tgz#658ad4423028bf66d77f2caa2fab55cd4c0e6455"
+  integrity sha512-9tK8HErRUD4ws/cAVsuuk2BQlCgf2Kc4OqQ0MdRzDLJmK2jgqHz56Bsct3SEhRlYw9kJZXqzUW9Foj+jnun0yg==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.0.tgz"
 
