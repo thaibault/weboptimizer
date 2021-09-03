@@ -68,7 +68,7 @@ export type LoaderConfiguration = Mapping<unknown> & {
 export default function(this:any, source:string):string {
     const givenOptions:LoaderConfiguration =
         Tools.convertSubstringInPlainObject(
-            Tools.extend(
+            Tools.extend<LoaderConfiguration>(
                 true,
                 {
                     compiler: {},
@@ -88,8 +88,7 @@ export default function(this:any, source:string):string {
                                 '.html',
                                 '.eot', '.ttf', '.woff', '.woff2'
                             ]
-                        },
-                        module: []
+                        }
                     },
                     module: {
                         aliases: {},
