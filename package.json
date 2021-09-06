@@ -118,7 +118,6 @@
     "@types/jest": "*",
     "@types/jsdom": "*",
     "@types/node": "*",
-    "@types/node-fetch": "*",
     "@types/rimraf": "*",
     "@types/webpack-env": "*",
     "@types/webpack-sources": "*",
