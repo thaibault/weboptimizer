@@ -136,6 +136,7 @@
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
     "mkdirp": "*",
+    "node-fetch": "*",
     "postcss": "*",
     "postcss-fontpath": "*",
     "postcss-import": "*",
