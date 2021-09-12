@@ -451,6 +451,7 @@ if (configuration.injection.external.modules === '__implicit__')
     ):void => {
         if (typeof request !== 'string')
             return callback()
+
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
             request = path.relative(configuration.path.context, request)
@@ -459,6 +460,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 request = request.substring(filePath.length)
                 if (request.startsWith('/'))
                     request = request.substring(1)
+
                 break
             }
         // region pattern based aliasing
@@ -549,6 +551,7 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.inPlace.externalLibrary.dynamic,
             configuration.encoding
         )
+
         if (resolvedRequest) {
             const keys:Array<string> = ['amd', 'commonjs', 'commonjs2', 'root']
             let result:PlainObject|string = resolvedRequest
@@ -597,6 +600,7 @@ if (configuration.injection.external.modules === '__implicit__')
                             result[key] = result.default
                 // endregion
             }
+
             if (
                 typeof result !== 'string' &&
                 Object.prototype.hasOwnProperty.call(result, 'root')
@@ -610,6 +614,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 configuration.exportFormat.external ||
                 configuration.exportFormat.self
             )
+
             return callback(
                 null,
                 exportFormat === 'umd' || typeof result === 'string' ?
@@ -618,6 +623,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 exportFormat
             )
         }
+
         return callback()
     }
 // /// endregion
