@@ -3570,9 +3570,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.828"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.828.tgz#cab7664436bc40c7091c78e7925a66ba1d2f52a8"
-  integrity sha512-39oi5i8XNM5+dy6uTyPAW2hxXeNfjVzprqKAayIisH/v9J/gnfeTmavnw5LRRjZDtp6KVvEOqiLYDKRWuqdIqg==
+  version "3.0.829"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.829.tgz#4f8f6274a953bc7142ba31cefd221644e246c793"
+  integrity sha512-p9HgqK6NjfxRhhrN7wOrdafHZQwadqcmH2kqwPhJAKw9GiyNFB9ppZO8FATS5su+zIA3krocbcMaiT8J9kREsA==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
 
@@ -9789,9 +9789,9 @@ strip-json-comments@~2.0.1:
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
 style-loader@*:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.2.1.tgz#63cb920ec145c8669e9a50e92961452a1ef5dcde"
-  integrity sha512-1k9ZosJCRFaRbY6hH49JFlRB0fVSbmnyq1iTPjNxUmGVjBNEmwrrHPenhlp+Lgo51BojHSf6pl2FcqYaN3PfVg==
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.3.0.tgz#d66ea95fc50b22f8b79b69a9e414760fcf58d8d8"
+  integrity sha512-szANub7ksJtQioJYtpbWwh1hUl99uK15n5HDlikeCRil/zYMZgSxucHddyF/4A3qJMUiAjPhFowrrQuNMA7jwQ==
 
 style-search@^0.1.0:
   version "0.1.0"
