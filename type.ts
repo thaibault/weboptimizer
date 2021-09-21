@@ -74,6 +74,12 @@ export interface GivenInjectionConfiguration {
     entry:GivenInjection
     external:GivenInjection
 }
+export type IgnorePattern =
+    WebpackIgnorePlugin['options'] |
+    {
+        contextRegExp?:string
+        resourceRegExp?:string
+    }
 export interface InjectionConfiguration {
     autoExclude:Array<string>
     chunks:NonNullable<BaseWebpackConfiguration['optimization']>['splitChunks']
@@ -92,7 +98,7 @@ export interface InjectionConfiguration {
         modules:BaseWebpackConfiguration['externals']
     }
     externalAliases:Mapping
-    ignorePattern:Array<WebpackIgnorePlugin['options']>|WebpackIgnorePlugin['options']
+    ignorePattern:Array<IgnorePattern>|IgnorePattern
     implicitExternalExcludePattern:Array<RegExp|string>
     implicitExternalIncludePattern:Array<RegExp|string>
 }

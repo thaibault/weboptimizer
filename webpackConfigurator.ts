@@ -84,6 +84,7 @@ import {
     HTMLConfiguration,
     HTMLWebpackPluginAssetTagGroupsData,
     HTMLWebpackPluginBeforeEmitData,
+    IgnorePattern,
     InPlaceAssetConfiguration,
     InPlaceConfiguration,
     PackageDescriptor,
@@ -150,16 +151,21 @@ else {
 // / region plugins
 const pluginInstances:WebpackConfiguration['plugins'] = []
 // // region define modules to ignore
-for (const pattern of ([] as Array<IgnorePlugin['options']>).concat(
+for (const pattern of ([] as Array<IgnorePattern>).concat(
     configuration.injection.ignorePattern
 )) {
-    if (typeof (pattern as PlainObject).contextRegExp === 'string')
+    if (typeof (pattern as {contextRegExp:string}).contextRegExp === 'string')
         (pattern as {contextRegExp:RegExp}).contextRegExp =
             new RegExp((pattern as {contextRegExp:string}).contextRegExp)
-    if (typeof (pattern as PlainObject).resourceRegExp === 'string')
+
+    if (
+        typeof (pattern as {resourceRegExp:string}).resourceRegExp ===
+            'string'
+    )
         (pattern as {resourceRegExp:RegExp}).resourceRegExp =
             new RegExp((pattern as {resourceRegExp:string}).resourceRegExp)
-    pluginInstances.push(new IgnorePlugin(pattern))
+
+    pluginInstances.push(new IgnorePlugin(pattern as IgnorePlugin['options']))
 }
 // // endregion
 // // region define modules to replace
