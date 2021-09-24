@@ -1835,7 +1835,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
                     }
                 }
             )
-        },
+        } as Partial<WebpackConfiguration['optimization']>,
         plugins: pluginInstances
     },
     configuration.cache?.main ? {cache: configuration.cache.main} : {},
