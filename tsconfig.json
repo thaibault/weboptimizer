@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "allowJs": true,
+        "allowSyntheticDefaultImports": true,
         "allowUmdGlobalAccess": true,
         "baseUrl": "../../",
         "checkJs": true,
