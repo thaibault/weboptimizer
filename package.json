@@ -81,9 +81,7 @@
   },
   "dependencies": {
     "@babel/core": "*",
-    "@babel/plugin-proposal-class-properties": "*",
     "@babel/plugin-proposal-decorators": "*",
-    "@babel/plugin-syntax-top-level-await": "*",
     "@babel/plugin-transform-runtime": "*",
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "*",
@@ -1111,6 +1109,9 @@
             "include": null,
             "loader": "babel-loader",
             "options": {
+              "assumptions": {
+                "ignoreFunctionLength": true
+              },
               "cacheDirectory": true,
               "compact": {
                 "__evaluate__": "!self.debug"
@@ -1121,9 +1122,6 @@
               "#": "NOTE: \"@babel/plugin-proposal-nullish-coalescing-operator\" and \"@babel/plugin-proposal-optional-chaining\" is needed to let typescript be able to parse result. \"@babel/plugin-transform-parameters\" is needed caused by a bug when transforming parameters coming from the preceding transformer.",
               "plugins": [
                 "@babel/plugin-proposal-nullish-coalescing-operator",
-                "@babel/plugin-proposal-optional-chaining",
-                "@babel/plugin-syntax-top-level-await",
-                "@babel/plugin-transform-parameters",
                 [
                   "@babel/plugin-proposal-decorators",
                   {

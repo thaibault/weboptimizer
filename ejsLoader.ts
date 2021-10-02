@@ -120,9 +120,11 @@ export default function(this:any, source:string):string {
             const queryMatch:Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
 
             if (queryMatch) {
-                const evaluated:EvaluationResult = Tools.stringEvaluate(
-                    queryMatch[1], {compile, locals, request, source, template}
-                )
+                const evaluated:EvaluationResult<Mapping<unknown>> =
+                    Tools.stringEvaluate<Mapping<unknown>>(
+                        queryMatch[1],
+                        {compile, locals, request, source, template}
+                    )
                 if (evaluated.error)
                     console.warn(
                         'Error occurred during processing given query: ' +

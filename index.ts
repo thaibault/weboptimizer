@@ -293,7 +293,7 @@ const main = async ():Promise<void> => {
                 'test:coverage:report'
             ].includes(process.argv[2])) {
                 let tidiedUp = false
-                const tidyUp:Function = ():void => {
+                const tidyUp:ProcedureFunction = ():void => {
                     /*
                         Determines all none javaScript entities which have been
                         emitted as single module to remove.
