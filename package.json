@@ -1680,6 +1680,7 @@
       "@typescript-eslint"
     ],
     "rules": {
+      "@typescript-eslint/no-non-null-assertion": 0,
       "@typescript-eslint/type-annotation-spacing": [
         "error",
         {
