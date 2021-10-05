@@ -3,9 +3,9 @@
 
 
 "@apideck/better-ajv-errors@^0.2.4":
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/@apideck/better-ajv-errors/-/better-ajv-errors-0.2.5.tgz#b9c0092b7f7f23c356a0a31600334f7b8958458b"
-  integrity sha512-Pm1fAqCT8OEfBVLddU3fWZ/URWpGGhkvlsBIgn9Y2jJlcNumo0gNzPsQswDJTiA8HcKpCjOhWQOgkA9kXR4Ghg==
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/@apideck/better-ajv-errors/-/better-ajv-errors-0.2.6.tgz#f12e5176a04c84caade85100fa33317a1457f372"
+  integrity sha512-FvGcbFUdbPLexAhdvihkroCA3LQa7kGMa8Qj9f32BiOcV1Thscg/QCxp/kJibsFrhUrlKOzd07uJFOGTN0/awQ==
   dependencies:
     json-schema "^0.3.0"
     jsonpointer "^4.1.0"
@@ -3593,9 +3593,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.841"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.841.tgz#e1e0fbdd4198ad70dbc84f545c14d5ad0d83ffde"
-  integrity sha512-G1S5AqlTwx8W/7Zm7OgfLJNhkKmgNBF6yqsUPPoXB+3nQnS8kBZXYx1oZPR5FG9+51GO7yhBhhfFQv/dX9MCOw==
+  version "3.0.842"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.842.tgz#4b4fe365b70d9b7743cbfa01482035eb5439dfde"
+  integrity sha512-PR79FREmYkPt13yZhm5c/9NJLAxX/IFYZ9xpvP2A3l1YfaV5TDtXJKhMM3rY87NPjae6mNwGHrdnaO+dRHt+kQ==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
 
