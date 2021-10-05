@@ -17,21 +17,27 @@
 // region imports
 import Tools, {optionalRequire} from 'clientnode'
 import {
+    AnyFunction,
     EvaluationResult,
     Mapping,
     PlainObject,
     SecondParameter,
     SynchronousProcedureFunction
 } from 'clientnode/type'
-const postcssCSSnano:Function = optionalRequire('cssnano')
+const postcssCSSnano:null|typeof import('cssnano') =
+    optionalRequire<typeof import('cssnano')>('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {promises as fileSystem} from 'fs'
 import path from 'path'
-const postcssFontPath:Function = optionalRequire('postcss-fontpath')
-const postcssImport:Function = optionalRequire('postcss-import')
-const postcssSprites:Function = optionalRequire('postcss-sprites')
-const postcssURL:Function = optionalRequire('postcss-url')
+const postcssFontPath:AnyFunction|null =
+    optionalRequire<AnyFunction>('postcss-fontpath')
+const postcssImport:null|typeof import('postcss-import') =
+    optionalRequire<typeof import('postcss-import')>('postcss-import')
+const postcssSprites:AnyFunction|null =
+    optionalRequire<AnyFunction>('postcss-sprites')
+const postcssURL:null|typeof import('postcss-url') =
+    optionalRequire<typeof import('postcss-url')>('postcss-url')
 import util from 'util'
 import webpack, {
     Compiler,
@@ -1316,7 +1322,6 @@ Tools.extend(loader, {
                                     plugins: ([] as Array<any>).concat(
                                         postcssImport ?
                                             postcssImport({
-                                                addDependencyTo: webpack,
                                                 root:
                                                     configuration.path.context
                                             }) :
