@@ -28,6 +28,7 @@ import Tools, {CloseEventNames} from 'clientnode'
 import {
     EvaluationResult,
     File,
+    Mapping,
     PlainObject,
     ProcedureFunction,
     ProcessCloseCallback,
@@ -100,7 +101,7 @@ const main = async ():Promise<void> => {
                     configuration.givenCommandLineArguments[
                         configuration.givenCommandLineArguments.length - 1
                     ],
-                    configuration,
+                    configuration as unknown as Mapping<unknown>,
                     'configuration'
                 )
             )

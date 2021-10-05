@@ -16,7 +16,7 @@
 */
 // region imports
 import Tools, {currentRequire, optionalRequire} from 'clientnode'
-import {PlainObject} from 'clientnode/type'
+import {Mapping, PlainObject} from 'clientnode/type'
 import fileSystem from 'fs'
 import path from 'path'
 
@@ -214,7 +214,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         runtimeInformation.givenCommandLineArguments[
             runtimeInformation.givenCommandLineArguments.length - 1
         ],
-        configuration,
+        configuration as unknown as Mapping<unknown>,
         'configuration'
     )
 if (result !== null && typeof result === 'object') {
