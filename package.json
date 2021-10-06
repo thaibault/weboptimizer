@@ -103,7 +103,7 @@
     "rimraf": "*",
     "script-loader": "*",
     "typescript": "*",
-    "webpack": "*",
+    "webpack": "5.56.*",
     "webpack-cli": "*",
     "webpack-sources": "*"
   },
