@@ -3593,9 +3593,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.843"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.843.tgz#ff383c0a5649681c9c7796329260b5cc03834758"
-  integrity sha512-X1cG94SuHjq4FZA8Cpyi5kgkX4nolbYSGOuizXPUdYaSq4fvvLyX7ebMLN/sAEI4mHjHZdaP1bidVIHZI5bp0A==
+  version "3.0.844"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.844.tgz#7e8c2ccbcf2d721cd1265a90fe22cfc61e0c1401"
+  integrity sha512-uHELFrjVceCpSix3HhxSZJpXCBhN9E15QOP7hCTAz2f86ROkkwDQGvu8YjRk+xS+jQt+JbpGe487XQMT8YWo8Q==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
 
@@ -6069,9 +6069,9 @@ istanbul-lib-source-maps@^4.0.0:
     source-map "^0.6.1"
 
 istanbul-reports@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/istanbul-reports/-/istanbul-reports-3.0.2.tgz#d593210e5000683750cb09fc0644e4b6e27fd53b"
-  integrity sha512-9tZvz7AiR3PEDNGiV9vIouQ/EAcqMXFmkcA1CDFTwOB98OZVDL0PH9glHotf5Ugp6GCOTypfzGWI/OqjWNCRUw==
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/istanbul-reports/-/istanbul-reports-3.0.3.tgz#974d682037f6d12b15dc55f9a2a5f8f1ea923831"
+  integrity sha512-0i77ZFLsb9U3DHi22WzmIngVzfoyxxbQcZRqlF3KoKmCJGq9nhFHoGi8FqBztN2rE8w6hURnZghetn0xpkVb6A==
   dependencies:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
