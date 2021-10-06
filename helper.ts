@@ -85,8 +85,10 @@ export class Helper {
      * @returns Given module id stripped.
      */
     static stripLoader(moduleID:string):string {
-        const moduleIDWithoutLoader:string =
-            moduleID.substring(moduleID.lastIndexOf('!') + 1)
+        const moduleIDWithoutLoader:string = moduleID
+            .substring(moduleID.lastIndexOf('!') + 1)
+            .replace(/\.webpack\[.+\/.+\]$/, '')
+
         return moduleIDWithoutLoader.includes('?') ?
             moduleIDWithoutLoader.substring(
                 0, moduleIDWithoutLoader.indexOf('?')

@@ -1006,6 +1006,7 @@ new NormalModuleReplacementPlugin(
 // / region loader helper
 const isFilePathInDependencies:Function = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
+
     return Helper.isFilePathInLocation(
         filePath,
         configuration.path.ignore
@@ -1577,6 +1578,7 @@ Tools.extend(loader, {
         exclude: (filePath:string):boolean => {
             if (typeof filePath !== 'string')
                 return false
+
             return configuration.extensions.file.internal.includes(
                 path.extname(Helper.stripLoader(filePath))
             ) ||
@@ -1586,7 +1588,8 @@ Tools.extend(loader, {
                     evaluate(
                         configuration.module.optimizer.data.exclude, filePath
                     )
-            )},
+            )
+        },
         generator: {
             filename:
                 path.join(
@@ -1617,9 +1620,7 @@ if (
         first.
     */
     loader.style.use.shift()
-    loader.style.use.unshift(
-        {loader: plugins.MiniCSSExtract.loader, options: {esModule: true}}
-    )
+    loader.style.use.unshift({loader: plugins.MiniCSSExtract.loader})
 }
 // / endregion
 // / region apply runtime dev helper

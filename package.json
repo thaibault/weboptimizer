@@ -851,7 +851,18 @@
           "exclude": null,
           "include": null,
           "loader": "css-loader",
-          "options": {}
+          "options": {
+            "esModule": false,
+            "modules": {
+              "auto": true,
+              "getLocalIdent": {
+                "__evaluate__": "(context, localIdentName, localName, options) => options.namedExport ? `${localName}ClassName` : localName"
+              },
+              "localIdentName": "[local]",
+              "mode": "local",
+              "namedExport": false
+            }
+          }
         },
         "directoryNames": [
           "node_modules"
