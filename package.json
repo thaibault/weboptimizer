@@ -103,7 +103,7 @@
     "rimraf": "*",
     "script-loader": "*",
     "typescript": "*",
-    "webpack": "5.56.*",
+    "webpack": "*",
     "webpack-cli": "*",
     "webpack-sources": "*"
   },
@@ -645,7 +645,7 @@
         ],
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug || self.generic.isWeb ? `${path.resolve(self.path.target.asset.cascadingStyleSheet, 'index.css')}?${self.hashAlgorithm}=[chunkhash]` : null"
+            "__evaluate__": "self.debug || self.generic.isWeb ? `${path.resolve(self.path.target.asset.cascadingStyleSheet, '[name].css')}?${self.hashAlgorithm}=[chunkhash]` : null"
           },
           "image": {
             "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
@@ -1386,11 +1386,6 @@
           "self": "commonjs2"
         },
         "files": {
-          "compose": {
-            "javaScript": {
-              "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, 'testBundle.js')}?${self.hashAlgorithm}=[chunkhash]`"
-            }
-          },
           "defaultHTML": {
             "filename": "test.html",
             "inject": "head",
@@ -1567,10 +1562,7 @@
       "files": {
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['serve', 'test:browser'].includes(self.givenCommandLineArguments[2]) ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, `index${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '.compiled' : ''}.css`)}?${self.hashAlgorithm}=[chunkhash]`"
-          },
-          "javaScript": {
-            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, `[name].js`)}?${self.hashAlgorithm}=[chunkhash]`"
+            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['serve', 'test:browser'].includes(self.givenCommandLineArguments[2]) ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, `[name]${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '.compiled' : ''}.css`)}?${self.hashAlgorithm}=[chunkhash]`"
           }
         },
         "defaultHTML": {
@@ -1632,14 +1624,14 @@
       "test": {
         "injection": {
           "entry": {
-            "index": "./test"
+            "testBundle": "./test"
           }
         }
       },
       "test:browser": {
         "injection": {
           "entry": {
-            "index": "./test"
+            "testBundle": "./test"
           }
         }
       },
