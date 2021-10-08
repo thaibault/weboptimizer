@@ -18,6 +18,7 @@
 import {
     Encoding, Mapping, PlainObject, ProcedureFunction, SecondParameter
 } from 'clientnode/type'
+import {Configuration as FaviconConfiguration} from 'favicons'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import {JSDOM} from 'jsdom'
 import {
@@ -61,7 +62,7 @@ export interface PackageDescriptor {
 }
 export type Replacements = Mapping<SecondParameter<String['replace']>>
 export type Resolvable = {
-    [TYPE in '__evaluate__'|'__execute__'|string]:any|Resolvable|string
+    [TYPE in '__evaluate__'|'__execute__'|string]:Resolvable|string|unknown
 }
 // / endregion
 // / region injection
@@ -212,7 +213,7 @@ export interface PluginConfiguration {
         initializer:string
         module:string
     }
-    parameter:Array<any>
+    parameters:Array<unknown>
 }
 export interface DefaultConfiguration {
     contextType:string
@@ -307,7 +308,7 @@ export interface ResolvedConfiguration {
         self:ExportFormat
     }
     extensions:Extensions
-    favicon:Mapping<any> & {logo:string}
+    favicon:Mapping<FaviconConfiguration> & {logo:string}
     files:{
         additionalPaths:Array<string>
         compose:{
@@ -419,6 +420,8 @@ export interface ResolvedConfiguration {
     webpack:WebpackConfiguration
 }
 export type ResolvedBuildConfiguration = Array<ResolvedBuildConfigurationItem>
+export type RuntimeInformation =
+    PlainObject & {givenCommandLineArguments:Array<string>}
 export interface WebpackConfiguration extends BaseWebpackConfiguration {
     devServer:Mapping<unknown>
     replaceWebOptimizer:WebpackConfiguration

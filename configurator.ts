@@ -29,6 +29,7 @@ import {
     InjectionConfiguration,
     ResolvedBuildConfigurationItem,
     ResolvedConfiguration,
+    RuntimeInformation,
     SubConfigurationTypes
 } from './type'
 /*
@@ -153,14 +154,12 @@ while (true) {
     count += 1
 }
 
-let runtimeInformation:PlainObject & {
-    givenCommandLineArguments:Array<string>
-} = {givenCommandLineArguments: process.argv}
-
+let runtimeInformation:RuntimeInformation =
+    {givenCommandLineArguments: process.argv}
 if (filePath) {
     runtimeInformation = JSON.parse(fileSystem.readFileSync(
         filePath, {encoding: configuration.encoding}
-    ))
+    )) as RuntimeInformation
     fileSystem.unlink(filePath, (error:Error|null):void => {
         if (error)
             throw error
@@ -214,6 +213,7 @@ Tools.extend(
     specificConfiguration,
     runtimeInformation
 )
+
 let result:null|PlainObject = null
 if (runtimeInformation.givenCommandLineArguments.length > 3)
     result = Tools.stringParseEncodedObject(
@@ -223,6 +223,7 @@ if (runtimeInformation.givenCommandLineArguments.length > 3)
         configuration as unknown as Mapping<unknown>,
         'configuration'
     )
+
 if (result !== null && typeof result === 'object') {
     if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
         const referenceNames:Array<string> =
@@ -236,6 +237,7 @@ if (result !== null && typeof result === 'object') {
                     PlainObject
             )
     }
+
     Tools.extend(true, Tools.modifyObject(configuration, result)!, result)
 }
 // Removing comments (default key name to delete is "#").

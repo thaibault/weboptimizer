@@ -52,9 +52,9 @@ import webpack, {
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 
 // NOTE: Hack to retrieve needed types.
-type WebpackResolveData = Parameters<IgnorePlugin['checkIgnore']>[0] & {
-    createData:any
-}
+type WebpackResolveData =
+    Parameters<IgnorePlugin['checkIgnore']>[0] &
+    {createData:any}
 const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
@@ -62,6 +62,7 @@ const pluginNameResourceMapping:Mapping = {
     Imagemin: 'imagemin-webpack-plugin',
     Offline: 'workbox-webpack-plugin'
 }
+
 const plugins:Record<string, any> = {}
 for (const name in pluginNameResourceMapping)
     if (
@@ -70,6 +71,7 @@ for (const name in pluginNameResourceMapping)
         plugins[name] = optionalRequire(pluginNameResourceMapping[name])
         if (plugins[name] === null) {
             delete plugins[name]
+
             console.debug(`Optional webpack plugin "${name}" not available.`)
         }
     }
@@ -886,6 +888,7 @@ if (configuration.module.enforceDeduplication) {
                                 result.createData.userRequest =
                                 result.createData.rawRequest =
                                     alternateTargetPath
+
                                 return
                             }
                             redundantRequest = {
@@ -1659,7 +1662,7 @@ if (
 for (const pluginConfiguration of configuration.plugins)
     pluginInstances.push(new (eval('require')(pluginConfiguration.name.module)[
         pluginConfiguration.name.initializer
-    ])(...pluginConfiguration.parameter))
+    ])(...pluginConfiguration.parameters))
 // region configuration
 let customConfiguration:PlainObject = {}
 if (configuration.path.configuration?.json)

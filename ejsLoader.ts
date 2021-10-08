@@ -26,6 +26,7 @@ import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import {getOptions, getRemainingRequest} from 'loader-utils'
 import path from 'path'
+import {LoaderRunnerLoaderContext} from 'webpack'
 
 import configuration from './configurator'
 import Helper from './helper'
@@ -65,7 +66,9 @@ export type LoaderConfiguration = Mapping<unknown> & {
  *
  * @returns Transformed string.
  */
-export default function(this:any, source:string):string {
+export default function(
+    this:LoaderRunnerLoaderContext<LoaderConfiguration>, source:string
+):string {
     const givenOptions:LoaderConfiguration =
         Tools.convertSubstringInPlainObject(
             Tools.extend<LoaderConfiguration>(
@@ -229,7 +232,7 @@ export default function(this:any, source:string):string {
         delete options.isString
 
         let stepLocals:Array<string>|Mapping<unknown>
-        let scope:Mapping<any>
+        let scope:Mapping<unknown>
         let originalScopeNames:Array<string>
         let scopeNames:Array<string>
 
@@ -254,7 +257,6 @@ export default function(this:any, source:string):string {
                     }
                 else if (!Array.isArray(stepLocals))
                     scope = stepLocals
-
 
                 originalScopeNames =
                     Array.isArray(stepLocals) ? stepLocals : Object.keys(scope)
@@ -317,7 +319,7 @@ export default function(this:any, source:string):string {
                             here.
                         */
                         ...originalScopeNames!
-                            .map((name:string):any => scope[name])
+                            .map((name:string):unknown => scope[name])
                             .concat(
                                 !options.strict && options._with ? [] : scope!
                             )

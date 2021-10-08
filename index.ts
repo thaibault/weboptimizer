@@ -87,7 +87,7 @@ const main = async ():Promise<void> => {
             'test:coverage:report',
             'check:types'
         ]
-        const closeEventHandlers:Array<Function> = []
+        const closeEventHandlers:Array<AnyFunction> = []
         if (configuration.givenCommandLineArguments.length > 2) {
             // region temporary save dynamically given configurations
             // NOTE: We need a copy of given arguments array.
@@ -128,6 +128,7 @@ const main = async ():Promise<void> => {
                 // NOTE: Close handler have to be synchronous.
                 if (Tools.isFileSync(filePath))
                     synchronousFileSystem.unlinkSync(filePath)
+
                 if (error)
                     throw error
             })
@@ -335,6 +336,7 @@ const main = async ():Promise<void> => {
                                             .aliasPropertyNames,
                                         configuration.encoding
                                     )
+
                                 let type:null|string = null
                                 if (filePath)
                                     type = Helper.determineAssetType(
@@ -342,6 +344,7 @@ const main = async ():Promise<void> => {
                                         configuration.buildContext.types,
                                         configuration.path
                                     )
+
                                 if (
                                     typeof type === 'string' &&
                                     configuration.buildContext.types[type]
@@ -406,7 +409,6 @@ const main = async ():Promise<void> => {
                         childProcessOptions
                     )
                     const copyAdditionalFilesAndTidyUp:ProcedureFunction = (
-                        ...parameter:Array<any>
                     ):void => {
                         for (
                             const filePath of
@@ -431,7 +433,7 @@ const main = async ():Promise<void> => {
                                 Tools.copyFileSync(sourcePath, targetPath)
                         }
 
-                        tidyUp(...parameter)
+                        tidyUp()
                     }
 
                     const closeHandler:ProcessHandler =
@@ -612,10 +614,12 @@ const main = async ():Promise<void> => {
             // endregion
         }
         let finished = false
-        const closeHandler:ProcessHandler = (...parameter:Array<any>):void => {
+        const closeHandler:ProcessHandler = (
+            ...parameters:Array<unknown>
+        ):void => {
             if (!finished)
                 for (const closeEventHandler of closeEventHandlers)
-                    closeEventHandler(...parameter)
+                    closeEventHandler(...parameters)
 
             finished = true
         }
