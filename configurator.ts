@@ -141,16 +141,22 @@ if (configuration.library && specificConfiguration?.library !== false)
 let count = 0
 let filePath:null|string = null
 while (true) {
-    const newFilePath:string = configuration.path.context +
-        `.dynamicConfiguration-${count}.json`
+    const newFilePath =
+        `${configuration.path.context as string}.dynamicConfiguration-` +
+        `${count}.json`
+
     if (!Tools.isFileSync(newFilePath))
         break
+
     filePath = newFilePath
+
     count += 1
 }
+
 let runtimeInformation:PlainObject & {
     givenCommandLineArguments:Array<string>
 } = {givenCommandLineArguments: process.argv}
+
 if (filePath) {
     runtimeInformation = JSON.parse(fileSystem.readFileSync(
         filePath, {encoding: configuration.encoding}
