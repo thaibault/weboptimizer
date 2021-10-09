@@ -16,7 +16,11 @@
 */
 // region imports
 import {
-    Encoding, Mapping, PlainObject, ProcedureFunction, SecondParameter
+    AnyFunction,
+    Encoding,
+    Mapping,
+    PlainObject,
+    SecondParameter
 } from 'clientnode/type'
 import {Configuration as FaviconConfiguration} from 'favicons'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
@@ -37,7 +41,7 @@ import {
 } from 'workbox-webpack-plugin'
 // endregion
 // region exports
-// / region generic
+// / region  generic
 export interface Browser {
     debug:boolean
     domContentLoaded:boolean
@@ -52,6 +56,7 @@ export interface InitializedBrowser extends Browser {
     instance:JSDOM
     window:Window
 }
+
 export interface PackageConfiguration {
     name:string
     version:string
@@ -60,15 +65,22 @@ export interface PackageDescriptor {
     configuration:PackageConfiguration
     filePath:string
 }
-export type Replacements = Mapping<SecondParameter<String['replace']>>
+
+export type Replacements = Mapping<SecondParameter<string['replace']>>
+
 export type Resolvable = {
-    [TYPE in '__evaluate__'|'__execute__'|string]:Resolvable|string|unknown
+    [K in '__evaluate__'|'__execute__'|string]:Resolvable|string|unknown
+}
+
+export interface RedundantRequest {
+    path:string
+    version:string
 }
 // / endregion
 // / region injection
-export type ExternalAliases = Mapping<Mapping<Function|string>>
+export type ExternalAliases = Mapping<Mapping<AnyFunction|string>>
 export type GivenInjection =
-    Function|string|Array<string>|Mapping<string|Array<string>>
+    AnyFunction|string|Array<string>|Mapping<string|Array<string>>
 export type NormalizedGivenInjection = Mapping<Array<string>>
 export interface GivenInjectionConfiguration {
     autoExclude:Array<string>
@@ -411,7 +423,7 @@ export interface ResolvedConfiguration {
     plugins:Array<PluginConfiguration>
     showConfiguration:boolean
     stylelint:PlainObject
-    targetTechnology: {
+    targetTechnology:{
         boilerplate:string
         payload:string
     }

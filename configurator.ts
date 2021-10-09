@@ -471,8 +471,9 @@ for (const loader of Array.isArray(
         .webOptimizerDefaultTemplateFileLoader += loader.loader
     if (loader.options)
         resolvedConfiguration.loader.aliases
-            .webOptimizerDefaultTemplateFileLoader += '?' +
-                Tools.convertCircularObjectToJSON(loader.options)
+            .webOptimizerDefaultTemplateFileLoader +=
+                '?' +
+                (Tools.convertCircularObjectToJSON(loader.options) as string)
 }
 resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath =
     resolvedConfiguration.files.defaultHTML.template.filePath
@@ -494,22 +495,16 @@ for (const htmlConfiguration of resolvedConfiguration.files.html) {
     ) {
         const requestString:string = new String(
             htmlConfiguration.template.request +
-            Tools.convertCircularObjectToJSON(
+            (Tools.convertCircularObjectToJSON(
                 htmlConfiguration.template.options
-            )
+            ) as string)
         ) as string
-        /* eslint-disable
-            @typescript-eslint/unbound-method,
-            @typescript-eslint/ban-ts-ignore
-        */
+        /* eslint-disable @typescript-eslint/unbound-method */
         // @ts-ignore: Monkeypatching is not allowed by typescript.
-        requestString.replace = (
-            (value:string):Function => ():string => value
-        )(htmlConfiguration.template.filePath)
-        /* eslint-enable
-            @typescript-eslint/unbound-method,
-            @typescript-eslint/ban-ts-ignore
-        */
+        requestString.replace = ((value:string) => ():string => value)(
+            htmlConfiguration.template.filePath
+        )
+        /* eslint-enable @typescript-eslint/unbound-method */
         htmlConfiguration.template.request = requestString
     }
 }

@@ -17,7 +17,6 @@
 // region imports
 import Tools from 'clientnode'
 import {Encoding, File, Mapping, PlainObject} from 'clientnode/type'
-import {DOMWindow, JSDOM as DOM} from 'jsdom'
 import fileSystem from 'fs'
 import path from 'path'
 
@@ -202,7 +201,6 @@ export class Helper {
     /**
      * Check if given request points to an external dependency not maintained
      * by current package context.
-     *
      * @param request - Request to determine.
      * @param context - Context of current project.
      * @param requestContext - Context of given request to resolve relative to.
@@ -625,7 +623,7 @@ export class Helper {
                 normalizedGivenInjection, chunkName
             )) {
                 let index = 0
-                for (let moduleID of normalizedGivenInjection[chunkName]) {
+                for (const moduleID of normalizedGivenInjection[chunkName]) {
                     const resolvedModuleID:false|string =
                         Helper.applyModuleReplacements(
                             Helper.applyAliases(
@@ -788,8 +786,10 @@ export class Helper {
                     injection[name as keyof GivenInjectionConfiguration] as
                         Mapping
                 ) = Helper.getAutoInjection(
-                    buildConfigurations, moduleFilePathsToExclude, context
-                )
+                                buildConfigurations,
+                                moduleFilePathsToExclude,
+                                context
+                            )
         }
         return injection
     }

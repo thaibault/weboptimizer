@@ -20,54 +20,59 @@ import {
 } from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
 import Tools from 'clientnode'
-import {EvaluationResult, Encoding, Mapping} from 'clientnode/type'
+import {
+    AnyFunction, EvaluationResult, Encoding, Mapping
+} from 'clientnode/type'
 import ejs, {Options, TemplateFunction} from 'ejs'
 import fileSystem from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import {getOptions, getRemainingRequest} from 'loader-utils'
 import path from 'path'
-import {LoaderRunnerLoaderContext} from 'webpack'
+import {LoaderContext} from 'webpack'
 
 import configuration from './configurator'
 import Helper from './helper'
 import {Extensions, Replacements} from './type'
 // endregion
 // region types
-export type CompilerOptions = Options & {
-    encoding:Encoding
-    isString?:boolean
-}
+export type CompilerOptions =
+    Options &
+    {
+        encoding:Encoding
+        isString?:boolean
+    }
 export type CompileFunction = (
-    template:string,
-    options?:Partial<CompilerOptions>,
-    compileSteps?:number
+    _template:string,
+    _options?:Partial<CompilerOptions>,
+    _compileSteps?:number
 ) => TemplateFunction
-export type LoaderConfiguration = Mapping<unknown> & {
-    compiler:Partial<CompilerOptions>
-    compileSteps:number
-    compress:{
-        html:Mapping<unknown>
-        javaScript:Mapping<unknown>
+export type LoaderConfiguration =
+    Mapping<unknown> &
+    {
+        compiler:Partial<CompilerOptions>
+        compileSteps:number
+        compress:{
+            html:Mapping<unknown>
+            javaScript:Mapping<unknown>
+        }
+        context:string
+        extensions:Extensions
+        locals?:Mapping<unknown>
+        module:{
+            aliases:Mapping<string>
+            replacements:Replacements
+        }
     }
-    context:string
-    extensions:Extensions
-    locals?:Mapping<unknown>
-    module:{
-        aliases:Mapping<string>
-        replacements:Replacements
-    }
-}
 // endregion
 /**
  * Main transformation function.
- *
  * @param this - Loader context.
  * @param source - Input string to transform.
  *
  * @returns Transformed string.
  */
 export default function(
-    this:LoaderRunnerLoaderContext<LoaderConfiguration>, source:string
+    this:LoaderContext<LoaderConfiguration>, source:string
 ):string {
     const givenOptions:LoaderConfiguration =
         Tools.convertSubstringInPlainObject(
@@ -102,7 +107,7 @@ export default function(
             ),
             /#%%%#/g,
             '!'
-        ) as LoaderConfiguration
+        )
 
     const compile:CompileFunction = (
         template:string,
@@ -110,13 +115,13 @@ export default function(
         compileSteps = 2
     ):TemplateFunction => (
         locals:Array<Array<string>>|Array<Mapping<unknown>>|Mapping<unknown> =
-            {}
+        {}
     ):string => {
         options = {filename: template, ...options}
         const givenLocals:Array<unknown> =
             ([] as Array<unknown>).concat(locals)
 
-        const require:Function = (
+        const require = (
             request:string, nestedLocals:Mapping<unknown> = {}
         ):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
@@ -191,7 +196,7 @@ export default function(
             )
         }
 
-        const compressHTML:Function = (content:string):string =>
+        const compressHTML = (content:string):string =>
             givenOptions.compress.html ?
                 minifyHTML(
                     content,
@@ -228,7 +233,7 @@ export default function(
                 content
 
         let result:string|TemplateFunction = template
-        const isString:boolean = Boolean(options.isString)
+        const isString = Boolean(options.isString)
         delete options.isString
 
         let stepLocals:Array<string>|Mapping<unknown>
@@ -236,7 +241,7 @@ export default function(
         let originalScopeNames:Array<string>
         let scopeNames:Array<string>
 
-        for (let step:number = 1; step <= compileSteps; step += 1) {
+        for (let step = 1; step <= compileSteps; step += 1) {
             // On every odd compile step we have to determine the environment.
             if (step % 2) {
                 // region determine scope
@@ -285,8 +290,7 @@ export default function(
                         // NOTE: Needed to manipulate code after compiling.
                         options.client = true
 
-                    result = ejs.compile(result as string, options) as
-                        TemplateFunction
+                    result = ejs.compile(result, options) as TemplateFunction
 
                     /*
                         Provide all scope names when "_with" options isn't
@@ -296,6 +300,8 @@ export default function(
                         let localsName:string = options.localsName || 'locals'
                         while (scopeNames!.includes(localsName))
                             localsName = `_${localsName}`
+
+                        /* eslint-disable @typescript-eslint/no-implied-eval */
                         result = new Function(
                             ...scopeNames!,
                             localsName,
@@ -303,11 +309,12 @@ export default function(
                             `${localsName},${localsName}.escapeFn,include,` +
                             `${localsName}.rethrow)`
                         ) as TemplateFunction
+                        /* eslint-enable @typescript-eslint/no-implied-eval */
                     }
                 }
             } else
                 result = compressHTML(!options.strict && options._with ?
-                    (result as Function)(
+                    (result as AnyFunction)(
                         scope!, scope!.escapeFn, scope!.include
                     ) :
                     result(
@@ -352,7 +359,7 @@ export default function(
             if (typeof processed?.code === 'string')
                 code = processed.code
 
-            return `${options.strict ? "'use strict';\n" : ''}${code}`
+            return `${options.strict ? `'use strict';\n` : ''}${code}`
         }
 
         if (typeof result === 'string') {

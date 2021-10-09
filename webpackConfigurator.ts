@@ -17,18 +17,12 @@
 // region imports
 import Tools, {optionalRequire} from 'clientnode'
 import {
-    AnyFunction,
-    EvaluationResult,
-    Mapping,
-    PlainObject,
-    SecondParameter,
-    SynchronousProcedureFunction
+    AnyFunction, EvaluationResult, Mapping, PlainObject
 } from 'clientnode/type'
 const postcssCSSnano:null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
-import {promises as fileSystem} from 'fs'
 import path from 'path'
 const postcssFontPath:AnyFunction|null =
     optionalRequire<AnyFunction>('postcss-fontpath')
@@ -39,7 +33,7 @@ const postcssSprites:AnyFunction|null =
 const postcssURL:null|typeof import('postcss-url') =
     optionalRequire<typeof import('postcss-url')>('postcss-url')
 import util from 'util'
-import webpack, {
+import {
     Compiler,
     Compilation,
     ContextReplacementPlugin,
@@ -90,12 +84,12 @@ import {
     AdditionalLoaderConfiguration,
     AssetPathConfiguration,
     HTMLConfiguration,
-    HTMLWebpackPluginAssetTagGroupsData,
     HTMLWebpackPluginBeforeEmitData,
     IgnorePattern,
     InPlaceAssetConfiguration,
     InPlaceConfiguration,
     PackageDescriptor,
+    RedundantRequest,
     WebpackAssets,
     WebpackBaseAssets,
     WebpackConfiguration,
@@ -125,18 +119,21 @@ if (require.cache && require.resolve('html-loader') in require.cache)
         }
 // Monkey-Patch loader-utils to define which url is a local request.
 import loaderUtilsModuleBackup from 'loader-utils'
+
 const loaderUtilsIsUrlRequestBackup:(
-    url:string, ...parameter:Array<any>
+    _url:string, ..._parameters:Array<any>
 ) => boolean = loaderUtilsModuleBackup.isUrlRequest
+
 if (require.cache && require.resolve('loader-utils') in require.cache)
     (require.cache[require.resolve('loader-utils')] as NodeModule)
         .exports
         .isUrlRequest =
-            (url:string, ...parameter:Array<any>):boolean => {
+            (url:string, ...parameters:Array<any>):boolean => {
                 if (/^[a-z]+:.+/.exec(url))
                     return false
+
                 return loaderUtilsIsUrlRequestBackup.call(
-                    loaderUtilsModuleBackup, url, ...parameter
+                    loaderUtilsModuleBackup, url, ...parameters
                 )
             }
 // / endregion
@@ -186,9 +183,7 @@ for (const source in configuration.module.replacements.normal)
             search,
             (resource:{request:string}):void => {
                 resource.request = resource.request.replace(
-                    search,
-                    configuration.module.replacements.normal[source] as
-                        SecondParameter<String['replace']>
+                    search, configuration.module.replacements.normal[source]
                 )
             }
         ))
@@ -386,7 +381,9 @@ if (
                                 compilation.assets[name] &&
                                 settings![type] &&
                                 ([] as Array<RegExp|string>)
-                                    .concat(settings![type] as Array<RegExp|string>)
+                                    .concat(
+                                        settings![type] as Array<RegExp|string>
+                                    )
                                     .some((pattern:RegExp|string):boolean =>
                                         (new RegExp(pattern)).test(name)
                                     )
@@ -403,7 +400,7 @@ if (
                                     attributes: newAttributes,
                                     innerHTML:
                                         compilation.assets[name].source(),
-                                    tagName: 'script',
+                                    tagName: 'script'
                                 }
                             }
 
@@ -461,7 +458,7 @@ if (configuration.injection.external.modules === '__implicit__')
         external dependency.
     */
     configuration.injection.external.modules = (
-        {context, request}, callback:Function
+        {context, request}, callback:AnyFunction
     ):void => {
         if (typeof request !== 'string')
             return callback()
@@ -592,7 +589,7 @@ if (configuration.injection.external.modules === '__implicit__')
                         result[key] = (
                             configuration.injection.external.aliases[
                                 request
-                            ] as unknown as Function
+                            ] as unknown as AnyFunction
                         )(request, key)
                 else if (
                     configuration.injection.external.aliases[
@@ -651,7 +648,9 @@ if (htmlAvailable)
     ):void => {
         plugins.HTML.getHooks(compilation).beforeEmit.tap(
             'WebOptimizerPostProcessHTML',
-            (data:HTMLWebpackPluginBeforeEmitData):HTMLWebpackPluginBeforeEmitData => {
+            (
+                data:HTMLWebpackPluginBeforeEmitData
+            ):HTMLWebpackPluginBeforeEmitData => {
                 /*
                     NOTE: We have to prevent creating native "style" dom nodes
                     to prevent jsdom from parsing the entire cascading style
@@ -725,18 +724,17 @@ if (htmlAvailable)
                     .replace(
                         /(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi,
                         (
-                            match:string,
-                            startTag:string,
-                            endTag:string
+                            match:string, startTag:string, endTag:string
                         ):string =>
-                            `${startTag}${styleContents.shift()}${endTag}`
+                            `${startTag}${styleContents.shift() as string}` +
+                            endTag
                     )
                 // region post compilation
                 for (const htmlFileSpecification of configuration.files.html)
                     if (htmlFileSpecification.filename === (
                         data.plugin as
                             unknown as
-                            {options: HTMLPlugin.ProcessedOptions}
+                            {options:HTMLPlugin.ProcessedOptions}
                     ).options.filename) {
                         for (const loaderConfiguration of (
                             [] as Array<WebpackLoader>
@@ -823,13 +821,14 @@ if (configuration.module.enforceDeduplication) {
                         targetPath.match(/((?:^|.*?\/)node_modules\/)/g)
                     if (matches === null)
                         return
+
                     pathPrefixes = Array.from(matches)
                     /*
                         Remove last one to avoid replacing with the already set
                         path.
                     */
                     pathPrefixes.pop()
-                    let index:number = 0
+                    let index = 0
                     for (const pathPrefix of pathPrefixes) {
                         if (index > 0)
                             pathPrefixes[index] = path.resolve(
@@ -845,18 +844,20 @@ if (configuration.module.enforceDeduplication) {
                         path.resolve(absoluteContextPath, 'node_modules')
                     ]
                     // Find longest common prefix.
-                    let index:number = 0
+                    let index = 0
                     while (
                         index < absoluteContextPath.length &&
                         absoluteContextPath.charAt(index) ===
                             targetPath.charAt(index)
                     )
                         index += 1
+
                     pathSuffix = targetPath
                         .substring(index)
                         .replace(/^.*\/node_modules\//, '')
                 }
-                let redundantRequest:null|PlainObject = null
+
+                let redundantRequest:null|RedundantRequest = null
                 for (const pathPrefix of pathPrefixes) {
                     const alternateTargetPath:string =
                         path.resolve(pathPrefix, pathSuffix)
@@ -891,6 +892,7 @@ if (configuration.module.enforceDeduplication) {
 
                                 return
                             }
+
                             redundantRequest = {
                                 path: alternateTargetPath,
                                 version:
@@ -1007,7 +1009,7 @@ new NormalModuleReplacementPlugin(
 // // endregion
 // / endregion
 // / region loader helper
-const isFilePathInDependencies:Function = (filePath:string):boolean => {
+const isFilePathInDependencies = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
 
     return Helper.isFilePathInLocation(
@@ -1025,13 +1027,16 @@ const isFilePathInDependencies:Function = (filePath:string):boolean => {
             )
     )
 }
-const loader:Record<string, any> = {}
-const scope:Record<string, any> = {
+
+const loader:Mapping<any> = {}
+
+const scope:Mapping<any> = {
     configuration,
     isFilePathInDependencies,
     loader,
     require: eval('require')
 }
+
 const evaluate = (
     object:any, filePath:string = configuration.path.context
 ):any => {
@@ -1064,11 +1069,117 @@ const evaluateAdditionalLoaderConfiguration = (
     test: new RegExp(evaluate(loaderConfiguration.test)),
     use: evaluate(loaderConfiguration.use)
 })
+
 const includingPaths:Array<string> =
     Helper.normalizePaths([configuration.path.source.asset.javaScript].concat(
         configuration.module.locations.directoryPaths
     ))
-Tools.extend(loader, {
+
+const cssUse =
+    configuration.module.preprocessor.cascadingStyleSheet.additional.pre.map(
+        evaluateMapper
+    ).concat(
+        {
+            loader: configuration.module.style.loader,
+            options: configuration.module.style.options || {}
+        },
+        {
+            loader: configuration.module.cascadingStyleSheet.loader,
+            options: configuration.module.cascadingStyleSheet.options || {}
+        },
+        configuration.module.preprocessor.cascadingStyleSheet.loader ?
+            {
+                loader:
+                    configuration.module.preprocessor.cascadingStyleSheet
+                        .loader,
+                options: Tools.extend(
+                    true,
+                    optionalRequire('postcss') ?
+                        {postcssOptions: {
+                            plugins: ([] as Array<any>).concat(
+                                postcssImport ?
+                                    postcssImport({
+                                        root: configuration.path.context
+                                    }) :
+                                    [],
+                                configuration.module.preprocessor
+                                    .cascadingStyleSheet.additional.plugins.pre
+                                    .map(evaluateMapper),
+                                /*
+                                    NOTE: Checking path doesn't work if fonts
+                                    are referenced in libraries provided in
+                                    another location than the project itself
+                                    like the "node_modules" folder.
+                                */
+                                postcssFontPath ?
+                                    postcssFontPath({
+                                        checkPath: false,
+                                        formats: [
+                                            {type: 'woff2', ext: 'woff2'},
+                                            {type: 'woff', ext: 'woff'}
+                                        ]
+                                    }) :
+                                    [],
+                                postcssURL ? postcssURL({url: 'rebase'}) : [],
+                                postcssSprites ?
+                                    postcssSprites({
+                                        filterBy: ():Promise<void> =>
+                                            new Promise<void>((
+                                                resolve:AnyFunction,
+                                                reject:AnyFunction
+                                            ):void => (
+                                                configuration.files.compose
+                                                    .image ?
+                                                    resolve :
+                                                    reject
+                                            )()),
+                                        hooks: {
+                                            onSaveSpritesheet: (
+                                                image:Record<string, any>
+                                            ):string =>
+                                                path.join(
+                                                    image.spritePath,
+                                                    path.relative(
+                                                        configuration.path
+                                                            .target.asset
+                                                            .image,
+                                                        configuration.files
+                                                            .compose.image
+                                                    )
+                                                )
+                                        },
+                                        stylesheetPath:
+                                            configuration.path.source.asset
+                                                .cascadingStyleSheet,
+                                        spritePath:
+                                            configuration.path.source.asset
+                                                .image
+                                    }) :
+                                    [],
+                                configuration.module.preprocessor
+                                    .cascadingStyleSheet.additional.plugins
+                                    .post.map(evaluateMapper),
+                                (
+                                    configuration.module.optimizer.cssnano &&
+                                    postcssCSSnano
+                                ) ?
+                                    postcssCSSnano(
+                                        configuration.module.optimizer.cssnano
+                                    ) :
+                                    []
+                            )
+                        }} :
+                        {},
+                    configuration.module.preprocessor.cascadingStyleSheet
+                        .options ||
+                        {}
+                )} :
+            [],
+        configuration.module.preprocessor.cascadingStyleSheet.additional.post
+            .map(evaluateMapper)
+    )
+
+const genericLoader = {
     // Convert to compatible native web types.
     // region generic template
     ejs: {
@@ -1237,10 +1348,11 @@ Tools.extend(loader, {
         html: {
             exclude: (filePath:string):boolean =>
                 Helper.normalizePaths(
-                    configuration.files.html.concat(
-                        configuration.files.defaultHTML
-                    ).map((htmlConfiguration:HTMLConfiguration):string =>
-                        htmlConfiguration.template.filePath)
+                    configuration.files.html
+                        .concat(configuration.files.defaultHTML)
+                        .map((htmlConfiguration:HTMLConfiguration):string =>
+                            htmlConfiguration.template.filePath
+                        )
                 ).includes(filePath) ||
                 (
                     (configuration.module.html.exclude === null) ?
@@ -1249,8 +1361,9 @@ Tools.extend(loader, {
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
-            use: configuration.module.html.additional.pre.map(evaluateMapper)
-                .concat(
+            use: configuration.module.html.additional.pre.map(
+                evaluateMapper
+            ).concat(
                 {
                     loader:
                        'file?name=' +
@@ -1298,120 +1411,7 @@ Tools.extend(loader, {
             return Boolean(result)
         },
         test: /\.s?css(?:\?.*)?$/i,
-        use:
-            configuration.module.preprocessor.cascadingStyleSheet.additional
-                .pre
-                .map(evaluateMapper)
-                .concat(
-                    {
-                        loader: configuration.module.style.loader,
-                        options: configuration.module.style.options || {}
-                    },
-                    {
-                        loader:
-                            configuration.module.cascadingStyleSheet.loader,
-                        options:
-                            configuration.module.cascadingStyleSheet.options ||
-                            {}
-                    },
-                    configuration.module.preprocessor.cascadingStyleSheet.loader ?
-                    {
-                        loader:
-                            configuration.module.preprocessor
-                                .cascadingStyleSheet.loader,
-                        options: Tools.extend(
-                            true,
-                            optionalRequire('postcss') ?
-                                {postcssOptions: {
-                                    plugins: ([] as Array<any>).concat(
-                                        postcssImport ?
-                                            postcssImport({
-                                                root:
-                                                    configuration.path.context
-                                            }) :
-                                            [],
-                                        configuration.module.preprocessor
-                                            .cascadingStyleSheet.additional
-                                            .plugins.pre.map(evaluateMapper),
-                                        /*
-                                            NOTE: Checking path doesn't work if
-                                            fonts are referenced in libraries
-                                            provided in another location than
-                                            the project itself like the
-                                            "node_modules" folder.
-                                        */
-                                        postcssFontPath ?
-                                            postcssFontPath({
-                                                checkPath: false,
-                                                formats: [
-                                                    {type: 'woff2', ext: 'woff2'},
-                                                    {type: 'woff', ext: 'woff'}
-                                                ]
-                                            }) :
-                                            [],
-                                        postcssURL ?
-                                            postcssURL({url: 'rebase'}) :
-                                            [],
-                                        postcssSprites ?
-                                            postcssSprites({
-                                                filterBy: ():Promise<void> =>
-                                                    new Promise((
-                                                        resolve:Function,
-                                                        reject:Function
-                                                    ):void => (
-                                                        configuration.files
-                                                            .compose.image ?
-                                                                resolve :
-                                                                reject
-                                                    )()),
-                                                hooks: {onSaveSpritesheet: (
-                                                    image:Record<string, any>
-                                                ):string =>
-                                                    path.join(
-                                                        image.spritePath,
-                                                        path.relative(
-                                                            configuration.path
-                                                                .target.asset
-                                                                .image,
-                                                            configuration.files
-                                                                .compose.image
-                                                        )
-                                                    )
-                                                },
-                                                stylesheetPath:
-                                                    configuration.path.source
-                                                        .asset
-                                                        .cascadingStyleSheet,
-                                                spritePath:
-                                                    configuration.path.source
-                                                        .asset.image
-                                            }) :
-                                            [],
-                                        configuration.module.preprocessor
-                                            .cascadingStyleSheet.additional
-                                            .plugins.post
-                                            .map(evaluateMapper),
-                                        (
-                                            configuration.module.optimizer
-                                                .cssnano &&
-                                            postcssCSSnano
-                                        ) ?
-                                            postcssCSSnano(
-                                                configuration.module.optimizer
-                                                    .cssnano
-                                            ) :
-                                            []
-                                    )
-                                }} :
-                                {},
-                        configuration.module.preprocessor.cascadingStyleSheet
-                            .options || {})
-                    } :
-                    [],
-                    configuration.module.preprocessor.cascadingStyleSheet
-                        .additional.post
-                        .map(evaluateMapper)
-                )
+        use: cssUse
     },
     // endregion
     // Optimize loaded assets.
@@ -1614,7 +1614,10 @@ Tools.extend(loader, {
         use: configuration.module.optimizer.data.loader.map(evaluateMapper)
     }
     // endregion
-})
+}
+
+Tools.extend(loader, genericLoader)
+
 if (
     configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract
 ) {
@@ -1646,7 +1649,7 @@ if (
         `${configuration.development.server.hot ? 'true' : 'false'}&http` +
         `${configuration.development.server.https ? 's' : ''}://` +
         `${configuration.development.server.host}:` +
-        configuration.development.server.port
+        `${configuration.development.server.port}`
     ]
 
     if (configuration.development.server.hot) {
@@ -1685,6 +1688,7 @@ if (configuration.path.configuration?.json)
             `${configuration.path.configuration.json}" not available.`
         )
     }
+
 export let webpackConfiguration:WebpackConfiguration = Tools.extend<
     WebpackConfiguration
 >(
@@ -1851,6 +1855,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
     configuration.webpack,
     customConfiguration
 )
+
 if (configuration.nodeENV !== null)
     webpackConfiguration.optimization!.nodeEnv = configuration.nodeENV
 if (
@@ -1859,6 +1864,7 @@ if (
 )
     webpackConfiguration.module!.noParse =
         configuration.module.skipParseRegularExpressions
+
 if (configuration.path.configuration?.javaScript)
     try {
         require.resolve(configuration.path.configuration.javaScript)
@@ -1887,6 +1893,7 @@ if (configuration.path.configuration?.javaScript)
             `${configuration.path.configuration.javaScript}" not available.`
         )
     }
+
 if (configuration.showConfiguration) {
     console.info(
         'Using internal configuration:',

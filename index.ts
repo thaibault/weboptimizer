@@ -26,6 +26,7 @@ import {
 } from 'child_process'
 import Tools, {CloseEventNames} from 'clientnode'
 import {
+    AnyFunction,
     EvaluationResult,
     File,
     Mapping,
@@ -47,12 +48,10 @@ import {
     Command,
     CommandLineArguments,
     GivenInjection,
-    ResolvedConfiguration,
     ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem
 } from './type'
 // endregion
-type PathModule = typeof path
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128'
 /**
@@ -196,7 +195,8 @@ const main = async ():Promise<void> => {
                                 ).test(file.path)) {
                                     if (file.stats?.isDirectory()) {
                                         await new Promise((
-                                            resolve:Function, reject:Function
+                                            resolve:AnyFunction,
+                                            reject:AnyFunction
                                         ):void => removeDirectoryRecursively(
                                             file.path,
                                             {glob: false},
@@ -224,10 +224,9 @@ const main = async ():Promise<void> => {
                     )
                         if (file.name.startsWith('npm-debug'))
                             await fileSystem.unlink(file.path)
-
                 } else
                     await new Promise((
-                        resolve:Function, reject:Function
+                        resolve:AnyFunction, reject:AnyFunction
                     ):void => removeDirectoryRecursively(
                         configuration.path.target.base,
                         {glob: false},
@@ -241,7 +240,7 @@ const main = async ():Promise<void> => {
                     )
                 )
                     await new Promise((
-                        resolve:Function, reject:Function
+                        resolve:AnyFunction, reject:AnyFunction
                     ):void =>
                         removeDirectoryRecursively(
                             configuration.path.apiDocumentation,
@@ -263,7 +262,7 @@ const main = async ():Promise<void> => {
 
                 for (
                     const filePathPattern of
-                        configuration.path.tidyUpOnClearGlobs.pattern
+                    configuration.path.tidyUpOnClearGlobs.pattern
                 )
                     if (filePathPattern)
                         removeDirectoryRecursively.sync(
@@ -390,7 +389,7 @@ const main = async ():Promise<void> => {
                     final productive output.
                 */
                 processPromises.push(new Promise<Array<ChildProcess>>((
-                    resolve:Function, reject:Function
+                    resolve:AnyFunction, reject:AnyFunction
                 ):Array<ChildProcess> => {
                     const commandLineArguments:Array<string> = (
                         configuration.commandLine.build.arguments || []
@@ -485,8 +484,6 @@ const main = async ():Promise<void> => {
                     ] as string).trim()
                     for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
-                            type buildConfigItem =
-                                ResolvedBuildConfigurationItem
                             const evaluated:EvaluationResult =
                                 Tools.stringEvaluate(
                                     `\`${expression}\``,
@@ -510,7 +507,7 @@ const main = async ():Promise<void> => {
 
                             processPromises.push(
                                 new Promise<Array<ChildProcess>>((
-                                    resolve:Function, reject:Function
+                                    resolve:AnyFunction, reject:AnyFunction
                                 ):Array<ChildProcess> => [
                                     Tools.handleChildProcess(
                                         execChildProcess(
@@ -554,7 +551,7 @@ const main = async ():Promise<void> => {
                         )
                     if (evaluated.result)
                         processPromises.push(new Promise<Array<ChildProcess>>((
-                            resolve:Function, reject:Function
+                            resolve:AnyFunction, reject:AnyFunction
                         ):Array<ChildProcess> => {
                             const commandLineArguments:Array<string> = (
                                 task.arguments || []
@@ -656,8 +653,10 @@ const main = async ():Promise<void> => {
             console.error(error)
     }
 }
+
 if (require.main === module)
     main()
+
 export default main
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
