@@ -112,6 +112,7 @@
     "@babel/eslint-parser": "*",
     "@types/cssnano": "*",
     "@types/ejs": "*",
+    "@types/favicons": "*",
     "@types/html-minifier": "*",
     "@types/html-minifier-terser": "*",
     "@types/jest": "*",
@@ -156,6 +157,7 @@
     "@babel/eslint-parser": "*",
     "@babel/preset-react": "*",
     "@types/ejs": "*",
+    "@types/favicons": "*",
     "@types/html-minifier": "*",
     "@types/jest": "*",
     "@types/jsdom": "*",
@@ -196,6 +198,9 @@
       "optional": true
     },
     "@types/ejs": {
+      "optional": true
+    },
+    "@types/favicons": {
       "optional": true
     },
     "@types/html-minifier": {

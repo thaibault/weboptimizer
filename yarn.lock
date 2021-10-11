@@ -1702,6 +1702,13 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
+"@types/favicons@*":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@types/favicons/-/favicons-6.2.2.tgz#207ffb134c34c9f8080d699a18481eb739357b7b"
+  integrity sha512-iwAeiO8BFUk/lH74Zd9RlIIgxA7fFCVmlZI5yNsJ68L7mDMs42vYk8FnDxEm09ZO4nTlBQjPHdvtYC+N9GLtxg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/favicons@5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@types/favicons/-/favicons-5.5.0.tgz#c1cb3d2a14955eedf479f3cc51948630c56e3a64"
