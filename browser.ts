@@ -18,7 +18,9 @@
 import Tools, {ConsoleOutputMethods} from 'clientnode'
 import {ProcedureFunction, SynchronousProcedureFunction} from 'clientnode/type'
 import {DOMWindow, VirtualConsole} from 'jsdom'
+import {LoaderContext} from 'webpack'
 
+import {LoaderConfiguration} from './ejsLoader'
 import {Browser, InitializedBrowser} from './type'
 // endregion
 // region declaration
@@ -113,7 +115,11 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             const ejsLoader = (await import('./ejsLoader')).default
             const content:string = await (await import('fs')).promises
                 .readFile(filePath, {encoding: 'utf-8'})
-            render(ejsLoader.bind({resourcePath: filePath})(content))
+            render(ejsLoader.bind(
+                {resourcePath: filePath} as
+                    unknown as
+                    LoaderContext<LoaderConfiguration>
+            )(content))
         } else
             render(await import('webOptimizerDefaultTemplateFilePath'))
         // endregion
