@@ -22,7 +22,7 @@ import {
     PlainObject,
     SecondParameter
 } from 'clientnode/type'
-import {Configuration as FaviconConfiguration} from 'favicons'
+import {FaviconOptions} from 'favicons'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import {JSDOM} from 'jsdom'
 import {
@@ -325,7 +325,7 @@ export interface ResolvedConfiguration {
         self:ExportFormat
     }
     extensions:Extensions
-    favicon:Mapping<FaviconConfiguration> & {logo:string}
+    favicon:Mapping<FaviconOptions> & {logo:string}
     files:{
         additionalPaths:Array<string>
         compose:{
