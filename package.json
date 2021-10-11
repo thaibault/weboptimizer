@@ -69,7 +69,7 @@
     "document": "yarn build:plain && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.js",
     "prettify": "yarn lint:base --fix || true",
     "lint": "yarn lint:base",
-    "lint:base": "eslint --ignore-pattern '*.js' --ignore-pattern '*.compiled.*' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
+    "lint:base": "eslint --ignore-pattern '*.compiled.*' --ignore-pattern '*.d.ts' --ignore-pattern '*.js' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
     "prepare": "yarn build",
     "test": "yarn build:test && jest --config ./jest.json --root-dir './' --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/helper.js test/ejsLoader.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
     "test:coverage": "yarn test --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults",
@@ -128,7 +128,7 @@
     "css-loader": "*",
     "cssnano": "*",
     "documentation-website": "*",
-    "eslint": "*",
+    "eslint": "7.*",
     "eslint-config-google": "*",
     "eslint-plugin-jsdoc": "*",
     "favicons": "*",
@@ -477,7 +477,9 @@
               "'**/backup/*'",
               "--ignore-pattern",
               "'**/plugins/*'",
-              "'**/*.{jsx,ts}'"
+              "--ignore-pattern",
+              "'*.d.ts'",
+              "'**/*.{jsx,ts,tsx}'"
             ],
             "command": "eslint",
             "indicator": "self.needed.javaScript || self.needed.typeScript"
@@ -1674,8 +1676,10 @@
       "google"
     ],
     "parserOptions": {
-      "ecmaFeatures": {},
-      "ecmaVersion": 2020,
+      "ecmaFeatures": {
+        "jsx": true
+      },
+      "ecmaVersion": "latest",
       "impliedStrict": true,
       "project": "node_modules/weboptimizer/tsconfigLibrary.json",
       "sourceType": "module"

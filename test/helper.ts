@@ -3,18 +3,10 @@
 'use strict'
 // region imports
 import {testEach, testEachAgainstSameExpectation} from 'clientnode/testHelper'
-import {FirstParameter, Mapping} from 'clientnode/type'
+import {FirstParameter} from 'clientnode/type'
 import path from 'path'
 
-import {
-    BuildConfiguration,
-    GivenInjection,
-    GivenInjectionConfiguration,
-    NormalizedGivenInjection,
-    PathConfiguration,
-    Replacements,
-    ResolvedBuildConfiguration
-} from '../type'
+import {BuildConfiguration, PathConfiguration, Replacements} from '../type'
 import Helper from '../helper'
 // endregion
 // region mockup

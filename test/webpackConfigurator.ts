@@ -15,7 +15,10 @@ test('webpackConfigurator', async ():Promise<void> => {
     const webpackConfiguration:WebpackConfiguration = (await import(
         '../webpackConfigurator'
     )).default
-    expect((webpackConfiguration.entry as Mapping).index).toContain('./index.ts')
+
+    expect((webpackConfiguration.entry as Mapping).index)
+        .toContain('./index.ts')
+
     webpackConfiguration.output.path = __dirname
     webpackConfiguration.output.filename = 'dummy.compiled.js'
     expect(webpack(webpackConfiguration)).toBeInstanceOf(Object)

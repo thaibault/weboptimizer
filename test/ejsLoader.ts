@@ -3,7 +3,7 @@
 'use strict'
 // region imports
 import Tools from 'clientnode'
-import {PlainObject} from 'clientnode/type'
+import {AnyFunction, PlainObject} from 'clientnode/type'
 
 import ejsLoader from '../ejsLoader'
 // endregion
@@ -20,7 +20,7 @@ describe('ejsLoader', ():void => {
     test('loader', ():void => {
         expect(ejsLoader.call(context, '<a></a>')).toStrictEqual('<a></a>')
         const complexContext:PlainObject & {
-            cachable:Function
+            cachable:AnyFunction
             query:PlainObject
         } = Tools.extend(
             true,
