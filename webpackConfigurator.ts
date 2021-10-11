@@ -23,7 +23,7 @@ const postcssCSSnano:null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
-import path from 'path'
+import {extname, join, relative, resolve} from 'path'
 const postcssFontPath:AnyFunction|null =
     optionalRequire<AnyFunction>('postcss-fontpath')
 const postcssImport:null|typeof import('postcss-import') =
@@ -40,6 +40,7 @@ import {
     DefinePlugin,
     HotModuleReplacementPlugin,
     IgnorePlugin,
+    LoaderContext,
     NormalModuleReplacementPlugin,
     ProvidePlugin
 } from 'webpack'
@@ -227,7 +228,7 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
                     configuration.offline.common.excludeChunks = []
                 for (const name of matches)
                     configuration.offline.common.excludeChunks.push(
-                        path.relative(
+                        relative(
                             configuration.path.target.base,
                             configuration.path.target.asset[
                                 type as keyof AssetPathConfiguration
@@ -435,14 +436,14 @@ if (!(
     configuration.needed.typeScript ||
     configuration.needed.typeScriptExtension
 ))
-    configuration.files.compose.javaScript = path.resolve(
+    configuration.files.compose.javaScript = resolve(
         configuration.path.target.asset.javaScript, '.__dummy__.compiled.js'
     )
 // /// endregion
 // /// region extract cascading style sheets
 if (configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract)
     pluginInstances.push(new plugins.MiniCSSExtract({
-        filename: path.relative(
+        filename: relative(
             configuration.path.target.base,
             configuration.files.compose.cascadingStyleSheet
         )
@@ -465,7 +466,7 @@ if (configuration.injection.external.modules === '__implicit__')
 
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
-            request = path.relative(configuration.path.context, request)
+            request = relative(configuration.path.context, request)
         for (const filePath of configuration.module.directoryNames)
             if (request.startsWith(filePath)) {
                 request = request.substring(filePath.length)
@@ -533,9 +534,12 @@ if (configuration.injection.external.modules === '__implicit__')
                                 ))
                         } else
                             match = true
+
                         if (match) {
                             request = request.replace(
-                                replacementRegularExpression, target)
+                                replacementRegularExpression, target
+                            )
+
                             break
                         }
                     }
@@ -751,7 +755,10 @@ if (htmlAvailable)
                                         htmlFileSpecification.template
                                             .postCompileOptions
                                     )
-                                })(data.html)
+                                } as LoaderContext<EJSLoaderConfiguration>)(
+                                    data.html
+                                )
+
                         break
                     }
                 // endregion
@@ -797,7 +804,7 @@ for (const contextReplacement of configuration.module.replacements.context)
     them as same dependency.
 */
 if (configuration.module.enforceDeduplication) {
-    const absoluteContextPath:string = path.resolve(configuration.path.context)
+    const absoluteContextPath:string = resolve(configuration.path.context)
 
     const consolidator = (result:WebpackResolveData):void => {
         const targetPath:string = result.createData.resource
@@ -831,17 +838,19 @@ if (configuration.module.enforceDeduplication) {
                     let index = 0
                     for (const pathPrefix of pathPrefixes) {
                         if (index > 0)
-                            pathPrefixes[index] = path.resolve(
+                            pathPrefixes[index] = resolve(
                                 pathPrefixes[index - 1], pathPrefix
                             )
+
                         index += 1
                     }
+
                     pathSuffix = targetPath.replace(
                         /(?:^|.*\/)node_modules\/(.+$)/, '$1'
                     )
                 } else {
                     pathPrefixes = [
-                        path.resolve(absoluteContextPath, 'node_modules')
+                        resolve(absoluteContextPath, 'node_modules')
                     ]
                     // Find longest common prefix.
                     let index = 0
@@ -860,7 +869,8 @@ if (configuration.module.enforceDeduplication) {
                 let redundantRequest:null|RedundantRequest = null
                 for (const pathPrefix of pathPrefixes) {
                     const alternateTargetPath:string =
-                        path.resolve(pathPrefix, pathSuffix)
+                        resolve(pathPrefix, pathSuffix)
+
                     if (Tools.isFileSync(alternateTargetPath)) {
                         const otherPackageDescriptor:null|PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
@@ -935,7 +945,7 @@ new NormalModuleReplacementPlugin(
         const isResource:boolean = Boolean(result.createData.resource)
         const targetPath:string = isResource ?
             result.createData.resource :
-            path.resolve(result.context, result.request)
+            resolve(result.context, result.request)
         if (
             targetPath &&
             /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
@@ -955,7 +965,7 @@ new NormalModuleReplacementPlugin(
                 for (const pathPrefix of pathPrefixes) {
                     if (index > 0)
                         pathPrefixes[index] =
-                            path.resolve(pathPrefixes[index - 1], pathPrefix)
+                            resolve(pathPrefixes[index - 1], pathPrefix)
                     index += 1
                 }
                 const pathSuffix:string =
@@ -963,7 +973,7 @@ new NormalModuleReplacementPlugin(
                 let redundantRequest:null|PlainObject = null
                 for (const pathPrefix of pathPrefixes) {
                     const alternateTargetPath:string =
-                        path.resolve(pathPrefix, pathSuffix)
+                        resolve(pathPrefix, pathSuffix)
                     if (Tools.isFileSync(alternateTargetPath)) {
                         const otherPackageDescriptor:null|PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
@@ -1020,7 +1030,7 @@ const isFilePathInDependencies = (filePath:string):boolean => {
                 configuration.loader.directoryNames
             )
             .map((filePath:string):string =>
-                path.resolve(configuration.path.context, filePath)
+                resolve(configuration.path.context, filePath)
             )
             .filter((filePath:string):boolean =>
                 !configuration.path.context.startsWith(filePath)
@@ -1137,9 +1147,9 @@ const cssUse =
                                             onSaveSpritesheet: (
                                                 image:Record<string, any>
                                             ):string =>
-                                                path.join(
+                                                join(
                                                     image.spritePath,
-                                                    path.relative(
+                                                    relative(
                                                         configuration.path
                                                             .target.asset
                                                             .image,
@@ -1294,8 +1304,8 @@ const genericLoader = {
                 {
                     loader:
                         'file?name=' +
-                        path.join(
-                            path.relative(
+                        join(
+                            relative(
                                 configuration.path.target.asset.base,
                                 configuration.path.target.asset.template
                             ),
@@ -1307,7 +1317,8 @@ const genericLoader = {
                                             .options
                                     ) ?
                                         configuration.module.preprocessor.html
-                                            .options as EJSLoaderConfiguration :
+                                            .options as
+                                                EJSLoaderConfiguration :
                                         {compileSteps: 2}
                                 ).compileSteps % 2 ?
                                     '.js' :
@@ -1367,8 +1378,8 @@ const genericLoader = {
                 {
                     loader:
                        'file?name=' +
-                        path.join(
-                            path.relative(
+                        join(
+                            relative(
                                 configuration.path.target.base,
                                 configuration.path.target.asset.template
                             ),
@@ -1427,8 +1438,8 @@ const genericLoader = {
                     ),
             generator: {
                 filename:
-                    path.join(
-                        path.relative(
+                    join(
+                        relative(
                             configuration.path.target.base,
                             configuration.path.target.asset.font
                         ),
@@ -1459,8 +1470,8 @@ const genericLoader = {
             include: configuration.path.source.asset.font,
             generator: {
                 filename:
-                    path.join(
-                        path.relative(
+                    join(
+                        relative(
                             configuration.path.target.base,
                             configuration.path.target.asset.font
                         ),
@@ -1491,8 +1502,8 @@ const genericLoader = {
                     ),
             generator: {
                 filename:
-                    path.join(
-                        path.relative(
+                    join(
+                        relative(
                             configuration.path.target.base,
                             configuration.path.target.asset.font
                         ),
@@ -1523,8 +1534,8 @@ const genericLoader = {
                     ),
             generator: {
                 filename:
-                    path.join(
-                        path.relative(
+                    join(
+                        relative(
                             configuration.path.target.base,
                             configuration.path.target.asset.font
                         ),
@@ -1556,8 +1567,8 @@ const genericLoader = {
                 ),
         generator: {
             filename:
-                path.join(
-                    path.relative(
+                join(
+                    relative(
                         configuration.path.target.base,
                         configuration.path.target.asset.image
                     ),
@@ -1583,7 +1594,7 @@ const genericLoader = {
                 return false
 
             return configuration.extensions.file.internal.includes(
-                path.extname(Helper.stripLoader(filePath))
+                extname(Helper.stripLoader(filePath))
             ) ||
             (
                 (configuration.module.optimizer.data.exclude === null) ?
@@ -1595,8 +1606,8 @@ const genericLoader = {
         },
         generator: {
             filename:
-                path.join(
-                    path.relative(
+                join(
+                    relative(
                         configuration.path.target.base,
                         configuration.path.target.asset.data
                     ),
@@ -1672,9 +1683,8 @@ if (configuration.path.configuration?.json)
     try {
         require.resolve(configuration.path.configuration.json)
         try {
-            customConfiguration = require(
-                configuration.path.configuration.json
-            )
+            customConfiguration =
+                require(configuration.path.configuration.json)
         } catch (error) {
             console.debug(
                 'Importing provided json webpack configuration file path ' +
@@ -1727,15 +1737,15 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
         // endregion
         // region output
         output: {
-            assetModuleFilename: path.join(
-                path.relative(
+            assetModuleFilename: join(
+                relative(
                     configuration.path.target.base,
                     configuration.path.target.asset.base
                 ),
                 '[name][ext]'
             ) +
             `?${configuration.hashAlgorithm}=[chunkhash]`,
-            filename: path.relative(
+            filename: relative(
                 configuration.path.target.base,
                 configuration.files.compose.javaScript
             ),

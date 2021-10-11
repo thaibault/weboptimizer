@@ -4,27 +4,30 @@
 // region imports
 import {testEach, testEachAgainstSameExpectation} from 'clientnode/testHelper'
 import {FirstParameter} from 'clientnode/type'
-import path from 'path'
+import {resolve} from 'path'
 
 import {BuildConfiguration, PathConfiguration, Replacements} from '../type'
 import Helper from '../helper'
 // endregion
 // region mockup
 const buildConfiguration:BuildConfiguration = {
-    other: {
-        extension: 'other',
+    example: {
+        extension: 'example',
         filePathPattern: '',
-        outputExtension: 'other'
+        ignoredExtension: '',
+        outputExtension: 'example'
     },
     javaScript: {
         extension: 'js',
         filePathPattern: '',
+        ignoredExtension: '',
         outputExtension: 'js'
     },
-    example: {
-        extension: 'example',
+    other: {
+        extension: 'other',
         filePathPattern: '',
-        outputExtension: 'example'
+        ignoredExtension: '',
+        outputExtension: 'other'
     }
 }
 // endregion
@@ -373,8 +376,13 @@ describe('helper', ():void => {
                     public: ''
                 },
                 tidyUp: [],
-                tidyUpOnClear: []
+                tidyUpOnClear: [],
+                tidyUpOnClearGlobs: {
+                    options: {},
+                    pattern: []
+                }
             }
+
             expect(
                 Helper.determineAssetType(parameter, buildConfiguration, paths)
             ).toStrictEqual(expected)
@@ -389,18 +397,21 @@ describe('helper', ():void => {
                 extension: 'js',
                 filePathPattern: '',
                 filePaths: [],
+                ignoredExtension: '',
                 outputExtension: 'js'
             },
             {
                 extension: 'example',
                 filePathPattern: '',
                 filePaths: [],
+                ignoredExtension: '',
                 outputExtension: 'example'
             },
             {
                 extension: 'other',
                 filePathPattern: '',
                 filePaths: [],
+                ignoredExtension: '',
                 outputExtension: 'other'
             }
         ])
@@ -413,23 +424,23 @@ describe('helper', ():void => {
         [{filePaths: [], directoryPaths: []}, 'example'],
         [
             {
-                directoryPaths: [path.resolve(__dirname, '../')],
-                filePaths: [path.resolve(__dirname, '../helper.js')]
+                directoryPaths: [resolve(__dirname, '../')],
+                filePaths: [resolve(__dirname, '../helper.js')]
             },
             'helper'
         ],
         [{filePaths: [], directoryPaths: []}, {example: 'example'}],
         [
             {
-                directoryPaths: [path.resolve(__dirname, '../')],
-                filePaths: [path.resolve(__dirname, '../helper.js')]
+                directoryPaths: [resolve(__dirname, '../')],
+                filePaths: [resolve(__dirname, '../helper.js')]
             },
             {example: 'helper'}
         ],
         [
             {
-                directoryPaths: [path.resolve(__dirname, '../')],
-                filePaths: [path.resolve(__dirname, '../', 'helper.ts')]
+                directoryPaths: [resolve(__dirname, '../')],
+                filePaths: [resolve(__dirname, '../', 'helper.ts')]
             },
             {helper: ['helper.ts']}
         ]
@@ -544,18 +555,10 @@ describe('helper', ():void => {
         [null, 'a', {}, {}, {file: []}, './', '', []],
         [null, 'a', {a: 'b'}, {}, {file: []}, './', '', []],
         [null, 'bba', {a: 'b'}, {}, {file: []}, './', '', []],
-        [path.resolve('helper.js'), 'helper'],
+        [resolve('helper.js'), 'helper'],
         [null, 'helper', {}, {}, {file: []}, './', '', []],
         [null, './helper', {}, {}, {file: ['.ts']}, '', 'a', []],
-        [
-            path.resolve('helper.ts'),
-            'helper',
-            {},
-            {},
-            {file: ['.ts']},
-            './',
-            './'
-        ]
+        [resolve('helper.ts'), 'helper', {}, {}, {file: ['.ts']}, './', './']
     )
     // / endregion
     testEach<typeof Helper.applyAliases>(
@@ -589,7 +592,7 @@ describe('helper', ():void => {
     >(
         'findPackageDescriptorFilePath',
         Helper.findPackageDescriptorFilePath,
-        path.resolve(__dirname, '../package.json'),
+        resolve(__dirname, '../package.json'),
 
         ['./', 'package.json'],
         ['../', 'package.json']
@@ -597,7 +600,7 @@ describe('helper', ():void => {
     test.each([['./'], ['../']])(
         `getClosestPackageDescriptor('%s') === {configuration: ...}`,
         (modulePath:string):void => {
-            const filePath:string = path.resolve(__dirname, '../package.json')
+            const filePath:string = resolve(__dirname, '../package.json')
             expect(Helper.getClosestPackageDescriptor(modulePath, filePath))
                 .toStrictEqual(
                     {configuration: eval('require')(filePath), filePath}

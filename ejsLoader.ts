@@ -20,14 +20,12 @@ import {
 } from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
 import Tools from 'clientnode'
-import {
-    AnyFunction, EvaluationResult, Encoding, Mapping
-} from 'clientnode/type'
-import ejs, {Options, TemplateFunction} from 'ejs'
-import fileSystem from 'fs'
+import {EvaluationResult, Encoding, Mapping} from 'clientnode/type'
+import ejs, {Options, TemplateFunction as EJSTemplateFunction} from 'ejs'
+import {readFileSync} from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import {getOptions, getRemainingRequest} from 'loader-utils'
-import path from 'path'
+import {extname} from 'path'
 import {LoaderContext} from 'webpack'
 
 import configuration from './configurator'
@@ -35,17 +33,22 @@ import Helper from './helper'
 import {Extensions, Replacements} from './type'
 // endregion
 // region types
+export type PreCompiledTemplateFunction =
+    ((..._parameters:Array<unknown>) => string)
+export type TemplateFunction =
+    EJSTemplateFunction | PreCompiledTemplateFunction
 export type CompilerOptions =
     Options &
     {
         encoding:Encoding
         isString?:boolean
     }
-export type CompileFunction = (
-    _template:string,
-    _options?:Partial<CompilerOptions>,
-    _compileSteps?:number
-) => TemplateFunction
+export type CompileFunction =
+    (
+        _template:string,
+        _options?:Partial<CompilerOptions>,
+        _compileSteps?:number
+    ) => TemplateFunction
 export type LoaderConfiguration =
     Mapping<unknown> &
     {
@@ -56,6 +59,7 @@ export type LoaderConfiguration =
             javaScript:Mapping<unknown>
         }
         context:string
+        debug:boolean
         extensions:Extensions
         locals?:Mapping<unknown>
         module:{
@@ -86,6 +90,7 @@ export default function(
                         javaScript: {}
                     },
                     context: './',
+                    debug: false,
                     extensions: {
                         file: {
                             external: [],
@@ -187,10 +192,11 @@ export default function(
                         nestedLocals
                     )
 
-                return fileSystem.readFileSync(
+                return readFileSync(
                     templateFilePath, {encoding: nestedOptions.encoding}
-                ) as unknown as string
+                )
             }
+
             throw new Error(
                 `Given template file "${template}" couldn't be resolved.`
             )
@@ -274,14 +280,14 @@ export default function(
             if (typeof result === 'string') {
                 const filePath:string|undefined =
                     isString ? options.filename : result
-                if (filePath && path.extname(filePath) === '.js')
+                if (filePath && extname(filePath) === '.js')
                     result = eval('require')(filePath)
                 else {
                     if (!isString) {
                         let encoding:Encoding = configuration.encoding
                         if (typeof options.encoding === 'string')
                             encoding = options.encoding
-                        result = fileSystem.readFileSync(result, {encoding})
+                        result = readFileSync(result, {encoding})
                     }
                     if (step === compileSteps)
                         result = compressHTML(result)
@@ -290,7 +296,8 @@ export default function(
                         // NOTE: Needed to manipulate code after compiling.
                         options.client = true
 
-                    result = ejs.compile(result, options) as TemplateFunction
+                    result = ejs.compile(result, options) as
+                        EJSTemplateFunction
 
                     /*
                         Provide all scope names when "_with" options isn't
@@ -308,16 +315,16 @@ export default function(
                             `return ${result.toString()}(` +
                             `${localsName},${localsName}.escapeFn,include,` +
                             `${localsName}.rethrow)`
-                        ) as TemplateFunction
+                        ) as PreCompiledTemplateFunction
                         /* eslint-enable @typescript-eslint/no-implied-eval */
                     }
                 }
             } else
                 result = compressHTML(!options.strict && options._with ?
-                    (result as AnyFunction)(
+                    (result as PreCompiledTemplateFunction)(
                         scope!, scope!.escapeFn, scope!.include
                     ) :
-                    result(
+                    (result as PreCompiledTemplateFunction)(
                         /*
                             NOTE: We want to be ensure to have same ordering as
                             we have for the scope names and to call internal
@@ -392,12 +399,13 @@ export default function(
         {
             ...givenOptions.compiler,
             client: Boolean(givenOptions.compileSteps % 2),
-            compileDebug: this.debug || false,
-            debug: this.debug || false,
+            compileDebug: givenOptions.debug,
+            debug: givenOptions.debug,
             filename:
                 'remainingRequest' in this ?
                     getRemainingRequest(this).replace(/^!/, '') :
-                    this.resourcePath || 'unknown',
+                    (this as LoaderContext<LoaderConfiguration>)
+                        .resourcePath || 'unknown',
             isString: true,
             localsName: 'scope'
         },

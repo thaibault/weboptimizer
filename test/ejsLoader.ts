@@ -3,26 +3,23 @@
 'use strict'
 // region imports
 import Tools from 'clientnode'
-import {AnyFunction, PlainObject} from 'clientnode/type'
+import {LoaderContext} from 'webpack'
 
-import ejsLoader from '../ejsLoader'
+import ejsLoader, {LoaderConfiguration} from '../ejsLoader'
 // endregion
 // region mockup
-const context:PlainObject = {
+const context:LoaderContext<LoaderConfiguration> = {
     debug: false,
     loaders: [],
     resourcePath: '',
     query: ''
-}
+} as unknown as LoaderContext<LoaderConfiguration>
 // endregion
 describe('ejsLoader', ():void => {
     // region tests
     test('loader', ():void => {
         expect(ejsLoader.call(context, '<a></a>')).toStrictEqual('<a></a>')
-        const complexContext:PlainObject & {
-            cachable:AnyFunction
-            query:PlainObject
-        } = Tools.extend(
+        const complexContext:LoaderContext<LoaderConfiguration> = Tools.extend(
             true,
             Tools.copy(context),
             {
@@ -39,18 +36,18 @@ describe('ejsLoader', ():void => {
             complexContext,
             `<a></a><%- include('<a>test</a>?{options: {isString: true}}') %>`
         )).toStrictEqual('<a></a><a>test</a>')
-        complexContext.query.compileSteps = 0
+        ;(complexContext.query as LoaderConfiguration).compileSteps = 0
         expect(ejsLoader.call(complexContext, '<a></a>'))
             .toStrictEqual('<a></a>')
-        complexContext.query.compileSteps = 1
+        ;(complexContext.query as LoaderConfiguration).compileSteps = 1
         expect(
             ejsLoader.call(complexContext, '<a></a>')
                 .startsWith(`'use strict';\nmodule.exports=`)
         ).toStrictEqual(true)
-        complexContext.query.compileSteps = 2
+        ;(complexContext.query as LoaderConfiguration).compileSteps = 2
         expect(ejsLoader.call(complexContext, '<a></a>'))
             .toStrictEqual('<a></a>')
-        complexContext.query.compileSteps = 3
+        ;(complexContext.query as LoaderConfiguration).compileSteps = 3
         expect(
             ejsLoader.call(complexContext, '<a></a>')
                 .startsWith(`'use strict';\nmodule.exports=`)

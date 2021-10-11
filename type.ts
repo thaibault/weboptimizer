@@ -127,16 +127,9 @@ export interface AssetPathConfiguration {
     javaScript:string
     template:string
 }
-export interface PathConfiguration {
-    apiDocumentation:string
+export interface BasePathConfiguration {
     base:string
-    configuration:{
-        javaScript:string
-        json:string
-        typeScript:string
-    }
     context:string
-    ignore:Array<string>
     source:{
         asset:AssetPathConfiguration
         base:string
@@ -147,6 +140,17 @@ export interface PathConfiguration {
         manifest:string
         public:string
     }
+}
+export interface PathConfiguration extends BasePathConfiguration {
+    apiDocumentation:string
+    base:string
+    configuration:{
+        javaScript:string
+        json:string
+        typeScript:string
+    }
+    context:string
+    ignore:Array<string>
     tidyUp:Array<string>
     tidyUpOnClear:Array<string>
     tidyUpOnClearGlobs:{
@@ -154,6 +158,7 @@ export interface PathConfiguration {
         pattern:Array<string>
     }
 }
+export type DefaultPathConfiguration = BasePathConfiguration & Resolvable
 // // endregion
 // // region build
 export interface BuildConfigurationItem {
@@ -235,7 +240,7 @@ export interface DefaultConfiguration {
     givenCommandLineArguments:Array<string>
     library:boolean
     nodeEnvironment:NodeEnvironment
-    path:Resolvable
+    path:DefaultPathConfiguration
     plugins:Array<PluginConfiguration>
     test:PlainObject
     'test:browser':PlainObject

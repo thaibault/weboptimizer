@@ -17,8 +17,10 @@
 // region imports
 import Tools from 'clientnode'
 import {Encoding, File, Mapping, PlainObject} from 'clientnode/type'
-import fileSystem from 'fs'
-import path from 'path'
+import {existsSync, readFileSync} from 'fs'
+import {
+    basename, dirname, extname, join, normalize, resolve, sep, relative
+} from 'path'
 
 import {
     AssetPathConfiguration,
@@ -73,7 +75,7 @@ export class Helper {
         this:void, filePath:string, locationsToCheck:Array<string>
     ):boolean {
         for (const pathToCheck of locationsToCheck)
-            if (path.resolve(filePath).startsWith(path.resolve(pathToCheck)))
+            if (resolve(filePath).startsWith(resolve(pathToCheck)))
                 return true
 
         return false
@@ -110,7 +112,7 @@ export class Helper {
      */
     static normalizePaths(this:void, paths:Array<string>):Array<string> {
         return Array.from(new Set(paths.map((givenPath:string):string => {
-            givenPath = path.normalize(givenPath)
+            givenPath = normalize(givenPath)
 
             if (givenPath.endsWith('/'))
                 return givenPath.substring(0, givenPath.length - 1)
@@ -178,20 +180,18 @@ export class Helper {
         moduleReplacements:Replacements = {},
         relativeModuleLocations:Array<string> = ['node_modules']
     ):false|string {
-        referencePath = path.resolve(referencePath)
-        if (
-            request.startsWith('./') && path.resolve(context) !== referencePath
-        ) {
-            request = path.resolve(context, request)
+        referencePath = resolve(referencePath)
+        if (request.startsWith('./') && resolve(context) !== referencePath) {
+            request = resolve(context, request)
 
             for (const modulePath of relativeModuleLocations) {
-                const pathPrefix:string =
-                    path.resolve(referencePath, modulePath)
+                const pathPrefix:string = resolve(referencePath, modulePath)
 
                 if (request.startsWith(pathPrefix)) {
                     request = request.substring(pathPrefix.length)
                     if (request.startsWith('/'))
                         request = request.substring(1)
+
                     return Helper.applyModuleReplacements(
                         Helper.applyAliases(
                             request.substring(request.lastIndexOf('!') + 1),
@@ -286,9 +286,9 @@ export class Helper {
         inPlaceDynamicLibrary = true,
         encoding:Encoding = 'utf-8'
     ):null|string {
-        context = path.resolve(context)
-        requestContext = path.resolve(requestContext)
-        referencePath = path.resolve(referencePath)
+        context = resolve(context)
+        requestContext = resolve(requestContext)
+        referencePath = resolve(referencePath)
         // NOTE: We apply alias on externals additionally.
         const resolvedRequest:false|string = Helper.applyModuleReplacements(
             Helper.applyAliases(
@@ -365,7 +365,7 @@ export class Helper {
         while (parts.length > 0) {
             for (const relativePath of relativeExternalModuleLocations)
                 externalModuleLocations.push(
-                    path.join('/', parts.join('/'), relativePath)
+                    join('/', parts.join('/'), relativePath)
                 )
 
             parts.splice(-1, 1)
@@ -380,7 +380,7 @@ export class Helper {
             (
                 extensions.file.external.length === 0 ||
                 filePath &&
-                extensions.file.external.includes(path.extname(filePath)) ||
+                extensions.file.external.includes(extname(filePath)) ||
                 !filePath && extensions.file.external.includes('')
             ) &&
             !(inPlaceDynamicLibrary && request.includes('!')) &&
@@ -430,10 +430,10 @@ export class Helper {
         let result:null|string = null
         for (const type in buildConfiguration)
             if (
-                path.extname(filePath) ===
-                `.${buildConfiguration[type].extension}`
+                extname(filePath) === `.${buildConfiguration[type].extension}`
             ) {
                 result = type
+
                 break
             }
         if (!result)
@@ -507,15 +507,15 @@ export class Helper {
                 newItem.filePaths.sort((
                     firstFilePath:string, secondFilePath:string
                 ):number => {
-                    if (mainFileBasenames.includes(path.basename(
-                        firstFilePath, path.extname(firstFilePath)
+                    if (mainFileBasenames.includes(basename(
+                        firstFilePath, extname(firstFilePath)
                     ))) {
-                        if (mainFileBasenames.includes(path.basename(
-                            secondFilePath, path.extname(secondFilePath)
+                        if (mainFileBasenames.includes(basename(
+                            secondFilePath, extname(secondFilePath)
                         )))
                             return 0
-                    } else if (mainFileBasenames.includes(path.basename(
-                        secondFilePath, path.extname(secondFilePath)
+                    } else if (mainFileBasenames.includes(basename(
+                        secondFilePath, extname(secondFilePath)
                     )))
                         return 1
 
@@ -627,7 +627,7 @@ export class Helper {
 
                     if (filePath) {
                         filePaths.push(filePath)
-                        const directoryPath:string = path.dirname(filePath)
+                        const directoryPath:string = dirname(filePath)
                         if (!directoryPaths.includes(directoryPath))
                             directoryPaths.push(directoryPath)
                     }
@@ -660,7 +660,7 @@ export class Helper {
         pathsToIgnore:Array<string> = ['.git']
     ):NormalizedGivenInjection {
         if (referencePath.startsWith('/'))
-            referencePath = path.relative(context, referencePath)
+            referencePath = relative(context, referencePath)
         for (const chunkName in normalizedGivenInjection)
             if (Object.prototype.hasOwnProperty.call(
                 normalizedGivenInjection, chunkName
@@ -680,7 +680,7 @@ export class Helper {
                     }
 
                     const resolvedPath:string =
-                        path.resolve(referencePath, resolvedModuleID)
+                        resolve(referencePath, resolvedModuleID)
 
                     if (Tools.isDirectorySync(resolvedPath)) {
                         normalizedGivenInjection[chunkName].splice(index, 1)
@@ -696,19 +696,19 @@ export class Helper {
                             if (file.stats?.isFile())
                                 normalizedGivenInjection[chunkName].push(
                                     './' +
-                                    path.relative(
+                                    relative(
                                         referencePath,
-                                        path.resolve(resolvedPath, file.path)
+                                        resolve(resolvedPath, file.path)
                                     )
                                 )
                     } else if (
                         resolvedModuleID.startsWith('./') &&
                         !resolvedModuleID.startsWith(
-                            `./${path.relative(context, referencePath)}`
+                            `./${relative(context, referencePath)}`
                         )
                     )
                         normalizedGivenInjection[chunkName][index] =
-                            `./${path.relative(context, resolvedPath)}`
+                            `./${relative(context, resolvedPath)}`
                     index += 1
                 }
             }
@@ -871,17 +871,17 @@ export class Helper {
             for (const moduleFilePath of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
                     const relativeModuleFilePath =
-                        `./${path.relative(context, moduleFilePath)}`
-                    const directoryPath:string = path.dirname(
-                        relativeModuleFilePath)
-                    const baseName:string = path.basename(
+                        `./${relative(context, moduleFilePath)}`
+                    const directoryPath:string =
+                        dirname(relativeModuleFilePath)
+                    const baseName:string = basename(
                         relativeModuleFilePath,
                         `.${buildConfiguration.extension}`
                     )
 
                     let moduleID:string = baseName
                     if (directoryPath !== '.')
-                        moduleID = path.join(directoryPath, baseName)
+                        moduleID = join(directoryPath, baseName)
 
                     /*
                         Ensure that each output type has only one source
@@ -947,12 +947,12 @@ export class Helper {
         }
         if (Tools.isDirectorySync(packagePath)) {
             const pathToPackageJSON:string =
-                path.resolve(packagePath, 'package.json')
+                resolve(packagePath, 'package.json')
             if (Tools.isFileSync(pathToPackageJSON)) {
                 let localConfiguration:PlainObject = {}
                 try {
-                    localConfiguration = JSON.parse(
-                        fileSystem.readFileSync(pathToPackageJSON, {encoding}))
+                    localConfiguration =
+                        JSON.parse(readFileSync(pathToPackageJSON, {encoding}))
                 } catch (error) {
                     console.warn(
                         `Package configuration file "${pathToPackageJSON}" ` +
@@ -1045,11 +1045,11 @@ export class Helper {
 
         let moduleFilePath:string = moduleID
         if (moduleFilePath.startsWith('./'))
-            moduleFilePath = path.join(referencePath, moduleFilePath)
+            moduleFilePath = join(referencePath, moduleFilePath)
 
         const moduleLocations = [referencePath].concat(
             relativeModuleLocations.map((filePath:string):string =>
-                path.resolve(context, filePath)
+                resolve(context, filePath)
             )
         )
 
@@ -1057,9 +1057,8 @@ export class Helper {
         parts.splice(-1, 1)
         while (parts.length > 0) {
             for (const relativePath of relativeModuleLocations)
-                moduleLocations.push(path.join(
-                    '/', parts.join('/'), relativePath
-                ))
+                moduleLocations.push(join('/', parts.join('/'), relativePath))
+
             parts.splice(-1, 1)
         }
 
@@ -1070,11 +1069,10 @@ export class Helper {
                 for (const fileExtension of [''].concat(extensions.file)) {
                     let currentModuleFilePath:string
                     if (moduleFilePath.startsWith('/'))
-                        currentModuleFilePath = path.resolve(moduleFilePath)
+                        currentModuleFilePath = resolve(moduleFilePath)
                     else
-                        currentModuleFilePath = path.resolve(
-                            moduleLocation, moduleFilePath
-                        )
+                        currentModuleFilePath =
+                            resolve(moduleLocation, moduleFilePath)
 
                     let packageAliases:Mapping = {}
                     if (fileName === '__package__') {
@@ -1105,7 +1103,7 @@ export class Helper {
                         continue
 
                     if (resolvedFileName)
-                        currentModuleFilePath = path.resolve(
+                        currentModuleFilePath = resolve(
                             currentModuleFilePath,
                             `${resolvedFileName}${fileExtension}`
                         )
@@ -1183,18 +1181,17 @@ export class Helper {
         this:void, start:Array<string>|string, fileName = 'package.json'
     ):null|string {
         if (typeof start === 'string') {
-            if (!start.endsWith(path.sep))
-                start += path.sep
-            start = start.split(path.sep)
+            if (!start.endsWith(sep))
+                start += sep
+            start = start.split(sep)
         }
         if (!start.length)
             return null
 
         start.pop()
-        const result:string = path.resolve(
-            start.join(path.sep), fileName)
+        const result:string = resolve(start.join(sep), fileName)
         try {
-            if (fileSystem.existsSync(result))
+            if (existsSync(result))
                 return result
         /* eslint-disable no-empty */
         } catch (error) {}
@@ -1228,7 +1225,7 @@ export class Helper {
         */
         if (!configuration.name)
             return Helper.getClosestPackageDescriptor(
-                path.resolve(path.dirname(filePath), '..'), fileName
+                resolve(dirname(filePath), '..'), fileName
             )
 
         if (!configuration.version)
