@@ -16,7 +16,7 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports
+// region imp orts
 import {
     ChildProcess,
     CommonSpawnOptions,
@@ -26,6 +26,7 @@ import {
 } from 'child_process'
 import Tools, {CloseEventNames} from 'clientnode'
 import {
+    AnyFunction,
     EvaluationResult,
     File,
     Mapping,
@@ -36,10 +37,12 @@ import {
     ProcessErrorCallback,
     ProcessHandler
 } from 'clientnode/type'
-import synchronousFileSystem from 'fs'
-import {promises as fileSystem} from 'fs'
-import path from 'path'
-import removeDirectoryRecursively from 'rimraf'
+import {chmodSync, unlinkSync} from 'fs'
+import {writeFile, unlink} from 'fs/promises'
+import path, {join, resolve} from 'path'
+import removeDirectoryRecursively, {
+    sync as removeDirectoryRecursivelySync
+} from 'rimraf'
 
 import configuration from './configurator'
 import Helper from './helper'
@@ -47,12 +50,10 @@ import {
     Command,
     CommandLineArguments,
     GivenInjection,
-    ResolvedConfiguration,
     ResolvedBuildConfiguration,
     ResolvedBuildConfigurationItem
 } from './type'
 // endregion
-type PathModule = typeof path
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128'
 /**
@@ -87,7 +88,7 @@ const main = async ():Promise<void> => {
             'test:coverage:report',
             'check:types'
         ]
-        const closeEventHandlers:Array<Function> = []
+        const closeEventHandlers:Array<AnyFunction> = []
         if (configuration.givenCommandLineArguments.length > 2) {
             // region temporary save dynamically given configurations
             // NOTE: We need a copy of given arguments array.
@@ -107,12 +108,12 @@ const main = async ():Promise<void> => {
             )
                 configuration.givenCommandLineArguments.pop()
             let count = 0
-            let filePath:string = path.resolve(
+            let filePath:string = resolve(
                 configuration.path.context,
                 `.dynamicConfiguration-${count}.json`
             )
             while (true) {
-                filePath = path.resolve(
+                filePath = resolve(
                     configuration.path.context,
                     `.dynamicConfiguration-${count}.json`
                 )
@@ -120,14 +121,14 @@ const main = async ():Promise<void> => {
                     break
                 count += 1
             }
-            await fileSystem.writeFile(
-                filePath, JSON.stringify(dynamicConfiguration))
+            await writeFile(filePath, JSON.stringify(dynamicConfiguration))
             const additionalArguments:Array<string> = process.argv.splice(3)
             // / region register exit handler to tidy up
             closeEventHandlers.push((error:Error):void => {
                 // NOTE: Close handler have to be synchronous.
                 if (Tools.isFileSync(filePath))
-                    synchronousFileSystem.unlinkSync(filePath)
+                    unlinkSync(filePath)
+
                 if (error)
                     throw error
             })
@@ -157,8 +158,8 @@ const main = async ():Promise<void> => {
                 )
             ) {
                 if (
-                    path.resolve(configuration.path.target.base) ===
-                    path.resolve(configuration.path.context)
+                    resolve(configuration.path.target.base) ===
+                    resolve(configuration.path.context)
                 ) {
                     // Removes all compiled files.
                     await Tools.walkDirectoryRecursively(
@@ -172,7 +173,7 @@ const main = async ():Promise<void> => {
                                         configuration.loader.directoryNames
                                     )
                                     .map((filePath:string):string =>
-                                        path.resolve(
+                                        resolve(
                                             configuration.path.context,
                                             filePath
                                         )
@@ -195,7 +196,8 @@ const main = async ():Promise<void> => {
                                 ).test(file.path)) {
                                     if (file.stats?.isDirectory()) {
                                         await new Promise((
-                                            resolve:Function, reject:Function
+                                            resolve:AnyFunction,
+                                            reject:AnyFunction
                                         ):void => removeDirectoryRecursively(
                                             file.path,
                                             {glob: false},
@@ -204,9 +206,12 @@ const main = async ():Promise<void> => {
                                                     reject(error) :
                                                     resolve()
                                         ))
+
                                         return false
                                     }
-                                    await fileSystem.unlink(file.path)
+
+                                    await unlink(file.path)
+
                                     break
                                 }
                         }
@@ -222,11 +227,10 @@ const main = async ():Promise<void> => {
                         )
                     )
                         if (file.name.startsWith('npm-debug'))
-                            await fileSystem.unlink(file.path)
-
+                            await unlink(file.path)
                 } else
                     await new Promise((
-                        resolve:Function, reject:Function
+                        resolve:AnyFunction, reject:AnyFunction
                     ):void => removeDirectoryRecursively(
                         configuration.path.target.base,
                         {glob: false},
@@ -240,7 +244,7 @@ const main = async ():Promise<void> => {
                     )
                 )
                     await new Promise((
-                        resolve:Function, reject:Function
+                        resolve:AnyFunction, reject:AnyFunction
                     ):void =>
                         removeDirectoryRecursively(
                             configuration.path.apiDocumentation,
@@ -254,18 +258,18 @@ const main = async ():Promise<void> => {
                     if (filePath)
                         if (Tools.isFileSync(filePath))
                             // NOTE: Close handler have to be synchronous.
-                            synchronousFileSystem.unlinkSync(filePath)
+                            unlinkSync(filePath)
                         else if (Tools.isDirectorySync(filePath))
-                            removeDirectoryRecursively.sync(
+                            removeDirectoryRecursivelySync(
                                 filePath, {glob: false}
                             )
 
                 for (
                     const filePathPattern of
-                        configuration.path.tidyUpOnClearGlobs.pattern
+                    configuration.path.tidyUpOnClearGlobs.pattern
                 )
                     if (filePathPattern)
-                        removeDirectoryRecursively.sync(
+                        removeDirectoryRecursivelySync(
                             filePathPattern,
                             configuration.path.tidyUpOnClearGlobs.options
                         )
@@ -280,7 +284,7 @@ const main = async ():Promise<void> => {
                         configuration.module.directoryNames,
                         configuration.loader.directoryNames
                     ).map((filePath:string):string =>
-                        path.resolve(configuration.path.context, filePath)
+                        resolve(configuration.path.context, filePath)
                     ).filter((filePath:string):boolean =>
                         !configuration.path.context.startsWith(filePath)
                     ),
@@ -335,6 +339,7 @@ const main = async ():Promise<void> => {
                                             .aliasPropertyNames,
                                         configuration.encoding
                                     )
+
                                 let type:null|string = null
                                 if (filePath)
                                     type = Helper.determineAssetType(
@@ -342,6 +347,7 @@ const main = async ():Promise<void> => {
                                         configuration.buildContext.types,
                                         configuration.path
                                     )
+
                                 if (
                                     typeof type === 'string' &&
                                     configuration.buildContext.types[type]
@@ -364,9 +370,7 @@ const main = async ():Promise<void> => {
                                         ].outputExtension === 'js' &&
                                         Tools.isFileSync(filePath)
                                     )
-                                        synchronousFileSystem.chmodSync(
-                                            filePath, '755'
-                                        )
+                                        chmodSync(filePath, '755')
                                 }
                             }
 
@@ -374,10 +378,11 @@ const main = async ():Promise<void> => {
                         if (filePath)
                             if (Tools.isFileSync(filePath))
                                 // NOTE: Close handler have to be synchronous.
-                                synchronousFileSystem.unlinkSync(filePath)
+                                unlinkSync(filePath)
                             else if (Tools.isDirectorySync(filePath))
-                                removeDirectoryRecursively.sync(
-                                    filePath, {glob: false})
+                                removeDirectoryRecursivelySync(
+                                    filePath, {glob: false}
+                                )
                 }
 
                 closeEventHandlers.push(tidyUp)
@@ -387,7 +392,7 @@ const main = async ():Promise<void> => {
                     final productive output.
                 */
                 processPromises.push(new Promise<Array<ChildProcess>>((
-                    resolve:Function, reject:Function
+                    resolve:AnyFunction, reject:AnyFunction
                 ):Array<ChildProcess> => {
                     const commandLineArguments:Array<string> = (
                         configuration.commandLine.build.arguments || []
@@ -406,23 +411,21 @@ const main = async ():Promise<void> => {
                         childProcessOptions
                     )
                     const copyAdditionalFilesAndTidyUp:ProcedureFunction = (
-                        ...parameter:Array<any>
                     ):void => {
                         for (
                             const filePath of
                             configuration.files.additionalPaths
                         ) {
-                            const sourcePath:string = path.join(
-                                configuration.path.source.base, filePath
-                            )
-                            const targetPath:string = path.join(
-                                configuration.path.target.base, filePath
-                            )
+                            const sourcePath:string =
+                                join(configuration.path.source.base, filePath)
+                            const targetPath:string =
+                                join(configuration.path.target.base, filePath)
                             // NOTE: Close handler have to be synchronous.
                             if (Tools.isDirectorySync(sourcePath)) {
                                 if (Tools.isDirectorySync(targetPath))
-                                    removeDirectoryRecursively.sync(
-                                        targetPath, {glob: false})
+                                    removeDirectoryRecursivelySync(
+                                        targetPath, {glob: false}
+                                    )
 
                                 Tools.copyDirectoryRecursiveSync(
                                     sourcePath, targetPath
@@ -431,7 +434,7 @@ const main = async ():Promise<void> => {
                                 Tools.copyFileSync(sourcePath, targetPath)
                         }
 
-                        tidyUp(...parameter)
+                        tidyUp()
                     }
 
                     const closeHandler:ProcessHandler =
@@ -483,8 +486,6 @@ const main = async ():Promise<void> => {
                     ] as string).trim()
                     for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
-                            type buildConfigItem =
-                                ResolvedBuildConfigurationItem
                             const evaluated:EvaluationResult =
                                 Tools.stringEvaluate(
                                     `\`${expression}\``,
@@ -508,7 +509,7 @@ const main = async ():Promise<void> => {
 
                             processPromises.push(
                                 new Promise<Array<ChildProcess>>((
-                                    resolve:Function, reject:Function
+                                    resolve:AnyFunction, reject:AnyFunction
                                 ):Array<ChildProcess> => [
                                     Tools.handleChildProcess(
                                         execChildProcess(
@@ -552,7 +553,7 @@ const main = async ():Promise<void> => {
                         )
                     if (evaluated.result)
                         processPromises.push(new Promise<Array<ChildProcess>>((
-                            resolve:Function, reject:Function
+                            resolve:AnyFunction, reject:AnyFunction
                         ):Array<ChildProcess> => {
                             const commandLineArguments:Array<string> = (
                                 task.arguments || []
@@ -612,10 +613,12 @@ const main = async ():Promise<void> => {
             // endregion
         }
         let finished = false
-        const closeHandler:ProcessHandler = (...parameter:Array<any>):void => {
+        const closeHandler:ProcessHandler = (
+            ...parameters:Array<unknown>
+        ):void => {
             if (!finished)
                 for (const closeEventHandler of closeEventHandlers)
-                    closeEventHandler(...parameter)
+                    closeEventHandler(...parameters)
 
             finished = true
         }
@@ -652,8 +655,10 @@ const main = async ():Promise<void> => {
             console.error(error)
     }
 }
+
 if (require.main === module)
-    main()
+    main().then(Tools.noop, Tools.noop)
+
 export default main
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

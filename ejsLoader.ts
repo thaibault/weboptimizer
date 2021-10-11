@@ -21,51 +21,63 @@ import {
 import babelMinifyPreset from 'babel-preset-minify'
 import Tools from 'clientnode'
 import {EvaluationResult, Encoding, Mapping} from 'clientnode/type'
-import ejs, {Options, TemplateFunction} from 'ejs'
-import fileSystem from 'fs'
+import ejs, {Options, TemplateFunction as EJSTemplateFunction} from 'ejs'
+import {readFileSync} from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import {getOptions, getRemainingRequest} from 'loader-utils'
-import path from 'path'
+import {extname} from 'path'
+import {LoaderContext} from 'webpack'
 
 import configuration from './configurator'
 import Helper from './helper'
 import {Extensions, Replacements} from './type'
 // endregion
 // region types
-export type CompilerOptions = Options & {
-    encoding:Encoding
-    isString?:boolean
-}
-export type CompileFunction = (
-    template:string,
-    options?:Partial<CompilerOptions>,
-    compileSteps?:number
-) => TemplateFunction
-export type LoaderConfiguration = Mapping<unknown> & {
-    compiler:Partial<CompilerOptions>
-    compileSteps:number
-    compress:{
-        html:Mapping<unknown>
-        javaScript:Mapping<unknown>
+export type PreCompiledTemplateFunction =
+    ((..._parameters:Array<unknown>) => string)
+export type TemplateFunction =
+    EJSTemplateFunction | PreCompiledTemplateFunction
+export type CompilerOptions =
+    Options &
+    {
+        encoding:Encoding
+        isString?:boolean
     }
-    context:string
-    extensions:Extensions
-    locals?:Mapping<unknown>
-    module:{
-        aliases:Mapping<string>
-        replacements:Replacements
+export type CompileFunction =
+    (
+        _template:string,
+        _options?:Partial<CompilerOptions>,
+        _compileSteps?:number
+    ) => TemplateFunction
+export type LoaderConfiguration =
+    Mapping<unknown> &
+    {
+        compiler:Partial<CompilerOptions>
+        compileSteps:number
+        compress:{
+            html:Mapping<unknown>
+            javaScript:Mapping<unknown>
+        }
+        context:string
+        debug:boolean
+        extensions:Extensions
+        locals?:Mapping<unknown>
+        module:{
+            aliases:Mapping<string>
+            replacements:Replacements
+        }
     }
-}
 // endregion
 /**
  * Main transformation function.
- *
  * @param this - Loader context.
  * @param source - Input string to transform.
  *
  * @returns Transformed string.
  */
-export default function(this:any, source:string):string {
+export default function(
+    this:LoaderContext<LoaderConfiguration>, source:string
+):string {
     const givenOptions:LoaderConfiguration =
         Tools.convertSubstringInPlainObject(
             Tools.extend<LoaderConfiguration>(
@@ -78,6 +90,7 @@ export default function(this:any, source:string):string {
                         javaScript: {}
                     },
                     context: './',
+                    debug: false,
                     extensions: {
                         file: {
                             external: [],
@@ -99,7 +112,7 @@ export default function(this:any, source:string):string {
             ),
             /#%%%#/g,
             '!'
-        ) as LoaderConfiguration
+        )
 
     const compile:CompileFunction = (
         template:string,
@@ -107,13 +120,13 @@ export default function(this:any, source:string):string {
         compileSteps = 2
     ):TemplateFunction => (
         locals:Array<Array<string>>|Array<Mapping<unknown>>|Mapping<unknown> =
-            {}
+        {}
     ):string => {
         options = {filename: template, ...options}
         const givenLocals:Array<unknown> =
             ([] as Array<unknown>).concat(locals)
 
-        const require:Function = (
+        const require = (
             request:string, nestedLocals:Mapping<unknown> = {}
         ):string => {
             const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
@@ -179,16 +192,17 @@ export default function(this:any, source:string):string {
                         nestedLocals
                     )
 
-                return fileSystem.readFileSync(
+                return readFileSync(
                     templateFilePath, {encoding: nestedOptions.encoding}
-                ) as unknown as string
+                )
             }
+
             throw new Error(
                 `Given template file "${template}" couldn't be resolved.`
             )
         }
 
-        const compressHTML:Function = (content:string):string =>
+        const compressHTML = (content:string):string =>
             givenOptions.compress.html ?
                 minifyHTML(
                     content,
@@ -225,15 +239,15 @@ export default function(this:any, source:string):string {
                 content
 
         let result:string|TemplateFunction = template
-        const isString:boolean = Boolean(options.isString)
+        const isString = Boolean(options.isString)
         delete options.isString
 
         let stepLocals:Array<string>|Mapping<unknown>
-        let scope:Mapping<any>
+        let scope:Mapping<unknown>
         let originalScopeNames:Array<string>
         let scopeNames:Array<string>
 
-        for (let step:number = 1; step <= compileSteps; step += 1) {
+        for (let step = 1; step <= compileSteps; step += 1) {
             // On every odd compile step we have to determine the environment.
             if (step % 2) {
                 // region determine scope
@@ -255,7 +269,6 @@ export default function(this:any, source:string):string {
                 else if (!Array.isArray(stepLocals))
                     scope = stepLocals
 
-
                 originalScopeNames =
                     Array.isArray(stepLocals) ? stepLocals : Object.keys(scope)
                 scopeNames = originalScopeNames.map((name:string):string =>
@@ -267,14 +280,14 @@ export default function(this:any, source:string):string {
             if (typeof result === 'string') {
                 const filePath:string|undefined =
                     isString ? options.filename : result
-                if (filePath && path.extname(filePath) === '.js')
+                if (filePath && extname(filePath) === '.js')
                     result = eval('require')(filePath)
                 else {
                     if (!isString) {
                         let encoding:Encoding = configuration.encoding
                         if (typeof options.encoding === 'string')
                             encoding = options.encoding
-                        result = fileSystem.readFileSync(result, {encoding})
+                        result = readFileSync(result, {encoding})
                     }
                     if (step === compileSteps)
                         result = compressHTML(result)
@@ -283,8 +296,8 @@ export default function(this:any, source:string):string {
                         // NOTE: Needed to manipulate code after compiling.
                         options.client = true
 
-                    result = ejs.compile(result as string, options) as
-                        TemplateFunction
+                    result = ejs.compile(result, options) as
+                        EJSTemplateFunction
 
                     /*
                         Provide all scope names when "_with" options isn't
@@ -294,21 +307,24 @@ export default function(this:any, source:string):string {
                         let localsName:string = options.localsName || 'locals'
                         while (scopeNames!.includes(localsName))
                             localsName = `_${localsName}`
+
+                        /* eslint-disable @typescript-eslint/no-implied-eval */
                         result = new Function(
                             ...scopeNames!,
                             localsName,
                             `return ${result.toString()}(` +
                             `${localsName},${localsName}.escapeFn,include,` +
                             `${localsName}.rethrow)`
-                        ) as TemplateFunction
+                        ) as PreCompiledTemplateFunction
+                        /* eslint-enable @typescript-eslint/no-implied-eval */
                     }
                 }
             } else
                 result = compressHTML(!options.strict && options._with ?
-                    (result as Function)(
+                    (result as PreCompiledTemplateFunction)(
                         scope!, scope!.escapeFn, scope!.include
                     ) :
-                    result(
+                    (result as PreCompiledTemplateFunction)(
                         /*
                             NOTE: We want to be ensure to have same ordering as
                             we have for the scope names and to call internal
@@ -317,7 +333,7 @@ export default function(this:any, source:string):string {
                             here.
                         */
                         ...originalScopeNames!
-                            .map((name:string):any => scope[name])
+                            .map((name:string):unknown => scope[name])
                             .concat(
                                 !options.strict && options._with ? [] : scope!
                             )
@@ -350,7 +366,7 @@ export default function(this:any, source:string):string {
             if (typeof processed?.code === 'string')
                 code = processed.code
 
-            return `${options.strict ? "'use strict';\n" : ''}${code}`
+            return `${options.strict ? `'use strict';\n` : ''}${code}`
         }
 
         if (typeof result === 'string') {
@@ -383,12 +399,13 @@ export default function(this:any, source:string):string {
         {
             ...givenOptions.compiler,
             client: Boolean(givenOptions.compileSteps % 2),
-            compileDebug: this.debug || false,
-            debug: this.debug || false,
+            compileDebug: givenOptions.debug,
+            debug: givenOptions.debug,
             filename:
                 'remainingRequest' in this ?
                     getRemainingRequest(this).replace(/^!/, '') :
-                    this.resourcePath || 'unknown',
+                    (this as LoaderContext<LoaderConfiguration>)
+                        .resourcePath || 'unknown',
             isString: true,
             localsName: 'scope'
         },

@@ -17,9 +17,10 @@
 // region imports
 import Tools from 'clientnode'
 import {Encoding, File, Mapping, PlainObject} from 'clientnode/type'
-import {DOMWindow, JSDOM as DOM} from 'jsdom'
-import fileSystem from 'fs'
-import path from 'path'
+import {existsSync, readFileSync} from 'fs'
+import {
+    basename, dirname, extname, join, normalize, resolve, sep, relative
+} from 'path'
 
 import {
     AssetPathConfiguration,
@@ -63,17 +64,20 @@ export class Helper {
     /**
      * Determines whether given file path is within given list of file
      * locations.
+     * @param this - Indicates an unbound method.
      * @param filePath - Path to file to check.
      * @param locationsToCheck - Locations to take into account.
+     *
      * @returns Value "true" if given file path is within one of given
      * locations or "false" otherwise.
      */
     static isFilePathInLocation(
-        filePath:string, locationsToCheck:Array<string>
+        this:void, filePath:string, locationsToCheck:Array<string>
     ):boolean {
         for (const pathToCheck of locationsToCheck)
-            if (path.resolve(filePath).startsWith(path.resolve(pathToCheck)))
+            if (resolve(filePath).startsWith(resolve(pathToCheck)))
                 return true
+
         return false
     }
     // endregion
@@ -81,10 +85,12 @@ export class Helper {
     /**
      * Strips loader informations form given module request including loader
      * prefix and query parameter.
+     * @param this - Indicates an unbound method.
      * @param moduleID - Module request to strip.
+     *
      * @returns Given module id stripped.
      */
-    static stripLoader(moduleID:string):string {
+    static stripLoader(this:void, moduleID:string):string {
         const moduleIDWithoutLoader:string = moduleID
             .substring(moduleID.lastIndexOf('!') + 1)
             .replace(/\.webpack\[.+\/.+\]$/, '')
@@ -99,14 +105,18 @@ export class Helper {
     // region array
     /**
      * Converts given list of path to a normalized list with unique values.
+     * @param this - Indicates an unbound method.
      * @param paths - File paths.
+     *
      * @returns The given file path list with normalized unique values.
      */
-    static normalizePaths(paths:Array<string>):Array<string> {
+    static normalizePaths(this:void, paths:Array<string>):Array<string> {
         return Array.from(new Set(paths.map((givenPath:string):string => {
-            givenPath = path.normalize(givenPath)
+            givenPath = normalize(givenPath)
+
             if (givenPath.endsWith('/'))
                 return givenPath.substring(0, givenPath.length - 1)
+
             return givenPath
         })))
     }
@@ -115,12 +125,14 @@ export class Helper {
     /**
      * Applies file path/name placeholder replacements with given bundle
      * associated informations.
+     * @param this - Indicates an unbound method.
      * @param template - File path to process placeholder in.
      * @param scope - Scope to use for processing.
+     *
      * @returns Processed file path.
      */
     static renderFilePathTemplate(
-        template:string, scope:Mapping<number|string> = {}
+        this:void, template:string, scope:Mapping<number|string> = {}
     ):string {
         scope = {
             '[chunkhash]': '.__dummy__',
@@ -130,6 +142,7 @@ export class Helper {
             '[name]': '.__dummy__',
             ...scope
         }
+
         let filePath:string = template
         for (const placeholderName in scope)
             if (Object.prototype.hasOwnProperty.call(scope, placeholderName))
@@ -140,11 +153,13 @@ export class Helper {
                     ),
                     `${scope[placeholderName]}`
                 )
+
         return filePath
     }
     /**
      * Converts given request to a resolved request with given context
      * embedded.
+     * @param this - Indicates an unbound method.
      * @param request - Request to determine.
      * @param context - Context of given request to resolve relative to.
      * @param referencePath - Path to resolve local modules relative to.
@@ -153,9 +168,11 @@ export class Helper {
      * account.
      * @param relativeModuleLocations - List of relative directory paths to
      * search for modules in.
+     *
      * @returns A new resolved request.
      */
     static applyContext(
+        this:void,
         request:string,
         context = './',
         referencePath = './',
@@ -163,18 +180,18 @@ export class Helper {
         moduleReplacements:Replacements = {},
         relativeModuleLocations:Array<string> = ['node_modules']
     ):false|string {
-        referencePath = path.resolve(referencePath)
-        if (
-            request.startsWith('./') && path.resolve(context) !== referencePath
-        ) {
-            request = path.resolve(context, request)
+        referencePath = resolve(referencePath)
+        if (request.startsWith('./') && resolve(context) !== referencePath) {
+            request = resolve(context, request)
+
             for (const modulePath of relativeModuleLocations) {
-                const pathPrefix:string =
-                    path.resolve(referencePath, modulePath)
+                const pathPrefix:string = resolve(referencePath, modulePath)
+
                 if (request.startsWith(pathPrefix)) {
                     request = request.substring(pathPrefix.length)
                     if (request.startsWith('/'))
                         request = request.substring(1)
+
                     return Helper.applyModuleReplacements(
                         Helper.applyAliases(
                             request.substring(request.lastIndexOf('!') + 1),
@@ -184,10 +201,12 @@ export class Helper {
                     )
                 }
             }
+
             if (request.startsWith(referencePath)) {
                 request = request.substring(referencePath.length)
                 if (request.startsWith('/'))
                     request = request.substring(1)
+
                 return Helper.applyModuleReplacements(
                     Helper.applyAliases(
                         request.substring(request.lastIndexOf('!') + 1),
@@ -197,12 +216,13 @@ export class Helper {
                 )
             }
         }
+
         return request
     }
     /**
      * Check if given request points to an external dependency not maintained
      * by current package context.
-     *
+     * @param this - Indicates an unbound method.
      * @param request - Request to determine.
      * @param context - Context of current project.
      * @param requestContext - Context of given request to resolve relative to.
@@ -240,6 +260,7 @@ export class Helper {
      * external one.
      */
     static determineExternalRequest(
+        this:void,
         request:string,
         context = './',
         requestContext = './',
@@ -265,9 +286,9 @@ export class Helper {
         inPlaceDynamicLibrary = true,
         encoding:Encoding = 'utf-8'
     ):null|string {
-        context = path.resolve(context)
-        requestContext = path.resolve(requestContext)
-        referencePath = path.resolve(referencePath)
+        context = resolve(context)
+        requestContext = resolve(requestContext)
+        referencePath = resolve(referencePath)
         // NOTE: We apply alias on externals additionally.
         const resolvedRequest:false|string = Helper.applyModuleReplacements(
             Helper.applyAliases(
@@ -317,6 +338,7 @@ export class Helper {
                 ) ||
                 null
             )
+
         for (const chunkName in normalizedGivenInjection)
             if (Object.prototype.hasOwnProperty.call(
                 normalizedGivenInjection, chunkName
@@ -337,13 +359,15 @@ export class Helper {
                         encoding
                     ) === filePath)
                         return null
+
         const parts:Array<string> = context.split('/')
         const externalModuleLocations:Array<string> = []
         while (parts.length > 0) {
             for (const relativePath of relativeExternalModuleLocations)
                 externalModuleLocations.push(
-                    path.join('/', parts.join('/'), relativePath)
+                    join('/', parts.join('/'), relativePath)
                 )
+
             parts.splice(-1, 1)
         }
         /*
@@ -356,7 +380,7 @@ export class Helper {
             (
                 extensions.file.external.length === 0 ||
                 filePath &&
-                extensions.file.external.includes(path.extname(filePath)) ||
+                extensions.file.external.includes(extname(filePath)) ||
                 !filePath && extensions.file.external.includes('')
             ) &&
             !(inPlaceDynamicLibrary && request.includes('!')) &&
@@ -382,19 +406,23 @@ export class Helper {
                 ) ||
                 null
             )
+
         return null
     }
     /**
      * Determines asset type of given file.
+     * @param this - Indicates an unbound method.
      * @param filePath - Path to file to analyse.
      * @param buildConfiguration - Meta informations for available asset
      * types.
      * @param paths - List of paths to search if given path doesn't reference
      * a file directly.
+     *
      * @returns Determined file type or "null" of given file couldn't be
      * determined.
      */
     static determineAssetType(
+        this:void,
         filePath:string,
         buildConfiguration:BuildConfiguration,
         paths:PathConfiguration
@@ -402,10 +430,10 @@ export class Helper {
         let result:null|string = null
         for (const type in buildConfiguration)
             if (
-                path.extname(filePath) ===
-                `.${buildConfiguration[type].extension}`
+                extname(filePath) === `.${buildConfiguration[type].extension}`
             ) {
                 result = type
+
                 break
             }
         if (!result)
@@ -433,13 +461,16 @@ export class Helper {
      * matches each build configuration in given entry path and converts given
      * build configuration into a sorted array were javaScript files takes
      * precedence.
+     * @param this - Indicates an unbound method.
      * @param configuration - Given build configurations.
      * @param entryPath - Path to analyse nested structure.
      * @param pathsToIgnore - Paths which marks location to ignore.
      * @param mainFileBasenames - File basenames to sort into the front.
+     *
      * @returns Converted build configuration.
      */
     static resolveBuildConfigurationFilePaths(
+        this:void,
         configuration:BuildConfiguration,
         entryPath = './',
         pathsToIgnore:Array<string> = ['.git'],
@@ -476,15 +507,15 @@ export class Helper {
                 newItem.filePaths.sort((
                     firstFilePath:string, secondFilePath:string
                 ):number => {
-                    if (mainFileBasenames.includes(path.basename(
-                        firstFilePath, path.extname(firstFilePath)
+                    if (mainFileBasenames.includes(basename(
+                        firstFilePath, extname(firstFilePath)
                     ))) {
-                        if (mainFileBasenames.includes(path.basename(
-                            secondFilePath, path.extname(secondFilePath)
+                        if (mainFileBasenames.includes(basename(
+                            secondFilePath, extname(secondFilePath)
                         )))
                             return 0
-                    } else if (mainFileBasenames.includes(path.basename(
-                        secondFilePath, path.extname(secondFilePath)
+                    } else if (mainFileBasenames.includes(basename(
+                        secondFilePath, extname(secondFilePath)
                     )))
                         return 1
 
@@ -493,6 +524,7 @@ export class Helper {
 
                 buildConfiguration.push(newItem)
             }
+
         return buildConfiguration.sort((
             first:ResolvedBuildConfigurationItem,
             second:ResolvedBuildConfigurationItem
@@ -513,6 +545,7 @@ export class Helper {
     /**
      * Determines all file and directory paths related to given internal
      * modules as array.
+     * @param this - Indicates an unbound method.
      * @param givenInjection - List of module ids or module file paths.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of module replacements to take into
@@ -532,10 +565,12 @@ export class Helper {
      * @param packageAliasPropertyNames - List of package file alias property
      * names to search for package specific module aliases.
      * @param encoding - File name encoding to use during file traversing.
+     *
      * @returns Object with a file path and directory path key mapping to
      * corresponding list of paths.
      */
     static determineModuleLocations(
+        this:void,
         givenInjection:GivenInjection,
         aliases:Mapping = {},
         moduleReplacements:Replacements = {},
@@ -569,6 +604,7 @@ export class Helper {
                 referencePath,
                 pathsToIgnore
             )
+
         for (const chunkName in normalizedGivenInjection)
             if (Object.prototype.hasOwnProperty.call(
                 normalizedGivenInjection, chunkName
@@ -588,18 +624,21 @@ export class Helper {
                         packageAliasPropertyNames,
                         encoding
                     )
+
                     if (filePath) {
                         filePaths.push(filePath)
-                        const directoryPath:string = path.dirname(filePath)
+                        const directoryPath:string = dirname(filePath)
                         if (!directoryPaths.includes(directoryPath))
                             directoryPaths.push(directoryPath)
                     }
                 }
+
         return {filePaths, directoryPaths}
     }
     /**
      * Determines a list of concrete file paths for given module id pointing to
      * a folder which isn't a package.
+     * @param this - Indicates an unbound method.
      * @param normalizedGivenInjection - Injection data structure of modules
      * with folder references to resolve.
      * @param aliases - Mapping of aliases to take into account.
@@ -608,9 +647,11 @@ export class Helper {
      * @param context - File path to determine relative to.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
+     *
      * @returns Given injections with resolved folder pointing modules.
      */
     static resolveModulesInFolders(
+        this:void,
         normalizedGivenInjection:NormalizedGivenInjection,
         aliases:Mapping = {},
         moduleReplacements:Replacements = {},
@@ -619,13 +660,13 @@ export class Helper {
         pathsToIgnore:Array<string> = ['.git']
     ):NormalizedGivenInjection {
         if (referencePath.startsWith('/'))
-            referencePath = path.relative(context, referencePath)
+            referencePath = relative(context, referencePath)
         for (const chunkName in normalizedGivenInjection)
             if (Object.prototype.hasOwnProperty.call(
                 normalizedGivenInjection, chunkName
             )) {
                 let index = 0
-                for (let moduleID of normalizedGivenInjection[chunkName]) {
+                for (const moduleID of normalizedGivenInjection[chunkName]) {
                     const resolvedModuleID:false|string =
                         Helper.applyModuleReplacements(
                             Helper.applyAliases(
@@ -639,7 +680,7 @@ export class Helper {
                     }
 
                     const resolvedPath:string =
-                        path.resolve(referencePath, resolvedModuleID)
+                        resolve(referencePath, resolvedModuleID)
 
                     if (Tools.isDirectorySync(resolvedPath)) {
                         normalizedGivenInjection[chunkName].splice(index, 1)
@@ -655,33 +696,36 @@ export class Helper {
                             if (file.stats?.isFile())
                                 normalizedGivenInjection[chunkName].push(
                                     './' +
-                                    path.relative(
+                                    relative(
                                         referencePath,
-                                        path.resolve(resolvedPath, file.path)
+                                        resolve(resolvedPath, file.path)
                                     )
                                 )
                     } else if (
                         resolvedModuleID.startsWith('./') &&
                         !resolvedModuleID.startsWith(
-                            `./${path.relative(context, referencePath)}`
+                            `./${relative(context, referencePath)}`
                         )
                     )
                         normalizedGivenInjection[chunkName][index] =
-                            `./${path.relative(context, resolvedPath)}`
+                            `./${relative(context, resolvedPath)}`
                     index += 1
                 }
             }
+
         return normalizedGivenInjection
     }
     /**
      * Every injection definition type can be represented as plain object
      * (mapping from chunk name to array of module ids). This method converts
      * each representation into the normalized plain object notation.
+     * @param this - Indicates an unbound method.
      * @param givenInjection - Given entry injection to normalize.
+     *
      * @returns Normalized representation of given entry injection.
      */
     static normalizeGivenInjection(
-        givenInjection:GivenInjection
+        this:void, givenInjection:GivenInjection
     ):NormalizedGivenInjection {
         let result:NormalizedGivenInjection = {}
         if (Array.isArray(givenInjection))
@@ -719,6 +763,7 @@ export class Helper {
     /**
      * Determines all concrete file paths for given injection which are marked
      * with the "__auto__" indicator.
+     * @param this - Indicates an unbound method.
      * @param givenInjection - Given entry and external injection to take
      * into account.
      * @param buildConfigurations - Resolved build configuration.
@@ -731,9 +776,11 @@ export class Helper {
      * @param referencePath - Reference path from where local files should be
      * resolved.
      * @param pathsToIgnore - Paths which marks location to ignore.
+     *
      * @returns Given injection with resolved marked indicators.
      */
     static resolveAutoInjection<T extends GivenInjectionConfiguration>(
+        this:void,
         givenInjection:T,
         buildConfigurations:ResolvedBuildConfiguration,
         aliases:Mapping = {},
@@ -759,6 +806,7 @@ export class Helper {
                 referencePath,
                 pathsToIgnore
             ).filePaths
+
         for (const name of ['entry', 'external'] as const) {
             const injectionType:GivenInjection = injection[name]
             /* eslint-disable curly */
@@ -788,21 +836,27 @@ export class Helper {
                     injection[name as keyof GivenInjectionConfiguration] as
                         Mapping
                 ) = Helper.getAutoInjection(
-                    buildConfigurations, moduleFilePathsToExclude, context
-                )
+                                buildConfigurations,
+                                moduleFilePathsToExclude,
+                                context
+                            )
         }
+
         return injection
     }
     /**
      * Determines all module file paths.
+     * @param this - Indicates an unbound method.
      * @param buildConfigurations - Resolved build configuration.
      * @param moduleFilePathsToExclude - A list of modules file paths to
      * exclude (specified by path or id) or a mapping from chunk names to
      * module ids.
      * @param context - File path to use as starting point.
+     *
      * @returns All determined module file paths.
      */
     static getAutoInjection(
+        this:void,
         buildConfigurations:ResolvedBuildConfiguration,
         moduleFilePathsToExclude:Array<string>,
         context:string
@@ -817,17 +871,17 @@ export class Helper {
             for (const moduleFilePath of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
                     const relativeModuleFilePath =
-                        `./${path.relative(context, moduleFilePath)}`
-                    const directoryPath:string = path.dirname(
-                        relativeModuleFilePath)
-                    const baseName:string = path.basename(
+                        `./${relative(context, moduleFilePath)}`
+                    const directoryPath:string =
+                        dirname(relativeModuleFilePath)
+                    const baseName:string = basename(
                         relativeModuleFilePath,
                         `.${buildConfiguration.extension}`
                     )
 
                     let moduleID:string = baseName
                     if (directoryPath !== '.')
-                        moduleID = path.join(directoryPath, baseName)
+                        moduleID = join(directoryPath, baseName)
 
                     /*
                         Ensure that each output type has only one source
@@ -858,20 +912,24 @@ export class Helper {
                     }
                 }
         }
+
         return result
     }
     // TODO test
     /**
      * Determines a resolved module file path in given package path.
+     * @param this - Indicates an unbound method.
      * @param packagePath - Path to package to resolve in.
      * @param packageMainPropertyNames - List of package file main property
      * names to search for package representing entry module definitions.
      * @param packageAliasPropertyNames - List of package file alias property
      * names to search for package specific module aliases.
      * @param encoding - Encoding to use for file names during file traversing.
+     *
      * @returns Path if found and / or additional package aliases to consider.
      */
     static determineModuleFilePathInPackage(
+        this:void,
         packagePath:string,
         packageMainPropertyNames:Array<string> = ['main'],
         packageAliasPropertyNames:Array<string> = [],
@@ -889,12 +947,12 @@ export class Helper {
         }
         if (Tools.isDirectorySync(packagePath)) {
             const pathToPackageJSON:string =
-                path.resolve(packagePath, 'package.json')
+                resolve(packagePath, 'package.json')
             if (Tools.isFileSync(pathToPackageJSON)) {
                 let localConfiguration:PlainObject = {}
                 try {
-                    localConfiguration = JSON.parse(
-                        fileSystem.readFileSync(pathToPackageJSON, {encoding}))
+                    localConfiguration =
+                        JSON.parse(readFileSync(pathToPackageJSON, {encoding}))
                 } catch (error) {
                     console.warn(
                         `Package configuration file "${pathToPackageJSON}" ` +
@@ -932,6 +990,7 @@ export class Helper {
     }
     /**
      * Determines a concrete file path for given module id.
+     * @param this - Indicates an unbound method.
      * @param moduleID - Module id to determine.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
@@ -951,10 +1010,12 @@ export class Helper {
      * @param packageAliasPropertyNames - List of package file alias property
      * names to search for package specific module aliases.
      * @param encoding - Encoding to use for file names during file traversing.
+     *
      * @returns File path or given module id if determinations has failed or
      * wasn't necessary.
      */
     static determineModuleFilePath(
+        this:void,
         moduleID:false|string,
         aliases:Mapping = {},
         moduleReplacements:Replacements = {},
@@ -974,29 +1035,33 @@ export class Helper {
     ):null|string {
         if (!moduleID)
             return null
+
         moduleID = Helper.applyModuleReplacements(
             Helper.applyAliases(Helper.stripLoader(moduleID), aliases),
             moduleReplacements
         )
         if (!moduleID)
             return null
+
         let moduleFilePath:string = moduleID
         if (moduleFilePath.startsWith('./'))
-            moduleFilePath = path.join(referencePath, moduleFilePath)
+            moduleFilePath = join(referencePath, moduleFilePath)
+
         const moduleLocations = [referencePath].concat(
             relativeModuleLocations.map((filePath:string):string =>
-                path.resolve(context, filePath)
+                resolve(context, filePath)
             )
         )
+
         const parts = context.split('/')
         parts.splice(-1, 1)
         while (parts.length > 0) {
             for (const relativePath of relativeModuleLocations)
-                moduleLocations.push(path.join(
-                    '/', parts.join('/'), relativePath
-                ))
+                moduleLocations.push(join('/', parts.join('/'), relativePath))
+
             parts.splice(-1, 1)
         }
+
         for (const moduleLocation of [referencePath].concat(moduleLocations))
             for (let fileName of ['', '__package__'].concat(
                 packageEntryFileNames
@@ -1004,11 +1069,11 @@ export class Helper {
                 for (const fileExtension of [''].concat(extensions.file)) {
                     let currentModuleFilePath:string
                     if (moduleFilePath.startsWith('/'))
-                        currentModuleFilePath = path.resolve(moduleFilePath)
+                        currentModuleFilePath = resolve(moduleFilePath)
                     else
-                        currentModuleFilePath = path.resolve(
-                            moduleLocation, moduleFilePath
-                        )
+                        currentModuleFilePath =
+                            resolve(moduleLocation, moduleFilePath)
+
                     let packageAliases:Mapping = {}
                     if (fileName === '__package__') {
                         const result:{
@@ -1024,9 +1089,11 @@ export class Helper {
                             fileName = result.fileName
                         if (result.packageAliases)
                             packageAliases = result.packageAliases
+
                         if (fileName === '__package__')
                             continue
                     }
+
                     const resolvedFileName:false|string =
                         Helper.applyModuleReplacements(
                             Helper.applyAliases(fileName, packageAliases),
@@ -1036,7 +1103,7 @@ export class Helper {
                         continue
 
                     if (resolvedFileName)
-                        currentModuleFilePath = path.resolve(
+                        currentModuleFilePath = resolve(
                             currentModuleFilePath,
                             `${resolvedFileName}${fileExtension}`
                         )
@@ -1052,16 +1119,19 @@ export class Helper {
                     if (Tools.isFileSync(currentModuleFilePath))
                         return currentModuleFilePath
                 }
+
         return null
     }
     // endregion
     /**
      * Determines a concrete file path for given module id.
+     * @param this - Indicates an unbound method.
      * @param moduleID - Module id to determine.
      * @param aliases - Mapping of aliases to take into account.
+     *
      * @returns The alias applied given module id.
      */
-    static applyAliases(moduleID:string, aliases:Mapping):string {
+    static applyAliases(this:void, moduleID:string, aliases:Mapping):string {
         for (const alias in aliases)
             if (Object.prototype.hasOwnProperty.call(aliases, alias))
                 if (alias.endsWith('$')) {
@@ -1069,20 +1139,24 @@ export class Helper {
                         moduleID = aliases[alias]
                 } else if (typeof moduleID === 'string')
                     moduleID = moduleID.replace(alias, aliases[alias])
+
         return moduleID
     }
     /**
      * Determines a concrete file path for given module id.
+     * @param this - Indicates an unbound method.
      * @param moduleID - Module id to determine.
      * @param replacements - Mapping of regular expressions to their
      * corresponding replacements.
+     *
      * @returns The replacement applied given module id.
      */
     static applyModuleReplacements(
-        moduleID:false|string, replacements:Replacements
+        this:void, moduleID:false|string, replacements:Replacements
     ):false|string {
         if (moduleID === false)
             return moduleID
+
         for (const replacement in replacements)
             if (Object.prototype.hasOwnProperty.call(
                 replacements, replacement
@@ -1092,51 +1166,58 @@ export class Helper {
                     // issues/22378
                     new RegExp(replacement), replacements[replacement]
                 )
+
         return moduleID
     }
     /**
      * Determines the nearest package configuration file from given file path.
+     * @param this - Indicates an unbound method.
      * @param start - Reference location to search from.
      * @param fileName - Package configuration file name.
+     *
      * @returns Determined file path.
      */
     static findPackageDescriptorFilePath(
-        start:Array<string>|string, fileName = 'package.json'
+        this:void, start:Array<string>|string, fileName = 'package.json'
     ):null|string {
         if (typeof start === 'string') {
-            if (!start.endsWith(path.sep))
-                start += path.sep
-            start = start.split(path.sep)
+            if (!start.endsWith(sep))
+                start += sep
+            start = start.split(sep)
         }
         if (!start.length)
             return null
+
         start.pop()
-        const result:string = path.resolve(
-            start.join(path.sep), fileName)
+        const result:string = resolve(start.join(sep), fileName)
         try {
-            if (fileSystem.existsSync(result))
+            if (existsSync(result))
                 return result
         /* eslint-disable no-empty */
         } catch (error) {}
         /* eslint-enable no-empty */
+
         return Helper.findPackageDescriptorFilePath(start, fileName)
     }
     /**
      * Determines the nearest package configuration from given module file
      * path.
+     * @param this - Indicates an unbound method.
      * @param modulePath - Module path to take as reference location (leaf in
      * tree).
      * @param fileName - Package configuration file name.
+     *
      * @returns A object containing found parsed configuration an their
      * corresponding file path.
      */
     static getClosestPackageDescriptor(
-        modulePath:string, fileName = 'package.json'
+        this:void, modulePath:string, fileName = 'package.json'
     ):null|PackageDescriptor {
         const filePath:null|string = Helper.findPackageDescriptorFilePath(
             modulePath, fileName)
         if (!filePath)
             return null
+
         const configuration:PackageConfiguration = eval('require')(filePath)
         /*
             If the package.json does not have a name property, try again from
@@ -1144,10 +1225,12 @@ export class Helper {
         */
         if (!configuration.name)
             return Helper.getClosestPackageDescriptor(
-                path.resolve(path.dirname(filePath), '..'), fileName
+                resolve(dirname(filePath), '..'), fileName
             )
+
         if (!configuration.version)
             configuration.version = 'not set'
+
         return {configuration, filePath}
     }
 }
