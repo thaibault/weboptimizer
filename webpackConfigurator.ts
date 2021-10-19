@@ -1753,9 +1753,9 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
             hashFunction: configuration.hashAlgorithm,
             library: {
                 name: libraryName === '*' ? undefined : libraryName,
+                type: configuration.exportFormat.self,
                 umdNamedDefine: true
             },
-            libraryTarget: configuration.exportFormat.self,
             path: configuration.path.target.base,
             publicPath: configuration.path.target.public
         },
