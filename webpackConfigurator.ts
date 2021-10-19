@@ -1751,11 +1751,13 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
             ),
             globalObject: configuration.exportFormat.globalObject,
             hashFunction: configuration.hashAlgorithm,
-            library: libraryName === '*' ? undefined : libraryName,
-            libraryTarget: configuration.exportFormat.self,
+            library: {
+                name: libraryName === '*' ? undefined : libraryName,
+                type: configuration.exportFormat.self,
+                umdNamedDefine: true
+            },
             path: configuration.path.target.base,
-            publicPath: configuration.path.target.public,
-            umdNamedDefine: true
+            publicPath: configuration.path.target.public
         },
         performance: configuration.performanceHints,
         /*
