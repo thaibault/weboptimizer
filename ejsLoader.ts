@@ -24,7 +24,6 @@ import {EvaluationResult, Encoding, Mapping} from 'clientnode/type'
 import ejs, {Options, TemplateFunction as EJSTemplateFunction} from 'ejs'
 import {readFileSync} from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
-import {getOptions, getRemainingRequest} from 'loader-utils'
 import {extname} from 'path'
 import {LoaderContext} from 'webpack'
 
@@ -108,7 +107,7 @@ export default function(
                         replacements: {}
                     }
                 },
-                'query' in this ? getOptions(this) || {} : {}
+                'getOptions' in this ? this.getOptions() || {} : {}
             ),
             /#%%%#/g,
             '!'
@@ -402,10 +401,8 @@ export default function(
             compileDebug: givenOptions.debug,
             debug: givenOptions.debug,
             filename:
-                'remainingRequest' in this ?
-                    getRemainingRequest(this).replace(/^!/, '') :
-                    (this as LoaderContext<LoaderConfiguration>)
-                        .resourcePath || 'unknown',
+                (this as LoaderContext<LoaderConfiguration>).resourcePath ||
+                'unknown',
             isString: true,
             localsName: 'scope'
         },
