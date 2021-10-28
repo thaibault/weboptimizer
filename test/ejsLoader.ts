@@ -24,6 +24,9 @@ describe('ejsLoader', ():void => {
             Tools.copy(context),
             {
                 cacheable: Tools.noop,
+                getOptions: function():LoaderConfiguration {
+                    return this.query
+                },
                 query: {
                     compiler: {strict: true},
                     locals: {test: 'hans'}
