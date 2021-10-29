@@ -100,44 +100,6 @@ import {
 /* eslint-enable no-unused-vars */
 import configuration from './configurator'
 import Helper from './helper'
-// / region monkey patches
-// Monkey-Patch html loader to retrieve html loader options since the
-// "webpack-html-plugin" doesn't preserve the original loader interface.
-import htmlLoaderModuleBackup from 'html-loader'
-if (require.cache && require.resolve('html-loader') in require.cache)
-    (require.cache[require.resolve('html-loader')] as NodeModule).exports =
-        function<Type, Result>(
-            this:WebpackLoader, ...parameters:Array<Type>
-        ):Result {
-            Tools.extend<NodeModule>(
-                true,
-                this.options,
-                module,
-                this.options as unknown as NodeModule
-            )
-
-            return htmlLoaderModuleBackup.call(this, ...parameters)
-        }
-// Monkey-Patch loader-utils to define which url is a local request.
-import loaderUtilsModuleBackup from 'loader-utils'
-
-const loaderUtilsIsUrlRequestBackup:(
-    _url:string, ..._parameters:Array<any>
-) => boolean = loaderUtilsModuleBackup.isUrlRequest
-
-if (require.cache && require.resolve('loader-utils') in require.cache)
-    (require.cache[require.resolve('loader-utils')] as NodeModule)
-        .exports
-        .isUrlRequest =
-            (url:string, ...parameters:Array<any>):boolean => {
-                if (/^[a-z]+:.+/.exec(url))
-                    return false
-
-                return loaderUtilsIsUrlRequestBackup.call(
-                    loaderUtilsModuleBackup, url, ...parameters
-                )
-            }
-// / endregion
 // endregion
 // region initialisation
 // / region determine library name
