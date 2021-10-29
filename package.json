@@ -99,7 +99,6 @@
     "html-webpack-plugin": "*",
     "imports-loader": "*",
     "jsdom": "^16.6.0",
-    "loader-utils": "*",
     "rimraf": "*",
     "script-loader": "*",
     "typescript": "*",

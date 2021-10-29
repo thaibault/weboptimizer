@@ -25,7 +25,7 @@ describe('ejsLoader', ():void => {
             {
                 cacheable: Tools.noop,
                 getOptions: function():LoaderConfiguration {
-                    return this.query
+                    return this.query as LoaderConfiguration
                 },
                 query: {
                     compiler: {strict: true},
