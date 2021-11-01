@@ -400,9 +400,7 @@ export default function(
             client: Boolean(givenOptions.compileSteps % 2),
             compileDebug: givenOptions.debug,
             debug: givenOptions.debug,
-            filename:
-                (this as LoaderContext<LoaderConfiguration>).resourcePath ||
-                'unknown',
+            filename: this.resourcePath || 'unknown',
             isString: true,
             localsName: 'scope'
         },
