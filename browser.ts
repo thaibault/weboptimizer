@@ -121,7 +121,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     LoaderContext<LoaderConfiguration>
             )(content))
         } else
-            render(await import('webOptimizerDefaultTemplateFilePath'))
+            render(
+                await import('webOptimizerDefaultTemplateFilePath') as string
+            )
         // endregion
     })().catch(console.error)
 else {

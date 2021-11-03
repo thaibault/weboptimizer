@@ -951,8 +951,9 @@ export class Helper {
             if (Tools.isFileSync(pathToPackageJSON)) {
                 let localConfiguration:PlainObject = {}
                 try {
-                    localConfiguration =
-                        JSON.parse(readFileSync(pathToPackageJSON, {encoding}))
+                    localConfiguration = JSON.parse(
+                        readFileSync(pathToPackageJSON, {encoding})
+                    ) as PlainObject
                 } catch (error) {
                     console.warn(
                         `Package configuration file "${pathToPackageJSON}" ` +
@@ -1162,8 +1163,6 @@ export class Helper {
                 replacements, replacement
             ))
                 moduleID = moduleID.replace(
-                    // @ts-ignore: https://github.com/microsoft/TypeScript/
-                    // issues/22378
                     new RegExp(replacement), replacements[replacement]
                 )
 
@@ -1218,7 +1217,9 @@ export class Helper {
         if (!filePath)
             return null
 
-        const configuration:PackageConfiguration = eval('require')(filePath)
+        const configuration:PackageConfiguration =
+            (eval('require') as typeof require)(filePath) as
+                PackageConfiguration
         /*
             If the package.json does not have a name property, try again from
             one level higher.

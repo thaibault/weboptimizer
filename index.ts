@@ -33,6 +33,7 @@ import {
     PlainObject,
     ProcedureFunction,
     ProcessCloseCallback,
+    ProcessCloseReason,
     ProcessError,
     ProcessErrorCallback,
     ProcessHandler
@@ -73,7 +74,7 @@ const main = async ():Promise<void> => {
             ...processOptions
         }
         const childProcesses:Array<ChildProcess> = []
-        const processPromises:Array<Promise<Array<ChildProcess>>> = []
+        const processPromises:Array<Promise<ProcessCloseReason>> = []
         const possibleArguments:Array<string> = [
             'build',
             'build:types',
@@ -195,9 +196,9 @@ const main = async ():Promise<void> => {
                                     ].filePathPattern
                                 ).test(file.path)) {
                                     if (file.stats?.isDirectory()) {
-                                        await new Promise((
-                                            resolve:AnyFunction,
-                                            reject:AnyFunction
+                                        await new Promise<void>((
+                                            resolve:() => void,
+                                            reject:(_reason:Error) => void
                                         ):void => removeDirectoryRecursively(
                                             file.path,
                                             {glob: false},
@@ -229,8 +230,8 @@ const main = async ():Promise<void> => {
                         if (file.name.startsWith('npm-debug'))
                             await unlink(file.path)
                 } else
-                    await new Promise((
-                        resolve:AnyFunction, reject:AnyFunction
+                    await new Promise<void>((
+                        resolve:() => void, reject:(_reason:Error) => void
                     ):void => removeDirectoryRecursively(
                         configuration.path.target.base,
                         {glob: false},
@@ -243,8 +244,8 @@ const main = async ():Promise<void> => {
                         configuration.path.apiDocumentation
                     )
                 )
-                    await new Promise((
-                        resolve:AnyFunction, reject:AnyFunction
+                    await new Promise<void>((
+                        resolve:() => void, reject:(_reason:Error) => void
                     ):void =>
                         removeDirectoryRecursively(
                             configuration.path.apiDocumentation,
@@ -391,12 +392,13 @@ const main = async ():Promise<void> => {
                     Triggers complete asset compiling and bundles them into the
                     final productive output.
                 */
-                processPromises.push(new Promise<Array<ChildProcess>>((
-                    resolve:AnyFunction, reject:AnyFunction
+                processPromises.push(new Promise<ProcessCloseReason>((
+                    resolve:ProcessCloseCallback, reject:ProcessErrorCallback
                 ):Array<ChildProcess> => {
                     const commandLineArguments:Array<string> = (
                         configuration.commandLine.build.arguments || []
                     ).concat(additionalArguments)
+
                     console.info(
                         'Running "' +
                         (
@@ -405,11 +407,13 @@ const main = async ():Promise<void> => {
                         ).trim() +
                         '"'
                     )
+
                     const childProcess:ChildProcess = spawnChildProcess(
                         configuration.commandLine.build.command,
                         commandLineArguments,
                         childProcessOptions
                     )
+
                     const copyAdditionalFilesAndTidyUp:ProcedureFunction = (
                     ):void => {
                         for (
@@ -420,6 +424,7 @@ const main = async ():Promise<void> => {
                                 join(configuration.path.source.base, filePath)
                             const targetPath:string =
                                 join(configuration.path.target.base, filePath)
+
                             // NOTE: Close handler have to be synchronous.
                             if (Tools.isDirectorySync(sourcePath)) {
                                 if (Tools.isDirectorySync(targetPath))
@@ -439,8 +444,8 @@ const main = async ():Promise<void> => {
 
                     const closeHandler:ProcessHandler =
                         Tools.getProcessCloseHandler(
-                            resolve as ProcessCloseCallback,
-                            reject as ProcessErrorCallback,
+                            resolve,
+                            reject,
                             null,
                             process.argv[2] === 'build' ?
                                 copyAdditionalFilesAndTidyUp :
@@ -508,8 +513,10 @@ const main = async ():Promise<void> => {
                             console.info(`Running "${evaluated.result}"`)
 
                             processPromises.push(
-                                new Promise<Array<ChildProcess>>((
-                                    resolve:AnyFunction, reject:AnyFunction
+                                new Promise<ProcessCloseReason>((
+                                    resolve:(_value:ProcessCloseReason) =>
+                                        void,
+                                    reject:(_reason:Error) => void
                                 ):Array<ChildProcess> => [
                                     Tools.handleChildProcess(
                                         execChildProcess(
@@ -522,7 +529,10 @@ const main = async ():Promise<void> => {
                                             (error:Error|null):void =>
                                                 error ?
                                                     reject(error) :
-                                                    resolve()
+                                                    resolve({
+                                                        reason: 'Finished.',
+                                                        parameters: []
+                                                    })
                                         )
                                     )
                                 ])
@@ -552,12 +562,14 @@ const main = async ():Promise<void> => {
                             evaluated.error
                         )
                     if (evaluated.result)
-                        processPromises.push(new Promise<Array<ChildProcess>>((
-                            resolve:AnyFunction, reject:AnyFunction
+                        processPromises.push(new Promise<ProcessCloseReason>((
+                            resolve:ProcessCloseCallback,
+                            reject:ProcessErrorCallback
                         ):Array<ChildProcess> => {
                             const commandLineArguments:Array<string> = (
                                 task.arguments || []
                             ).concat(additionalArguments)
+
                             console.info(
                                 'Running "' +
                                 (
@@ -566,20 +578,21 @@ const main = async ():Promise<void> => {
                                 ).trim() +
                                 '"'
                             )
+
                             const childProcess:ChildProcess =
                                 spawnChildProcess(
                                     task.command,
                                     commandLineArguments,
                                     childProcessOptions
                                 )
+
                             const closeHandler:ProcessHandler =
-                                Tools.getProcessCloseHandler(
-                                    resolve as ProcessCloseCallback,
-                                    reject as ProcessErrorCallback
-                                )
+                                Tools.getProcessCloseHandler(resolve, reject)
+
                             for (const closeEventName of CloseEventNames)
                                 childProcess.on(closeEventName, closeHandler)
                             childProcesses.push(childProcess)
+
                             return childProcesses
                         }))
                 }
@@ -623,8 +636,6 @@ const main = async ():Promise<void> => {
             finished = true
         }
         for (const closeEventName of CloseEventNames)
-            // @ts-ignore: Accepts only "NodeSignals" but other strings are
-            // available.
             process.on(closeEventName, closeHandler)
         if (
             require.main === module &&

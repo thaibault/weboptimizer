@@ -23,25 +23,29 @@ import {
     SecondParameter
 } from 'clientnode/type'
 import {FaviconOptions} from 'favicons'
+import FaviconWebpackPlugin from 'favicons-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import ImageminWebpackPlugin from 'imagemin-webpack-plugin'
 import {JSDOM} from 'jsdom'
+import MiniCSSExtractPlugin from 'mini-css-extract-plugin'
+import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
 import {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
     IgnorePlugin as WebpackIgnorePlugin,
+    library as webpackLibrary,
     ModuleOptions as WebpackModuleOptions,
     RuleSetRule as WebpackRuleSetRule,
     WebpackOptionsNormalized
 } from 'webpack'
-import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
-import {
+import OfflinePlugin, {
     CommonOptions as WorkboxCommonOptions,
     GenerateSWOptions as WorkboxGenerateSWOptions,
     InjectManifestOptions as WorkboxInjectManifestOptions
 } from 'workbox-webpack-plugin'
 // endregion
 // region exports
-// / region  generic
+// / region generic
 export interface Browser {
     debug:boolean
     domContentLoaded:boolean
@@ -69,6 +73,7 @@ export interface PackageDescriptor {
 export type Replacements = Mapping<SecondParameter<string['replace']>>
 
 export type Resolvable = {
+    // eslint-disable-next-line no-unused-vars
     [K in '__evaluate__'|'__execute__'|string]:Resolvable|string|unknown
 }
 
@@ -179,7 +184,7 @@ export interface AdditionalLoaderConfiguration {
     exclude?:BooleanExpression
     include?:BooleanExpression
     test:string
-    use:any
+    use:Array<WebpackLoader>|WebpackLoader|string
 }
 export interface AdditionalLoaderConfigurations {
     post:Array<AdditionalLoaderConfiguration>
@@ -456,6 +461,22 @@ export interface WebpackAssets extends WebpackBaseAssets {
     publicPath:string
     plugin:HtmlWebpackPlugin
 }
+export type WebpackPlugin =
+    webpackLibrary.AbstractLibraryPlugin<unknown> & Mapping<unknown>
+export type WebpackPlugins =
+    Mapping<WebpackPlugin> &
+    {
+        Favicon?:typeof FaviconWebpackPlugin
+        GenerateServiceWorker?:typeof OfflinePlugin.GenerateSW
+        HTML?:typeof HtmlWebpackPlugin
+        Imagemin?:typeof ImageminWebpackPlugin
+        InjectManifest?:typeof OfflinePlugin.InjectManifest
+        Offline?:{
+            GenerateSW:typeof OfflinePlugin.GenerateSW
+            InjectManifest:typeof OfflinePlugin.InjectManifest
+        }
+        MiniCSSExtract?:typeof MiniCSSExtractPlugin
+    }
 export interface HTMLWebpackPluginAssetTagGroupsData {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
     headTags:HtmlWebpackPlugin.HtmlTagObject[]

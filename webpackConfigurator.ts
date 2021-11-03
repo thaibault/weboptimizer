@@ -22,6 +22,7 @@ import {
 const postcssCSSnano:null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
+import ImageminWebpackPlugin from 'imagemin-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {extname, join, relative, resolve} from 'path'
 const postcssFontPath:AnyFunction|null =
@@ -34,6 +35,7 @@ const postcssURL:null|typeof import('postcss-url') =
     optionalRequire<typeof import('postcss-url')>('postcss-url')
 import util from 'util'
 import {
+    Chunk,
     Compiler,
     Compilation,
     ContextReplacementPlugin,
@@ -45,42 +47,16 @@ import {
     ProvidePlugin
 } from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
+import {
+    GenerateSWOptions as WorkboxGenerateSWOptions,
+    InjectManifestOptions as WorkboxInjectManifestOptions
+} from 'workbox-webpack-plugin'
 
-// NOTE: Hack to retrieve needed types.
-type WebpackResolveData =
-    Parameters<IgnorePlugin['checkIgnore']>[0] &
-    {createData:any}
-const pluginNameResourceMapping:Mapping = {
-    HTML: 'html-webpack-plugin',
-    MiniCSSExtract: 'mini-css-extract-plugin',
-    Favicon: 'favicons-webpack-plugin',
-    Imagemin: 'imagemin-webpack-plugin',
-    Offline: 'workbox-webpack-plugin'
-}
-
-const plugins:Record<string, any> = {}
-for (const name in pluginNameResourceMapping)
-    if (
-        Object.prototype.hasOwnProperty.call(pluginNameResourceMapping, name)
-    ) {
-        plugins[name] = optionalRequire(pluginNameResourceMapping[name])
-        if (plugins[name] === null) {
-            delete plugins[name]
-
-            console.debug(`Optional webpack plugin "${name}" not available.`)
-        }
-    }
-if (plugins.Offline) {
-    plugins.GenerateServiceWorker = plugins.Offline.GenerateSW
-    plugins.InjectManifest = plugins.Offline.InjectManifest
-}
-if (plugins.Imagemin)
-    plugins.Imagemin = plugins.Imagemin.default
-
+import configuration from './configurator'
+import Helper from './helper'
 import ejsLoader, {
     LoaderConfiguration as EJSLoaderConfiguration
 } from './ejsLoader'
-/* eslint-disable no-unused-vars */
 import {
     AdditionalLoaderConfiguration,
     AssetPathConfiguration,
@@ -94,12 +70,44 @@ import {
     WebpackAssets,
     WebpackBaseAssets,
     WebpackConfiguration,
+    WebpackPlugin,
+    WebpackPlugins,
     WebpackLoader,
     WebpackLoaderConfiguration
 } from './type'
-/* eslint-enable no-unused-vars */
-import configuration from './configurator'
-import Helper from './helper'
+
+// NOTE: Hack to retrieve needed types.
+type WebpackResolveData =
+    Parameters<IgnorePlugin['checkIgnore']>[0] &
+    {createData:any}
+const pluginNameResourceMapping:Mapping = {
+    HTML: 'html-webpack-plugin',
+    MiniCSSExtract: 'mini-css-extract-plugin',
+    Favicon: 'favicons-webpack-plugin',
+    Imagemin: 'imagemin-webpack-plugin',
+    Offline: 'workbox-webpack-plugin'
+}
+
+const plugins:WebpackPlugins = {}
+for (const name in pluginNameResourceMapping)
+    if (
+        Object.prototype.hasOwnProperty.call(pluginNameResourceMapping, name)
+    ) {
+        const plugin:null|WebpackPlugin =
+            optionalRequire(pluginNameResourceMapping[name])
+        if (plugin)
+            plugins[name] = plugin
+        else
+            console.debug(`Optional webpack plugin "${name}" not available.`)
+    }
+if (plugins.Offline) {
+    plugins.GenerateServiceWorker = plugins.Offline.GenerateSW
+    plugins.InjectManifest = plugins.Offline.InjectManifest
+}
+if (plugins.Imagemin)
+    plugins.Imagemin =
+        (plugins.Imagemin as unknown as {default:ImageminWebpackPlugin})
+            .default
 // endregion
 // region initialisation
 // / region determine library name
@@ -156,7 +164,7 @@ for (const source in configuration.module.replacements.normal)
 let htmlAvailable = false
 for (const htmlConfiguration of configuration.files.html)
     if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
-        pluginInstances.push(new plugins.HTML({
+        pluginInstances.push(new plugins.HTML!({
             ...htmlConfiguration,
             template: htmlConfiguration.template.request
         }))
@@ -206,7 +214,7 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             .concat(configuration.offline.use)
             .includes('injectionManifest')
     )
-        pluginInstances.push(new plugins.InjectManifest(Tools.extend(
+        pluginInstances.push(new plugins.InjectManifest!(Tools.extend<WorkboxInjectManifestOptions>(
             true,
             configuration.offline.common,
             configuration.offline.injectionManifest
@@ -216,7 +224,7 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             .concat(configuration.offline.use)
             .includes('generateServiceWorker')
     )
-        pluginInstances.push(new plugins.GenerateServiceWorker(Tools.extend(
+        pluginInstances.push(new plugins.GenerateServiceWorker!(Tools.extend(
             true,
             configuration.offline.common,
             configuration.offline.serviceWorker
@@ -1780,9 +1788,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
                         chunks: 'all',
                         cacheGroups: {
                             defaultVendors: {
-                                chunks: (
-                                    module:Record<string, any>
-                                ):boolean => {
+                                chunks: (chunk:Chunk):boolean => {
                                     if (
                                         typeof configuration.inPlace
                                             .javaScript ===
@@ -1795,9 +1801,10 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
                                         ))
                                             if (
                                                 name === '*' ||
-                                                name === module.name
+                                                name === chunk.name
                                             )
                                                 return false
+
                                     return true
                                 },
                                 priority: -10,
@@ -1842,16 +1849,10 @@ if (
 if (configuration.path.configuration?.javaScript)
     try {
         require.resolve(configuration.path.configuration.javaScript)
-        let result:PlainObject|undefined
-        try {
-            result = require(configuration.path.configuration.javaScript)
-        } catch (error) {
-            console.debug(
-                'Failed to load given JavaScript configuration file path "' +
-                `${configuration.path.configuration.javaScript}": ` +
-                Tools.represent(error)
-            )
-        }
+
+        const result:unknown =
+            optionalRequire(configuration.path.configuration.javaScript)
+
         if (Tools.isPlainObject(result))
             if (Object.prototype.hasOwnProperty.call(
                 result, 'replaceWebOptimizer'
@@ -1861,6 +1862,11 @@ if (configuration.path.configuration?.javaScript)
                     WebpackConfiguration
             else
                 Tools.extend(true, webpackConfiguration, result)
+        else
+            console.debug(
+                'Failed to load given JavaScript configuration file path "' +
+                `${configuration.path.configuration.javaScript}".`
+            )
     } catch (error) {
         console.debug(
             'Optional configuration file script "' +
