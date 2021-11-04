@@ -17,7 +17,7 @@
 // region imports
 import Tools, {optionalRequire} from 'clientnode'
 import {
-    AnyFunction, EvaluationResult, Mapping, PlainObject
+    AnyFunction, EvaluationResult, Mapping, PlainObject, Unpacked
 } from 'clientnode/type'
 const postcssCSSnano:null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
@@ -106,7 +106,7 @@ if (plugins.Offline) {
 }
 if (plugins.Imagemin)
     plugins.Imagemin =
-        (plugins.Imagemin as unknown as {default:ImageminWebpackPlugin})
+        (plugins.Imagemin as unknown as {default:typeof ImageminWebpackPlugin})
             .default
 // endregion
 // region initialisation
@@ -320,9 +320,9 @@ if (
 
         compiler.hooks.compilation.tap(
             'inPlaceHTMLAssets',
-            (compilation:Record<string, any>):void => {
+            (compilation:Compilation):void => {
                 const hooks:HTMLPlugin.Hooks =
-                    plugins.HTML.getHooks(compilation)
+                    plugins.HTML!.getHooks(compilation)
                 const inPlacedAssetNames:Array<string> = []
 
                 hooks.alterAssetTagGroups.tap(
@@ -370,7 +370,8 @@ if (
                                     ...tag,
                                     attributes: newAttributes,
                                     innerHTML:
-                                        compilation.assets[name].source(),
+                                        compilation.assets[name].source() as
+                                            string,
                                     tagName: 'script'
                                 }
                             }
@@ -620,7 +621,7 @@ if (htmlAvailable)
     ):void => compiler.hooks.compilation.tap('WebOptimizer', (
         compilation:Compilation
     ):void => {
-        plugins.HTML.getHooks(compilation).beforeEmit.tap(
+        plugins.HTML!.getHooks(compilation).beforeEmit.tap(
             'WebOptimizerPostProcessHTML',
             (
                 data:HTMLWebpackPluginBeforeEmitData
@@ -741,9 +742,9 @@ if (htmlAvailable)
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
 // ran through.
 if (plugins.Imagemin)
-    pluginInstances.push(new plugins.Imagemin(
+    pluginInstances.push((new plugins.Imagemin(
         configuration.module.optimizer.image.content
-    ))
+    ) as unknown as Unpacked<WebpackConfiguration['plugins']>)!)
 // // endregion
 // // region context replacements
 for (const contextReplacement of configuration.module.replacements.context)

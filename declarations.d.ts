@@ -2,7 +2,6 @@
 /** @module declarations */
 declare module 'babel-preset-minify'
 declare module 'html-loader'
-declare module 'loader-utils'
 declare module 'webOptimizerDefaultTemplateFilePath'
 /*
     NOTE: We have to avoid importing this from "clientnode/type" to avoid a
