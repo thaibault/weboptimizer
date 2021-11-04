@@ -477,6 +477,19 @@ export type WebpackPlugins =
         }
         MiniCSSExtract?:typeof MiniCSSExtractPlugin
     }
+export type WebpackResolveData =
+    // NOTE: Hack to retrieve needed types.
+    Parameters<WebpackIgnorePlugin['checkIgnore']>[0]
+export type WebpackExtendedResolveData =
+    WebpackResolveData &
+    {
+        createData:{
+            rawRequest:string
+            request:string
+            resource:string
+            userRequest:string
+        }
+    }
 export interface HTMLWebpackPluginAssetTagGroupsData {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
     headTags:HtmlWebpackPlugin.HtmlTagObject[]

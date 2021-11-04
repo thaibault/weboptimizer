@@ -21,7 +21,6 @@ import {
     EvaluationResult,
     Mapping,
     PlainObject,
-    UnknownFunction,
     Unpacked
 } from 'clientnode/type'
 const postcssCSSnano:null|typeof import('cssnano') =
@@ -49,7 +48,8 @@ import {
     IgnorePlugin,
     LoaderContext,
     NormalModuleReplacementPlugin,
-    ProvidePlugin
+    ProvidePlugin,
+    sources
 } from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 import {
@@ -74,23 +74,14 @@ import {
     WebpackAssets,
     WebpackBaseAssets,
     WebpackConfiguration,
+    WebpackExtendedResolveData,
+    WebpackLoader,
+    WebpackLoaderConfiguration,
     WebpackPlugin,
     WebpackPlugins,
-    WebpackLoader,
-    WebpackLoaderConfiguration
+    WebpackResolveData
 } from './type'
 
-// NOTE: Hack to retrieve needed types.
-type WebpackResolveData =
-    Parameters<IgnorePlugin['checkIgnore']>[0] &
-    {
-        createData:{
-            rawRequest:string
-            request:string
-            resource:string
-            userRequest:string
-        }
-    }
 const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
@@ -280,7 +271,7 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
                                 .excludeFilePathRegularExpression
                         )).test(filePath)
                     ) {
-                        const source:string =
+                        const source:Buffer|string =
                             compilation.assets[request].source()
                         if (typeof source === 'string')
                             compilation.assets[request] = new WebpackRawSource(
@@ -288,7 +279,7 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
                                     .replace(
                                         /\{1\}/g, source.replace(/\$/g, '$$$')
                                     )
-                            )
+                            ) as unknown as sources.Source
                     }
                 }
         }
@@ -443,7 +434,12 @@ if (configuration.injection.external.modules === '__implicit__')
         external dependency.
     */
     configuration.injection.external.modules = (
-        {context, request}, callback:UnknownFunction
+        {context, request},
+        callback:(
+            _error?:Error|undefined,
+            _result?:Array<string>|boolean|string|Mapping<unknown>,
+            _type?:string
+        ) => void
     ):void => {
         if (typeof request !== 'string')
             return callback()
@@ -615,10 +611,12 @@ if (configuration.injection.external.modules === '__implicit__')
             )
 
             return callback(
-                null,
-                exportFormat === 'umd' || typeof result === 'string' ?
-                    result :
-                    result[exportFormat],
+                undefined,
+                (
+                    exportFormat === 'umd' || typeof result === 'string' ?
+                        result :
+                        result[exportFormat]
+                ) as Array<string>|boolean|string|Mapping<unknown>,
                 exportFormat
             )
         }
@@ -790,7 +788,7 @@ for (const contextReplacement of configuration.module.replacements.context)
 if (configuration.module.enforceDeduplication) {
     const absoluteContextPath:string = resolve(configuration.path.context)
 
-    const consolidator = (result:WebpackResolveData):void => {
+    const consolidator = (result:WebpackExtendedResolveData):void => {
         const targetPath:string = result.createData.resource
 
         if (
@@ -913,7 +911,8 @@ if (configuration.module.enforceDeduplication) {
             'WebOptimizerModuleConsolidation',
             (nmf:ReturnType<Compiler['createNormalModuleFactory']>):void =>
                 nmf.hooks.afterResolve.tap(
-                    'WebOptimizerModuleConsolidation', consolidator
+                    'WebOptimizerModuleConsolidation',
+                    consolidator as (_result:WebpackResolveData) => void
                 )
         )
     })
