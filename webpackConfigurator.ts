@@ -471,29 +471,30 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.encoding
         )
         if (filePath)
-            for (const pattern in configuration.injection.external.aliases)
-                if (
-                    Object.prototype.hasOwnProperty.call(
-                        configuration.injection.external.aliases, pattern
-                    ) &&
-                    pattern.startsWith('^')
-                ) {
+            for (const [pattern, targetConfiguration] of Object.entries(
+                configuration.injection.external.aliases
+            ))
+                if (pattern.startsWith('^')) {
                     const regularExpression = new RegExp(pattern)
                     if (regularExpression.test(filePath)) {
                         let match = false
-                        const targetConfiguration =
-                            configuration.injection.external.aliases[pattern]
+
                         if (typeof targetConfiguration !== 'string')
                             break
-                        const replacementRegularExpression = new RegExp(
-                            Object.keys(targetConfiguration)[0])
+
+                        const replacementRegularExpression =
+                            new RegExp(Object.keys(targetConfiguration)[0])
+
                         let target:string = targetConfiguration[
                             Object.keys(targetConfiguration)[0]
                         ]
                         if (target.startsWith('?')) {
                             target = target.substring(1)
+
                             const aliasedRequest:string = request.replace(
                                 replacementRegularExpression, target)
+
+
                             if (aliasedRequest !== request)
                                 match = Boolean(Helper.determineModuleFilePath(
                                     aliasedRequest,
@@ -549,7 +550,7 @@ if (configuration.injection.external.modules === '__implicit__')
 
         if (resolvedRequest) {
             const keys:Array<string> = ['amd', 'commonjs', 'commonjs2', 'root']
-            let result:PlainObject|string = resolvedRequest
+            let result:Mapping|string = resolvedRequest
             if (Object.prototype.hasOwnProperty.call(
                 configuration.injection.external.aliases, request
             )) {
@@ -573,8 +574,9 @@ if (configuration.injection.external.modules === '__implicit__')
                         result[key] = (
                             configuration.injection.external.aliases[
                                 request
-                            ] as unknown as AnyFunction
-                        )(request, key)
+                            ] as (_request:string, _key:string) => string)(
+                                request, key
+                            )
                 else if (
                     configuration.injection.external.aliases[
                         request

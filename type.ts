@@ -83,7 +83,8 @@ export interface RedundantRequest {
 }
 // / endregion
 // / region injection
-export type ExternalAliases = Mapping<Mapping<AnyFunction|string>>
+export type ExternalAliases =
+    Mapping<Mapping|string|((_request:string, _key:string) => string)>
 export type GivenInjection =
     AnyFunction|string|Array<string>|Mapping<string|Array<string>>
 export type NormalizedGivenInjection = Mapping<Array<string>>
