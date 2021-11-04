@@ -3,6 +3,9 @@
 declare module 'babel-preset-minify'
 declare module 'html-loader'
 declare module 'webOptimizerDefaultTemplateFilePath'
+declare module 'svgo' {
+    export type Options = any
+}
 /*
     NOTE: We have to avoid importing this from "clientnode/type" to avoid a
     dependency cycle.

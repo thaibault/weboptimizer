@@ -17,7 +17,12 @@
 // region imports
 import Tools, {optionalRequire} from 'clientnode'
 import {
-    AnyFunction, EvaluationResult, Mapping, PlainObject, Unpacked
+    AnyFunction,
+    EvaluationResult,
+    Mapping,
+    PlainObject,
+    UnknownFunction,
+    Unpacked
 } from 'clientnode/type'
 const postcssCSSnano:null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
@@ -48,7 +53,6 @@ import {
 } from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 import {
-    GenerateSWOptions as WorkboxGenerateSWOptions,
     InjectManifestOptions as WorkboxInjectManifestOptions
 } from 'workbox-webpack-plugin'
 
@@ -79,7 +83,14 @@ import {
 // NOTE: Hack to retrieve needed types.
 type WebpackResolveData =
     Parameters<IgnorePlugin['checkIgnore']>[0] &
-    {createData:any}
+    {
+        createData:{
+            rawRequest:string
+            request:string
+            resource:string
+            userRequest:string
+        }
+    }
 const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
@@ -214,11 +225,13 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             .concat(configuration.offline.use)
             .includes('injectionManifest')
     )
-        pluginInstances.push(new plugins.InjectManifest!(Tools.extend<WorkboxInjectManifestOptions>(
-            true,
-            configuration.offline.common,
-            configuration.offline.injectionManifest
-        )))
+        pluginInstances.push(new plugins.InjectManifest!(
+            Tools.extend<WorkboxInjectManifestOptions>(
+                true,
+                configuration.offline.common,
+                configuration.offline.injectionManifest
+            )
+        ))
     if (
         ([] as Array<string>)
             .concat(configuration.offline.use)
@@ -244,7 +257,7 @@ if (configuration.module.provide)
 pluginInstances.push({apply: (compiler:Compiler):void => {
     compiler.hooks.emit.tap(
         'applyModulePattern',
-        (compilation:Record<string, any>):void => {
+        (compilation:Compilation):void => {
             for (const request in compilation.assets)
                 if (Object.prototype.hasOwnProperty.call(
                     compilation.assets, request
@@ -430,7 +443,7 @@ if (configuration.injection.external.modules === '__implicit__')
         external dependency.
     */
     configuration.injection.external.modules = (
-        {context, request}, callback:AnyFunction
+        {context, request}, callback:UnknownFunction
     ):void => {
         if (typeof request !== 'string')
             return callback()
@@ -865,10 +878,10 @@ if (configuration.module.enforceDeduplication) {
                                     not always work.
                                 */
                                 result.request =
+                                result.createData.rawRequest =
                                 result.createData.request =
                                 result.createData.resource =
                                 result.createData.userRequest =
-                                result.createData.rawRequest =
                                     alternateTargetPath
 
                                 return

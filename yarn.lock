@@ -1932,10 +1932,12 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
-"@types/svgo@*", "@types/svgo@https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz", "@types/webpack@^4.4.24", "@types/webpack@https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz":
-  version "1.1.1"
-  uid f8cae15d883ffc0abc663b5eaaa711fcc64bb5c2
-  resolved "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz#f8cae15d883ffc0abc663b5eaaa711fcc64bb5c2"
+"@types/svgo@*":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@types/svgo/-/svgo-2.6.0.tgz#f0c50eed286422f63b4e3346d8a309b0ea67d58a"
+  integrity sha512-VSdhb3KTOglle1SLQD4+TB6ezj/MS3rN98gOUkXzbTUhG8VjFKHXN3OVgEFlTnW5fYBxt+lzZlD3PFqkwMj36Q==
+  dependencies:
+    "@types/node" "*"
 
 "@types/tough-cookie@*":
   version "4.0.1"
@@ -1967,6 +1969,11 @@
     "@types/node" "*"
     "@types/source-list-map" "*"
     source-map "^0.7.3"
+
+"@types/webpack@^4.4.24", "@types/webpack@https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz":
+  version "1.1.1"
+  uid f8cae15d883ffc0abc663b5eaaa711fcc64bb5c2
+  resolved "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz#f8cae15d883ffc0abc663b5eaaa711fcc64bb5c2"
 
 "@types/workbox-webpack-plugin@*":
   version "5.1.8"
@@ -3837,9 +3844,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.852"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.852.tgz#8e8a18c6deafa4525d61c746a45bf0ca44350700"
-  integrity sha512-5YtgA00bpvokXGM1jSiOR52GinBGTBGsF7o+BLJCvygUpimGyUFmQZSpNTZWEHWJLNVPaAl5l6jaDYRfji138A==
+  version "3.0.853"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.853.tgz#785f57cfe7440e35b17fbb050cd6c6eb5847c935"
+  integrity sha512-vMeHJ7Dc1p7YhBKhV+O+DkTsfujF0BuJHQ4QwqdG2kzbzwYV4fjMVZuCCiDcjt6Fue+C2ZRIJB+BD1mUu6BptA==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
 
@@ -8337,9 +8344,9 @@ min-indent@^1.0.0:
   integrity sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==
 
 mini-css-extract-plugin@*:
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/mini-css-extract-plugin/-/mini-css-extract-plugin-2.4.3.tgz#be742943c192b028645d4389084ef187615fff82"
-  integrity sha512-zekavl9mZuGyk7COjsfFY/f655AX61EKE0AthXPrmDk+oZyjZ9WzO4WPjXnnO9xl8obK2kmM6rAQrBEmk+WK1g==
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/mini-css-extract-plugin/-/mini-css-extract-plugin-2.4.4.tgz#c7e5d2d931dcf100ae50ae949ba757c506b54b0f"
+  integrity sha512-UJ+aNuFQaQaECu7AamlWOBLj2cJ6XSGU4zNiqXeZ7lZLe5VD0DoSPWFbWArXueo+6FZVbgHzpX9lUIaBIDLuYg==
   dependencies:
     schema-utils "^3.1.0"
 
