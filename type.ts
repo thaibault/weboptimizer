@@ -28,6 +28,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ImageminWebpackPlugin from 'imagemin-webpack-plugin'
 import {JSDOM} from 'jsdom'
 import MiniCSSExtractPlugin from 'mini-css-extract-plugin'
+import {PluginCreator as PostcssPluginCreator} from 'postcss'
 import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
 import {
     DefinePlugin as WebpackDefinePlugin,
@@ -197,7 +198,7 @@ export interface AdditionalLoader {
 }
 export interface WebpackLoader {
     loader:string
-    options?:PlainObject
+    options?:Mapping<unknown>
 }
 export type ResourceLoaderConfiguration = WebpackLoader & {
     exclude:BooleanExpression
@@ -449,6 +450,13 @@ export interface WebpackConfiguration extends BaseWebpackConfiguration {
     devServer:Mapping<unknown>
     replaceWebOptimizer:WebpackConfiguration
 }
+
+export interface EvaluationScope {
+    configuration:ResolvedConfiguration
+    isFilePathInDependencies:(_filePath:string) => boolean
+    loader:Mapping<any>
+    require:typeof require
+}
 // / endregion
 // NOTE: Not yet defined in webpack types.
 export interface WebpackBaseAssets {
@@ -491,6 +499,7 @@ export type WebpackExtendedResolveData =
             userRequest:string
         }
     }
+
 export interface HTMLWebpackPluginAssetTagGroupsData {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
     headTags:HtmlWebpackPlugin.HtmlTagObject[]
@@ -502,6 +511,8 @@ export interface HTMLWebpackPluginBeforeEmitData {
     outputName:string
     plugin:HtmlWebpackPlugin
 }
+
+export type PostcssPlugin = PostcssPluginCreator<Mapping<unknown>>
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

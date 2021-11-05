@@ -64,12 +64,14 @@ import ejsLoader, {
 import {
     AdditionalLoaderConfiguration,
     AssetPathConfiguration,
+    EvaluationScope,
     HTMLConfiguration,
     HTMLWebpackPluginBeforeEmitData,
     IgnorePattern,
     InPlaceAssetConfiguration,
     InPlaceConfiguration,
     PackageDescriptor,
+    PostcssPlugin,
     RedundantRequest,
     WebpackAssets,
     WebpackBaseAssets,
@@ -77,6 +79,7 @@ import {
     WebpackExtendedResolveData,
     WebpackLoader,
     WebpackLoaderConfiguration,
+    WebpackLoaderIndicator,
     WebpackPlugin,
     WebpackPlugins,
     WebpackResolveData
@@ -447,6 +450,7 @@ if (configuration.injection.external.modules === '__implicit__')
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
             request = relative(configuration.path.context, request)
+
         for (const filePath of configuration.module.directoryNames)
             if (request.startsWith(filePath)) {
                 request = request.substring(filePath.length)
@@ -470,6 +474,7 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.package.aliasPropertyNames,
             configuration.encoding
         )
+
         if (filePath)
             for (const [pattern, targetConfiguration] of Object.entries(
                 configuration.injection.external.aliases
@@ -479,21 +484,22 @@ if (configuration.injection.external.modules === '__implicit__')
                     if (regularExpression.test(filePath)) {
                         let match = false
 
-                        if (typeof targetConfiguration !== 'string')
+                        const firstKey:string =
+                            Object.keys(targetConfiguration)[0]
+                        let target:string =
+                            (targetConfiguration as Mapping)[firstKey]
+
+                        if (typeof target !== 'string')
                             break
 
                         const replacementRegularExpression =
-                            new RegExp(Object.keys(targetConfiguration)[0])
+                            new RegExp(firstKey)
 
-                        let target:string = targetConfiguration[
-                            Object.keys(targetConfiguration)[0]
-                        ]
                         if (target.startsWith('?')) {
                             target = target.substring(1)
 
                             const aliasedRequest:string = request.replace(
                                 replacementRegularExpression, target)
-
 
                             if (aliasedRequest !== request)
                                 match = Boolean(Helper.determineModuleFilePath(
@@ -550,7 +556,8 @@ if (configuration.injection.external.modules === '__implicit__')
 
         if (resolvedRequest) {
             const keys:Array<string> = ['amd', 'commonjs', 'commonjs2', 'root']
-            let result:Mapping|string = resolvedRequest
+            let result:(Mapping & {root?:Array<string>})|string =
+                resolvedRequest
             if (Object.prototype.hasOwnProperty.call(
                 configuration.injection.external.aliases, request
             )) {
@@ -574,9 +581,8 @@ if (configuration.injection.external.modules === '__implicit__')
                         result[key] = (
                             configuration.injection.external.aliases[
                                 request
-                            ] as (_request:string, _key:string) => string)(
-                                request, key
-                            )
+                            ] as (_request:string, _key:string) => string
+                        )(request, key)
                 else if (
                     configuration.injection.external.aliases[
                         request
@@ -603,7 +609,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 Object.prototype.hasOwnProperty.call(result, 'root')
             )
                 result.root = ([] as Array<string>)
-                    .concat(result.root as Array<string>)
+                    .concat(result.root!)
                     .map((name:string):string =>
                         Tools.stringConvertToValidVariableName(name)
                     )
@@ -689,10 +695,8 @@ if (htmlAvailable)
                             */
                             domNode.setAttribute(
                                 linkables[tagName],
-                                // @ts-ignore: Typescripts wrongly considers
-                                // "null" even when we cast explicitly.
                                 domNode
-                                    .getAttribute(linkables[tagName])
+                                    .getAttribute(linkables[tagName])!
                                     .replace(
                                         new RegExp(
                                             '(\\?' +
@@ -762,21 +766,17 @@ if (plugins.Imagemin)
 // // region context replacements
 for (const contextReplacement of configuration.module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
-        contextReplacement.map((value:string):any => {
+        contextReplacement.map((value:string):string => {
             const evaluated:EvaluationResult = Tools.stringEvaluate(
                 value, {configuration, __dirname, __filename}
             )
-            if (
-                (evaluated as {compileError:string}).compileError ||
-                (evaluated as {runtimeError:string}).runtimeError
-            )
+            if (evaluated.error)
                 throw new Error(
                     'Error occurred during processing given context ' +
-                    'replacement: ' +
-                    (evaluated as {compileError:string}).compileError ||
-                    (evaluated as {runtimeError:string}).runtimeError
+                    `replacement: ${evaluated.error}`
                 )
-            return (evaluated as {result:any}).result
+
+            return evaluated.result
         }) as [string, string]
     )))
 // // endregion
@@ -1025,7 +1025,7 @@ const isFilePathInDependencies = (filePath:string):boolean => {
 
 const loader:Mapping<any> = {}
 
-const scope:Mapping<any> = {
+const scope:EvaluationScope = {
     configuration,
     isFilePathInDependencies,
     loader,
@@ -1033,36 +1033,35 @@ const scope:Mapping<any> = {
 }
 
 const evaluate = (
-    object:any, filePath:string = configuration.path.context
-):any => {
+    object:unknown, filePath:string = configuration.path.context
+):unknown => {
     if (typeof object === 'string') {
-        const evaluated:EvaluationResult =
-            Tools.stringEvaluate(object, {filePath, ...scope})
-        if (
-            (evaluated as {compileError:string}).compileError ||
-            (evaluated as {runtimeError:string}).runtimeError
-        )
+        const evaluated:EvaluationResult<unknown> =
+            Tools.stringEvaluate<unknown>(object, {filePath, ...scope})
+        if (evaluated.error)
             throw new Error(
                 'Error occurred during processing given expression: ' +
-                (evaluated as {compileError:string}).compileError ||
-                (evaluated as {runtimeError:string}).runtimeError
+                evaluated.error
             )
-        return (evaluated as {result:any}).result
+
+        return evaluated.result
     }
+
     return object
 }
-const evaluateMapper = (value:any):any => evaluate(value)
+const evaluateMapper = (value:unknown):unknown => evaluate(value)
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration:AdditionalLoaderConfiguration
 ):WebpackLoaderConfiguration => ({
     exclude: (filePath:string):boolean =>
-        evaluate(loaderConfiguration.exclude || false, filePath),
+        Boolean(evaluate(loaderConfiguration.exclude, filePath)),
     include:
         loaderConfiguration.include &&
-        evaluate(loaderConfiguration.include) ||
+        evaluate(loaderConfiguration.include) as WebpackLoaderIndicator ||
         configuration.path.source.base,
-    test: new RegExp(evaluate(loaderConfiguration.test)),
-    use: evaluate(loaderConfiguration.use)
+    test: new RegExp(evaluate(loaderConfiguration.test) as string),
+    use:
+        evaluate(loaderConfiguration.use) as Array<WebpackLoader>|WebpackLoader
 })
 
 const includingPaths:Array<string> =
@@ -1091,15 +1090,17 @@ const cssUse =
                     true,
                     optionalRequire('postcss') ?
                         {postcssOptions: {
-                            plugins: ([] as Array<any>).concat(
+                            plugins: ([] as Array<PostcssPlugin>).concat(
                                 postcssImport ?
                                     postcssImport({
                                         root: configuration.path.context
-                                    }) :
+                                    }) as unknown as Array<PostcssPlugin> :
                                     [],
                                 configuration.module.preprocessor
                                     .cascadingStyleSheet.additional.plugins.pre
-                                    .map(evaluateMapper),
+                                    .map(evaluateMapper) as
+                                        unknown as
+                                        Array<PostcssPlugin>,
                                 /*
                                     NOTE: Checking path doesn't work if fonts
                                     are referenced in libraries provided in
@@ -1113,9 +1114,13 @@ const cssUse =
                                             {type: 'woff2', ext: 'woff2'},
                                             {type: 'woff', ext: 'woff'}
                                         ]
-                                    }) :
+                                    }) as unknown as Array<PostcssPlugin> :
                                     [],
-                                postcssURL ? postcssURL({url: 'rebase'}) : [],
+                                postcssURL ?
+                                    postcssURL({url: 'rebase'}) as
+                                        unknown as
+                                        Array<PostcssPlugin> :
+                                    [],
                                 postcssSprites ?
                                     postcssSprites({
                                         filterBy: ():Promise<void> =>
@@ -1130,7 +1135,7 @@ const cssUse =
                                             )()),
                                         hooks: {
                                             onSaveSpritesheet: (
-                                                image:Record<string, any>
+                                                image:Mapping
                                             ):string =>
                                                 join(
                                                     image.spritePath,
@@ -1149,18 +1154,20 @@ const cssUse =
                                         spritePath:
                                             configuration.path.source.asset
                                                 .image
-                                    }) :
+                                    }) as unknown as Array<PostcssPlugin> :
                                     [],
                                 configuration.module.preprocessor
                                     .cascadingStyleSheet.additional.plugins
-                                    .post.map(evaluateMapper),
+                                    .post.map(evaluateMapper) as
+                                        unknown as
+                                        Array<PostcssPlugin>,
                                 (
                                     configuration.module.optimizer.cssnano &&
                                     postcssCSSnano
                                 ) ?
                                     postcssCSSnano(
                                         configuration.module.optimizer.cssnano
-                                    ) :
+                                    ) as unknown as Array<PostcssPlugin> :
                                     []
                             )
                         }} :
@@ -1188,9 +1195,9 @@ const genericLoader = {
             ).includes(filePath) ||
             (configuration.module.preprocessor.ejs.exclude === null) ?
                 false :
-                evaluate(
+                Boolean(evaluate(
                     configuration.module.preprocessor.ejs.exclude, filePath
-                ),
+                )),
         include: includingPaths,
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: configuration.module.preprocessor.ejs.additional.pre
@@ -1224,21 +1231,22 @@ const genericLoader = {
     // region script
     script: {
         exclude: (filePath:string):boolean =>
-            evaluate(
+            Boolean(evaluate(
                 configuration.module.preprocessor.javaScript.exclude, filePath
-            ),
+            )),
         include: (filePath:string):boolean => {
-            const result:any =
-                evaluate(
-                    configuration.module.preprocessor.javaScript.include,
-                    filePath
-                )
-            if ([null, undefined].includes(result)) {
+            const result:unknown = evaluate(
+                configuration.module.preprocessor.javaScript.include,
+                filePath
+            )
+            if ([null, undefined].includes(result as null)) {
                 for (const includePath of includingPaths)
                     if (filePath.startsWith(includePath))
                         return true
+
                 return false
             }
+
             return Boolean(result)
         },
         test: new RegExp(
@@ -1269,17 +1277,18 @@ const genericLoader = {
         ejs: {
             exclude:
                 (filePath:string):boolean => Helper.normalizePaths(
-                    configuration.files.html.concat(
-                        configuration.files.defaultHTML
-                    ).map((htmlConfiguration:HTMLConfiguration):string =>
-                        htmlConfiguration.template.filePath)
+                    configuration.files.html
+                        .concat(configuration.files.defaultHTML)
+                        .map((htmlConfiguration:HTMLConfiguration):string =>
+                            htmlConfiguration.template.filePath
+                        )
                 ).includes(filePath) ||
                 ((configuration.module.preprocessor.html.exclude === null) ?
                     false :
-                    evaluate(
+                    Boolean(evaluate(
                         configuration.module.preprocessor.html.exclude,
                         filePath
-                    )
+                    ))
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
@@ -1353,7 +1362,9 @@ const genericLoader = {
                 (
                     (configuration.module.html.exclude === null) ?
                         true :
-                        evaluate(configuration.module.html.exclude, filePath)
+                        Boolean(evaluate(
+                            configuration.module.html.exclude, filePath
+                        ))
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
@@ -1388,22 +1399,23 @@ const genericLoader = {
         exclude: (filePath:string):boolean =>
             (configuration.module.cascadingStyleSheet.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                evaluate(
+                Boolean(evaluate(
                     configuration.module.cascadingStyleSheet.exclude,
                     filePath
-                ),
+                )),
         include: (filePath:string):boolean => {
-            const result:any =
-                evaluate(
-                    configuration.module.cascadingStyleSheet.include,
-                    filePath
-                )
-            if ([null, undefined].includes(result)) {
+            const result:unknown = evaluate(
+                configuration.module.cascadingStyleSheet.include,
+                filePath
+            )
+            if ([null, undefined].includes(result as null)) {
                 for (const includePath of includingPaths)
                     if (filePath.startsWith(includePath))
                         return true
+
                 return false
             }
+
             return Boolean(result)
         },
         test: /\.s?css(?:\?.*)?$/i,
@@ -1417,10 +1429,10 @@ const genericLoader = {
             exclude: (filePath:string):boolean =>
                 (configuration.module.optimizer.font.eot.exclude === null) ?
                     false :
-                    evaluate(
+                    Boolean(evaluate(
                         configuration.module.optimizer.font.eot.exclude,
                         filePath
-                    ),
+                    )),
             generator: {
                 filename:
                     join(
@@ -1448,10 +1460,10 @@ const genericLoader = {
             exclude: (filePath:string):boolean =>
                 (configuration.module.optimizer.font.svg.exclude === null) ?
                     false :
-                    evaluate(
+                    Boolean(evaluate(
                         configuration.module.optimizer.font.svg.exclude,
                         filePath
-                    ),
+                    )),
             include: configuration.path.source.asset.font,
             generator: {
                 filename:
@@ -1481,10 +1493,10 @@ const genericLoader = {
             exclude: (filePath:string):boolean =>
                 (configuration.module.optimizer.font.ttf.exclude === null) ?
                     false :
-                    evaluate(
+                    Boolean(evaluate(
                         configuration.module.optimizer.font.ttf.exclude,
                         filePath
-                    ),
+                    )),
             generator: {
                 filename:
                     join(
@@ -1513,10 +1525,10 @@ const genericLoader = {
             exclude: (filePath:string):boolean =>
                 (configuration.module.optimizer.font.woff.exclude === null) ?
                     false :
-                    evaluate(
+                    Boolean(evaluate(
                         configuration.module.optimizer.font.woff.exclude,
                         filePath
-                    ),
+                    )),
             generator: {
                 filename:
                     join(
@@ -1547,9 +1559,9 @@ const genericLoader = {
         exclude: (filePath:string):boolean =>
             (configuration.module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                evaluate(
+                Boolean(evaluate(
                     configuration.module.optimizer.image.exclude, filePath
-                ),
+                )),
         generator: {
             filename:
                 join(
@@ -1584,9 +1596,9 @@ const genericLoader = {
             (
                 (configuration.module.optimizer.data.exclude === null) ?
                     isFilePathInDependencies(filePath) :
-                    evaluate(
+                    Boolean(evaluate(
                         configuration.module.optimizer.data.exclude, filePath
-                    )
+                    ))
             )
         },
         generator: {
