@@ -17,11 +17,7 @@
 // region imports
 import Tools, {optionalRequire} from 'clientnode'
 import {
-    AnyFunction,
-    EvaluationResult,
-    Mapping,
-    PlainObject,
-    Unpacked
+    EvaluationResult, Mapping, PlainObject, Unpacked
 } from 'clientnode/type'
 const postcssCSSnano:null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
@@ -29,13 +25,17 @@ import HTMLPlugin from 'html-webpack-plugin'
 import ImageminWebpackPlugin from 'imagemin-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {extname, join, relative, resolve} from 'path'
-const postcssFontPath:AnyFunction|null =
-    optionalRequire<AnyFunction>('postcss-fontpath')
-const postcssImport:null|typeof import('postcss-import') =
+const postcssFontpath =
+    optionalRequire<typeof import('postcss-fontpath').default>(
+        'postcss-fontpath'
+    )
+const postcssImport =
     optionalRequire<typeof import('postcss-import')>('postcss-import')
-const postcssSprites:AnyFunction|null =
-    optionalRequire<AnyFunction>('postcss-sprites')
-const postcssURL:null|typeof import('postcss-url') =
+const postcssSprites =
+    optionalRequire<typeof import('postcss-sprites').default>(
+        'postcss-sprites'
+    )
+const postcssURL =
     optionalRequire<typeof import('postcss-url')>('postcss-url')
 import util from 'util'
 import {
@@ -49,6 +49,7 @@ import {
     LoaderContext,
     NormalModuleReplacementPlugin,
     ProvidePlugin,
+    RuleSetRule,
     sources
 } from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
@@ -65,14 +66,18 @@ import {
     AdditionalLoaderConfiguration,
     AssetPathConfiguration,
     EvaluationScope,
+    GenericLoader,
     HTMLConfiguration,
     HTMLWebpackPluginBeforeEmitData,
     IgnorePattern,
     InPlaceAssetConfiguration,
     InPlaceConfiguration,
+    Loader,
     PackageDescriptor,
     PostcssPlugin,
     RedundantRequest,
+    ResolvedConfiguration,
+    RuleSet,
     WebpackAssets,
     WebpackBaseAssets,
     WebpackConfiguration,
@@ -114,6 +119,7 @@ if (plugins.Imagemin)
         (plugins.Imagemin as unknown as {default:typeof ImageminWebpackPlugin})
             .default
 // endregion
+const module:ResolvedConfiguration['module'] = configuration.module
 // region initialisation
 // / region determine library name
 let libraryName:string
@@ -150,16 +156,16 @@ for (const pattern of ([] as Array<IgnorePattern>).concat(
 }
 // // endregion
 // // region define modules to replace
-for (const source in configuration.module.replacements.normal)
+for (const source in module.replacements.normal)
     if (Object.prototype.hasOwnProperty.call(
-        configuration.module.replacements.normal, source
+        module.replacements.normal, source
     )) {
         const search = new RegExp(source)
         pluginInstances.push(new NormalModuleReplacementPlugin(
             search,
             (resource:{request:string}):void => {
                 resource.request = resource.request.replace(
-                    search, configuration.module.replacements.normal[source]
+                    search, module.replacements.normal[source]
                 )
             }
         ))
@@ -243,8 +249,8 @@ if (configuration.buildContext.definitions)
     pluginInstances.push(
         new DefinePlugin(configuration.buildContext.definitions)
     )
-if (configuration.module.provide)
-    pluginInstances.push(new ProvidePlugin(configuration.module.provide))
+if (module.provide)
+    pluginInstances.push(new ProvidePlugin(module.provide))
 // // endregion
 // // region modules/assets
 // /// region apply module pattern
@@ -451,7 +457,7 @@ if (configuration.injection.external.modules === '__implicit__')
         if (request.startsWith('/'))
             request = relative(configuration.path.context, request)
 
-        for (const filePath of configuration.module.directoryNames)
+        for (const filePath of module.directoryNames)
             if (request.startsWith(filePath)) {
                 request = request.substring(filePath.length)
                 if (request.startsWith('/'))
@@ -468,7 +474,7 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.path.context,
             context,
             configuration.path.ignore,
-            configuration.module.directoryNames,
+            module.directoryNames,
             configuration.package.main.fileNames,
             configuration.package.main.propertyNames,
             configuration.package.aliasPropertyNames,
@@ -513,7 +519,7 @@ if (configuration.injection.external.modules === '__implicit__')
                                     configuration.path.context,
                                     context,
                                     configuration.path.ignore,
-                                    configuration.module.directoryNames,
+                                    module.directoryNames,
                                     configuration.package.main.fileNames,
                                     configuration.package.main.propertyNames,
                                     configuration.package.aliasPropertyNames,
@@ -537,13 +543,13 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.path.context,
             context,
             configuration.injection.entry.normalized,
-            configuration.module.directoryNames,
-            configuration.module.aliases,
-            configuration.module.replacements.normal,
+            module.directoryNames,
+            module.aliases,
+            module.replacements.normal,
             configuration.extensions,
             configuration.path.source.asset.base,
             configuration.path.ignore,
-            configuration.module.directoryNames,
+            module.directoryNames,
             configuration.package.main.fileNames,
             configuration.package.main.propertyNames,
             configuration.package.aliasPropertyNames,
@@ -760,11 +766,11 @@ if (htmlAvailable)
 // ran through.
 if (plugins.Imagemin)
     pluginInstances.push((new plugins.Imagemin(
-        configuration.module.optimizer.image.content
+        module.optimizer.image.content
     ) as unknown as Unpacked<WebpackConfiguration['plugins']>)!)
 // // endregion
 // // region context replacements
-for (const contextReplacement of configuration.module.replacements.context)
+for (const contextReplacement of module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
         contextReplacement.map((value:string):string => {
             const evaluated:EvaluationResult = Tools.stringEvaluate(
@@ -787,7 +793,7 @@ for (const contextReplacement of configuration.module.replacements.context)
     linked modules share the same transitive dependency webpack wont recognize
     them as same dependency.
 */
-if (configuration.module.enforceDeduplication) {
+if (module.enforceDeduplication) {
     const absoluteContextPath:string = resolve(configuration.path.context)
 
     const consolidator = (result:WebpackExtendedResolveData):void => {
@@ -1010,10 +1016,7 @@ const isFilePathInDependencies = (filePath:string):boolean => {
     return Helper.isFilePathInLocation(
         filePath,
         configuration.path.ignore
-            .concat(
-                configuration.module.directoryNames,
-                configuration.loader.directoryNames
-            )
+            .concat(module.directoryNames, configuration.loader.directoryNames)
             .map((filePath:string):string =>
                 resolve(configuration.path.context, filePath)
             )
@@ -1023,21 +1026,22 @@ const isFilePathInDependencies = (filePath:string):boolean => {
     )
 }
 
-const loader:Mapping<any> = {}
+const loader:Loader = {} as unknown as Loader
 
 const scope:EvaluationScope = {
     configuration,
     isFilePathInDependencies,
     loader,
-    require: eval('require')
+    require: eval('require') as typeof require
 }
 
-const evaluate = (
+const evaluate = <T = unknown>(
     object:unknown, filePath:string = configuration.path.context
-):unknown => {
+):T => {
     if (typeof object === 'string') {
-        const evaluated:EvaluationResult<unknown> =
-            Tools.stringEvaluate<unknown>(object, {filePath, ...scope})
+        const evaluated:EvaluationResult<T> =
+            Tools.stringEvaluate<T>(object, {filePath, ...scope})
+
         if (evaluated.error)
             throw new Error(
                 'Error occurred during processing given expression: ' +
@@ -1047,9 +1051,9 @@ const evaluate = (
         return evaluated.result
     }
 
-    return object
+    return object as T
 }
-const evaluateMapper = (value:unknown):unknown => evaluate(value)
+const evaluateMapper = <T = unknown>(value:unknown):T => evaluate<T>(value)
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration:AdditionalLoaderConfiguration
 ):WebpackLoaderConfiguration => ({
@@ -1057,35 +1061,29 @@ const evaluateAdditionalLoaderConfiguration = (
         Boolean(evaluate(loaderConfiguration.exclude, filePath)),
     include:
         loaderConfiguration.include &&
-        evaluate(loaderConfiguration.include) as WebpackLoaderIndicator ||
+        evaluate<WebpackLoaderIndicator>(loaderConfiguration.include) ||
         configuration.path.source.base,
-    test: new RegExp(evaluate(loaderConfiguration.test) as string),
-    use:
-        evaluate(loaderConfiguration.use) as Array<WebpackLoader>|WebpackLoader
+    test: new RegExp(evaluate<string>(loaderConfiguration.test)),
+    use: evaluate<Array<WebpackLoader>|WebpackLoader>(loaderConfiguration.use)
 })
 
 const includingPaths:Array<string> =
-    Helper.normalizePaths([configuration.path.source.asset.javaScript].concat(
-        configuration.module.locations.directoryPaths
-    ))
+    Helper.normalizePaths(
+        [configuration.path.source.asset.javaScript]
+            .concat(module.locations.directoryPaths)
+    )
 
-const cssUse =
-    configuration.module.preprocessor.cascadingStyleSheet.additional.pre.map(
-        evaluateMapper
-    ).concat(
+const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
+    .map(evaluateMapper)
+    .concat(
+        {loader: module.style.loader, options: module.style.options || {}},
         {
-            loader: configuration.module.style.loader,
-            options: configuration.module.style.options || {}
+            loader: module.cascadingStyleSheet.loader,
+            options: module.cascadingStyleSheet.options || {}
         },
-        {
-            loader: configuration.module.cascadingStyleSheet.loader,
-            options: configuration.module.cascadingStyleSheet.options || {}
-        },
-        configuration.module.preprocessor.cascadingStyleSheet.loader ?
+        module.preprocessor.cascadingStyleSheet.loader ?
             {
-                loader:
-                    configuration.module.preprocessor.cascadingStyleSheet
-                        .loader,
+                loader: module.preprocessor.cascadingStyleSheet.loader,
                 options: Tools.extend(
                     true,
                     optionalRequire('postcss') ?
@@ -1094,12 +1092,11 @@ const cssUse =
                                 postcssImport ?
                                     postcssImport({
                                         root: configuration.path.context
-                                    }) as unknown as Array<PostcssPlugin> :
+                                    }) :
                                     [],
-                                configuration.module.preprocessor
+                                module.preprocessor
                                     .cascadingStyleSheet.additional.plugins.pre
                                     .map(evaluateMapper) as
-                                        unknown as
                                         Array<PostcssPlugin>,
                                 /*
                                     NOTE: Checking path doesn't work if fonts
@@ -1107,14 +1104,14 @@ const cssUse =
                                     another location than the project itself
                                     like the "node_modules" folder.
                                 */
-                                postcssFontPath ?
-                                    postcssFontPath({
+                                postcssFontpath ?
+                                    postcssFontpath({
                                         checkPath: false,
                                         formats: [
-                                            {type: 'woff2', ext: 'woff2'},
-                                            {type: 'woff', ext: 'woff'}
+                                            {ext: 'woff2', type: 'woff2'},
+                                            {ext: 'woff', type: 'woff'}
                                         ]
-                                    }) as unknown as Array<PostcssPlugin> :
+                                    }) :
                                     [],
                                 postcssURL ?
                                     postcssURL({url: 'rebase'}) as
@@ -1125,8 +1122,8 @@ const cssUse =
                                     postcssSprites({
                                         filterBy: ():Promise<void> =>
                                             new Promise<void>((
-                                                resolve:AnyFunction,
-                                                reject:AnyFunction
+                                                resolve:() => void,
+                                                reject:() => void
                                             ):void => (
                                                 configuration.files.compose
                                                     .image ?
@@ -1154,34 +1151,29 @@ const cssUse =
                                         spritePath:
                                             configuration.path.source.asset
                                                 .image
-                                    }) as unknown as Array<PostcssPlugin> :
+                                    }) :
                                     [],
-                                configuration.module.preprocessor
+                                module.preprocessor
                                     .cascadingStyleSheet.additional.plugins
                                     .post.map(evaluateMapper) as
                                         unknown as
                                         Array<PostcssPlugin>,
-                                (
-                                    configuration.module.optimizer.cssnano &&
-                                    postcssCSSnano
-                                ) ?
+                                (module.optimizer.cssnano && postcssCSSnano) ?
                                     postcssCSSnano(
-                                        configuration.module.optimizer.cssnano
+                                        module.optimizer.cssnano
                                     ) as unknown as Array<PostcssPlugin> :
                                     []
                             )
                         }} :
                         {},
-                    configuration.module.preprocessor.cascadingStyleSheet
-                        .options ||
-                        {}
+                    module.preprocessor.cascadingStyleSheet.options || {}
                 )} :
             [],
-        configuration.module.preprocessor.cascadingStyleSheet.additional.post
+        module.preprocessor.cascadingStyleSheet.additional.post
             .map(evaluateMapper)
-    )
+    ) as RuleSet
 
-const genericLoader = {
+const genericLoader:GenericLoader = {
     // Convert to compatible native web types.
     // region generic template
     ejs: {
@@ -1193,14 +1185,12 @@ const genericLoader = {
                         htmlConfiguration.template.filePath
                     )
             ).includes(filePath) ||
-            (configuration.module.preprocessor.ejs.exclude === null) ?
+            (module.preprocessor.ejs.exclude === null) ?
                 false :
-                Boolean(evaluate(
-                    configuration.module.preprocessor.ejs.exclude, filePath
-                )),
+                Boolean(evaluate(module.preprocessor.ejs.exclude, filePath)),
         include: includingPaths,
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
-        use: configuration.module.preprocessor.ejs.additional.pre
+        use: module.preprocessor.ejs.additional.pre
             .map(evaluateMapper)
             .concat(
                 {
@@ -1208,11 +1198,10 @@ const genericLoader = {
                         (
                             (
                                 Tools.isPlainObject(
-                                    configuration.module.preprocessor.ejs
-                                        .options
+                                    module.preprocessor.ejs.options
                                 ) ?
-                                    configuration.module.preprocessor.ejs
-                                        .options as EJSLoaderConfiguration :
+                                    module.preprocessor.ejs.options as
+                                        EJSLoaderConfiguration :
                                     {compileSteps: 2}
                             ).compileSteps % 2 ? '.js' : ''
                         ) +
@@ -1220,25 +1209,22 @@ const genericLoader = {
                 },
                 {loader: 'extract'},
                 {
-                    loader: configuration.module.preprocessor.ejs.loader,
-                    options: configuration.module.preprocessor.ejs.options || {}
+                    loader: module.preprocessor.ejs.loader,
+                    options: module.preprocessor.ejs.options || {}
                 },
-                configuration.module.preprocessor.ejs.additional.post
-                    .map(evaluateMapper)
-            )
+                module.preprocessor.ejs.additional.post.map(evaluateMapper)
+            ) as RuleSet
     },
     // endregion
     // region script
     script: {
         exclude: (filePath:string):boolean =>
             Boolean(evaluate(
-                configuration.module.preprocessor.javaScript.exclude, filePath
+                module.preprocessor.javaScript.exclude, filePath
             )),
         include: (filePath:string):boolean => {
-            const result:unknown = evaluate(
-                configuration.module.preprocessor.javaScript.include,
-                filePath
-            )
+            const result:unknown =
+                evaluate(module.preprocessor.javaScript.include, filePath)
             if ([null, undefined].includes(result as null)) {
                 for (const includePath of includingPaths)
                     if (filePath.startsWith(includePath))
@@ -1250,28 +1236,31 @@ const genericLoader = {
             return Boolean(result)
         },
         test: new RegExp(
-            configuration.module.preprocessor.javaScript.regularExpression, 'i'
+            module.preprocessor.javaScript.regularExpression, 'i'
         ),
-        use: configuration.module.preprocessor.javaScript.additional.pre.map(
-            evaluateMapper
-        ).concat(
-            {
-                loader: configuration.module.preprocessor.javaScript.loader,
-                options:
-                    configuration.module.preprocessor.javaScript.options || {}
-            },
-            configuration.module.preprocessor.javaScript.additional.post
-                .map(evaluateMapper)
-        )
+        use: module.preprocessor.javaScript.additional.pre
+            .map(evaluateMapper)
+            .concat(
+                {
+                    loader: module.preprocessor.javaScript.loader,
+                    options: module.preprocessor.javaScript.options || {}
+                },
+                module.preprocessor.javaScript.additional.post
+                    .map(evaluateMapper)
+            ) as RuleSet
     },
     // endregion
     // region html template
     html: {
         // NOTE: This is only for the main entry template.
         main: {
-            test: new RegExp('^' + Tools.stringEscapeRegularExpressions(
-                configuration.files.defaultHTML.template.filePath
-            ) + '(?:\\?.*)?$'),
+            test: new RegExp(
+                '^' +
+                Tools.stringEscapeRegularExpressions(
+                    configuration.files.defaultHTML.template.filePath
+                ) +
+                '(?:\\?.*)?$'
+            ),
             use: configuration.files.defaultHTML.template.use
         },
         ejs: {
@@ -1283,72 +1272,66 @@ const genericLoader = {
                             htmlConfiguration.template.filePath
                         )
                 ).includes(filePath) ||
-                ((configuration.module.preprocessor.html.exclude === null) ?
+                ((module.preprocessor.html.exclude === null) ?
                     false :
                     Boolean(evaluate(
-                        configuration.module.preprocessor.html.exclude,
-                        filePath
+                        module.preprocessor.html.exclude, filePath
                     ))
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
-            use: configuration.module.preprocessor.html.additional.pre.map(
-                evaluateMapper
-            ).concat(
-                {
-                    loader:
-                        'file?name=' +
-                        join(
-                            relative(
-                                configuration.path.target.asset.base,
-                                configuration.path.target.asset.template
-                            ),
-                            '[name]' +
-                            (
+            use: module.preprocessor.html.additional.pre
+                .map(evaluateMapper)
+                .concat(
+                    {
+                        loader:
+                            'file?name=' +
+                            join(
+                                relative(
+                                    configuration.path.target.asset.base,
+                                    configuration.path.target.asset.template
+                                ),
+                                '[name]' +
                                 (
-                                    Tools.isPlainObject(
-                                        configuration.module.preprocessor.html
-                                            .options
-                                    ) ?
-                                        configuration.module.preprocessor.html
-                                            .options as
+                                    (
+                                        Tools.isPlainObject(
+                                            module.preprocessor.html.options
+                                        ) ?
+                                            module.preprocessor.html.options as
                                                 EJSLoaderConfiguration :
-                                        {compileSteps: 2}
-                                ).compileSteps % 2 ?
-                                    '.js' :
-                                    ''
-                            ) +
-                            `?${configuration.hashAlgorithm}=[chunkhash]`
-                        )
-                },
-                (
+                                            {compileSteps: 2}
+                                    ).compileSteps % 2 ?
+                                        '.js' :
+                                        ''
+                                ) +
+                                `?${configuration.hashAlgorithm}=[chunkhash]`
+                            )
+                    },
                     (
-                        Tools.isPlainObject(
-                            configuration.module.preprocessor.html.options
-                        ) ?
-                            configuration.module.preprocessor.html.options as
-                                EJSLoaderConfiguration :
-                            {compileSteps: 2}
-                    ).compileSteps % 2 ?
-                        [] :
-                        [
-                            {loader: 'extract'},
-                            {
-                                loader: configuration.module.html.loader,
-                                options:
-                                    configuration.module.html.options || {}
-                            }
-                        ]
-                ),
-                {
-                    loader: configuration.module.preprocessor.html.loader,
-                    options:
-                        configuration.module.preprocessor.html.options || {}
-                },
-                configuration.module.preprocessor.html.additional.post.map(
-                    evaluateMapper
-                )
-            )
+                        (
+                            Tools.isPlainObject(
+                                module.preprocessor.html.options
+                            ) ?
+                                module.preprocessor.html.options as
+                                    EJSLoaderConfiguration :
+                                {compileSteps: 2}
+                        ).compileSteps % 2 ?
+                            [] :
+                            [
+                                {loader: 'extract'},
+                                {
+                                    loader: module.html.loader,
+                                    options: module.html.options || {}
+                                }
+                            ]
+                    ),
+                    {
+                        loader: module.preprocessor.html.loader,
+                        options: module.preprocessor.html.options || {}
+                    },
+                    module.preprocessor.html.additional.post
+                        .map(evaluateMapper)
+                ) as RuleSet
         },
         html: {
             exclude: (filePath:string):boolean =>
@@ -1360,36 +1343,34 @@ const genericLoader = {
                         )
                 ).includes(filePath) ||
                 (
-                    (configuration.module.html.exclude === null) ?
+                    (module.html.exclude === null) ?
                         true :
-                        Boolean(evaluate(
-                            configuration.module.html.exclude, filePath
-                        ))
+                        Boolean(evaluate(module.html.exclude, filePath))
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
-            use: configuration.module.html.additional.pre.map(
-                evaluateMapper
-            ).concat(
-                {
-                    loader:
-                       'file?name=' +
-                        join(
-                            relative(
-                                configuration.path.target.base,
-                                configuration.path.target.asset.template
-                            ),
-                            `[name][ext]?${configuration.hashAlgorithm}=` +
-                            '[chunkhash]'
-                        )
-                },
-                {loader: 'extract'},
-                {
-                    loader: configuration.module.html.loader,
-                    options: configuration.module.html.options || {}
-                },
-                configuration.module.html.additional.post.map(evaluateMapper)
-            )
+            use: module.html.additional.pre
+                .map(evaluateMapper)
+                .concat(
+                    {
+                        loader:
+                           'file?name=' +
+                            join(
+                                relative(
+                                    configuration.path.target.base,
+                                    configuration.path.target.asset.template
+                                ),
+                                `[name][ext]?${configuration.hashAlgorithm}=` +
+                                '[chunkhash]'
+                            )
+                    },
+                    {loader: 'extract'},
+                    {
+                        loader: module.html.loader,
+                        options: module.html.options || {}
+                    },
+                    module.html.additional.post.map(evaluateMapper)
+                ) as RuleSet
         }
     },
     // endregion
@@ -1397,16 +1378,14 @@ const genericLoader = {
     // region style
     style: {
         exclude: (filePath:string):boolean =>
-            (configuration.module.cascadingStyleSheet.exclude === null) ?
+            (module.cascadingStyleSheet.exclude === null) ?
                 isFilePathInDependencies(filePath) :
                 Boolean(evaluate(
-                    configuration.module.cascadingStyleSheet.exclude,
-                    filePath
+                    module.cascadingStyleSheet.exclude, filePath
                 )),
         include: (filePath:string):boolean => {
             const result:unknown = evaluate(
-                configuration.module.cascadingStyleSheet.include,
-                filePath
+                module.cascadingStyleSheet.include, filePath
             )
             if ([null, undefined].includes(result as null)) {
                 for (const includePath of includingPaths)
@@ -1427,11 +1406,10 @@ const genericLoader = {
     font: {
         eot: {
             exclude: (filePath:string):boolean =>
-                (configuration.module.optimizer.font.eot.exclude === null) ?
+                (module.optimizer.font.eot.exclude === null) ?
                     false :
                     Boolean(evaluate(
-                        configuration.module.optimizer.font.eot.exclude,
-                        filePath
+                        module.optimizer.font.eot.exclude, filePath
                     )),
             generator: {
                 filename:
@@ -1452,17 +1430,15 @@ const genericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            use: configuration.module.optimizer.font.eot.loader.map(
-                evaluateMapper
-            )
+            use: module.optimizer.font.eot.loader.map(evaluateMapper) as
+                RuleSet
         },
         svg: {
             exclude: (filePath:string):boolean =>
-                (configuration.module.optimizer.font.svg.exclude === null) ?
+                (module.optimizer.font.svg.exclude === null) ?
                     false :
                     Boolean(evaluate(
-                        configuration.module.optimizer.font.svg.exclude,
-                        filePath
+                        module.optimizer.font.svg.exclude, filePath
                     )),
             include: configuration.path.source.asset.font,
             generator: {
@@ -1485,17 +1461,15 @@ const genericLoader = {
             },
             test: /\.svg(?:\?.*)?$/i,
             type: 'asset/resource',
-            use: configuration.module.optimizer.font.svg.loader.map(
-                evaluateMapper
-            )
+            use: module.optimizer.font.svg.loader.map(evaluateMapper) as
+                RuleSet
         },
         ttf: {
             exclude: (filePath:string):boolean =>
-                (configuration.module.optimizer.font.ttf.exclude === null) ?
+                (module.optimizer.font.ttf.exclude === null) ?
                     false :
                     Boolean(evaluate(
-                        configuration.module.optimizer.font.ttf.exclude,
-                        filePath
+                        module.optimizer.font.ttf.exclude, filePath
                     )),
             generator: {
                 filename:
@@ -1517,17 +1491,15 @@ const genericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            use: configuration.module.optimizer.font.ttf.loader.map(
-                evaluateMapper
-            )
+            use: module.optimizer.font.ttf.loader.map(evaluateMapper) as
+                RuleSet
         },
         woff: {
             exclude: (filePath:string):boolean =>
-                (configuration.module.optimizer.font.woff.exclude === null) ?
+                (module.optimizer.font.woff.exclude === null) ?
                     false :
                     Boolean(evaluate(
-                        configuration.module.optimizer.font.woff.exclude,
-                        filePath
+                        module.optimizer.font.woff.exclude, filePath
                     )),
             generator: {
                 filename:
@@ -1548,20 +1520,17 @@ const genericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            use: configuration.module.optimizer.font.woff.loader.map(
-                evaluateMapper
-            )
+            use: module.optimizer.font.woff.loader.map(evaluateMapper) as
+                RuleSet
         }
     },
     // endregion
     // region image
     image: {
         exclude: (filePath:string):boolean =>
-            (configuration.module.optimizer.image.exclude === null) ?
+            (module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                Boolean(evaluate(
-                    configuration.module.optimizer.image.exclude, filePath
-                )),
+                Boolean(evaluate(module.optimizer.image.exclude, filePath)),
         generator: {
             filename:
                 join(
@@ -1581,7 +1550,7 @@ const genericLoader = {
                 maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
             }
         },
-        use: configuration.module.optimizer.image.loader.map(evaluateMapper)
+        use: module.optimizer.image.loader.map(evaluateMapper) as RuleSet
     },
     // endregion
     // region data
@@ -1594,11 +1563,9 @@ const genericLoader = {
                 extname(Helper.stripLoader(filePath))
             ) ||
             (
-                (configuration.module.optimizer.data.exclude === null) ?
+                (module.optimizer.data.exclude === null) ?
                     isFilePathInDependencies(filePath) :
-                    Boolean(evaluate(
-                        configuration.module.optimizer.data.exclude, filePath
-                    ))
+                    Boolean(evaluate(module.optimizer.data.exclude, filePath))
             )
         },
         generator: {
@@ -1619,7 +1586,7 @@ const genericLoader = {
                 maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
             }
         },
-        use: configuration.module.optimizer.data.loader.map(evaluateMapper)
+        use: module.optimizer.data.loader.map(evaluateMapper) as RuleSet
     }
     // endregion
 }
@@ -1712,14 +1679,13 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
         entry: configuration.injection.entry.normalized,
         externals: configuration.injection.external.modules,
         resolve: {
-            alias: configuration.module.aliases,
+            alias: module.aliases,
             aliasFields: configuration.package.aliasPropertyNames,
             extensions: configuration.extensions.file.internal,
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,
-            modules:
-                Helper.normalizePaths(configuration.module.directoryNames),
-            symlinks: configuration.module.resolveSymlinks,
+            modules: Helper.normalizePaths(module.directoryNames),
+            symlinks: module.resolveSymlinks,
             unsafeCache: Boolean(configuration.cache?.unsafe)
         },
         resolveLoader: {
@@ -1766,30 +1732,32 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
         // endregion
         mode: configuration.debug ? 'development' : 'production',
         module: {
-            rules: configuration.module.additional.pre
-                .map(evaluateAdditionalLoaderConfiguration)
-                .concat(
-                    loader.ejs,
+            rules: (
+                module.additional.pre.map(
+                    evaluateAdditionalLoaderConfiguration
+                ) as Array<(RuleSetRule|'...')>
+            ).concat(
+                loader.ejs,
 
-                    loader.script,
+                loader.script,
 
-                    loader.html.main,
-                    loader.html.ejs,
-                    loader.html.html,
+                loader.html.main,
+                loader.html.ejs,
+                loader.html.html,
 
-                    loader.style,
+                loader.style,
 
-                    loader.font.eot,
-                    loader.font.svg,
-                    loader.font.ttf,
-                    loader.font.woff,
+                loader.font.eot,
+                loader.font.svg,
+                loader.font.ttf,
+                loader.font.woff,
 
-                    loader.image,
-                    loader.data,
+                loader.image,
+                loader.data,
 
-                    configuration.module.additional.post
-                        .map(evaluateAdditionalLoaderConfiguration)
-                )
+                module.additional.post
+                    .map(evaluateAdditionalLoaderConfiguration)
+            )
         },
         node: configuration.nodeEnvironment,
         optimization: {
@@ -1844,7 +1812,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
                 ),
             // endregion
             ...Tools.mask(
-                configuration.module.optimizer,
+                module.optimizer,
                 {
                     exclude: {
                         babelMinify: true,
@@ -1867,11 +1835,10 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
 if (configuration.nodeENV !== null)
     webpackConfiguration.optimization!.nodeEnv = configuration.nodeENV
 if (
-    !Array.isArray(configuration.module.skipParseRegularExpressions) ||
-    configuration.module.skipParseRegularExpressions.length
+    !Array.isArray(module.skipParseRegularExpressions) ||
+    module.skipParseRegularExpressions.length
 )
-    webpackConfiguration.module!.noParse =
-        configuration.module.skipParseRegularExpressions
+    webpackConfiguration.module!.noParse = module.skipParseRegularExpressions
 
 if (configuration.path.configuration?.javaScript)
     try {

@@ -37,6 +37,7 @@ import {
     library as webpackLibrary,
     ModuleOptions as WebpackModuleOptions,
     RuleSetRule as WebpackRuleSetRule,
+    RuleSetUseItem as WebpackRuleSetUseItem,
     WebpackOptionsNormalized
 } from 'webpack'
 import OfflinePlugin, {
@@ -451,10 +452,34 @@ export interface WebpackConfiguration extends BaseWebpackConfiguration {
     replaceWebOptimizer:WebpackConfiguration
 }
 
+export type RuleSet = Array<WebpackRuleSetUseItem>
+export type RuleSetRule = WebpackRuleSetRule & {use:RuleSet}
+export interface GenericLoader {
+    ejs:RuleSetRule
+    script:RuleSetRule
+    html:{
+        ejs:RuleSetRule
+        html:RuleSetRule
+        main:{
+            test:RegExp
+            use:Array<WebpackLoader>|WebpackLoader
+        }
+    }
+    style:RuleSetRule
+    font:{
+        eot:RuleSetRule
+        svg:RuleSetRule
+        ttf:RuleSetRule
+        woff:RuleSetRule
+    }
+    image:RuleSetRule
+    data:RuleSetRule
+}
+export type Loader = GenericLoader & Mapping<WebpackRuleSetRule>
 export interface EvaluationScope {
     configuration:ResolvedConfiguration
     isFilePathInDependencies:(_filePath:string) => boolean
-    loader:Mapping<any>
+    loader:Loader
     require:typeof require
 }
 // / endregion
