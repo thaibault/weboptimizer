@@ -1028,8 +1028,8 @@
                   ]
                 ]
               },
-              "include": {
-                "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? '' : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{include:undefined}}}}}\" to enable default image file including.`) || ''"
+              "exclude": {
+                "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? /.*/ : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{exclude:undefined}}}}}\" to enable default image file including.`) || /.*/"
               }
             },
             "loader": []
