@@ -3573,9 +3573,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.854"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.854.tgz#02b7e1ba7be8d2cee6993d9aac1d3734b6be9734"
-  integrity sha512-hDvkqUIU876T7ZMcp4w2Y+ajDydQ6rBN1p8l8h2nAGgoOsZIU8I9ui3FQMkU24djlCAE1ZeQ6IHedfp83nVpeg==
+  version "3.0.855"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.855.tgz#2cf4cf6708d0faf4a519fcaf2f0fafe02eb029f1"
+  integrity sha512-7qe4wALRyg22tCjo7sBaU2FImtMUS9p4ovjNWtClYuKTs6Ej/LDwrxkmk2bfPza9OcdZRVn0mtLDgbQCLuN6uA==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
 
@@ -4617,9 +4617,9 @@ eslint-visitor-keys@^2.0.0, eslint-visitor-keys@^2.1.0:
   integrity sha512-0rSmRBzXgDzIsD6mGdJgevzgezI534Cer5L/vyMX0kHzT/jiB43jRhd9YUlMGYLQy2zprNmoT8qasCGtY+QaKw==
 
 eslint-visitor-keys@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-3.0.0.tgz#e32e99c6cdc2eb063f204eda5db67bfe58bb4186"
-  integrity sha512-mJOZa35trBTb3IyRmo8xmKBZlxf+N7OnUl4+ZhJHs/r+0770Wh/LEACE2pqMGMe27G/4y8P2bYGk4J70IC5k1Q==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-3.1.0.tgz#eee4acea891814cda67a7d8812d9647dd0179af2"
+  integrity sha512-yWJFpu4DtjsWKkt5GeNBBuZMlNcYVs6vRCLoCVEJrTjaSB6LC98gFipNK/erM2Heg/E8mIK+hXG/pJMLK+eRZA==
 
 eslint@7.*:
   version "7.32.0"
