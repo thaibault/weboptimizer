@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.1094",
+  "version": "2.0.1095",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -1007,12 +1007,25 @@
                       "optimizationLevel": 3
                     }
                   ],
-                  ["jpegtran", {
-                    "arithmetic": true,
-                    "progressive": true
-                  }],
-                  ["optipng", {"optimizationLevel": 7}],
-                  ["svgo", {"plugins": []}]
+                  [
+                    "jpegtran",
+                    {
+                      "arithmetic": true,
+                      "progressive": true
+                    }
+                  ],
+                  [
+                    "optipng",
+                    {
+                      "optimizationLevel": 7
+                    }
+                  ],
+                  [
+                    "svgo",
+                    {
+                      "plugins": []
+                    }
+                  ]
                 ]
               },
               "include": {
