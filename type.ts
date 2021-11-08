@@ -16,32 +16,33 @@
 */
 // region imports
 import {
-    AnyFunction,
-    Encoding,
-    Mapping,
-    PlainObject,
-    SecondParameter
+    AnyFunction, Encoding, Mapping, PlainObject, SecondParameter
 } from 'clientnode/type'
 import {FaviconOptions} from 'favicons'
+import FaviconWebpackPlugin from 'favicons-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import ImageMinimizerWebpackPlugin from 'image-minimizer-webpack-plugin'
 import {JSDOM} from 'jsdom'
+import MiniCSSExtractPlugin from 'mini-css-extract-plugin'
+import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
 import {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
     IgnorePlugin as WebpackIgnorePlugin,
+    library as webpackLibrary,
     ModuleOptions as WebpackModuleOptions,
     RuleSetRule as WebpackRuleSetRule,
+    RuleSetUseItem as WebpackRuleSetUseItem,
     WebpackOptionsNormalized
 } from 'webpack'
-import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
-import {
+import OfflinePlugin, {
     CommonOptions as WorkboxCommonOptions,
     GenerateSWOptions as WorkboxGenerateSWOptions,
     InjectManifestOptions as WorkboxInjectManifestOptions
 } from 'workbox-webpack-plugin'
 // endregion
 // region exports
-// / region  generic
+// / region generic
 export interface Browser {
     debug:boolean
     domContentLoaded:boolean
@@ -69,6 +70,7 @@ export interface PackageDescriptor {
 export type Replacements = Mapping<SecondParameter<string['replace']>>
 
 export type Resolvable = {
+    // eslint-disable-next-line no-unused-vars
     [K in '__evaluate__'|'__execute__'|string]:Resolvable|string|unknown
 }
 
@@ -78,7 +80,8 @@ export interface RedundantRequest {
 }
 // / endregion
 // / region injection
-export type ExternalAliases = Mapping<Mapping<AnyFunction|string>>
+export type ExternalAliases =
+    Mapping<Mapping|string|((_request:string, _key:string) => string)>
 export type GivenInjection =
     AnyFunction|string|Array<string>|Mapping<string|Array<string>>
 export type NormalizedGivenInjection = Mapping<Array<string>>
@@ -179,7 +182,7 @@ export interface AdditionalLoaderConfiguration {
     exclude?:BooleanExpression
     include?:BooleanExpression
     test:string
-    use:any
+    use:Array<WebpackLoader>|WebpackLoader|string
 }
 export interface AdditionalLoaderConfigurations {
     post:Array<AdditionalLoaderConfiguration>
@@ -191,7 +194,7 @@ export interface AdditionalLoader {
 }
 export interface WebpackLoader {
     loader:string
-    options?:PlainObject
+    options?:Mapping<unknown>
 }
 export type ResourceLoaderConfiguration = WebpackLoader & {
     exclude:BooleanExpression
@@ -443,6 +446,37 @@ export interface WebpackConfiguration extends BaseWebpackConfiguration {
     devServer:Mapping<unknown>
     replaceWebOptimizer:WebpackConfiguration
 }
+
+export type RuleSet = Array<WebpackRuleSetUseItem>
+export type RuleSetRule = WebpackRuleSetRule & {use:RuleSet}
+export interface GenericLoader {
+    ejs:RuleSetRule
+    script:RuleSetRule
+    html:{
+        ejs:RuleSetRule
+        html:RuleSetRule
+        main:{
+            test:RegExp
+            use:Array<WebpackLoader>|WebpackLoader
+        }
+    }
+    style:RuleSetRule
+    font:{
+        eot:RuleSetRule
+        svg:RuleSetRule
+        ttf:RuleSetRule
+        woff:RuleSetRule
+    }
+    image:RuleSetRule
+    data:RuleSetRule
+}
+export type Loader = GenericLoader & Mapping<WebpackRuleSetRule>
+export interface EvaluationScope {
+    configuration:ResolvedConfiguration
+    isFilePathInDependencies:(_filePath:string) => boolean
+    loader:Loader
+    require:typeof require
+}
 // / endregion
 // NOTE: Not yet defined in webpack types.
 export interface WebpackBaseAssets {
@@ -456,6 +490,36 @@ export interface WebpackAssets extends WebpackBaseAssets {
     publicPath:string
     plugin:HtmlWebpackPlugin
 }
+export type WebpackPlugin =
+    webpackLibrary.AbstractLibraryPlugin<unknown> & Mapping<unknown>
+export type WebpackPlugins =
+    Mapping<WebpackPlugin> &
+    {
+        Favicon?:typeof FaviconWebpackPlugin
+        GenerateServiceWorker?:typeof OfflinePlugin.GenerateSW
+        HTML?:typeof HtmlWebpackPlugin
+        ImageMinimizer?:typeof ImageMinimizerWebpackPlugin
+        InjectManifest?:typeof OfflinePlugin.InjectManifest
+        Offline?:{
+            GenerateSW:typeof OfflinePlugin.GenerateSW
+            InjectManifest:typeof OfflinePlugin.InjectManifest
+        }
+        MiniCSSExtract?:typeof MiniCSSExtractPlugin
+    }
+export type WebpackResolveData =
+    // NOTE: Hack to retrieve needed types.
+    Parameters<WebpackIgnorePlugin['checkIgnore']>[0]
+export type WebpackExtendedResolveData =
+    WebpackResolveData &
+    {
+        createData:{
+            rawRequest:string
+            request:string
+            resource:string
+            userRequest:string
+        }
+    }
+
 export interface HTMLWebpackPluginAssetTagGroupsData {
     bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
     headTags:HtmlWebpackPlugin.HtmlTagObject[]

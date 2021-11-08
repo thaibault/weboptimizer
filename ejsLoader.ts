@@ -280,7 +280,7 @@ export default function(
                 const filePath:string|undefined =
                     isString ? options.filename : result
                 if (filePath && extname(filePath) === '.js')
-                    result = eval('require')(filePath)
+                    result = (eval('require') as typeof require)(filePath)
                 else {
                     if (!isString) {
                         let encoding:Encoding = configuration.encoding

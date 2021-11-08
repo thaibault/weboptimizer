@@ -521,7 +521,6 @@ for (const htmlConfiguration of resolvedConfiguration.files.html) {
             ) as string)
         ) as string
         /* eslint-disable @typescript-eslint/unbound-method */
-        // @ts-ignore: Monkeypatching is not allowed by typescript.
         requestString.replace = ((value:string) => ():string => value)(
             htmlConfiguration.template.filePath
         )

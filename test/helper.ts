@@ -6,7 +6,9 @@ import {testEach, testEachAgainstSameExpectation} from 'clientnode/testHelper'
 import {FirstParameter} from 'clientnode/type'
 import {resolve} from 'path'
 
-import {BuildConfiguration, PathConfiguration, Replacements} from '../type'
+import {
+    BuildConfiguration, PackageConfiguration, PathConfiguration, Replacements
+} from '../type'
 import Helper from '../helper'
 // endregion
 // region mockup
@@ -603,7 +605,12 @@ describe('helper', ():void => {
             const filePath:string = resolve(__dirname, '../package.json')
             expect(Helper.getClosestPackageDescriptor(modulePath, filePath))
                 .toStrictEqual(
-                    {configuration: eval('require')(filePath), filePath}
+                    {
+                        configuration:
+                            (eval('require') as typeof require)(filePath) as
+                                PackageConfiguration,
+                        filePath
+                    }
                 )
         }
     )

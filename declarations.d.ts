@@ -1,14 +1,40 @@
 // -*- coding: utf-8 -*-
-/** @module declarations */
-declare module 'babel-preset-minify'
-declare module 'html-loader'
-declare module 'loader-utils'
-declare module 'webOptimizerDefaultTemplateFilePath'
 /*
     NOTE: We have to avoid importing this from "clientnode/type" to avoid a
     dependency cycle.
 */
-type Mapping = {[key:string]:string}
+type Mapping<T = string> = {[key:string]:T}
+interface PostcssTransformer {
+    postcssPlugin: string
+    postcssVersion: string
+
+    (root:object, result:object):Promise<void>|void
+}
+/** @module declarations */
+declare module 'babel-preset-minify'
+declare module 'html-loader'
+declare module 'postcss-fontpath' {
+    export default function(options:Partial<{
+        checkPath:boolean
+        formats:Array<{
+            ext:string
+            type:string
+        }>
+    }>):PostcssTransformer
+}
+declare module 'postcss-sprites' {
+    export default function(options:Partial<{
+        filterBy:() => Promise<void>
+        hooks:{onSaveSpritesheet:(_image:Mapping) => string}
+        spritePath:string
+        stylesheetPath:null|string
+        verbose:boolean
+    }>):PostcssTransformer
+}
+declare module 'webOptimizerDefaultTemplateFilePath'
+declare module 'svgo' {
+    export type Options = any
+}
 declare module '*.module' {
     const classes:Mapping
     export default classes
