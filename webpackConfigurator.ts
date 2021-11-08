@@ -15,14 +15,13 @@
     endregion
 */
 // region imports
-import Tools, {optionalRequire} from 'clientnode'
+import Tools, {currentRequire, optionalRequire} from 'clientnode'
 import {
     EvaluationResult, Mapping, PlainObject, Unpacked
 } from 'clientnode/type'
 const postcssCSSnano:null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
-import ImageMinimizerPlugin from 'image-minimizer-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {extname, join, relative, resolve} from 'path'
 import {Transformer as PostcssTransformer} from 'postcss'
@@ -761,7 +760,7 @@ if (htmlAvailable)
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
 // ran through.
 if (plugins.ImageMinimizer)
-    pluginInstances.push((new plugins.ImageMinizer(
+    pluginInstances.push((new plugins.ImageMinimizer(
         module.optimizer.image.content
     ) as unknown as Unpacked<WebpackConfiguration['plugins']>)!)
 // // endregion
@@ -1637,10 +1636,23 @@ if (
 }
 // / endregion
 // endregion
-for (const pluginConfiguration of configuration.plugins)
-    pluginInstances.push(new (eval('require')(pluginConfiguration.name.module)[
-        pluginConfiguration.name.initializer
-    ])(...pluginConfiguration.parameters))
+for (const pluginConfiguration of configuration.plugins) {
+    type Initializer = new (..._parameters:Array<unknown>) =>
+        Unpacked<WebpackConfiguration['plugins']>
+    const plugin:Mapping<Initializer>|null =
+        optionalRequire(pluginConfiguration.name.module)
+    if (plugin)
+        pluginInstances.push(
+            (new (plugin[pluginConfiguration.name.initializer])(
+                ...pluginConfiguration.parameters
+            ))!
+        )
+    else
+        console.warn(
+            `Configured plugin module "${pluginConfiguration.name.module}" ` +
+            'could not be loaded.'
+        )
+}
 // region configuration
 let customConfiguration:PlainObject = {}
 if (configuration.path.configuration?.json)
@@ -1648,7 +1660,8 @@ if (configuration.path.configuration?.json)
         require.resolve(configuration.path.configuration.json)
         try {
             customConfiguration =
-                require(configuration.path.configuration.json)
+                currentRequire!(configuration.path.configuration.json) as
+                    PlainObject
         } catch (error) {
             console.debug(
                 'Importing provided json webpack configuration file path ' +

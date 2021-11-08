@@ -4,7 +4,12 @@
     dependency cycle.
 */
 type Mapping<T = string> = {[key:string]:T}
-type PostcssPlugin = any // PostcssPluginCreator<Mapping<unknown>>
+interface PostcssTransformer {
+    postcssPlugin: string
+    postcssVersion: string
+
+    (root:object, result:object):Promise<void>|void
+}
 /** @module declarations */
 declare module 'babel-preset-minify'
 declare module 'html-loader'
@@ -15,7 +20,7 @@ declare module 'postcss-fontpath' {
             ext:string
             type:string
         }>
-    }>):PostcssPlugin
+    }>):PostcssTransformer
 }
 declare module 'postcss-sprites' {
     export default function(options:Partial<{
@@ -24,7 +29,7 @@ declare module 'postcss-sprites' {
         spritePath:string
         stylesheetPath:null|string
         verbose:boolean
-    }>):PostcssPlugin
+    }>):PostcssTransformer
 }
 declare module 'webOptimizerDefaultTemplateFilePath'
 declare module 'svgo' {

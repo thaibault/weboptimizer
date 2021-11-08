@@ -16,12 +16,7 @@
 */
 // region imports
 import {
-    AnyFunction,
-    Encoding,
-    Mapping,
-    PlainObject,
-    SecondParameter,
-    UnknownFunction
+    AnyFunction, Encoding, Mapping, PlainObject, SecondParameter
 } from 'clientnode/type'
 import {FaviconOptions} from 'favicons'
 import FaviconWebpackPlugin from 'favicons-webpack-plugin'
