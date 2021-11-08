@@ -134,7 +134,7 @@
     "eslint-plugin-jsdoc": "*",
     "favicons": "*",
     "favicons-webpack-plugin": "*",
-    "imagemin-webpack-plugin": "*",
+    "image-minimizer-webpack-plugin": "*",
     "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
@@ -175,7 +175,7 @@
     "eslint-plugin-jsdoc": "*",
     "favicons-webpack-plugin": "*",
     "identity-obj-proxy": "*",
-    "imagemin-webpack-plugin": "*",
+    "image-minimizer-webpack-plugin": "*",
     "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
@@ -250,7 +250,7 @@
     "identity-obj-proxy": {
       "optional": true
     },
-    "imagemin-webpack-plugin": {
+    "image-minimizer-webpack-plugin": {
       "optional": true
     },
     "jest": {
@@ -997,24 +997,27 @@
           },
           "image": {
             "content": {
-              "disable": {
-                "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? true : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{disable:false}}}}}\" to enable it.`) || true"
+              "minimizerOptions": {
+                "plugins": [
+                  [
+                    "gifsicle",
+                    {
+                      "colors": 256,
+                      "interlanced": false,
+                      "optimizationLevel": 3
+                    }
+                  ],
+                  ["jpegtran", {
+                    "arithmetic": true,
+                    "progressive": true
+                  }],
+                  ["optipng", {"optimizationLevel": 7}],
+                  ["svgo", {"plugins": []}]
+                ]
               },
-              "gifsicle": {
-                "colors": 256,
-                "interlanced": false,
-                "optimizationLevel": 3
-              },
-              "jpegtran": {
-                "arithmetic": true,
-                "progressive": true
-              },
-              "optipng": {
-                "optimizationLevel": 7
-              },
-              "plugins": [],
-              "pngquant": null,
-              "svgo": {}
+              "include": {
+                "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? '' : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{include:undefined}}}}}\" to enable default image file including.`) || ''"
+              }
             },
             "loader": []
           },

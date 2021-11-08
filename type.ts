@@ -20,15 +20,15 @@ import {
     Encoding,
     Mapping,
     PlainObject,
-    SecondParameter
+    SecondParameter,
+    UnknownFunction
 } from 'clientnode/type'
 import {FaviconOptions} from 'favicons'
 import FaviconWebpackPlugin from 'favicons-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import ImageminWebpackPlugin from 'imagemin-webpack-plugin'
+import ImageMinimizerWebpackPlugin from 'image-minimizer-webpack-plugin'
 import {JSDOM} from 'jsdom'
 import MiniCSSExtractPlugin from 'mini-css-extract-plugin'
-import {PluginCreator as PostcssPluginCreator} from 'postcss'
 import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
 import {
     DefinePlugin as WebpackDefinePlugin,
@@ -503,7 +503,7 @@ export type WebpackPlugins =
         Favicon?:typeof FaviconWebpackPlugin
         GenerateServiceWorker?:typeof OfflinePlugin.GenerateSW
         HTML?:typeof HtmlWebpackPlugin
-        Imagemin?:typeof ImageminWebpackPlugin
+        ImageMinimizer?:typeof ImageMinimizerWebpackPlugin
         InjectManifest?:typeof OfflinePlugin.InjectManifest
         Offline?:{
             GenerateSW:typeof OfflinePlugin.GenerateSW
@@ -536,8 +536,6 @@ export interface HTMLWebpackPluginBeforeEmitData {
     outputName:string
     plugin:HtmlWebpackPlugin
 }
-
-export type PostcssPlugin = PostcssPluginCreator<Mapping<unknown>>
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

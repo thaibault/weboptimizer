@@ -22,9 +22,10 @@ import {
 const postcssCSSnano:null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
-import ImageminWebpackPlugin from 'imagemin-webpack-plugin'
+import ImageMinimizerPlugin from 'image-minimizer-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {extname, join, relative, resolve} from 'path'
+import {Transformer as PostcssTransformer} from 'postcss'
 const postcssFontpath =
     optionalRequire<typeof import('postcss-fontpath').default>(
         'postcss-fontpath'
@@ -74,7 +75,6 @@ import {
     InPlaceConfiguration,
     Loader,
     PackageDescriptor,
-    PostcssPlugin,
     RedundantRequest,
     ResolvedConfiguration,
     RuleSet,
@@ -94,7 +94,7 @@ const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
     Favicon: 'favicons-webpack-plugin',
-    Imagemin: 'imagemin-webpack-plugin',
+    ImageMinimizer: 'image-minimizer-webpack-plugin',
     Offline: 'workbox-webpack-plugin'
 }
 
@@ -114,10 +114,6 @@ if (plugins.Offline) {
     plugins.GenerateServiceWorker = plugins.Offline.GenerateSW
     plugins.InjectManifest = plugins.Offline.InjectManifest
 }
-if (plugins.Imagemin)
-    plugins.Imagemin =
-        (plugins.Imagemin as unknown as {default:typeof ImageminWebpackPlugin})
-            .default
 // endregion
 const module:ResolvedConfiguration['module'] = configuration.module
 // region initialisation
@@ -764,8 +760,8 @@ if (htmlAvailable)
 // // region add automatic image compression
 // NOTE: This plugin should be loaded at last to ensure that all emitted images
 // ran through.
-if (plugins.Imagemin)
-    pluginInstances.push((new plugins.Imagemin(
+if (plugins.ImageMinimizer)
+    pluginInstances.push((new plugins.ImageMinizer(
         module.optimizer.image.content
     ) as unknown as Unpacked<WebpackConfiguration['plugins']>)!)
 // // endregion
@@ -1088,16 +1084,21 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                     true,
                     optionalRequire('postcss') ?
                         {postcssOptions: {
-                            plugins: ([] as Array<PostcssPlugin>).concat(
+                            /*
+                                NOTE: Some plugins like "postcss-import" are
+                                not yet ported to postcss 8. Let the final
+                                consumer decide which distribution suites most.
+                            */
+                            plugins: ([] as Array<PostcssTransformer>).concat(
                                 postcssImport ?
                                     postcssImport({
                                         root: configuration.path.context
-                                    }) :
+                                    }) as unknown as PostcssTransformer :
                                     [],
                                 module.preprocessor
                                     .cascadingStyleSheet.additional.plugins.pre
                                     .map(evaluateMapper) as
-                                        Array<PostcssPlugin>,
+                                        Array<PostcssTransformer>,
                                 /*
                                     NOTE: Checking path doesn't work if fonts
                                     are referenced in libraries provided in
@@ -1116,7 +1117,7 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                 postcssURL ?
                                     postcssURL({url: 'rebase'}) as
                                         unknown as
-                                        Array<PostcssPlugin> :
+                                        PostcssTransformer :
                                     [],
                                 postcssSprites ?
                                     postcssSprites({
@@ -1156,12 +1157,11 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                 module.preprocessor
                                     .cascadingStyleSheet.additional.plugins
                                     .post.map(evaluateMapper) as
-                                        unknown as
-                                        Array<PostcssPlugin>,
+                                        Array<PostcssTransformer>,
                                 (module.optimizer.cssnano && postcssCSSnano) ?
                                     postcssCSSnano(
                                         module.optimizer.cssnano
-                                    ) as unknown as Array<PostcssPlugin> :
+                                    ) as unknown as PostcssTransformer :
                                     []
                             )
                         }} :
