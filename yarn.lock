@@ -1833,12 +1833,12 @@
     postcss "^8.0.0"
 
 "@types/postcss-url@*":
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/@types/postcss-url/-/postcss-url-8.0.2.tgz#739be2912bb123f69d71cb690a45178d89d76930"
-  integrity sha512-5eMpnD6C02ZerfE/Omk1C/P+agin6jm8OBVP/7mQmRijhqJTPK9CR2k6p2Qi+9ux1ZDeVW/xYerxQqt2DqBrEg==
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@types/postcss-url/-/postcss-url-10.0.0.tgz#16dbb52a22bfa99361ab04ddee308bf7800cbb11"
+  integrity sha512-Ci0+xR7WUFw7K1z4qBml1+QJQmekD7B6fn5DTbb8X8Ud5gsVWvEsS5mmTHhyezgRtC60M1/EFuQRcvqNrGv/KQ==
   dependencies:
     "@types/node" "*"
-    postcss "7.x.x"
+    postcss "^8.0.0"
 
 "@types/prettier@^2.1.5":
   version "2.4.2"
@@ -8403,9 +8403,9 @@ postcss-value-parser@^3.3.0:
   integrity sha512-pISE66AbVkp4fDQ7VHBwRNXzAAKJjw4Vw7nWI/+Q3vuly7SNfgYXvm6i5IgFylHGK5sP/xHAbB7N49OS4gWNyQ==
 
 postcss-value-parser@^4.0.0, postcss-value-parser@^4.0.2, postcss-value-parser@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.1.0.tgz#443f6a20ced6481a2bda4fa8532a6e55d789a2cb"
-  integrity sha512-97DXOFbQJhk71ne5/Mt6cOu6yxsSfM0QGQyl0L25Gca4yGWEGJaig7l7gbCX623VqTBNGLRLaVUCnNkcedlRSQ==
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
+  integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
 postcss-values-parser@6.0.1, postcss-values-parser@^6, postcss-values-parser@^6.0.0:
   version "6.0.1"
@@ -8425,7 +8425,7 @@ postcss@*, postcss@^8.0.0, postcss@^8.2.15, postcss@^8.3, postcss@^8.3.0, postcs
     picocolors "^1.0.0"
     source-map-js "^1.0.1"
 
-"postcss@5 - 7", postcss@7.x.x:
+"postcss@5 - 7":
   version "7.0.39"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.39.tgz#9624375d965630e2e1f2c02a935c82a59cb48309"
   integrity sha512-yioayjNbHn6z1/Bywyb2Y4s3yvDAeXGOyxqD+LnVOinq6Mdmd++SW2wUNVzavyyHxd6+DxzWGIuosg6P1Rj8uA==
