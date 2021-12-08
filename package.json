@@ -1001,7 +1001,7 @@
           },
           "image": {
             "content": {
-              "minimizerOptions": {
+              "minimizer": {
                 "plugins": [
                   [
                     "gifsicle",
