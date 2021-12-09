@@ -136,7 +136,6 @@
     "favicons": "*",
     "favicons-webpack-plugin": "*",
     "image-minimizer-webpack-plugin": "*",
-    "imagemin": "*",
     "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
@@ -1002,35 +1001,37 @@
           "image": {
             "content": {
               "minimizer": {
-                "plugins": [
-                  [
-                    "gifsicle",
-                    {
-                      "colors": 256,
-                      "interlanced": false,
-                      "optimizationLevel": 3
-                    }
-                  ],
-                  [
-                    "jpegtran",
-                    {
-                      "arithmetic": true,
-                      "progressive": true
-                    }
-                  ],
-                  [
-                    "optipng",
-                    {
-                      "optimizationLevel": 7
-                    }
-                  ],
-                  [
-                    "svgo",
-                    {
-                      "plugins": []
-                    }
+                "options": {
+                  "plugins": [
+                    [
+                      "gifsicle",
+                      {
+                        "colors": 256,
+                        "interlanced": false,
+                        "optimizationLevel": 3
+                      }
+                    ],
+                    [
+                      "jpegtran",
+                      {
+                        "arithmetic": true,
+                        "progressive": true
+                      }
+                    ],
+                    [
+                      "optipng",
+                      {
+                        "optimizationLevel": 7
+                      }
+                    ],
+                    [
+                      "svgo",
+                      {
+                        "plugins": []
+                      }
+                    ]
                   ]
-                ]
+                }
               },
               "exclude": {
                 "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? /.*/ : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{exclude:undefined}}}}}\" to enable default image file including.`) || /.*/"

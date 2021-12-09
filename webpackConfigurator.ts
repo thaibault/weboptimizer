@@ -761,7 +761,10 @@ if (htmlAvailable)
 // ran through.
 if (plugins.ImageMinimizer)
     pluginInstances.push((new plugins.ImageMinimizer(
-        module.optimizer.image.content
+        {
+            implementation: plugins.ImageMinimizer.imageminMinify,
+            ...module.optimizer.image.content
+        }
     ) as unknown as Unpacked<WebpackConfiguration['plugins']>)!)
 // // endregion
 // // region context replacements
