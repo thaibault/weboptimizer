@@ -1039,11 +1039,7 @@
             },
             "loader": []
           },
-          "minimize": true,
-          "minimizer": {
-            "#": "HTML-Templates shouldn't be transformed via terser to avoid html webpack plugin throwing to not get markup as intermediate result.",
-            "__evaluate__": "[new (require('terser-webpack-plugin'))({exclude: /\\.html(?:\\.js)?(?:\\?.*)?$/, extractComments: false, parallel: true})]"
-          }
+          "minimize": true
         },
         "preprocessor": {
           "cascadingStyleSheet": {

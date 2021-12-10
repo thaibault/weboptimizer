@@ -94,7 +94,8 @@ const pluginNameResourceMapping:Mapping = {
     MiniCSSExtract: 'mini-css-extract-plugin',
     Favicon: 'favicons-webpack-plugin',
     ImageMinimizer: 'image-minimizer-webpack-plugin',
-    Offline: 'workbox-webpack-plugin'
+    Offline: 'workbox-webpack-plugin',
+    Terser: 'terser-webpack-plugin'
 }
 
 const plugins:WebpackPlugins = {}
@@ -755,17 +756,6 @@ if (htmlAvailable)
             }
         )
     })})
-// // endregion
-// // region add automatic image compression
-// NOTE: This plugin should be loaded at last to ensure that all emitted images
-// ran through.
-if (plugins.ImageMinimizer)
-    pluginInstances.push((new plugins.ImageMinimizer(
-        {
-            implementation: plugins.ImageMinimizer.imageminMinify,
-            ...module.optimizer.image.content
-        }
-    ) as unknown as Unpacked<WebpackConfiguration['plugins']>)!)
 // // endregion
 // // region context replacements
 for (const contextReplacement of module.replacements.context)
@@ -1639,9 +1629,11 @@ if (
 }
 // / endregion
 // endregion
+// region plugins
 for (const pluginConfiguration of configuration.plugins) {
     type Initializer = new (..._parameters:Array<unknown>) =>
         Unpacked<WebpackConfiguration['plugins']>
+
     const plugin:Mapping<Initializer>|null =
         optionalRequire(pluginConfiguration.name.module)
     if (plugin)
@@ -1656,6 +1648,40 @@ for (const pluginConfiguration of configuration.plugins) {
             'could not be loaded.'
         )
 }
+// endregion
+// region minimizer and image compression
+// NOTE: This plugin should be loaded at last to ensure that all emitted images
+// ran through.
+if (!module.optimizer.minimizer) {
+    module.optimizer.minimizer = []
+
+    if (plugins.Terser)
+        /*
+            HTML-Templates shouldn't be transformed via terser to avoid html
+            webpack plugin throwing to not get markup as intermediate result.
+        */
+        module.optimizer.minimizer.push(
+            new plugins.Terser({
+                exclude: /\\.html(?:\\.js)?(?:\\?.*)?$/,
+                extractComments: false,
+                parallel: true
+            })
+        )
+
+    if (plugins.ImageMinimizer)
+        module.optimizer.minimizer.push(new plugins.ImageMinimizer(
+            Tools.extend(
+                true,
+                {
+                    minimizer: {
+                        implementation: plugins.ImageMinimizer.imageminMinify
+                    }
+                },
+                module.optimizer.image.content
+            )
+        ))
+}
+// endregion
 // region configuration
 let customConfiguration:PlainObject = {}
 if (configuration.path.configuration?.json)
