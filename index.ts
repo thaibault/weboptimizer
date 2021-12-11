@@ -668,7 +668,7 @@ const main = async ():Promise<void> => {
 }
 
 if (require.main === module)
-    main().then(Tools.noop, Tools.noop)
+    void main()
 
 export default main
 // region vim modline
