@@ -1,10 +1,9 @@
-// #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
-/** @module clientnode */
+/** @module dummy */
 'use strict'
 /* !
     region header
-    [Project page](https://torben.website/clientnode)
+    [Project page](https://torben.website/weboptimizer)
 
     Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
 

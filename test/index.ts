@@ -2,6 +2,8 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import {resolve} from 'path'
+
 import main from '../index'
 // endregion
 test('index', async ():Promise<void> => {
@@ -11,6 +13,12 @@ test('index', async ():Promise<void> => {
         console.error(error)
     }
     expect(true).toBeTruthy()
+
+    try {
+        await main(resolve(__dirname, 'dummyProject'))
+    } catch (error) {
+        console.error(error)
+    }
 })
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
