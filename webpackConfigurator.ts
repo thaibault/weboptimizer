@@ -57,7 +57,7 @@ import {
     InjectManifestOptions as WorkboxInjectManifestOptions
 } from 'workbox-webpack-plugin'
 
-import configuration from './configurator'
+import loadConfiguration from './configurator'
 import Helper from './helper'
 import ejsLoader, {
     LoaderConfiguration as EJSLoaderConfiguration
@@ -115,6 +115,7 @@ if (plugins.Offline) {
     plugins.InjectManifest = plugins.Offline.InjectManifest
 }
 // endregion
+const configuration:ResolvedConfiguration = loadConfiguration()
 const module:ResolvedConfiguration['module'] = configuration.module
 // region initialisation
 // / region determine library name

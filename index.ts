@@ -16,7 +16,7 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imp orts
+// region imports
 import {
     ChildProcess,
     CommonSpawnOptions,
@@ -45,23 +45,28 @@ import removeDirectoryRecursively, {
     sync as removeDirectoryRecursivelySync
 } from 'rimraf'
 
-import configuration from './configurator'
+import loadConfiguration from './configurator'
 import Helper from './helper'
 import {
     Command,
     CommandLineArguments,
     GivenInjection,
     ResolvedBuildConfiguration,
-    ResolvedBuildConfigurationItem
+    ResolvedBuildConfigurationItem,
+    ResolvedConfiguration
 } from './type'
 // endregion
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128'
 /**
  * Main entry point.
+ * @param context - Location from where to build current application.
+ *
  * @returns Nothing.
  */
-const main = async ():Promise<void> => {
+const main = async (context?:string):Promise<void> => {
+    const configuration:ResolvedConfiguration = loadConfiguration(context)
+
     try {
         // region controller
         const processOptions:ExecOptions = {

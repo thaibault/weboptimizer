@@ -1,9 +1,11 @@
 // #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
-/** @module stylelintConfigurator */
+/** @module clientnode */
 'use strict'
 /* !
     region header
+    [Project page](https://torben.website/clientnode)
+
     Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
 
     License
@@ -14,15 +16,7 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports
-import loadConfiguration from './configurator'
-import {ResolvedConfiguration} from './type'
-// endregion
-const configuration:ResolvedConfiguration = loadConfiguration()
-
-module.exports = configuration.stylelint
-
-export default module.exports
+export const default = () => console.info('Running dummy module')
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
