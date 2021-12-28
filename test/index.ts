@@ -14,6 +14,7 @@ test('index', async ():Promise<void> => {
     }
     expect(true).toBeTruthy()
 
+    console.log('TODO', resolve(__dirname, 'dummyProject'))
     try {
         await main(resolve(__dirname, 'dummyProject'))
     } catch (error) {
