@@ -403,6 +403,7 @@ if (
                     (asset:WebpackBaseAssets):WebpackBaseAssets => {
                         for (const name of inPlacedAssetNames)
                             delete compilation.assets[name]
+
                         return asset
                     }
                 )
@@ -427,7 +428,8 @@ if (configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract)
         filename: relative(
             configuration.path.target.base,
             configuration.files.compose.cascadingStyleSheet
-        )
+        ),
+        runtime: false
     }))
 // /// endregion
 // /// region performs implicit external logic

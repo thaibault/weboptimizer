@@ -489,6 +489,8 @@
               "'**/plugins/*'",
               "--ignore-pattern",
               "'*.d.ts'",
+              "--resolve-plugins-relative-to",
+              ".",
               "'**/*.{jsx,ts,tsx}'"
             ],
             "command": "eslint",
