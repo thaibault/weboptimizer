@@ -156,6 +156,10 @@ export interface PathConfiguration extends BasePathConfiguration {
     context:string
     ignore:Array<string>
     tidyUp:Array<string>
+    tidyUpGlobs:{
+        options:RemoveDirectoryRecursivelyOptions
+        pattern:Array<string>
+    }
     tidyUpOnClear:Array<string>
     tidyUpOnClearGlobs:{
         options:RemoveDirectoryRecursivelyOptions
@@ -333,7 +337,7 @@ export interface ResolvedConfiguration {
     files:{
         additionalPaths:Array<string>
         compose:{
-            cascadingStyleSheet:string
+            cascadingStyleSheet:string|((_asset:unknown) => string)
             image:string
             javaScript:string
         }

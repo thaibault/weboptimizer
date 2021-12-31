@@ -1356,6 +1356,24 @@
             "__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"
           }
         ],
+        "tidyUpGlobs": {
+          "options": {
+            "glob": {
+              "ignore": [
+                "node_modules/**/*.css.js",
+                "**/node_modules/**/*.css.js"
+              ]
+            }
+          },
+          "pattern": [
+            {
+              "__evaluate__": "path.resolve(self.path.target.base, '*.css.js')"
+            },
+            {
+              "__evaluate__": "path.resolve(self.path.target.base, '**/*.css.js')"
+            }
+          ]
+        },
         "tidyUpOnClear": [
           {
             "__evaluate__": "path.resolve(self.path.target.base, 'yarn-error.log')"
@@ -1633,7 +1651,7 @@
       "files": {
         "compose": {
           "cascadingStyleSheet": {
-            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['serve', 'test:browser'].includes(self.givenCommandLineArguments[2]) ? null : `${path.resolve(self.path.target.asset.cascadingStyleSheet, `[name]${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '.compiled' : ''}.css`)}?${self.hashAlgorithm}=[chunkhash]`"
+            "__evaluate__": "self.debug && 2 < self.givenCommandLineArguments.length && ['serve', 'test:browser'].includes(self.givenCommandLineArguments[2]) ? null : ({chunk: {name}}) => `${path.relative(self.path.target.base, path.resolve(self.path.target.asset.cascadingStyleSheet, `${path.basename(name, '.css')}${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '.compiled' : ''}.css`))}?${self.hashAlgorithm}=[chunkhash]`"
           }
         },
         "defaultHTML": {

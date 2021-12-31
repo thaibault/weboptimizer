@@ -423,13 +423,13 @@ if (!(
     )
 // /// endregion
 // /// region extract cascading style sheets
-if (configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract)
+const cssOutputPath:string|((_asset:unknown) => string) =
+    configuration.files.compose.cascadingStyleSheet
+if (cssOutputPath && plugins.MiniCSSExtract)
     pluginInstances.push(new plugins.MiniCSSExtract({
-        filename: relative(
-            configuration.path.target.base,
-            configuration.files.compose.cascadingStyleSheet
-        ),
-        runtime: false
+        filename: typeof cssOutputPath === 'string' ?
+            relative(configuration.path.target.base, cssOutputPath) :
+            cssOutputPath
     }))
 // /// endregion
 // /// region performs implicit external logic

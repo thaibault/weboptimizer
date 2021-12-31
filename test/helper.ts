@@ -378,6 +378,10 @@ describe('helper', ():void => {
                     public: ''
                 },
                 tidyUp: [],
+                tidyUpGlobs: {
+                    options: {},
+                    pattern: []
+                },
                 tidyUpOnClear: [],
                 tidyUpOnClearGlobs: {
                     options: {},

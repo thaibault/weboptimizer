@@ -304,7 +304,7 @@ const main = async (context?:string):Promise<void> => {
                 'test:coverage:report'
             ].includes(process.argv[2])) {
                 let tidiedUp = false
-                const tidyUp:ProcedureFunction = ():void => {
+                const tidyUp = ():void => {
                     /*
                         Determines all none javaScript entities which have been
                         emitted as single module to remove.
@@ -322,7 +322,8 @@ const main = async (context?:string):Promise<void> => {
                         ))
                             for (const moduleID of
                                 configuration.injection.entry.normalized[
-                                    chunkName]
+                                    chunkName
+                                ]
                             ) {
                                 const filePath:null|string =
                                     Helper.determineModuleFilePath(
@@ -389,6 +390,16 @@ const main = async (context?:string):Promise<void> => {
                                 removeDirectoryRecursivelySync(
                                     filePath, {glob: false}
                                 )
+
+                    for (
+                        const filePathPattern of
+                        configuration.path.tidyUpGlobs.pattern
+                    )
+                        if (filePathPattern)
+                            removeDirectoryRecursivelySync(
+                                filePathPattern,
+                                configuration.path.tidyUpOnClearGlobs.options
+                            )
                 }
 
                 closeEventHandlers.push(tidyUp)
