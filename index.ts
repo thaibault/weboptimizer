@@ -16,7 +16,7 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imp orts
+// region imports
 import {
     ChildProcess,
     CommonSpawnOptions,
@@ -45,23 +45,28 @@ import removeDirectoryRecursively, {
     sync as removeDirectoryRecursivelySync
 } from 'rimraf'
 
-import configuration from './configurator'
+import loadConfiguration from './configurator'
 import Helper from './helper'
 import {
     Command,
     CommandLineArguments,
     GivenInjection,
     ResolvedBuildConfiguration,
-    ResolvedBuildConfigurationItem
+    ResolvedBuildConfigurationItem,
+    ResolvedConfiguration
 } from './type'
 // endregion
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128'
 /**
  * Main entry point.
+ * @param context - Location from where to build current application.
+ *
  * @returns Nothing.
  */
-const main = async ():Promise<void> => {
+const main = async (context?:string):Promise<void> => {
+    const configuration:ResolvedConfiguration = loadConfiguration(context)
+
     try {
         // region controller
         const processOptions:ExecOptions = {
@@ -299,7 +304,7 @@ const main = async ():Promise<void> => {
                 'test:coverage:report'
             ].includes(process.argv[2])) {
                 let tidiedUp = false
-                const tidyUp:ProcedureFunction = ():void => {
+                const tidyUp = ():void => {
                     /*
                         Determines all none javaScript entities which have been
                         emitted as single module to remove.
@@ -317,7 +322,8 @@ const main = async ():Promise<void> => {
                         ))
                             for (const moduleID of
                                 configuration.injection.entry.normalized[
-                                    chunkName]
+                                    chunkName
+                                ]
                             ) {
                                 const filePath:null|string =
                                     Helper.determineModuleFilePath(
@@ -384,6 +390,16 @@ const main = async ():Promise<void> => {
                                 removeDirectoryRecursivelySync(
                                     filePath, {glob: false}
                                 )
+
+                    for (
+                        const filePathPattern of
+                        configuration.path.tidyUpGlobs.pattern
+                    )
+                        if (filePathPattern)
+                            removeDirectoryRecursivelySync(
+                                filePathPattern,
+                                configuration.path.tidyUpOnClearGlobs.options
+                            )
                 }
 
                 closeEventHandlers.push(tidyUp)

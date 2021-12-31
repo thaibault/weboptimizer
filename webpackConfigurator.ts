@@ -57,7 +57,7 @@ import {
     InjectManifestOptions as WorkboxInjectManifestOptions
 } from 'workbox-webpack-plugin'
 
-import configuration from './configurator'
+import loadConfiguration from './configurator'
 import Helper from './helper'
 import ejsLoader, {
     LoaderConfiguration as EJSLoaderConfiguration
@@ -115,6 +115,7 @@ if (plugins.Offline) {
     plugins.InjectManifest = plugins.Offline.InjectManifest
 }
 // endregion
+const configuration:ResolvedConfiguration = loadConfiguration()
 const module:ResolvedConfiguration['module'] = configuration.module
 // region initialisation
 // / region determine library name
@@ -402,6 +403,7 @@ if (
                     (asset:WebpackBaseAssets):WebpackBaseAssets => {
                         for (const name of inPlacedAssetNames)
                             delete compilation.assets[name]
+
                         return asset
                     }
                 )
@@ -421,12 +423,13 @@ if (!(
     )
 // /// endregion
 // /// region extract cascading style sheets
-if (configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract)
+const cssOutputPath:string|((_asset:unknown) => string) =
+    configuration.files.compose.cascadingStyleSheet
+if (cssOutputPath && plugins.MiniCSSExtract)
     pluginInstances.push(new plugins.MiniCSSExtract({
-        filename: relative(
-            configuration.path.target.base,
-            configuration.files.compose.cascadingStyleSheet
-        )
+        filename: typeof cssOutputPath === 'string' ?
+            relative(configuration.path.target.base, cssOutputPath) :
+            cssOutputPath
     }))
 // /// endregion
 // /// region performs implicit external logic

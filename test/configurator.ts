@@ -2,10 +2,10 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import configuration from '../configurator'
+import loadConfiguration from '../configurator'
 // endregion
-test('configurator', ():void =>
-    expect(configuration.name).toStrictEqual('mockup')
+test('loadConfiguration', ():void =>
+    expect(loadConfiguration()).toHaveProperty('name', 'mockup')
 )
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
