@@ -33,7 +33,11 @@ import {
     SubConfigurationTypes
 } from './type'
 // endregion
+export let loadedConfiguration:null|ResolvedConfiguration = null
+
 export const load = (context?:string):ResolvedConfiguration => {
+    if (loadedConfiguration)
+        return loadedConfiguration
     // region determine application context location
     if (context)
         metaConfiguration.default.path.context = context
@@ -571,8 +575,10 @@ export const load = (context?:string):ResolvedConfiguration => {
         }
     }
     // endregion
-    return resolvedConfiguration
+    loadedConfiguration = resolvedConfiguration
+    return loadedConfiguration
 }
+
 export default load
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
