@@ -6,12 +6,20 @@ import {resolve} from 'path'
 
 import main from '../index'
 // endregion
-test('index', ():void => {
-    void expect(main()).resolves.toBeUndefined()
-
-    void expect(main(resolve(__dirname, 'simple'))).resolves.toBeUndefined()
-    void expect(main(resolve(__dirname, 'scss'))).resolves.toBeUndefined()
-})
+for (const folder of ['simple', 'scss'])
+    test.each(
+        ['clear', 'check:types', 'lint', 'build', 'clear', 'test', 'build']
+    )(`index (${folder}:%s)`, async (command:string):Promise<void> => {
+        try {
+            await expect(main(
+                resolve(__dirname, folder),
+                resolve(__dirname, folder),
+                ['yarn', 'weboptimizer', command]
+            )).resolves.toBeUndefined()
+        } catch (error) {
+            console.error(error)
+        }
+    })
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

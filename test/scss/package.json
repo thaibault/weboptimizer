@@ -76,7 +76,7 @@
     "postcss-sprites": "*",
     "postcss-url": "*",
     "sass": "*",
-    "sass-loader": "^10.0.5",
+    "sass-loader": "*",
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",

@@ -45,7 +45,7 @@ import removeDirectoryRecursively, {
     sync as removeDirectoryRecursivelySync
 } from 'rimraf'
 
-import loadConfiguration from './configurator'
+import {load as loadConfiguration} from './configurator'
 import Helper from './helper'
 import {
     Command,
@@ -61,17 +61,36 @@ process.env.UV_THREADPOOL_SIZE = '128'
 /**
  * Main entry point.
  * @param context - Location from where to build current application.
+ * @param currentWorkingDirectory - Current working directory to use as
+ * reference.
+ * @param commandLineArguments - Arguments to take into account.
+ * @param environment - Environment variables to take into account.
  *
  * @returns Nothing.
  */
-const main = async (context?:string):Promise<void> => {
-    const configuration:ResolvedConfiguration = loadConfiguration(context)
+const main = async (
+    context?:string,
+    currentWorkingDirectory:string = process.cwd(),
+    commandLineArguments:Array<string> = process.argv,
+    /*
+        NOTE: We have to avoid that some pre-processor removes this
+        assignment.
+    */
+    // eslint-disable-next-line no-eval
+    environment:NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
+):Promise<void> => {
+    const configuration:ResolvedConfiguration = loadConfiguration(
+        context,
+        currentWorkingDirectory,
+        commandLineArguments,
+        environment
+    )
 
     try {
         // region controller
         const processOptions:ExecOptions = {
             cwd: configuration.path.context,
-            env: process.env
+            env: environment
         }
         const childProcessOptions:CommonSpawnOptions = {
             shell: true,
@@ -128,7 +147,8 @@ const main = async (context?:string):Promise<void> => {
                 count += 1
             }
             await writeFile(filePath, JSON.stringify(dynamicConfiguration))
-            const additionalArguments:Array<string> = process.argv.splice(3)
+            const additionalArguments:Array<string> =
+                commandLineArguments.splice(3)
             // / region register exit handler to tidy up
             closeEventHandlers.push((error:Error):void => {
                 // NOTE: Close handler have to be synchronous.
@@ -302,7 +322,7 @@ const main = async (context?:string):Promise<void> => {
                 'test',
                 'test:coverage',
                 'test:coverage:report'
-            ].includes(process.argv[2])) {
+            ].includes(commandLineArguments[2])) {
                 let tidiedUp = false
                 const tidyUp = ():void => {
                     /*
@@ -463,7 +483,7 @@ const main = async (context?:string):Promise<void> => {
                             resolve,
                             reject,
                             null,
-                            process.argv[2] === 'build' ?
+                            commandLineArguments[2] === 'build' ?
                                 copyAdditionalFilesAndTidyUp :
                                 tidyUp
 

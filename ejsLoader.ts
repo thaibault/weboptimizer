@@ -27,7 +27,7 @@ import {minify as minifyHTML} from 'html-minifier'
 import {extname} from 'path'
 import {LoaderContext} from 'webpack'
 
-import loadConfiguration from './configurator'
+import getConfiguration from './configurator'
 import Helper from './helper'
 import {Extensions, Replacements, ResolvedConfiguration} from './type'
 // endregion
@@ -67,7 +67,7 @@ export type LoaderConfiguration =
         }
     }
 // endregion
-const configuration:ResolvedConfiguration = loadConfiguration()
+const configuration:ResolvedConfiguration = getConfiguration()
 /**
  * Main transformation function.
  * @param this - Loader context.
