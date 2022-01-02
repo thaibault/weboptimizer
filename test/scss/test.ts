@@ -4,7 +4,7 @@
 // region imports
 import main from './index'
 // endregion
-test('index', async ():Promise<void> => {
+test('index', ():void => {
     expect(main()).toBeUndefined()
 })
 // region vim modline

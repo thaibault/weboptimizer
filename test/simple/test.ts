@@ -2,15 +2,10 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import {resolve} from 'path'
-
-import main from '../index'
+import main from './index'
 // endregion
 test('index', ():void => {
-    void expect(main()).resolves.toBeUndefined()
-
-    void expect(main(resolve(__dirname, 'simple'))).resolves.toBeUndefined()
-    void expect(main(resolve(__dirname, 'scss'))).resolves.toBeUndefined()
+    expect(main()).toBeUndefined()
 })
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:

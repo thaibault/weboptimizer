@@ -1,5 +1,5 @@
 {
-  "name": "dummy",
+  "name": "scss",
   "version": "0.0.1",
   "description": "dummy project",
   "keywords": [
@@ -18,7 +18,7 @@
   },
   "files": [
     "index.d.ts",
-    "index.js"
+    "index.ts"
   ],
   "repository": {
     "type": "git",
@@ -75,6 +75,8 @@
     "postcss-preset-env": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
+    "sass": "*",
+    "sass-loader": "^10.0.5",
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
@@ -96,7 +98,25 @@
     "tagline": "dummy project",
     "trackingCode": "UA-XXX-X"
   },
-  "webOptimizer": {},
+  "webOptimizer": {
+    "injection": {
+      "chunks": false,
+      "entry": {
+        "index": ["./index.scss", "./index.tsx"]
+      }
+    },
+    "module": {
+      "preprocessor": {
+        "cascadingStyleSheet": {
+          "additional": {
+            "post": [
+              "{loader: 'sass-loader'}"
+            ]
+          }
+        }
+      }
+    }
+  },
   "dependencies": {
     "@types/webpack": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
   }
