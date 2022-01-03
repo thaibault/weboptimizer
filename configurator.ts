@@ -40,6 +40,7 @@ export let loadedConfiguration:null|ResolvedConfiguration = null
  * @param currentWorkingDirectory - Current working directory to use as
  * reference.
  * @param commandLineArguments - Arguments to take into account.
+ * @param webOptimizerPath - Current optimizer context path.
  * @param environment - Environment variables to take into account.
  *
  * @returns Nothing.
@@ -48,6 +49,7 @@ export const load = (
     context?:string,
     currentWorkingDirectory:string = process.cwd(),
     commandLineArguments:Array<string> = process.argv,
+    webOptimizerPath:string = __dirname,
     /*
         NOTE: We have to avoid that some pre-processor removes this
         assignment.
@@ -65,7 +67,7 @@ export const load = (
             with projects where current working directory isn't the projects
             directory and this library is located as a nested dependency.
         */
-        metaConfiguration.default.path.context = __dirname
+        metaConfiguration.default.path.context = webOptimizerPath
         while (true) {
             metaConfiguration.default.path.context =
                 resolve(metaConfiguration.default.path.context, '../../')
@@ -391,7 +393,7 @@ export const load = (
                 path,
                 require: currentRequire,
                 Tools,
-                webOptimizerPath: __dirname,
+                webOptimizerPath,
                 now,
                 nowUTCTimestamp: Tools.numberGetUTCTimestamp(now)
             }

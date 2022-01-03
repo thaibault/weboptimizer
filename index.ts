@@ -64,6 +64,7 @@ process.env.UV_THREADPOOL_SIZE = '128'
  * @param currentWorkingDirectory - Current working directory to use as
  * reference.
  * @param commandLineArguments - Arguments to take into account.
+ * @param webOptimizerPath - Current optimizer context path.
  * @param environment - Environment variables to take into account.
  *
  * @returns Nothing.
@@ -72,6 +73,7 @@ const main = async (
     context?:string,
     currentWorkingDirectory:string = process.cwd(),
     commandLineArguments:Array<string> = process.argv,
+    webOptimizerPath:string = __dirname,
     /*
         NOTE: We have to avoid that some pre-processor removes this
         assignment.
@@ -83,6 +85,7 @@ const main = async (
         context,
         currentWorkingDirectory,
         commandLineArguments,
+        webOptimizerPath,
         environment
     )
 
@@ -444,6 +447,13 @@ const main = async (
                         '"'
                     )
 
+                    /*
+                        NOTE: Take current weboptimizer's dependencies into
+                        account.
+                    */
+                    childProcessOptions.env!.PATH +=
+                        `:${webOptimizerPath}/node_modules/.bin`
+
                     const childProcess:ChildProcess = spawnChildProcess(
                         configuration.commandLine.build.command,
                         commandLineArguments,
@@ -692,6 +702,8 @@ const main = async (
         try {
             await Promise.all(processPromises)
         } catch (error) {
+            console.error(error)
+
             process.exit((error as ProcessError).returnCode)
         }
         // endregion
