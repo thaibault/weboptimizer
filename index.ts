@@ -80,7 +80,7 @@ const main = async (
     */
     // eslint-disable-next-line no-eval
     environment:NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
-):Promise<void> => {
+):Promise<() => void> => {
     const configuration:ResolvedConfiguration = loadConfiguration(
         context,
         currentWorkingDirectory,
@@ -88,6 +88,8 @@ const main = async (
         webOptimizerPath,
         environment
     )
+
+    let clear:() => void = Tools.noop() as () => void
 
     try {
         // region controller
@@ -135,6 +137,7 @@ const main = async (
                 )
             )
                 configuration.givenCommandLineArguments.pop()
+
             let count = 0
             let filePath:string = resolve(
                 configuration.path.context,
@@ -147,20 +150,23 @@ const main = async (
                 )
                 if (!(await Tools.isFile(filePath)))
                     break
+
                 count += 1
             }
             await writeFile(filePath, JSON.stringify(dynamicConfiguration))
+
             const additionalArguments:Array<string> =
                 commandLineArguments.splice(3)
             // / region register exit handler to tidy up
-            closeEventHandlers.push((error:Error):void => {
+            clear = (error?:Error):void => {
                 // NOTE: Close handler have to be synchronous.
                 if (Tools.isFileSync(filePath))
                     unlinkSync(filePath)
 
                 if (error)
                     throw error
-            })
+            }
+            closeEventHandlers.push(clear)
             // / endregion
             // endregion
             // region handle clear
@@ -319,6 +325,7 @@ const main = async (
                     ),
                     configuration.package.main.fileNames
                 )
+
             if ([
                 'build',
                 'document',
@@ -653,6 +660,7 @@ const main = async (
                 configuration.givenCommandLineArguments[2]
             )) {
                 await Promise.all(processPromises)
+
                 handleTask(
                     configuration.givenCommandLineArguments[2] as keyof
                         CommandLineArguments
@@ -713,6 +721,8 @@ const main = async (
         else
             console.error(error)
     }
+
+    return clear
 }
 
 if (require.main === module)

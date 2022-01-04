@@ -4,8 +4,6 @@
 // region imports
 import {resolve} from 'path'
 import {spawnSync as spawnChildProcessSync} from 'child_process'
-
-import main from '../index'
 // endregion
 /*
     NOTE: Theses tasks can take lot longer than 5 seconds (default
@@ -13,26 +11,23 @@ import main from '../index'
 */
 jest.setTimeout(60 * 1000)
 
-for (const folder of ['simple'/*, 'scss'*/])
-    test.each(
-        ['clear', 'check:types', 'lint', 'build', 'clear', 'test']
-    )(`index (${folder}:%s)`, async (command:string):Promise<void> => {
-        console.log('A TODO', folder, command)
-        try {
-            await main(
-                resolve(__dirname, folder),
-                resolve(__dirname, folder),
-                ['yarn', 'weboptimizer', command],
-                resolve(__dirname, folder, 'node_modules', 'weboptimizer')
-            )
-            console.log('B', folder, command)
-            expect(true).toBeTruthy()
-        } catch (error) {
-            console.error(error)
-            console.log('D', folder, command)
+for (const folder of ['simple', 'scss'])
+    test.each(['check:types', 'lint', 'build', 'test'])(
+        `index (${folder}:%s)`,
+        (command:string):void => {
+            for (const currentCommand of ['clear', command, 'clear'])
+                expect(spawnChildProcessSync(
+                    'yarn',
+                    ['weboptimizer', currentCommand],
+                    {
+                        cwd: resolve(__dirname, folder),
+                        env: process.env,
+                        shell: true,
+                        stdio: 'inherit'
+                    }
+                ).status).toStrictEqual(0)
         }
-        console.log('E', folder, command)
-    })
+    )
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

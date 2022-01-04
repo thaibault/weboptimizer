@@ -485,6 +485,7 @@ export const load = (
                 resolvedConfiguration.givenCommandLineArguments[2]
             )
     }
+    // / region determine which asset types are needed
     for (const chunkName in resolvedConfiguration.injection.entry.normalized)
         if (Object.prototype.hasOwnProperty.call(
             resolvedConfiguration.injection.entry.normalized, chunkName
@@ -502,7 +503,7 @@ export const load = (
                     /*
                         NOTE: We doesn't use
                         "resolvedConfiguration.path.source.asset.base" because
-                        we have already resolve all module ids.
+                        we already have resolved all module ids.
                     */
                     './',
                     resolvedConfiguration.path.ignore,
@@ -526,6 +527,7 @@ export const load = (
                 if (type)
                     resolvedConfiguration.needed[type] = true
             }
+    // / endregion
     // endregion
     // region adding special aliases
     /*

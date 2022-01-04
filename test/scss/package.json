@@ -18,7 +18,7 @@
   },
   "files": [
     "index.d.ts",
-    "index.ts"
+    "index.tsx"
   ],
   "repository": {
     "type": "git",
@@ -99,10 +99,28 @@
     "trackingCode": "UA-XXX-X"
   },
   "webOptimizer": {
+    "commandLine": {
+      "lint": {
+        "__remove__": "__0__",
+        "__prepend__": {
+          "arguments": [
+            {
+              "__evaluate__": "path.resolve(self.path.source.asset.cascadingStyleSheet, '**/*.scss')"
+            },
+            "--config",
+            {
+              "__evaluate__": "path.relative(self.path.context, path.resolve(webOptimizerPath, 'stylelintConfigurator.js'))"
+            }
+          ],
+          "command": "stylelint",
+          "indicator": "self.needed.cascadingStyleSheet"
+        }
+      }
+    },
     "injection": {
       "chunks": false,
       "entry": {
-        "index": ["./index.scss", "./index.tsx"]
+        "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2].startsWith('test') ? {testBundle: './test.ts'} : {index: ['./index.scss', './index.tsx']}"
       }
     },
     "module": {

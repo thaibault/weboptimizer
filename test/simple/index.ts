@@ -15,7 +15,7 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-export const main = ():void => console.info('Running dummy module')
+export const main = ():void => console.info('Running simple dummy module')
 
 export default main
 // region vim modline
