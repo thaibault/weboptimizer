@@ -45,7 +45,7 @@ import removeDirectoryRecursively, {
     sync as removeDirectoryRecursivelySync
 } from 'rimraf'
 
-import loadConfiguration from './configurator'
+import {load as loadConfiguration} from './configurator'
 import Helper from './helper'
 import {
     Command,
@@ -61,17 +61,41 @@ process.env.UV_THREADPOOL_SIZE = '128'
 /**
  * Main entry point.
  * @param context - Location from where to build current application.
+ * @param currentWorkingDirectory - Current working directory to use as
+ * reference.
+ * @param commandLineArguments - Arguments to take into account.
+ * @param webOptimizerPath - Current optimizer context path.
+ * @param environment - Environment variables to take into account.
  *
  * @returns Nothing.
  */
-const main = async (context?:string):Promise<void> => {
-    const configuration:ResolvedConfiguration = loadConfiguration(context)
+const main = async (
+    context?:string,
+    currentWorkingDirectory:string = process.cwd(),
+    commandLineArguments:Array<string> = process.argv,
+    webOptimizerPath:string = __dirname,
+    /*
+        NOTE: We have to avoid that some pre-processor removes this
+        assignment.
+    */
+    // eslint-disable-next-line no-eval
+    environment:NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
+):Promise<() => void> => {
+    const configuration:ResolvedConfiguration = loadConfiguration(
+        context,
+        currentWorkingDirectory,
+        commandLineArguments,
+        webOptimizerPath,
+        environment
+    )
+
+    let clear:() => void = Tools.noop() as () => void
 
     try {
         // region controller
         const processOptions:ExecOptions = {
             cwd: configuration.path.context,
-            env: process.env
+            env: environment
         }
         const childProcessOptions:CommonSpawnOptions = {
             shell: true,
@@ -113,6 +137,7 @@ const main = async (context?:string):Promise<void> => {
                 )
             )
                 configuration.givenCommandLineArguments.pop()
+
             let count = 0
             let filePath:string = resolve(
                 configuration.path.context,
@@ -125,19 +150,23 @@ const main = async (context?:string):Promise<void> => {
                 )
                 if (!(await Tools.isFile(filePath)))
                     break
+
                 count += 1
             }
             await writeFile(filePath, JSON.stringify(dynamicConfiguration))
-            const additionalArguments:Array<string> = process.argv.splice(3)
+
+            const additionalArguments:Array<string> =
+                commandLineArguments.splice(3)
             // / region register exit handler to tidy up
-            closeEventHandlers.push((error:Error):void => {
+            clear = (error?:Error):void => {
                 // NOTE: Close handler have to be synchronous.
                 if (Tools.isFileSync(filePath))
                     unlinkSync(filePath)
 
                 if (error)
                     throw error
-            })
+            }
+            closeEventHandlers.push(clear)
             // / endregion
             // endregion
             // region handle clear
@@ -296,13 +325,14 @@ const main = async (context?:string):Promise<void> => {
                     ),
                     configuration.package.main.fileNames
                 )
+
             if ([
                 'build',
                 'document',
                 'test',
                 'test:coverage',
                 'test:coverage:report'
-            ].includes(process.argv[2])) {
+            ].includes(commandLineArguments[2])) {
                 let tidiedUp = false
                 const tidyUp = ():void => {
                     /*
@@ -424,6 +454,13 @@ const main = async (context?:string):Promise<void> => {
                         '"'
                     )
 
+                    /*
+                        NOTE: Take current weboptimizer's dependencies into
+                        account.
+                    */
+                    childProcessOptions.env!.PATH +=
+                        `:${webOptimizerPath}/node_modules/.bin`
+
                     const childProcess:ChildProcess = spawnChildProcess(
                         configuration.commandLine.build.command,
                         commandLineArguments,
@@ -463,7 +500,7 @@ const main = async (context?:string):Promise<void> => {
                             resolve,
                             reject,
                             null,
-                            process.argv[2] === 'build' ?
+                            commandLineArguments[2] === 'build' ?
                                 copyAdditionalFilesAndTidyUp :
                                 tidyUp
 
@@ -623,6 +660,7 @@ const main = async (context?:string):Promise<void> => {
                 configuration.givenCommandLineArguments[2]
             )) {
                 await Promise.all(processPromises)
+
                 handleTask(
                     configuration.givenCommandLineArguments[2] as keyof
                         CommandLineArguments
@@ -672,6 +710,8 @@ const main = async (context?:string):Promise<void> => {
         try {
             await Promise.all(processPromises)
         } catch (error) {
+            console.error(error)
+
             process.exit((error as ProcessError).returnCode)
         }
         // endregion
@@ -681,6 +721,8 @@ const main = async (context?:string):Promise<void> => {
         else
             console.error(error)
     }
+
+    return clear
 }
 
 if (require.main === module)

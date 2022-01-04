@@ -34,10 +34,29 @@ import {
 } from './type'
 // endregion
 export let loadedConfiguration:null|ResolvedConfiguration = null
-
-export const load = (context?:string):ResolvedConfiguration => {
-    if (loadedConfiguration)
-        return loadedConfiguration
+/**
+ * Main entry point to determine current configuration.
+ * @param context - Location from where to build current application.
+ * @param currentWorkingDirectory - Current working directory to use as
+ * reference.
+ * @param commandLineArguments - Arguments to take into account.
+ * @param webOptimizerPath - Current optimizer context path.
+ * @param environment - Environment variables to take into account.
+ *
+ * @returns Nothing.
+ */
+export const load = (
+    context?:string,
+    currentWorkingDirectory:string = process.cwd(),
+    commandLineArguments:Array<string> = process.argv,
+    webOptimizerPath:string = __dirname,
+    /*
+        NOTE: We have to avoid that some pre-processor removes this
+        assignment.
+    */
+    // eslint-disable-next-lien no-eval
+    environment:NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
+):ResolvedConfiguration => {
     // region determine application context location
     if (context)
         metaConfiguration.default.path.context = context
@@ -48,7 +67,7 @@ export const load = (context?:string):ResolvedConfiguration => {
             with projects where current working directory isn't the projects
             directory and this library is located as a nested dependency.
         */
-        metaConfiguration.default.path.context = __dirname
+        metaConfiguration.default.path.context = webOptimizerPath
         while (true) {
             metaConfiguration.default.path.context =
                 resolve(metaConfiguration.default.path.context, '../../')
@@ -59,15 +78,16 @@ export const load = (context?:string):ResolvedConfiguration => {
                 break
         }
         if (
-            basename(dirname(process.cwd())) === 'node_modules' ||
-            basename(dirname(process.cwd())) === '.staging' &&
-            basename(dirname(dirname(process.cwd()))) === 'node_modules'
+            basename(dirname(currentWorkingDirectory)) === 'node_modules' ||
+            basename(dirname(currentWorkingDirectory)) === '.staging' &&
+            basename(dirname(dirname(currentWorkingDirectory))) ===
+                'node_modules'
         ) {
             /*
                 NOTE: If we are dealing was a dependency project use current
                 directory as context.
             */
-            metaConfiguration.default.path.context = process.cwd()
+            metaConfiguration.default.path.context = currentWorkingDirectory
             metaConfiguration.default.contextType = 'dependency'
         } else
             /*
@@ -78,10 +98,11 @@ export const load = (context?:string):ResolvedConfiguration => {
             */
             try {
                 if (
-                    lstatSync(join(process.cwd(), 'node_modules'))
+                    lstatSync(join(currentWorkingDirectory, 'node_modules'))
                         .isSymbolicLink()
                 )
-                    metaConfiguration.default.path.context = process.cwd()
+                    metaConfiguration.default.path.context =
+                        currentWorkingDirectory
             } catch (error) {
                 // Continue regardless of error.
             }
@@ -90,13 +111,11 @@ export const load = (context?:string):ResolvedConfiguration => {
     // region load application specific configuration
     let specificConfiguration:PlainObject = {}
     try {
-        /* eslint-disable no-eval */
-        specificConfiguration = (eval('require') as typeof require)(join(
+        specificConfiguration = currentRequire!(join(
             metaConfiguration.default.path.context, 'package'
         )) as PlainObject
-        /* eslint-enable no-eval */
     } catch (error) {
-        metaConfiguration.default.path.context = process.cwd()
+        metaConfiguration.default.path.context = currentWorkingDirectory
     }
 
     specificConfiguration =
@@ -115,17 +134,13 @@ export const load = (context?:string):ResolvedConfiguration => {
     if (typeof specificConfiguration.debug === 'boolean')
         debug = specificConfiguration.debug
     else if (
-        process.env.npm_config_dev === 'true' ||
-        typeof process.env.NODE_ENV === 'string' &&
-        ['debug', 'dev', 'development'].includes(process.env.NODE_ENV)
+        environment.npm_config_dev === 'true' ||
+        typeof environment.NODE_ENV === 'string' &&
+        ['debug', 'dev', 'development'].includes(environment.NODE_ENV)
     )
         debug = true
     if (debug)
-        /*
-            NOTE: We have to avoid that some pre-processor removes this
-            assignment.
-        */
-        eval(`process.env.NODE_ENV = 'development'`)
+        environment.NODE_ENV = 'development'
     // endregion
     // region loading default configuration
     metaConfiguration.default.path.context += '/'
@@ -174,7 +189,7 @@ export const load = (context?:string):ResolvedConfiguration => {
     }
 
     let runtimeInformation:RuntimeInformation =
-        {givenCommandLineArguments: process.argv}
+        {givenCommandLineArguments: commandLineArguments}
     if (filePath) {
         runtimeInformation = JSON.parse(readFileSync(
             filePath, {encoding: configuration.encoding}
@@ -371,14 +386,14 @@ export const load = (context?:string):ResolvedConfiguration => {
                 unknown as
                 RecursiveEvaluateable<ResolvedConfiguration>,
             {
-                currentPath: process.cwd(),
+                currentPath: currentWorkingDirectory,
                 fileSystem,
                 Helper,
                 optionalRequire,
                 path,
                 require: currentRequire,
                 Tools,
-                webOptimizerPath: __dirname,
+                webOptimizerPath,
                 now,
                 nowUTCTimestamp: Tools.numberGetUTCTimestamp(now)
             }
@@ -470,6 +485,7 @@ export const load = (context?:string):ResolvedConfiguration => {
                 resolvedConfiguration.givenCommandLineArguments[2]
             )
     }
+    // / region determine which asset types are needed
     for (const chunkName in resolvedConfiguration.injection.entry.normalized)
         if (Object.prototype.hasOwnProperty.call(
             resolvedConfiguration.injection.entry.normalized, chunkName
@@ -487,7 +503,7 @@ export const load = (context?:string):ResolvedConfiguration => {
                     /*
                         NOTE: We doesn't use
                         "resolvedConfiguration.path.source.asset.base" because
-                        we have already resolve all module ids.
+                        we already have resolved all module ids.
                     */
                     './',
                     resolvedConfiguration.path.ignore,
@@ -511,6 +527,7 @@ export const load = (context?:string):ResolvedConfiguration => {
                 if (type)
                     resolvedConfiguration.needed[type] = true
             }
+    // / endregion
     // endregion
     // region adding special aliases
     /*
@@ -575,11 +592,22 @@ export const load = (context?:string):ResolvedConfiguration => {
         }
     }
     // endregion
-    loadedConfiguration = resolvedConfiguration
+    return resolvedConfiguration
+}
+/**
+ * Get cached or determined configuration object.
+ * @returns Nothing.
+ */
+export const get = ():ResolvedConfiguration => {
+    if (loadedConfiguration)
+        return loadedConfiguration
+
+    loadedConfiguration = load()
+
     return loadedConfiguration
 }
 
-export default load
+export default get
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

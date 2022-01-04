@@ -15,10 +15,10 @@
     endregion
 */
 // region imports
-import loadConfiguration from './configurator'
+import getConfiguration from './configurator'
 import {ResolvedConfiguration} from './type'
 // endregion
-const configuration:ResolvedConfiguration = loadConfiguration()
+const configuration:ResolvedConfiguration = getConfiguration()
 
 module.exports = configuration.stylelint
 

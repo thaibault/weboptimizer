@@ -454,6 +454,7 @@ export class Helper {
                         )
                     )
                         return assetType
+
         return result
     }
     /**
