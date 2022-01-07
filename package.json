@@ -182,6 +182,7 @@
     "jest": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
+    "postcss": "*",
     "postcss-fontpath": "*",
     "postcss-import": "*",
     "postcss-loader": "*",
