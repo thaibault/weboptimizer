@@ -86,7 +86,7 @@
     "workbox-webpack-plugin": "*"
   },
   "engines": {
-    "node": ">=14",
+    "node": ">=17",
     "npm": ">=7"
   },
   "resolutions": {
