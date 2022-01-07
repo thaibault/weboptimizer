@@ -20,7 +20,9 @@ import {
 } from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
 import Tools from 'clientnode'
-import {EvaluationResult, Encoding, Mapping} from 'clientnode/type'
+import {
+    EvaluationResult, Encoding, Mapping, RecursivePartial
+} from 'clientnode/type'
 import ejs, {Options, TemplateFunction as EJSTemplateFunction} from 'ejs'
 import {readFileSync} from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
@@ -75,7 +77,7 @@ const configuration:ResolvedConfiguration = getConfiguration()
  *
  * @returns Transformed string.
  */
-export default function(
+export const loader = function(
     this:LoaderContext<LoaderConfiguration>, source:string
 ):string {
     const givenOptions:LoaderConfiguration =
@@ -108,7 +110,9 @@ export default function(
                         replacements: {}
                     }
                 },
-                'getOptions' in this ? this.getOptions() || {} : {}
+                'getOptions' in this && this.getOptions() ?
+                    this.getOptions() :
+                    (this.query as RecursivePartial<LoaderConfiguration>) ?? {}
             ),
             /#%%%#/g,
             '!'
@@ -203,7 +207,7 @@ export default function(
         }
 
         const compressHTML = (content:string):string =>
-            givenOptions.compress.html ?
+            givenOptions.compress?.html ?
                 minifyHTML(
                     content,
                     Tools.extend(
@@ -233,7 +237,7 @@ export default function(
                             trimCustomFragments: true,
                             useShortDoctype: true
                         },
-                        givenOptions.compress.html
+                        givenOptions.compress.html || {}
                     )
                 ) :
                 content
@@ -408,6 +412,8 @@ export default function(
         givenOptions.compileSteps
     )(givenOptions.locals || {})
 }
+
+export default loader
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
