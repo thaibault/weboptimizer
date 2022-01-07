@@ -33,6 +33,7 @@ describe('ejsLoader', ():void => {
                 }
             }
         )
+
         expect(ejsLoader.call(complexContext, '<a><%- test %></a>'))
             .toStrictEqual('<a>hans</a>')
         expect(ejsLoader.call(
