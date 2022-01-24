@@ -546,9 +546,9 @@
             "#": "Indicates whether to activate the developments hot module replacement feature.",
             "__evaluate__": "self.debug"
           },
-          "https": false,
           "liveReload": true,
           "port": 8080,
+          "server": "http",
           "static": [
             {
               "directory": {
