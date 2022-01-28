@@ -1277,7 +1277,7 @@
             "index"
           ],
           "propertyNames": {
-            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesmnext', 'esmnext', 'fesnext', 'esnext', 'fesm2015', 'esm2015', 'fesnext', 'esnext', 'es2015', 'module').concat(self.generic.isWeb ? 'browser' : []).concat('main')"
+            "__evaluate__": "(self.debug ? [] : ['main:aheadOfTimeCompiled']).concat('fesmnext', 'esmnext', 'fesnext', 'esnext', 'fesm2015', 'esm2015', 'fesnext', 'esnext', 'es2015', 'module', 'jsnext').concat(self.generic.isWeb ? 'browser' : []).concat('main')"
           }
         }
       },
