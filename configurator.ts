@@ -117,14 +117,18 @@ export const load = (
     } catch (error) {
         metaConfiguration.default.path.context = currentWorkingDirectory
     }
-
-    specificConfiguration =
-        (specificConfiguration.webOptimizer as PlainObject) || {}
     // endregion
-    // region determine application name
+    // region determine application name and web optimizer configuration
     const name:string = typeof specificConfiguration.name === 'string' ?
         specificConfiguration.name :
-        'mockup'
+        (
+            typeof (specificConfiguration.webOptimizer as PlainObject)?.name ===
+                'string'
+        ) ?
+            (specificConfiguration.webOptimizer as Mapping)?.name :
+            'mockup'
+    specificConfiguration =
+        (specificConfiguration.webOptimizer as PlainObject) || {}
     specificConfiguration.name = name
     // endregion
     // region determine debug mode
