@@ -36,11 +36,13 @@ import {
     RuleSetUseItem as WebpackRuleSetUseItem,
     WebpackOptionsNormalized
 } from 'webpack'
-import OfflinePlugin, {
-    CommonOptions as WorkboxCommonOptions,
-    GenerateSWOptions as WorkboxGenerateSWOptions,
-    InjectManifestOptions as WorkboxInjectManifestOptions
-} from 'workbox-webpack-plugin'
+import {
+    WebpackPartial as WorkboxBaseCommonOptions,
+    BasePartial as WorkboxCommonOptions,
+    WebpackGenerateSWOptions as WorkboxGenerateSWOptions,
+    WebpackInjectManifestOptions as WorkboxInjectManifestOptions
+} from 'workbox-build'
+import OfflinePlugin from 'workbox-webpack-plugin'
 // endregion
 // region exports
 // / region generic
@@ -419,7 +421,7 @@ export interface ResolvedConfiguration {
     nodeENV:false|null|string
     nodeEnvironment:NodeEnvironment
     offline:{
-        common:WorkboxCommonOptions
+        common:WorkboxBaseCommonOptions & WorkboxCommonOptions
         injectionManifest:WorkboxInjectManifestOptions
         serviceWorker:WorkboxGenerateSWOptions
         use:'injectionManifest'|'serviceWorker'

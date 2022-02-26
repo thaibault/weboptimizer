@@ -55,7 +55,7 @@ import {
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 import {
     InjectManifestOptions as WorkboxInjectManifestOptions
-} from 'workbox-webpack-plugin'
+} from 'workbox-build'
 
 import getConfiguration from './configurator'
 import Helper from './helper'

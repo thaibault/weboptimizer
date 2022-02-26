@@ -18,6 +18,7 @@
         },
         "plugins": [{"name": "typescript-plugin-css-modules"}],
         "resolveJsonModule": true,
+        "skipLibCheck": true,
         "strict": true,
         "target": "esnext"
     },
