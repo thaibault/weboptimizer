@@ -222,9 +222,6 @@
     "@types/webpack-env": {
       "optional": true
     },
-    "@types/workbox-webpack-plugin": {
-      "optional": true
-    },
     "@typescript-eslint/eslint-plugin": {
       "optional": true
     },
