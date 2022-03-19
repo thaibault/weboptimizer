@@ -73,8 +73,7 @@ export interface PackageDescriptor {
 export type Replacements = Mapping<SecondParameter<string['replace']>>
 
 export type Resolvable = {
-    // eslint-disable-next-line no-unused-vars
-    [K in '__evaluate__'|'__execute__'|string]:Resolvable|string|unknown
+    [_K in '__evaluate__'|'__execute__'|string]:Resolvable|string|unknown
 }
 
 export interface RedundantRequest {
