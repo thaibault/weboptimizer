@@ -1823,14 +1823,6 @@
         10
       ],
       "no-invalid-this": 0,
-      "no-this-assignment": [
-        true,
-        {
-          "allowed-names": [
-            "^self$"
-          ]
-        }
-      ],
       "no-unused-vars": [
         "error",
         {
