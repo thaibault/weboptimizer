@@ -1872,7 +1872,7 @@
               "/usr/bin/env node"
             ]
           },
-          "markers": ["/"]
+          "markers": ["/", "//", "///"]
         }
       ],
       "space-infix-ops": 0,

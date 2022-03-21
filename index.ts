@@ -157,7 +157,7 @@ const main = async (
 
             const additionalArguments:Array<string> =
                 commandLineArguments.splice(3)
-            // / region register exit handler to tidy up
+            /// region register exit handler to tidy up
             clear = (error?:Error):void => {
                 // NOTE: Close handler have to be synchronous.
                 if (Tools.isFileSync(filePath))
@@ -167,7 +167,7 @@ const main = async (
                     throw error
             }
             closeEventHandlers.push(clear)
-            // / endregion
+            /// endregion
             // endregion
             // region handle clear
             /*
@@ -650,7 +650,7 @@ const main = async (
                         }))
                 }
             }
-            // / region a-/synchronous
+            /// region a-/synchronous
             if ([
                 'document',
                 'test',
@@ -676,7 +676,7 @@ const main = async (
                     configuration.givenCommandLineArguments[2] as
                         keyof CommandLineArguments
                 )
-            // / endregion
+            /// endregion
             // endregion
         }
         let finished = false
