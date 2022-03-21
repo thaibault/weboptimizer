@@ -178,7 +178,7 @@ export const load = (
         )
     // endregion
     // region merging and evaluating task specific and dynamic configurations
-    // / region load additional dynamically given configuration
+    /// region load additional dynamically given configuration
     let count = 0
     let filePath:null|string = null
     while (true) {
@@ -204,8 +204,8 @@ export const load = (
                 throw error
         })
     }
-    // // region task specific configuration
-    // /// region apply task type specific configuration
+    //// region task specific configuration
+    ///// region apply task type specific configuration
     if (runtimeInformation.givenCommandLineArguments.length > 2)
         for (const type of SubConfigurationTypes)
             if (
@@ -232,8 +232,8 @@ export const load = (
                             )!,
                             configurationTarget[type] as PlainObject
                         )
-    // /// endregion
-    // /// region clear task type specific configurations
+    ///// endregion
+    ///// region clear task type specific configurations
     for (const type of SubConfigurationTypes)
         for (const configurationTarget of [
             configuration, specificConfiguration
@@ -245,9 +245,9 @@ export const load = (
                 typeof configurationTarget[type] === 'object'
             )
                 delete configurationTarget[type]
-    // /// endregion
-    // // endregion
-    // / endregion
+    ///// endregion
+    //// endregion
+    /// endregion
     Tools.extend(
         true,
         Tools.modifyObject(
@@ -287,7 +287,7 @@ export const load = (
     // Removing comments (default key name to delete is "#").
     configuration = Tools.removeKeyPrefixes(configuration)
     // endregion
-    // / region build absolute paths
+    /// region build absolute paths
     configuration.path.base =
         resolve(configuration.path.context, configuration.path.base)
 
@@ -377,7 +377,7 @@ export const load = (
                                     '/'
                     }
             }
-    // / endregion
+    /// endregion
     // region evaluate dynamic configuration structures
     const now:Date = new Date()
     /*
@@ -489,7 +489,7 @@ export const load = (
                 resolvedConfiguration.givenCommandLineArguments[2]
             )
     }
-    // / region determine which asset types are needed
+    /// region determine which asset types are needed
     for (const chunkName in resolvedConfiguration.injection.entry.normalized)
         if (Object.prototype.hasOwnProperty.call(
             resolvedConfiguration.injection.entry.normalized, chunkName
@@ -531,7 +531,7 @@ export const load = (
                 if (type)
                     resolvedConfiguration.needed[type] = true
             }
-    // / endregion
+    /// endregion
     // endregion
     // region adding special aliases
     /*

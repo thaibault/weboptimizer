@@ -45,7 +45,7 @@ import {
 import OfflinePlugin from 'workbox-webpack-plugin'
 // endregion
 // region exports
-// / region generic
+/// region generic
 export interface Browser {
     debug:boolean
     domContentLoaded:boolean
@@ -80,8 +80,8 @@ export interface RedundantRequest {
     path:string
     version:string
 }
-// / endregion
-// / region injection
+/// endregion
+/// region injection
 export type ExternalAliases =
     Mapping<Mapping|string|((_request:string, _key:string) => string)>
 export type GivenInjection =
@@ -120,9 +120,9 @@ export interface InjectionConfiguration {
     implicitExternalExcludePattern:Array<RegExp|string>
     implicitExternalIncludePattern:Array<RegExp|string>
 }
-// / endregion
-// / region configuration
-// // region path
+/// endregion
+/// region configuration
+//// region path
 export interface AssetPathConfiguration {
     base:string
     cascadingStyleSheet:string
@@ -168,8 +168,8 @@ export interface PathConfiguration extends BasePathConfiguration {
     }
 }
 export type DefaultPathConfiguration = BasePathConfiguration & Resolvable
-// // endregion
-// // region build
+//// endregion
+//// region build
 export interface BuildConfigurationItem {
     extension:string
     ignoredExtension:string
@@ -181,8 +181,8 @@ export const SubConfigurationTypes = [
     'debug', 'document', 'test', 'test:browser'
 ] as const
 export const TaskTypes = ['build', 'serve', ...SubConfigurationTypes] as const
-// // endregion
-// // region loader
+//// endregion
+//// region loader
 export type BooleanExpression = boolean|null|string
 export interface AdditionalLoaderConfiguration {
     exclude?:BooleanExpression
@@ -218,7 +218,7 @@ export interface WebpackLoaderConfiguration {
     use:Array<WebpackLoader>|WebpackLoader
 }
 export type WebpackLoaderIndicator = WebpackRuleSetRule['include']
-// // endregion
+//// endregion
 export interface Command {
     arguments:Array<string>
     command:string
@@ -483,7 +483,7 @@ export interface EvaluationScope {
     loader:Loader
     require:typeof require
 }
-// / endregion
+/// endregion
 // NOTE: Not yet defined in webpack types.
 export interface WebpackBaseAssets {
     outputName:string

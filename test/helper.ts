@@ -35,7 +35,7 @@ const buildConfiguration:BuildConfiguration = {
 // endregion
 describe('helper', ():void => {
     // region tests
-    // / region boolean
+    /// region boolean
     testEach<typeof Helper.isFilePathInLocation>(
         'isFilePathInLocation',
         Helper.isFilePathInLocation,
@@ -44,8 +44,8 @@ describe('helper', ():void => {
         [true, './', ['../']],
         [false, '../', ['./']]
     )
-    // / endregion
-    // / region string
+    /// endregion
+    /// region string
     testEach<typeof Helper.stripLoader>(
         'stripLoader',
         Helper.stripLoader,
@@ -61,8 +61,8 @@ describe('helper', ():void => {
         ['c', 'aa!b!c?abb?a'],
         ['moduleName', 'imports?$=library!moduleName']
     )
-    // / endregion
-    // / region array
+    /// endregion
+    /// region array
     testEach<typeof Helper.normalizePaths>(
         'normalizePaths',
         Helper.normalizePaths,
@@ -76,8 +76,8 @@ describe('helper', ():void => {
         [['a', 'b'], ['a/', 'a/', 'b']],
         [['a', 'b', '.'], ['a/', 'a/', 'b', '', '.']]
     )
-    // / endregion
-    // / region file handler
+    /// endregion
+    /// region file handler
     testEach<typeof Helper.renderFilePathTemplate>(
         'renderFilePathTemplate',
         Helper.renderFilePathTemplate,
@@ -566,7 +566,7 @@ describe('helper', ():void => {
         [null, './helper', {}, {}, {file: ['.ts']}, '', 'a', []],
         [resolve('helper.ts'), 'helper', {}, {}, {file: ['.ts']}, './', './']
     )
-    // / endregion
+    /// endregion
     testEach<typeof Helper.applyAliases>(
         'applyAliases',
         Helper.applyAliases,

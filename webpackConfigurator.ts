@@ -118,7 +118,7 @@ if (plugins.Offline) {
 const configuration:ResolvedConfiguration = getConfiguration()
 const module:ResolvedConfiguration['module'] = configuration.module
 // region initialisation
-// / region determine library name
+/// region determine library name
 let libraryName:string
 if (configuration.libraryName)
     libraryName = configuration.libraryName
@@ -131,10 +131,10 @@ else {
     ))
         libraryName = Tools.stringConvertToValidVariableName(libraryName)
 }
-// / endregion
-// / region plugins
+/// endregion
+/// region plugins
 const pluginInstances:WebpackConfiguration['plugins'] = []
-// // region define modules to ignore
+//// region define modules to ignore
 for (const pattern of ([] as Array<IgnorePattern>).concat(
     configuration.injection.ignorePattern
 )) {
@@ -151,8 +151,8 @@ for (const pattern of ([] as Array<IgnorePattern>).concat(
 
     pluginInstances.push(new IgnorePlugin(pattern as IgnorePlugin['options']))
 }
-// // endregion
-// // region define modules to replace
+//// endregion
+//// region define modules to replace
 for (const source in module.replacements.normal)
     if (Object.prototype.hasOwnProperty.call(
         module.replacements.normal, source
@@ -167,8 +167,8 @@ for (const source in module.replacements.normal)
             }
         ))
     }
-// // endregion
-// // region generate html file
+//// endregion
+//// region generate html file
 let htmlAvailable = false
 for (const htmlConfiguration of configuration.files.html)
     if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
@@ -178,8 +178,8 @@ for (const htmlConfiguration of configuration.files.html)
         }))
         htmlAvailable = true
     }
-// // endregion
-// // region generate favicons
+//// endregion
+//// region generate favicons
 if (
     htmlAvailable &&
     configuration.favicon &&
@@ -187,8 +187,8 @@ if (
     Tools.isFileSync(configuration.favicon.logo)
 )
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
-// // endregion
-// // region provide offline functionality
+//// endregion
+//// region provide offline functionality
 if (htmlAvailable && configuration.offline && plugins.Offline) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
@@ -240,17 +240,17 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             configuration.offline.serviceWorker
         )))
 }
-// // endregion
-// // region provide build environment
+//// endregion
+//// region provide build environment
 if (configuration.buildContext.definitions)
     pluginInstances.push(
         new DefinePlugin(configuration.buildContext.definitions)
     )
 if (module.provide)
     pluginInstances.push(new ProvidePlugin(module.provide))
-// // endregion
-// // region modules/assets
-// /// region apply module pattern
+//// endregion
+//// region modules/assets
+///// region apply module pattern
 pluginInstances.push({apply: (compiler:Compiler):void => {
     compiler.hooks.emit.tap(
         'applyModulePattern',
@@ -291,8 +291,8 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
         }
     )
 }})
-// /// endregion
-// /// region in-place configured assets in the main html file
+///// endregion
+///// region in-place configured assets in the main html file
 /*
     TODO
 
@@ -410,8 +410,8 @@ if (
             }
         )
     }})
-// /// endregion
-// /// region mark empty javaScript modules as dummy
+///// endregion
+///// region mark empty javaScript modules as dummy
 if (!(
     configuration.needed.javaScript ||
     configuration.needed.javaScriptExtension ||
@@ -421,8 +421,8 @@ if (!(
     configuration.files.compose.javaScript = resolve(
         configuration.path.target.asset.javaScript, '.__dummy__.compiled.js'
     )
-// /// endregion
-// /// region extract cascading style sheets
+///// endregion
+///// region extract cascading style sheets
 const cssOutputPath:string|((_asset:unknown) => string) =
     configuration.files.compose.cascadingStyleSheet
 if (cssOutputPath && plugins.MiniCSSExtract)
@@ -431,8 +431,8 @@ if (cssOutputPath && plugins.MiniCSSExtract)
             relative(configuration.path.target.base, cssOutputPath) :
             cssOutputPath
     }))
-// /// endregion
-// /// region performs implicit external logic
+///// endregion
+///// region performs implicit external logic
 if (configuration.injection.external.modules === '__implicit__')
     /*
         We only want to process modules from local context in library mode,
@@ -636,9 +636,9 @@ if (configuration.injection.external.modules === '__implicit__')
 
         return callback()
     }
-// /// endregion
-// // endregion
-// // region apply final cascadingStyleSheet/dom/javaScript modifications/fixes
+///// endregion
+//// endregion
+//// region apply final cascadingStyleSheet/dom/javaScript modifications/fixes
 if (htmlAvailable)
     pluginInstances.push({apply: (
         compiler:Compiler
@@ -759,8 +759,8 @@ if (htmlAvailable)
             }
         )
     })})
-// // endregion
-// // region context replacements
+//// endregion
+//// region context replacements
 for (const contextReplacement of module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
         contextReplacement.map((value:string):string => {
@@ -776,8 +776,8 @@ for (const contextReplacement of module.replacements.context)
             return evaluated.result
         }) as [string, string]
     )))
-// // endregion
-// // region consolidate duplicated module requests
+//// endregion
+//// region consolidate duplicated module requests
 /*
     NOTE: Redundancies usually occur when symlinks aren't converted to their
     real paths since real paths can be de-duplicated by webpack but if two
@@ -998,9 +998,9 @@ new NormalModuleReplacementPlugin(
         }
     }
 ))*/
-// // endregion
-// / endregion
-// / region loader helper
+//// endregion
+/// endregion
+/// region loader helper
 const isFilePathInDependencies = (filePath:string):boolean => {
     filePath = Helper.stripLoader(filePath)
 
@@ -1598,8 +1598,8 @@ if (
     loader.style.use.shift()
     loader.style.use.unshift({loader: plugins.MiniCSSExtract.loader})
 }
-// / endregion
-// / region apply runtime dev helper
+/// endregion
+/// region apply runtime dev helper
 /*
     NOTE: Disable automatic injection to avoid injection in all chunks and as
     last module which would shadow main module (e.g. index).
@@ -1630,7 +1630,7 @@ if (
         pluginInstances.push(new HotModuleReplacementPlugin())
     }
 }
-// / endregion
+/// endregion
 // endregion
 // region plugins
 for (const pluginConfiguration of configuration.plugins) {
