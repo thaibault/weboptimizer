@@ -285,7 +285,7 @@ export const loader = function(
                 const filePath:string|undefined =
                     isString ? options.filename : result
                 if (filePath && extname(filePath) === '.js')
-                    result = currentRequire!(filePath)
+                    result = currentRequire!(filePath) as TemplateFunction
                 else {
                     if (!isString) {
                         let encoding:Encoding = configuration.encoding
