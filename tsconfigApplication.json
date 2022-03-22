@@ -13,5 +13,9 @@
         }
     },
     "extends": "./tsconfig.json",
-    "include": ["../../source/*.ts", "../../source/*.tsx"]
+        "include": [
+            "../../*/*.ts", "../../*/*.tsx",
+            "../../*.ts", "../../*.tsx"
+        ]
+    ]
 }
