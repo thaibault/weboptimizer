@@ -15,7 +15,7 @@
     endregion
 */
 // region imports
-import Tools from 'clientnode'
+import Tools, {currentRequire} from 'clientnode'
 import {Encoding, File, Mapping, PlainObject} from 'clientnode/type'
 import {existsSync, readFileSync} from 'fs'
 import {
@@ -1219,8 +1219,7 @@ export class Helper {
             return null
 
         const configuration:PackageConfiguration =
-            (eval('require') as typeof require)(filePath) as
-                PackageConfiguration
+            currentRequire!(filePath) as PackageConfiguration
         /*
             If the package.json does not have a name property, try again from
             one level higher.

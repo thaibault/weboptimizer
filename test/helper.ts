@@ -2,6 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import {currentRequire} from 'clientnode'
 import {testEach, testEachAgainstSameExpectation} from 'clientnode/testHelper'
 import {FirstParameter} from 'clientnode/type'
 import {resolve} from 'path'
@@ -610,9 +611,8 @@ describe('helper', ():void => {
             expect(Helper.getClosestPackageDescriptor(modulePath, filePath))
                 .toStrictEqual(
                     {
-                        configuration:
-                            (eval('require') as typeof require)(filePath) as
-                                PackageConfiguration,
+                        configuration: currentRequire!(filePath) as
+                            PackageConfiguration,
                         filePath
                     }
                 )

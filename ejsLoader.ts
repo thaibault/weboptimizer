@@ -19,7 +19,7 @@ import {
     BabelFileResult, transformSync as babelTransformSync
 } from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
-import Tools from 'clientnode'
+import Tools, {currentRequire} from 'clientnode'
 import {
     EvaluationResult, Encoding, Mapping, RecursivePartial
 } from 'clientnode/type'
@@ -285,7 +285,7 @@ export const loader = function(
                 const filePath:string|undefined =
                     isString ? options.filename : result
                 if (filePath && extname(filePath) === '.js')
-                    result = (eval('require') as typeof require)(filePath)
+                    result = currentRequire!(filePath)
                 else {
                     if (!isString) {
                         let encoding:Encoding = configuration.encoding

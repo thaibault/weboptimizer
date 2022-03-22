@@ -1023,7 +1023,7 @@ const scope:EvaluationScope = {
     configuration,
     isFilePathInDependencies,
     loader,
-    require: eval('require') as typeof require
+    require: currentRequire!
 }
 
 const evaluate = <T = unknown>(
