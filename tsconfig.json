@@ -22,5 +22,8 @@
         "strict": true,
         "target": "esnext"
     },
-    "include": ["*.ts", "*.tsx", "test/*.ts", "test/*.tsx"]
+    "include": [
+        "*.ts", "*.tsx",
+        "*/*.ts", "*/*.tsx"
+    ]
 }
