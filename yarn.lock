@@ -3724,9 +3724,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.889"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.889.tgz#0665b3c10297d417815149eb8e643d65ef836375"
-  integrity sha512-UDkWdOFCb7dpyXrj6Brhx8rjC06DwQGwURrh1NTAujANwJhfG13Binl2CEyvc2JDDEwqVGl15o5oPgInDBCVUQ==
+  version "3.0.890"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.890.tgz#de77d1ab354ce8b0ad4d138df74fc587af6bece1"
+  integrity sha512-GTrYDcC+xmx0dmu9MABGYx6pJY6LdCsSiX2vKWPyVuOZMV3N7+CU1vIU2RpqrZyckxYL0eabyAs2lMT7racMng==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -10521,9 +10521,9 @@ webpack-sources@^1.4.3:
     source-map "~0.6.1"
 
 webpack@*:
-  version "5.70.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.70.0.tgz#3461e6287a72b5e6e2f4872700bc8de0d7500e6d"
-  integrity sha512-ZMWWy8CeuTTjCxbeaQI21xSswseF2oNOwc70QSKNePvmxE7XW36i7vpBMYZFAUHPwQiEbNGCEYIOOlyRbdGmxw==
+  version "5.71.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.71.0.tgz#b01fcf379570b8c5ee06ca06c829ca168c951884"
+  integrity sha512-g4dFT7CFG8LY0iU5G8nBL6VlkT21Z7dcYDpJAEJV5Q1WLb9UwnFbrem1k7K52ILqEmomN7pnzWFxxE6SlDY56A==
   dependencies:
     "@types/eslint-scope" "^3.7.3"
     "@types/estree" "^0.0.51"
