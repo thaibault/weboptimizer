@@ -510,7 +510,7 @@
             "__evaluate__": "['node'].concat(self.generic.isWeb ? 'jsdom' : [])"
           },
           "command": {
-            "__evaluate__": "self.commandLine.test.environments.map((environment) => `${self.generic.testCommandLine} '${path.relative(self.path.target.base, self.path.target.test) === '' ? './test' : '${path.relative(self.path.target.base, self.path.target.test)}/`}.+\\.js$' --test-environment ${environment} '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
+            "__evaluate__": "self.commandLine.test.environments.map((environment) => `${self.generic.testCommandLine} '${path.relative(self.path.target.base, self.path.target.test) === '' ? './test' : `${path.relative(self.path.target.base, self.path.target.test)}/`}.+\\.js$' --test-environment ${environment} '${path.relative('./', Helper.stripLoader(self.files.compose.javaScript)).replace(/\\.[^/.]+$/, '')}'`).join(' && ')"
           }
         },
         "test:browser": {
