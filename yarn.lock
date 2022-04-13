@@ -3717,9 +3717,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.892"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.892.tgz#b22c7902fdc49eeda9500601db174102acc0734e"
-  integrity sha512-AxxTAtAhwjFTsMqejN7ziVF9H9SBXzu8WoyHofYQddkc0YjBDy3U+in+LMJ8pq6ppd0yx/kWm7nezB0wriLFaA==
+  version "3.0.893"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.893.tgz#171edcec0f700244f03e160e106fb06896fcafdb"
+  integrity sha512-BDX3gSV7cLAlkuuEjU7pX4Ic/y0LCGNjiLspxl44mRNa/4Zw62ypV9my5L3iC+tceqTeDasy1AK02rUBE1yH+A==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -4565,9 +4565,9 @@ end-of-stream@^1.1.0, end-of-stream@^1.4.1:
     once "^1.4.0"
 
 enhanced-resolve@^5.9.2:
-  version "5.9.2"
-  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.9.2.tgz#0224dcd6a43389ebfb2d55efee517e5466772dd9"
-  integrity sha512-GIm3fQfwLJ8YZx2smuHpBKkXC1yOk+OBEmKckVyL0i/ea8mqDEykK3ld5dgH1QYPNyT/lIllxV2LULnxCHaHkA==
+  version "5.9.3"
+  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.9.3.tgz#44a342c012cbc473254af5cc6ae20ebd0aae5d88"
+  integrity sha512-Bq9VSor+kjvW3f9/MiiR4eE3XYgOl7/rS8lnSxbRbF3kS0B2r+Y9w5krBWxZgDxASVZbdYrn5wT4j/Wb0J9qow==
   dependencies:
     graceful-fs "^4.2.4"
     tapable "^2.2.0"
