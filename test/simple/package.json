@@ -39,7 +39,7 @@
     "test:coverage": "weboptimizer test:coverage",
     "test:coverage:report": "weboptimizer test:coverage:report",
     "update": "yarn version --patch && yarn publish",
-    "update:documentation": "documentationWebsite --log-level info",
+    "update:documentation": "documentation-website",
     "watch": "weboptimizer build --watch"
   },
   "devDependencies": {

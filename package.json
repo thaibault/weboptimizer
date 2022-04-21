@@ -77,7 +77,7 @@
     "test:watch": "yarn test --watch",
     "test:watch:all": "yarn test --watchAll",
     "update": "yarn version --patch && yarn publish",
-    "update:documentation": "documentation-website --log-level info"
+    "update:documentation": "documentation-website"
   },
   "dependencies": {
     "@babel/core": "*",
