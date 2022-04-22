@@ -99,17 +99,15 @@ const pluginNameResourceMapping:Mapping = {
 }
 
 const plugins:WebpackPlugins = {}
-for (const name in pluginNameResourceMapping)
-    if (
-        Object.prototype.hasOwnProperty.call(pluginNameResourceMapping, name)
-    ) {
-        const plugin:null|WebpackPlugin =
-            optionalRequire(pluginNameResourceMapping[name])
-        if (plugin)
-            plugins[name] = plugin
-        else
-            console.debug(`Optional webpack plugin "${name}" not available.`)
-    }
+
+for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
+    const plugin:null|WebpackPlugin = optionalRequire(alias)
+    if (plugin)
+        plugins[name] = plugin
+    else
+        console.debug(`Optional webpack plugin "${name}" not available.`)
+}
+
 if (plugins.Offline) {
     plugins.GenerateServiceWorker = plugins.Offline.GenerateSW
     plugins.InjectManifest = plugins.Offline.InjectManifest
@@ -153,20 +151,18 @@ for (const pattern of ([] as Array<IgnorePattern>).concat(
 }
 //// endregion
 //// region define modules to replace
-for (const source in module.replacements.normal)
-    if (Object.prototype.hasOwnProperty.call(
-        module.replacements.normal, source
-    )) {
-        const search = new RegExp(source)
-        pluginInstances.push(new NormalModuleReplacementPlugin(
-            search,
-            (resource:{request:string}):void => {
-                resource.request = resource.request.replace(
-                    search, module.replacements.normal[source]
-                )
-            }
-        ))
-    }
+for (const [source, replacement] of Object.entries(
+    module.replacements.normal
+)) {
+    const search = new RegExp(source)
+
+    pluginInstances.push(new NormalModuleReplacementPlugin(
+        search,
+        (resource:{request:string}):void => {
+            resource.request = resource.request.replace(search, replacement)
+        }
+    ))
+}
 //// endregion
 //// region generate html file
 let htmlAvailable = false
@@ -255,39 +251,37 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
     compiler.hooks.emit.tap(
         'applyModulePattern',
         (compilation:Compilation):void => {
-            for (const request in compilation.assets)
-                if (Object.prototype.hasOwnProperty.call(
-                    compilation.assets, request
-                )) {
-                    const filePath:string = request.replace(/\?[^?]+$/, '')
-                    const type:null|string = Helper.determineAssetType(
-                        filePath,
-                        configuration.buildContext.types,
-                        configuration.path
-                    )
-                    if (
-                        type &&
-                        configuration.assetPattern[type] &&
-                        (new RegExp(
-                            configuration.assetPattern[type]
-                                .includeFilePathRegularExpression
-                        )).test(filePath) &&
-                        !(new RegExp(
-                            configuration.assetPattern[type]
-                                .excludeFilePathRegularExpression
-                        )).test(filePath)
-                    ) {
-                        const source:Buffer|string =
-                            compilation.assets[request].source()
-                        if (typeof source === 'string')
-                            compilation.assets[request] = new WebpackRawSource(
-                                configuration.assetPattern[type].pattern
-                                    .replace(
-                                        /\{1\}/g, source.replace(/\$/g, '$$$')
-                                    )
-                            ) as unknown as sources.Source
-                    }
+            for (const [request, asset] of Object.entries(
+                compilation.assets
+            )) {
+                const filePath:string = request.replace(/\?[^?]+$/, '')
+                const type:null|string = Helper.determineAssetType(
+                    filePath,
+                    configuration.buildContext.types,
+                    configuration.path
+                )
+                if (
+                    type &&
+                    configuration.assetPattern[type] &&
+                    (new RegExp(
+                        configuration.assetPattern[type]
+                            .includeFilePathRegularExpression
+                    )).test(filePath) &&
+                    !(new RegExp(
+                        configuration.assetPattern[type]
+                            .excludeFilePathRegularExpression
+                    )).test(filePath)
+                ) {
+                    const source:Buffer|string = asset.source()
+                    if (typeof source === 'string')
+                        compilation.assets[request] = new WebpackRawSource(
+                            configuration.assetPattern[type].pattern
+                                .replace(
+                                    /\{1\}/g, source.replace(/\$/g, '$$$')
+                                )
+                        ) as unknown as sources.Source
                 }
+            }
         }
     )
 }})
@@ -683,34 +677,33 @@ if (htmlAvailable)
                     return data
                 }
                 const linkables:Mapping = {link: 'href', script: 'src'}
-                for (const tagName in linkables)
-                    if (Object.prototype.hasOwnProperty.call(
-                        linkables, tagName
+                for (const [tagName, attributeName] of Object.entries(
+                    linkables
+                ))
+                    for (const domNode of Array.from<HTMLElement>(
+                        dom.window.document.querySelectorAll<HTMLElement>(
+                            `${tagName}[${attributeName}*="?` +
+                            `${configuration.hashAlgorithm}="]`
+                        )
                     ))
-                        for (const domNode of Array.from<HTMLElement>(
-                            dom.window.document.querySelectorAll<HTMLElement>(
-                                `${tagName}[${linkables[tagName]}*="?` +
-                                `${configuration.hashAlgorithm}="]`
-                            )
-                        ))
-                            /*
-                                NOTE: Removing symbols after a "&" in hash
-                                string is necessary to match the generated
-                                request strings in offline plugin.
-                            */
-                            domNode.setAttribute(
-                                linkables[tagName],
-                                domNode
-                                    .getAttribute(linkables[tagName])!
-                                    .replace(
-                                        new RegExp(
-                                            '(\\?' +
-                                            `${configuration.hashAlgorithm}=` +
-                                            '[^&]+).*$'
-                                        ),
-                                        '$1'
-                                    )
-                            )
+                        /*
+                            NOTE: Removing symbols after a "&" in hash
+                            string is necessary to match the generated
+                            request strings in offline plugin.
+                        */
+                        domNode.setAttribute(
+                            attributeName,
+                            domNode
+                                .getAttribute(attributeName)!
+                                .replace(
+                                    new RegExp(
+                                        '(\\?' +
+                                        `${configuration.hashAlgorithm}=` +
+                                        '[^&]+).*$'
+                                    ),
+                                    '$1'
+                                )
+                        )
                 /*
                     NOTE: We have to restore template delimiter and style
                     contents.

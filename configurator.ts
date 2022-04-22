@@ -291,90 +291,40 @@ export const load = (
     configuration.path.base =
         resolve(configuration.path.context, configuration.path.base)
 
-    for (const key in configuration.path)
-        if (
-            Object.prototype.hasOwnProperty.call(configuration.path, key) &&
-            !['base', 'configuration'].includes(key)
-        )
-            if (typeof configuration.path[key] === 'string')
+    for (const [key, path] of Object.entries(configuration.path))
+        if (!['base', 'configuration'].includes(key))
+            if (typeof path === 'string')
                 configuration.path[key] =
-                    resolve(
-                        configuration.path.base,
-                        configuration.path[key] as string
-                    ) +
-                    '/'
-            else if (Tools.isPlainObject(configuration.path[key])) {
-                if (Object.prototype.hasOwnProperty.call(
-                    configuration.path[key as 'source'], 'base'
-                ))
+                    resolve(configuration.path.base, path) + '/'
+            else if (Tools.isPlainObject(path)) {
+                if (Object.prototype.hasOwnProperty.call(path, 'base'))
                     configuration.path[key as 'source'].base = resolve(
-                        configuration.path.base,
-                        configuration.path[key as 'source'].base
+                        configuration.path.base, path.base as string
                     )
 
-                for (const subKey in configuration.path[key] as PlainObject)
+                for (const [subKey, subPath] of Object.entries(path))
                     if (
-                        Object.prototype.hasOwnProperty.call(
-                            configuration.path[key], subKey
-                        ) &&
                         !['base', 'public'].includes(subKey) &&
-                        typeof configuration.path[key as 'target'][
-                            subKey as 'manifest'
-                        ] === 'string'
+                        typeof subPath === 'string'
                     )
-                        configuration.path[key as 'target'][
-                            subKey as 'manifest'
-                        ] =
-                            resolve(
-                                configuration.path[key as 'target'].base,
-                                configuration.path[key as 'target'][
-                                    subKey as 'manifest'
-                                ]
-                            ) +
-                            '/'
+                        path[subKey as 'manifest'] =
+                            resolve(path.base as string, subPath) + '/'
                     else if (
-                        subKey !== 'options' &&
-                        Tools.isPlainObject(
-                            configuration.path[key as 'source'][
-                                subKey as 'asset'
-                            ]
-                        )
+                        subKey !== 'options' && Tools.isPlainObject(subPath)
                     ) {
-                        configuration.path[key as 'source'][subKey as 'asset']
-                            .base = resolve(
-                                configuration.path[key as 'source'].base,
-                                configuration.path[key as 'source'][
-                                    subKey as 'asset'
-                                ].base
-                            )
+                        subPath.base = resolve(
+                            path.base as string, subPath.base as string
+                        )
 
-                        for (const subSubKey in configuration.path[
-                            key as 'source'
-                        ][subKey as 'asset'])
+                        for (const [subSubKey, subSubPath] of Object.entries(
+                            subPath
+                        ))
                             if (
-                                Object.prototype.hasOwnProperty.call(
-                                    configuration.path[key as 'source'][
-                                        subKey as 'asset'
-                                    ],
-                                    subSubKey
-                                ) &&
                                 subSubKey !== 'base' &&
-                                typeof configuration.path[key as 'source'][
-                                    subKey as 'asset'
-                                ][subSubKey as 'data'] === 'string'
+                                typeof subSubPath === 'string'
                             )
-                                configuration.path[key as 'source'][
-                                    subKey as 'asset'
-                                ][subSubKey as 'data'] =
-                                    resolve(
-                                        configuration.path[key as 'source'][
-                                            subKey as 'asset'
-                                        ].base,
-                                        configuration.path[key as 'source'][
-                                            subKey as 'asset'
-                                        ][subSubKey as 'data']
-                                    ) +
-                                    '/'
+                                subPath[subSubKey as 'data'] =
+                                    resolve(subPath.base, subSubPath) + '/'
                     }
             }
     /// endregion
@@ -411,21 +361,17 @@ export const load = (
             unknown as
             PlainObject
     delete resolvedConfiguration.buildContext.types.default
-    for (const type in resolvedConfiguration.buildContext.types)
-        if (Object.prototype.hasOwnProperty.call(
-            resolvedConfiguration.buildContext.types, type
-        ))
-            resolvedConfiguration.buildContext.types[type] =
+    for (const [type, context] of Object.entries(
+        resolvedConfiguration.buildContext.types
+    ))
+        resolvedConfiguration.buildContext.types[type] =
+            Tools.extend<ResolvedBuildConfigurationItem>(
+                true,
+                Tools.copy(defaultConfiguration),
                 Tools.extend<ResolvedBuildConfigurationItem>(
-                    true,
-                    Tools.copy(defaultConfiguration),
-                    Tools.extend<ResolvedBuildConfigurationItem>(
-                        true,
-                        {extension: type},
-                        resolvedConfiguration.buildContext.types[type],
-                        {type}
-                    )
+                    true, {extension: type}, context, {type}
                 )
+            )
     // endregion
     // region resolve module location and which asset types are needed
     resolvedConfiguration.module.locations = Helper.determineModuleLocations(
@@ -490,47 +436,45 @@ export const load = (
             )
     }
     /// region determine which asset types are needed
-    for (const chunkName in resolvedConfiguration.injection.entry.normalized)
-        if (Object.prototype.hasOwnProperty.call(
-            resolvedConfiguration.injection.entry.normalized, chunkName
-        ))
-            for (
-                const moduleID of
-                resolvedConfiguration.injection.entry.normalized[chunkName]
-            ) {
-                const filePath:null|string = Helper.determineModuleFilePath(
-                    moduleID,
-                    resolvedConfiguration.module.aliases,
-                    resolvedConfiguration.module.replacements.normal,
-                    {file: resolvedConfiguration.extensions.file.internal},
-                    resolvedConfiguration.path.context,
-                    /*
-                        NOTE: We doesn't use
-                        "resolvedConfiguration.path.source.asset.base" because
-                        we already have resolved all module ids.
-                    */
-                    './',
-                    resolvedConfiguration.path.ignore,
-                    resolvedConfiguration.module.directoryNames,
-                    resolvedConfiguration.package.main.fileNames,
-                    resolvedConfiguration.package.main.propertyNames,
-                    resolvedConfiguration.package.aliasPropertyNames,
-                    resolvedConfiguration.encoding
+    for (const chunk of Object.values(
+        resolvedConfiguration.injection.entry.normalized
+    ))
+        for (const moduleID of chunk) {
+            const filePath:null|string = Helper.determineModuleFilePath(
+                moduleID,
+                resolvedConfiguration.module.aliases,
+                resolvedConfiguration.module.replacements.normal,
+                {file: resolvedConfiguration.extensions.file.internal},
+                resolvedConfiguration.path.context,
+                /*
+                    NOTE: We doesn't use
+                    "resolvedConfiguration.path.source.asset.base" because
+                    we already have resolved all module ids.
+                */
+                './',
+                resolvedConfiguration.path.ignore,
+                resolvedConfiguration.module.directoryNames,
+                resolvedConfiguration.package.main.fileNames,
+                resolvedConfiguration.package.main.propertyNames,
+                resolvedConfiguration.package.aliasPropertyNames,
+                resolvedConfiguration.encoding
+            )
+
+            let type:null|string = null
+            if (filePath)
+                type = Helper.determineAssetType(
+                    filePath,
+                    resolvedConfiguration.buildContext.types,
+                    resolvedConfiguration.path
                 )
-                let type:null|string = null
-                if (filePath)
-                    type = Helper.determineAssetType(
-                        filePath,
-                        resolvedConfiguration.buildContext.types,
-                        resolvedConfiguration.path
-                    )
-                else
-                    throw new Error(
-                        `Given request "${moduleID}" couldn't be resolved.`
-                    )
-                if (type)
-                    resolvedConfiguration.needed[type] = true
-            }
+            else
+                throw new Error(
+                    `Given request "${moduleID}" couldn't be resolved.`
+                )
+
+            if (type)
+                resolvedConfiguration.needed[type] = true
+        }
     /// endregion
     // endregion
     // region adding special aliases

@@ -343,73 +343,65 @@ const main = async (
                         return
 
                     tidiedUp = true
-                    for (
-                        const chunkName in
+                    for (const [chunkName, chunk] of Object.entries(
                         configuration.injection.entry.normalized
-                    )
-                        if (Object.prototype.hasOwnProperty.call(
-                            configuration.injection.entry.normalized, chunkName
-                        ))
-                            for (const moduleID of
-                                configuration.injection.entry.normalized[
-                                    chunkName
-                                ]
+                    ))
+                        for (const moduleID of chunk) {
+                            const filePath:null|string =
+                                Helper.determineModuleFilePath(
+                                    moduleID,
+                                    configuration.module.aliases,
+                                    configuration.module.replacements
+                                        .normal,
+                                    {
+                                        file: configuration.extensions.file
+                                            .internal
+                                    },
+                                    configuration.path.context,
+                                    configuration.path.source.asset.base,
+                                    configuration.path.ignore,
+                                    configuration.module.directoryNames,
+                                    configuration.package.main.fileNames,
+                                    configuration.package.main
+                                        .propertyNames,
+                                    configuration.package
+                                        .aliasPropertyNames,
+                                    configuration.encoding
+                                )
+
+                            let type:null|string = null
+                            if (filePath)
+                                type = Helper.determineAssetType(
+                                    filePath,
+                                    configuration.buildContext.types,
+                                    configuration.path
+                                )
+
+                            if (
+                                typeof type === 'string' &&
+                                configuration.buildContext.types[type]
                             ) {
-                                const filePath:null|string =
-                                    Helper.determineModuleFilePath(
-                                        moduleID,
-                                        configuration.module.aliases,
-                                        configuration.module.replacements
-                                            .normal,
-                                        {
-                                            file: configuration.extensions.file
-                                                .internal
-                                        },
-                                        configuration.path.context,
-                                        configuration.path.source.asset.base,
-                                        configuration.path.ignore,
-                                        configuration.module.directoryNames,
-                                        configuration.package.main.fileNames,
-                                        configuration.package.main
-                                            .propertyNames,
-                                        configuration.package
-                                            .aliasPropertyNames,
-                                        configuration.encoding
+                                const filePath:string =
+                                    Helper.renderFilePathTemplate(
+                                        Helper.stripLoader(
+                                            configuration.files.compose
+                                                .javaScript
+                                        ),
+                                        {'[name]': chunkName}
                                     )
-
-                                let type:null|string = null
-                                if (filePath)
-                                    type = Helper.determineAssetType(
-                                        filePath,
-                                        configuration.buildContext.types,
-                                        configuration.path
-                                    )
-
+                                /*
+                                    NOTE: Close handler have to be
+                                    synchronous.
+                                */
                                 if (
-                                    typeof type === 'string' &&
-                                    configuration.buildContext.types[type]
-                                ) {
-                                    const filePath:string =
-                                        Helper.renderFilePathTemplate(
-                                            Helper.stripLoader(
-                                                configuration.files.compose
-                                                    .javaScript
-                                            ),
-                                            {'[name]': chunkName}
-                                        )
-                                    /*
-                                        NOTE: Close handler have to be
-                                        synchronous.
-                                    */
-                                    if (
-                                        configuration.buildContext.types[
-                                            type
-                                        ].outputExtension === 'js' &&
-                                        Tools.isFileSync(filePath)
-                                    )
-                                        chmodSync(filePath, '755')
-                                }
+                                    configuration.buildContext.types[
+                                        type
+                                    ].outputExtension === 'js' &&
+                                    Tools.isFileSync(filePath)
+                                )
+                                    chmodSync(filePath, '755')
                             }
+                        }
 
                     for (const filePath of configuration.path.tidyUp)
                         if (filePath)
