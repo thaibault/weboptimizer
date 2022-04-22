@@ -23,7 +23,6 @@ import {
 } from 'path'
 
 import {
-    AssetPathConfiguration,
     BuildConfiguration,
     Extensions,
     GivenInjection,
@@ -144,15 +143,13 @@ export class Helper {
         }
 
         let filePath:string = template
-        for (const placeholderName in scope)
-            if (Object.prototype.hasOwnProperty.call(scope, placeholderName))
-                filePath = filePath.replace(
-                    new RegExp(
-                        Tools.stringEscapeRegularExpressions(placeholderName),
-                        'g'
-                    ),
-                    `${scope[placeholderName]}`
-                )
+        for (const [placeholderName, value] of Object.entries(scope))
+            filePath = filePath.replace(
+                new RegExp(
+                    Tools.stringEscapeRegularExpressions(placeholderName), 'g'
+                ),
+                `${value}`
+            )
 
         return filePath
     }
@@ -339,26 +336,23 @@ export class Helper {
                 null
             )
 
-        for (const chunkName in normalizedGivenInjection)
-            if (Object.prototype.hasOwnProperty.call(
-                normalizedGivenInjection, chunkName
-            ))
-                for (const moduleID of normalizedGivenInjection[chunkName])
-                    if (Helper.determineModuleFilePath(
-                        moduleID,
-                        aliases,
-                        moduleReplacements,
-                        {file: extensions.file.internal},
-                        context,
-                        requestContext,
-                        pathsToIgnore,
-                        relativeModuleLocations,
-                        packageEntryFileNames,
-                        packageMainPropertyNames,
-                        packageAliasPropertyNames,
-                        encoding
-                    ) === filePath)
-                        return null
+        for (const chunk of Object.values(normalizedGivenInjection))
+            for (const moduleID of chunk)
+                if (Helper.determineModuleFilePath(
+                    moduleID,
+                    aliases,
+                    moduleReplacements,
+                    {file: extensions.file.internal},
+                    context,
+                    requestContext,
+                    pathsToIgnore,
+                    relativeModuleLocations,
+                    packageEntryFileNames,
+                    packageMainPropertyNames,
+                    packageAliasPropertyNames,
+                    encoding
+                ) === filePath)
+                    return null
 
         const parts:Array<string> = context.split('/')
         const externalModuleLocations:Array<string> = []
@@ -438,20 +432,13 @@ export class Helper {
             }
         if (!result)
             for (const type of [paths.source, paths.target])
-                for (const assetType in type.asset)
+                for (const [assetType, assetConfiguration] of Object.entries(
+                    type.asset
+                ))
                     if (
-                        Object.prototype.hasOwnProperty.call(
-                            type.asset, assetType
-                        ) &&
                         assetType !== 'base' &&
-                        type.asset[
-                            assetType as keyof AssetPathConfiguration
-                        ] &&
-                        filePath.startsWith(
-                            type.asset[
-                                assetType as keyof AssetPathConfiguration
-                            ]
-                        )
+                        assetConfiguration &&
+                        filePath.startsWith(assetConfiguration as string)
                     )
                         return assetType
 
@@ -479,52 +466,51 @@ export class Helper {
     ):ResolvedBuildConfiguration {
         const buildConfiguration:ResolvedBuildConfiguration = []
 
-        for (const type in configuration)
-            if (Object.prototype.hasOwnProperty.call(configuration, type)) {
-                const newItem:ResolvedBuildConfigurationItem = Tools.extend<
-                    ResolvedBuildConfigurationItem
-                >(true, {filePaths: []}, configuration[type])
+        for (const value of Object.values(configuration)) {
+            const newItem:ResolvedBuildConfigurationItem = Tools.extend<
+                ResolvedBuildConfigurationItem
+            >(true, {filePaths: []}, value)
 
-                for (const file of Tools.walkDirectoryRecursivelySync(
-                    entryPath,
-                    (file:File):false|void => {
-                        if (Helper.isFilePathInLocation(
-                            file.path, pathsToIgnore
-                        ))
-                            return false
-                    }
-                ))
-                    if (
-                        file.stats?.isFile() &&
-                        file.path.endsWith(`.${newItem.extension}`) &&
-                        !(
-                            newItem.ignoredExtension &&
-                            file.path.endsWith(`.${newItem.ignoredExtension}`)
-                        ) &&
-                        !(new RegExp(newItem.filePathPattern)).test(file.path)
-                    )
-                        newItem.filePaths.push(file.path)
+            for (const file of Tools.walkDirectoryRecursivelySync(
+                entryPath,
+                (file:File):false|void => {
+                    if (Helper.isFilePathInLocation(
+                        file.path, pathsToIgnore
+                    ))
+                        return false
+                }
+            ))
+                if (
+                    file.stats?.isFile() &&
+                    file.path.endsWith(`.${newItem.extension}`) &&
+                    !(
+                        newItem.ignoredExtension &&
+                        file.path.endsWith(`.${newItem.ignoredExtension}`)
+                    ) &&
+                    !(new RegExp(newItem.filePathPattern)).test(file.path)
+                )
+                    newItem.filePaths.push(file.path)
 
-                newItem.filePaths.sort((
-                    firstFilePath:string, secondFilePath:string
-                ):number => {
+            newItem.filePaths.sort((
+                firstFilePath:string, secondFilePath:string
+            ):number => {
+                if (mainFileBasenames.includes(basename(
+                    firstFilePath, extname(firstFilePath)
+                ))) {
                     if (mainFileBasenames.includes(basename(
-                        firstFilePath, extname(firstFilePath)
-                    ))) {
-                        if (mainFileBasenames.includes(basename(
-                            secondFilePath, extname(secondFilePath)
-                        )))
-                            return 0
-                    } else if (mainFileBasenames.includes(basename(
                         secondFilePath, extname(secondFilePath)
                     )))
-                        return 1
+                        return 0
+                } else if (mainFileBasenames.includes(basename(
+                    secondFilePath, extname(secondFilePath)
+                )))
+                    return 1
 
-                    return 0
-                })
+                return 0
+            })
 
-                buildConfiguration.push(newItem)
-            }
+            buildConfiguration.push(newItem)
+        }
 
         return buildConfiguration.sort((
             first:ResolvedBuildConfigurationItem,
@@ -606,33 +592,30 @@ export class Helper {
                 pathsToIgnore
             )
 
-        for (const chunkName in normalizedGivenInjection)
-            if (Object.prototype.hasOwnProperty.call(
-                normalizedGivenInjection, chunkName
-            ))
-                for (const moduleID of normalizedGivenInjection[chunkName]) {
-                    const filePath:null|string = Helper.determineModuleFilePath(
-                        moduleID,
-                        aliases,
-                        moduleReplacements,
-                        extensions,
-                        context,
-                        referencePath,
-                        pathsToIgnore,
-                        relativeModuleLocations,
-                        packageEntryFileNames,
-                        packageMainPropertyNames,
-                        packageAliasPropertyNames,
-                        encoding
-                    )
+        for (const chunk of Object.values(normalizedGivenInjection))
+            for (const moduleID of chunk) {
+                const filePath:null|string = Helper.determineModuleFilePath(
+                    moduleID,
+                    aliases,
+                    moduleReplacements,
+                    extensions,
+                    context,
+                    referencePath,
+                    pathsToIgnore,
+                    relativeModuleLocations,
+                    packageEntryFileNames,
+                    packageMainPropertyNames,
+                    packageAliasPropertyNames,
+                    encoding
+                )
 
-                    if (filePath) {
-                        filePaths.push(filePath)
-                        const directoryPath:string = dirname(filePath)
-                        if (!directoryPaths.includes(directoryPath))
-                            directoryPaths.push(directoryPath)
-                    }
+                if (filePath) {
+                    filePaths.push(filePath)
+                    const directoryPath:string = dirname(filePath)
+                    if (!directoryPaths.includes(directoryPath))
+                        directoryPaths.push(directoryPath)
                 }
+            }
 
         return {filePaths, directoryPaths}
     }
@@ -662,57 +645,55 @@ export class Helper {
     ):NormalizedGivenInjection {
         if (referencePath.startsWith('/'))
             referencePath = relative(context, referencePath)
-        for (const chunkName in normalizedGivenInjection)
-            if (Object.prototype.hasOwnProperty.call(
-                normalizedGivenInjection, chunkName
-            )) {
-                let index = 0
-                for (const moduleID of normalizedGivenInjection[chunkName]) {
-                    const resolvedModuleID:false|string =
-                        Helper.applyModuleReplacements(
-                            Helper.applyAliases(
-                                Helper.stripLoader(moduleID), aliases
-                            ),
-                            moduleReplacements
-                        )
-                    if (resolvedModuleID === false) {
-                        normalizedGivenInjection[chunkName].splice(index, 1)
-                        continue
-                    }
-
-                    const resolvedPath:string =
-                        resolve(referencePath, resolvedModuleID)
-
-                    if (Tools.isDirectorySync(resolvedPath)) {
-                        normalizedGivenInjection[chunkName].splice(index, 1)
-                        for (const file of Tools.walkDirectoryRecursivelySync(
-                            resolvedPath,
-                            (file:File):false|undefined => {
-                                if (Helper.isFilePathInLocation(
-                                    file.path, pathsToIgnore
-                                ))
-                                    return false
-                            }
-                        ))
-                            if (file.stats?.isFile())
-                                normalizedGivenInjection[chunkName].push(
-                                    './' +
-                                    relative(
-                                        referencePath,
-                                        resolve(resolvedPath, file.path)
-                                    )
-                                )
-                    } else if (
-                        resolvedModuleID.startsWith('./') &&
-                        !resolvedModuleID.startsWith(
-                            `./${relative(context, referencePath)}`
-                        )
+        for (const chunk of Object.values(normalizedGivenInjection)) {
+            let index = 0
+            for (const moduleID of chunk) {
+                const resolvedModuleID:false|string =
+                    Helper.applyModuleReplacements(
+                        Helper.applyAliases(
+                            Helper.stripLoader(moduleID), aliases
+                        ),
+                        moduleReplacements
                     )
-                        normalizedGivenInjection[chunkName][index] =
-                            `./${relative(context, resolvedPath)}`
-                    index += 1
+                if (resolvedModuleID === false) {
+                    chunk.splice(index, 1)
+
+                    continue
                 }
+
+                const resolvedPath:string =
+                    resolve(referencePath, resolvedModuleID)
+
+                if (Tools.isDirectorySync(resolvedPath)) {
+                    chunk.splice(index, 1)
+
+                    for (const file of Tools.walkDirectoryRecursivelySync(
+                        resolvedPath,
+                        (file:File):false|undefined => {
+                            if (Helper.isFilePathInLocation(
+                                file.path, pathsToIgnore
+                            ))
+                                return false
+                        }
+                    ))
+                        if (file.stats?.isFile())
+                            chunk.push(
+                                './' +
+                                relative(
+                                    referencePath,
+                                    resolve(resolvedPath, file.path)
+                                )
+                            )
+                } else if (
+                    resolvedModuleID.startsWith('./') &&
+                    !resolvedModuleID.startsWith(
+                        `./${relative(context, referencePath)}`
+                    )
+                )
+                    chunk[index] = `./${relative(context, resolvedPath)}`
+                index += 1
             }
+        }
 
         return normalizedGivenInjection
     }
@@ -736,29 +717,24 @@ export class Helper {
         else if (Tools.isPlainObject(givenInjection)) {
             let hasContent = false
             const chunkNamesToDelete:Array<string> = []
-            for (const chunkName in givenInjection)
-                if (Object.prototype.hasOwnProperty.call(
-                    givenInjection, chunkName
-                ))
-                    if (Array.isArray(givenInjection[chunkName]))
-                        if (givenInjection[chunkName].length > 0) {
-                            hasContent = true
-                            result[chunkName] =
-                                givenInjection[chunkName] as Array<string>
-                        } else
-                            chunkNamesToDelete.push(chunkName)
-                    else {
+            for (const [chunkName, chunk] of Object.entries(givenInjection))
+                if (Array.isArray(chunk))
+                    if (chunk.length > 0) {
                         hasContent = true
-                        result[chunkName] = [
-                            givenInjection[chunkName] as string
-                        ]
-                    }
+                        result[chunkName] = chunk
+                    } else
+                        chunkNamesToDelete.push(chunkName)
+                else {
+                    hasContent = true
+                    result[chunkName] = [chunk]
+                }
             if (hasContent)
                 for (const chunkName of chunkNamesToDelete)
                     delete result[chunkName]
             else
                 result = {index: []}
         }
+
         return result
     }
     /**
@@ -820,11 +796,8 @@ export class Helper {
                             moduleFilePathsToExclude,
                             referencePath
                         )
-                        for (const subChunkName in modules)
-                            if (Object.prototype.hasOwnProperty.call(
-                                modules, subChunkName
-                            ))
-                                chunk.push(modules[subChunkName])
+                        for (const subChunk of Object.values(modules))
+                            chunk.push(subChunk)
                         /*
                             Reverse array to let javaScript and main files be
                             the last ones to export them rather.
@@ -1134,13 +1107,12 @@ export class Helper {
      * @returns The alias applied given module id.
      */
     static applyAliases(this:void, moduleID:string, aliases:Mapping):string {
-        for (const alias in aliases)
-            if (Object.prototype.hasOwnProperty.call(aliases, alias))
-                if (alias.endsWith('$')) {
-                    if (moduleID === alias.substring(0, alias.length - 1))
-                        moduleID = aliases[alias]
-                } else if (typeof moduleID === 'string')
-                    moduleID = moduleID.replace(alias, aliases[alias])
+        for (const [name, alias] of Object.entries(aliases))
+            if (name.endsWith('$')) {
+                if (moduleID === name.substring(0, name.length - 1))
+                    moduleID = alias
+            } else if (typeof moduleID === 'string')
+                moduleID = moduleID.replace(name, alias)
 
         return moduleID
     }
@@ -1159,13 +1131,8 @@ export class Helper {
         if (moduleID === false)
             return moduleID
 
-        for (const replacement in replacements)
-            if (Object.prototype.hasOwnProperty.call(
-                replacements, replacement
-            ))
-                moduleID = moduleID.replace(
-                    new RegExp(replacement), replacements[replacement]
-                )
+        for (const [search, replacement] of Object.entries(replacements))
+            moduleID = moduleID.replace(new RegExp(search), replacement)
 
         return moduleID
     }
