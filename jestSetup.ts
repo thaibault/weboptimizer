@@ -15,12 +15,11 @@
     endregion
 */
 // region imports
+import {globalContext} from 'Tools'
 import {TextEncoder, TextDecoder} from 'util'
 // endregion
-module.exports = async function (globalConfig, projectConfig) {
-    global.TextEncoder = TextEncoder
-    global.TextDecoder = TextDecoder 
-}
+globalContext.TextEncoder = TextEncoder
+globalContext.TextDecoder = TextDecoder 
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
