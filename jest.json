@@ -1,5 +1,6 @@
 {
     "forceCoverageMatch": ["**/testBundle.js"],
+    "globalSetup": "./jestSetup.js",
     "moduleNameMapper": {
         "\\.((css)|(less)|(sass)|(scss))$": "identity-obj-proxy"
     },
