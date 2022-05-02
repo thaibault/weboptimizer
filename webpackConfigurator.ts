@@ -117,7 +117,7 @@ const configuration:ResolvedConfiguration = getConfiguration()
 const module:ResolvedConfiguration['module'] = configuration.module
 // region initialisation
 /// region determine library name
-let libraryName:string
+let libraryName:Array<string>|string
 if (configuration.libraryName)
     libraryName = configuration.libraryName
 else if (Object.keys(configuration.injection.entry.normalized).length > 1)
@@ -129,6 +129,10 @@ else {
     ))
         libraryName = Tools.stringConvertToValidVariableName(libraryName)
 }
+if (libraryName === '*')
+    libraryName = Object.keys(
+        configuration.injection.entry.normalized
+    ).map((name:string):string => Tools.stringConvertToValidVariableName(name))
 /// endregion
 /// region plugins
 const pluginInstances:WebpackConfiguration['plugins'] = []
@@ -1753,7 +1757,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
             globalObject: configuration.exportFormat.globalObject,
             hashFunction: configuration.hashAlgorithm,
             library: {
-                name: libraryName === '*' ? '[name]' : libraryName,
+                name: libraryName,
                 type: configuration.exportFormat.self,
                 umdNamedDefine: true
             },
