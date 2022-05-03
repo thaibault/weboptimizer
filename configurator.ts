@@ -274,12 +274,26 @@ export const load = (
                 ([] as Array<string>).concat(result.__reference__ as string)
             delete result.__reference__
             for (const name of referenceNames)
-                Tools.extend(
-                    true,
-                    result,
-                    configuration[name as keyof DefaultConfiguration] as
-                        PlainObject
-                )
+                if (Object.prototype.hasOwnProperty.call(configuration, name))
+                    Tools.extend(
+                        true,
+                        result,
+                        configuration[name as keyof DefaultConfiguration] as
+                            PlainObject
+                    )
+                else if (Tools.isFileSync(name))
+                    Tools.extend(
+                        true,
+                        result,
+                        JSON.parse(
+                            readFileSync(name, configuration.encoding)
+                        ) as PlainObject
+                    )
+                else
+                    console.warn(
+                        `Given dynamic referenced configuration "${name}" ` +
+                        'could not be resolved.'
+                    )
         }
 
         Tools.extend(true, Tools.modifyObject(configuration, result)!, result)
