@@ -1176,7 +1176,7 @@
                     ]
                   }
                 ],
-                "@babel/transform-runtime"
+                "@babel/plugin-transform-runtime"
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transformation to allow tree shaking by the final (minimizer).",
