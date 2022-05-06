@@ -1138,19 +1138,29 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                                             .compose.image
                                                     )
                                                 ),
-                                            // TODO
-                                            onUpdateRule: (rule, token, image) => {
-                                                updateRule(
-                                                    rule, token, image
-                                                )
-                                                if (!token.value.includes(token.text))
+                                            /*
+                                                Reset this token due to a
+                                                sprite bug with
+                                                "background-image" declaration
+                                                which do not refer to an image
+                                                (e.g. linear gradient instead).
+                                            */
+                                            onUpdateRule: (
+                                                rule, token, image
+                                            ):void => {
+                                                if (token.value.includes(
+                                                    token.text
+                                                ))
+                                                    updateRule(
+                                                        rule, token, image
+                                                    )
+                                                else
                                                     token.cloneAfter({
                                                         type: 'decl',
-                                                        prop: 'background-image',
+                                                        prop:
+                                                            'background-image',
                                                         value: token.value
                                                     })
-                                                console.log('u', token.value, token.text, token)
-                                                return output
                                             },
                                         },
                                         stylesheetPath:
