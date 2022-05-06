@@ -35,6 +35,7 @@ const postcssSprites =
     optionalRequire<typeof import('postcss-sprites').default>(
         'postcss-sprites'
     )
+const updateRule = optionalRequire('postcss-sprites/lib/core')?.updateRule
 const postcssURL =
     optionalRequire<typeof import('postcss-url')>('postcss-url')
 import util from 'util'
@@ -1138,8 +1139,17 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                                     )
                                                 ),
                                             // TODO
-                                            onUpdateRule: (rule, declaration, output) => {
-                                                console.log('u', declaration.value, declaration.text)
+                                            onUpdateRule: (rule, token, image) => {
+                                                updateRule(
+                                                    rule, token, image
+                                                )
+                                                if (!token.value.includes(token.text))
+                                                    token.cloneAfter({
+                                                        type: 'decl',
+                                                        prop: 'background-image',
+                                                        value: token.value
+                                                    })
+                                                console.log('u', token.value, token.text, token)
                                                 return output
                                             },
                                         },
