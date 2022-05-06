@@ -111,7 +111,6 @@
   "devDependencies": {
     "@babel/cli": "*",
     "@babel/eslint-parser": "*",
-    "@types/cssnano": "*",
     "@types/ejs": "*",
     "@types/favicons": "*",
     "@types/html-minifier": "*",
@@ -925,7 +924,7 @@
             "#": "The autoprefixer has to be disabled in this context since it would remove all needed vendor prefixes from the preceding processing (every prefix should be needed here).",
             "preset": [
               {
-                "__evaluate__": "require('cssnano-preset-default')"
+                "__evaluate__": "optionalRequire('cssnano-preset-default')"
               },
               {
                 "autoprefixer": false,

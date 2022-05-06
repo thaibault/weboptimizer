@@ -25,6 +25,7 @@ import HTMLPlugin from 'html-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {extname, join, relative, resolve} from 'path'
 import {Transformer as PostcssTransformer} from 'postcss'
+import PostcssNode from 'postcss/lib/node'
 const postcssFontpath =
     optionalRequire<typeof import('postcss-fontpath').default>(
         'postcss-fontpath'
@@ -35,7 +36,15 @@ const postcssSprites =
     optionalRequire<typeof import('postcss-sprites').default>(
         'postcss-sprites'
     )
-const updateRule = optionalRequire('postcss-sprites/lib/core')?.updateRule
+
+type UpdateRule = (
+    _node:PostcssNode, _token:PostcssNode, _image:Mapping<unknown>
+) => void
+const updateRule:undefined|UpdateRule =
+    optionalRequire<{updateRule:UpdateRule}>(
+        'postcss-sprites/lib/core'
+    )?.updateRule
+
 const postcssURL =
     optionalRequire<typeof import('postcss-url')>('postcss-url')
 import util from 'util'
@@ -1126,10 +1135,10 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                             )()),
                                         hooks: {
                                             onSaveSpritesheet: (
-                                                image:Mapping
+                                                image:Mapping<unknown>
                                             ):string =>
                                                 join(
-                                                    image.spritePath,
+                                                    image.spritePath as string,
                                                     relative(
                                                         configuration.path
                                                             .target.asset
@@ -1146,12 +1155,17 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                                 (e.g. linear gradient instead).
                                             */
                                             onUpdateRule: (
-                                                rule, token, image
+                                                rule:PostcssNode,
+                                                token:PostcssNode & {
+                                                    text:string
+                                                    value:string
+                                                },
+                                                image:Mapping<unknown>
                                             ):void => {
                                                 if (token.value.includes(
                                                     token.text
                                                 ))
-                                                    updateRule(
+                                                    updateRule!(
                                                         rule, token, image
                                                     )
                                                 else
@@ -1161,7 +1175,7 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                                             'background-image',
                                                         value: token.value
                                                     })
-                                            },
+                                            }
                                         },
                                         stylesheetPath:
                                             configuration.path.source.asset
