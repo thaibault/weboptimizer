@@ -35,6 +35,7 @@ const postcssSprites =
     optionalRequire<typeof import('postcss-sprites').default>(
         'postcss-sprites'
     )
+const updateRule = optionalRequire('postcss-sprites/lib/core')?.updateRule
 const postcssURL =
     optionalRequire<typeof import('postcss-url')>('postcss-url')
 import util from 'util'
@@ -1137,10 +1138,29 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                                             .compose.image
                                                     )
                                                 ),
-                                            // TODO
-                                            onUpdateRule: (rule, declaration, output) => {
-                                                console.log('u', declaration.value, declaration.text)
-                                                return output
+                                            /*
+                                                Reset this token due to a
+                                                sprite bug with
+                                                "background-image" declaration
+                                                which do not refer to an image
+                                                (e.g. linear gradient instead).
+                                            */
+                                            onUpdateRule: (
+                                                rule, token, image
+                                            ):void => {
+                                                if (token.value.includes(
+                                                    token.text
+                                                ))
+                                                    updateRule(
+                                                        rule, token, image
+                                                    )
+                                                else
+                                                    token.cloneAfter({
+                                                        type: 'decl',
+                                                        prop:
+                                                            'background-image',
+                                                        value: token.value
+                                                    })
                                             },
                                         },
                                         stylesheetPath:

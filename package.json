@@ -923,10 +923,17 @@
           },
           "cssnano": {
             "#": "The autoprefixer has to be disabled in this context since it would remove all needed vendor prefixes from the preceding processing (every prefix should be needed here).",
-            "autoprefixer": false,
-            "discardUnused": {
-              "__evaluate__": "!self.library"
-            }
+            "preset": [
+              {
+                "__evaluate__": "require('cssnano-preset-default')"
+              },
+              {
+                "autoprefixer": false,
+                "discardUnused": {
+                  "__evaluate__": "!self.library"
+                }
+              }
+            ]
           },
           "data": {
             "exclude": null,
