@@ -1136,7 +1136,12 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                                         configuration.files
                                                             .compose.image
                                                     )
-                                                )
+                                                ),
+                                            // TODO
+                                            onUpdateRule: (rule, declaration, output) => {
+                                                console.log('u', declaration.value, declaration.text)
+                                                return output
+                                            },
                                         },
                                         stylesheetPath:
                                             configuration.path.source.asset
@@ -1197,7 +1202,7 @@ const genericLoader:GenericLoader = {
                                     {compileSteps: 2}
                             ).compileSteps % 2 ? '.js' : ''
                         ) +
-                        `?${configuration.hashAlgorithm}=[chunkhash]`
+                        `?${configuration.hashAlgorithm}=[contenthash]`
                 },
                 {loader: 'extract'},
                 {
@@ -1296,7 +1301,7 @@ const genericLoader:GenericLoader = {
                                         '.js' :
                                         ''
                                 ) +
-                                `?${configuration.hashAlgorithm}=[chunkhash]`
+                                `?${configuration.hashAlgorithm}=[contenthash]`
                             )
                     },
                     (
@@ -1353,7 +1358,7 @@ const genericLoader:GenericLoader = {
                                     configuration.path.target.asset.template
                                 ),
                                 `[name][ext]?${configuration.hashAlgorithm}=` +
-                                '[chunkhash]'
+                                '[contenthash]'
                             )
                     },
                     {loader: 'extract'},
@@ -1412,7 +1417,7 @@ const genericLoader:GenericLoader = {
                         ),
                         '[name][ext]'
                     ) +
-                    `?${configuration.hashAlgorithm}=[chunkhash]`
+                    `?${configuration.hashAlgorithm}=[contenthash]`
             },
             test: /\.eot(?:\?.*)?$/i,
             type: 'asset/resource',
@@ -1442,7 +1447,7 @@ const genericLoader:GenericLoader = {
                         ),
                         '[name][ext]'
                     ) +
-                    `?${configuration.hashAlgorithm}=[chunkhash]`
+                    `?${configuration.hashAlgorithm}=[contenthash]`
             },
             mimetype: 'image/svg+xml',
             parser: {
@@ -1472,7 +1477,7 @@ const genericLoader:GenericLoader = {
                         ),
                         '[name][ext]'
                     ) +
-                    `?${configuration.hashAlgorithm}=[chunkhash]`
+                    `?${configuration.hashAlgorithm}=[contenthash]`
             },
             test: /\.ttf(?:\?.*)?$/i,
             type: 'asset/resource',
@@ -1502,7 +1507,7 @@ const genericLoader:GenericLoader = {
                         ),
                         '[name][ext]'
                     ) +
-                    `?${configuration.hashAlgorithm}=[chunkhash]`
+                    `?${configuration.hashAlgorithm}=[contenthash]`
             },
             test: /\.woff2?(?:\?.*)?$/i,
             type: 'asset/resource',
@@ -1532,7 +1537,7 @@ const genericLoader:GenericLoader = {
                     ),
                     '[name][ext]'
                 ) +
-                `?${configuration.hashAlgorithm}=[chunkhash]`
+                `?${configuration.hashAlgorithm}=[contenthash]`
         },
         include: configuration.path.source.asset.image,
         test: /\.(?:gif|ico|jpg|png|svg)(?:\?.*)?$/i,
@@ -1569,7 +1574,7 @@ const genericLoader:GenericLoader = {
                     ),
                     '[name][ext]'
                 ) +
-                `?${configuration.hashAlgorithm}=[chunkhash]`
+                `?${configuration.hashAlgorithm}=[contenthash]`
         },
         test: /.+/,
         type: 'asset/resource',
