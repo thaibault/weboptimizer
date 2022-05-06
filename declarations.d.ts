@@ -25,7 +25,12 @@ declare module 'postcss-fontpath' {
 declare module 'postcss-sprites' {
     export default function(options:Partial<{
         filterBy:() => Promise<void>
-        hooks:{onSaveSpritesheet:(_image:Mapping) => string}
+        hooks:{
+            onSaveSpritesheet:(_image:Mapping<unknown>) => string
+            onUpdateRule:(
+                _rule:PostcssNode, _token:PostcssNode, _image:Mapping<unknown>
+            ) => void
+        }
         spritePath:string
         stylesheetPath:null|string
         verbose:boolean
