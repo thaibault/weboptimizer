@@ -99,15 +99,15 @@ Installation
 
 Edit your **package.json** to add **one** dependency:
 
-    #!JSON
-
+```JSON
+...
+"dependencies": {
     ...
-    "dependencies": {
-        ...
-        "weboptimizer": "latest",
-        ...
-    },
+    "weboptimizer": "latest",
     ...
+},
+...
+```
 
 Update your **packages** via npm and have fun:
 
@@ -120,79 +120,79 @@ First you should specify some tasks/use-cases you want to use in you project.
 You can do this in your **package.json**. All supported scripts and some useful
 compositions are listed below:
 
-    #!JSON
-
+```JSON
+...
+"scripts": {
     ...
-    "scripts": {
-        ...
-        "build": "weboptimizer build",
-        "build:stats": "weboptimizer build --profile --json >/tmp/stat.json && echo 'Results successfully written to \"/tmp/stat.json\".'",
-        "check": "yarn check:types; yarn lint",
-        "check:types": "weboptimizer check:types",
-        "clear": "weboptimizer clear",
-        "document": "weboptimizer document",
-        "lint": "weboptimizer lint",
-        "postinstall": "weboptimizer build",
-        "preinstall": "weboptimizer preinstall",
-        "serve": "weboptimizer serve",
-        "start": "npm run serve",
-        "test": "weboptimizer test",
-        "test:browser": "weboptimizer test:browser",
-        "watch": "weboptimizer build --watch",
-        ...
-    },
+    "build": "weboptimizer build",
+    "build:stats": "weboptimizer build --profile --json >/tmp/stat.json && echo 'Results successfully written to \"/tmp/stat.json\".'",
+    "check": "yarn check:types; yarn lint",
+    "check:types": "weboptimizer check:types",
+    "clear": "weboptimizer clear",
+    "document": "weboptimizer document",
+    "lint": "weboptimizer lint",
+    "postinstall": "weboptimizer build",
+    "preinstall": "weboptimizer preinstall",
+    "serve": "weboptimizer serve",
+    "start": "npm run serve",
+    "test": "weboptimizer test",
+    "test:browser": "weboptimizer test:browser",
+    "watch": "weboptimizer build --watch",
     ...
+},
+...
+```
 
 You can easily run any specified script via npm's command lint interface:
 
-    #!bash
-
-    npm run build -debug
-    npm run lint
-    npm run watch -debug
-    npm run serve
-    ...
+```bash
+npm run build -debug
+npm run lint
+npm run watch -debug
+npm run serve
+...
+```
 
 If you want to configure your application to change any of the expected
 default source, target, asset or build paths do it in your **package.json**:
 
-    #!JSON
-
+```JSON
+...
+"webOptimizer": {
     ...
-    "webOptimizer": {
+    "path": {
         ...
-        "path": {
+        "apiDocumentation": "apiDocumentation/",
+        "source": {
             ...
-            "apiDocumentation": "apiDocumentation/",
-            "source": {
+            "asset": {
                 ...
-                "asset": {
-                    ...
-                    "cascadingStyleSheet": "cascadingStyleSheet/",
-                    "data": "data/",
-                    "favicon": "favicon.png",
-                    "font": "font/",
-                    "image": "image/",
-                    "javaScript": "javaScript/",
-                    "publicTarget": "",
-                    "template": "template/"
-                    ..
-                },
-                ...
+                "cascadingStyleSheet": "cascadingStyleSheet/",
+                "data": "data/",
+                "favicon": "favicon.png",
+                "font": "font/",
+                "image": "image/",
+                "javaScript": "javaScript/",
+                "publicTarget": "",
+                "template": "template/"
+                ..
             },
-            "ignore": ["node_modules", ".git"],
-            "manifest": "manifest.appcache",
-            "target": {
-                ...
-                "base": "build/",
-                ...
-            },
-            "tidyUp": ["crap"],
             ...
         },
+        "ignore": ["node_modules", ".git"],
+        "manifest": "manifest.appcache",
+        "target": {
+            ...
+            "base": "build/",
+            ...
+        },
+        "tidyUp": ["crap"],
         ...
     },
     ...
+},
+...
+```
 
 It's recommended to first specify if you're writing a library (preserve
 external dependencies not managed within current project) or an application
@@ -200,75 +200,71 @@ external dependencies not managed within current project) or an application
 preconfigurations are targeting on this two different use cases. Anyway you can
 customize each configuration preset by hand.
 
-    #!JSON
-
+```JSON
+...
+"webOptimizer": {
     ...
-    "webOptimizer": {
-        ...
-        "library": false,
-        ...
-    },
+    "library": false,
     ...
+},
+...
+```
 
 You can even reference any value or evaluate any configuration value
 dynamically though a complete javaScript compatible evaluation mechanism:
 
-
-    #!JSON
-
+```JSON
+...
+"webOptimizer": {
     ...
-    "webOptimizer": {
+    "path": {
         ...
-        "path": {
+        "source": {
             ...
-            "source": {
+            "base": "/",
+            "asset": {
                 ...
-                "base": "/",
-                "asset": {
-                    ...
-                    "cascadingStyleSheet": "cascadingStyleSheet/",
-                    "template": {
-                        "__evaluate__": "self.debug ? '' : self.path.source.base"
-                    },
-                    ...
+                "cascadingStyleSheet": "cascadingStyleSheet/",
+                "template": {
+                    "__evaluate__": "self.debug ? '' : self.path.source.base"
                 },
                 ...
             },
             ...
         },
         ...
-        "offline": {
+    },
+    ...
+    "offline": {
+        ...
+        "externals": [
             ...
-            "externals": [
-                ...
-                {"__evaluate__": "self.path.source.asset.cascadingStyleSheet"},
-                "onlineAvailable.txt",
-                ...
-            ],
+            {"__evaluate__": "self.path.source.asset.cascadingStyleSheet"},
+            "onlineAvailable.txt",
             ...
-        },
+        ],
         ...
     },
     ...
+},
+...
+```
 
 You can even execute scripts to determine a value:
 
-    #!JSON
-
+``JSON
+...
+"webOptimizer": {
     ...
-    "webOptimizer": {
+    "path": {
         ...
-        "path": {
+        "source": {
             ...
-            "source": {
+            "base": "/",
+            "asset": {
                 ...
-                "base": "/",
-                "asset": {
-                    ...
-                    "template": {
-                        "__execute__": "test = self.path.source.base; if (test.endsWith('js')) return 'bar/';return 'foo/'"
-                    },
-                    ...
+                "template": {
+                    "__execute__": "test = self.path.source.base; if (test.endsWith('js')) return 'bar/';return 'foo/'"
                 },
                 ...
             },
@@ -277,6 +273,9 @@ You can even execute scripts to determine a value:
         ...
     },
     ...
+},
+...
+```
 
 For all available configuration possibilities please have a look at the
 **package.json** file in this project since these values will be extended on
@@ -287,15 +286,11 @@ complete generic command line interface: The last argument should evaluate to
 a javaScript object which will be used as source for extending the default
 behavior. Any javaScript will be supported:
 
-    #!JSON
-
     npm run build '{module:{preprocessor:{javaScript:{loader:"babel"}}}}'
 
 If you're using weboptimizer in a toolchain were none printable or none unicode
 compatible symbols should be used (for example content which should replace
 placeholder) you can encode your javaScript expression as base64 code:
-
-    #!bash
 
     npm run build '{module:{preprocessor:{ejs:{locals:{name:'häns'}}}}}'
 
@@ -307,15 +302,15 @@ There is a static tool [clientnode](https://torben.website/clientNode) and
 helper instance provided to each evaluation or execution context within the
 package.json (see the API-Documentation, link above, for more details):
 
-    #!JSON
-
+```JSON
+...
+"webOptimizer": {
     ...
-    "webOptimizer": {
-        ...
-        "libraryName": {"__evaluate__": Tools.isPlainObject(self.name) ? helper.stripLoader(self.request) : 'random'},
-        ...
-    },
+    "libraryName": {"__evaluate__": Tools.isPlainObject(self.name) ? helper.stripLoader(self.request) : 'random'},
     ...
+},
+...
+```
 
 <!-- region modline
 vim: set tabstop=4 shiftwidth=4 expandtab:
