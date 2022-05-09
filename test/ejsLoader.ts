@@ -2,6 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import {describe, expect, test} from '@jest/globals'
 import Tools from 'clientnode'
 import {LoaderContext} from 'webpack'
 

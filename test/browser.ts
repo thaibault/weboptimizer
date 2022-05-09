@@ -2,6 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import {expect, test} from '@jest/globals'
 import Tools from 'clientnode'
 
 import getInitializedBrowser, {browser} from '../browser'

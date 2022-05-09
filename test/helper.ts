@@ -2,6 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import {describe, expect, test} from '@jest/globals'
 import {currentRequire} from 'clientnode'
 import {testEach, testEachAgainstSameExpectation} from 'clientnode/testHelper'
 import {FirstParameter} from 'clientnode/type'
@@ -337,10 +338,7 @@ describe('helper', ():void => {
             false
         ]
     )
-    test.each<[
-        ReturnType<typeof Helper.determineAssetType>,
-        FirstParameter<typeof Helper.determineAssetType>
-    ]>([[null, './'], ['javaScript', 'a.js'], [null, 'a.css']])(
+    test.each([[null, './'], ['javaScript', 'a.js'], [null, 'a.css']])(
         `%p === determineAssetType('%s')`,
         (
             expected:ReturnType<typeof Helper.determineAssetType>,

@@ -26,9 +26,10 @@ import {Browser, InitializedBrowser} from './type'
 // region declaration
 declare const NAME:string
 declare const TARGET_TECHNOLOGY:string
-// endregion
-// region variables
+//  endregion
+//  region variables
 const onCreatedListener:Array<ProcedureFunction> = []
+
 export const browser:Browser = {
     debug: false,
     domContentLoaded: false,
@@ -80,10 +81,24 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 {
                     beforeParse: (window:DOMWindow):void => {
                         // We want to use it in a polymorphic way.
-                        browser.window = window as unknown as Window
+                        browser.window =
+                            global.window ?? window as unknown as Window
+
                         window.document.addEventListener(
                             'DOMContentLoaded',
                             ():void => {
+                                /*
+                                    Move template results into global
+                                    pre-defined dom.
+                                */
+                                if (global.window)
+                                    for (const type of [
+                                        'head', 'body'
+                                    ] as const)
+                                        global.window.document[type]
+                                            .innerHTML =
+                                                window.document[type].innerHTML
+
                                 browser.domContentLoaded = true
                             }
                         )
@@ -96,6 +111,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                             browser.windowLoaded =
                                 true
                         })
+
                         for (const callback of onCreatedListener)
                             (callback as SynchronousProcedureFunction)()
                     },
@@ -106,6 +122,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 }
             )
         }
+
         if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
             const filePath:string = path.join(__dirname, 'index.html.ejs')
             /*
@@ -115,6 +132,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             const ejsLoader = (await import('./ejsLoader')).default
             const content:string = await (await import('fs')).promises
                 .readFile(filePath, {encoding: 'utf-8'})
+
             render(ejsLoader.bind(
                 {resourcePath: filePath} as
                     unknown as
@@ -129,12 +147,14 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
 else {
     browser.initialized = true
     browser.window = window
+
     window.document.addEventListener('DOMContentLoaded', ():void => {
         browser.domContentLoaded = true
     })
     window.addEventListener('load', ():void => {
         browser.windowLoaded = true
     })
+
     void Tools.timeout(():void => {
         for (const callback of onCreatedListener)
             (callback as SynchronousProcedureFunction)()
@@ -145,6 +165,7 @@ else {
  * Provides a generic browser api in node or web contexts.
  * @param replaceWindow - Indicates whether a potential existing window object
  * should be replaced or not.
+ *
  * @returns Determined environment.
  */
 export const getInitializedBrowser = async (
@@ -156,11 +177,12 @@ export const getInitializedBrowser = async (
             resolvePromise = resolve
         }
     )
+
     /*
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.
     */
-    const wrappedCallback:ProcedureFunction = ():void => {
+    const wrappedCallback = ():void => {
         if (
             replaceWindow &&
             typeof global !== 'undefined' &&
@@ -168,12 +190,15 @@ export const getInitializedBrowser = async (
         )
             (global as unknown as {window:Window}).window =
                 browser.window as Window
+
         resolvePromise(browser as InitializedBrowser)
     }
+
     if (browser.initialized)
         wrappedCallback()
     else
         onCreatedListener.push(wrappedCallback)
+
     return promise
 }
 export default getInitializedBrowser

@@ -4458,9 +4458,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation-website@*:
-  version "1.0.261"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.261.tgz#52ea118d3afaa61fc89d09f708624414d098faf8"
-  integrity sha512-HKFArPesbGv9l7Ak7eBV4eGntB9HNCrbjRXabNrREvUn0KCGFECB02u/5/BiXzp/7jALvGgsxYlfpNp3yYHVQw==
+  version "1.0.263"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.263.tgz#2f8620a1af389a701c0c81769d250e39e93c7104"
+  integrity sha512-idiAfYIusHAIQe+u8n2KJyqtfbKuDTrdPtbxOa8/+NoZjknt0NeC/OW732BD01GQKeek3SKt1TqgI2xGjcTZzA==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
 
@@ -5466,9 +5466,9 @@ globals@^11.1.0:
   integrity sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==
 
 globals@^13.6.0, globals@^13.9.0:
-  version "13.13.0"
-  resolved "https://registry.yarnpkg.com/globals/-/globals-13.13.0.tgz#ac32261060d8070e2719dd6998406e27d2b5727b"
-  integrity sha512-EQ7Q18AJlPwp3vUDL4mKA0KXrXyNIQyWon6T6XQiBQF0XHvRsiCSrWmmeATpUzdJN2HhWZU6Pdl0a9zdep5p6A==
+  version "13.14.0"
+  resolved "https://registry.yarnpkg.com/globals/-/globals-13.14.0.tgz#daf3ff9b4336527cf56e98330b6f64bea9aff9df"
+  integrity sha512-ERO68sOYwm5UuLvSJTY7w7NP2c8S4UcXs3X1GBX8cwOr+ShOcDBbCY5mH4zxz0jsYCdJ8ve8Mv9n2YGJMB1aeg==
   dependencies:
     type-fest "^0.20.2"
 
