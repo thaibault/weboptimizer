@@ -2,7 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
-import {expect, test} from '@jest/globals'
+import {expect, jest, test} from '@jest/globals'
 import {resolve} from 'path'
 import {spawnSync as spawnChildProcessSync} from 'child_process'
 // endregion
