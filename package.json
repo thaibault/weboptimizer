@@ -116,7 +116,6 @@
     "@types/html-minifier": "*",
     "@types/html-minifier-terser": "*",
     "@types/imagemin": "*",
-    "@types/jest": "*",
     "@types/node": "*",
     "@types/postcss-import": "*",
     "@types/postcss-url": "*",
@@ -160,7 +159,6 @@
     "@types/favicons": "*",
     "@types/html-minifier": "*",
     "@types/imagemin": "*",
-    "@types/jest": "*",
     "@types/node": "*",
     "@types/webpack-env": "*",
     "@typescript-eslint/eslint-plugin": "*",
@@ -205,9 +203,6 @@
       "optional": true
     },
     "@types/html-minifier": {
-      "optional": true
-    },
-    "@types/jest": {
       "optional": true
     },
     "@types/node": {
