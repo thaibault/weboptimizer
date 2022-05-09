@@ -2,6 +2,7 @@
 // -*- coding: utf-8 -*-
 'use strict'
 // region imports
+import {expect, test} from '@jest/globals'
 import loadConfiguration from '../configurator'
 // endregion
 test('loadConfiguration', ():void =>
