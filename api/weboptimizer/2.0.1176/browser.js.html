@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: browser.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: browser.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// #!/usr/bin/env babel-node
+// -*- coding: utf-8 -*-
+
+/** @module browser */
+'use strict';
+/* !
+    region header
+    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+    License
+    -------
+
+    This library written by Torben Sickert stand under a creative commons
+    naming 3.0 unported license.
+    See https://creativecommons.org/licenses/by/3.0/deed.de
+    endregion
+*/
+// region imports
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _typeof = require("@babel/runtime/helpers/typeof");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getInitializedBrowser = exports["default"] = exports.browser = void 0;
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var _clientnode = _interopRequireWildcard(require("clientnode"));
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" &amp;&amp; o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike &amp;&amp; o &amp;&amp; typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion &amp;&amp; it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" &amp;&amp; o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i &lt; len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop &amp;&amp; obj &amp;&amp; obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" &amp;&amp; typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache &amp;&amp; cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty &amp;&amp; Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" &amp;&amp; Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc &amp;&amp; (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+//  endregion
+//  region variables
+var onCreatedListener = [];
+var browser = {
+  debug: false,
+  domContentLoaded: false,
+  DOM: null,
+  initialized: false,
+  instance: null,
+  window: null,
+  windowLoaded: false
+}; // endregion
+// region ensure presence of common browser environment
+
+exports.browser = browser;
+if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
+  /*
+      NOTE: We use an asynchronous wrapper method to initialize
+      "browser.initialized" at module loading time.
+  */
+  (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+    var _yield$Promise$all, _yield$Promise$all2, _yield$Promise$all2$, JSDOM, VirtualConsoleImplementation, path, virtualConsole, _iterator, _step, name, render, filePath, ejsLoader, content;
+
+    return _regenerator["default"].wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return Promise.all([Promise.resolve().then(function () {
+              return _interopRequireWildcard(require('jsdom'));
+            }), Promise.resolve().then(function () {
+              return _interopRequireWildcard(require('path'));
+            })]);
+
+          case 2:
+            _yield$Promise$all = _context.sent;
+            _yield$Promise$all2 = (0, _slicedToArray2["default"])(_yield$Promise$all, 2);
+            _yield$Promise$all2$ = _yield$Promise$all2[0];
+            JSDOM = _yield$Promise$all2$.JSDOM;
+            VirtualConsoleImplementation = _yield$Promise$all2$.VirtualConsole;
+            path = _yield$Promise$all2[1];
+            virtualConsole = new VirtualConsoleImplementation();
+            _iterator = _createForOfIteratorHelper(_clientnode.ConsoleOutputMethods);
+
+            try {
+              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                name = _step.value;
+                virtualConsole.on(name, console[name].bind(console));
+              }
+            } catch (err) {
+              _iterator.e(err);
+            } finally {
+              _iterator.f();
+            }
+
+            virtualConsole.on('error', function (error) {
+              if (!browser.debug &amp;&amp; ['XMLHttpRequest', 'resource loading'].includes(error.type)) console.warn("Loading resource failed: ".concat(error.toString(), "."));else console.error(error.stack, error.detail);
+            });
+
+            render = function render(template) {
+              browser.DOM = JSDOM;
+              browser.initialized = true;
+              browser.instance = new browser.DOM(template, {
+                beforeParse: function beforeParse(window) {
+                  var _global$window;
+
+                  // We want to use it in a polymorphic way.
+                  browser.window = (_global$window = global.window) !== null &amp;&amp; _global$window !== void 0 ? _global$window : window;
+                  window.document.addEventListener('DOMContentLoaded', function () {
+                    /*
+                        Move template results into global
+                        pre-defined dom.
+                    */
+                    if (global.window) {
+                      var _iterator2 = _createForOfIteratorHelper(['head', 'body']),
+                          _step2;
+
+                      try {
+                        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                          var type = _step2.value;
+                          global.window.document[type].innerHTML = window.document[type].innerHTML;
+                        }
+                      } catch (err) {
+                        _iterator2.e(err);
+                      } finally {
+                        _iterator2.f();
+                      }
+                    }
+
+                    browser.domContentLoaded = true;
+                  });
+                  window.addEventListener('load', function () {
+                    /*
+                        NOTE: Maybe we have miss the "DOMContentLoaded"
+                        event caused by a race condition.
+                    */
+                    browser.domContentLoaded = browser.windowLoaded = true;
+                  });
+
+                  var _iterator3 = _createForOfIteratorHelper(onCreatedListener),
+                      _step3;
+
+                  try {
+                    for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+                      var callback = _step3.value;
+                      callback();
+                    }
+                  } catch (err) {
+                    _iterator3.e(err);
+                  } finally {
+                    _iterator3.f();
+                  }
+                },
+                resources: 'usable',
+                runScripts: 'dangerously',
+                url: 'http://localhost',
+                virtualConsole: virtualConsole
+              });
+            };
+
+            if (!(typeof NAME === 'undefined' || NAME === 'webOptimizer')) {
+              _context.next = 26;
+              break;
+            }
+
+            filePath = path.join(__dirname, 'index.html.ejs');
+            /*
+                NOTE: We load dependencies now to avoid having file imports
+                after test runner has finished to isolate the environment.
+            */
+
+            _context.next = 17;
+            return Promise.resolve().then(function () {
+              return _interopRequireWildcard(require('./ejsLoader'));
+            });
+
+          case 17:
+            ejsLoader = _context.sent["default"];
+            _context.next = 20;
+            return Promise.resolve().then(function () {
+              return _interopRequireWildcard(require('fs'));
+            });
+
+          case 20:
+            _context.next = 22;
+            return _context.sent.promises.readFile(filePath, {
+              encoding: 'utf-8'
+            });
+
+          case 22:
+            content = _context.sent;
+            render(ejsLoader.bind({
+              resourcePath: filePath
+            })(content));
+            _context.next = 31;
+            break;
+
+          case 26:
+            _context.t0 = render;
+            _context.next = 29;
+            return Promise.resolve().then(function () {
+              return _interopRequireWildcard(require('webOptimizerDefaultTemplateFilePath'));
+            });
+
+          case 29:
+            _context.t1 = _context.sent;
+            (0, _context.t0)(_context.t1);
+
+          case 31:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }))()["catch"](console.error);else {
+  browser.initialized = true;
+  browser.window = window;
+  window.document.addEventListener('DOMContentLoaded', function () {
+    browser.domContentLoaded = true;
+  });
+  window.addEventListener('load', function () {
+    browser.windowLoaded = true;
+  });
+  void _clientnode["default"].timeout(function () {
+    var _iterator4 = _createForOfIteratorHelper(onCreatedListener),
+        _step4;
+
+    try {
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var callback = _step4.value;
+        callback();
+      }
+    } catch (err) {
+      _iterator4.e(err);
+    } finally {
+      _iterator4.f();
+    }
+  });
+} // endregion
+
+/**
+ * Provides a generic browser api in node or web contexts.
+ * @param replaceWindow - Indicates whether a potential existing window object
+ * should be replaced or not.
+ *
+ * @returns Determined environment.
+ */
+
+var getInitializedBrowser = /*#__PURE__*/function () {
+  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+    var replaceWindow,
+        resolvePromise,
+        promise,
+        wrappedCallback,
+        _args2 = arguments;
+    return _regenerator["default"].wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            replaceWindow = _args2.length > 0 &amp;&amp; _args2[0] !== undefined ? _args2[0] : true;
+            promise = new Promise(function (resolve) {
+              resolvePromise = resolve;
+            });
+            /*
+                NOTE: We have to define window globally before anything is loaded to
+                ensure that all future instances share the same window object.
+            */
+
+            wrappedCallback = function wrappedCallback() {
+              if (replaceWindow &amp;&amp; typeof global !== 'undefined' &amp;&amp; global !== browser.window) global.window = browser.window;
+              resolvePromise(browser);
+            };
+
+            if (browser.initialized) wrappedCallback();else onCreatedListener.push(wrappedCallback);
+            return _context2.abrupt("return", promise);
+
+          case 5:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function getInitializedBrowser() {
+    return _ref2.apply(this, arguments);
+  };
+}();
+
+exports.getInitializedBrowser = getInitializedBrowser;
+var _default = getInitializedBrowser; // region vim modline
+// vim: set tabstop=4 shiftwidth=4 expandtab:
+// vim: foldmethod=marker foldmarker=region,endregion:
+// endregioun
+
+exports["default"] = _default;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-jestEnvironmentBrowser.html">jestEnvironmentBrowser</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 10 2022 13:12:08 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

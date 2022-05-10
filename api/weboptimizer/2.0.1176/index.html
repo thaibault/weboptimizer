@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3>weboptimizer 2.0.1176</h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><!-- !/usr/bin/env markdown
+-*- coding: utf-8 -*-
+region header
+Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+License
+-------
+
+This library written by Torben Sickert stand under a creative commons naming
+3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
+endregion -->
+<h2>Project status</h2>
+<p><a href="https://www.npmjs.com/package/weboptimizer"><img src="https://img.shields.io/npm/v/weboptimizer?color=%23d55e5d&amp;label=npm%20package%20version&amp;logoColor=%23d55e5d" alt="npm"></a>
+<a href="https://www.npmjs.com/package/weboptimizer"><img src="https://img.shields.io/npm/dy/weboptimizer.svg" alt="npm downloads"></a></p>
+<p><a href="https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml"><img src="https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml/badge.svg" alt=""></a>
+<a href="https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml"><img src="https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml/badge.svg" alt=""></a>
+<a href="https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage:report.yaml"><img src="https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage:report.yaml/badge.svg" alt=""></a>
+<a href="https://github.com/thaibault/weboptimizer/actions/workflows/check:types.yaml"><img src="https://github.com/thaibault/weboptimizer/actions/workflows/check:types.yaml/badge.svg" alt=""></a>
+<a href="https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml"><img src="https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml/badge.svg" alt=""></a></p>
+<p><a href="https://coveralls.io/github/thaibault/weboptimizer"><img src="https://coveralls.io/repos/github/thaibault/weboptimizer/badge.svg" alt="code coverage"></a></p>
+<!-- Too unstable yet
+[![dependencies](https://img.shields.io/david/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer)
+[![development dependencies](https://img.shields.io/david/dev/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=dev)
+[![peer dependencies](https://img.shields.io/david/peer/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=peer)
+-->
+<p><a href="https://torben.website/weboptimizer"><img src="https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website" alt="documentation website"></a></p>
+<h2>Use case</h2>
+<p>The main goal of This plugin is providing a generic module bundler and
+workflow for all your development use cases in any project related to the web
+or node. All native web types like html, css and JavaScript are supported
+natively in their latest language specification through preconfigured
+transpiler.</p>
+<h2>Content</h2>
+<!--Place for automatic generated table of contents.-->
+<p>[TOC]</p>
+<h2>Features</h2>
+<ul>
+<li>Complete and flexible configured wrapper for <strong>webpack5+</strong> with many
+automatically determined pre configurations.</li>
+<li>Completely <strong>adaptable</strong> for your needs.</li>
+<li>Targets <strong>library</strong> and <strong>web</strong> bundle building out of the box.</li>
+<li>Only one configuration file (your already existing <strong>package.json</strong>) for all
+needed customisations needed.</li>
+<li>Many <strong>uses-cases</strong> are preconfigured and mostly works out of the box for
+your project:
+<ul>
+<li>Preconfigured <strong>preprocessing</strong> for css (PostCSS), javaScript (Babel,
+Flow) and any generic text (template) file (in ejs) with any number of
+precompile/render steps for optimal runtime performance.</li>
+<li>Preconfigured <strong>postprocessing</strong> for css (Minification),
+JavaScript (Minification), Images (Compression)</li>
+<li>Image <strong>sprite</strong> handling: Combine your images and never manage sprites
+by hand again.</li>
+<li>Polymorphic <strong>testing</strong> on dom in browsers and/or node through
+weboptimizer/browser</li>
+<li><strong>Linting</strong> and <strong>TypeChecking</strong> with Flow on css and javaScript</li>
+<li>Automatic <strong>API-Documentation</strong> generation for javaScript</li>
+<li>Various pre configured and adaptable implemented concepts for building
+development-, production-, testing-, errorhandler and/or vendor
+<strong>bundles</strong>.</li>
+<li>Support for building <strong>libraries</strong> with well defined (UMD, AMD,
+commonjs...) external, dependencies (preconfigured extendable weback
+configuration)</li>
+<li>Support for building and <strong>shimming</strong> a whole package managed application
+structure to build for various target environments like browsers or node
+(preconfigured extendable weback configuration)</li>
+<li>Generic support for all known <strong>favicon</strong> types using only one png file as
+source (watching, compressing and auto-generating integrated)</li>
+<li>Brings <strong>offline</strong> support though service worker to your application
+without any needed manual intervention!</li>
+<li>Many development helper:
+<ul>
+<li>Automatic watching and (re-)building on any assets through cross
+platform <strong>file watching</strong></li>
+<li>Preconfigured local webserver with websocket connections to
+<strong>livereload</strong> you browser when any asset has changed
+(webpack-dev-server).</li>
+<li>Preconfigured <strong>hot module replacement</strong> integration to update parts
+of your library/application with no siteeffects in a generic way
+without even the need to refresh your browser</li>
+<li>Automaticaly watch and integrate any <strong>css updates</strong> trough hot
+module replacements in app which will be shiped through the
+development server.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Installation</h2>
+<p>Edit your <strong>package.json</strong> to add <strong>one</strong> dependency:</p>
+<pre class="prettyprint source lang-JSON"><code>...
+&quot;dependencies&quot;: {
+    ...
+    &quot;weboptimizer&quot;: &quot;latest&quot;,
+    ...
+},
+...
+</code></pre>
+<p>Update your <strong>packages</strong> via npm and have fun:</p>
+<pre><code>npm update
+</code></pre>
+<h2>Configuration</h2>
+<p>First you should specify some tasks/use-cases you want to use in you project.
+You can do this in your <strong>package.json</strong>. All supported scripts and some useful
+compositions are listed below:</p>
+<pre class="prettyprint source lang-JSON"><code>...
+&quot;scripts&quot;: {
+    ...
+    &quot;build&quot;: &quot;weboptimizer build&quot;,
+    &quot;build:stats&quot;: &quot;weboptimizer build --profile --json >/tmp/stat.json && echo 'Results successfully written to \&quot;/tmp/stat.json\&quot;.'&quot;,
+    &quot;check&quot;: &quot;yarn check:types; yarn lint&quot;,
+    &quot;check:types&quot;: &quot;weboptimizer check:types&quot;,
+    &quot;clear&quot;: &quot;weboptimizer clear&quot;,
+    &quot;document&quot;: &quot;weboptimizer document&quot;,
+    &quot;lint&quot;: &quot;weboptimizer lint&quot;,
+    &quot;postinstall&quot;: &quot;weboptimizer build&quot;,
+    &quot;preinstall&quot;: &quot;weboptimizer preinstall&quot;,
+    &quot;serve&quot;: &quot;weboptimizer serve&quot;,
+    &quot;start&quot;: &quot;npm run serve&quot;,
+    &quot;test&quot;: &quot;weboptimizer test&quot;,
+    &quot;test:browser&quot;: &quot;weboptimizer test:browser&quot;,
+    &quot;watch&quot;: &quot;weboptimizer build --watch&quot;,
+    ...
+},
+...
+</code></pre>
+<p>You can easily run any specified script via npm's command lint interface:</p>
+<pre class="prettyprint source lang-bash"><code>npm run build -debug
+npm run lint
+npm run watch -debug
+npm run serve
+...
+</code></pre>
+<p>If you want to configure your application to change any of the expected
+default source, target, asset or build paths do it in your <strong>package.json</strong>:</p>
+<pre class="prettyprint source lang-JSON"><code>...
+&quot;webOptimizer&quot;: {
+    ...
+    &quot;path&quot;: {
+        ...
+        &quot;apiDocumentation&quot;: &quot;apiDocumentation/&quot;,
+        &quot;source&quot;: {
+            ...
+            &quot;asset&quot;: {
+                ...
+                &quot;cascadingStyleSheet&quot;: &quot;cascadingStyleSheet/&quot;,
+                &quot;data&quot;: &quot;data/&quot;,
+                &quot;favicon&quot;: &quot;favicon.png&quot;,
+                &quot;font&quot;: &quot;font/&quot;,
+                &quot;image&quot;: &quot;image/&quot;,
+                &quot;javaScript&quot;: &quot;javaScript/&quot;,
+                &quot;publicTarget&quot;: &quot;&quot;,
+                &quot;template&quot;: &quot;template/&quot;
+                ..
+            },
+            ...
+        },
+        &quot;ignore&quot;: [&quot;node_modules&quot;, &quot;.git&quot;],
+        &quot;manifest&quot;: &quot;manifest.appcache&quot;,
+        &quot;target&quot;: {
+            ...
+            &quot;base&quot;: &quot;build/&quot;,
+            ...
+        },
+        &quot;tidyUp&quot;: [&quot;crap&quot;],
+        ...
+    },
+    ...
+},
+...
+</code></pre>
+<p>It's recommended to first specify if you're writing a library (preserve
+external dependencies not managed within current project) or an application
+(everything should be bundled including external libraries) since many
+preconfigurations are targeting on this two different use cases. Anyway you can
+customize each configuration preset by hand.</p>
+<pre class="prettyprint source lang-JSON"><code>...
+&quot;webOptimizer&quot;: {
+    ...
+    &quot;library&quot;: false,
+    ...
+},
+...
+</code></pre>
+<p>You can even reference any value or evaluate any configuration value
+dynamically though a complete javaScript compatible evaluation mechanism:</p>
+<pre class="prettyprint source lang-JSON"><code>...
+&quot;webOptimizer&quot;: {
+    ...
+    &quot;path&quot;: {
+        ...
+        &quot;source&quot;: {
+            ...
+            &quot;base&quot;: &quot;/&quot;,
+            &quot;asset&quot;: {
+                ...
+                &quot;cascadingStyleSheet&quot;: &quot;cascadingStyleSheet/&quot;,
+                &quot;template&quot;: {
+                    &quot;__evaluate__&quot;: &quot;self.debug ? '' : self.path.source.base&quot;
+                },
+                ...
+            },
+            ...
+        },
+        ...
+    },
+    ...
+    &quot;offline&quot;: {
+        ...
+        &quot;externals&quot;: [
+            ...
+            {&quot;__evaluate__&quot;: &quot;self.path.source.asset.cascadingStyleSheet&quot;},
+            &quot;onlineAvailable.txt&quot;,
+            ...
+        ],
+        ...
+    },
+    ...
+},
+...
+</code></pre>
+<p>You can even execute scripts to determine a value:</p>
+<p>``JSON
+...
+&quot;webOptimizer&quot;: {
+...
+&quot;path&quot;: {
+...
+&quot;source&quot;: {
+...
+&quot;base&quot;: &quot;/&quot;,
+&quot;asset&quot;: {
+...
+&quot;template&quot;: {
+&quot;<strong>execute</strong>&quot;: &quot;test = self.path.source.base; if (test.endsWith('js')) return 'bar/';return 'foo/'&quot;
+},
+...
+},
+...
+},
+...
+},
+...
+},
+...</p>
+<pre class="prettyprint source"><code>
+For all available configuration possibilities please have a look at the
+**package.json** file in this project since these values will be extended on
+runtime.
+
+Additionally its even possible to overwrite any value on runtime via a
+complete generic command line interface: The last argument should evaluate to
+a javaScript object which will be used as source for extending the default
+behavior. Any javaScript will be supported:
+
+    npm run build '{module:{preprocessor:{javaScript:{loader:&quot;babel&quot;}}}}'
+
+If you're using weboptimizer in a toolchain were none printable or none unicode
+compatible symbols should be used (for example content which should replace
+placeholder) you can encode your javaScript expression as base64 code:
+
+    npm run build '{module:{preprocessor:{ejs:{locals:{name:'häns'}}}}}'
+
+    # is the same as:
+
+    npm run build 'e21vZHVsZTp7cHJlcHJvY2Vzc29yOntwdWc6e2xvY2Fsczp7bmFtZTonaMOkbnMnfX19fX0='
+
+There is a static tool [clientnode](https://torben.website/clientNode) and
+helper instance provided to each evaluation or execution context within the
+package.json (see the API-Documentation, link above, for more details):
+
+```JSON
+...
+&quot;webOptimizer&quot;: {
+    ...
+    &quot;libraryName&quot;: {&quot;__evaluate__&quot;: Tools.isPlainObject(self.name) ? helper.stripLoader(self.request) : 'random'},
+    ...
+},
+...
+</code></pre>
+<!-- region modline
+vim: set tabstop=4 shiftwidth=4 expandtab:
+vim: foldmethod=marker foldmarker=region,endregion:
+endregion --></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-jestEnvironmentBrowser.html">jestEnvironmentBrowser</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 10 2022 13:12:08 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

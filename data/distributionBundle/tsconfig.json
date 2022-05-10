@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "allowUmdGlobalAccess": true,
+        "baseUrl": "../../",
+        "checkJs": true,
+        "declaration": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "isolatedModules": true,
+        "jsx": "react",
+        "lib": ["dom", "esnext"],
+        "module": "esnext",
+        "moduleResolution": "node",
+        "paths": {
+            "@root/*": ["*"]
+        },
+        "plugins": [{"name": "typescript-plugin-css-modules"}],
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "esnext"
+    },
+    "include": [
+        "*.ts", "*.tsx",
+        "*/*.ts", "*/*.tsx"
+    ]
+}
