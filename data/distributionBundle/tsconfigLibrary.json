@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "paths": {
+            "@asset/*": ["*"],
+            "@cascadingStyleSheet/*": ["*"],
+            "@data/*": ["*"],
+            "@font/*": ["*"],
+            "@image/*": ["*"],
+            "@javaScript/*": ["*"],
+            "@root/*": ["*"],
+            "@source/*": ["*"],
+            "@template/*": ["*"]
+        }
+    },
+    "extends": "./tsconfig.json",
+    "include": [
+        "../../*.ts", "../../*.tsx",
+        "../../*/*.ts", "../../*/*.tsx"
+    ]
+}
