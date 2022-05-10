@@ -49,7 +49,6 @@
     "@types/favicons": "*",
     "@types/html-minifier": "*",
     "@types/imagemin": "*",
-    "@types/jest": "*",
     "@types/jsdom": "*",
     "@types/node": "*",
     "@types/webpack-env": "*",

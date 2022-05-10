@@ -3630,9 +3630,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30001332, caniuse-lite@^1.0.30001335:
-  version "1.0.30001338"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001338.tgz#b5dd7a7941a51a16480bdf6ff82bded1628eec0d"
-  integrity sha512-1gLHWyfVoRDsHieO+CaeYe7jSo/MT7D7lhaXUiwwbuR5BwQxORs0f1tAwUSQr3YbxRXJvxHM/PA5FfPQRnsPeQ==
+  version "1.0.30001339"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001339.tgz#f9aece4ea8156071613b27791547ba0b33f176cf"
+  integrity sha512-Es8PiVqCe+uXdms0Gu5xP5PF2bxLR7OBp3wUzUnuO7OHzhOfCyg3hdiGWVPVxhiuniOzng+hTc1u3fEQ0TlkSQ==
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -3744,9 +3744,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.903"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.903.tgz#52d1fc539e7bed82a6673a1f9036c956c601d588"
-  integrity sha512-WL4qyC7J5J94Uks7OIpQrklK702EqIOoOm2L6VIhkgzo7PdP97kVQB2PkRUYIyiQu6WYZXD3CBpnQLfMi1CRRw==
+  version "3.0.905"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.905.tgz#419f64165a5cd183600866f687695f2a4260ff5e"
+  integrity sha512-1Pm6aS7+0236TO6rfNkRa4rzvJHMSMoJJSceL3p76NaCMhyu92b9ljdblAz3Jj2S7kfNd6aAheKc6734KlwZ/Q==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -4005,9 +4005,9 @@ copy-anything@^2.0.1:
     is-what "^3.14.1"
 
 core-js-compat@^3.21.0, core-js-compat@^3.22.1:
-  version "3.22.4"
-  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.22.4.tgz#d700f451e50f1d7672dcad0ac85d910e6691e579"
-  integrity sha512-dIWcsszDezkFZrfm1cnB4f/J85gyhiCpxbgBdohWCDtSVuAaChTSpPV7ldOQf/Xds2U5xCIJZOK82G4ZPAIswA==
+  version "3.22.5"
+  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.22.5.tgz#7fffa1d20cb18405bd22756ca1353c6f1a0e8614"
+  integrity sha512-rEF75n3QtInrYICvJjrAgV03HwKiYvtKHdPtaba1KucG+cNZ4NJnH9isqt979e67KZlhpbCOTwnsvnIr+CVeOg==
   dependencies:
     browserslist "^4.20.3"
     semver "7.0.0"
@@ -4445,9 +4445,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation-website@*:
-  version "1.0.265"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.265.tgz#7a7dd410a149de59ff8ba273b47fbc21e4e4b107"
-  integrity sha512-1PxxroPsjglXG9bCG4OEfFVHy3uec0cB175TQ5bqEaIQXKYr7dP4njzhoPcc9cG+87ymoLr7WJAe09AnH2WzAA==
+  version "1.0.266"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.266.tgz#ea49b2457c1dd7b1c12011eea5b8b21dc489c692"
+  integrity sha512-4NTskWtd0P2LNeXNGfdTHwoe1bB4OHO8oELyM58n12VN8386WeGbfi0VfAwMx45zz5QcSux5ggR/Z8bSp+4aaA==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
 
