@@ -40,11 +40,11 @@ or node. All native web types like html, css and JavaScript are supported
 natively in their latest language specification through preconfigured
 transpiler.
 
-Content
--------
-
 <!--Place for automatic generated table of contents.-->
-[TOC]
+<div class="doc-toc" style="display:none">
+    <!--|deDE:Inhalt-->
+    <h2 id="content">Content</h2>
+</div>
 
 Features
 --------
