@@ -774,7 +774,9 @@
                   "__evaluate__": "/(?:^|\\/)webpack(?:$|\\/)/"
                 }
               ],
-              "include": []
+              "include": [
+                "@jest/globals"
+              ]
             }
           },
           "modules": "__implicit__"
