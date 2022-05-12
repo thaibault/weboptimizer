@@ -127,7 +127,7 @@ const configuration:ResolvedConfiguration = getConfiguration()
 const module:ResolvedConfiguration['module'] = configuration.module
 // region initialisation
 /// region determine library name
-let libraryName:Array<string>|string
+let libraryName:Array<string>|string|undefined
 if (configuration.libraryName)
     libraryName = configuration.libraryName
 else if (Object.keys(configuration.injection.entry.normalized).length > 1)
@@ -139,10 +139,16 @@ else {
     ))
         libraryName = Tools.stringConvertToValidVariableName(libraryName)
 }
-if (libraryName === '*')
-    libraryName = Object.keys(
-        configuration.injection.entry.normalized
-    ).map((name:string):string => Tools.stringConvertToValidVariableName(name))
+/*
+    NOTE: Maybe useful:
+
+    if (libraryName === '*')
+        libraryName = Object.keys(
+            configuration.injection.entry.normalized
+        ).map((name:string):string =>
+            Tools.stringConvertToValidVariableName(name)
+        )
+*/
 /// endregion
 /// region plugins
 const pluginInstances:WebpackConfiguration['plugins'] = []
