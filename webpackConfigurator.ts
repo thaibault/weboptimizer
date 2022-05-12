@@ -139,16 +139,17 @@ else {
     ))
         libraryName = Tools.stringConvertToValidVariableName(libraryName)
 }
-/*
-    NOTE: Maybe useful:
+if (libraryName === '*')
+    /*
+        NOTE: Maybe useful:
 
-    if (libraryName === '*')
         libraryName = Object.keys(
             configuration.injection.entry.normalized
         ).map((name:string):string =>
             Tools.stringConvertToValidVariableName(name)
         )
-*/
+    */
+    libraryName = undefined
 /// endregion
 /// region plugins
 const pluginInstances:WebpackConfiguration['plugins'] = []
