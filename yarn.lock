@@ -3750,9 +3750,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.913"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.913.tgz#202811024291f818bf1e940f0affd588a0a2f4ab"
-  integrity sha512-8rhCU/9/U0+T2nHkGn2ywXtoAjS6tvLfSP0CIC9sFRMwgSDMY+8lqFyhrGB88o/GFqxky3rQc8s0doSJQdDpDQ==
+  version "3.0.914"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.914.tgz#17b7cb48d618eada5c459800174c533d6c43a761"
+  integrity sha512-zZT4pbZut+Ql+idQwPJqHT84yrbjbbCKp+rKdsNlNvA8+SW85V0QtD3HRa63NdPY0L3NbrOYE6UyJaojAyvSDQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -4451,9 +4451,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation-website@*:
-  version "1.0.269"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.269.tgz#239e8eb109686c8e6e668127a8af6683ccd4a34f"
-  integrity sha512-C2HqhajolxeCKR/JEXB2X31wec6uOipBSu/FSC5mBOYei1fVXcHvkNqDOM0eucvfRKtDRz79lhAxnnDK6Vvm6Q==
+  version "1.0.272"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.272.tgz#d235813dad611b0c50eb720ffe03f2fc97727717"
+  integrity sha512-mWp1ksg/FzeJ52xu1IHOXUoOZ/3apEPWxdw9LMFIpgACI5fUw6Ppj9YkxQCC5JEKPOQ4Wovm9gJfdZL+XzAanA==
   dependencies:
     "@types/webpack" "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
 
