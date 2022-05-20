@@ -170,7 +170,6 @@ var main = /*#__PURE__*/function () {
                               case 22:
                                 additionalArguments = commandLineArguments.splice(3); /// region register exit handler to tidy up
 
-                                /// region register exit handler to tidy up
                                 clear = function clear(error) {
                                   // NOTE: Close handler have to be synchronous.
                                   if (_clientnode["default"].isFileSync(filePath)) (0, _fs.unlinkSync)(filePath);
@@ -439,10 +438,6 @@ var main = /*#__PURE__*/function () {
                                             */
 
 
-                                            /*
-                                                NOTE: Close handler have to be
-                                                synchronous.
-                                            */
                                             if (configuration.buildContext.types[type].outputExtension === 'js' && _clientnode["default"].isFileSync(_filePath3)) (0, _fs.chmodSync)(_filePath3, '755');
                                           }
                                         }
@@ -491,10 +486,6 @@ var main = /*#__PURE__*/function () {
                                       final productive output.
                                   */
 
-                                  /*
-                                      Triggers complete asset compiling and bundles them into the
-                                      final productive output.
-                                  */
                                   processPromises.push(new Promise(function (resolve, reject) {
                                     var commandLineArguments = (configuration.commandLine.build.arguments || []).concat(additionalArguments);
                                     console.info('Running "' + ("".concat(configuration.commandLine.build.command, " ") + commandLineArguments.join(' ')).trim() + '"');
@@ -503,10 +494,6 @@ var main = /*#__PURE__*/function () {
                                         account.
                                     */
 
-                                    /*
-                                        NOTE: Take current weboptimizer's dependencies into
-                                        account.
-                                    */
                                     childProcessOptions.env.PATH += ":".concat(webOptimizerPath, "/node_modules/.bin");
                                     var childProcess = (0, _child_process.spawn)(configuration.commandLine.build.command, commandLineArguments, childProcessOptions);
 
@@ -520,7 +507,6 @@ var main = /*#__PURE__*/function () {
                                           var sourcePath = (0, _path.join)(configuration.path.source.base, _filePath5);
                                           var targetPath = (0, _path.join)(configuration.path.target.base, _filePath5); // NOTE: Close handler have to be synchronous.
 
-                                          // NOTE: Close handler have to be synchronous.
                                           if (_clientnode["default"].isDirectorySync(sourcePath)) {
                                             if (_clientnode["default"].isDirectorySync(targetPath)) (0, _rimraf.sync)(targetPath, {
                                               glob: false
@@ -617,8 +603,6 @@ var main = /*#__PURE__*/function () {
                                 // region handle remaining tasks
 
 
-                                // endregion
-                                // region handle remaining tasks
                                 handleTask = function handleTask(type) {
                                   var tasks = Array.isArray(configuration.commandLine[type]) ? configuration.commandLine[type] : [configuration.commandLine[type]];
 

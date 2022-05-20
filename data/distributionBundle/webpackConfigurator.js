@@ -115,9 +115,9 @@ if (configuration.libraryName) libraryName = configuration.libraryName;else if (
   libraryName = configuration.name;
   if (['assign', 'global', 'this', 'var', 'window'].includes(configuration.exportFormat.self)) libraryName = _clientnode["default"].stringConvertToValidVariableName(libraryName);
 }
-if (libraryName === '*') libraryName = Object.keys(configuration.injection.entry.normalized).map(function (name) {
+if (libraryName === '*') libraryName = ['assign', 'global', 'this', 'var', 'window'].includes(configuration.exportFormat.self) ? Object.keys(configuration.injection.entry.normalized).map(function (name) {
   return _clientnode["default"].stringConvertToValidVariableName(name);
-}); /// endregion
+}) : undefined; /// endregion
 /// region plugins
 
 var pluginInstances = []; //// region define modules to ignore
