@@ -1851,21 +1851,21 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
             chunkIds: configuration.debug ? 'named' : 'total-size',
             moduleIds: configuration.debug ? 'named' : 'size',
             // region common chunks
-            splitChunks: (
-                !configuration.injection.chunks ||
-                configuration.targetTechnology.payload === 'node' ||
-                configuration.givenCommandLineArguments[2] === 'test'
-            ) ?
-                {
-                    cacheGroups: {
-                        default: false,
-                        defaultVendors: false
-                    }
-                } :
-                Tools.extend<NonNullable<
-                    WebpackConfiguration['optimization']
-                >['splitChunks']>(
-                    true,
+            splitChunks: Tools.extend<NonNullable<
+                WebpackConfiguration['optimization']
+            >['splitChunks']>(
+                true,
+                (
+                    !configuration.injection.chunks ||
+                    configuration.targetTechnology.payload === 'node' ||
+                    configuration.givenCommandLineArguments[2] === 'test'
+                ) ?
+                    {
+                        cacheGroups: {
+                            default: false,
+                            defaultVendors: false
+                        }
+                    } :
                     {
                         chunks: 'all',
                         cacheGroups: {
@@ -1895,8 +1895,8 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
                             }
                         }
                     },
-                    configuration.injection.chunks
-                ),
+                configuration.injection.chunks
+            ),
             // endregion
             ...Tools.mask(
                 module.optimizer,
