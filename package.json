@@ -1610,6 +1610,13 @@
           }
         }
       },
+      "development": {
+        "server": {
+          "devMiddleware": {
+            "index": "playground.html"
+          }
+        }
+      },
       "document": {
         "commandLine": {
           "document": {
