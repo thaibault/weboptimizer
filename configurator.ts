@@ -462,10 +462,10 @@ export const load = (
                 resolvedConfiguration.path.context,
                 /*
                     NOTE: We doesn't use
-                    "resolvedConfiguration.path.source.asset.base" because
-                    we already have resolved all module ids.
+                    "resolvedConfiguration.path.source.asset.base" because we
+                    already have resolved all module ids.
                 */
-                './',
+                '',
                 resolvedConfiguration.path.ignore,
                 resolvedConfiguration.module.directoryNames,
                 resolvedConfiguration.package.main.fileNames,

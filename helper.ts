@@ -645,6 +645,7 @@ export class Helper {
     ):NormalizedGivenInjection {
         if (referencePath.startsWith('/'))
             referencePath = relative(context, referencePath)
+
         for (const chunk of Object.values(normalizedGivenInjection)) {
             let index = 0
             for (const moduleID of chunk) {
@@ -680,8 +681,7 @@ export class Helper {
                             chunk.push(
                                 './' +
                                 relative(
-                                    referencePath,
-                                    resolve(resolvedPath, file.path)
+                                    context, resolve(resolvedPath, file.path)
                                 )
                             )
                 } else if (
