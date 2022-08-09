@@ -23,6 +23,12 @@ import {TextEncoder, TextDecoder} from 'util'
     TextEncoder
 ;(globalContext as $Global & {TextDecoder:typeof TextDecoder}).TextDecoder =
     TextDecoder
+try {
+    if ((eval('require') as typeof require)('jest-canvas-mock'))
+        console.info('Canvas mocking module loaded.')
+} catch (error) {
+    // Do nothing.
+}
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:

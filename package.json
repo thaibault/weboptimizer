@@ -173,6 +173,7 @@
     "image-minimizer-webpack-plugin": "*",
     "imagemin": "*",
     "jest": "*",
+    "jest-canvas-mock": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
     "postcss": "*",
@@ -242,6 +243,9 @@
       "optional": true
     },
     "jest": {
+      "optional": true
+    },
+    "jest-canvas-mock": {
       "optional": true
     },
     "jsdoc": {
