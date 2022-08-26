@@ -1899,7 +1899,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
             ),
             // endregion
             ...Tools.mask(
-                module.optimizer,
+                module.optimizer as unknown as Mapping<unknown>,
                 {
                     exclude: {
                         babelMinify: true,
