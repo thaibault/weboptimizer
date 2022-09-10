@@ -22,6 +22,9 @@ import {
 const postcssCSSnano:null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
+import {
+    PluginOptions as ImageMinimizerOptions
+} from 'image-minimizer-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {extname, join, relative, resolve} from 'path'
 import {Transformer as PostcssTransformer} from 'postcss'
@@ -1721,10 +1724,10 @@ if (!module.optimizer.minimizer) {
                     minimizer: {
                         implementation: plugins.ImageMinimizer.imageminMinify
                     }
-                },
+                } as ImageMinimizerOptions<unknown, unknown>,
                 module.optimizer.image.content
             )
-        )!)
+        ))
 }
 // endregion
 // region configuration

@@ -14,14 +14,16 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region import s
+// region imports
 import {
     AnyFunction, Encoding, Mapping, PlainObject, SecondParameter
 } from 'clientnode/type'
 import {FaviconOptions} from 'favicons'
 import FaviconWebpackPlugin from 'favicons-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import ImageMinimizerWebpackPlugin from 'image-minimizer-webpack-plugin'
+import ImageMinimizerWebpackPlugin, {
+    PluginOptions as ImageMinimizerOptions
+} from 'image-minimizer-webpack-plugin'
 import {JSDOM} from 'jsdom'
 import MiniCSSExtractPlugin from 'mini-css-extract-plugin'
 import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
@@ -388,7 +390,7 @@ export interface ResolvedConfiguration {
             }
             htmlMinifier?:PlainObject
             image:{
-                content:PlainObject
+                content:ImageMinimizerOptions<unknown, unknown>
                 exclude:string
                 loader:Array<string>
             }
