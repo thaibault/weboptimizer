@@ -1724,7 +1724,7 @@ if (!module.optimizer.minimizer) {
                 },
                 module.optimizer.image.content
             )
-        ))
+        )!)
 }
 // endregion
 // region configuration
