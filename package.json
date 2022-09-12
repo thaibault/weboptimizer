@@ -81,6 +81,7 @@
     "update": "yarn version --patch && yarn publish",
     "update:documentation": "documentation-website"
   },
+  "runkitExample": "require('@babel/runtime/package.json')\n\nconst {default: main} = require('weboptimizer')\n\nawait main('./', './', ['clear'])",
   "dependencies": {
     "@babel/core": "*",
     "@babel/plugin-proposal-decorators": "*",
