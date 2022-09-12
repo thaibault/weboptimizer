@@ -612,30 +612,26 @@
       },
       "favicon": {
         "background": "white",
-        "emitStats": false,
-        "icons": {
-          "android": true,
-          "appleIcon": true,
-          "appleStartup": true,
-          "coast": true,
-          "favicons": true,
-          "firefox": true,
-          "opengraph": true,
-          "twitter": true,
-          "windows": true,
-          "yandex": true
+        "cache": true,
+        "favicons": {
+          "appName": {
+            "__evaluate__": "self.name"
+          },
+          "icons": {
+            "android": true,
+            "appleIcon": true,
+            "appleStartup": true,
+            "favicons": true,
+            "windows": true,
+            "yandex": true
+          }
         },
         "inject": true,
         "logo": {
           "__evaluate__": "self.path.source.asset.favicon"
         },
-        "persistentCache": true,
         "prefix": {
           "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, 'favicons-[chunkhash]'))}/`"
-        },
-        "statsFilename": "iconStats.json",
-        "title": {
-          "__evaluate__": "self.name"
         }
       },
       "files": {
