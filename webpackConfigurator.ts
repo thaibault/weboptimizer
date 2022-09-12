@@ -15,12 +15,10 @@
     endregion
 */
 // region imports
-import Tools, {currentRequire, optionalRequire} from 'clientnode'
+import Tools from 'clientnode'
 import {
     EvaluationResult, Mapping, PlainObject, Unpacked
 } from 'clientnode/type'
-const postcssCSSnano:null|typeof import('cssnano') =
-    optionalRequire<typeof import('cssnano')>('cssnano')
 import HTMLPlugin from 'html-webpack-plugin'
 import {
     PluginOptions as ImageMinimizerOptions
@@ -29,27 +27,6 @@ import {JSDOM as DOM} from 'jsdom'
 import {extname, join, relative, resolve} from 'path'
 import {Transformer as PostcssTransformer} from 'postcss'
 import PostcssNode from 'postcss/lib/node'
-const postcssFontpath =
-    optionalRequire<typeof import('postcss-fontpath').default>(
-        'postcss-fontpath'
-    )
-const postcssImport =
-    optionalRequire<typeof import('postcss-import')>('postcss-import')
-const postcssSprites =
-    optionalRequire<typeof import('postcss-sprites').default>(
-        'postcss-sprites'
-    )
-
-type UpdateRule = (
-    _node:PostcssNode, _token:PostcssNode, _image:Mapping<unknown>
-) => void
-const updateRule:undefined|UpdateRule =
-    optionalRequire<{updateRule:UpdateRule}>(
-        'postcss-sprites/lib/core'
-    )?.updateRule
-
-const postcssURL =
-    optionalRequire<typeof import('postcss-url')>('postcss-url')
 import util from 'util'
 import {
     Chunk,
@@ -101,7 +78,47 @@ import {
     WebpackPlugins,
     WebpackResolveData
 } from './type'
+/// region optional imports
+// NOTE: Has to be defined here to ensure to resolve from here.
+const currentRequire:null|typeof require =
+    /*
+        typeof __non_webpack_require__ === 'function' ?
+            __non_webpack_require__ :
+    */
+    eval(`typeof require === 'undefined' ? null : require`) as
+        null|typeof require
+export const optionalRequire = <T = unknown>(id:string):null|T => {
+    try {
+        return currentRequire ? currentRequire(id) as T : null
+    } catch (error) {
+        return null
+    }
+}
 
+const postcssCSSnano:null|typeof import('cssnano') =
+    optionalRequire<typeof import('cssnano')>('cssnano')
+const postcssFontpath =
+    optionalRequire<typeof import('postcss-fontpath').default>(
+        'postcss-fontpath'
+    )
+const postcssImport =
+    optionalRequire<typeof import('postcss-import')>('postcss-import')
+const postcssSprites =
+    optionalRequire<typeof import('postcss-sprites').default>(
+        'postcss-sprites'
+    )
+
+type UpdateRule = (
+    _node:PostcssNode, _token:PostcssNode, _image:Mapping<unknown>
+) => void
+const updateRule:undefined|UpdateRule =
+    optionalRequire<{updateRule:UpdateRule}>(
+        'postcss-sprites/lib/core'
+    )?.updateRule
+
+const postcssURL =
+    optionalRequire<typeof import('postcss-url')>('postcss-url')
+/// endregion
 const pluginNameResourceMapping:Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
