@@ -18,8 +18,10 @@
 import {
     AnyFunction, Encoding, Mapping, PlainObject, SecondParameter
 } from 'clientnode/type'
-import {FaviconStreamOptions} from 'favicons'
 import FaviconWebpackPlugin from 'favicons-webpack-plugin'
+import {
+    FaviconWebpackPlugionOptions as FaviconWebpackPluginOptions
+} from 'favicons-webpack-plugin/src/options'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ImageMinimizerWebpackPlugin, {
     PluginOptions as ImageMinimizerOptions
@@ -336,7 +338,7 @@ export interface ResolvedConfiguration {
         self:ExportFormat
     }
     extensions:Extensions
-    favicon:Mapping<FaviconStreamOptions> & {logo:string}
+    favicon:FaviconWebpackPluginOptions
     files:{
         additionalPaths:Array<string>
         compose:{
