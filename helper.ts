@@ -812,7 +812,7 @@ export class Helper {
                 ) = Helper.getAutoInjection(
                                 buildConfigurations,
                                 moduleFilePathsToExclude,
-                                context
+                                referencePath
                             )
         }
 
