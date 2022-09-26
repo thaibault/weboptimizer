@@ -22,16 +22,3 @@ jobs:
 
       - name: Run tests
         run: yarn test
-  test_lts:
-    runs-on: ubuntu-latest
-    container: node:lts
-    steps:
-      - uses: actions/checkout@v2
-
-      # Runs a set of commands using the runners shell
-
-      - name: Install packages marked as dependencies
-        run: yarn
-
-      - name: Run tests
-        run: yarn test
