@@ -69,6 +69,7 @@
     "check:types": "tsc --noEmit",
     "clear": "rimraf apiDocumentation browser.d.ts configurator.d.ts ejsLoader.d.ts helper.d.ts index.d.ts jestEnvironmentBrowser.d.ts stylelintConfigurator.d.ts type.d.ts webpackConfigurator.d.ts *.js *.compiled.* *.compiled test/*.js test/*.compiled.* test/*.d.ts *.html *.log node_modules/weboptimizer .coverage .nyc_output || true",
     "document": "yarn build:plain && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.js",
+    "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push",
     "prettify": "yarn lint:base --fix || true",
     "lint": "yarn lint:base",
     "lint:base": "eslint --ignore-pattern '*.compiled.*' --ignore-pattern '*.d.ts' --ignore-pattern '*.js' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
@@ -78,7 +79,7 @@
     "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info",
     "test:watch": "yarn test --watch",
     "test:watch:all": "yarn test --watchAll",
-    "update": "yarn version --patch && yarn publish && git push origin $(git describe --tags)",
+    "update": "yarn version --patch && yarn publish",
     "update:documentation": "documentation-website"
   },
   "runkitExample": "require('@babel/runtime/package.json')\n\nconst {default: main} = require('weboptimizer')\n\nawait main('./', './', ['clear'])",
