@@ -183,6 +183,7 @@
     "postcss-import": "*",
     "postcss-loader": "*",
     "postcss-preset-env": "*",
+    "postcss-scss": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
     "style-loader": "*",
@@ -266,6 +267,9 @@
       "optional": true
     },
     "postcss-preset-env": {
+      "optional": true
+    },
+    "postcss-scss": {
       "optional": true
     },
     "postcss-sprites": {
@@ -1411,6 +1415,9 @@
         "__evaluate__": "self.debug"
       },
       "stylelint": {
+        "customSyntax": {
+          "__evaluate__": "optionalRequire('postcss-scss') ? 'postcss-scss' : null"
+        },
         "extends": "stylelint-config-standard",
         "ignoreFiles": "**/node_modules/*",
         "rules": {
