@@ -265,7 +265,7 @@ const main = async (
                             await unlink(file.path)
                 } else
                     await new Promise<void>((
-                        resolve:() => void, reject:(_reason:Error) => void
+                        resolve:() => void, reject:(reason:Error) => void
                     ):void => removeDirectoryRecursively(
                         configuration.path.target.base,
                         {glob: false},
@@ -279,7 +279,7 @@ const main = async (
                     )
                 )
                     await new Promise<void>((
-                        resolve:() => void, reject:(_reason:Error) => void
+                        resolve:() => void, reject:(reason:Error) => void
                     ):void =>
                         removeDirectoryRecursively(
                             configuration.path.apiDocumentation,
@@ -601,11 +601,15 @@ const main = async (
                         ),
                         {global, self: configuration, path}
                     )
+
+                    console.log('TODO', configuration.needed, task)
+
                     if (evaluated.error)
                         throw new Error(
                             'Error occurred during processing given task: ' +
                             evaluated.error
                         )
+
                     if (evaluated.result)
                         processPromises.push(new Promise<ProcessCloseReason>((
                             resolve:ProcessCloseCallback,
