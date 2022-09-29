@@ -602,8 +602,6 @@ const main = async (
                         {global, self: configuration, path}
                     )
 
-                    console.log('TODO', configuration.needed, task)
-
                     if (evaluated.error)
                         throw new Error(
                             'Error occurred during processing given task: ' +
