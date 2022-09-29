@@ -1739,6 +1739,9 @@
             "**/package.json",
             {
               "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
+            },
+            {
+              "__evaluate__": "path.resolve(self.path.target.base, '**/*.js')"
             }
           ]
         }

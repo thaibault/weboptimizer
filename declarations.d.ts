@@ -40,10 +40,6 @@ declare module 'webOptimizerDefaultTemplateFilePath'
 declare module 'svgo' {
     export type Options = any
 }
-declare module '*/module' {
-    const classes:Mapping
-    export default classes
-}
 declare module '*.module' {
     const classes:Mapping
     export default classes
