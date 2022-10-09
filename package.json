@@ -151,6 +151,7 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
+    "stylelint-config-standard-scss": "*",
     "typescript-plugin-css-modules": "*",
     "workbox-webpack-plugin": "*"
   },
@@ -189,6 +190,7 @@
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
+    "stylelint-config-standard-scss": "*",
     "typescript-plugin-css-modules": "*",
     "webpack-dev-server": "*",
     "workbox-webpack-plugin": "*"
@@ -285,6 +287,9 @@
       "optional": true
     },
     "stylelint-config-standard": {
+      "optional": true
+    },
+    "stylelint-config-standard-scss": {
       "optional": true
     },
     "typescript-plugin-css-modules": {
@@ -1418,7 +1423,9 @@
         "customSyntax": {
           "__evaluate__": "optionalRequire('postcss-scss') ? 'postcss-scss' : null"
         },
-        "extends": "stylelint-config-standard",
+        "extends": {
+          "__evaluate__": "optionalRequire('stylelint-config-standard-scss') ? 'stylelint-config-standard-scss' : 'stylelint-config-standard'"
+        },
         "ignoreFiles": "**/node_modules/*",
         "rules": {
           "at-rule-empty-line-before": [
