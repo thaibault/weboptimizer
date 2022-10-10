@@ -78,7 +78,7 @@
     "sass-loader": "*",
     "style-loader": "*",
     "stylelint": "*",
-    "stylelint-config-standard": "*",
+    "stylelint-config-standard-scss": "*",
     "typescript-plugin-css-modules": "*",
     "weboptimizer": "*",
     "webpack-dev-server": "*",
