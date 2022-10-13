@@ -24,6 +24,8 @@
     },
     "include": [
         "*.ts", "*.tsx",
-        "*/*.ts", "*/*.tsx"
+        "*/*.ts", "*/*.tsx",
+        "source/**/*.ts", "source/**/*.tsx",
+        "src/**/*.ts", "src/**/*.tsx"
     ]
 }

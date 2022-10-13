@@ -1,8 +1,8 @@
 // #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
-
 /** @module type */
 'use strict';
+
 /* !
     region header
     Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
@@ -15,8 +15,7 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region import s
-
+// region imports
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -33,12 +32,13 @@ exports.TaskTypes = exports.SubConfigurationTypes = void 0;
 //// region build
 var SubConfigurationTypes = ['debug', 'document', 'test', 'test:browser'];
 exports.SubConfigurationTypes = SubConfigurationTypes;
-var TaskTypes = ['build', 'serve'].concat(SubConfigurationTypes); //// endregion
+var TaskTypes = ['build', 'serve'].concat(SubConfigurationTypes);
+//// endregion
 //// region loader
+
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
 // endregion
-
 exports.TaskTypes = TaskTypes;
