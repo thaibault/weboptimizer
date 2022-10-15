@@ -16,6 +16,9 @@
     "include": [
         "../../*.ts", "../../*.tsx",
         "../../*/*.ts", "../../*/*.tsx",
+        "../../assets/source/**/*.ts", "../../assets/source/**/*.tsx",
+        "../../assets/src/**/*.ts", "../../assets/src/**/*.tsx",
+        "../../source/**/*.ts", "../../source/**/*.tsx",
         "../../src/**/*.ts", "../../src/**/*.tsx"
     ]
 }
