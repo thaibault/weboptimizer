@@ -10,4 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     container: node:latest
     steps:
-      - uses: thaibault/build-npm-package-action@main
+      - uses: thaibault/install-npm-package-dependencies-action@main
+
+      - name: Build package contents
+        run: yarn build
