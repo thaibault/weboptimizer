@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     container: node:latest
     steps:
-      - uses: thaibault/build-npm-package-action@master
+      - uses: thaibault/build-npm-package-action@main
