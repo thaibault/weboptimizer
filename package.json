@@ -1920,7 +1920,7 @@
       ],
       "jsdoc/require-description-complete-sentence": "error",
       "jsdoc/require-hyphen-before-param-description": "error",
-      "jsdoc/require-param": "error",
+      "jsdoc/require-param": 0,
       "jsdoc/require-param-description": "error",
       "jsdoc/require-param-type": 0,
       "jsdoc/require-returns-description": "error",
