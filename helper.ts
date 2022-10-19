@@ -63,7 +63,6 @@ export class Helper {
     /**
      * Determines whether given file path is within given list of file
      * locations.
-     * @param this - Indicates an unbound method.
      * @param filePath - Path to file to check.
      * @param locationsToCheck - Locations to take into account.
      *
@@ -84,7 +83,6 @@ export class Helper {
     /**
      * Strips loader informations form given module request including loader
      * prefix and query parameter.
-     * @param this - Indicates an unbound method.
      * @param moduleID - Module request to strip.
      *
      * @returns Given module id stripped.
@@ -104,7 +102,6 @@ export class Helper {
     // region array
     /**
      * Converts given list of path to a normalized list with unique values.
-     * @param this - Indicates an unbound method.
      * @param paths - File paths.
      *
      * @returns The given file path list with normalized unique values.
@@ -124,7 +121,6 @@ export class Helper {
     /**
      * Applies file path/name placeholder replacements with given bundle
      * associated informations.
-     * @param this - Indicates an unbound method.
      * @param template - File path to process placeholder in.
      * @param scope - Scope to use for processing.
      *
@@ -156,7 +152,6 @@ export class Helper {
     /**
      * Converts given request to a resolved request with given context
      * embedded.
-     * @param this - Indicates an unbound method.
      * @param request - Request to determine.
      * @param context - Context of given request to resolve relative to.
      * @param referencePath - Path to resolve local modules relative to.
@@ -219,7 +214,6 @@ export class Helper {
     /**
      * Check if given request points to an external dependency not maintained
      * by current package context.
-     * @param this - Indicates an unbound method.
      * @param request - Request to determine.
      * @param context - Context of current project.
      * @param requestContext - Context of given request to resolve relative to.
@@ -405,7 +399,6 @@ export class Helper {
     }
     /**
      * Determines asset type of given file.
-     * @param this - Indicates an unbound method.
      * @param filePath - Path to file to analyse.
      * @param buildConfiguration - Meta informations for available asset
      * types.
@@ -449,7 +442,6 @@ export class Helper {
      * matches each build configuration in given entry path and converts given
      * build configuration into a sorted array were javaScript files takes
      * precedence.
-     * @param this - Indicates an unbound method.
      * @param configuration - Given build configurations.
      * @param entryPath - Path to analyse nested structure.
      * @param pathsToIgnore - Paths which marks location to ignore.
@@ -532,7 +524,6 @@ export class Helper {
     /**
      * Determines all file and directory paths related to given internal
      * modules as array.
-     * @param this - Indicates an unbound method.
      * @param givenInjection - List of module ids or module file paths.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of module replacements to take into
@@ -622,7 +613,6 @@ export class Helper {
     /**
      * Determines a list of concrete file paths for given module id pointing to
      * a folder which isn't a package.
-     * @param this - Indicates an unbound method.
      * @param normalizedGivenInjection - Injection data structure of modules
      * with folder references to resolve.
      * @param aliases - Mapping of aliases to take into account.
@@ -701,7 +691,6 @@ export class Helper {
      * Every injection definition type can be represented as plain object
      * (mapping from chunk name to array of module ids). This method converts
      * each representation into the normalized plain object notation.
-     * @param this - Indicates an unbound method.
      * @param givenInjection - Given entry injection to normalize.
      *
      * @returns Normalized representation of given entry injection.
@@ -740,7 +729,6 @@ export class Helper {
     /**
      * Determines all concrete file paths for given injection which are marked
      * with the "__auto__" indicator.
-     * @param this - Indicates an unbound method.
      * @param givenInjection - Given entry and external injection to take
      * into account.
      * @param buildConfigurations - Resolved build configuration.
@@ -820,7 +808,6 @@ export class Helper {
     }
     /**
      * Determines all module file paths.
-     * @param this - Indicates an unbound method.
      * @param buildConfigurations - Resolved build configuration.
      * @param moduleFilePathsToExclude - A list of modules file paths to
      * exclude (specified by path or id) or a mapping from chunk names to
@@ -892,7 +879,6 @@ export class Helper {
     // TODO test
     /**
      * Determines a resolved module file path in given package path.
-     * @param this - Indicates an unbound method.
      * @param packagePath - Path to package to resolve in.
      * @param packageMainPropertyNames - List of package file main property
      * names to search for package representing entry module definitions.
@@ -965,7 +951,6 @@ export class Helper {
     }
     /**
      * Determines a concrete file path for given module id.
-     * @param this - Indicates an unbound method.
      * @param moduleID - Module id to determine.
      * @param aliases - Mapping of aliases to take into account.
      * @param moduleReplacements - Mapping of replacements to take into
@@ -1100,7 +1085,6 @@ export class Helper {
     // endregion
     /**
      * Determines a concrete file path for given module id.
-     * @param this - Indicates an unbound method.
      * @param moduleID - Module id to determine.
      * @param aliases - Mapping of aliases to take into account.
      *
@@ -1118,7 +1102,6 @@ export class Helper {
     }
     /**
      * Determines a concrete file path for given module id.
-     * @param this - Indicates an unbound method.
      * @param moduleID - Module id to determine.
      * @param replacements - Mapping of regular expressions to their
      * corresponding replacements.
@@ -1138,7 +1121,6 @@ export class Helper {
     }
     /**
      * Determines the nearest package configuration file from given file path.
-     * @param this - Indicates an unbound method.
      * @param start - Reference location to search from.
      * @param fileName - Package configuration file name.
      *
@@ -1169,7 +1151,6 @@ export class Helper {
     /**
      * Determines the nearest package configuration from given module file
      * path.
-     * @param this - Indicates an unbound method.
      * @param modulePath - Module path to take as reference location (leaf in
      * tree).
      * @param fileName - Package configuration file name.
