@@ -72,7 +72,6 @@ export type LoaderConfiguration =
 const configuration:ResolvedConfiguration = getConfiguration()
 /**
  * Main transformation function.
- * @param this - Loader context.
  * @param source - Input string to transform.
  *
  * @returns Transformed string.
