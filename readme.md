@@ -18,17 +18,12 @@ Project status
 
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml)
-[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage:report.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test:coverage:report.yaml)
-[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/check:types.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/check:types.yaml)
+[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test-coverage-report.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test-coverage-report.yaml)
+[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/check-types.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/check-types.yaml)
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml)
 
 [![code coverage](https://coveralls.io/repos/github/thaibault/weboptimizer/badge.svg)](https://coveralls.io/github/thaibault/weboptimizer)
 
-<!-- Too unstable yet
-[![dependencies](https://img.shields.io/david/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer)
-[![development dependencies](https://img.shields.io/david/dev/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=dev)
-[![peer dependencies](https://img.shields.io/david/peer/thaibault/weboptimizer.svg)](https://david-dm.org/thaibault/weboptimizer?type=peer)
--->
 [![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website)](https://torben.website/weboptimizer)
 
 [![Try out](https://badge.runkitcdn.com/weboptimizer.svg)](https://npm.runkit.com/weboptimizer)
