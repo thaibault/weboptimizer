@@ -42,7 +42,6 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 var configuration = (0, _configurator["default"])();
 /**
  * Main transformation function.
- * @param this - Loader context.
  * @param source - Input string to transform.
  *
  * @returns Transformed string.
