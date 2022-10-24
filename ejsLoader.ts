@@ -35,7 +35,7 @@ import {Extensions, Replacements, ResolvedConfiguration} from './type'
 // endregion
 // region types
 export type PreCompiledTemplateFunction =
-    ((..._parameters:Array<unknown>) => string)
+    ((...parameters:Array<unknown>) => string)
 export type TemplateFunction =
     EJSTemplateFunction | PreCompiledTemplateFunction
 export type CompilerOptions =
@@ -46,9 +46,9 @@ export type CompilerOptions =
     }
 export type CompileFunction =
     (
-        _template:string,
-        _options?:Partial<CompilerOptions>,
-        _compileSteps?:number
+        template:string,
+        options?:Partial<CompilerOptions>,
+        compileSteps?:number
     ) => TemplateFunction
 export type LoaderConfiguration =
     Mapping<unknown> &

@@ -777,7 +777,10 @@ if (htmlAvailable)
                                 data.html = ejsLoader.bind({
                                     query: Tools.extend(
                                         true,
-                                        loaderConfiguration.options || {},
+                                        Tools.copy(
+                                            loaderConfiguration.options
+                                        ) ||
+                                        {},
                                         htmlFileSpecification.template
                                             .postCompileOptions
                                     )
