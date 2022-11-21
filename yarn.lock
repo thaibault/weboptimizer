@@ -1634,13 +1634,6 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.51.tgz#cfd70924a25a3fd32b218e5e420e6897e1ac4f40"
   integrity sha512-CuPgU6f3eT/XgKKPqKd/gLZV1Xmvf1a2R5POBOGQa6uv82xpls89HU5zKeVoyR8XzHd1RGNOlQlvUe3CFkjWNQ==
 
-"@types/favicons@*":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@types/favicons/-/favicons-7.0.0.tgz#9d3e38cad946a6ea001e27b5bdc2f23958794f75"
-  integrity sha512-PwRyNWdezxmrcX7YbtxwI1w1VqayeLJriIB48h1wUMEV5cypGMSdz8+Cyjp+GzpaFb8oc1C3LJTJ3vfjAgGpFw==
-  dependencies:
-    favicons "*"
-
 "@types/favicons@5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@types/favicons/-/favicons-5.5.0.tgz#c1cb3d2a14955eedf479f3cc51948630c56e3a64"
@@ -3481,9 +3474,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.983"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.983.tgz#eb524567e5ea1eeae07d3c26fca35f3c82175e55"
-  integrity sha512-W6kIOJHKOQYlTtkaURGlK0gyAOxxFnbwQ3zNjBW+JLvhlJBXLonXndzjTgAMZiylzuS006E0jPqvjsQ/4luH+Q==
+  version "3.0.984"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.984.tgz#671e81ce8c8f60ebf58159a3b635a07e7f8da106"
+  integrity sha512-xS5b6+jcwAoB9+lSRdM7fG7ntcVm/hk6/sv080cvSRPhoLys5b0FjTpYDNOSjnxBZzGgUwpURneDh9eWansS3A==
 
 cliui@^4.0.0:
   version "4.1.0"
