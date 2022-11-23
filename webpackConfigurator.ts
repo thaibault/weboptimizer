@@ -220,7 +220,9 @@ if (
     htmlAvailable &&
     configuration.favicon &&
     plugins.Favicon &&
-    Tools.isFileSync(configuration.favicon.logo)
+    Tools.isFileSync(
+        ([] as Array<string>).concat(configuration.favicon.logo)[0]
+    )
 )
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
 //// endregion
