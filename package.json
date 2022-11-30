@@ -90,7 +90,6 @@
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "*",
     "@babel/runtime": "*",
-    "@types/webpack": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz",
     "babel-loader": "*",
     "babel-plugin-transform-modern-regexp": "*",
     "babel-preset-minify": "*",
@@ -128,7 +127,7 @@
     "css-loader": "*",
     "cssnano": "*",
     "documentation-website": "*",
-    "eslint": "7.*",
+    "eslint": "*",
     "eslint-config-google": "*",
     "eslint-plugin-jsdoc": "*",
     "favicons": "*",
@@ -302,7 +301,6 @@
     "npm": ">=8"
   },
   "resolutions": {
-    "@types/webpack": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz",
     "colors": "1.4.0"
   },
   "sideEffects": true,
