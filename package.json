@@ -139,12 +139,14 @@
     "mkdirp": "*",
     "node-fetch": "*",
     "postcss": "*",
-    "postcss-fontpath": "*",
     "postcss-import": "*",
     "postcss-loader": "*",
     "postcss-preset-env": "*",
+
     "postcss-sprites": "*",
+    "postcss-fontpath": "*",
     "postcss-url": "*",
+
     "shx": "*",
     "style-loader": "*",
     "stylelint": "*",
