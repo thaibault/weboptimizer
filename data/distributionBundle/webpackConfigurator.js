@@ -156,7 +156,7 @@ try {
 } finally {
   _iterator2.f();
 }
-if (htmlAvailable && configuration.favicon && plugins.Favicon && _clientnode["default"].isFileSync(configuration.favicon.logo)) pluginInstances.push(new plugins.Favicon(configuration.favicon));
+if (htmlAvailable && configuration.favicon && plugins.Favicon && _clientnode["default"].isFileSync([].concat(configuration.favicon.logo)[0])) pluginInstances.push(new plugins.Favicon(configuration.favicon));
 //// endregion
 //// region provide offline functionality
 if (htmlAvailable && configuration.offline && plugins.Offline) {
@@ -485,7 +485,7 @@ if (htmlAvailable) pluginInstances.push({
                   var _loaderConfiguration$;
                   var loaderConfiguration = _step9.value;
                   if ((_loaderConfiguration$ = loaderConfiguration.options) !== null && _loaderConfiguration$ !== void 0 && _loaderConfiguration$.compileSteps && typeof loaderConfiguration.options.compileSteps === 'number') data.html = _ejsLoader["default"].bind({
-                    query: _clientnode["default"].extend(true, loaderConfiguration.options || {}, htmlFileSpecification.template.postCompileOptions)
+                    query: _clientnode["default"].extend(true, _clientnode["default"].copy(loaderConfiguration.options) || {}, htmlFileSpecification.template.postCompileOptions)
                   })(data.html);
                 }
               } catch (err) {
