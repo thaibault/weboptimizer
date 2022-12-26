@@ -1743,9 +1743,9 @@
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
 "@types/node@*":
-  version "18.11.17"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.17.tgz#5c009e1d9c38f4a2a9d45c0b0c493fe6cdb4bcb5"
-  integrity sha512-HJSUJmni4BeDHhfzn6nF0sVmd1SMezP7/4F0Lq+aXzmp2xm9O7WXrUtHW/CHlYVtZUbByEvWidHqRtcJXGF2Ng==
+  version "18.11.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.18.tgz#8dfb97f0da23c2293e554c5a50d61ef134d7697f"
+  integrity sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -3449,9 +3449,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.999"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.999.tgz#1055e5e3c33b88013b2c559cc6367cdd4e5167d0"
-  integrity sha512-rvenOTQ4yqAZohiuqdlvA8oIN0rJT1mVxFx95VZdVfnEGQHdPMutfMS10ye7s1WyBmyB3MMYtNfitSOqWoaGoQ==
+  version "3.0.1000"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1000.tgz#0f7c17c0d2ccdb78b1559566871cc82768e042ba"
+  integrity sha512-LIXiOyGRau27nJfkBIRsvW3OVBS8XSnmKXIt3N1VSCyj1f6xyanhWVuT3uw1qXK0qmFbfmSaUtO/NHhkoG5QwA==
 
 cliui@^4.0.0:
   version "4.1.0"
