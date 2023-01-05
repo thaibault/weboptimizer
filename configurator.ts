@@ -17,7 +17,7 @@
 // region imports
 import Tools, {currentRequire, optionalRequire} from 'clientnode'
 import {Mapping, PlainObject, RecursiveEvaluateable} from 'clientnode/type'
-import fileSystem, {lstatSync, readFileSync, unlink} from 'fs'
+import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
 
 import Helper from './helper'

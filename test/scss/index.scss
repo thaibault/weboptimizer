@@ -1,3 +1,9 @@
+@custom-media --small-viewport (max-width: 30em);
+
 body {
     border: color 2px solid red;
+
+    @media (--small-viewport) {
+        border: color 2px solid green;
+    }
 }
