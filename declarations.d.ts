@@ -4,12 +4,14 @@
     dependency cycle.
 */
 type Mapping<T = string> = {[key:string]:T}
+
 interface PostcssTransformer {
     postcssPlugin: string
     postcssVersion: string
 
     (root:object, result:object):Promise<void>|void
 }
+
 /** @module declarations */
 declare module 'babel-preset-minify'
 declare module 'html-loader'

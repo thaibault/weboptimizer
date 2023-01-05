@@ -17,7 +17,7 @@
 // region imports
 import Tools, {currentRequire, optionalRequire} from 'clientnode'
 import {Mapping, PlainObject, RecursiveEvaluateable} from 'clientnode/type'
-import fileSystem, {lstatSync, readFileSync, unlink} from 'fs'
+import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
 
 import Helper from './helper'
@@ -195,14 +195,11 @@ export const load = (
     let runtimeInformation:RuntimeInformation =
         {givenCommandLineArguments: commandLineArguments}
     if (filePath) {
-        runtimeInformation = JSON.parse(readFileSync(
+        const fileContent:string = readFileSync(
             filePath, {encoding: configuration.encoding}
-        )) as RuntimeInformation
-
-        unlink(filePath, (error:Error|null):void => {
-            if (error)
-                throw error
-        })
+        )
+        runtimeInformation = JSON.parse(fileContent) as RuntimeInformation
+        unlinkSync(filePath)
     }
     //// region task specific configuration
     ///// region apply task type specific configuration
