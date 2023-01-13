@@ -102,7 +102,7 @@
     "html-webpack-plugin": "*",
     "imports-loader": "*",
     "jest-environment-jsdom": "*",
-    "rimraf": "*",
+    "rimraf": ">=4",
     "script-loader": "*",
     "typescript": "*",
     "webpack": "*",
@@ -1364,8 +1364,12 @@
           {
             "__evaluate__": "path.resolve(self.path.target.base, '**/*.css.js')"
           },
-          "!node_modules/**/*.css.js",
-          "!**/node_modules/**/*.css.js"
+          {
+            "__evaluate__": "'!' + path.resolve(self.path.target.base, 'node_modules/**/*.css.js')"
+          },
+          {
+            "__evaluate__": "'!' + path.resolve(self.path.target.base, '**/node_modules/**/*.css.js')"
+          }
         ],
         "tidyUpOnClear": [
           {
@@ -1385,9 +1389,15 @@
           {
             "__evaluate__": "path.resolve(self.path.target.base, '**/*.d.ts')"
           },
-          "!node_modules/**/*.d.ts",
-          "!**/node_modules/**/*.d.ts",
-          "!**/declarations.d.ts"
+          {
+            "__evaluate__": "'!' + path.resolve(self.path.target.base, 'node_modules/**/*.d.ts')"
+          },
+          {
+            "__evaluate__": "'!' + path.resolve(self.path.target.base, '**/node_modules/**/*.d.ts')"
+          },
+          {
+            "__evaluate__": "'!' + path.resolve(self.path.target.base, '**/declarations.d.ts')"
+          }
         ]
       },
       "performanceHints": {
