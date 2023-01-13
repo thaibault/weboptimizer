@@ -40,6 +40,7 @@ import {
 } from 'clientnode/type'
 import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
+import glob, {sync as globSync} from 'glob-all'
 import path, {join, resolve} from 'path'
 import removeDirectoryRecursively, {
     sync as removeDirectoryRecursivelySync
@@ -230,17 +231,9 @@ const main = async (
                                     ].filePathPattern
                                 ).test(file.path)) {
                                     if (file.stats?.isDirectory()) {
-                                        await new Promise<void>((
-                                            resolve:() => void,
-                                            reject:(_reason:Error) => void
-                                        ):void => removeDirectoryRecursively(
-                                            file.path,
-                                            {glob: false},
-                                            (error?:Error|null):void =>
-                                                error ?
-                                                    reject(error) :
-                                                    resolve()
-                                        ))
+                                        await removeDirectoryRecursively(
+                                            file.path
+                                        )
 
                                         return false
                                     }
@@ -264,29 +257,15 @@ const main = async (
                         if (file.name.startsWith('npm-debug'))
                             await unlink(file.path)
                 } else
-                    await new Promise<void>((
-                        resolve:() => void, reject:(reason:Error) => void
-                    ):void => removeDirectoryRecursively(
-                        configuration.path.target.base,
-                        {glob: false},
-                        (error?:Error|null):void =>
-                            error ? reject(error) : resolve()
-                    ))
-
-                if (
-                    await Tools.isDirectory(
-                        configuration.path.apiDocumentation
+                    await removeDirectoryRecursively(
+                        configuration.path.target.base
                     )
-                )
-                    await new Promise<void>((
-                        resolve:() => void, reject:(reason:Error) => void
-                    ):void =>
-                        removeDirectoryRecursively(
-                            configuration.path.apiDocumentation,
-                            {glob: false},
-                            (error?:Error|null):void =>
-                                error ? reject(error) : resolve()
-                        )
+
+                if (await Tools.isDirectory(
+                    configuration.path.apiDocumentation
+                ))
+                    await removeDirectoryRecursively(
+                        configuration.path.apiDocumentation
                     )
 
                 for (const filePath of configuration.path.tidyUpOnClear)
@@ -295,19 +274,11 @@ const main = async (
                             // NOTE: Close handler have to be synchronous.
                             unlinkSync(filePath)
                         else if (Tools.isDirectorySync(filePath))
-                            removeDirectoryRecursivelySync(
-                                filePath, {glob: false}
-                            )
+                            removeDirectoryRecursivelySync(filePath)
 
-                for (
-                    const filePathPattern of
-                    configuration.path.tidyUpOnClearGlobs.pattern
+                removeDirectoryRecursivelySync(
+                    await glob(configuration.path.tidyUpOnClearGlobs)
                 )
-                    if (filePathPattern)
-                        removeDirectoryRecursivelySync(
-                            filePathPattern,
-                            configuration.path.tidyUpOnClearGlobs.options
-                        )
             }
             // endregion
             // region handle build
@@ -409,19 +380,11 @@ const main = async (
                                 // NOTE: Close handler have to be synchronous.
                                 unlinkSync(filePath)
                             else if (Tools.isDirectorySync(filePath))
-                                removeDirectoryRecursivelySync(
-                                    filePath, {glob: false}
-                                )
+                                removeDirectoryRecursivelySync(filePath)
 
-                    for (
-                        const filePathPattern of
-                        configuration.path.tidyUpGlobs.pattern
+                    removeDirectoryRecursivelySync(
+                        globSync(configuration.path.tidyUpGlobs)
                     )
-                        if (filePathPattern)
-                            removeDirectoryRecursivelySync(
-                                filePathPattern,
-                                configuration.path.tidyUpOnClearGlobs.options
-                            )
                 }
 
                 closeEventHandlers.push(tidyUp)
@@ -473,9 +436,7 @@ const main = async (
                             // NOTE: Close handler have to be synchronous.
                             if (Tools.isDirectorySync(sourcePath)) {
                                 if (Tools.isDirectorySync(targetPath))
-                                    removeDirectoryRecursivelySync(
-                                        targetPath, {glob: false}
-                                    )
+                                    removeDirectoryRecursivelySync(targetPath)
 
                                 Tools.copyDirectoryRecursiveSync(
                                     sourcePath, targetPath

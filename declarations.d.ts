@@ -14,6 +14,10 @@ interface PostcssTransformer {
 
 /** @module declarations */
 declare module 'babel-preset-minify'
+declare module 'glob-all' {
+    export default function(globs:Array<string>):Promise<Array<string>>
+    export function sync(globs:Array<string>):Array<string>
+}
 declare module 'html-loader'
 declare module 'postcss-fontpath' {
     export default function(options:Partial<{
