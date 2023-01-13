@@ -40,7 +40,7 @@ import {
 } from 'clientnode/type'
 import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
-import glob, {sync as globSync} from 'glob-all'
+import {sync as globSync} from 'glob-all'
 import path, {join, resolve} from 'path'
 import removeDirectoryRecursively, {
     sync as removeDirectoryRecursivelySync
@@ -277,7 +277,7 @@ const main = async (
                             removeDirectoryRecursivelySync(filePath)
 
                 removeDirectoryRecursivelySync(
-                    await glob(configuration.path.tidyUpOnClearGlobs)
+                    globSync(configuration.path.tidyUpOnClearGlobs)
                 )
             }
             // endregion
