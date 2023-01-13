@@ -377,15 +377,9 @@ describe('helper', ():void => {
                     public: ''
                 },
                 tidyUp: [],
-                tidyUpGlobs: {
-                    options: {},
-                    pattern: []
-                },
+                tidyUpGlobs: [],
                 tidyUpOnClear: [],
-                tidyUpOnClearGlobs: {
-                    options: {},
-                    pattern: []
-                }
+                tidyUpOnClearGlobs: []
             }
 
             expect(

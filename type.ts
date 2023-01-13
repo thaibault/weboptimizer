@@ -28,7 +28,6 @@ import ImageMinimizerWebpackPlugin, {
 } from 'image-minimizer-webpack-plugin'
 import {JSDOM} from 'jsdom'
 import MiniCSSExtractPlugin from 'mini-css-extract-plugin'
-import {Options as RemoveDirectoryRecursivelyOptions} from 'rimraf'
 import TerserWebpackPlugin from 'terser-webpack-plugin'
 import {
     DefinePlugin as WebpackDefinePlugin,
@@ -161,15 +160,9 @@ export interface PathConfiguration extends BasePathConfiguration {
     context:string
     ignore:Array<string>
     tidyUp:Array<string>
-    tidyUpGlobs:{
-        options:RemoveDirectoryRecursivelyOptions
-        pattern:Array<string>
-    }
+    tidyUpGlobs:Array<string>
     tidyUpOnClear:Array<string>
-    tidyUpOnClearGlobs:{
-        options:RemoveDirectoryRecursivelyOptions
-        pattern:Array<string>
-    }
+    tidyUpOnClearGlobs:Array<string>
 }
 export type DefaultPathConfiguration = BasePathConfiguration & Resolvable
 //// endregion

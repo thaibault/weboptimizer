@@ -132,6 +132,7 @@
     "eslint-plugin-jsdoc": "*",
     "favicons": "*",
     "favicons-webpack-plugin": "*",
+    "glob-all": "*",
     "image-minimizer-webpack-plugin": "*",
     "jest": "*",
     "jsdoc": "*",
@@ -1356,24 +1357,16 @@
             "__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"
           }
         ],
-        "tidyUpGlobs": {
-          "options": {
-            "glob": {
-              "ignore": [
-                "node_modules/**/*.css.js",
-                "**/node_modules/**/*.css.js"
-              ]
-            }
+        "tidyUpGlobs": [
+          {
+            "__evaluate__": "path.resolve(self.path.target.base, '*.css.js')"
           },
-          "pattern": [
-            {
-              "__evaluate__": "path.resolve(self.path.target.base, '*.css.js')"
-            },
-            {
-              "__evaluate__": "path.resolve(self.path.target.base, '**/*.css.js')"
-            }
-          ]
-        },
+          {
+            "__evaluate__": "path.resolve(self.path.target.base, '**/*.css.js')"
+          },
+          "!node_modules/**/*.css.js",
+          "!**/node_modules/**/*.css.js"
+        ],
         "tidyUpOnClear": [
           {
             "__evaluate__": "path.resolve(self.path.target.base, 'yarn-error.log')"
@@ -1385,25 +1378,17 @@
             "__evaluate__": "path.resolve(self.path.target.base, '.nyc_output')"
           }
         ],
-        "tidyUpOnClearGlobs": {
-          "options": {
-            "glob": {
-              "ignore": [
-                "node_modules/**/*.d.ts",
-                "**/node_modules/**/*.d.ts",
-                "**/declarations.d.ts"
-              ]
-            }
+        "tidyUpOnClearGlobs": [
+          {
+            "__evaluate__": "path.resolve(self.path.target.base, '*.d.ts')"
           },
-          "pattern": [
-            {
-              "__evaluate__": "path.resolve(self.path.target.base, '*.d.ts')"
-            },
-            {
-              "__evaluate__": "path.resolve(self.path.target.base, '**/*.d.ts')"
-            }
-          ]
-        }
+          {
+            "__evaluate__": "path.resolve(self.path.target.base, '**/*.d.ts')"
+          },
+          "!node_modules/**/*.d.ts",
+          "!**/node_modules/**/*.d.ts",
+          "!**/declarations.d.ts"
+        ]
       },
       "performanceHints": {
         "hints": false
