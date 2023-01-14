@@ -71,6 +71,7 @@
     "postcss-preset-env": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
+    "rimraf": ">=4",
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
@@ -83,10 +84,5 @@
     "node": ">=19",
     "npm": ">=8"
   },
-  "sideEffects": false,
-  "documentationWebsite": {
-    "name": "dummy",
-    "tagline": "dummy project",
-    "trackingCode": "UA-XXX-X"
-  }
+  "sideEffects": false
 }
