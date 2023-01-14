@@ -73,6 +73,7 @@
     "postcss-scss": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
+    "rimraf": ">=4",
     "sass": "*",
     "sass-loader": "*",
     "style-loader": "*",
@@ -88,11 +89,6 @@
     "npm": ">=8"
   },
   "sideEffects": false,
-  "documentationWebsite": {
-    "name": "dummy",
-    "tagline": "dummy project",
-    "trackingCode": "UA-XXX-X"
-  },
   "webOptimizer": {
     "commandLine": {
       "lint": {
