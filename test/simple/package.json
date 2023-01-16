@@ -71,6 +71,7 @@
     "postcss-preset-env": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
+    "rimraf": ">=4",
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
