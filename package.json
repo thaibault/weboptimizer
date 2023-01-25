@@ -1054,7 +1054,8 @@
                     {
                       "browsers": {
                         "__evaluate__": "self.generic.supportedBrowsers"
-                      }
+                      },
+                      "stage": 1
                     }
                   ]
                 ]
