@@ -480,9 +480,9 @@ if (configuration.injection.external.modules === '__implicit__')
     configuration.injection.external.modules = (
         {context, request},
         callback:(
-            _error?:Error|undefined,
-            _result?:Array<string>|boolean|string|Mapping<unknown>,
-            _type?:string
+            error?:Error|undefined,
+            result?:Array<string>|boolean|string|Mapping<unknown>,
+            type?:string
         ) => void
     ):void => {
         if (typeof request !== 'string')
