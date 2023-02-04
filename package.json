@@ -120,7 +120,6 @@
     "@types/node": "*",
     "@types/postcss-import": "*",
     "@types/postcss-url": "*",
-    "@types/rimraf": "*",
     "@types/webpack-env": "*",
     "@types/webpack-sources": "*",
     "@typescript-eslint/eslint-plugin": "*",
