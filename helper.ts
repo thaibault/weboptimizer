@@ -638,7 +638,7 @@ export class Helper {
 
         for (const chunk of Object.values(normalizedGivenInjection)) {
             let index = 0
-            for (const moduleID of chunk) {
+            for (const moduleID of Tools.copy(chunk)) {
                 const resolvedModuleID:false|string =
                     Helper.applyModuleReplacements(
                         Helper.applyAliases(
@@ -681,6 +681,7 @@ export class Helper {
                     )
                 )
                     chunk[index] = `./${relative(context, resolvedPath)}`
+
                 index += 1
             }
         }
@@ -905,6 +906,7 @@ export class Helper {
             fileName: null,
             packageAliases: null
         }
+
         if (Tools.isDirectorySync(packagePath)) {
             const pathToPackageJSON:string =
                 resolve(packagePath, 'package.json')
