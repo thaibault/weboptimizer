@@ -1619,6 +1619,9 @@
           "devMiddleware": {
             "index": {
               "__evaluate__": "self.files.defaultHTML.filename"
+            },
+            "mimeTypes": {
+              "ejs": "text/html"
             }
           }
         }
