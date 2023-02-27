@@ -3531,9 +3531,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.1027"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1027.tgz#04a3129cc0cea507a59b8a72f6643f36bae0e244"
-  integrity sha512-/1BwBee/teG0fOc93FcZ2G5o0ZlOzwgIvYZc6dDA8AuH2ubdTCo/CzWwK7YOknuPNd708K7zYp2CHPBxQS42zg==
+  version "3.0.1028"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1028.tgz#e53d0d624fba498da85de8f6468d7b2ee94e416a"
+  integrity sha512-sqkATxIwCW+MWsY6gbj+TKRwaf51Ds+2dQsFULCeH0Yuan/DfFL4/AsCS48QmyisTCdxWrzRQoDxgQcl8TnAmQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -4213,9 +4213,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation-website@*:
-  version "1.0.295"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.295.tgz#46136d2ef7592641c012751ba8f94f4ca8a037d3"
-  integrity sha512-6yo+lRgnfb5bRrhZjekNz5pxEj6dEF67N7pfrXurXmtB/eqha1efPYuq09p+FUD+dkWuyt50Vl6YWaXBHuw9Lw==
+  version "1.0.296"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.296.tgz#0af00909be30a3914c08dbb6fab197b2b5b8956c"
+  integrity sha512-WTqJm9AWi3IQs/c8ng4dBnhBLXzAHWTsHbymbc9t8CgVaXxrETIY6l4kKIswr6B0Gff8PhOh15pG2JjHBsQpNA==
 
 dom-converter@^0.2.0:
   version "0.2.0"
