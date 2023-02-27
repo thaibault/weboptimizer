@@ -1618,7 +1618,7 @@
         "server": {
           "devMiddleware": {
             "index": {
-              "__evaluate__": "self.file.defaultHTML.filename"
+              "__evaluate__": "self.files.defaultHTML.filename"
             }
           }
         }
@@ -1663,7 +1663,7 @@
           "inject": "head",
           "template": {
             "filePath": {
-              "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, `${self.file.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.file.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
+              "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
             }
           }
         },
