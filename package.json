@@ -1619,6 +1619,7 @@
           "devMiddleware": {
             "index": {
               "__evaluate__": "self.file.defaultHTML.filename"
+            }
           }
         }
       },
