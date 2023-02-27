@@ -3531,9 +3531,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.1026"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1026.tgz#74eee6bea2c1e1f2defd6f93024db2e4fc8ba57b"
-  integrity sha512-RkIumxo3t0HzHm/0AE8dP8GOApPeiV2LfAYGdm7FV0x55I442R2HrvtctchYL68GlI0TqeG0m9+NSEN/tT3v7A==
+  version "3.0.1027"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1027.tgz#04a3129cc0cea507a59b8a72f6643f36bae0e244"
+  integrity sha512-/1BwBee/teG0fOc93FcZ2G5o0ZlOzwgIvYZc6dDA8AuH2ubdTCo/CzWwK7YOknuPNd708K7zYp2CHPBxQS42zg==
 
 cliui@^4.0.0:
   version "4.1.0"
