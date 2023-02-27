@@ -668,7 +668,7 @@
           },
           "template": {
             "filePath": {
-              "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, 'index.html.ejs')) ? path.resolve(self.path.source.base, 'index.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
+              "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
             },
             "postCompileOptions": {
               "compileSteps": 0
@@ -1477,12 +1477,7 @@
         "files": {
           "defaultHTML": {
             "filename": "test.html",
-            "inject": "head",
-            "template": {
-              "filePath": {
-                "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, 'test.html.ejs')) ? path.resolve(self.path.source.base, 'test.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
-              }
-            }
+            "inject": "head"
           },
           "html": []
         },
@@ -1512,12 +1507,7 @@
         "files": {
           "defaultHTML": {
             "filename": "test.html",
-            "inject": "head",
-            "template": {
-              "filePath": {
-                "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, 'test.html.ejs')) ? path.resolve(self.path.source.base, 'test.html.ejs') : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
-              }
-            }
+            "inject": "head"
           }
         },
         "inPlace": {
@@ -1663,12 +1653,7 @@
         },
         "defaultHTML": {
           "filename": "playground.html",
-          "inject": "head",
-          "template": {
-            "filePath": {
-              "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
-            }
-          }
+          "inject": "head"
         },
         "html": {
           "__evaluate__": "2 < self.givenCommandLineArguments.length && ['test:browser', 'serve'].includes(self.givenCommandLineArguments[2]) ? [{}] : []"
