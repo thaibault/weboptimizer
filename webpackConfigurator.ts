@@ -701,8 +701,10 @@ if (htmlAvailable)
                         endTag:string
                     ):string => {
                         styleContents.push(content)
+
                         return `${startTag}${endTag}`
                     })
+
                 let dom:DOM
                 try {
                     /*
@@ -718,6 +720,7 @@ if (htmlAvailable)
                 } catch (error) {
                     return data
                 }
+
                 const linkables:Mapping = {link: 'href', script: 'src'}
                 for (const [tagName, attributeName] of Object.entries(
                     linkables
