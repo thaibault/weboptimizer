@@ -290,40 +290,50 @@ if (module.provide)
 //// region modules/assets
 ///// region apply module pattern
 pluginInstances.push({apply: (compiler:Compiler):void => {
-    compiler.hooks.emit.tap(
-        'applyModulePattern',
+    const name = 'ApplyModulePattern'
+
+    compiler.hooks.compilation.tap(
+        name,
         (compilation:Compilation):void => {
-            for (const [request, asset] of Object.entries(
-                compilation.assets
-            )) {
-                const filePath:string = request.replace(/\?[^?]+$/, '')
-                const type:null|string = Helper.determineAssetType(
-                    filePath,
-                    configuration.buildContext.types,
-                    configuration.path
-                )
-                if (
-                    type &&
-                    configuration.assetPattern[type] &&
-                    (new RegExp(
-                        configuration.assetPattern[type]
-                            .includeFilePathRegularExpression
-                    )).test(filePath) &&
-                    !(new RegExp(
-                        configuration.assetPattern[type]
-                            .excludeFilePathRegularExpression
-                    )).test(filePath)
-                ) {
-                    const source:Buffer|string = asset.source()
-                    if (typeof source === 'string')
-                        compilation.assets[request] = new WebpackRawSource(
-                            configuration.assetPattern[type].pattern
-                                .replace(
-                                    /\{1\}/g, source.replace(/\$/g, '$$$')
-                                )
-                        ) as unknown as sources.Source
+            compilation.hooks.processAssets.tap(
+                {
+                    name,
+                    additionalAssets: true,
+                    stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS
+                },
+                (assets):void => {
+                    for (const [request, asset] of Object.entries(assets)) {
+                        const filePath:string = request.replace(/\?[^?]+$/, '')
+                        const type:null|string = Helper.determineAssetType(
+                            filePath,
+                            configuration.buildContext.types,
+                            configuration.path
+                        )
+
+                        if (
+                            type &&
+                            configuration.assetPattern[type] &&
+                            (new RegExp(
+                                configuration.assetPattern[type]
+                                    .includeFilePathRegularExpression
+                            )).test(filePath) &&
+                            !(new RegExp(
+                                configuration.assetPattern[type]
+                                    .excludeFilePathRegularExpression
+                            )).test(filePath)
+                        ) {
+                            const source:Buffer|string = asset.source()
+                            if (typeof source === 'string')
+                                compilation.assets[request] = new WebpackRawSource(
+                                    configuration.assetPattern[type].pattern
+                                        .replace(
+                                            /\{1\}/g, source.replace(/\$/g, '$$$')
+                                        )
+                                ) as unknown as sources.Source
+                        }
+                    }
                 }
-            }
+            )
         }
     )
 }})
