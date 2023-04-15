@@ -324,12 +324,14 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
                         ) {
                             const source:Buffer|string = asset.source()
                             if (typeof source === 'string')
-                                compilation.assets[request] = new WebpackRawSource(
-                                    configuration.assetPattern[type].pattern
-                                        .replace(
-                                            /\{1\}/g, source.replace(/\$/g, '$$$')
-                                        )
-                                ) as unknown as sources.Source
+                                compilation.assets[request] =
+                                    new WebpackRawSource(
+                                        configuration.assetPattern[type]
+                                            .pattern.replace(
+                                                /\{1\}/g,
+                                                source.replace(/\$/g, '$$$')
+                                            )
+                                    ) as unknown as sources.Source
                         }
                     }
                 }
@@ -422,6 +424,7 @@ if (
                                 delete newAttributes.src
 
                                 inPlacedAssetNames.push(name)
+
                                 return {
                                     ...tag,
                                     attributes: newAttributes,
@@ -434,6 +437,7 @@ if (
 
                             return tag
                         }
+
                         assets.headTags =
                             assets.headTags.map(inPlace.bind(this, 'head'))
                         assets.bodyTags =
@@ -944,6 +948,7 @@ if (module.enforceDeduplication) {
                         }
                     }
                 }
+
                 if (redundantRequest)
                     console.warn(
                         '\nIncluding different versions of same package "' +
@@ -956,6 +961,7 @@ if (module.enforceDeduplication) {
             }
         }
     }
+
     pluginInstances.push({apply: (compiler:Compiler) =>
         compiler.hooks.normalModuleFactory.tap(
             'WebOptimizerModuleConsolidation',
