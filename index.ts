@@ -42,8 +42,9 @@ import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
 import {sync as globSync} from 'glob-all'
 import path, {join, resolve} from 'path'
-import removeDirectoryRecursively, {
-    sync as removeDirectoryRecursivelySync
+import {
+    rimraf as removeDirectoryRecursively,
+    rimrafSync as removeDirectoryRecursivelySync
 } from 'rimraf'
 
 import {load as loadConfiguration} from './configurator'
