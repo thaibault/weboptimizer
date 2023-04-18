@@ -1891,10 +1891,6 @@
       ],
       "jsdoc/check-param-names": "error",
       "jsdoc/check-tag-names": "error",
-      "jsdoc/newline-after-description": [
-        "error",
-        "never"
-      ],
       "jsdoc/require-description-complete-sentence": "error",
       "jsdoc/require-hyphen-before-param-description": "error",
       "jsdoc/require-param": 0,
