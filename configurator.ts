@@ -21,7 +21,9 @@ import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
 
 import Helper from './helper'
-import {configuration as metaConfiguration} from './package.json'
+import packageConfiguration, {
+    configuration as metaConfiguration
+} from './package.json'
 import {
     DefaultConfiguration,
     GivenInjection,
@@ -354,7 +356,7 @@ export const load = (
                 currentPath: currentWorkingDirectory,
                 fileSystem,
                 Helper,
-                metaConfiguration,
+                packageConfiguration,
                 optionalRequire,
                 path,
                 require: currentRequire,
