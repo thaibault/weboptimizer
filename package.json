@@ -297,7 +297,7 @@
     }
   },
   "engines": {
-    "node": ">=19",
+    "node": ">=18",
     "npm": ">=8"
   },
   "resolutions": {
@@ -1188,7 +1188,7 @@
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transformation to allow tree shaking by the final (minimizer).",
-                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.generic.isWeb ? {browsers: self.generic.supportedBrowsers, node: 'current'} : {node: 'current'}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
+                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.generic.isWeb ? {browsers: self.generic.supportedBrowsers, node: 'last 2 node major versions'} : {node: 'last 2 node major versions'}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             },
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"
