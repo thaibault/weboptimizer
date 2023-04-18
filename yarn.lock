@@ -3587,9 +3587,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.1040"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1040.tgz#3b5b9770ba4fed4dca186c04c2a532fab9d59928"
-  integrity sha512-7sDV+3jDqkxkQq1EZX+n8F1oMsmwQEwelul4Qjy/pIh/7MJN4eiEiSULCxgF00+VNbKMJ4k9dHmsStTgE9JL8Q==
+  version "3.0.1041"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1041.tgz#98d7cecfb6481f28c4ef73b0071f3cd50541b12e"
+  integrity sha512-pSlsWE+yUv5BFOeJpaqcCW9TtfFq6Y6bWKtCUFfffH7bQJE3u0o840odOX9pcGNStTLkgDnsOR0S+9XQEB3HmQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -7221,9 +7221,9 @@ no-case@^3.0.4:
     tslib "^2.0.3"
 
 node-abi@^3.3.0:
-  version "3.35.0"
-  resolved "https://registry.yarnpkg.com/node-abi/-/node-abi-3.35.0.tgz#c7f171af995cc5286fa95612c4ca97b3910eaa79"
-  integrity sha512-jAlSOFR1Bls963NmFwxeQkNTzqjUF0NThm8Le7eRIRGzFUVJuMOFZDLv5Y30W/Oaw+KEebEJLAigwO9gQHoEmw==
+  version "3.36.0"
+  resolved "https://registry.yarnpkg.com/node-abi/-/node-abi-3.36.0.tgz#acb40df75317af73e40d43fcd20d7e3496460502"
+  integrity sha512-Hdv/DrxITY7aqRXxe9U+rdV+UqA4HHxLv89Eum/nuwIgRCf6Hixqx8hkPEy6Y9SzGjViZ4bAyNhfiRELPhI0cw==
   dependencies:
     semver "^7.3.5"
 
