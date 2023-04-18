@@ -354,6 +354,7 @@ export const load = (
                 currentPath: currentWorkingDirectory,
                 fileSystem,
                 Helper,
+                metaConfiguration,
                 optionalRequire,
                 path,
                 require: currentRequire,
