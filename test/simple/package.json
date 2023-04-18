@@ -81,8 +81,8 @@
     "workbox-webpack-plugin": "*"
   },
   "engines": {
-    "node": ">=19",
-    "npm": ">=8"
+    "node": ">=18",
+    "npm": ">=9"
   },
   "sideEffects": false
 }

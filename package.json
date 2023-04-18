@@ -298,7 +298,7 @@
   },
   "engines": {
     "node": ">=18",
-    "npm": ">=8"
+    "npm": ">=9"
   },
   "resolutions": {
     "colors": "1.4.0"
