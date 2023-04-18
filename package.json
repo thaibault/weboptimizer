@@ -727,7 +727,7 @@
         },
         "isWeb": true,
         "supportedBrowsers": [
-          "last 2 versions",
+          "last 2 major versions",
           "> 5%"
         ],
         "testCommandLine": "jest --config node_modules/weboptimizer/jest.json --test-regex",
@@ -1188,7 +1188,7 @@
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transformation to allow tree shaking by the final (minimizer).",
-                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.generic.isWeb ? {browsers: self.generic.supportedBrowsers, node: 'last 2 node major versions'} : {node: 'last 2 node major versions'}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
+                "__evaluate__": "[['@babel/preset-env', {loose: true, modules: false, targets: self.generic.isWeb ? {browsers: self.generic.supportedBrowsers, node: metaConfiguration.engines.node} : {node: metaConfiguration.engines.node}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             },
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"
