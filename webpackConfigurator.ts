@@ -1115,11 +1115,8 @@ const evaluateAdditionalLoaderConfiguration = (
     use: evaluate<Array<WebpackLoader>|WebpackLoader>(loaderConfiguration.use)
 })
 
-const includingPaths:Array<string> =
-    Helper.normalizePaths(
-        [configuration.path.source.asset.javaScript]
-            .concat(module.locations.directoryPaths)
-    )
+const getIncludingPaths = (path:string):Array<string> =>
+    Helper.normalizePaths([path].concat(module.locations.directoryPaths))
 
 const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
     .map(evaluateMapper)
@@ -1269,7 +1266,7 @@ const genericLoader:GenericLoader = {
             (module.preprocessor.ejs.exclude === null) ?
                 false :
                 Boolean(evaluate(module.preprocessor.ejs.exclude, filePath)),
-        include: includingPaths,
+        include: getIncludingPaths(configuration.path.source.asset.template),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: module.preprocessor.ejs.additional.pre
             .map(evaluateMapper)
@@ -1307,7 +1304,9 @@ const genericLoader:GenericLoader = {
             const result:unknown =
                 evaluate(module.preprocessor.javaScript.include, filePath)
             if ([null, undefined].includes(result as null)) {
-                for (const includePath of includingPaths)
+                for (const includePath of getIncludingPaths(
+                    configuration.path.source.asset.javaScript
+                ))
                     if (filePath.startsWith(includePath))
                         return true
 
@@ -1469,7 +1468,9 @@ const genericLoader:GenericLoader = {
                 module.cascadingStyleSheet.include, filePath
             )
             if ([null, undefined].includes(result as null)) {
-                for (const includePath of includingPaths)
+                for (const includePath of getIncludingPaths(
+                    configuration.path.source.asset.cascadingStyleSheet
+                ))
                     if (filePath.startsWith(includePath))
                         return true
 
