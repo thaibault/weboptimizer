@@ -85,6 +85,7 @@
   "runkitExample": "require('@babel/runtime/package.json')\n\nconst {default: main} = require('weboptimizer')\n\nawait main('./', './', ['clear'])",
   "dependencies": {
     "@babel/core": "*",
+    "@babel/plugin-proposal-class-properties": "*",
     "@babel/plugin-proposal-decorators": "*",
     "@babel/plugin-transform-runtime": "*",
     "@babel/preset-env": "*",
