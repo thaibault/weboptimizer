@@ -822,6 +822,7 @@ for (const contextReplacement of module.replacements.context)
             const evaluated:EvaluationResult = Tools.stringEvaluate(
                 value, {configuration, __dirname, __filename}
             )
+
             if (evaluated.error)
                 throw new Error(
                     'Error occurred during processing given context ' +
