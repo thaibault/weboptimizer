@@ -818,8 +818,8 @@ if (htmlAvailable)
 //// region context replacements
 for (const contextReplacement of module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
-        contextReplacement.map((value:string):string => {
-            const evaluated:EvaluationResult = Tools.stringEvaluate(
+        contextReplacement.map((value:string):RegExp|string => {
+            const evaluated = Tools.stringEvaluate<RegExp|string>(
                 value, {configuration, __dirname, __filename}
             )
 
@@ -830,7 +830,7 @@ for (const contextReplacement of module.replacements.context)
                 )
 
             return evaluated.result
-        }) as [string, string]
+        }) as [RegExp, string]
     )))
 //// endregion
 //// region consolidate duplicated module requests
@@ -1731,7 +1731,7 @@ for (const pluginConfiguration of configuration.plugins) {
         pluginInstances.push(
             (new (plugin[pluginConfiguration.name.initializer])(
                 ...pluginConfiguration.parameters
-            ))!
+            ))
         )
     else
         console.warn(
