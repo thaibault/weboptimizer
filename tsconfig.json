@@ -5,7 +5,6 @@
         "allowUmdGlobalAccess": true,
         "baseUrl": "../../",
         "checkJs": true,
-        "declaration": true,
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "isolatedModules": true,
