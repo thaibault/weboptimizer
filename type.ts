@@ -75,9 +75,8 @@ export interface PackageDescriptor {
 
 export type Replacements = Mapping<SecondParameter<string['replace']>>
 
-export type Resolvable = {
-    [_K in '__evaluate__'|'__execute__'|string]:Resolvable|string|unknown
-}
+export type Resolvable =
+    {[_K in '__evaluate__'|'__execute__']?:Resolvable} & Mapping<unknown>
 
 export interface RedundantRequest {
     path:string
@@ -260,7 +259,7 @@ export interface HTMLConfiguration {
         filePath:string
         options?:PlainObject
         postCompileOptions:PlainObject
-        request:string|string
+        request:string
         use:Array<WebpackLoader>|WebpackLoader
     }
 }
