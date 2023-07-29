@@ -486,6 +486,9 @@
               "'**/plugins/*'",
               "--ignore-pattern",
               "'*.d.ts'",
+              {
+                "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? '--parser-options=project:tsconfig.json' : ''"
+              },
               "--resolve-plugins-relative-to",
               ".",
               "'**/*.{jsx,ts,tsx}'"
