@@ -444,7 +444,7 @@
           {
             "arguments": [
               {
-                "__evaluate__": "path.resolve(self.path.source.asset.cascadingStyleSheet, '**/*.css')"
+                "__evaluate__": "path.resolve(self.path.source.asset.cascadingStyleSheet, `**/*.${self.generic.cascadingStyleSheetFileExtension}`)"
               },
               "--config",
               {
@@ -728,6 +728,7 @@
             "pattern": "'use strict';if(typeof module!=='undefined'&&module!==null&&eval('typeof require')!=='undefined'&&eval('require')!==null&&'main'in eval('require')&&eval('typeof require.main')!=='undefined'&&eval('require.main')!==null){var ORIGINAL_MAIN_MODULE=module;if(module!==eval('require.main')&&'paths'in module&&'paths'in eval('require.main')&&typeof __dirname!=='undefined'&&__dirname!==null)module.paths=eval('require.main.paths').concat(module.paths.filter(function(path){return eval('require.main.paths').includes(path)}))};"
           }
         },
+        "cascadingStyleSheetFileExtension": "css",
         "isWeb": true,
         "supportedBrowsers": [
           "last 2 major versions",
