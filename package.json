@@ -74,7 +74,7 @@
     "prepare": "yarn build",
     "postversion": "yarn publish --non-interactive; git push --tags && git push",
     "prettify": "yarn lint:base --fix || true",
-    "test": "yarn build:test && jest --config ./jest.json --root-dir './' --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/helper.js test/ejsLoader.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
+    "test": "yarn build:test && jest --config ./jest.json --noStackTrace --root-dir './' --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/helper.js test/ejsLoader.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
     "test:coverage": "yarn test --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults",
     "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info",
     "test:watch": "yarn test --watch",
@@ -737,7 +737,7 @@
           "last 2 major versions",
           "> 5%"
         ],
-        "testCommandLine": "jest --config node_modules/weboptimizer/jest.json --test-regex",
+        "testCommandLine": "jest --config node_modules/weboptimizer/jest.json --noStackTrace --test-regex",
         "testCommandLineCoverageArguments": "--ci --coverage --coverage-reporters=text --coverage-reporters=text-summary --silent --test-location-in-results"
       },
       "givenCommandLineArguments": [],
