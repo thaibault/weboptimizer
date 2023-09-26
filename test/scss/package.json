@@ -73,7 +73,7 @@
     "postcss-scss": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
-    "rimraf": ">=4",
+    "rimraf": ">=5",
     "sass": "*",
     "sass-loader": "*",
     "style-loader": "*",
