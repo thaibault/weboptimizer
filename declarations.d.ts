@@ -42,10 +42,11 @@ declare module 'postcss-sprites' {
         verbose:boolean
     }>):PostcssTransformer
 }
-declare module 'webOptimizerDefaultTemplateFilePath'
+declare module 'rimraf'
 declare module 'svgo' {
     export type Options = any
 }
+declare module 'webOptimizerDefaultTemplateFilePath'
 declare module '*.module' {
     const classes:Mapping
     export default classes
