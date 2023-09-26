@@ -42,10 +42,12 @@ import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
 import {sync as globSync} from 'glob-all'
 import path, {join, resolve} from 'path'
+// TODO Workaround for https://github.com/isaacs/rimraf/issues/290
+// When fixed just use 'rimraf'
 import {
     rimraf as removeDirectoryRecursively,
-    rimrafSync as removeDirectoryRecursivelySync
-} from 'rimraf'
+    sync as removeDirectoryRecursivelySync
+} from 'rimraf/dist/esm'
 
 import {load as loadConfiguration} from './configurator'
 import Helper from './helper'
