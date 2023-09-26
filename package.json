@@ -105,7 +105,7 @@
     "html-webpack-plugin": "*",
     "imports-loader": "*",
     "jest-environment-jsdom": "*",
-    "rimraf": ">=4",
+    "rimraf": ">=5",
     "script-loader": "*",
     "typescript": "*",
     "webpack": "*",
