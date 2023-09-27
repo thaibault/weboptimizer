@@ -232,10 +232,9 @@ const main = async (
                                     ].filePathPattern
                                 ).test(file.path)) {
                                     if (file.stats?.isDirectory()) {
-                                        await (
-                                            removeDirectoryRecursively as
-                                                unknown
-                                        )(file.path)
+                                        await removeDirectoryRecursively(
+                                            file.path
+                                        )
 
                                         return false
                                     }
