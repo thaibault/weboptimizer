@@ -3572,9 +3572,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30001538, caniuse-lite@^1.0.30001539:
-  version "1.0.30001539"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001539.tgz#325a387ab1ed236df2c12dc6cd43a4fff9903a44"
-  integrity sha512-hfS5tE8bnNiNvEOEkm8HElUHroYwlqMMENEzELymy77+tJ6m+gA2krtHl5hxJaj71OlpC2cHZbdSMX1/YEqEkA==
+  version "1.0.30001540"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001540.tgz#a316ca4f2ae673ab02ff0ec533334016d56ff658"
+  integrity sha512-9JL38jscuTJBTcuETxm8QLsFr/F6v0CYYTEU6r5+qSM98P2Q0Hmu0eG1dTG5GBUmywU3UlcVOUSIJYY47rdFSw==
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -3681,9 +3681,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.1075"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1075.tgz#cfc408f24094de7e85662602c5a44b92b76b552b"
-  integrity sha512-7Hpu3N/nZ8wgotq+zarLPML76V8p6T2yqT/AUWRtmYVuErkMGm0GyId8BH1iFjaUUKewRgLqkYyMtn1HahQfKA==
+  version "3.0.1076"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1076.tgz#b53a59089c97dabc3a0b2b03c059270de2a8bc0f"
+  integrity sha512-cQE+UdRvH2pomfcAWDIEzuT/9U9oGV77RkVFHPE44gymc58NCNc4acwXGIJkFgBfNzGWFEGAUxtEA3HqyYy0OA==
 
 cliui@^4.0.0:
   version "4.1.0"
