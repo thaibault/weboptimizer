@@ -42,7 +42,6 @@ declare module 'postcss-sprites' {
         verbose:boolean
     }>):PostcssTransformer
 }
-declare module 'rimraf'
 declare module 'svgo' {
     export type Options = any
 }
