@@ -21,6 +21,10 @@
         "strict": true,
         "target": "esnext"
     },
+    "exclude": [
+        "exclude/*",
+        "exclude/**/*"
+    ],
     "include": [
         "*.ts", "*.tsx",
         "*/*.ts", "*/*.tsx",

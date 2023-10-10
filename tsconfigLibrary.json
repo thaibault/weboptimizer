@@ -1,4 +1,6 @@
 {
+    "extends": "./tsconfig.json",
+
     "compilerOptions": {
         "declaration": true,
         "paths": {
@@ -13,7 +15,11 @@
             "@template/*": ["*"]
         }
     },
-    "extends": "./tsconfig.json",
+
+    "exclude": [
+        "../../exclude/*",
+        "../../exclude/**/*"
+    ],
     "include": [
         "../../*.ts", "../../*.tsx",
         "../../*/*.ts", "../../*/*.tsx",
