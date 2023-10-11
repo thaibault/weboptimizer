@@ -636,7 +636,8 @@ export class Helper {
         if (referencePath.startsWith('/'))
             referencePath = relative(context, referencePath)
 
-        for (const chunk of Object.values(normalizedGivenInjection)) {
+        const result = Tools.copy(normalizedGivenInjection)
+        for (const chunk of Object.values(result)) {
             let index = 0
             for (const moduleID of Tools.copy(chunk)) {
                 const resolvedModuleID:false|string =
@@ -686,7 +687,7 @@ export class Helper {
             }
         }
 
-        return normalizedGivenInjection
+        return result
     }
     /**
      * Every injection definition type can be represented as plain object
@@ -772,16 +773,6 @@ export class Helper {
                 referencePath,
                 pathsToIgnore
             ).filePaths
-
-        console.log('A', moduleFilePathsToExclude)
-        console.log('C', givenInjection.autoExclude,
-            aliases,
-            moduleReplacements,
-            {file: extensions.file.internal},
-            context,
-            referencePath,
-            pathsToIgnore
-        )
 
         for (const name of ['entry', 'external'] as const) {
             const injectionType:GivenInjection = injection[name]
