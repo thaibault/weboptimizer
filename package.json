@@ -755,8 +755,7 @@
           "./type",
           "./type.js",
           "./type.ts",
-          ".coverage",
-          "exclude"
+          ".coverage"
         ],
         "chunks": {},
         "entry": {
@@ -795,7 +794,7 @@
           },
           "modules": "__implicit__"
         },
-        "ignorePattern": []
+        "ignorePattern": [{"resourceRegExp": "(.*/)?exclude/.+"}]
       },
       "inPlace": {
         "#": "Indicates whether to include the corresponding artefacts into build target artefact or reference them to dynamically include them during runtime.",

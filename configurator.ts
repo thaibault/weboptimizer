@@ -396,6 +396,7 @@ export const load = (
         resolvedConfiguration.path.context,
         resolvedConfiguration.path.source.asset.base
     )
+
     resolvedConfiguration.injection = Helper.resolveAutoInjection(
         resolvedConfiguration.injection as
             unknown as
