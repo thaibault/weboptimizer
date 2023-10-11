@@ -773,6 +773,16 @@ export class Helper {
                 pathsToIgnore
             ).filePaths
 
+        console.log('A', moduleFilePathsToExclude)
+        console.log('C', givenInjection.autoExclude,
+            aliases,
+            moduleReplacements,
+            {file: extensions.file.internal},
+            context,
+            referencePath,
+            pathsToIgnore
+        )
+
         for (const name of ['entry', 'external'] as const) {
             const injectionType:GivenInjection = injection[name]
             /* eslint-disable curly */
@@ -832,10 +842,6 @@ export class Helper {
 
             for (const moduleFilePath of buildConfiguration.filePaths)
                 if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
-
-                    console.log('A', moduleFilePath)
-                    console.log('B', moduleFilePathsToExclude)
-
                     const relativeModuleFilePath =
                         `./${relative(context, moduleFilePath)}`
                     const directoryPath:string =
