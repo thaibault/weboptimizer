@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.1384",
+  "version": "2.0.1385",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -794,7 +794,11 @@
           },
           "modules": "__implicit__"
         },
-        "ignorePattern": [{"resourceRegExp": "(.*/)?exclude/.+"}]
+        "ignorePattern": [
+          {
+            "resourceRegExp": "(.*/)?exclude/.+"
+          }
+        ]
       },
       "inPlace": {
         "#": "Indicates whether to include the corresponding artefacts into build target artefact or reference them to dynamically include them during runtime.",
