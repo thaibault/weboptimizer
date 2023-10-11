@@ -773,6 +773,8 @@ export class Helper {
                 pathsToIgnore
             ).filePaths
 
+        console.log('A', moduleFilePathsToExclude)
+
         for (const name of ['entry', 'external'] as const) {
             const injectionType:GivenInjection = injection[name]
             /* eslint-disable curly */
