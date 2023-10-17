@@ -18,10 +18,9 @@ Project status
 
 [![build](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/build.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
 
-[![test](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/test.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml)
-[![test-coverage](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/test-coverage-report.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/test-coverage-report.yaml)
 [![check types](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/check-types.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/check-types.yaml)
 [![lint](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/lint.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml)
+[![test](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/test-coverage-report.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/test-coverage-report.yaml)
 
 [![code coverage](https://img.shields.io/coverallsCoverage/github/thaibault/weboptimizer?style=for-the-badge)](https://coveralls.io/github/thaibault/weboptimizer)
 
