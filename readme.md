@@ -27,7 +27,7 @@ Project status
 
 [![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website&style=for-the-badge)](https://torben.website/weboptimizer)
 
-[![Try out](https://badge.runkitcdn.com/weboptimizer.svg)](https://npm.runkit.com/weboptimizer)
+[![Try out](https://img.shields.io/badge/Try%20it%20on%20runkit-%2345cc11?style=for-the-badge)](https://npm.runkit.com/weboptimizer)
 
 Use case
 --------
