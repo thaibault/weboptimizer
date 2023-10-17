@@ -16,12 +16,12 @@ Project status
 [![npm](https://img.shields.io/npm/v/weboptimizer?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d&style=for-the-badge)](https://www.npmjs.com/package/weboptimizer)
 [![npm downloads](https://img.shields.io/npm/dy/weboptimizer.svg?style=for-the-badge)](https://www.npmjs.com/package/weboptimizer)
 
-[![<LABEL>](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/build.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
+[![build](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/build.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
 
-[![<LABEL>](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/test.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml)
-[![<LABEL>](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/test-coverage-report.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/test-coverage-report.yaml)
-[![<LABEL>](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/check-types.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/check-types.yaml)
-[![<LABEL>](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/lint.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml)
+[![test](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/test.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml)
+[![test-coverage](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/test-coverage-report.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/test-coverage-report.yaml)
+[![check types](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/check-types.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/check-types.yaml)
+[![lint](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/lint.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml)
 
 [![code coverage](https://img.shields.io/coverallsCoverage/github/thaibault/weboptimizer?style=for-the-badge)](https://coveralls.io/github/thaibault/weboptimizer)
 
