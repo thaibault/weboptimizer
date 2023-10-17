@@ -13,8 +13,8 @@ endregion -->
 Project status
 --------------
 
-[![npm](https://img.shields.io/npm/v/weboptimizer?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d)](https://www.npmjs.com/package/weboptimizer)
-[![npm downloads](https://img.shields.io/npm/dy/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
+[![npm](https://img.shields.io/npm/v/weboptimizer?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d&style=for-the-badge)](https://www.npmjs.com/package/weboptimizer)
+[![npm downloads](https://img.shields.io/npm/dy/weboptimizer.svg?style=for-the-badge)](https://www.npmjs.com/package/weboptimizer)
 
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
 [![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml)
@@ -24,7 +24,7 @@ Project status
 
 [![code coverage](https://coveralls.io/repos/github/thaibault/weboptimizer/badge.svg)](https://coveralls.io/github/thaibault/weboptimizer)
 
-[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website)](https://torben.website/weboptimizer)
+[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website&style=for-the-badge)](https://torben.website/weboptimizer)
 
 [![Try out](https://badge.runkitcdn.com/weboptimizer.svg)](https://npm.runkit.com/weboptimizer)
 
