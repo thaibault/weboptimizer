@@ -23,7 +23,7 @@ Project status
 [![<LABEL>](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/check-types.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/check-types.yaml)
 [![<LABEL>](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/lint.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml)
 
-[![code coverage](https://coveralls.io/repos/github/thaibault/weboptimizer/badge.svg)](https://coveralls.io/github/thaibault/weboptimizer)
+[![code coverage](https://img.shields.io/coverallsCoverage/github/thaibault/weboptimizer?style=for-the-badge)](https://coveralls.io/github/thaibault/weboptimizer)
 
 [![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website&style=for-the-badge)](https://torben.website/weboptimizer)
 
