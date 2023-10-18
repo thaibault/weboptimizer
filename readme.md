@@ -13,20 +13,20 @@ endregion -->
 Project status
 --------------
 
-[![npm](https://img.shields.io/npm/v/weboptimizer?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d)](https://www.npmjs.com/package/weboptimizer)
-[![npm downloads](https://img.shields.io/npm/dy/weboptimizer.svg)](https://www.npmjs.com/package/weboptimizer)
+[![npm](https://img.shields.io/npm/v/weboptimizer?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d&style=for-the-badge)](https://www.npmjs.com/package/weboptimizer)
+[![npm downloads](https://img.shields.io/npm/dy/weboptimizer.svg?style=for-the-badge)](https://www.npmjs.com/package/weboptimizer)
 
-[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
-[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test.yaml)
-[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/test-coverage-report.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/test-coverage-report.yaml)
-[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/check-types.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/check-types.yaml)
-[![<LABEL>](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml/badge.svg)](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml)
+[![build](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/build.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/build.yaml)
 
-[![code coverage](https://coveralls.io/repos/github/thaibault/weboptimizer/badge.svg)](https://coveralls.io/github/thaibault/weboptimizer)
+[![check types](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/check-types.yaml?label=check%20types&style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/check-types.yaml)
+[![lint](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/lint.yaml?label=lint&style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/lint.yaml)
+[![test](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/test-coverage-report.yaml?label=test&style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/test-coverage-report.yaml)
 
-[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website)](https://torben.website/weboptimizer)
+[![code coverage](https://img.shields.io/coverallsCoverage/github/thaibault/weboptimizer?label=code%20coverage&style=for-the-badge)](https://coveralls.io/github/thaibault/weboptimizer)
 
-[![Try out](https://badge.runkitcdn.com/weboptimizer.svg)](https://npm.runkit.com/weboptimizer)
+[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website&style=for-the-badge)](https://torben.website/weboptimizer)
+
+[![Try out](https://img.shields.io/badge/Try%20it%20on%20runkit-%2345cc11?style=for-the-badge)](https://npm.runkit.com/weboptimizer)
 
 Use case
 --------
