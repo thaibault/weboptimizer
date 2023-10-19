@@ -1468,10 +1468,10 @@
       "targetTechnology": {
         "#": "NOTE: Live-reload is not working if target technology is not set to web. Webpack boilerplate code may not support target technologies.",
         "boilerplate": {
-          "__evaluate__": "self.generic.supportedBrowsers.map((query) => `browserslist:${query}`)"
+          "__evaluate__": "self.generic.isWeb ? self.generic.supportedBrowsers.map((query) => `browserslist:${query}`) : 'node'"
         },
         "payload": {
-          "__evaluate__": "self.generic.supportedBrowsers"
+          "__evaluate__": "self.generic.isWeb ? self.generic.supportedBrowsers : 'node'"
         }
       },
       "test": {
