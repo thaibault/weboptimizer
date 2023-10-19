@@ -4416,9 +4416,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation-website@*:
-  version "1.0.309"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.309.tgz#5676a3e573fcae492575d33ec271ac1283c61cc1"
-  integrity sha512-0LlycB2DZO86j2iL35834Om9AP6Aw/sU/U0LxnYRs4nKQLTNHwaZ+2wocw7gEicLUr4XeNroTCwVUSqMWXv1FA==
+  version "1.0.310"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.310.tgz#058f9c3c2b6c113d587e6390df99faa562e260fa"
+  integrity sha512-BuYegs+lgce2qwQwKUC3y27Stu3kq82LtO88rWA6Fb3OhfYceWnhIoiBkJGMoDxCt4lIAmz9PMrSZwiHqFLQ5w==
 
 dom-converter@^0.2.0:
   version "0.2.0"
