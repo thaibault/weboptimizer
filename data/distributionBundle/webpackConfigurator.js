@@ -1,4 +1,336 @@
-// #!/usr/bin/env babel-node
+context = _ref.context,
+      request = _ref.request;
+    if (typeof request !== 'string') return callback();
+    request = request.replace(/^!+/, '');
+    if (request.startsWith('/')) request = (0, _path.relative)(configuration.path.context, request);
+    var _iterator3 = _createForOfIteratorHelper(_module.directoryNames),
+      _step3;
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var _filePath = _step3.value;
+        if (request.startsWith(_filePath)) {
+          request = request.substring(_filePath.length);
+          if (request.startsWith('/')) request = request.substring(1);
+          break;
+        }
+      }
+      // region pattern based aliasing
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
+    }
+    var filePath = _helper["default"].determineModuleFilePath(request, {}, {}, {
+      file: configuration.extensions.file.external
+    }, configuration.path.context, context, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.encoding);
+    if (filePath) for (var _i7 = 0, _Object$entries5 = Object.entries(configuration.injection.external.aliases); _i7 < _Object$entries5.length; _i7++) {
+      var _Object$entries5$_i = (0, _slicedToArray2["default"])(_Object$entries5[_i7], 2),
+        pattern = _Object$entries5$_i[0],
+        targetConfiguration = _Object$entries5$_i[1];
+      if (pattern.startsWith('^')) {
+        var regularExpression = new RegExp(pattern);
+        if (regularExpression.test(filePath)) {
+          var match = false;
+          var firstKey = Object.keys(targetConfiguration)[0];
+          var target = targetConfiguration[firstKey];
+          if (typeof target !== 'string') break;
+          var replacementRegularExpression = new RegExp(firstKey);
+          if (target.startsWith('?')) {
+            target = target.substring(1);
+            var aliasedRequest = request.replace(replacementRegularExpression, target);
+            if (aliasedRequest !== request) match = Boolean(_helper["default"].determineModuleFilePath(aliasedRequest, {}, {}, {
+              file: configuration.extensions.file.external
+            }, configuration.path.context, context, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.encoding));
+          } else match = true;
+          if (match) {
+            request = request.replace(replacementRegularExpression, target);
+            break;
+          }
+        }
+      }
+    }
+    // endregion
+    var resolvedRequest = _helper["default"].determineExternalRequest(request, configuration.path.context, context, configuration.injection.entry.normalized, _module.directoryNames, _module.aliases, _module.replacements.normal, configuration.extensions, configuration.path.source.asset.base, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.injection.external.implicit.pattern.include, configuration.injection.external.implicit.pattern.exclude, configuration.inPlace.externalLibrary.normal, configuration.inPlace.externalLibrary.dynamic, configuration.encoding);
+    if (resolvedRequest) {
+      var keys = ['amd', 'commonjs', 'commonjs2', 'root'];
+      var _result2 = resolvedRequest;
+      if (Object.prototype.hasOwnProperty.call(configuration.injection.external.aliases, request)) {
+        // region normal alias replacement
+        _result2 = {
+          "default": request
+        };
+        if (typeof configuration.injection.external.aliases[request] === 'string') {
+          var _iterator4 = _createForOfIteratorHelper(keys),
+            _step4;
+          try {
+            for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+              var key = _step4.value;
+              _result2[key] = configuration.injection.external.aliases[request];
+            }
+          } catch (err) {
+            _iterator4.e(err);
+          } finally {
+            _iterator4.f();
+          }
+        } else if (typeof configuration.injection.external.aliases[request] === 'function') {
+          var _iterator5 = _createForOfIteratorHelper(keys),
+            _step5;
+          try {
+            for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+              var _key2 = _step5.value;
+              _result2[_key2] = configuration.injection.external.aliases[request](request, _key2);
+            }
+          } catch (err) {
+            _iterator5.e(err);
+          } finally {
+            _iterator5.f();
+          }
+        } else if (configuration.injection.external.aliases[request] !== null && (0, _typeof2["default"])(configuration.injection.external.aliases[request]) === 'object') _clientnode["default"].extend(_result2, configuration.injection.external.aliases[request]);
+        if (Object.prototype.hasOwnProperty.call(_result2, 'default')) {
+          var _iterator6 = _createForOfIteratorHelper(keys),
+            _step6;
+          try {
+            for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+              var _key3 = _step6.value;
+              if (!Object.prototype.hasOwnProperty.call(_result2, _key3)) _result2[_key3] = _result2["default"];
+            }
+          } catch (err) {
+            _iterator6.e(err);
+          } finally {
+            _iterator6.f();
+          }
+        }
+        // endregion
+      }
+
+      if (typeof _result2 !== 'string' && Object.prototype.hasOwnProperty.call(_result2, 'root')) _result2.root = [].concat(_result2.root).map(function (name) {
+        return _clientnode["default"].stringConvertToValidVariableName(name);
+      });
+      var exportFormat = configuration.exportFormat.external || configuration.exportFormat.self;
+      return callback(undefined, exportFormat === 'umd' || typeof _result2 === 'string' ? _result2 : _result2[exportFormat], exportFormat);
+    }
+    return callback();
+  };
+///// endregion
+//// endregion
+//// region apply final cascadingStyleSheet/dom/javaScript modifications/fixes
+if (htmlAvailable) pluginInstances.push({
+  apply: function apply(compiler) {
+    return compiler.hooks.compilation.tap('WebOptimizer', function (compilation) {
+      plugins.HTML.getHooks(compilation).beforeEmit.tap('WebOptimizerPostProcessHTML', function (data) {
+        /*
+            NOTE: We have to prevent creating native "style" dom nodes
+            to prevent jsdom from parsing the entire cascading style
+            sheet. Which is error prune and very resource intensive.
+        */
+        var styleContents = [];
+        data.html = data.html.replace(/(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, function (match, startTag, content, endTag) {
+          styleContents.push(content);
+          return "".concat(startTag).concat(endTag);
+        });
+        var dom;
+        try {
+          /*
+              NOTE: We have to translate template delimiter to html
+              compatible sequences and translate it back later to
+              avoid unexpected escape sequences in resulting html.
+          */
+          dom = new _jsdom.JSDOM(data.html.replace(/<%/g, '##+#+#+##').replace(/%>/g, '##-#-#-##'));
+        } catch (error) {
+          return data;
+        }
+        var linkables = {
+          link: 'href',
+          script: 'src'
+        };
+        for (var _i8 = 0, _Object$entries6 = Object.entries(linkables); _i8 < _Object$entries6.length; _i8++) {
+          var _Object$entries6$_i = (0, _slicedToArray2["default"])(_Object$entries6[_i8], 2),
+            tagName = _Object$entries6$_i[0],
+            attributeName = _Object$entries6$_i[1];
+          for (var _i9 = 0, _Array$from = Array.from(dom.window.document.querySelectorAll("".concat(tagName, "[").concat(attributeName, "*=\"?") + "".concat(configuration.hashAlgorithm, "=\"]"))); _i9 < _Array$from.length; _i9++) {
+            var domNode = _Array$from[_i9];
+            /*
+                NOTE: Removing symbols after a "&" in hash
+                string is necessary to match the generated
+                request strings in offline plugin.
+            */
+            domNode.setAttribute(attributeName, domNode.getAttribute(attributeName).replace(new RegExp('(\\?' + "".concat(configuration.hashAlgorithm, "=") + '[^&]+).*$'), '$1'));
+          }
+        }
+        /*
+            NOTE: We have to restore template delimiter and style
+            contents.
+        */
+        data.html = dom.serialize().replace(/##\+#\+#\+##/g, '<%').replace(/##-#-#-##/g, '%>').replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, function (match, startTag, endTag) {
+          return "".concat(startTag).concat(styleContents.shift()) + endTag;
+        });
+        // region post compilation
+        var _iterator7 = _createForOfIteratorHelper(configuration.files.html),
+          _step7;
+        try {
+          for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+            var htmlFileSpecification = _step7.value;
+            if (htmlFileSpecification.filename === data.plugin.options.filename) {
+              var _iterator8 = _createForOfIteratorHelper([].concat(htmlFileSpecification.template.use)),
+                _step8;
+              try {
+                for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+                  var _loaderConfiguration$;
+                  var loaderConfiguration = _step8.value;
+                  if ((_loaderConfiguration$ = loaderConfiguration.options) !== null && _loaderConfiguration$ !== void 0 && _loaderConfiguration$.compileSteps && typeof loaderConfiguration.options.compileSteps === 'number') data.html = _ejsLoader["default"].bind({
+                    query: _clientnode["default"].extend(true, _clientnode["default"].copy(loaderConfiguration.options) || {}, htmlFileSpecification.template.postCompileOptions)
+                  })(data.html);
+                }
+              } catch (err) {
+                _iterator8.e(err);
+              } finally {
+                _iterator8.f();
+              }
+              break;
+            }
+          }
+          // endregion
+        } catch (err) {
+          _iterator7.e(err);
+        } finally {
+          _iterator7.f();
+        }
+        return data;
+      });
+    });
+  }
+});
+//// endregion
+//// region context replacements
+var _iterator9 = _createForOfIteratorHelper(_module.replacements.context),
+  _step9;
+try {
+  for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+    var contextReplacement = _step9.value;
+    pluginInstances.push((0, _construct2["default"])(_webpack.ContextReplacementPlugin, (0, _toConsumableArray2["default"])(contextReplacement.map(function (value) {
+      var evaluated = _clientnode["default"].stringEvaluate(value, {
+        configuration: configuration,
+        __dirname: __dirname,
+        __filename: __filename
+      });
+      if (evaluated.error) throw new Error('Error occurred during processing given context ' + "replacement: ".concat(evaluated.error));
+      return evaluated.result;
+    }))));
+  }
+  //// endregion
+  //// region consolidate duplicated module requests
+  /*
+      NOTE: Redundancies usually occur when symlinks aren't converted to their
+      real paths since real paths can be de-duplicated by webpack but if two
+      linked modules share the same transitive dependency webpack wont recognize
+      them as same dependency.
+  */
+} catch (err) {
+  _iterator9.e(err);
+} finally {
+  _iterator9.f();
+}
+if (_module.enforceDeduplication) {
+  var absoluteContextPath = (0, _path.resolve)(configuration.path.context);
+  var consolidator = function consolidator(result) {
+    var targetPath = result.createData.resource;
+    if (targetPath && /((?:^|\/)node_modules\/.+)/.test(targetPath) && (!targetPath.startsWith(absoluteContextPath) || /((?:^|\/)node_modules\/.+){2}/.test(targetPath)) && _clientnode["default"].isFileSync(targetPath)) {
+      var packageDescriptor = _helper["default"].getClosestPackageDescriptor(targetPath);
+      if (packageDescriptor) {
+        var pathPrefixes;
+        var pathSuffix;
+        if (targetPath.startsWith(absoluteContextPath)) {
+          var _matches2 = targetPath.match(/((?:^|.*?\/)node_modules\/)/g);
+          if (_matches2 === null) return;
+          pathPrefixes = Array.from(_matches2);
+          /*
+              Remove last one to avoid replacing with the already set
+              path.
+          */
+          pathPrefixes.pop();
+          var index = 0;
+          var _iterator10 = _createForOfIteratorHelper(pathPrefixes),
+            _step10;
+          try {
+            for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+              var pathPrefix = _step10.value;
+              if (index > 0) pathPrefixes[index] = (0, _path.resolve)(pathPrefixes[index - 1], pathPrefix);
+              index += 1;
+            }
+          } catch (err) {
+            _iterator10.e(err);
+          } finally {
+            _iterator10.f();
+          }
+          pathSuffix = targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1');
+        } else {
+          pathPrefixes = [(0, _path.resolve)(absoluteContextPath, 'node_modules')];
+          // Find longest common prefix.
+          var _index = 0;
+          while (_index < absoluteContextPath.length && absoluteContextPath.charAt(_index) === targetPath.charAt(_index)) _index += 1;
+          pathSuffix = targetPath.substring(_index).replace(/^.*\/node_modules\//, '');
+        }
+        var redundantRequest = null;
+        var _iterator11 = _createForOfIteratorHelper(pathPrefixes),
+          _step11;
+        try {
+          for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
+            var _pathPrefix = _step11.value;
+            var alternateTargetPath = (0, _path.resolve)(_pathPrefix, pathSuffix);
+            if (_clientnode["default"].isFileSync(alternateTargetPath)) {
+              var otherPackageDescriptor = _helper["default"].getClosestPackageDescriptor(alternateTargetPath);
+              if (otherPackageDescriptor) {
+                if (packageDescriptor.configuration.version === otherPackageDescriptor.configuration.version) {
+                  console.info('\nConsolidate module request "' + "".concat(targetPath, "\" to \"") + "".concat(alternateTargetPath, "\"."));
+                  /*
+                      NOTE: Only overwriting
+                      "result.createData.resource" like
+                      implemented in
+                      "NormaleModuleReplacementPlugin" does
+                      not always work.
+                  */
+                  result.request = result.createData.rawRequest = result.createData.request = result.createData.resource = result.createData.userRequest = alternateTargetPath;
+                  return;
+                }
+                redundantRequest = {
+                  path: alternateTargetPath,
+                  version: otherPackageDescriptor.configuration.version
+                };
+              }
+            }
+          }
+        } catch (err) {
+          _iterator11.e(err);
+        } finally {
+          _iterator11.f();
+        }
+        if (redundantRequest) console.warn('\nIncluding different versions of same package "' + "".concat(packageDescriptor.configuration.name, "\". Module \"") + "".concat(targetPath, "\" (version ") + "".concat(packageDescriptor.configuration.version, ") has ") + "redundancies with \"".concat(redundantRequest.path, "\" (") + "version ".concat(redundantRequest.version, ")."));
+      }
+    }
+  };
+  pluginInstances.push({
+    apply: function apply(compiler) {
+      return compiler.hooks.normalModuleFactory.tap('WebOptimizerModuleConsolidation', function (nmf) {
+        return nmf.hooks.afterResolve.tap('WebOptimizerModuleConsolidation', consolidator);
+      });
+    }
+  });
+}
+/*
+new NormalModuleReplacementPlugin(
+    /.+/,
+    (result:{
+        context:string
+        createData:{resource:string}
+        request:string
+    }):void => {
+        const isResource:boolean = Boolean(result.createData.resource)
+        const targetPath:string = isResource ?
+            result.createData.resource :
+            resolve(result.context, result.request)
+        if (
+            targetPath &&
+            /((?:^|\/)node_modules\/.+){2}/.test(targ// #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
 /** @module webpackConfigurator */
 'use strict';
@@ -41,11 +373,11 @@ var _optionalRequire,
   _configuration$cache,
   _configuration$cache2,
   _configuration$path$c2;
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 /// region optional imports
 // NOTE: Has to be defined here to ensure to resolve from here.
 var currentRequire =
@@ -54,14 +386,13 @@ var currentRequire =
         __non_webpack_require__ :
 */
 eval("typeof require === 'undefined' ? null : require");
-var optionalRequire = function optionalRequire(id) {
+var optionalRequire = exports.optionalRequire = function optionalRequire(id) {
   try {
     return currentRequire ? currentRequire(id) : null;
   } catch (error) {
     return null;
   }
 };
-exports.optionalRequire = optionalRequire;
 var postcssCSSnano = optionalRequire('cssnano');
 var postcssFontpath = optionalRequire('postcss-fontpath');
 var postcssImport = optionalRequire('postcss-import');
@@ -167,13 +498,13 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
     var _Object$entries3$_i = (0, _slicedToArray2["default"])(_Object$entries3[_i3], 2),
       _name = _Object$entries3$_i[0],
       extension = _Object$entries3$_i[1];
-    var type = _name;
-    if (configuration.inPlace[type]) {
-      var matches = Object.keys(configuration.inPlace[type]);
+    var _type = _name;
+    if (configuration.inPlace[_type]) {
+      var matches = Object.keys(configuration.inPlace[_type]);
       if (!Array.isArray(configuration.offline.common.excludeChunks)) configuration.offline.common.excludeChunks = [];
       for (var _i4 = 0, _matches = matches; _i4 < _matches.length; _i4++) {
         var _name2 = _matches[_i4];
-        configuration.offline.common.excludeChunks.push((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset[type]) + "".concat(_name2, ".").concat(extension, "?").concat(configuration.hashAlgorithm, "=*"));
+        configuration.offline.common.excludeChunks.push((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset[_type]) + "".concat(_name2, ".").concat(extension, "?").concat(configuration.hashAlgorithm, "=*"));
       }
     }
   }
@@ -189,18 +520,25 @@ if (_module.provide) pluginInstances.push(new _webpack.ProvidePlugin(_module.pro
 ///// region apply module pattern
 pluginInstances.push({
   apply: function apply(compiler) {
-    compiler.hooks.emit.tap('applyModulePattern', function (compilation) {
-      for (var _i5 = 0, _Object$entries4 = Object.entries(compilation.assets); _i5 < _Object$entries4.length; _i5++) {
-        var _Object$entries4$_i = (0, _slicedToArray2["default"])(_Object$entries4[_i5], 2),
-          request = _Object$entries4$_i[0],
-          asset = _Object$entries4$_i[1];
-        var filePath = request.replace(/\?[^?]+$/, '');
-        var _type2 = _helper["default"].determineAssetType(filePath, configuration.buildContext.types, configuration.path);
-        if (_type2 && configuration.assetPattern[_type2] && new RegExp(configuration.assetPattern[_type2].includeFilePathRegularExpression).test(filePath) && !new RegExp(configuration.assetPattern[_type2].excludeFilePathRegularExpression).test(filePath)) {
-          var source = asset.source();
-          if (typeof source === 'string') compilation.assets[request] = new _webpackSources.RawSource(configuration.assetPattern[_type2].pattern.replace(/\{1\}/g, source.replace(/\$/g, '$$$')));
+    var name = 'ApplyModulePattern';
+    compiler.hooks.compilation.tap(name, function (compilation) {
+      compilation.hooks.processAssets.tap({
+        name: name,
+        additionalAssets: true,
+        stage: _webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS
+      }, function (assets) {
+        for (var _i5 = 0, _Object$entries4 = Object.entries(assets); _i5 < _Object$entries4.length; _i5++) {
+          var _Object$entries4$_i = (0, _slicedToArray2["default"])(_Object$entries4[_i5], 2),
+            request = _Object$entries4$_i[0],
+            asset = _Object$entries4$_i[1];
+          var filePath = request.replace(/\?[^?]+$/, '');
+          var _type2 = _helper["default"].determineAssetType(filePath, configuration.buildContext.types, configuration.path);
+          if (_type2 && configuration.assetPattern[_type2] && new RegExp(configuration.assetPattern[_type2].includeFilePathRegularExpression).test(filePath) && !new RegExp(configuration.assetPattern[_type2].excludeFilePathRegularExpression).test(filePath)) {
+            var source = asset.source();
+            if (typeof source === 'string') compilation.assets[request] = new _webpackSources.RawSource(configuration.assetPattern[_type2].pattern.replace(/\{1\}/g, source.replace(/\$/g, '$$$')));
+          }
         }
-      }
+      });
     });
   }
 });
@@ -268,17 +606,9 @@ if (htmlAvailable && !['serve', 'test:browser'].includes(configuration.givenComm
 
       // NOTE: Avoid if you still want to emit the runtime chunks:
       hooks.afterEmit.tap('inPlaceHTMLAssets', function (asset) {
-        var _iterator3 = _createForOfIteratorHelper(inPlacedAssetNames),
-          _step3;
-        try {
-          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var _name3 = _step3.value;
-            delete compilation.assets[_name3];
-          }
-        } catch (err) {
-          _iterator3.e(err);
-        } finally {
-          _iterator3.f();
+        for (var _i6 = 0, _inPlacedAssetNames = inPlacedAssetNames; _i6 < _inPlacedAssetNames.length; _i6++) {
+          var _name3 = _inPlacedAssetNames[_i6];
+          delete compilation.assets[_name3];
         }
         return asset;
       });
@@ -305,341 +635,7 @@ if (configuration.injection.external.modules === '__implicit__')
       external dependency.
   */
   configuration.injection.external.modules = function (_ref, callback) {
-    var context = _ref.context,
-      request = _ref.request;
-    if (typeof request !== 'string') return callback();
-    request = request.replace(/^!+/, '');
-    if (request.startsWith('/')) request = (0, _path.relative)(configuration.path.context, request);
-    var _iterator4 = _createForOfIteratorHelper(_module.directoryNames),
-      _step4;
-    try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var _filePath = _step4.value;
-        if (request.startsWith(_filePath)) {
-          request = request.substring(_filePath.length);
-          if (request.startsWith('/')) request = request.substring(1);
-          break;
-        }
-      }
-      // region pattern based aliasing
-    } catch (err) {
-      _iterator4.e(err);
-    } finally {
-      _iterator4.f();
-    }
-    var filePath = _helper["default"].determineModuleFilePath(request, {}, {}, {
-      file: configuration.extensions.file.external
-    }, configuration.path.context, context, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.encoding);
-    if (filePath) for (var _i6 = 0, _Object$entries5 = Object.entries(configuration.injection.external.aliases); _i6 < _Object$entries5.length; _i6++) {
-      var _Object$entries5$_i = (0, _slicedToArray2["default"])(_Object$entries5[_i6], 2),
-        pattern = _Object$entries5$_i[0],
-        targetConfiguration = _Object$entries5$_i[1];
-      if (pattern.startsWith('^')) {
-        var regularExpression = new RegExp(pattern);
-        if (regularExpression.test(filePath)) {
-          var match = false;
-          var firstKey = Object.keys(targetConfiguration)[0];
-          var target = targetConfiguration[firstKey];
-          if (typeof target !== 'string') break;
-          var replacementRegularExpression = new RegExp(firstKey);
-          if (target.startsWith('?')) {
-            target = target.substring(1);
-            var aliasedRequest = request.replace(replacementRegularExpression, target);
-            if (aliasedRequest !== request) match = Boolean(_helper["default"].determineModuleFilePath(aliasedRequest, {}, {}, {
-              file: configuration.extensions.file.external
-            }, configuration.path.context, context, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.encoding));
-          } else match = true;
-          if (match) {
-            request = request.replace(replacementRegularExpression, target);
-            break;
-          }
-        }
-      }
-    }
-    // endregion
-    var resolvedRequest = _helper["default"].determineExternalRequest(request, configuration.path.context, context, configuration.injection.entry.normalized, _module.directoryNames, _module.aliases, _module.replacements.normal, configuration.extensions, configuration.path.source.asset.base, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.injection.external.implicit.pattern.include, configuration.injection.external.implicit.pattern.exclude, configuration.inPlace.externalLibrary.normal, configuration.inPlace.externalLibrary.dynamic, configuration.encoding);
-    if (resolvedRequest) {
-      var keys = ['amd', 'commonjs', 'commonjs2', 'root'];
-      var result = resolvedRequest;
-      if (Object.prototype.hasOwnProperty.call(configuration.injection.external.aliases, request)) {
-        // region normal alias replacement
-        result = {
-          "default": request
-        };
-        if (typeof configuration.injection.external.aliases[request] === 'string') {
-          var _iterator5 = _createForOfIteratorHelper(keys),
-            _step5;
-          try {
-            for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-              var key = _step5.value;
-              result[key] = configuration.injection.external.aliases[request];
-            }
-          } catch (err) {
-            _iterator5.e(err);
-          } finally {
-            _iterator5.f();
-          }
-        } else if (typeof configuration.injection.external.aliases[request] === 'function') {
-          var _iterator6 = _createForOfIteratorHelper(keys),
-            _step6;
-          try {
-            for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-              var _key2 = _step6.value;
-              result[_key2] = configuration.injection.external.aliases[request](request, _key2);
-            }
-          } catch (err) {
-            _iterator6.e(err);
-          } finally {
-            _iterator6.f();
-          }
-        } else if (configuration.injection.external.aliases[request] !== null && (0, _typeof2["default"])(configuration.injection.external.aliases[request]) === 'object') _clientnode["default"].extend(result, configuration.injection.external.aliases[request]);
-        if (Object.prototype.hasOwnProperty.call(result, 'default')) {
-          var _iterator7 = _createForOfIteratorHelper(keys),
-            _step7;
-          try {
-            for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-              var _key3 = _step7.value;
-              if (!Object.prototype.hasOwnProperty.call(result, _key3)) result[_key3] = result["default"];
-            }
-          } catch (err) {
-            _iterator7.e(err);
-          } finally {
-            _iterator7.f();
-          }
-        }
-        // endregion
-      }
-
-      if (typeof result !== 'string' && Object.prototype.hasOwnProperty.call(result, 'root')) result.root = [].concat(result.root).map(function (name) {
-        return _clientnode["default"].stringConvertToValidVariableName(name);
-      });
-      var exportFormat = configuration.exportFormat.external || configuration.exportFormat.self;
-      return callback(undefined, exportFormat === 'umd' || typeof result === 'string' ? result : result[exportFormat], exportFormat);
-    }
-    return callback();
-  };
-///// endregion
-//// endregion
-//// region apply final cascadingStyleSheet/dom/javaScript modifications/fixes
-if (htmlAvailable) pluginInstances.push({
-  apply: function apply(compiler) {
-    return compiler.hooks.compilation.tap('WebOptimizer', function (compilation) {
-      plugins.HTML.getHooks(compilation).beforeEmit.tap('WebOptimizerPostProcessHTML', function (data) {
-        /*
-            NOTE: We have to prevent creating native "style" dom nodes
-            to prevent jsdom from parsing the entire cascading style
-            sheet. Which is error prune and very resource intensive.
-        */
-        var styleContents = [];
-        data.html = data.html.replace(/(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi, function (match, startTag, content, endTag) {
-          styleContents.push(content);
-          return "".concat(startTag).concat(endTag);
-        });
-        var dom;
-        try {
-          /*
-              NOTE: We have to translate template delimiter to html
-              compatible sequences and translate it back later to
-              avoid unexpected escape sequences in resulting html.
-          */
-          dom = new _jsdom.JSDOM(data.html.replace(/<%/g, '##+#+#+##').replace(/%>/g, '##-#-#-##'));
-        } catch (error) {
-          return data;
-        }
-        var linkables = {
-          link: 'href',
-          script: 'src'
-        };
-        for (var _i7 = 0, _Object$entries6 = Object.entries(linkables); _i7 < _Object$entries6.length; _i7++) {
-          var _Object$entries6$_i = (0, _slicedToArray2["default"])(_Object$entries6[_i7], 2),
-            tagName = _Object$entries6$_i[0],
-            attributeName = _Object$entries6$_i[1];
-          for (var _i8 = 0, _Array$from = Array.from(dom.window.document.querySelectorAll("".concat(tagName, "[").concat(attributeName, "*=\"?") + "".concat(configuration.hashAlgorithm, "=\"]"))); _i8 < _Array$from.length; _i8++) {
-            var domNode = _Array$from[_i8];
-            /*
-                NOTE: Removing symbols after a "&" in hash
-                string is necessary to match the generated
-                request strings in offline plugin.
-            */
-            domNode.setAttribute(attributeName, domNode.getAttribute(attributeName).replace(new RegExp('(\\?' + "".concat(configuration.hashAlgorithm, "=") + '[^&]+).*$'), '$1'));
-          }
-        }
-        /*
-            NOTE: We have to restore template delimiter and style
-            contents.
-        */
-        data.html = dom.serialize().replace(/##\+#\+#\+##/g, '<%').replace(/##-#-#-##/g, '%>').replace(/(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi, function (match, startTag, endTag) {
-          return "".concat(startTag).concat(styleContents.shift()) + endTag;
-        });
-        // region post compilation
-        var _iterator8 = _createForOfIteratorHelper(configuration.files.html),
-          _step8;
-        try {
-          for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-            var htmlFileSpecification = _step8.value;
-            if (htmlFileSpecification.filename === data.plugin.options.filename) {
-              var _iterator9 = _createForOfIteratorHelper([].concat(htmlFileSpecification.template.use)),
-                _step9;
-              try {
-                for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-                  var _loaderConfiguration$;
-                  var loaderConfiguration = _step9.value;
-                  if ((_loaderConfiguration$ = loaderConfiguration.options) !== null && _loaderConfiguration$ !== void 0 && _loaderConfiguration$.compileSteps && typeof loaderConfiguration.options.compileSteps === 'number') data.html = _ejsLoader["default"].bind({
-                    query: _clientnode["default"].extend(true, _clientnode["default"].copy(loaderConfiguration.options) || {}, htmlFileSpecification.template.postCompileOptions)
-                  })(data.html);
-                }
-              } catch (err) {
-                _iterator9.e(err);
-              } finally {
-                _iterator9.f();
-              }
-              break;
-            }
-          }
-          // endregion
-        } catch (err) {
-          _iterator8.e(err);
-        } finally {
-          _iterator8.f();
-        }
-        return data;
-      });
-    });
-  }
-});
-//// endregion
-//// region context replacements
-var _iterator10 = _createForOfIteratorHelper(_module.replacements.context),
-  _step10;
-try {
-  for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-    var contextReplacement = _step10.value;
-    pluginInstances.push((0, _construct2["default"])(_webpack.ContextReplacementPlugin, (0, _toConsumableArray2["default"])(contextReplacement.map(function (value) {
-      var evaluated = _clientnode["default"].stringEvaluate(value, {
-        configuration: configuration,
-        __dirname: __dirname,
-        __filename: __filename
-      });
-      if (evaluated.error) throw new Error('Error occurred during processing given context ' + "replacement: ".concat(evaluated.error));
-      return evaluated.result;
-    }))));
-  }
-  //// endregion
-  //// region consolidate duplicated module requests
-  /*
-      NOTE: Redundancies usually occur when symlinks aren't converted to their
-      real paths since real paths can be de-duplicated by webpack but if two
-      linked modules share the same transitive dependency webpack wont recognize
-      them as same dependency.
-  */
-} catch (err) {
-  _iterator10.e(err);
-} finally {
-  _iterator10.f();
-}
-if (_module.enforceDeduplication) {
-  var absoluteContextPath = (0, _path.resolve)(configuration.path.context);
-  var consolidator = function consolidator(result) {
-    var targetPath = result.createData.resource;
-    if (targetPath && /((?:^|\/)node_modules\/.+)/.test(targetPath) && (!targetPath.startsWith(absoluteContextPath) || /((?:^|\/)node_modules\/.+){2}/.test(targetPath)) && _clientnode["default"].isFileSync(targetPath)) {
-      var packageDescriptor = _helper["default"].getClosestPackageDescriptor(targetPath);
-      if (packageDescriptor) {
-        var pathPrefixes;
-        var pathSuffix;
-        if (targetPath.startsWith(absoluteContextPath)) {
-          var _matches2 = targetPath.match(/((?:^|.*?\/)node_modules\/)/g);
-          if (_matches2 === null) return;
-          pathPrefixes = Array.from(_matches2);
-          /*
-              Remove last one to avoid replacing with the already set
-              path.
-          */
-          pathPrefixes.pop();
-          var index = 0;
-          var _iterator11 = _createForOfIteratorHelper(pathPrefixes),
-            _step11;
-          try {
-            for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
-              var pathPrefix = _step11.value;
-              if (index > 0) pathPrefixes[index] = (0, _path.resolve)(pathPrefixes[index - 1], pathPrefix);
-              index += 1;
-            }
-          } catch (err) {
-            _iterator11.e(err);
-          } finally {
-            _iterator11.f();
-          }
-          pathSuffix = targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1');
-        } else {
-          pathPrefixes = [(0, _path.resolve)(absoluteContextPath, 'node_modules')];
-          // Find longest common prefix.
-          var _index = 0;
-          while (_index < absoluteContextPath.length && absoluteContextPath.charAt(_index) === targetPath.charAt(_index)) {
-            _index += 1;
-          }
-          pathSuffix = targetPath.substring(_index).replace(/^.*\/node_modules\//, '');
-        }
-        var redundantRequest = null;
-        var _iterator12 = _createForOfIteratorHelper(pathPrefixes),
-          _step12;
-        try {
-          for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
-            var _pathPrefix = _step12.value;
-            var alternateTargetPath = (0, _path.resolve)(_pathPrefix, pathSuffix);
-            if (_clientnode["default"].isFileSync(alternateTargetPath)) {
-              var otherPackageDescriptor = _helper["default"].getClosestPackageDescriptor(alternateTargetPath);
-              if (otherPackageDescriptor) {
-                if (packageDescriptor.configuration.version === otherPackageDescriptor.configuration.version) {
-                  console.info('\nConsolidate module request "' + "".concat(targetPath, "\" to \"") + "".concat(alternateTargetPath, "\"."));
-                  /*
-                      NOTE: Only overwriting
-                      "result.createData.resource" like
-                      implemented in
-                      "NormaleModuleReplacementPlugin" does
-                      not always work.
-                  */
-                  result.request = result.createData.rawRequest = result.createData.request = result.createData.resource = result.createData.userRequest = alternateTargetPath;
-                  return;
-                }
-                redundantRequest = {
-                  path: alternateTargetPath,
-                  version: otherPackageDescriptor.configuration.version
-                };
-              }
-            }
-          }
-        } catch (err) {
-          _iterator12.e(err);
-        } finally {
-          _iterator12.f();
-        }
-        if (redundantRequest) console.warn('\nIncluding different versions of same package "' + "".concat(packageDescriptor.configuration.name, "\". Module \"") + "".concat(targetPath, "\" (version ") + "".concat(packageDescriptor.configuration.version, ") has ") + "redundancies with \"".concat(redundantRequest.path, "\" (") + "version ".concat(redundantRequest.version, ")."));
-      }
-    }
-  };
-  pluginInstances.push({
-    apply: function apply(compiler) {
-      return compiler.hooks.normalModuleFactory.tap('WebOptimizerModuleConsolidation', function (nmf) {
-        return nmf.hooks.afterResolve.tap('WebOptimizerModuleConsolidation', consolidator);
-      });
-    }
-  });
-}
-/*
-new NormalModuleReplacementPlugin(
-    /.+/,
-    (result:{
-        context:string
-        createData:{resource:string}
-        request:string
-    }):void => {
-        const isResource:boolean = Boolean(result.createData.resource)
-        const targetPath:string = isResource ?
-            result.createData.resource :
-            resolve(result.context, result.request)
-        if (
-            targetPath &&
-            /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
+    var etPath) &&
             Tools.isFileSync(targetPath)
         ) {
             const packageDescriptor:null|PackageDescriptor =
@@ -749,7 +745,9 @@ var evaluateAdditionalLoaderConfiguration = function evaluateAdditionalLoaderCon
     use: evaluate(loaderConfiguration.use)
   };
 };
-var includingPaths = _helper["default"].normalizePaths([configuration.path.source.asset.javaScript].concat(_module.locations.directoryPaths));
+var getIncludingPaths = function getIncludingPaths(path) {
+  return _helper["default"].normalizePaths([path].concat(_module.locations.directoryPaths));
+};
 var cssUse = _module.preprocessor.cascadingStyleSheet.additional.pre.map(evaluateMapper).concat({
   loader: _module.style.loader,
   options: _module.style.options || {}
@@ -825,7 +823,7 @@ var genericLoader = {
         return htmlConfiguration.template.filePath;
       })).includes(filePath) || _module.preprocessor.ejs.exclude === null ? false : Boolean(evaluate(_module.preprocessor.ejs.exclude, filePath));
     },
-    include: includingPaths,
+    include: getIncludingPaths(configuration.path.source.asset.template),
     test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
     use: _module.preprocessor.ejs.additional.pre.map(evaluateMapper).concat({
       loader: 'file?name=[path][name]' + ((_clientnode["default"].isPlainObject(_module.preprocessor.ejs.options) ? _module.preprocessor.ejs.options : {
@@ -847,17 +845,17 @@ var genericLoader = {
     include: function include(filePath) {
       var result = evaluate(_module.preprocessor.javaScript.include, filePath);
       if ([null, undefined].includes(result)) {
-        var _iterator13 = _createForOfIteratorHelper(includingPaths),
-          _step13;
+        var _iterator12 = _createForOfIteratorHelper(getIncludingPaths(configuration.path.source.asset.javaScript)),
+          _step12;
         try {
-          for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
-            var includePath = _step13.value;
+          for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
+            var includePath = _step12.value;
             if (filePath.startsWith(includePath)) return true;
           }
         } catch (err) {
-          _iterator13.e(err);
+          _iterator12.e(err);
         } finally {
-          _iterator13.f();
+          _iterator12.f();
         }
         return false;
       }
@@ -929,17 +927,17 @@ var genericLoader = {
     include: function include(filePath) {
       var result = evaluate(_module.cascadingStyleSheet.include, filePath);
       if ([null, undefined].includes(result)) {
-        var _iterator14 = _createForOfIteratorHelper(includingPaths),
-          _step14;
+        var _iterator13 = _createForOfIteratorHelper(getIncludingPaths(configuration.path.source.asset.cascadingStyleSheet)),
+          _step13;
         try {
-          for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-            var includePath = _step14.value;
+          for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
+            var includePath = _step13.value;
             if (filePath.startsWith(includePath)) return true;
           }
         } catch (err) {
-          _iterator14.e(err);
+          _iterator13.e(err);
         } finally {
-          _iterator14.f();
+          _iterator13.f();
         }
         return false;
       }
@@ -1090,11 +1088,11 @@ if (htmlAvailable && configuration.debug && configuration.development.server.liv
 /// endregion
 // endregion
 // region plugins
-var _iterator15 = _createForOfIteratorHelper(configuration.plugins),
-  _step15;
+var _iterator14 = _createForOfIteratorHelper(configuration.plugins),
+  _step14;
 try {
-  for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
-    var pluginConfiguration = _step15.value;
+  for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
+    var pluginConfiguration = _step14.value;
     var _plugin = optionalRequire(pluginConfiguration.name.module);
     if (_plugin) pluginInstances.push((0, _construct2["default"])(_plugin[pluginConfiguration.name.initializer], (0, _toConsumableArray2["default"])(pluginConfiguration.parameters)));else console.warn("Configured plugin module \"".concat(pluginConfiguration.name.module, "\" ") + 'could not be loaded.');
   }
@@ -1103,9 +1101,9 @@ try {
   // NOTE: This plugin should be loaded at last to ensure that all emitted images
   // ran through.
 } catch (err) {
-  _iterator15.e(err);
+  _iterator14.e(err);
 } finally {
-  _iterator15.f();
+  _iterator14.f();
 }
 if (!_module.optimizer.minimizer) {
   _module.optimizer.minimizer = [];
@@ -1138,7 +1136,7 @@ if ((_configuration$path$c = configuration.path.configuration) !== null && _conf
 } catch (error) {
   console.debug('Optional configuration file "' + "".concat(configuration.path.configuration.json, "\" not available."));
 }
-var webpackConfiguration = _clientnode["default"].extend(true, {
+var webpackConfiguration = exports.webpackConfiguration = _clientnode["default"].extend(true, {
   bail: !configuration.givenCommandLineArguments.includes('--watch'),
   context: configuration.path.context,
   devtool: configuration.development.tool,
@@ -1210,8 +1208,8 @@ var webpackConfiguration = _clientnode["default"].extend(true, {
       cacheGroups: {
         defaultVendors: {
           chunks: function chunks(chunk) {
-            if ((0, _typeof2["default"])(configuration.inPlace.javaScript) === 'object' && configuration.inPlace.javaScript !== null) for (var _i9 = 0, _Object$keys = Object.keys(configuration.inPlace.javaScript); _i9 < _Object$keys.length; _i9++) {
-              var _name4 = _Object$keys[_i9];
+            if ((0, _typeof2["default"])(configuration.inPlace.javaScript) === 'object' && configuration.inPlace.javaScript !== null) for (var _i10 = 0, _Object$keys = Object.keys(configuration.inPlace.javaScript); _i10 < _Object$keys.length; _i10++) {
+              var _name4 = _Object$keys[_i10];
               if (_name4 === '*' || _name4 === chunk.name) return false;
             }
             return true;
@@ -1236,14 +1234,13 @@ var webpackConfiguration = _clientnode["default"].extend(true, {
 }, (_configuration$cache2 = configuration.cache) !== null && _configuration$cache2 !== void 0 && _configuration$cache2.main ? {
   cache: configuration.cache.main
 } : {}, configuration.webpack, customConfiguration);
-exports.webpackConfiguration = webpackConfiguration;
 if (configuration.nodeENV !== null) webpackConfiguration.optimization.nodeEnv = configuration.nodeENV;
 if (!Array.isArray(_module.skipParseRegularExpressions) || _module.skipParseRegularExpressions.length) webpackConfiguration.module.noParse = _module.skipParseRegularExpressions;
 if ((_configuration$path$c2 = configuration.path.configuration) !== null && _configuration$path$c2 !== void 0 && _configuration$path$c2.javaScript) try {
   require.resolve(configuration.path.configuration.javaScript);
-  var result = optionalRequire(configuration.path.configuration.javaScript);
-  if (_clientnode["default"].isPlainObject(result)) {
-    if (Object.prototype.hasOwnProperty.call(result, 'replaceWebOptimizer')) exports.webpackConfiguration = webpackConfiguration = result.replaceWebOptimizer;else _clientnode["default"].extend(true, webpackConfiguration, result);
+  var _result3 = optionalRequire(configuration.path.configuration.javaScript);
+  if (_clientnode["default"].isPlainObject(_result3)) {
+    if (Object.prototype.hasOwnProperty.call(_result3, 'replaceWebOptimizer')) exports.webpackConfiguration = webpackConfiguration = _result3.replaceWebOptimizer;else _clientnode["default"].extend(true, webpackConfiguration, _result3);
   } else console.debug('Failed to load given JavaScript configuration file path "' + "".concat(configuration.path.configuration.javaScript, "\"."));
 } catch (error) {
   console.debug('Optional configuration file script "' + "".concat(configuration.path.configuration.javaScript, "\" not available."));
@@ -1258,8 +1255,7 @@ if (configuration.showConfiguration) {
   }));
 }
 // endregion
-var _default = webpackConfiguration; // region vim modline
+var _default = exports["default"] = webpackConfiguration; // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
 // endregion
-exports["default"] = _default;

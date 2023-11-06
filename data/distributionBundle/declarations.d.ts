@@ -4,14 +4,20 @@
     dependency cycle.
 */
 type Mapping<T = string> = {[key:string]:T}
+
 interface PostcssTransformer {
     postcssPlugin: string
     postcssVersion: string
 
     (root:object, result:object):Promise<void>|void
 }
+
 /** @module declarations */
 declare module 'babel-preset-minify'
+declare module 'glob-all' {
+    export default function(globs:Array<string>):Promise<Array<string>>
+    export function sync(globs:Array<string>):Array<string>
+}
 declare module 'html-loader'
 declare module 'postcss-fontpath' {
     export default function(options:Partial<{
@@ -36,10 +42,10 @@ declare module 'postcss-sprites' {
         verbose:boolean
     }>):PostcssTransformer
 }
-declare module 'webOptimizerDefaultTemplateFilePath'
 declare module 'svgo' {
     export type Options = any
 }
+declare module 'webOptimizerDefaultTemplateFilePath'
 declare module '*.module' {
     const classes:Mapping
     export default classes

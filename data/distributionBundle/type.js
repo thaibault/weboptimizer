@@ -30,15 +30,22 @@ exports.TaskTypes = exports.SubConfigurationTypes = void 0;
 //// region path
 //// endregion
 //// region build
-var SubConfigurationTypes = ['debug', 'document', 'test', 'test:browser'];
-exports.SubConfigurationTypes = SubConfigurationTypes;
-var TaskTypes = ['build', 'serve'].concat(SubConfigurationTypes);
+var SubConfigurationTypes = exports.SubConfigurationTypes = ['debug', 'document', 'test', 'test:browser'];
+var TaskTypes = exports.TaskTypes = ['build', 'serve'].concat(SubConfigurationTypes);
 //// endregion
 //// region loader
+
+//// endregion
+
+/* eslint-disable max-len */
+
+/* eslint-enable max-len */
+
+/// endregion
+// NOTE: Not yet defined in webpack types.
 
 // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
 // endregion
-exports.TaskTypes = TaskTypes;

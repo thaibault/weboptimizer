@@ -1,5 +1,8 @@
 {
+    "extends": "./tsconfig.json",
+
     "compilerOptions": {
+        "declaration": true,
         "paths": {
             "@asset/*": ["*"],
             "@cascadingStyleSheet/*": ["*"],
@@ -12,7 +15,7 @@
             "@template/*": ["*"]
         }
     },
-    "extends": "./tsconfig.json",
+
     "include": [
         "../../*.ts", "../../*.tsx",
         "../../*/*.ts", "../../*/*.tsx",
