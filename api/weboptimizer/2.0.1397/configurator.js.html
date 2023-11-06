@@ -56,15 +56,15 @@ var _clientnode = _interopRequireWildcard(require("clientnode"));
 var _fs = _interopRequireWildcard(require("fs"));
 var _path2 = _interopRequireWildcard(require("path"));
 var _helper = _interopRequireDefault(require("./helper"));
-var _package = require("./package.json");
+var _package = _interopRequireWildcard(require("./package.json"));
 var _type4 = require("./type");
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop &amp;&amp; obj &amp;&amp; obj.__esModule) { return obj; } if (obj === null || _typeof3(obj) !== "object" &amp;&amp; typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache &amp;&amp; cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty &amp;&amp; Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" &amp;&amp; Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc &amp;&amp; (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r &amp;&amp; e &amp;&amp; e.__esModule) return e; if (null === e || "object" != _typeof3(e) &amp;&amp; "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t &amp;&amp; t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty &amp;&amp; Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u &amp;&amp; Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i &amp;&amp; (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t &amp;&amp; t.set(e, n), n; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" &amp;&amp; o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike &amp;&amp; o &amp;&amp; typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion &amp;&amp; it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" &amp;&amp; o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i &lt; len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i &lt; len; i++) arr2[i] = arr[i]; return arr2; }
 // endregion
-var loadedConfiguration = null;
+var loadedConfiguration = exports.loadedConfiguration = null;
 /**
  * Main entry point to determine current configuration.
  * @param context - Location from where to build current application.
@@ -76,14 +76,12 @@ var loadedConfiguration = null;
  *
  * @returns Nothing.
  */
-exports.loadedConfiguration = loadedConfiguration;
-var load = function load(context) {
+var load = exports.load = function load(context) {
   var currentWorkingDirectory = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : process.cwd();
   var commandLineArguments = arguments.length > 2 &amp;&amp; arguments[2] !== undefined ? arguments[2] : process.argv;
   var webOptimizerPath = arguments.length > 3 &amp;&amp; arguments[3] !== undefined ? arguments[3] : __dirname;
   var environment = arguments.length > 4 &amp;&amp; arguments[4] !== undefined ? arguments[4] : eval('process.env');
-  return function () {
-    var _specificConfiguratio, _specificConfiguratio2, _specificConfiguratio3;
+  return function (_specificConfiguratio, _specificConfiguratio2, _specificConfiguratio3) {
     // region determine application context location
     if (context) _package.configuration["default"].path.context = context;else {
       /*
@@ -163,12 +161,11 @@ var load = function load(context) {
       givenCommandLineArguments: commandLineArguments
     };
     if (filePath) {
-      runtimeInformation = JSON.parse((0, _fs.readFileSync)(filePath, {
+      var fileContent = (0, _fs.readFileSync)(filePath, {
         encoding: configuration.encoding
-      }));
-      (0, _fs.unlink)(filePath, function (error) {
-        if (error) throw error;
       });
+      runtimeInformation = JSON.parse(fileContent);
+      (0, _fs.unlinkSync)(filePath);
     }
     //// region task specific configuration
     ///// region apply task type specific configuration
@@ -269,6 +266,7 @@ var load = function load(context) {
       currentPath: currentWorkingDirectory,
       fileSystem: _fs["default"],
       Helper: _helper["default"],
+      packageConfiguration: _package["default"],
       optionalRequire: _clientnode.optionalRequire,
       path: _path2["default"],
       require: _clientnode.currentRequire,
@@ -403,18 +401,15 @@ var load = function load(context) {
  * Get cached or determined configuration object.
  * @returns Nothing.
  */
-exports.load = load;
-var get = function get() {
+var get = exports.get = function get() {
   if (loadedConfiguration) return loadedConfiguration;
   exports.loadedConfiguration = loadedConfiguration = load();
   return loadedConfiguration;
 };
-exports.get = get;
-var _default = get; // region vim modline
+var _default = exports["default"] = get; // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
 // endregion
-exports["default"] = _default;
 </code></pre>
         </article>
     </section>
@@ -431,7 +426,7 @@ exports["default"] = _default;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Tue Dec 20 2022 12:33:21 GMT+0100 (Mitteleuropäische Normalzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Mon Nov 06 2023 14:54:34 GMT+0100 (GMT+01:00)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,4 +1,325 @@
-// #!/usr/bin/env babel-node
+eLocations) || null;
+      for (var _i2 = 0, _Object$values = Object.values(normalizedGivenInjection); _i2 < _Object$values.length; _i2++) {
+        var chunk = _Object$values[_i2];
+        var _iterator3 = _createForOfIteratorHelper(chunk),
+          _step3;
+        try {
+          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+            var moduleID = _step3.value;
+            if (Helper.determineModuleFilePath(moduleID, aliases, moduleReplacements, {
+              file: extensions.file.internal
+            }, context, requestContext, pathsToIgnore, relativeModuleLocations, packageEntryFileNames, packageMainPropertyNames, packageAliasPropertyNames, encoding) === filePath) return null;
+          }
+        } catch (err) {
+          _iterator3.e(err);
+        } finally {
+          _iterator3.f();
+        }
+      }
+      var parts = context.split('/');
+      var externalModuleLocations = [];
+      while (parts.length > 0) {
+        var _iterator4 = _createForOfIteratorHelper(relativeExternalModuleLocations),
+          _step4;
+        try {
+          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+            var relativePath = _step4.value;
+            externalModuleLocations.push((0, _path.join)('/', parts.join('/'), relativePath));
+          }
+        } catch (err) {
+          _iterator4.e(err);
+        } finally {
+          _iterator4.f();
+        }
+        parts.splice(-1, 1);
+      }
+      /*
+          NOTE: We mark dependencies as external if they does not contain a
+          loader in their request and aren't part of the current main package
+          or have a file extension other than javaScript aware.
+      */
+      if (!inPlaceNormalLibrary && (extensions.file.external.length === 0 || filePath && extensions.file.external.includes((0, _path.extname)(filePath)) || !filePath && extensions.file.external.includes('')) && !(inPlaceDynamicLibrary && request.includes('!')) && (!filePath && inPlaceDynamicLibrary || filePath && (!filePath.startsWith(context) || Helper.isFilePathInLocation(filePath, externalModuleLocations)))) return Helper.applyContext(resolvedRequest, requestContext, referencePath, aliases, moduleReplacements, relativeModuleLocations) || null;
+      return null;
+    }
+    /**
+     * Determines asset type of given file.
+     * @param filePath - Path to file to analyse.
+     * @param buildConfiguration - Meta informations for available asset
+     * types.
+     * @param paths - List of paths to search if given path doesn't reference
+     * a file directly.
+     *
+     * @returns Determined file type or "null" of given file couldn't be
+     * determined.
+     */
+  }, {
+    key: "determineAssetType",
+    value: function determineAssetType(filePath, buildConfiguration, paths) {
+      var result = null;
+      for (var type in buildConfiguration) if ((0, _path.extname)(filePath) === ".".concat(buildConfiguration[type].extension)) {
+        result = type;
+        break;
+      }
+      if (!result) for (var _i3 = 0, _arr = [paths.source, paths.target]; _i3 < _arr.length; _i3++) {
+        var _type = _arr[_i3];
+        for (var _i4 = 0, _Object$entries2 = Object.entries(_type.asset); _i4 < _Object$entries2.length; _i4++) {
+          var _Object$entries2$_i = (0, _slicedToArray2["default"])(_Object$entries2[_i4], 2),
+            assetType = _Object$entries2$_i[0],
+            assetConfiguration = _Object$entries2$_i[1];
+          if (assetType !== 'base' && assetConfiguration && filePath.startsWith(assetConfiguration)) return assetType;
+        }
+      }
+      return result;
+    }
+    /**
+     * Adds a property with a stored array of all matching file paths, which
+     * matches each build configuration in given entry path and converts given
+     * build configuration into a sorted array were javaScript files takes
+     * precedence.
+     * @param configuration - Given build configurations.
+     * @param entryPath - Path to analyse nested structure.
+     * @param pathsToIgnore - Paths which marks location to ignore.
+     * @param mainFileBasenames - File basenames to sort into the front.
+     *
+     * @returns Converted build configuration.
+     */
+  }, {
+    key: "resolveBuildConfigurationFilePaths",
+    value: function resolveBuildConfigurationFilePaths(configuration) {
+      var entryPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : './';
+      var pathsToIgnore = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ['.git'];
+      var mainFileBasenames = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['index', 'main'];
+      var buildConfiguration = [];
+      for (var _i5 = 0, _Object$values2 = Object.values(configuration); _i5 < _Object$values2.length; _i5++) {
+        var value = _Object$values2[_i5];
+        var newItem = _clientnode["default"].extend(true, {
+          filePaths: []
+        }, value);
+        var _iterator5 = _createForOfIteratorHelper(_clientnode["default"].walkDirectoryRecursivelySync(entryPath, function (file) {
+            if (Helper.isFilePathInLocation(file.path, pathsToIgnore)) return false;
+          })),
+          _step5;
+        try {
+          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+            var _file$stats;
+            var file = _step5.value;
+            if ((_file$stats = file.stats) !== null && _file$stats !== void 0 && _file$stats.isFile() && file.path.endsWith(".".concat(newItem.extension)) && !(newItem.ignoredExtension && file.path.endsWith(".".concat(newItem.ignoredExtension))) && !new RegExp(newItem.filePathPattern).test(file.path)) newItem.filePaths.push(file.path);
+          }
+        } catch (err) {
+          _iterator5.e(err);
+        } finally {
+          _iterator5.f();
+        }
+        newItem.filePaths.sort(function (firstFilePath, secondFilePath) {
+          if (mainFileBasenames.includes((0, _path.basename)(firstFilePath, (0, _path.extname)(firstFilePath)))) {
+            if (mainFileBasenames.includes((0, _path.basename)(secondFilePath, (0, _path.extname)(secondFilePath)))) return 0;
+          } else if (mainFileBasenames.includes((0, _path.basename)(secondFilePath, (0, _path.extname)(secondFilePath)))) return 1;
+          return 0;
+        });
+        buildConfiguration.push(newItem);
+      }
+      return buildConfiguration.sort(function (first, second) {
+        if (first.outputExtension !== second.outputExtension) {
+          if (first.outputExtension === 'js') return -1;
+          if (second.outputExtension === 'js') return 1;
+          return first.outputExtension < second.outputExtension ? -1 : 1;
+        }
+        return 0;
+      });
+    }
+    /**
+     * Determines all file and directory paths related to given internal
+     * modules as array.
+     * @param givenInjection - List of module ids or module file paths.
+     * @param aliases - Mapping of aliases to take into account.
+     * @param moduleReplacements - Mapping of module replacements to take into
+     * account.
+     * @param extensions - List of file and module extensions to take into
+     * account.
+     * @param context - File path to resolve relative to.
+     * @param referencePath - Path to search for local modules.
+     * @param pathsToIgnore - Paths which marks location to ignore.
+     * @param relativeModuleLocations - List of relative file path to search
+     * for modules in.
+     * @param packageEntryFileNames - List of package entry file names to
+     * search for. The magic name "__package__" will search for an appreciate
+     * entry in a "package.json" file.
+     * @param packageMainPropertyNames - List of package file main property
+     * names to search for package representing entry module definitions.
+     * @param packageAliasPropertyNames - List of package file alias property
+     * names to search for package specific module aliases.
+     * @param encoding - File name encoding to use during file traversing.
+     *
+     * @returns Object with a file path and directory path key mapping to
+     * corresponding list of paths.
+     */
+  }, {
+    key: "determineModuleLocations",
+    value: function determineModuleLocations(givenInjection) {
+      var aliases = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var moduleReplacements = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var extensions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {
+        file: KNOWN_FILE_EXTENSIONS.map(function (suffix) {
+          return ".".concat(suffix);
+        })
+      };
+      var context = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : './';
+      var referencePath = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
+      var pathsToIgnore = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : ['.git'];
+      var relativeModuleLocations = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : ['node_modules'];
+      var packageEntryFileNames = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : ['__package__', '', 'index', 'main'];
+      var packageMainPropertyNames = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : ['main', 'module'];
+      var packageAliasPropertyNames = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : [];
+      var encoding = arguments.length > 11 && arguments[11] !== undefined ? arguments[11] : 'utf-8';
+      var filePaths = [];
+      var directoryPaths = [];
+      var normalizedGivenInjection = Helper.resolveModulesInFolders(Helper.normalizeGivenInjection(givenInjection), aliases, moduleReplacements, context, referencePath, pathsToIgnore);
+      for (var _i6 = 0, _Object$values3 = Object.values(normalizedGivenInjection); _i6 < _Object$values3.length; _i6++) {
+        var chunk = _Object$values3[_i6];
+        var _iterator6 = _createForOfIteratorHelper(chunk),
+          _step6;
+        try {
+          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+            var moduleID = _step6.value;
+            var filePath = Helper.determineModuleFilePath(moduleID, aliases, moduleReplacements, extensions, context, referencePath, pathsToIgnore, relativeModuleLocations, packageEntryFileNames, packageMainPropertyNames, packageAliasPropertyNames, encoding);
+            if (filePath) {
+              filePaths.push(filePath);
+              var directoryPath = (0, _path.dirname)(filePath);
+              if (!directoryPaths.includes(directoryPath)) directoryPaths.push(directoryPath);
+            }
+          }
+        } catch (err) {
+          _iterator6.e(err);
+        } finally {
+          _iterator6.f();
+        }
+      }
+      return {
+        filePaths: filePaths,
+        directoryPaths: directoryPaths
+      };
+    }
+    /**
+     * Determines a list of concrete file paths for given module id pointing to
+     * a folder which isn't a package.
+     * @param normalizedGivenInjection - Injection data structure of modules
+     * with folder references to resolve.
+     * @param aliases - Mapping of aliases to take into account.
+     * @param moduleReplacements - Mapping of replacements to take into
+     * account.
+     * @param context - File path to determine relative to.
+     * @param referencePath - Path to resolve local modules relative to.
+     * @param pathsToIgnore - Paths which marks location to ignore.
+     *
+     * @returns Given injections with resolved folder pointing modules.
+     */
+  }, {
+    key: "resolveModulesInFolders",
+    value: function resolveModulesInFolders(normalizedGivenInjection) {
+      var aliases = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var moduleReplacements = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var context = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : './';
+      var referencePath = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '';
+      var pathsToIgnore = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : ['.git'];
+      if (referencePath.startsWith('/')) referencePath = (0, _path.relative)(context, referencePath);
+      var result = _clientnode["default"].copy(normalizedGivenInjection);
+      for (var _i7 = 0, _Object$values4 = Object.values(result); _i7 < _Object$values4.length; _i7++) {
+        var chunk = _Object$values4[_i7];
+        var index = 0;
+        var _iterator7 = _createForOfIteratorHelper(_clientnode["default"].copy(chunk)),
+          _step7;
+        try {
+          for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+            var moduleID = _step7.value;
+            var resolvedModuleID = Helper.applyModuleReplacements(Helper.applyAliases(Helper.stripLoader(moduleID), aliases), moduleReplacements);
+            if (resolvedModuleID === false) {
+              chunk.splice(index, 1);
+              continue;
+            }
+            var resolvedPath = (0, _path.resolve)(referencePath, resolvedModuleID);
+            if (_clientnode["default"].isDirectorySync(resolvedPath)) {
+              chunk.splice(index, 1);
+              var _iterator8 = _createForOfIteratorHelper(_clientnode["default"].walkDirectoryRecursivelySync(resolvedPath, function (file) {
+                  if (Helper.isFilePathInLocation(file.path, pathsToIgnore)) return false;
+                })),
+                _step8;
+              try {
+                for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+                  var _file$stats2;
+                  var file = _step8.value;
+                  if ((_file$stats2 = file.stats) !== null && _file$stats2 !== void 0 && _file$stats2.isFile()) chunk.push('./' + (0, _path.relative)(context, (0, _path.resolve)(resolvedPath, file.path)));
+                }
+              } catch (err) {
+                _iterator8.e(err);
+              } finally {
+                _iterator8.f();
+              }
+            } else if (resolvedModuleID.startsWith('./') && !resolvedModuleID.startsWith("./".concat((0, _path.relative)(context, referencePath)))) chunk[index] = "./".concat((0, _path.relative)(context, resolvedPath));
+            index += 1;
+          }
+        } catch (err) {
+          _iterator7.e(err);
+        } finally {
+          _iterator7.f();
+        }
+      }
+      return result;
+    }
+    /**
+     * Every injection definition type can be represented as plain object
+     * (mapping from chunk name to array of module ids). This method converts
+     * each representation into the normalized plain object notation.
+     * @param givenInjection - Given entry injection to normalize.
+     *
+     * @returns Normalized representation of given entry injection.
+     */
+  }, {
+    key: "normalizeGivenInjection",
+    value: function normalizeGivenInjection(givenInjection) {
+      var result = {};
+      if (Array.isArray(givenInjection)) result = {
+        index: givenInjection
+      };else if (typeof givenInjection === 'string') result = {
+        index: [givenInjection]
+      };else if (_clientnode["default"].isPlainObject(givenInjection)) {
+        var hasContent = false;
+        var chunkNamesToDelete = [];
+        for (var _i8 = 0, _Object$entries3 = Object.entries(givenInjection); _i8 < _Object$entries3.length; _i8++) {
+          var _Object$entries3$_i = (0, _slicedToArray2["default"])(_Object$entries3[_i8], 2),
+            chunkName = _Object$entries3$_i[0],
+            chunk = _Object$entries3$_i[1];
+          if (Array.isArray(chunk)) {
+            if (chunk.length > 0) {
+              hasContent = true;
+              result[chunkName] = chunk;
+            } else chunkNamesToDelete.push(chunkName);
+          } else {
+            hasContent = true;
+            result[chunkName] = [chunk];
+          }
+        }
+        if (hasContent) {
+          var _iterator9 = _createForOfIteratorHelper(chunkNamesToDelete),
+            _step9;
+          try {
+            for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+              var _chunkName = _step9.value;
+              delete result[_chunkName];
+            }
+          } catch (err) {
+            _iterator9.e(err);
+          } finally {
+            _iterator9.f();
+          }
+        } else result = {
+          index: []
+        };
+      }
+      return result;
+    }
+    /**
+     * Determines all concrete file paths for given injection which are marked
+     * with the // #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
 /** @module helper */
 'use strict';
@@ -29,23 +350,22 @@ var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/creat
 var _clientnode = _interopRequireWildcard(require("clientnode"));
 var _fs = require("fs");
 var _path = require("path");
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 // endregion
 // region constants
-var KNOWN_FILE_EXTENSIONS = ['js', 'ts', 'json', 'css', 'eot', 'gif', 'html', 'ico', 'jpg', 'png', 'ejs', 'svg', 'ttf', 'woff', '.woff2'];
+var KNOWN_FILE_EXTENSIONS = exports.KNOWN_FILE_EXTENSIONS = ['js', 'ts', 'json', 'css', 'eot', 'gif', 'html', 'ico', 'jpg', 'png', 'ejs', 'svg', 'ttf', 'woff', '.woff2'];
 // endregion
 // region methods
 /**
  * Provides a class of static methods with generic use cases.
  */
-exports.KNOWN_FILE_EXTENSIONS = KNOWN_FILE_EXTENSIONS;
-var Helper = /*#__PURE__*/function () {
+var Helper = exports.Helper = /*#__PURE__*/function () {
   function Helper() {
     (0, _classCallCheck2["default"])(this, Helper);
   }
@@ -273,329 +593,7 @@ var Helper = /*#__PURE__*/function () {
           NOTE: We mark dependencies as external if there file couldn't be
           resolved or are specified to be external explicitly.
       */
-      if (!(filePath || inPlaceNormalLibrary) || _clientnode["default"].isAnyMatching(resolvedRequest, includePattern)) return Helper.applyContext(resolvedRequest, requestContext, referencePath, aliases, moduleReplacements, relativeModuleLocations) || null;
-      for (var _i2 = 0, _Object$values = Object.values(normalizedGivenInjection); _i2 < _Object$values.length; _i2++) {
-        var chunk = _Object$values[_i2];
-        var _iterator3 = _createForOfIteratorHelper(chunk),
-          _step3;
-        try {
-          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var moduleID = _step3.value;
-            if (Helper.determineModuleFilePath(moduleID, aliases, moduleReplacements, {
-              file: extensions.file.internal
-            }, context, requestContext, pathsToIgnore, relativeModuleLocations, packageEntryFileNames, packageMainPropertyNames, packageAliasPropertyNames, encoding) === filePath) return null;
-          }
-        } catch (err) {
-          _iterator3.e(err);
-        } finally {
-          _iterator3.f();
-        }
-      }
-      var parts = context.split('/');
-      var externalModuleLocations = [];
-      while (parts.length > 0) {
-        var _iterator4 = _createForOfIteratorHelper(relativeExternalModuleLocations),
-          _step4;
-        try {
-          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-            var relativePath = _step4.value;
-            externalModuleLocations.push((0, _path.join)('/', parts.join('/'), relativePath));
-          }
-        } catch (err) {
-          _iterator4.e(err);
-        } finally {
-          _iterator4.f();
-        }
-        parts.splice(-1, 1);
-      }
-      /*
-          NOTE: We mark dependencies as external if they does not contain a
-          loader in their request and aren't part of the current main package
-          or have a file extension other than javaScript aware.
-      */
-      if (!inPlaceNormalLibrary && (extensions.file.external.length === 0 || filePath && extensions.file.external.includes((0, _path.extname)(filePath)) || !filePath && extensions.file.external.includes('')) && !(inPlaceDynamicLibrary && request.includes('!')) && (!filePath && inPlaceDynamicLibrary || filePath && (!filePath.startsWith(context) || Helper.isFilePathInLocation(filePath, externalModuleLocations)))) return Helper.applyContext(resolvedRequest, requestContext, referencePath, aliases, moduleReplacements, relativeModuleLocations) || null;
-      return null;
-    }
-    /**
-     * Determines asset type of given file.
-     * @param filePath - Path to file to analyse.
-     * @param buildConfiguration - Meta informations for available asset
-     * types.
-     * @param paths - List of paths to search if given path doesn't reference
-     * a file directly.
-     *
-     * @returns Determined file type or "null" of given file couldn't be
-     * determined.
-     */
-  }, {
-    key: "determineAssetType",
-    value: function determineAssetType(filePath, buildConfiguration, paths) {
-      var result = null;
-      for (var type in buildConfiguration) {
-        if ((0, _path.extname)(filePath) === ".".concat(buildConfiguration[type].extension)) {
-          result = type;
-          break;
-        }
-      }
-      if (!result) for (var _i3 = 0, _arr = [paths.source, paths.target]; _i3 < _arr.length; _i3++) {
-        var _type = _arr[_i3];
-        for (var _i4 = 0, _Object$entries2 = Object.entries(_type.asset); _i4 < _Object$entries2.length; _i4++) {
-          var _Object$entries2$_i = (0, _slicedToArray2["default"])(_Object$entries2[_i4], 2),
-            assetType = _Object$entries2$_i[0],
-            assetConfiguration = _Object$entries2$_i[1];
-          if (assetType !== 'base' && assetConfiguration && filePath.startsWith(assetConfiguration)) return assetType;
-        }
-      }
-      return result;
-    }
-    /**
-     * Adds a property with a stored array of all matching file paths, which
-     * matches each build configuration in given entry path and converts given
-     * build configuration into a sorted array were javaScript files takes
-     * precedence.
-     * @param configuration - Given build configurations.
-     * @param entryPath - Path to analyse nested structure.
-     * @param pathsToIgnore - Paths which marks location to ignore.
-     * @param mainFileBasenames - File basenames to sort into the front.
-     *
-     * @returns Converted build configuration.
-     */
-  }, {
-    key: "resolveBuildConfigurationFilePaths",
-    value: function resolveBuildConfigurationFilePaths(configuration) {
-      var entryPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : './';
-      var pathsToIgnore = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ['.git'];
-      var mainFileBasenames = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['index', 'main'];
-      var buildConfiguration = [];
-      for (var _i5 = 0, _Object$values2 = Object.values(configuration); _i5 < _Object$values2.length; _i5++) {
-        var value = _Object$values2[_i5];
-        var newItem = _clientnode["default"].extend(true, {
-          filePaths: []
-        }, value);
-        var _iterator5 = _createForOfIteratorHelper(_clientnode["default"].walkDirectoryRecursivelySync(entryPath, function (file) {
-            if (Helper.isFilePathInLocation(file.path, pathsToIgnore)) return false;
-          })),
-          _step5;
-        try {
-          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-            var _file$stats;
-            var file = _step5.value;
-            if ((_file$stats = file.stats) !== null && _file$stats !== void 0 && _file$stats.isFile() && file.path.endsWith(".".concat(newItem.extension)) && !(newItem.ignoredExtension && file.path.endsWith(".".concat(newItem.ignoredExtension))) && !new RegExp(newItem.filePathPattern).test(file.path)) newItem.filePaths.push(file.path);
-          }
-        } catch (err) {
-          _iterator5.e(err);
-        } finally {
-          _iterator5.f();
-        }
-        newItem.filePaths.sort(function (firstFilePath, secondFilePath) {
-          if (mainFileBasenames.includes((0, _path.basename)(firstFilePath, (0, _path.extname)(firstFilePath)))) {
-            if (mainFileBasenames.includes((0, _path.basename)(secondFilePath, (0, _path.extname)(secondFilePath)))) return 0;
-          } else if (mainFileBasenames.includes((0, _path.basename)(secondFilePath, (0, _path.extname)(secondFilePath)))) return 1;
-          return 0;
-        });
-        buildConfiguration.push(newItem);
-      }
-      return buildConfiguration.sort(function (first, second) {
-        if (first.outputExtension !== second.outputExtension) {
-          if (first.outputExtension === 'js') return -1;
-          if (second.outputExtension === 'js') return 1;
-          return first.outputExtension < second.outputExtension ? -1 : 1;
-        }
-        return 0;
-      });
-    }
-    /**
-     * Determines all file and directory paths related to given internal
-     * modules as array.
-     * @param givenInjection - List of module ids or module file paths.
-     * @param aliases - Mapping of aliases to take into account.
-     * @param moduleReplacements - Mapping of module replacements to take into
-     * account.
-     * @param extensions - List of file and module extensions to take into
-     * account.
-     * @param context - File path to resolve relative to.
-     * @param referencePath - Path to search for local modules.
-     * @param pathsToIgnore - Paths which marks location to ignore.
-     * @param relativeModuleLocations - List of relative file path to search
-     * for modules in.
-     * @param packageEntryFileNames - List of package entry file names to
-     * search for. The magic name "__package__" will search for an appreciate
-     * entry in a "package.json" file.
-     * @param packageMainPropertyNames - List of package file main property
-     * names to search for package representing entry module definitions.
-     * @param packageAliasPropertyNames - List of package file alias property
-     * names to search for package specific module aliases.
-     * @param encoding - File name encoding to use during file traversing.
-     *
-     * @returns Object with a file path and directory path key mapping to
-     * corresponding list of paths.
-     */
-  }, {
-    key: "determineModuleLocations",
-    value: function determineModuleLocations(givenInjection) {
-      var aliases = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var moduleReplacements = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var extensions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {
-        file: KNOWN_FILE_EXTENSIONS.map(function (suffix) {
-          return ".".concat(suffix);
-        })
-      };
-      var context = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : './';
-      var referencePath = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
-      var pathsToIgnore = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : ['.git'];
-      var relativeModuleLocations = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : ['node_modules'];
-      var packageEntryFileNames = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : ['__package__', '', 'index', 'main'];
-      var packageMainPropertyNames = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : ['main', 'module'];
-      var packageAliasPropertyNames = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : [];
-      var encoding = arguments.length > 11 && arguments[11] !== undefined ? arguments[11] : 'utf-8';
-      var filePaths = [];
-      var directoryPaths = [];
-      var normalizedGivenInjection = Helper.resolveModulesInFolders(Helper.normalizeGivenInjection(givenInjection), aliases, moduleReplacements, context, referencePath, pathsToIgnore);
-      for (var _i6 = 0, _Object$values3 = Object.values(normalizedGivenInjection); _i6 < _Object$values3.length; _i6++) {
-        var chunk = _Object$values3[_i6];
-        var _iterator6 = _createForOfIteratorHelper(chunk),
-          _step6;
-        try {
-          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-            var moduleID = _step6.value;
-            var filePath = Helper.determineModuleFilePath(moduleID, aliases, moduleReplacements, extensions, context, referencePath, pathsToIgnore, relativeModuleLocations, packageEntryFileNames, packageMainPropertyNames, packageAliasPropertyNames, encoding);
-            if (filePath) {
-              filePaths.push(filePath);
-              var directoryPath = (0, _path.dirname)(filePath);
-              if (!directoryPaths.includes(directoryPath)) directoryPaths.push(directoryPath);
-            }
-          }
-        } catch (err) {
-          _iterator6.e(err);
-        } finally {
-          _iterator6.f();
-        }
-      }
-      return {
-        filePaths: filePaths,
-        directoryPaths: directoryPaths
-      };
-    }
-    /**
-     * Determines a list of concrete file paths for given module id pointing to
-     * a folder which isn't a package.
-     * @param normalizedGivenInjection - Injection data structure of modules
-     * with folder references to resolve.
-     * @param aliases - Mapping of aliases to take into account.
-     * @param moduleReplacements - Mapping of replacements to take into
-     * account.
-     * @param context - File path to determine relative to.
-     * @param referencePath - Path to resolve local modules relative to.
-     * @param pathsToIgnore - Paths which marks location to ignore.
-     *
-     * @returns Given injections with resolved folder pointing modules.
-     */
-  }, {
-    key: "resolveModulesInFolders",
-    value: function resolveModulesInFolders(normalizedGivenInjection) {
-      var aliases = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var moduleReplacements = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var context = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : './';
-      var referencePath = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '';
-      var pathsToIgnore = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : ['.git'];
-      if (referencePath.startsWith('/')) referencePath = (0, _path.relative)(context, referencePath);
-      for (var _i7 = 0, _Object$values4 = Object.values(normalizedGivenInjection); _i7 < _Object$values4.length; _i7++) {
-        var chunk = _Object$values4[_i7];
-        var index = 0;
-        var _iterator7 = _createForOfIteratorHelper(chunk),
-          _step7;
-        try {
-          for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-            var moduleID = _step7.value;
-            var resolvedModuleID = Helper.applyModuleReplacements(Helper.applyAliases(Helper.stripLoader(moduleID), aliases), moduleReplacements);
-            if (resolvedModuleID === false) {
-              chunk.splice(index, 1);
-              continue;
-            }
-            var resolvedPath = (0, _path.resolve)(referencePath, resolvedModuleID);
-            if (_clientnode["default"].isDirectorySync(resolvedPath)) {
-              chunk.splice(index, 1);
-              var _iterator8 = _createForOfIteratorHelper(_clientnode["default"].walkDirectoryRecursivelySync(resolvedPath, function (file) {
-                  if (Helper.isFilePathInLocation(file.path, pathsToIgnore)) return false;
-                })),
-                _step8;
-              try {
-                for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-                  var _file$stats2;
-                  var file = _step8.value;
-                  if ((_file$stats2 = file.stats) !== null && _file$stats2 !== void 0 && _file$stats2.isFile()) chunk.push('./' + (0, _path.relative)(context, (0, _path.resolve)(resolvedPath, file.path)));
-                }
-              } catch (err) {
-                _iterator8.e(err);
-              } finally {
-                _iterator8.f();
-              }
-            } else if (resolvedModuleID.startsWith('./') && !resolvedModuleID.startsWith("./".concat((0, _path.relative)(context, referencePath)))) chunk[index] = "./".concat((0, _path.relative)(context, resolvedPath));
-            index += 1;
-          }
-        } catch (err) {
-          _iterator7.e(err);
-        } finally {
-          _iterator7.f();
-        }
-      }
-      return normalizedGivenInjection;
-    }
-    /**
-     * Every injection definition type can be represented as plain object
-     * (mapping from chunk name to array of module ids). This method converts
-     * each representation into the normalized plain object notation.
-     * @param givenInjection - Given entry injection to normalize.
-     *
-     * @returns Normalized representation of given entry injection.
-     */
-  }, {
-    key: "normalizeGivenInjection",
-    value: function normalizeGivenInjection(givenInjection) {
-      var result = {};
-      if (Array.isArray(givenInjection)) result = {
-        index: givenInjection
-      };else if (typeof givenInjection === 'string') result = {
-        index: [givenInjection]
-      };else if (_clientnode["default"].isPlainObject(givenInjection)) {
-        var hasContent = false;
-        var chunkNamesToDelete = [];
-        for (var _i8 = 0, _Object$entries3 = Object.entries(givenInjection); _i8 < _Object$entries3.length; _i8++) {
-          var _Object$entries3$_i = (0, _slicedToArray2["default"])(_Object$entries3[_i8], 2),
-            chunkName = _Object$entries3$_i[0],
-            chunk = _Object$entries3$_i[1];
-          if (Array.isArray(chunk)) {
-            if (chunk.length > 0) {
-              hasContent = true;
-              result[chunkName] = chunk;
-            } else chunkNamesToDelete.push(chunkName);
-          } else {
-            hasContent = true;
-            result[chunkName] = [chunk];
-          }
-        }
-        if (hasContent) {
-          var _iterator9 = _createForOfIteratorHelper(chunkNamesToDelete),
-            _step9;
-          try {
-            for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-              var _chunkName = _step9.value;
-              delete result[_chunkName];
-            }
-          } catch (err) {
-            _iterator9.e(err);
-          } finally {
-            _iterator9.f();
-          }
-        } else result = {
-          index: []
-        };
-      }
-      return result;
-    }
-    /**
-     * Determines all concrete file paths for given injection which are marked
-     * with the "__auto__" indicator.
+      if (!(filePath || inPlaceNormalLibrary) || _clientnode["default"].isAnyMatching(resolvedRequest, includePattern)) return Helper.applyContext(resolvedRequest, requestContext, referencePath, aliases, moduleReplacements, relativeModul"__auto__" indicator.
      * @param givenInjection - Given entry and external injection to take
      * into account.
      * @param buildConfigurations - Resolved build configuration.
@@ -1013,10 +1011,8 @@ var Helper = /*#__PURE__*/function () {
   }]);
   return Helper;
 }();
-exports.Helper = Helper;
-var _default = Helper; // endregion
+var _default = exports["default"] = Helper; // endregion
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
 // endregion
-exports["default"] = _default;

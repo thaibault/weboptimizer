@@ -25,8 +25,7 @@ var _configurator = _interopRequireDefault(require("./configurator"));
 // endregion
 var configuration = (0, _configurator["default"])();
 module.exports = configuration.stylelint;
-var _default = module.exports; // region vim modline
+var _default = exports["default"] = module.exports; // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
 // endregion
-exports["default"] = _default;
