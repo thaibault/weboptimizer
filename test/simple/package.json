@@ -73,7 +73,7 @@
     "postcss-url": "*",
     "rimraf": ">=5",
     "style-loader": "*",
-    "stylelint": "*",
+    "stylelint": "^15.11.0",
     "stylelint-config-standard": "*",
     "typescript-plugin-css-modules": "*",
     "weboptimizer": "*",
