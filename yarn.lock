@@ -3716,9 +3716,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.1096"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1096.tgz#60e30fc7cb82c9a99995d69e2b9652a7798beec6"
-  integrity sha512-+YsIL/+WkhL9Dy51I5gwroZM76BRQtjxPAGPs9y8Nh2aaPtD/TvEJuoqdWa6Gf9Y6XBuCE5Y2P+wsxLTWNzu1A==
+  version "3.0.1097"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1097.tgz#0b0a751cd002f851b3bb75ae4918b2f9f7c2409b"
+  integrity sha512-aUDmmsMQ6gFzMl4a3myit0Q+rYfdQmTww5dSzzcrLXjw+NLGjViWOdeJLHH1csb6DVWwM5PKeK1wIDPQXpeisw==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -4561,9 +4561,9 @@ ejs@*, ejs@^3.1.6:
     jake "^10.8.5"
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.4.601:
-  version "1.4.608"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.608.tgz#ff567c51dde4892ae330860c7d9f19571e9e1d69"
-  integrity sha512-J2f/3iIIm3Mo0npneITZ2UPe4B1bg8fTNrFjD8715F/k1BvbviRuqYGkET1PgprrczXYTHFvotbBOmUp6KE0uA==
+  version "1.4.609"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.609.tgz#5790a70aaa96de232501b56e14b64d17aff93988"
+  integrity sha512-ihiCP7PJmjoGNuLpl7TjNA8pCQWu09vGyjlPYw1Rqww4gvNuCcmvl+44G+2QyJ6S2K4o+wbTS++Xz0YN8Q9ERw==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -9477,9 +9477,9 @@ stack-utils@^2.0.3:
     escape-string-regexp "^2.0.0"
 
 streamx@^2.15.0:
-  version "2.15.5"
-  resolved "https://registry.yarnpkg.com/streamx/-/streamx-2.15.5.tgz#87bcef4dc7f0b883f9359671203344a4e004c7f1"
-  integrity sha512-9thPGMkKC2GctCzyCUjME3yR03x2xNo0GPKGkRw2UMYN+gqWa9uqpyNWhmsNCutU5zHmkUum0LsCRQTXUgUCAg==
+  version "2.15.6"
+  resolved "https://registry.yarnpkg.com/streamx/-/streamx-2.15.6.tgz#28bf36997ebc7bf6c08f9eba958735231b833887"
+  integrity sha512-q+vQL4AAz+FdfT137VF69Cc/APqUbxy+MDOImRrMvchJpigHj9GksgDU2LYbO9rx7RX6osWgxJB2WxhYv4SZAw==
   dependencies:
     fast-fifo "^1.1.0"
     queue-tick "^1.0.1"
