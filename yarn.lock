@@ -3778,9 +3778,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.1104"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1104.tgz#2639e8bc1bec497c786bcc624482c4e246ae78c5"
-  integrity sha512-3SKe8UxXC8SkMhoFwjMIalJP8gaP7HIIhTpffTUEwlO7uOp2ybxSeZ4nLuqFWY/nBhwfFLhEr4AmO6tjwnEpcA==
+  version "3.0.1105"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1105.tgz#258fc82359c1845956c429128d314c63cc38ff9b"
+  integrity sha512-xOHcBfIhLl5C6M0gh2lHTdCS/wJS2q0MN1v3ZsaymWn/mjLAoB7vbiDkD6Y9pjxMgJTND93xi9CUsU4PEzDPLQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -5779,12 +5779,12 @@ ignore@^5.2.0, ignore@^5.2.4, ignore@^5.3.0:
   integrity sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==
 
 image-minimizer-webpack-plugin@*:
-  version "3.8.3"
-  resolved "https://registry.yarnpkg.com/image-minimizer-webpack-plugin/-/image-minimizer-webpack-plugin-3.8.3.tgz#41b2379f9d8adabf4e4db63c656543fee26dd4c2"
-  integrity sha512-Ex0cjNJc2FUSuwN7WHNyxkIZINP0M9lrN+uWJznMcsehiM5Z7ELwk+SEkSGEookK1GUd2wf+09jy1PEH5a5XmQ==
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/image-minimizer-webpack-plugin/-/image-minimizer-webpack-plugin-4.0.0.tgz#69641a50e85a39fb328a293f302fdf7a75396aff"
+  integrity sha512-gBpAw9E1LxqlQ0/y72xHq3/3qWKh7xeIvhmNJOQEhj1hJPz2m/eQxREyuRkSIWJyN8ee8ZkwGnnNHe05jSmQrg==
   dependencies:
     schema-utils "^4.2.0"
-    serialize-javascript "^6.0.1"
+    serialize-javascript "^6.0.2"
 
 image-size@~0.5.0:
   version "0.5.5"
@@ -9042,7 +9042,7 @@ serialize-javascript@^4.0.0:
   dependencies:
     randombytes "^2.1.0"
 
-serialize-javascript@^6.0.1:
+serialize-javascript@^6.0.1, serialize-javascript@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-6.0.2.tgz#defa1e055c83bf6d59ea805d8da862254eb6a6c2"
   integrity sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==
