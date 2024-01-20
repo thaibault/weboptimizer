@@ -1898,9 +1898,9 @@
   integrity sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==
 
 "@sinonjs/commons@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-3.0.0.tgz#beb434fe875d965265e04722ccfc21df7f755d72"
-  integrity sha512-jXBtWAF4vmdNmZgD5FoKsVLv3rPgDnLgPbU84LIJ3otV44vJlDRokVng5v8NFJdCf/da9legHcKaRuZs4L7faA==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-3.0.1.tgz#1029357e44ca901a615585f6d27738dbc89084cd"
+  integrity sha512-K3mCHKQ9sVh8o1C9cxkwxaOmXoAMlDxC1mYyHrjqOWEcBjYr76t96zL2zlj5dUGZ3HSw240X1qgH3Mjf1yJWpQ==
   dependencies:
     type-detect "4.0.8"
 
@@ -3789,9 +3789,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.1106"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1106.tgz#e4aeb209c56b1a344fb5e38d2f44f27fcc2bedd2"
-  integrity sha512-MysOgVJPEJ9Q6nSw5P2IjKtdBIAqwXkoGWubNqTcRD1xyzr1WT0k183hVJ+rk2kbQm0beLrZwz/s+cyuuN7B2Q==
+  version "3.0.1107"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1107.tgz#447ad31c67b69f78415efc971f754871be259a2e"
+  integrity sha512-BadLUXtqqzYMyg318KaIGH08TnolzBqaOtiALAnKoQEXjcbBdo6YLUlDqq3BcBVqE/oBwKl6qQOfMc2k8v3cvQ==
 
 cliui@^4.0.0:
   version "4.1.0"
