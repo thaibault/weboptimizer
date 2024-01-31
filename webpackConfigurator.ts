@@ -1703,9 +1703,11 @@ if (
     )
 ) {
     configuration.injection.entry.normalized.developmentHandler = [
-        'webpack-dev-server/client/index.js?live-reload=true&hot=' +
-        `${configuration.development.server.hot ? 'true' : 'false'}&http` +
-        `${configuration.development.server.https ? 's' : ''}://` +
+        'webpack-dev-server/client/index.js?' +
+        'live-reload=' +
+        (configuration.development.server.liveReload ? 'true' : 'false') +
+        `&hot=${configuration.development.server.hot ? 'true' : 'false'}` +
+        `&http${configuration.development.server.https ? 's' : ''}://` +
         `${configuration.development.server.host}:` +
         `${configuration.development.server.port}`
     ]
@@ -1804,7 +1806,8 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
         bail: !configuration.givenCommandLineArguments.includes('--watch'),
         context: configuration.path.context,
         devtool: configuration.development.tool,
-        devServer: configuration.development.server,
+        devServer: configuration.development.server as
+            WebpackConfiguration['devServer'],
         experiments: {
             topLevelAwait: true
         },
@@ -1819,7 +1822,10 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
             mainFiles: configuration.package.main.fileNames,
             modules: Helper.normalizePaths(module.directoryNames),
             symlinks: module.resolveSymlinks,
-            unsafeCache: Boolean(configuration.cache?.unsafe)
+            unsafeCache: Boolean(
+                configuration.cache?.unsafe ??
+                configuration.cache?.main
+            )
         },
         resolveLoader: {
             alias: configuration.loader.aliases,
