@@ -310,16 +310,20 @@ export interface ResolvedConfiguration {
     contextType:string
     debug:boolean
     development:{
-        server:WebpackOptionsNormalized['devServer'] & {
-            /*
-                NOTE: We need these values mandatory to inject development
-                handler beforehand.
-            */
-            host:string
-            https:boolean
-            liveReload:boolean
-            port:number
-        }
+        server:(
+            WebpackOptionsNormalized['devServer'] &
+            {
+                /*
+                    NOTE: We need these values mandatory to inject development
+                    handler beforehand.
+                */
+                hot:boolean
+                host:string
+                https:boolean
+                liveReload:boolean
+                port:number
+            }
+        )
         tool:WebpackOptionsNormalized['devtool']
     }
     document:PlainObject
