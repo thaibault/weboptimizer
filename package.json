@@ -560,7 +560,7 @@
               "directory": {
                 "__evaluate__": "path.resolve(self.path.base, self.module.directoryNames[0])"
               },
-              "watch": true
+              "watch": false
             }
           ],
           "watchFiles": {
