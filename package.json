@@ -887,7 +887,7 @@
           "node_modules"
         ],
         "enforceDeduplication": {
-          "__evaluate__": "!self.module.resolveSymlinks"
+          "__evaluate__": "self.module.resolveSymlinks"
         },
         "html": {
           "additional": {
