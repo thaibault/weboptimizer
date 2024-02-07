@@ -19,11 +19,9 @@ import Tools from 'clientnode'
 import {
     EvaluationResult, Mapping, PlainObject, Unpacked
 } from 'clientnode/type'
-import HTMLPlugin from 'html-webpack-plugin'
 import {
     PluginOptions as ImageMinimizerOptions
 } from 'image-minimizer-webpack-plugin'
-import {JSDOM as DOM} from 'jsdom'
 import {extname, join, relative, resolve} from 'path'
 import {Transformer as PostcssTransformer} from 'postcss'
 import PostcssNode from 'postcss/lib/node'
@@ -36,7 +34,6 @@ import {
     DefinePlugin,
     HotModuleReplacementPlugin,
     IgnorePlugin,
-    LoaderContext,
     NormalModuleReplacementPlugin,
     ProvidePlugin,
     RuleSetRule,
@@ -48,27 +45,23 @@ import {
 } from 'workbox-build'
 
 import getConfiguration from './configurator'
+import {LoaderConfiguration as EJSLoaderConfiguration} from './ejsLoader'
 import Helper from './helper'
-import ejsLoader, {
-    LoaderConfiguration as EJSLoaderConfiguration
-} from './ejsLoader'
+import InPlaceAssetsIntoHTML from './plugins/InPlaceAssetsIntoHTML'
+import HTMLTransformation from './plugins/HTMLTransformation'
 import {
     AdditionalLoaderConfiguration,
     AssetPathConfiguration,
     EvaluationScope,
     GenericLoader,
     HTMLConfiguration,
-    HTMLWebpackPluginBeforeEmitData,
     IgnorePattern,
-    InPlaceAssetConfiguration,
     InPlaceConfiguration,
     Loader,
     PackageDescriptor,
     RedundantRequest,
     ResolvedConfiguration,
     RuleSet,
-    WebpackAssets,
-    WebpackBaseAssets,
     WebpackConfiguration,
     WebpackExtendedResolveData,
     WebpackLoader,
@@ -369,101 +362,12 @@ if (
     Object.keys(configuration.inPlace.cascadingStyleSheet).length ||
     configuration.inPlace.javaScript &&
     Object.keys(configuration.inPlace.javaScript).length
-) {
-    class InPlaceAssetsIntoHTML {
-        apply(compiler:Compiler):void {
-            let publicPath:string =
-                compiler.options.output.publicPath as string || ''
-            if (publicPath && !publicPath.endsWith('/'))
-                publicPath += '/'
-
-            compiler.hooks.compilation.tap(
-                'inPlaceHTMLAssets',
-                (compilation:Compilation):void => {
-                    const hooks:HTMLPlugin.Hooks =
-                        plugins.HTML!.getHooks(compilation)
-                    const inPlacedAssetNames:Array<string> = []
-
-                    hooks.alterAssetTagGroups.tap(
-                        'inPlaceHTMLAssets',
-                        (assets:WebpackAssets):WebpackAssets => {
-                            const inPlace = (
-                                type:keyof InPlaceAssetConfiguration,
-                                tag:HTMLPlugin.HtmlTagObject
-                            ):HTMLPlugin.HtmlTagObject => {
-                                let settings:InPlaceAssetConfiguration | undefined
-                                let url:boolean | null | string | undefined = false
-                                if (tag.tagName === 'script') {
-                                    settings = configuration.inPlace.javaScript
-                                    url = tag.attributes.src
-                                } else if (tag.tagName === 'style') {
-                                    settings =
-                                        configuration.inPlace.cascadingStyleSheet
-                                    url = tag.attributes.href
-                                }
-                                if (!(url && typeof url === 'string'))
-                                    return tag
-
-                                const name:string =
-                                    publicPath ? url.replace(publicPath, '') : url
-
-                                if (
-                                    compilation.assets[name] &&
-                                    settings![type] &&
-                                    ([] as Array<RegExp | string>)
-                                        .concat(
-                                            settings![type] as Array<RegExp | string>
-                                        )
-                                        .some((pattern:RegExp | string):boolean =>
-                                            (new RegExp(pattern)).test(name)
-                                        )
-                                ) {
-                                    const newAttributes:HTMLPlugin.HtmlTagObject[
-                                        'attributes'
-                                        ] = {...tag.attributes}
-                                    delete newAttributes.href
-                                    delete newAttributes.src
-
-                                    inPlacedAssetNames.push(name)
-
-                                    return {
-                                        ...tag,
-                                        attributes: newAttributes,
-                                        innerHTML:
-                                            compilation.assets[name].source() as
-                                                string,
-                                        tagName: 'script'
-                                    }
-                                }
-
-                                return tag
-                            }
-
-                            assets.headTags =
-                                assets.headTags.map(inPlace.bind(this, 'head'))
-                            assets.bodyTags =
-                                assets.bodyTags.map(inPlace.bind(this, 'body'))
-
-                            return assets
-                        }
-                    )
-
-                    // NOTE: Avoid if you still want to emit the runtime chunks:
-                    hooks.afterEmit.tap(
-                        'inPlaceHTMLAssets',
-                        (asset:WebpackBaseAssets):WebpackBaseAssets => {
-                            for (const name of inPlacedAssetNames)
-                                delete compilation.assets[name]
-
-                            return asset
-                        }
-                    )
-                })
-        }
-    }
-
-    pluginInstances.push(new InPlaceAssetsIntoHTML())
-}
+)
+    pluginInstances.push(new InPlaceAssetsIntoHTML({
+        cascadingStyleSheet: configuration.inPlace.cascadingStyleSheet,
+        javaScript: configuration.inPlace.javaScript,
+        htmlPlugin: plugins.HTML!
+    }))
 ///// endregion
 ///// region mark empty javaScript modules as dummy
 if (!(
@@ -692,142 +596,13 @@ if (configuration.injection.external.modules === '__implicit__')
     }
 ///// endregion
 //// endregion
-//// region apply final html and inline cascadingStyleSheet/javaScript modifications/fixes
-if (htmlAvailable) {
-    class HTMLTransformation {
-        apply(compiler: Compiler): void {
-            compiler.hooks.compilation.tap(
-                'WebOptimizer',
-                (compilation: Compilation): void => {
-                    plugins
-                        .HTML!
-                        .getHooks(compilation)
-                        .beforeEmit.tap(
-                        'WebOptimizerPostProcessHTML',
-                        (data: HTMLWebpackPluginBeforeEmitData): HTMLWebpackPluginBeforeEmitData => {
-                            /*
-                                NOTE: We have to prevent creating native "style" dom nodes
-                                to prevent jsdom from parsing the entire cascading style
-                                sheet. Which is error prune and very resource intensive.
-                            */
-                            const styleContents: Array<string> = []
-                            data.html = data.html.replace(
-                                /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi,
-                                (
-                                    match: string,
-                                    startTag: string,
-                                    content: string,
-                                    endTag: string
-                                ): string => {
-                                    styleContents.push(content)
-
-                                    return `${startTag}${endTag}`
-                                })
-
-                            let dom: DOM
-                            try {
-                                /*
-                                    NOTE: We have to translate template delimiter to html
-                                    compatible sequences and translate it back later to
-                                    avoid unexpected escape sequences in resulting html.
-                                */
-                                dom = new DOM(
-                                    data.html
-                                        .replace(/<%/g, '##+#+#+##')
-                                        .replace(/%>/g, '##-#-#-##')
-                                )
-                            } catch (error) {
-                                return data
-                            }
-
-                            const linkables: Mapping = {
-                                link: 'href',
-                                script: 'src'
-                            }
-                            for (const [tagName, attributeName] of Object.entries(
-                                linkables
-                            ))
-                                for (const domNode of Array.from<HTMLElement>(
-                                    dom.window.document.querySelectorAll<HTMLElement>(
-                                        `${tagName}[${attributeName}*="?` +
-                                        `${configuration.hashAlgorithm}="]`
-                                    )
-                                ))
-                                    /*
-                                        NOTE: Removing symbols after a "&" in hash
-                                        string is necessary to match the generated
-                                        request strings in offline plugin.
-                                    */
-                                    domNode.setAttribute(
-                                        attributeName,
-                                        domNode
-                                            .getAttribute(attributeName)!
-                                            .replace(
-                                                new RegExp(
-                                                    '(\\?' +
-                                                    `${configuration.hashAlgorithm}=` +
-                                                    '[^&]+).*$'
-                                                ),
-                                                '$1'
-                                            )
-                                    )
-                            /*
-                                NOTE: We have to restore template delimiter and style
-                                contents.
-                            */
-                            data.html = dom.serialize()
-                                .replace(/##\+#\+#\+##/g, '<%')
-                                .replace(/##-#-#-##/g, '%>')
-                                .replace(
-                                    /(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi,
-                                    (
-                                        match: string, startTag: string, endTag: string
-                                    ): string =>
-                                        `${startTag}${styleContents.shift() as string}` +
-                                        endTag
-                                )
-                            // region post compilation
-                            for (const htmlFileSpecification of configuration.files.html)
-                                if (htmlFileSpecification.filename === (
-                                    data.plugin as
-                                        unknown as
-                                        { options: HTMLPlugin.ProcessedOptions }
-                                ).options.filename) {
-                                    for (const loaderConfiguration of (
-                                        [] as Array<WebpackLoader>
-                                    ).concat(htmlFileSpecification.template.use))
-                                        if (
-                                            loaderConfiguration.options?.compileSteps &&
-                                            typeof loaderConfiguration.options
-                                                .compileSteps === 'number'
-                                        )
-                                            data.html = ejsLoader.bind({
-                                                query: Tools.extend(
-                                                    true,
-                                                    Tools.copy(
-                                                        loaderConfiguration.options
-                                                    ) ||
-                                                    {},
-                                                    htmlFileSpecification.template
-                                                        .postCompileOptions
-                                                )
-                                            } as LoaderContext<EJSLoaderConfiguration>)(
-                                                data.html
-                                            )
-
-                                    break
-                                }
-                            // endregion
-                            return data
-                        }
-                    )
-                }
-            )
-        }
-    }
-
-    pluginInstances.push(new HTMLTransformation())
-}
+//// region apply final html modifications/fixes
+if (htmlAvailable)
+    pluginInstances.push(new HTMLTransformation({
+        hashAlgorithm: configuration.hashAlgorithm,
+        htmlPlugin: plugins.HTML!,
+        files: configuration.files.html
+    }))
 //// endregion
 //// region context replacements
 for (const contextReplacement of module.replacements.context)
