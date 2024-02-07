@@ -124,6 +124,18 @@ export interface InjectionConfiguration {
 }
 /// endregion
 /// region configuration
+// region plugins
+export interface HTMLTransformationOptions {
+    hashAlgorithm:string
+    htmlPlugin:typeof HtmlWebpackPlugin
+    files:Array<HTMLConfiguration>
+}
+export interface InPlaceAssetsIntoHTMLOptions {
+    cascadingStyleSheet:InPlaceAssetConfiguration
+    javaScript:InPlaceAssetConfiguration
+    htmlPlugin:typeof HtmlWebpackPlugin
+}
+// endregion
 //// region path
 export interface AssetPathConfiguration {
     base:string
