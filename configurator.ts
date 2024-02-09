@@ -165,6 +165,7 @@ export const load = (
         )
     else
         configuration = metaConfiguration.default as DefaultConfiguration
+
     configuration.debug = debug
     if (typeof configuration.library === 'object')
         Tools.extend(

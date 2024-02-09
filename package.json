@@ -909,7 +909,7 @@
                 "..."
               ],
               "urlFilter": {
-                "__evaluate__": "(attributeName, reference) => !reference.endsWith('.js')"
+                "__evaluate__": "(attributeName, reference) => !/[^?]+\\.js(\\?.*)?/.test(reference)"
               }
             }
           }
@@ -1539,7 +1539,21 @@
         },
         "offline": null
       },
-      "webpack": {}
+      "webpack": {
+        "watchOptions": {
+          "ignored": [
+            "./*.js",
+            "**/node_modules",
+            "**/package.json",
+            {
+              "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
+            },
+            {
+              "__evaluate__": "path.resolve(self.path.target.base, '**/*.js')"
+            }
+          ]
+        }
+      }
     },
     "debug": {
       "debug": true,
@@ -1732,21 +1746,6 @@
           "entry": {
             "testBundle": "./test"
           }
-        }
-      },
-      "webpack": {
-        "watchOptions": {
-          "ignored": [
-            "./*.js",
-            "**/node_modules",
-            "**/package.json",
-            {
-              "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
-            },
-            {
-              "__evaluate__": "path.resolve(self.path.target.base, '**/*.js')"
-            }
-          ]
         }
       }
     }
