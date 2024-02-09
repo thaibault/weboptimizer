@@ -322,6 +322,7 @@ export interface ResolvedConfiguration {
     contextType:string
     debug:boolean
     development:{
+        includeClient?:boolean|null
         server:(
             WebpackOptionsNormalized['devServer'] &
             {

@@ -1487,8 +1487,12 @@ if (
     configuration.debug &&
     configuration.development.server.liveReload &&
     !configuration.injection.entry.normalized.developmentHandler &&
-    ['serve', 'test:browser'].includes(
-        configuration.givenCommandLineArguments[2]
+    (
+        configuration.development.includeClient ||
+        typeof configuration.development.includeClient !== 'boolean' &&
+        ['serve', 'test:browser'].includes(
+            configuration.givenCommandLineArguments[2]
+        )
     )
 ) {
     configuration.injection.entry.normalized.developmentHandler = [
