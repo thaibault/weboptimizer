@@ -539,6 +539,7 @@
       "contextType": "main",
       "debug": false,
       "development": {
+        "includeClient": null,
         "server": {
           "client": false,
           "compress": {
