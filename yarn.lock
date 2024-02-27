@@ -3705,9 +3705,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30001578, caniuse-lite@^1.0.30001587:
-  version "1.0.30001589"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001589.tgz#7ad6dba4c9bf6561aec8291976402339dc157dfb"
-  integrity sha512-vNQWS6kI+q6sBlHbh71IIeC+sRwK2N3EDySc/updIGhIee2x5z00J4c1242/5/d6EpEMdOnk/m+6tuk4/tcsqg==
+  version "1.0.30001591"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001591.tgz#16745e50263edc9f395895a7cd468b9f3767cf33"
+  integrity sha512-PCzRMei/vXjJyL5mJtzNiUCKP59dm8Apqc3PH8gJkMnMXZGox93RbE76jHsmLwmIo6/3nsYIpJtx0O7u5PqFuQ==
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -3809,9 +3809,9 @@ cli-table3@^0.5.0:
     colors "^1.1.2"
 
 clientnode@*:
-  version "3.0.1118"
-  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1118.tgz#dd1182b2bc3dd44c90cd6403d049eccebfacddf5"
-  integrity sha512-90d08tnTrY4qt8Xkq9LQO2iyZwobkT9ocn/bCBjC64wvMI7zqlhi/fJllY205jzOEHshh0Lj+Thc9F8OABQNPg==
+  version "3.0.1119"
+  resolved "https://registry.yarnpkg.com/clientnode/-/clientnode-3.0.1119.tgz#ea27186840ace7a46a2c72e75b6bcc865e7b7f51"
+  integrity sha512-7/wqt2pJKoQ5uruhW+SUqWniH8zyX9IALfB05EaYZds6D/X6NM6xc5k8u+M+5r5YhGKg7BrO90pA9kYGhEQhdQ==
 
 cliui@^4.0.0:
   version "4.1.0"
@@ -4501,9 +4501,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation-website@*:
-  version "1.0.323"
-  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.323.tgz#2a3f8738055ac77c9d41a7911a71f715a01dd3a1"
-  integrity sha512-6Jgd//tbwdeMWVQRVdQFJ7XEIqWrdFYFdPbOQgpzgs84Zja2S5fNFxbmnh1Dz00xTHy1tsRNa7RCpqyqbEDSZw==
+  version "1.0.325"
+  resolved "https://registry.yarnpkg.com/documentation-website/-/documentation-website-1.0.325.tgz#138182cb9c64c937382073311f4c6e759833fea2"
+  integrity sha512-DwNdQZ0x07x1stIqFgTyPaWzAb5YnHWY80Z2npL4QFEOBLDl4d+aQBhEEs9fBLg31FLmJ1qSFr0RxF5Fa4o1bg==
 
 dom-converter@^0.2.0:
   version "0.2.0"
@@ -4629,9 +4629,9 @@ ejs@*, ejs@^3.1.6:
     jake "^10.8.5"
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.4.668:
-  version "1.4.681"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.681.tgz#5f23fad8aa7e1f64cbb7dd9d15c7e39a1cd7e6e3"
-  integrity sha512-1PpuqJUFWoXZ1E54m8bsLPVYwIVCRzvaL+n5cjigGga4z854abDnFRc+cTa2th4S79kyGqya/1xoR7h+Y5G5lg==
+  version "1.4.682"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.682.tgz#27577b88ccccc810e09b05093345cf1830f1bd65"
+  integrity sha512-oCglfs8yYKs9RQjJFOHonSnhikPK3y+0SvSYc/YpYJV//6rqc0/hbwd0c7vgK4vrl6y2gJAwjkhkSGWK+z4KRA==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -8174,9 +8174,9 @@ postcss-modules-values@^4.0.0:
     icss-utils "^5.0.0"
 
 postcss-nesting@^12.0.3:
-  version "12.0.3"
-  resolved "https://registry.yarnpkg.com/postcss-nesting/-/postcss-nesting-12.0.3.tgz#ee451e5d2dc3f9f09d68434ddc7ad9d42b7f44e9"
-  integrity sha512-yrtMRPFNkfZMv9ikBvZ/Eh3RxhpMBKQ3KzD7LCY8+jYVlgju/Mdcxi4JY8bW2Y7ISXw8GTLuF/o+kFtp+yaVfQ==
+  version "12.0.4"
+  resolved "https://registry.yarnpkg.com/postcss-nesting/-/postcss-nesting-12.0.4.tgz#593d577fd1fbbfbe0997a6c81dbff074b26c83a2"
+  integrity sha512-WuCe0KnP4vKjLZK8VNoUWKL8ZLOv/5jiM94mHcI3VszLropHwmjotdUyP/ObzqZpXuQKP2Jf9R12vIHKFSStKw==
   dependencies:
     "@csstools/selector-specificity" "^3.0.2"
     postcss-selector-parser "^6.0.13"
