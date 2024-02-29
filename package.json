@@ -56,9 +56,7 @@
     "webpackConfigurator.d.ts",
     "webpackConfigurator.js"
   ],
-  "bin": {
-    "weboptimizer": "index.js"
-  },
+  "bin": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/thaibault/weboptimizer.git"
@@ -71,10 +69,10 @@
     "build:types": "tsc --declaration --emitDeclarationOnly",
     "check": "yarn check:types; yarn lint",
     "check:types": "tsc --noEmit",
-    "clear": "rimraf apiDocumentation plugins/*.d.ts plugins/*.js browser.d.ts configurator.d.ts ejsLoader.d.ts helper.d.ts index.d.ts jestEnvironmentBrowser.d.ts stylelintConfigurator.d.ts type.d.ts webpackConfigurator.d.ts *.js *.compiled.* *.compiled test/*.js test/*.compiled.* test/*.d.ts *.html *.log node_modules/weboptimizer .coverage .nyc_output || true",
+    "clear": "rimraf apiDocumentation 'plugins/*.d.ts' 'plugins/*.js' browser.d.ts configurator.d.ts ejsLoader.d.ts helper.d.ts index.d.ts jestEnvironmentBrowser.d.ts stylelintConfigurator.d.ts type.d.ts webpackConfigurator.d.ts '*.js' '*.compiled.*' '*.compiled' 'test/*.js' 'test/*.compiled.*' 'test/*.d.ts' '*.html' '*.log' node_modules/weboptimizer .coverage .nyc_output || true",
     "document": "yarn build:plain && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.js",
     "lint": "yarn lint:base",
-    "lint:base": "eslint --ignore-pattern **/exclude/* --ignore-pattern '*.compiled.*' --ignore-pattern '*.d.ts' --ignore-pattern '*.js' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
+    "lint:base": "eslint --ignore-pattern '**/exclude/*' --ignore-pattern '*.compiled.*' --ignore-pattern '*.d.ts' --ignore-pattern '*.js' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
     "prepare": "yarn build",
     "postversion": "yarn publish --non-interactive; git push --tags && git push",
     "prettify": "yarn lint:base --fix || true",
@@ -304,7 +302,8 @@
   },
   "engines": {
     "node": ">=18",
-    "npm": ">=9"
+    "npm": ">=9",
+    "yarn": ">=3"
   },
   "resolutions": {
     "colors": "1.4.0"
@@ -1917,5 +1916,6 @@
       "jsdoc/require-returns-description": "error",
       "jsdoc/require-returns-type": 0
     }
-  }
+  },
+  "packageManager": "yarn@4.1.0+sha256.81a00df816059803e6b5148acf03ce313cad36b7f6e5af6efa040a15981a6ffb"
 }
