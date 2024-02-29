@@ -3,8 +3,9 @@
 'use strict'
 // region imports
 import {expect, jest, test} from '@jest/globals'
-import {resolve} from 'path'
 import {spawnSync as spawnChildProcessSync} from 'child_process'
+import {open} from 'fs/promises'
+import {resolve} from 'path'
 // endregion
 /*
     NOTE: Theses tasks can take lot longer than 5 seconds (default
@@ -12,7 +13,10 @@ import {spawnSync as spawnChildProcessSync} from 'child_process'
 */
 jest.setTimeout(60 * 1000)
 
-for (const folder of ['simple', 'scss'])
+for (const folder of ['simple', 'scss']) {
+    // Enforce test folder to be handled as dedicated projects via yarn.
+    (await open(resolve(folder, 'yarn.lock'), 'w')).close()
+
     test.each(['check:types', 'lint', 'build', 'test'])(
         `index (${folder}:%s)`,
         (command:string):void => {
@@ -29,6 +33,7 @@ for (const folder of ['simple', 'scss'])
                 ).status).toStrictEqual(0)
         }
     )
+}
 // region vim modline
 // vim: set tabstop=4 shiftwidth=4 expandtab:
 // vim: foldmethod=marker foldmarker=region,endregion:
