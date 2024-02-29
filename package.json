@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.1429",
+  "version": "2.0.1430",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -81,7 +81,7 @@
     "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info",
     "test:watch": "yarn test --watch",
     "test:watch:all": "yarn test --watchAll",
-    "update": "yarn version --patch",
+    "update": "yarn version patch",
     "update:documentation": "documentation-website"
   },
   "runkitExample": "require('@babel/runtime/package.json')\n\nconst {default: main} = require('weboptimizer')\n\nawait main('./', './', ['clear'])",
