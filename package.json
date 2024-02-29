@@ -97,7 +97,7 @@
     "babel-loader": "*",
     "babel-plugin-transform-modern-regexp": "*",
     "babel-preset-minify": "*",
-    "clientnode": "*",
+    "clientnode": "^3.0.1124",
     "ejs": "*",
     "exports-loader": "*",
     "extract-loader": "*",
