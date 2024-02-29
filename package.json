@@ -81,7 +81,7 @@
     "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info",
     "test:watch": "yarn test --watch",
     "test:watch:all": "yarn test --watchAll",
-    "update": "yarn version patch && yarn npm publish && git push --tags",
+    "update": "yarn version patch && yarn npm publish",
     "update:documentation": "documentation-website"
   },
   "runkitExample": "require('@babel/runtime/package.json')\n\nconst {default: main} = require('weboptimizer')\n\nawait main('./', './', ['clear'])",
