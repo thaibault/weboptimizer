@@ -69,7 +69,7 @@
     "build:types": "tsc --declaration --emitDeclarationOnly",
     "check": "yarn check:types; yarn lint",
     "check:types": "tsc --noEmit",
-    "clear": "rimraf apiDocumentation 'plugins/*.d.ts' 'plugins/*.js' browser.d.ts configurator.d.ts ejsLoader.d.ts helper.d.ts index.d.ts jestEnvironmentBrowser.d.ts stylelintConfigurator.d.ts type.d.ts webpackConfigurator.d.ts '*.js' '*.compiled.*' '*.compiled' 'test/*.js' 'test/*.compiled.*' 'test/*.d.ts' '*.html' '*.log' node_modules/weboptimizer .coverage .nyc_output || true",
+    "clear": "rimraf apiDocumentation 'plugins/*.d.ts' 'plugins/*.js' browser.d.ts configurator.d.ts ejsLoader.d.ts helper.d.ts index.d.ts jestSetup.d.ts jestEnvironmentBrowser.d.ts stylelintConfigurator.d.ts type.d.ts webpackConfigurator.d.ts '*.js' '*.compiled.*' '*.compiled' 'test/*.js' 'test/*.compiled.*' 'test/*.d.ts' '*.html' '*.log' node_modules/weboptimizer .coverage .nyc_output || true",
     "document": "yarn build:plain && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.js",
     "lint": "yarn lint:base",
     "lint:base": "eslint --ignore-pattern '**/exclude/*' --ignore-pattern '*.compiled.*' --ignore-pattern '*.d.ts' --ignore-pattern '*.js' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
