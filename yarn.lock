@@ -5249,9 +5249,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:^3.0.1124":
-  version: 3.0.1124
-  resolution: "clientnode@npm:3.0.1124"
+"clientnode@npm:3.0.1121":
+  version: 3.0.1121
+  resolution: "clientnode@npm:3.0.1121"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -5269,7 +5269,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/88ab3653a1bc9fdd42fe4c9aace8d44922a92c1746a7d0e619fb5616e33e323296eac8e0d7c4ccacf92e87bc13815ecf5f51459dbf93c5055b8fd1999a0988b4
+  checksum: 10c0/eae8c4cb0d3b34197b654b3e64869ed28fd28eb06a48be94f0dd6602af2a7c193cfc6c070cc02cfa8e925748ca43aaea3e3af724ef079f4105ae9d86df418d3b
   languageName: node
   linkType: hard
 
@@ -6370,9 +6370,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.3.47, electron-to-chromium@npm:^1.4.668":
-  version: 1.4.687
-  resolution: "electron-to-chromium@npm:1.4.687"
-  checksum: 10c0/902837650116cae52936fcd7c4f6464482a64b303c241e320ba12d3004e285270064cb181956c449029864db9a921e953e0a87856acf5affabb180cc6f31d6c1
+  version: 1.4.688
+  resolution: "electron-to-chromium@npm:1.4.688"
+  checksum: 10c0/e00e18d837e7c28c5f1b87ee38b1ab161076f4ffb0848daca04f247ea5dd4b9aab924d07fe8e15d147d437cc037d526b97faf1c996f9e0cf6a711f1c099f000d
   languageName: node
   linkType: hard
 
@@ -12883,14 +12883,14 @@ __metadata:
   linkType: hard
 
 "side-channel@npm:^1.0.4":
-  version: 1.0.5
-  resolution: "side-channel@npm:1.0.5"
+  version: 1.0.6
+  resolution: "side-channel@npm:1.0.6"
   dependencies:
-    call-bind: "npm:^1.0.6"
+    call-bind: "npm:^1.0.7"
     es-errors: "npm:^1.3.0"
     get-intrinsic: "npm:^1.2.4"
     object-inspect: "npm:^1.13.1"
-  checksum: 10c0/31312fecb68997ce2893b1f6d1fd07d6dd41e05cc938e82004f056f7de96dd9df599ef9418acdf730dda948e867e933114bd2efe4170c0146d1ed7009700c252
+  checksum: 10c0/d2afd163dc733cc0a39aa6f7e39bf0c436293510dbccbff446733daeaf295857dbccf94297092ec8c53e2503acac30f0b78830876f0485991d62a90e9cad305f
   languageName: node
   linkType: hard
 
@@ -14457,7 +14457,7 @@ __metadata:
     babel-loader: "npm:*"
     babel-plugin-transform-modern-regexp: "npm:*"
     babel-preset-minify: "npm:*"
-    clientnode: "npm:^3.0.1124"
+    clientnode: "npm:3.0.1121"
     css-loader: "npm:*"
     cssnano: "npm:*"
     documentation-website: "npm:*"
