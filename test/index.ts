@@ -4,7 +4,7 @@
 // region imports
 import {expect, jest, test} from '@jest/globals'
 import {spawnSync as spawnChildProcessSync} from 'child_process'
-import {open} from 'fs/promises'
+import {closeSync, openSync} from 'fs'
 import {resolve} from 'path'
 // endregion
 /*
@@ -15,7 +15,17 @@ jest.setTimeout(60 * 1000)
 
 for (const folder of ['simple', 'scss']) {
     // Enforce test folder to be handled as dedicated projects via yarn.
-    (await open(resolve(folder, 'yarn.lock'), 'w')).close()
+    closeSync(openSync(resolve(__dirname, folder, 'yarn.lock'), 'w'))
+    spawnChildProcessSync(
+        'yarn',
+        ['install'],
+        {
+            cwd: resolve(__dirname, folder),
+            env: process.env,
+            shell: true,
+            stdio: 'inherit'
+        }
+    )
 
     test.each(['check:types', 'lint', 'build', 'test'])(
         `index (${folder}:%s)`,
