@@ -21,7 +21,7 @@ for (const folder of ['simple', 'scss']) {
 
     spawnChildProcessSync(
         'yarn',
-        [],
+        ['install'],
         {
             cwd: resolve(__dirname, folder),
             env: process.env,
