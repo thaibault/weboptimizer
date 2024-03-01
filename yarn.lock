@@ -42,7 +42,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/cli@npm:*":
+"@babel/cli@npm:^7.23.9":
   version: 7.23.9
   resolution: "@babel/cli@npm:7.23.9"
   dependencies:
@@ -86,7 +86,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:*, @babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.23.9":
+"@babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.23.9, @babel/core@npm:^7.24.0":
   version: 7.24.0
   resolution: "@babel/core@npm:7.24.0"
   dependencies:
@@ -109,7 +109,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:*":
+"@babel/eslint-parser@npm:^7.23.10":
   version: 7.23.10
   resolution: "@babel/eslint-parser@npm:7.23.10"
   dependencies:
@@ -440,7 +440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-proposal-class-properties@npm:*":
+"@babel/plugin-proposal-class-properties@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/plugin-proposal-class-properties@npm:7.18.6"
   dependencies:
@@ -452,7 +452,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-proposal-decorators@npm:*":
+"@babel/plugin-proposal-decorators@npm:^7.24.0":
   version: 7.24.0
   resolution: "@babel/plugin-proposal-decorators@npm:7.24.0"
   dependencies:
@@ -465,7 +465,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-proposal-nullish-coalescing-operator@npm:*":
+"@babel/plugin-proposal-nullish-coalescing-operator@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/plugin-proposal-nullish-coalescing-operator@npm:7.18.6"
   dependencies:
@@ -1206,7 +1206,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-runtime@npm:*":
+"@babel/plugin-transform-runtime@npm:^7.24.0":
   version: 7.24.0
   resolution: "@babel/plugin-transform-runtime@npm:7.24.0"
   dependencies:
@@ -1339,7 +1339,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:*, @babel/preset-env@npm:^7.11.0":
+"@babel/preset-env@npm:^7.11.0, @babel/preset-env@npm:^7.24.0":
   version: 7.24.0
   resolution: "@babel/preset-env@npm:7.24.0"
   dependencies:
@@ -1442,7 +1442,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-typescript@npm:*":
+"@babel/preset-typescript@npm:^7.23.3":
   version: 7.23.3
   resolution: "@babel/preset-typescript@npm:7.23.3"
   dependencies:
@@ -1464,7 +1464,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:*, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.24.0, @babel/runtime@npm:^7.8.4":
   version: 7.24.0
   resolution: "@babel/runtime@npm:7.24.0"
   dependencies:
@@ -2805,7 +2805,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ejs@npm:*":
+"@types/ejs@npm:^3.1.5":
   version: 3.1.5
   resolution: "@types/ejs@npm:3.1.5"
   checksum: 10c0/13d994cf0323d7e0ad33b9384914ccd3b4cd8bf282eced3649b1621b66ee7c784ac2d120a9d7b1f43d6f873518248fb8c3221b06a649b847860b9c2389a0b0ed
@@ -2855,13 +2855,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/html-minifier-terser@npm:*":
-  version: 7.0.2
-  resolution: "@types/html-minifier-terser@npm:7.0.2"
-  checksum: 10c0/46b700e022a666ed001f58c672bcabe1040660526ca617797750e84db8fc6e29e55305d7291d04b5c1e85960773e751d67ed338f5bf5264dd29d7d824a1ef1ed
-  languageName: node
-  linkType: hard
-
 "@types/html-minifier-terser@npm:^6.0.0":
   version: 6.1.0
   resolution: "@types/html-minifier-terser@npm:6.1.0"
@@ -2869,7 +2862,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/html-minifier@npm:*":
+"@types/html-minifier-terser@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "@types/html-minifier-terser@npm:7.0.2"
+  checksum: 10c0/46b700e022a666ed001f58c672bcabe1040660526ca617797750e84db8fc6e29e55305d7291d04b5c1e85960773e751d67ed338f5bf5264dd29d7d824a1ef1ed
+  languageName: node
+  linkType: hard
+
+"@types/html-minifier@npm:^4.0.5":
   version: 4.0.5
   resolution: "@types/html-minifier@npm:4.0.5"
   dependencies:
@@ -2880,7 +2880,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/imagemin@npm:*":
+"@types/imagemin@npm:^8.0.5":
   version: 8.0.5
   resolution: "@types/imagemin@npm:8.0.5"
   dependencies:
@@ -2956,7 +2956,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^20.11.24":
   version: 20.11.24
   resolution: "@types/node@npm:20.11.24"
   dependencies:
@@ -2965,7 +2965,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/postcss-import@npm:*":
+"@types/postcss-import@npm:^14.0.3":
   version: 14.0.3
   resolution: "@types/postcss-import@npm:14.0.3"
   dependencies:
@@ -2992,7 +2992,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/postcss-url@npm:*":
+"@types/postcss-url@npm:^10.0.4":
   version: 10.0.4
   resolution: "@types/postcss-url@npm:10.0.4"
   dependencies:
@@ -3076,14 +3076,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/webpack-env@npm:*":
+"@types/webpack-env@npm:^1.18.4":
   version: 1.18.4
   resolution: "@types/webpack-env@npm:1.18.4"
   checksum: 10c0/3fa77dbff0ed71685404576b0a1cf74587567fe2ee1cfd11d56d6eefcab7a61e4c9ead0eced264e289d2cf0fc74296dbd55ed6c95774fe0fd6264d156c5a59f0
   languageName: node
   linkType: hard
 
-"@types/webpack-sources@npm:*":
+"@types/webpack-sources@npm:^3.2.3":
   version: 3.2.3
   resolution: "@types/webpack-sources@npm:3.2.3"
   dependencies:
@@ -3110,7 +3110,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:*":
+"@typescript-eslint/eslint-plugin@npm:^7.1.0":
   version: 7.1.0
   resolution: "@typescript-eslint/eslint-plugin@npm:7.1.0"
   dependencies:
@@ -3135,7 +3135,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:*":
+"@typescript-eslint/parser@npm:^7.1.0":
   version: 7.1.0
   resolution: "@typescript-eslint/parser@npm:7.1.0"
   dependencies:
@@ -4093,7 +4093,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:*":
+"babel-loader@npm:^9.1.3":
   version: 9.1.3
   resolution: "babel-loader@npm:9.1.3"
   dependencies:
@@ -4595,7 +4595,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-transform-modern-regexp@npm:*":
+"babel-plugin-transform-modern-regexp@npm:^0.0.6":
   version: 0.0.6
   resolution: "babel-plugin-transform-modern-regexp@npm:0.0.6"
   dependencies:
@@ -4748,7 +4748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-preset-minify@npm:*":
+"babel-preset-minify@npm:^0.5.2":
   version: 0.5.2
   resolution: "babel-preset-minify@npm:0.5.2"
   dependencies:
@@ -5249,9 +5249,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:^3.0.1128":
-  version: 3.0.1128
-  resolution: "clientnode@npm:3.0.1128"
+"clientnode@npm:^3.0.1130":
+  version: 3.0.1130
+  resolution: "clientnode@npm:3.0.1130"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -5269,7 +5269,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/521bebf6916c313400223779389c550e6a3b8be062e482ee4d1787e33fc36f5ce2beba72f644d95a550a94b6c2edfa5ae6b5901d9df3725134a21febd551965d
+  checksum: 10c0/ffadf59ad910610b1009f1c409434c474147924eb7102ba863330a9c60f565197994cd5b65994c3f15b89897fd0886e137f45863a43da0833025d6cee7bfb1f5
   languageName: node
   linkType: hard
 
@@ -5748,7 +5748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:*":
+"css-loader@npm:^6.10.0":
   version: 6.10.0
   resolution: "css-loader@npm:6.10.0"
   dependencies:
@@ -5960,7 +5960,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano@npm:*":
+"cssnano@npm:^6.0.5":
   version: 6.0.5
   resolution: "cssnano@npm:6.0.5"
   dependencies:
@@ -6201,7 +6201,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"documentation-website@npm:*":
+"documentation-website@npm:^1.0.325":
   version: 1.0.325
   resolution: "documentation-website@npm:1.0.325"
   bin:
@@ -6358,7 +6358,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ejs@npm:*, ejs@npm:^3.1.6":
+"ejs@npm:^3.1.6, ejs@npm:^3.1.9":
   version: 3.1.9
   resolution: "ejs@npm:3.1.9"
   dependencies:
@@ -6655,7 +6655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-google@npm:*":
+"eslint-config-google@npm:^0.14.0":
   version: 0.14.0
   resolution: "eslint-config-google@npm:0.14.0"
   peerDependencies:
@@ -6664,7 +6664,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:*":
+"eslint-plugin-jsdoc@npm:^48.2.0":
   version: 48.2.0
   resolution: "eslint-plugin-jsdoc@npm:48.2.0"
   dependencies:
@@ -6717,7 +6717,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:*":
+"eslint@npm:^8.57.0":
   version: 8.57.0
   resolution: "eslint@npm:8.57.0"
   dependencies:
@@ -6898,7 +6898,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exports-loader@npm:*":
+"exports-loader@npm:^5.0.0":
   version: 5.0.0
   resolution: "exports-loader@npm:5.0.0"
   dependencies:
@@ -6916,7 +6916,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"extract-loader@npm:*":
+"extract-loader@npm:^5.1.0":
   version: 5.1.0
   resolution: "extract-loader@npm:5.1.0"
   dependencies:
@@ -7009,7 +7009,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"favicons-webpack-plugin@npm:*":
+"favicons-webpack-plugin@npm:^6.0.1":
   version: 6.0.1
   resolution: "favicons-webpack-plugin@npm:6.0.1"
   dependencies:
@@ -7027,7 +7027,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"favicons@npm:*":
+"favicons@npm:^7.1.5":
   version: 7.1.5
   resolution: "favicons@npm:7.1.5"
   dependencies:
@@ -7504,7 +7504,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob-all@npm:*":
+"glob-all@npm:^3.3.1":
   version: 3.3.1
   resolution: "glob-all@npm:3.3.1"
   dependencies:
@@ -7806,7 +7806,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-loader@npm:*":
+"html-loader@npm:^5.0.0":
   version: 5.0.0
   resolution: "html-loader@npm:5.0.0"
   dependencies:
@@ -7852,7 +7852,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-minifier@npm:*":
+"html-minifier@npm:^4.0.0":
   version: 4.0.0
   resolution: "html-minifier@npm:4.0.0"
   dependencies:
@@ -7876,7 +7876,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-webpack-plugin@npm:*, html-webpack-plugin@npm:^5.5.0":
+"html-webpack-plugin@npm:^5.5.0, html-webpack-plugin@npm:^5.6.0":
   version: 5.6.0
   resolution: "html-webpack-plugin@npm:5.6.0"
   dependencies:
@@ -8007,7 +8007,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"image-minimizer-webpack-plugin@npm:*":
+"image-minimizer-webpack-plugin@npm:^4.0.0":
   version: 4.0.0
   resolution: "image-minimizer-webpack-plugin@npm:4.0.0"
   dependencies:
@@ -8066,7 +8066,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"imports-loader@npm:*":
+"imports-loader@npm:^5.0.0":
   version: 5.0.0
   resolution: "imports-loader@npm:5.0.0"
   dependencies:
@@ -8769,7 +8769,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-jsdom@npm:*":
+"jest-environment-jsdom@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-environment-jsdom@npm:29.7.0"
   dependencies:
@@ -9095,7 +9095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:*":
+"jest@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest@npm:29.7.0"
   dependencies:
@@ -9204,7 +9204,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdoc@npm:*":
+"jsdoc@npm:^4.0.2":
   version: 4.0.2
   resolution: "jsdoc@npm:4.0.2"
   dependencies:
@@ -9998,7 +9998,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mini-css-extract-plugin@npm:*":
+"mini-css-extract-plugin@npm:^2.8.1":
   version: 2.8.1
   resolution: "mini-css-extract-plugin@npm:2.8.1"
   dependencies:
@@ -10137,15 +10137,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:*":
-  version: 3.0.1
-  resolution: "mkdirp@npm:3.0.1"
-  bin:
-    mkdirp: dist/cjs/src/bin.js
-  checksum: 10c0/9f2b975e9246351f5e3a40dcfac99fcd0baa31fbfab615fe059fb11e51f10e4803c63de1f384c54d656e4db31d000e4767e9ef076a22e12a641357602e31d57d
-  languageName: node
-  linkType: hard
-
 "mkdirp@npm:^0.5.1, mkdirp@npm:^0.5.4, mkdirp@npm:^0.5.5, mkdirp@npm:~0.5.1":
   version: 0.5.6
   resolution: "mkdirp@npm:0.5.6"
@@ -10163,6 +10154,15 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: 10c0/46ea0f3ffa8bc6a5bc0c7081ffc3907777f0ed6516888d40a518c5111f8366d97d2678911ad1a6882bf592fa9de6c784fea32e1687bb94e1f4944170af48a5cf
+  languageName: node
+  linkType: hard
+
+"mkdirp@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "mkdirp@npm:3.0.1"
+  bin:
+    mkdirp: dist/cjs/src/bin.js
+  checksum: 10c0/9f2b975e9246351f5e3a40dcfac99fcd0baa31fbfab615fe059fb11e51f10e4803c63de1f384c54d656e4db31d000e4767e9ef076a22e12a641357602e31d57d
   languageName: node
   linkType: hard
 
@@ -10300,7 +10300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:*":
+"node-fetch@npm:^3.3.2":
   version: 3.3.2
   resolution: "node-fetch@npm:3.3.2"
   dependencies:
@@ -11188,7 +11188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-fontpath@npm:*":
+"postcss-fontpath@npm:^1.0.0":
   version: 1.0.0
   resolution: "postcss-fontpath@npm:1.0.0"
   dependencies:
@@ -11218,7 +11218,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-import@npm:*":
+"postcss-import@npm:^16.0.1":
   version: 16.0.1
   resolution: "postcss-import@npm:16.0.1"
   dependencies:
@@ -11264,7 +11264,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-loader@npm:*":
+"postcss-loader@npm:^8.1.1":
   version: 8.1.1
   resolution: "postcss-loader@npm:8.1.1"
   dependencies:
@@ -11582,7 +11582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-preset-env@npm:*":
+"postcss-preset-env@npm:^9.4.0":
   version: 9.4.0
   resolution: "postcss-preset-env@npm:9.4.0"
   dependencies:
@@ -11741,7 +11741,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-sprites@npm:*":
+"postcss-sprites@npm:^4.2.1":
   version: 4.2.1
   resolution: "postcss-sprites@npm:4.2.1"
   dependencies:
@@ -11779,7 +11779,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-url@npm:*":
+"postcss-url@npm:^10.1.3":
   version: 10.1.3
   resolution: "postcss-url@npm:10.1.3"
   dependencies:
@@ -11797,17 +11797,6 @@ __metadata:
   version: 4.2.0
   resolution: "postcss-value-parser@npm:4.2.0"
   checksum: 10c0/f4142a4f56565f77c1831168e04e3effd9ffcc5aebaf0f538eee4b2d465adfd4b85a44257bb48418202a63806a7da7fe9f56c330aebb3cac898e46b4cbf49161
-  languageName: node
-  linkType: hard
-
-"postcss@npm:*, postcss@npm:^8.0.0, postcss@npm:^8.4.33, postcss@npm:^8.4.35":
-  version: 8.4.35
-  resolution: "postcss@npm:8.4.35"
-  dependencies:
-    nanoid: "npm:^3.3.7"
-    picocolors: "npm:^1.0.0"
-    source-map-js: "npm:^1.0.2"
-  checksum: 10c0/e8dd04e48001eb5857abc9475365bf08f4e508ddf9bc0b8525449a95d190f10d025acebc5b56ac2e94b3c7146790e4ae78989bb9633cb7ee20d1cc9b7dc909b2
   languageName: node
   linkType: hard
 
@@ -11831,6 +11820,17 @@ __metadata:
     source-map: "npm:^0.6.1"
     supports-color: "npm:^5.4.0"
   checksum: 10c0/45d45184ffbb9d510e7585d9441af9a1a771a56b7553b1d598544e54acdfd31df439a95d5f00a6dc57b85b76d0c8925fec18614b1cc795887c845c3965e32e63
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.0.0, postcss@npm:^8.4.33, postcss@npm:^8.4.35":
+  version: 8.4.35
+  resolution: "postcss@npm:8.4.35"
+  dependencies:
+    nanoid: "npm:^3.3.7"
+    picocolors: "npm:^1.0.0"
+    source-map-js: "npm:^1.0.2"
+  checksum: 10c0/e8dd04e48001eb5857abc9475365bf08f4e508ddf9bc0b8525449a95d190f10d025acebc5b56ac2e94b3c7146790e4ae78989bb9633cb7ee20d1cc9b7dc909b2
   languageName: node
   linkType: hard
 
@@ -12454,17 +12454,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:>=5, rimraf@npm:^5.0.5":
-  version: 5.0.5
-  resolution: "rimraf@npm:5.0.5"
-  dependencies:
-    glob: "npm:^10.3.7"
-  bin:
-    rimraf: dist/esm/bin.mjs
-  checksum: 10c0/d50dbe724f33835decd88395b25ed35995077c60a50ae78ded06e0185418914e555817aad1b4243edbff2254548c2f6ad6f70cc850040bebb4da9e8cc016f586
-  languageName: node
-  linkType: hard
-
 "rimraf@npm:^2.2.8":
   version: 2.7.1
   resolution: "rimraf@npm:2.7.1"
@@ -12484,6 +12473,17 @@ __metadata:
   bin:
     rimraf: bin.js
   checksum: 10c0/9cb7757acb489bd83757ba1a274ab545eafd75598a9d817e0c3f8b164238dd90eba50d6b848bd4dcc5f3040912e882dc7ba71653e35af660d77b25c381d402e8
+  languageName: node
+  linkType: hard
+
+"rimraf@npm:^5.0.5":
+  version: 5.0.5
+  resolution: "rimraf@npm:5.0.5"
+  dependencies:
+    glob: "npm:^10.3.7"
+  bin:
+    rimraf: dist/esm/bin.mjs
+  checksum: 10c0/d50dbe724f33835decd88395b25ed35995077c60a50ae78ded06e0185418914e555817aad1b4243edbff2254548c2f6ad6f70cc850040bebb4da9e8cc016f586
   languageName: node
   linkType: hard
 
@@ -12649,7 +12649,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"script-loader@npm:*":
+"script-loader@npm:^0.7.2":
   version: 0.7.2
   resolution: "script-loader@npm:0.7.2"
   dependencies:
@@ -12870,7 +12870,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shx@npm:*":
+"shx@npm:^0.3.4":
   version: 0.3.4
   resolution: "shx@npm:0.3.4"
   dependencies:
@@ -13404,7 +13404,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"style-loader@npm:*":
+"style-loader@npm:^3.3.4":
   version: 3.3.4
   resolution: "style-loader@npm:3.3.4"
   peerDependencies:
@@ -13451,7 +13451,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylelint-config-standard-scss@npm:*":
+"stylelint-config-standard-scss@npm:^13.0.0":
   version: 13.0.0
   resolution: "stylelint-config-standard-scss@npm:13.0.0"
   dependencies:
@@ -13467,7 +13467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylelint-config-standard@npm:*, stylelint-config-standard@npm:^36.0.0":
+"stylelint-config-standard@npm:^36.0.0":
   version: 36.0.0
   resolution: "stylelint-config-standard@npm:36.0.0"
   dependencies:
@@ -13493,7 +13493,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylelint@npm:*":
+"stylelint@npm:^16.2.1":
   version: 16.2.1
   resolution: "stylelint@npm:16.2.1"
   dependencies:
@@ -14065,7 +14065,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript-plugin-css-modules@npm:*":
+"typescript-plugin-css-modules@npm:^5.1.0":
   version: 5.1.0
   resolution: "typescript-plugin-css-modules@npm:5.1.0"
   dependencies:
@@ -14091,7 +14091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:*":
+"typescript@npm:^5.3.3":
   version: 5.3.3
   resolution: "typescript@npm:5.3.3"
   bin:
@@ -14101,7 +14101,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A*#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
   version: 5.3.3
   resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
   bin:
@@ -14433,74 +14433,74 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "weboptimizer@workspace:."
   dependencies:
-    "@babel/cli": "npm:*"
-    "@babel/core": "npm:*"
-    "@babel/eslint-parser": "npm:*"
-    "@babel/plugin-proposal-class-properties": "npm:*"
-    "@babel/plugin-proposal-decorators": "npm:*"
-    "@babel/plugin-proposal-nullish-coalescing-operator": "npm:*"
-    "@babel/plugin-transform-runtime": "npm:*"
-    "@babel/preset-env": "npm:*"
-    "@babel/preset-typescript": "npm:*"
-    "@babel/runtime": "npm:*"
-    "@types/ejs": "npm:*"
-    "@types/html-minifier": "npm:*"
-    "@types/html-minifier-terser": "npm:*"
-    "@types/imagemin": "npm:*"
-    "@types/node": "npm:*"
-    "@types/postcss-import": "npm:*"
-    "@types/postcss-url": "npm:*"
-    "@types/webpack-env": "npm:*"
-    "@types/webpack-sources": "npm:*"
-    "@typescript-eslint/eslint-plugin": "npm:*"
-    "@typescript-eslint/parser": "npm:*"
-    babel-loader: "npm:*"
-    babel-plugin-transform-modern-regexp: "npm:*"
-    babel-preset-minify: "npm:*"
-    clientnode: "npm:^3.0.1128"
-    css-loader: "npm:*"
-    cssnano: "npm:*"
-    documentation-website: "npm:*"
-    ejs: "npm:*"
-    eslint: "npm:*"
-    eslint-config-google: "npm:*"
-    eslint-plugin-jsdoc: "npm:*"
-    exports-loader: "npm:*"
-    extract-loader: "npm:*"
-    favicons: "npm:*"
-    favicons-webpack-plugin: "npm:*"
-    glob-all: "npm:*"
-    html-loader: "npm:*"
-    html-minifier: "npm:*"
-    html-webpack-plugin: "npm:*"
-    image-minimizer-webpack-plugin: "npm:*"
-    imports-loader: "npm:*"
-    jest: "npm:*"
-    jest-environment-jsdom: "npm:*"
-    jsdoc: "npm:*"
-    mini-css-extract-plugin: "npm:*"
-    mkdirp: "npm:*"
-    node-fetch: "npm:*"
-    postcss: "npm:*"
-    postcss-fontpath: "npm:*"
-    postcss-import: "npm:*"
-    postcss-loader: "npm:*"
-    postcss-preset-env: "npm:*"
-    postcss-sprites: "npm:*"
-    postcss-url: "npm:*"
-    rimraf: "npm:>=5"
-    script-loader: "npm:*"
-    shx: "npm:*"
-    style-loader: "npm:*"
-    stylelint: "npm:*"
-    stylelint-config-standard: "npm:*"
-    stylelint-config-standard-scss: "npm:*"
-    typescript: "npm:*"
-    typescript-plugin-css-modules: "npm:*"
-    webpack: "npm:*"
-    webpack-cli: "npm:*"
-    webpack-sources: "npm:*"
-    workbox-webpack-plugin: "npm:*"
+    "@babel/cli": "npm:^7.23.9"
+    "@babel/core": "npm:^7.24.0"
+    "@babel/eslint-parser": "npm:^7.23.10"
+    "@babel/plugin-proposal-class-properties": "npm:^7.18.6"
+    "@babel/plugin-proposal-decorators": "npm:^7.24.0"
+    "@babel/plugin-proposal-nullish-coalescing-operator": "npm:^7.18.6"
+    "@babel/plugin-transform-runtime": "npm:^7.24.0"
+    "@babel/preset-env": "npm:^7.24.0"
+    "@babel/preset-typescript": "npm:^7.23.3"
+    "@babel/runtime": "npm:^7.24.0"
+    "@types/ejs": "npm:^3.1.5"
+    "@types/html-minifier": "npm:^4.0.5"
+    "@types/html-minifier-terser": "npm:^7.0.2"
+    "@types/imagemin": "npm:^8.0.5"
+    "@types/node": "npm:^20.11.24"
+    "@types/postcss-import": "npm:^14.0.3"
+    "@types/postcss-url": "npm:^10.0.4"
+    "@types/webpack-env": "npm:^1.18.4"
+    "@types/webpack-sources": "npm:^3.2.3"
+    "@typescript-eslint/eslint-plugin": "npm:^7.1.0"
+    "@typescript-eslint/parser": "npm:^7.1.0"
+    babel-loader: "npm:^9.1.3"
+    babel-plugin-transform-modern-regexp: "npm:^0.0.6"
+    babel-preset-minify: "npm:^0.5.2"
+    clientnode: "npm:^3.0.1130"
+    css-loader: "npm:^6.10.0"
+    cssnano: "npm:^6.0.5"
+    documentation-website: "npm:^1.0.325"
+    ejs: "npm:^3.1.9"
+    eslint: "npm:^8.57.0"
+    eslint-config-google: "npm:^0.14.0"
+    eslint-plugin-jsdoc: "npm:^48.2.0"
+    exports-loader: "npm:^5.0.0"
+    extract-loader: "npm:^5.1.0"
+    favicons: "npm:^7.1.5"
+    favicons-webpack-plugin: "npm:^6.0.1"
+    glob-all: "npm:^3.3.1"
+    html-loader: "npm:^5.0.0"
+    html-minifier: "npm:^4.0.0"
+    html-webpack-plugin: "npm:^5.6.0"
+    image-minimizer-webpack-plugin: "npm:^4.0.0"
+    imports-loader: "npm:^5.0.0"
+    jest: "npm:^29.7.0"
+    jest-environment-jsdom: "npm:^29.7.0"
+    jsdoc: "npm:^4.0.2"
+    mini-css-extract-plugin: "npm:^2.8.1"
+    mkdirp: "npm:^3.0.1"
+    node-fetch: "npm:^3.3.2"
+    postcss: "npm:^8.4.35"
+    postcss-fontpath: "npm:^1.0.0"
+    postcss-import: "npm:^16.0.1"
+    postcss-loader: "npm:^8.1.1"
+    postcss-preset-env: "npm:^9.4.0"
+    postcss-sprites: "npm:^4.2.1"
+    postcss-url: "npm:^10.1.3"
+    rimraf: "npm:^5.0.5"
+    script-loader: "npm:^0.7.2"
+    shx: "npm:^0.3.4"
+    style-loader: "npm:^3.3.4"
+    stylelint: "npm:^16.2.1"
+    stylelint-config-standard: "npm:^36.0.0"
+    stylelint-config-standard-scss: "npm:^13.0.0"
+    typescript: "npm:^5.3.3"
+    typescript-plugin-css-modules: "npm:^5.1.0"
+    webpack: "npm:^5.90.3"
+    webpack-cli: "npm:^5.1.4"
+    webpack-sources: "npm:^3.2.3"
+    workbox-webpack-plugin: "npm:^7.0.0"
   peerDependencies:
     "@babel/eslint-parser": "*"
     "@babel/preset-react": "*"
@@ -14613,7 +14613,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"webpack-cli@npm:*":
+"webpack-cli@npm:^5.1.4":
   version: 5.1.4
   resolution: "webpack-cli@npm:5.1.4"
   dependencies:
@@ -14656,13 +14656,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-sources@npm:*, webpack-sources@npm:^3.2.3":
-  version: 3.2.3
-  resolution: "webpack-sources@npm:3.2.3"
-  checksum: 10c0/2ef63d77c4fad39de4a6db17323d75eb92897b32674e97d76f0a1e87c003882fc038571266ad0ef581ac734cbe20952912aaa26155f1905e96ce251adbb1eb4e
-  languageName: node
-  linkType: hard
-
 "webpack-sources@npm:^1.4.3":
   version: 1.4.3
   resolution: "webpack-sources@npm:1.4.3"
@@ -14673,7 +14666,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:*":
+"webpack-sources@npm:^3.2.3":
+  version: 3.2.3
+  resolution: "webpack-sources@npm:3.2.3"
+  checksum: 10c0/2ef63d77c4fad39de4a6db17323d75eb92897b32674e97d76f0a1e87c003882fc038571266ad0ef581ac734cbe20952912aaa26155f1905e96ce251adbb1eb4e
+  languageName: node
+  linkType: hard
+
+"webpack@npm:^5.90.3":
   version: 5.90.3
   resolution: "webpack@npm:5.90.3"
   dependencies:
@@ -15030,7 +15030,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workbox-webpack-plugin@npm:*":
+"workbox-webpack-plugin@npm:^7.0.0":
   version: 7.0.0
   resolution: "workbox-webpack-plugin@npm:7.0.0"
   dependencies:
