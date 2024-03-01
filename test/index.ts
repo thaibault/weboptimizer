@@ -15,6 +15,9 @@ jest.setTimeout(60 * 1000)
 
 for (const folder of ['simple', 'scss']) {
     // Enforce test folder to be handled as dedicated projects via yarn.
+    console.debug(
+        'Create indicator file:', resolve(__dirname, folder, 'yarn.lock')
+    )
     closeSync(openSync(resolve(__dirname, folder, 'yarn.lock'), 'w'))
     spawnChildProcessSync(
         'yarn',

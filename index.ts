@@ -83,6 +83,11 @@ const main = async (
     // eslint-disable-next-line no-eval
     environment:NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
 ):Promise<() => void> => {
+    if (environment.PATH && !environment.PATH.includes(':node_modules/.bin'))
+        environment.PATH += ':node_modules/.bin'
+    else
+        environment.PATH = 'node_modules/.bin'
+
     const configuration:ResolvedConfiguration = loadConfiguration(
         context,
         currentWorkingDirectory,
