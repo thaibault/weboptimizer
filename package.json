@@ -74,7 +74,6 @@
     "lint": "yarn lint:base",
     "lint:base": "eslint --ignore-pattern '**/exclude/*' --ignore-pattern '*.compiled.*' --ignore-pattern '*.d.ts' --ignore-pattern '*.js' --parser-options=project:tsconfig.json '*.ts' 'test/*.ts'",
     "prepare": "yarn build",
-    "postversion": "yarn publish --non-interactive; git push --tags && git push",
     "prettify": "yarn lint:base --fix || true",
     "test": "yarn build:test && jest --config ./jest.json --noStackTrace --root-dir './' --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/helper.js test/ejsLoader.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
     "test:coverage": "yarn test --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults",
