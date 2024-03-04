@@ -130,7 +130,7 @@
     "@typescript-eslint/parser": "^7.1.0",
     "css-loader": "^6.10.0",
     "cssnano": "^6.0.5",
-    "documentation-website": "^1.0.325",
+    "documentation-website": "^1.0.326",
     "eslint": "^8.57.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-jsdoc": "^48.2.0",
