@@ -68,7 +68,6 @@ process.env.UV_THREADPOOL_SIZE = '128'
  * @param commandLineArguments - Arguments to take into account.
  * @param webOptimizerPath - Current optimizer context path.
  * @param environment - Environment variables to take into account.
- *
  * @returns Nothing.
  */
 const main = async (
@@ -80,7 +79,6 @@ const main = async (
         NOTE: We have to avoid that some pre-processor removes this
         assignment.
     */
-    // eslint-disable-next-line no-eval
     environment:NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
 ):Promise<() => void> => {
     if (environment.PATH && !environment.PATH.includes(':node_modules/.bin'))

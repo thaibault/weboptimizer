@@ -19,9 +19,14 @@
     "include": [
         "../../*.ts", "../../*.tsx",
         "../../*/*.ts", "../../*/*.tsx",
+
         "../../assets/source/**/*.ts", "../../assets/source/**/*.tsx",
         "../../assets/src/**/*.ts", "../../assets/src/**/*.tsx",
+
         "../../source/**/*.ts", "../../source/**/*.tsx",
-        "../../src/**/*.ts", "../../src/**/*.tsx"
+        "../../src/**/*.ts", "../../src/**/*.tsx",
+
+        "../../test/*.ts", "../../test/*.tsx",
+        "../../test/*/*.ts", "../../test/*/*.tsx"
     ]
 }

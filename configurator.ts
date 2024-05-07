@@ -44,7 +44,6 @@ export let loadedConfiguration:null|ResolvedConfiguration = null
  * @param commandLineArguments - Arguments to take into account.
  * @param webOptimizerPath - Current optimizer context path.
  * @param environment - Environment variables to take into account.
- *
  * @returns Nothing.
  */
 export const load = (
@@ -105,7 +104,7 @@ export const load = (
                 )
                     metaConfiguration.default.path.context =
                         currentWorkingDirectory
-            } catch (error) {
+            } catch {
                 // Continue regardless of error.
             }
     }
@@ -116,7 +115,7 @@ export const load = (
         specificConfiguration = currentRequire!(join(
             metaConfiguration.default.path.context, 'package'
         )) as PlainObject
-    } catch (error) {
+    } catch {
         metaConfiguration.default.path.context = currentWorkingDirectory
     }
     // endregion
@@ -547,11 +546,9 @@ export const load = (
                     htmlConfiguration.template.options
                 ) as string)
             ) as string
-            /* eslint-disable @typescript-eslint/unbound-method */
             requestString.replace = ((value:string) => ():string => value)(
                 htmlConfiguration.template.filePath
             )
-            /* eslint-enable @typescript-eslint/unbound-method */
             htmlConfiguration.template.request = requestString
         }
     }

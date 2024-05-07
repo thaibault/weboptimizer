@@ -165,7 +165,6 @@ else {
  * Provides a generic browser api in node or web contexts.
  * @param replaceWindow - Indicates whether a potential existing window object
  * should be replaced or not.
- *
  * @returns Determined environment.
  */
 export const getInitializedBrowser = async (

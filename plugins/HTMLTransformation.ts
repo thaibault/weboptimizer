@@ -40,131 +40,125 @@ export class HTMLTransformation {
             HTMLTransformationOptions
     }
 
-    apply(compiler: Compiler): void {
+    private process(
+        data:HTMLWebpackPluginBeforeEmitData
+    ):HTMLWebpackPluginBeforeEmitData {
+        /*
+            NOTE: We have to prevent creating native "style" dom nodes to
+            prevent jsdom from parsing the entire cascading style sheet. Which
+            is error prune and very resource intensive.
+        */
+        const styleContents:Array<string> = []
+        data.html = data.html.replace(
+            /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi,
+            (
+                match:string,
+                startTag:string,
+                content:string,
+                endTag:string
+            ):string => {
+                styleContents.push(content)
+
+                return `${startTag}${endTag}`
+            }
+        )
+
+        let dom:DOM
+        try {
+            /*
+                NOTE: We have to translate template delimiter to html
+                compatible sequences and translate it back later to avoid
+                unexpected escape sequences in resulting html.
+            */
+            dom = new DOM(
+                data.html
+                    .replace(/<%/g, '##+#+#+##')
+                    .replace(/%>/g, '##-#-#-##')
+            )
+        } catch (error) {
+            return data
+        }
+
+        const linkables:Mapping = {
+            link: 'href',
+            script: 'src'
+        }
+        for (const [tagName, attributeName] of Object.entries(
+            linkables
+        ))
+            for (const domNode of Array.from<HTMLElement>(
+                dom.window.document.querySelectorAll<HTMLElement>(
+                    `${tagName}[${attributeName}*="?` +
+                    `${this.options.hashAlgorithm}="]`
+                )
+            ))
+                /*
+                    NOTE: Removing symbols after a "&" in hash string is
+                    necessary to match the generated request strings in offline
+                    plugin.
+                */
+                domNode.setAttribute(
+                    attributeName,
+                    domNode
+                        .getAttribute(attributeName)!
+                        .replace(
+                            new RegExp(
+                                `(\\?${this.options.hashAlgorithm}=[^&]+).*$`
+                            ),
+                            '$1'
+                        )
+                )
+        // NOTE: We have to restore template delimiter and style contents.
+        data.html = dom.serialize()
+            .replace(/##\+#\+#\+##/g, '<%')
+            .replace(/##-#-#-##/g, '%>')
+            .replace(
+                /(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi,
+                (
+                    match:string, startTag:string, endTag:string
+                ):string =>
+                    `${startTag}${styleContents.shift() as string}${endTag}`
+            )
+        // region post compilation
+        for (const htmlFileSpecification of this.options.files)
+            if (htmlFileSpecification.filename === (
+                data.plugin as
+                    unknown as
+                    {options:HtmlWebpackPlugin.ProcessedOptions}
+            ).options.filename) {
+                for (const loaderConfiguration of (
+                    [] as Array<WebpackLoader>
+                ).concat(htmlFileSpecification.template.use))
+                    if (
+                        loaderConfiguration.options?.compileSteps &&
+                        typeof loaderConfiguration.options
+                            .compileSteps === 'number'
+                    )
+                        data.html = ejsLoader.bind({
+                            query: Tools.extend(
+                                true,
+                                Tools.copy(loaderConfiguration.options) ||
+                                {},
+                                htmlFileSpecification.template
+                                    .postCompileOptions
+                            )
+                        } as LoaderContext<EJSLoaderConfiguration>)(data.html)
+
+                break
+            }
+        // endregion
+        return data
+    }
+
+    apply(compiler:Compiler):void {
         compiler.hooks.compilation.tap(
             'WebOptimizer',
-            (compilation:Compilation): void => {
+            (compilation:Compilation):void => {
                 this.options.htmlPlugin
                     .getHooks(compilation)
                     .beforeEmit.tap(
-                    'WebOptimizerPostProcessHTML',
-                    (data: HTMLWebpackPluginBeforeEmitData): HTMLWebpackPluginBeforeEmitData => {
-                        /*
-                            NOTE: We have to prevent creating native "style" dom nodes
-                            to prevent jsdom from parsing the entire cascading style
-                            sheet. Which is error prune and very resource intensive.
-                        */
-                        const styleContents:Array<string> = []
-                        data.html = data.html.replace(
-                            /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi,
-                            (
-                                match:string,
-                                startTag:string,
-                                content:string,
-                                endTag:string
-                            ):string => {
-                                styleContents.push(content)
-
-                                return `${startTag}${endTag}`
-                            })
-
-                        let dom:DOM
-                        try {
-                            /*
-                                NOTE: We have to translate template delimiter to html
-                                compatible sequences and translate it back later to
-                                avoid unexpected escape sequences in resulting html.
-                            */
-                            dom = new DOM(
-                                data.html
-                                    .replace(/<%/g, '##+#+#+##')
-                                    .replace(/%>/g, '##-#-#-##')
-                            )
-                        } catch (error) {
-                            return data
-                        }
-
-                        const linkables: Mapping = {
-                            link: 'href',
-                            script: 'src'
-                        }
-                        for (const [tagName, attributeName] of Object.entries(
-                            linkables
-                        ))
-                            for (const domNode of Array.from<HTMLElement>(
-                                dom.window.document.querySelectorAll<HTMLElement>(
-                                    `${tagName}[${attributeName}*="?` +
-                                    `${this.options.hashAlgorithm}="]`
-                                )
-                            ))
-                                /*
-                                    NOTE: Removing symbols after a "&" in hash
-                                    string is necessary to match the generated
-                                    request strings in offline plugin.
-                                */
-                                domNode.setAttribute(
-                                    attributeName,
-                                    domNode
-                                        .getAttribute(attributeName)!
-                                        .replace(
-                                            new RegExp(
-                                                '(\\?' +
-                                                `${this.options.hashAlgorithm}=` +
-                                                '[^&]+).*$'
-                                            ),
-                                            '$1'
-                                        )
-                                )
-                        /*
-                            NOTE: We have to restore template delimiter and style
-                            contents.
-                        */
-                        data.html = dom.serialize()
-                            .replace(/##\+#\+#\+##/g, '<%')
-                            .replace(/##-#-#-##/g, '%>')
-                            .replace(
-                                /(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi,
-                                (
-                                    match:string, startTag:string, endTag:string
-                                ): string =>
-                                    `${startTag}${styleContents.shift() as string}` +
-                                    endTag
-                            )
-                        // region post compilation
-                        for (const htmlFileSpecification of this.options.files)
-                            if (htmlFileSpecification.filename === (
-                                data.plugin as
-                                    unknown as
-                                    { options: HtmlWebpackPlugin.ProcessedOptions }
-                            ).options.filename) {
-                                for (const loaderConfiguration of (
-                                    [] as Array<WebpackLoader>
-                                ).concat(htmlFileSpecification.template.use))
-                                    if (
-                                        loaderConfiguration.options?.compileSteps &&
-                                        typeof loaderConfiguration.options
-                                            .compileSteps === 'number'
-                                    )
-                                        data.html = ejsLoader.bind({
-                                            query: Tools.extend(
-                                                true,
-                                                Tools.copy(
-                                                    loaderConfiguration.options
-                                                ) ||
-                                                {},
-                                                htmlFileSpecification.template
-                                                    .postCompileOptions
-                                            )
-                                        } as LoaderContext<EJSLoaderConfiguration>)(
-                                            data.html
-                                        )
-
-                                break
-                            }
-                        // endregion
-                        return data
-                    }
-                )
+                        'WebOptimizerPostProcessHTML', this.process.bind(this)
+                    )
             }
         )
     }

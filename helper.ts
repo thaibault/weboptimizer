@@ -65,7 +65,6 @@ export class Helper {
      * locations.
      * @param filePath - Path to file to check.
      * @param locationsToCheck - Locations to take into account.
-     *
      * @returns Value "true" if given file path is within one of given
      * locations or "false" otherwise.
      */
@@ -84,7 +83,6 @@ export class Helper {
      * Strips loader informations form given module request including loader
      * prefix and query parameter.
      * @param moduleID - Module request to strip.
-     *
      * @returns Given module id stripped.
      */
     static stripLoader(this:void, moduleID:string):string {
@@ -103,7 +101,6 @@ export class Helper {
     /**
      * Converts given list of path to a normalized list with unique values.
      * @param paths - File paths.
-     *
      * @returns The given file path list with normalized unique values.
      */
     static normalizePaths(this:void, paths:Array<string>):Array<string> {
@@ -123,7 +120,6 @@ export class Helper {
      * associated informations.
      * @param template - File path to process placeholder in.
      * @param scope - Scope to use for processing.
-     *
      * @returns Processed file path.
      */
     static renderFilePathTemplate(
@@ -160,7 +156,6 @@ export class Helper {
      * account.
      * @param relativeModuleLocations - List of relative directory paths to
      * search for modules in.
-     *
      * @returns A new resolved request.
      */
     static applyContext(
@@ -246,7 +241,6 @@ export class Helper {
      * @param inPlaceDynamicLibrary - Indicates whether requests with
      * integrated loader configurations should be marked as external or not.
      * @param encoding - Encoding for file names to use during file traversing.
-     *
      * @returns A new resolved request indicating whether given request is an
      * external one.
      */
@@ -404,7 +398,6 @@ export class Helper {
      * types.
      * @param paths - List of paths to search if given path doesn't reference
      * a file directly.
-     *
      * @returns Determined file type or "null" of given file couldn't be
      * determined.
      */
@@ -446,7 +439,6 @@ export class Helper {
      * @param entryPath - Path to analyse nested structure.
      * @param pathsToIgnore - Paths which marks location to ignore.
      * @param mainFileBasenames - File basenames to sort into the front.
-     *
      * @returns Converted build configuration.
      */
     static resolveBuildConfigurationFilePaths(
@@ -543,7 +535,6 @@ export class Helper {
      * @param packageAliasPropertyNames - List of package file alias property
      * names to search for package specific module aliases.
      * @param encoding - File name encoding to use during file traversing.
-     *
      * @returns Object with a file path and directory path key mapping to
      * corresponding list of paths.
      */
@@ -621,7 +612,6 @@ export class Helper {
      * @param context - File path to determine relative to.
      * @param referencePath - Path to resolve local modules relative to.
      * @param pathsToIgnore - Paths which marks location to ignore.
-     *
      * @returns Given injections with resolved folder pointing modules.
      */
     static resolveModulesInFolders(
@@ -694,7 +684,6 @@ export class Helper {
      * (mapping from chunk name to array of module ids). This method converts
      * each representation into the normalized plain object notation.
      * @param givenInjection - Given entry injection to normalize.
-     *
      * @returns Normalized representation of given entry injection.
      */
     static normalizeGivenInjection(
@@ -743,7 +732,6 @@ export class Helper {
      * @param referencePath - Reference path from where local files should be
      * resolved.
      * @param pathsToIgnore - Paths which marks location to ignore.
-     *
      * @returns Given injection with resolved marked indicators.
      */
     static resolveAutoInjection<T extends GivenInjectionConfiguration>(
@@ -776,7 +764,6 @@ export class Helper {
 
         for (const name of ['entry', 'external'] as const) {
             const injectionType:GivenInjection = injection[name]
-            /* eslint-disable curly */
             if (Tools.isPlainObject(injectionType)) {
                 for (let [chunkName, chunk] of Object.entries(injectionType))
                     if (chunk === '__auto__') {
@@ -795,7 +782,6 @@ export class Helper {
                         chunk.reverse()
                     }
             } else if (injectionType === '__auto__')
-            /* eslint-enable curly */
                 (
                     injection[name as keyof GivenInjectionConfiguration] as
                         Mapping
@@ -815,7 +801,6 @@ export class Helper {
      * exclude (specified by path or id) or a mapping from chunk names to
      * module ids.
      * @param context - File path to use as starting point.
-     *
      * @returns All determined module file paths.
      */
     static getAutoInjection(
@@ -887,7 +872,6 @@ export class Helper {
      * @param packageAliasPropertyNames - List of package file alias property
      * names to search for package specific module aliases.
      * @param encoding - Encoding to use for file names during file traversing.
-     *
      * @returns Path if found and / or additional package aliases to consider.
      */
     static determineModuleFilePathInPackage(
@@ -973,7 +957,6 @@ export class Helper {
      * @param packageAliasPropertyNames - List of package file alias property
      * names to search for package specific module aliases.
      * @param encoding - Encoding to use for file names during file traversing.
-     *
      * @returns File path or given module id if determinations has failed or
      * wasn't necessary.
      */
@@ -1090,7 +1073,6 @@ export class Helper {
      * Determines a concrete file path for given module id.
      * @param moduleID - Module id to determine.
      * @param aliases - Mapping of aliases to take into account.
-     *
      * @returns The alias applied given module id.
      */
     static applyAliases(this:void, moduleID:string, aliases:Mapping):string {
@@ -1108,7 +1090,6 @@ export class Helper {
      * @param moduleID - Module id to determine.
      * @param replacements - Mapping of regular expressions to their
      * corresponding replacements.
-     *
      * @returns The replacement applied given module id.
      */
     static applyModuleReplacements(
@@ -1126,7 +1107,6 @@ export class Helper {
      * Determines the nearest package configuration file from given file path.
      * @param start - Reference location to search from.
      * @param fileName - Package configuration file name.
-     *
      * @returns Determined file path.
      */
     static findPackageDescriptorFilePath(
@@ -1157,7 +1137,6 @@ export class Helper {
      * @param modulePath - Module path to take as reference location (leaf in
      * tree).
      * @param fileName - Package configuration file name.
-     *
      * @returns A object containing found parsed configuration an their
      * corresponding file path.
      */

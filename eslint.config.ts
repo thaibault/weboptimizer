@@ -1,22 +1,26 @@
 import globals from 'globals'
+import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
-import {dirname} from 'path'
-import {fileURLToPath} from 'url'
-import {FlatCompat} from '@eslint/eslintrc'
 import js from '@eslint/js'
+import typescript from 'typescript-eslint'
 import typescriptPlugin from '@typescript-eslint/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
 
-// Mimic CommonJS variables
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const compat = new FlatCompat({baseDirectory: __dirname})
+// Remove unsported rules.
+const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
+const googleRules = Object.keys(google.rules)
+    .filter((key) => !unsuportedRules.includes(key))
+    .reduce(
+        (object, key) => ({
+            ...object,
+            [key]: google.rules[key]
+        }),
+        {}
+    )
 
 export default [
     js.configs.recommended,
-    ...compat.extends('plugin:@typescript-eslint/eslint-recommended'),
-    ...compat.extends('plugin:@typescript-eslint/recommended-requiring-type-checking'),
-    ...compat.extends('google'),
+    ...typescript.configs.recommended,
     jsdoc.configs['flat/recommended'],
 
     {
@@ -33,7 +37,7 @@ export default [
                     jsx: true
                 },
                 impliedStrict: true,
-                project: 'node_modules/weboptimizer/tsconfigLibrary.json',
+                project: './tsconfig.json'
             },
             sourceType: 'module'
         },
@@ -42,11 +46,15 @@ export default [
         ],
         plugins: {
             jsdoc,
-            typescriptPlugin
+            '@typescript-eslint': typescriptPlugin
         },
 
         rules: {
-            '@typescript-eslint/no-non-null-assertion': 0,
+            ...googleRules,
+            ...typescriptPlugin.configs.recommended.rules,
+
+            '@typescript-eslint/no-implied-eval': 'error',
+            '@typescript-eslint/no-non-null-assertion': 'off',
             '@typescript-eslint/no-this-alias': [
                 'error',
                 {allowedNames: ['self']}
@@ -54,8 +62,8 @@ export default [
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {
-                    'argsIgnorePattern': '^_',
-                    'varsIgnorePattern': '^_'
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_'
                 }
             ],
             '@typescript-eslint/type-annotation-spacing': [
@@ -71,27 +79,39 @@ export default [
                     }
                 }
             ],
+
+            'jsdoc/check-param-names': 'error',
+            'jsdoc/check-tag-names': 'error',
+            'jsdoc/require-description-complete-sentence': 'error',
+            'jsdoc/require-hyphen-before-param-description': 'error',
+            'jsdoc/require-param': 'error',
+            'jsdoc/require-param-description': 'error',
+            'jsdoc/require-param-type': 'off',
+            'jsdoc/require-returns-description': 'error',
+            'jsdoc/require-returns-type': 'off',
+            'jsdoc/tag-lines': ['error', 'never'],
+
             'arrow-parens': ['error', 'always'],
-            'block-scoped-var': 0,
+            'block-scoped-var': 'off',
             camelcase: ['error', {properties: 'always'}],
             'comma-dangle': ['error', 'never'],
             curly: ['error', 'multi'],
             indent: ['error', 4, {ignoreComments: true}],
             'max-nested-callbacks': ['error', 10],
 
-            'new-cap': 0,
+            'new-cap': 'off',
 
-            'no-invalid-this': 0,
+            'no-invalid-this': 'off',
             'no-unused-vars': [
-                'error',
+                'off',
                 {
-                    'argsIgnorePattern': '^_',
-                    'varsIgnorePattern': '^_'
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_'
                 }
             ],
-            'no-constant-condition': 0,
-            'no-new-func': 0,
-            'no-new-wrappers': 0,
+            'no-constant-condition': 'off',
+            'no-new-func': 'off',
+            'no-new-wrappers': 'off',
 
             'quote-props': [
                 'error',
@@ -130,17 +150,7 @@ export default [
                     ]
                 }
             ],
-            'space-infix-ops': 0,
-
-            'jsdoc/check-param-names': 'error',
-            'jsdoc/check-tag-names': 'error',
-            'jsdoc/require-description-complete-sentence': 'error',
-            'jsdoc/require-hyphen-before-param-description': 'error',
-            'jsdoc/require-param': 0,
-            'jsdoc/require-param-description': 'error',
-            'jsdoc/require-param-type': 0,
-            'jsdoc/require-returns-description': 'error',
-            'jsdoc/require-returns-type': 0
+            'space-infix-ops': 'off'
         }
     }
 ]

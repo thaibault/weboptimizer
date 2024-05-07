@@ -51,8 +51,8 @@
     "stylelintConfigurator.d.ts",
     "stylelintConfigurator.js",
     "tsconfig.json",
-    "tsconfigApplication.json",
-    "tsconfigLibrary.json",
+    "tsconfig.application.json",
+    "tsconfig.library.json",
     "type.d.ts",
     "type.js",
     "webpackConfigurator.d.ts",
@@ -76,8 +76,7 @@
     "clear": "rimraf --glob apiDocumentation browser.d.ts configurator.d.ts ejsLoader.d.ts eslint.config.d.ts helper.d.ts index.d.ts jestSetup.d.ts jestEnvironmentBrowser.d.ts 'plugins/*.d.ts' 'plugins/*.js' stylelintConfigurator.d.ts 'test/*.js' 'test/*.compiled.*' 'test/*.d.ts' 'test/**/.yarn' 'test/**/yarn.lock' 'test/**/node_modules' type.d.ts webpackConfigurator.d.ts '*.js' '*.compiled.*' '*.compiled' '*.html' '*.log' node_modules/weboptimizer .coverage .nyc_output",
     "document": "yarn build:plain && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.js",
     "lint": "yarn build:lint && yarn lint:base",
-    "lint:base": "eslint",
-    "lint:backup": "eslint *.ts test/*.ts",
+    "lint:base": "eslint *.ts */*.ts test/*/*.ts",
     "prepare": "yarn build",
     "prettify": "yarn lint:base --fix || true",
     "test": "yarn build:test && jest --config ./jest.json --noStackTrace --root-dir './' --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/helper.js test/ejsLoader.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
@@ -122,6 +121,7 @@
     "@babel/cli": "^7.24.5",
     "@babel/eslint-parser": "^7.24.5",
     "@types/ejs": "^3.1.5",
+    "@types/eslint": "^8.56.10",
     "@types/html-minifier": "^4.0.5",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/imagemin": "^8.0.5",
@@ -159,6 +159,7 @@
     "stylelint": "^16.5.0",
     "stylelint-config-standard": "^36.0.0",
     "stylelint-config-standard-scss": "^13.1.0",
+    "typescript-eslint": "^7.8.0",
     "typescript-plugin-css-modules": "^5.1.0",
     "workbox-webpack-plugin": "^7.1.0"
   },
@@ -170,8 +171,6 @@
     "@types/imagemin": "*",
     "@types/node": "*",
     "@types/webpack-env": "*",
-    "@typescript-eslint/eslint-plugin": "*",
-    "@typescript-eslint/parser": "*",
     "css-loader": "*",
     "cssnano": "*",
     "eslint": "*",
@@ -416,7 +415,7 @@
             "--emitDeclarationOnly",
             "--project",
             {
-              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfigApplication.json`"
+              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.application.json`"
             }
           ],
           "command": "tsc"
@@ -426,7 +425,7 @@
             "--noEmit",
             "--project",
             {
-              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfigApplication.json`"
+              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.application.json`"
             }
           ],
           "command": "tsc"
@@ -1612,7 +1611,7 @@
             "--emitDeclarationOnly",
             "--project",
             {
-              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfigLibrary.json`"
+              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.library.json`"
             }
           ]
         },
@@ -1621,7 +1620,7 @@
             "--noEmit",
             "--project",
             {
-              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfigLibrary.json`"
+              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.library.json`"
             }
           ]
         },

@@ -81,9 +81,11 @@ export class InPlaceAssetsIntoHTML {
                                         (new RegExp(pattern)).test(name)
                                     )
                             ) {
-                                const newAttributes:HtmlWebpackPlugin.HtmlTagObject[
-                                    'attributes'
-                                    ] = {...tag.attributes}
+                                const newAttributes:(
+                                    HtmlWebpackPlugin.HtmlTagObject[
+                                        'attributes'
+                                    ]
+                                ) = {...tag.attributes}
                                 delete newAttributes.href
                                 delete newAttributes.src
 
