@@ -15852,8 +15852,6 @@ __metadata:
     "@types/imagemin": "*"
     "@types/node": "*"
     "@types/webpack-env": "*"
-    "@typescript-eslint/eslint-plugin": "*"
-    "@typescript-eslint/parser": "*"
     css-loader: "*"
     cssnano: "*"
     eslint: "*"
