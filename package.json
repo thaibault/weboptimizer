@@ -59,7 +59,6 @@
     "webpackConfigurator.js"
   ],
   "bin": "index.js",
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/thaibault/weboptimizer.git"
