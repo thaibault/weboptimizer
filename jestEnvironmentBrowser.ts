@@ -20,22 +20,13 @@
  * Implements the default browser environment to run script context in.
  */
 export class BrowserEnvironment {
-    /**
-     * @returns Nothing.
-     */
-    setup():Promise<void> {
+    setup() {
         return Promise.resolve()
     }
-    /**
-     * @returns Nothing.
-     */
-    teardown():void {
-        return
-    }
-    /**
-     * @returns Null.
-     */
-    runScript():null {
+
+    teardown() {}
+
+    runScript() {
         return null
     }
 }

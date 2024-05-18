@@ -13,7 +13,11 @@ interface PostcssTransformer {
 }
 
 /** @module declarations */
+declare module '@eslint/eslintrc'
+declare module '@eslint/js'
+declare module '@typescript-eslint/parser'
 declare module 'babel-preset-minify'
+declare module 'eslint-config-google'
 declare module 'glob-all' {
     export default function(globs:Array<string>):Promise<Array<string>>
     export function sync(globs:Array<string>):Array<string>
@@ -43,7 +47,7 @@ declare module 'postcss-sprites' {
     }>):PostcssTransformer
 }
 declare module 'svgo' {
-    export type Options = any
+    export type Options = unknown
 }
 declare module 'webOptimizerDefaultTemplateFilePath'
 declare module '*.module' {

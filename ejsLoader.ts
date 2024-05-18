@@ -35,7 +35,7 @@ import {Extensions, Replacements, ResolvedConfiguration} from './type'
 // endregion
 // region types
 export type PreCompiledTemplateFunction =
-    ((...parameters:Array<unknown>) => string)
+    ((..._parameters:Array<unknown>) => string)
 export type TemplateFunction =
     EJSTemplateFunction | PreCompiledTemplateFunction
 export type CompilerOptions =
@@ -73,7 +73,6 @@ const configuration:ResolvedConfiguration = getConfiguration()
 /**
  * Main transformation function.
  * @param source - Input string to transform.
- *
  * @returns Transformed string.
  */
 export const loader = function(
