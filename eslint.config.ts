@@ -42,7 +42,12 @@ export default [
             sourceType: 'module'
         },
         ignores: [
-            '**/exclude/*', '*.compiled.*', '*.d.ts', '*.js'
+            '**/exclude/*',
+            '*.compiled.*',
+            '*.d.ts',
+            '**/*.d.ts',
+            '*.js',
+            '**/*.js'
         ],
         plugins: {
             jsdoc,
