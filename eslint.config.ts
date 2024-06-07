@@ -6,7 +6,7 @@ import typescript from 'typescript-eslint'
 import typescriptPlugin from '@typescript-eslint/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
 
-// Remove unsported rules.
+// Remove unsupported rules.
 const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
 const googleRules = Object.keys(google.rules)
     .filter((key) => !unsuportedRules.includes(key))
