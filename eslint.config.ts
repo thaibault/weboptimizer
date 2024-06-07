@@ -1,13 +1,17 @@
 import clientnode from 'clientnode'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
+import {readFile} from 'fs/promises'
 import globals from 'globals'
-import js from '@eslint/js'
+import {resolve} from 'path'
+import {cwd} from 'process'
 import typescript from 'typescript-eslint'
+import js from '@eslint/js'
 import typescriptPlugin from '@typescript-eslint/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
 
-const {Tools} = clientnode
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Tools = (clientnode as any).Tools
 
 // Remove unsupported rules.
 const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
@@ -17,11 +21,21 @@ const googleRules = Object.keys(google.rules)
         (object, key) => ({...object, [key]: google.rules[key]}), {}
     )
 
+const isLibrary = (
+    JSON.parse(
+        await readFile(resolve(cwd(), './package.json'), {encoding: 'utf-8'})
+    ).default?.webOptimizer?.library ??
+    false
+)
+
 let tsConfigFilePath = ''
 for (const filePath of [
-    './tsconfig.json', './node_modules/weboptimizer/tsconfig.json'
+    './tsconfig.json',
+
+    './node_modules/weboptimizer/tsconfig.' +
+    `${isLibrary ? 'library' : 'application'}.json`
 ])
-    if (Tools.isFileSync(filePath)) {
+    if (await Tools.isFile(filePath)) {
         tsConfigFilePath = filePath
         break
     }
