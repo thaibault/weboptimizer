@@ -1,22 +1,30 @@
-import globals from 'globals'
+import clientnode from 'clientnode'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
+import globals from 'globals'
 import js from '@eslint/js'
 import typescript from 'typescript-eslint'
 import typescriptPlugin from '@typescript-eslint/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
+
+const {Tools} = clientnode
 
 // Remove unsupported rules.
 const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
 const googleRules = Object.keys(google.rules)
     .filter((key) => !unsuportedRules.includes(key))
     .reduce(
-        (object, key) => ({
-            ...object,
-            [key]: google.rules[key]
-        }),
-        {}
+        (object, key) => ({...object, [key]: google.rules[key]}), {}
     )
+
+let tsConfigFilePath = ''
+for (const filePath of [
+    './tsconfig.json', './node_modules/weboptimizer/tsconfig.json'
+])
+    if (Tools.isFileSync(filePath)) {
+        tsConfigFilePath = filePath
+        break
+    }
 
 export default [
     js.configs.recommended,
@@ -37,7 +45,7 @@ export default [
                     jsx: true
                 },
                 impliedStrict: true,
-                project: './tsconfig.json'
+                project: tsConfigFilePath
             },
             sourceType: 'module'
         },
@@ -50,8 +58,7 @@ export default [
             '**/*.js'
         ],
         plugins: {
-            jsdoc,
-            '@typescript-eslint': typescriptPlugin
+            jsdoc
         },
 
         rules: {
