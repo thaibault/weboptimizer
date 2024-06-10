@@ -196,6 +196,7 @@
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "stylelint-config-standard-scss": "*",
+    "typescript-eslint": "*",
     "typescript-plugin-css-modules": "*",
     "webpack-dev-server": "*",
     "workbox-webpack-plugin": "*"
