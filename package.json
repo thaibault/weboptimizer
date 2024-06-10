@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.1468",
+  "version": "2.0.1469",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -196,6 +196,7 @@
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "stylelint-config-standard-scss": "*",
+    "typescript-eslint": "*",
     "typescript-plugin-css-modules": "*",
     "webpack-dev-server": "*",
     "workbox-webpack-plugin": "*"
