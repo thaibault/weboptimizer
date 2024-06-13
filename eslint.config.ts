@@ -113,6 +113,7 @@ export default [
             'jsdoc/require-param': 'error',
             'jsdoc/require-param-description': 'error',
             'jsdoc/require-param-type': 'off',
+            'jsdoc/require-property-type': 'off',
             'jsdoc/require-returns-description': 'error',
             'jsdoc/require-returns-type': 'off',
             'jsdoc/tag-lines': ['error', 'never'],
