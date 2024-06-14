@@ -472,8 +472,8 @@ describe('helper', ():void => {
         Helper.resolveAutoInjection,
 
         [
-            {autoExclude: [], entry: [], external: {}},
-            {autoExclude: [], entry: [], external: {}},
+            {autoExclude: {paths: [], pattern: []}, entry: [], external: {}},
+            {autoExclude: {paths: [], pattern: []}, entry: [], external: {}},
             Helper.resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
@@ -485,8 +485,16 @@ describe('helper', ():void => {
             ['.git', 'node_modules']
         ],
         [
-            {autoExclude: [], entry: 'a.js', external: []},
-            {autoExclude: [], entry: 'a.js', external: []},
+            {
+                autoExclude: {paths: [], pattern: []},
+                entry: 'a.js',
+                external: []
+            },
+            {
+                autoExclude: {paths: [], pattern: []},
+                entry: 'a.js',
+                external: []
+            },
             Helper.resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
@@ -498,8 +506,8 @@ describe('helper', ():void => {
             ['.git', 'node_modules']
         ],
         [
-            {autoExclude: [], entry: ['a'], external: []},
-            {autoExclude: [], entry: ['a'], external: []},
+            {autoExclude: {paths: [], pattern: []}, entry: ['a'], external: []},
+            {autoExclude: {paths: [], pattern: []}, entry: ['a'], external: []},
             Helper.resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
@@ -511,8 +519,12 @@ describe('helper', ():void => {
             ['.git', 'node_modules']
         ],
         [
-            {autoExclude: [], entry: {}, external: []},
-            {autoExclude: [], entry: '__auto__', external: []},
+            {autoExclude: {paths: [], pattern: []}, entry: {}, external: []},
+            {
+                autoExclude: {paths: [], pattern: []},
+                entry: '__auto__',
+                external: []
+            },
             Helper.resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
@@ -524,8 +536,16 @@ describe('helper', ():void => {
             ['.git', 'node_modules']
         ],
         [
-            {autoExclude: [], entry: {index: []}, external: []},
-            {autoExclude: [], entry: {index: '__auto__'}, external: []},
+            {
+                autoExclude: {paths: [], pattern: []},
+                entry: {index: []},
+                external: []
+            },
+            {
+                autoExclude: {paths: [], pattern: []},
+                entry: {index: '__auto__'},
+                external: []
+            },
             Helper.resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
@@ -542,7 +562,8 @@ describe('helper', ():void => {
             Helper.resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
-            ['.git', 'node_modules'],
+            [],
+            [/.*\/\.git\/.*/, '/.*\\/node_modules/.*\\/'],
             './'
         )).toStrictEqual({})
     )

@@ -137,7 +137,7 @@
     "documentation-website": "^1.0.326",
     "eslint": "^9.4.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^48.2.9",
+    "eslint-plugin-jsdoc": "^48.2.12",
     "favicons": "^7.2.0",
     "favicons-webpack-plugin": "^6.0.1",
     "globals": "^15.4.0",
@@ -752,18 +752,25 @@
       "givenCommandLineArguments": [],
       "hashAlgorithm": "md5",
       "injection": {
-        "autoExclude": [
-          "./declarations.d.ts",
-          "./dummy",
-          "./dummyPlugin",
-          "./test",
-          "./test.js",
-          "./test.ts",
-          "./type",
-          "./type.js",
-          "./type.ts",
-          ".coverage"
-        ],
+        "autoExclude": {
+          "paths": [
+            "./declarations.d.ts",
+            "./dummy",
+            "./dummyPlugin",
+            "./test",
+            "./test.js",
+            "./test.ts",
+            "./type",
+            "./type.js",
+            "./type.ts",
+            ".coverage"
+          ],
+          "pattern": [
+            {
+              "__evaluate__": "./test/.+"
+            }
+          ]
+        },
         "chunks": {},
         "entry": {
           "index": "__auto__"
