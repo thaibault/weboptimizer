@@ -15,11 +15,7 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-export const main = ():void =>
+export const main = () =>
     console.info('Running extended dummy module with scss support')
 
 export default main
-// region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregion

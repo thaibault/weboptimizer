@@ -15,10 +15,6 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-export const main = ():void => console.info('Running simple dummy module')
+export const main = () => console.info('Running simple dummy module')
 
 export default main
-// region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregion

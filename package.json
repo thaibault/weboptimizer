@@ -767,7 +767,7 @@
           ],
           "pattern": [
             {
-              "__evaluate__": "./test/.+"
+              "__evaluate__": "/.*\\/test\\/.+/"
             }
           ]
         },
