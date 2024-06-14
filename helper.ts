@@ -824,7 +824,8 @@ export class Helper {
                 if (!(
                     moduleFilePathsToExclude.includes(moduleFilePath) ||
                     Tools.isAnyMatching(
-                        moduleFilePath, moduleFilePathPatternToExclude
+                        moduleFilePath.substring(context.length),
+                        moduleFilePathPatternToExclude
                     )
                 )) {
                     const relativeModuleFilePath =
