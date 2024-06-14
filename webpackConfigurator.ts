@@ -396,7 +396,7 @@ if (configuration.injection.external.modules === '__implicit__')
         We only want to process modules from local context in library mode,
         since a concrete project using this library should combine all assets
         (and de-duplicate them) for optimal bundling results.
-        NOTE: Only native java script and json modules will be marked as
+        NOTE: Only native javascript and json modules will be marked as
         external dependency.
     */
     configuration.injection.external.modules = (

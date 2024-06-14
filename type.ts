@@ -90,7 +90,10 @@ export type GivenInjection =
     AnyFunction|string|Array<string>|Mapping<string|Array<string>>
 export type NormalizedGivenInjection = Mapping<Array<string>>
 export interface GivenInjectionConfiguration {
-    autoExclude:Array<string>
+    autoExclude:{
+        paths:Array<string>
+        pattern:Array<RegExp|string>
+    }
     entry:GivenInjection
     external:GivenInjection
 }

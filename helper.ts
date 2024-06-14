@@ -753,7 +753,7 @@ export class Helper {
         const injection:T = Tools.copy(givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
-                givenInjection.autoExclude,
+                givenInjection.autoExclude.paths,
                 aliases,
                 moduleReplacements,
                 {file: extensions.file.internal},
@@ -771,6 +771,7 @@ export class Helper {
                         const modules:Mapping = Helper.getAutoInjection(
                             buildConfigurations,
                             moduleFilePathsToExclude,
+                            givenInjection.autoExclude.pattern,
                             referencePath
                         )
                         for (const subChunk of Object.values(modules))
@@ -788,6 +789,7 @@ export class Helper {
                 ) = Helper.getAutoInjection(
                                 buildConfigurations,
                                 moduleFilePathsToExclude,
+                                givenInjection.autoExclude.pattern,
                                 referencePath
                             )
         }
@@ -798,8 +800,9 @@ export class Helper {
      * Determines all module file paths.
      * @param buildConfigurations - Resolved build configuration.
      * @param moduleFilePathsToExclude - A list of modules file paths to
-     * exclude (specified by path or id) or a mapping from chunk names to
-     * module ids.
+     * exclude (specified by path or id).
+     * @param moduleFilePathPatternToExclude - A list of modules file paths
+     * pattern to exclude (specified by path or id).
      * @param context - File path to use as starting point.
      * @returns All determined module file paths.
      */
@@ -807,6 +810,7 @@ export class Helper {
         this:void,
         buildConfigurations:ResolvedBuildConfiguration,
         moduleFilePathsToExclude:Array<string>,
+        moduleFilePathPatternToExclude:Array<RegExp|string>,
         context:string
     ):Mapping {
         const result:Mapping = {}
@@ -817,7 +821,12 @@ export class Helper {
                 injectedModuleIDs[buildConfiguration.outputExtension] = []
 
             for (const moduleFilePath of buildConfiguration.filePaths)
-                if (!moduleFilePathsToExclude.includes(moduleFilePath)) {
+                if (!(
+                    moduleFilePathsToExclude.includes(moduleFilePath) ||
+                    Tools.isAnyMatching(
+                        moduleFilePath, moduleFilePathPatternToExclude
+                    )
+                )) {
                     const relativeModuleFilePath =
                         `./${relative(context, moduleFilePath)}`
                     const directoryPath:string =
@@ -934,6 +943,7 @@ export class Helper {
                     }
             }
         }
+
         return result
     }
     /**
