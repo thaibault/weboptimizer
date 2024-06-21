@@ -466,14 +466,14 @@ const main = async (
                     }
 
                     const closeHandler:ProcessHandler = getProcessCloseHandler(
-                            resolve,
-                            reject,
-                            null,
-                            commandLineArguments[2] === 'build' ?
-                                copyAdditionalFilesAndTidyUp :
-                                tidyUp
+                        resolve,
+                        reject,
+                        null,
+                        commandLineArguments[2] === 'build' ?
+                            copyAdditionalFilesAndTidyUp :
+                            tidyUp
 
-                        )
+                    )
 
                     for (const closeEventName of CLOSE_EVENT_NAMES)
                         childProcess.on(closeEventName, closeHandler)

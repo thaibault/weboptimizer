@@ -15,8 +15,8 @@
     endregion
 */
 // region imports
-import Tools, {
-    CONSOLE_METHODS, ProcedureFunction, SynchronousProcedureFunction
+import {
+    CONSOLE_METHODS, ProcedureFunction, SynchronousProcedureFunction, timeout
 } from 'clientnode'
 import {DOMWindow, VirtualConsole} from 'jsdom'
 import {LoaderContext} from 'webpack'
@@ -156,7 +156,7 @@ else {
         browser.windowLoaded = true
     })
 
-    void Tools.timeout(():void => {
+    void timeout(():void => {
         for (const callback of onCreatedListener)
             (callback as SynchronousProcedureFunction)()
     })

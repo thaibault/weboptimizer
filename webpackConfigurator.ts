@@ -785,7 +785,7 @@ new NormalModuleReplacementPlugin(
         if (
             targetPath &&
             /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
-            Tools.isFileSync(targetPath)
+            isFileSync(targetPath)
         ) {
             const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
@@ -810,7 +810,7 @@ new NormalModuleReplacementPlugin(
                 for (const pathPrefix of pathPrefixes) {
                     const alternateTargetPath:string =
                         resolve(pathPrefix, pathSuffix)
-                    if (Tools.isFileSync(alternateTargetPath)) {
+                    if (isFileSync(alternateTargetPath)) {
                         const otherPackageDescriptor:null|PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
                                 alternateTargetPath
@@ -898,7 +898,8 @@ const evaluateAnThrow = <T = unknown>(
 
     return object as T
 }
-const evaluateMapper = <T = unknown>(value:unknown):T => evaluateAnThrow<T>(value)
+const evaluateMapper =
+    <T = unknown>(value:unknown):T => evaluateAnThrow<T>(value)
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration:AdditionalLoaderConfiguration
 ):WebpackLoaderConfiguration => ({
@@ -909,7 +910,9 @@ const evaluateAdditionalLoaderConfiguration = (
         evaluateAnThrow<WebpackLoaderIndicator>(loaderConfiguration.include) ||
         configuration.path.source.base,
     test: new RegExp(evaluateAnThrow<string>(loaderConfiguration.test)),
-    use: evaluateAnThrow<Array<WebpackLoader>|WebpackLoader>(loaderConfiguration.use)
+    use: evaluateAnThrow<Array<WebpackLoader>|WebpackLoader>(
+        loaderConfiguration.use
+    )
 })
 
 const getIncludingPaths = (path:string):Array<string> =>
@@ -1062,7 +1065,9 @@ const genericLoader:GenericLoader = {
             ).includes(filePath) ||
             (module.preprocessor.ejs.exclude === null) ?
                 false :
-                Boolean(evaluateAnThrow(module.preprocessor.ejs.exclude, filePath)),
+                Boolean(evaluateAnThrow(
+                    module.preprocessor.ejs.exclude, filePath
+                )),
         include: getIncludingPaths(configuration.path.source.asset.template),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: module.preprocessor.ejs.additional.pre
@@ -1095,8 +1100,9 @@ const genericLoader:GenericLoader = {
                 module.preprocessor.javaScript.exclude, filePath
             )),
         include: (filePath:string):boolean => {
-            const result:unknown =
-                evaluateAnThrow(module.preprocessor.javaScript.include, filePath)
+            const result:unknown = evaluateAnThrow(
+                module.preprocessor.javaScript.include, filePath
+            )
             if ([null, undefined].includes(result as null)) {
                 for (const includePath of getIncludingPaths(
                     configuration.path.source.asset.javaScript
@@ -1404,7 +1410,9 @@ const genericLoader:GenericLoader = {
         exclude: (filePath:string):boolean =>
             (module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                Boolean(evaluateAnThrow(module.optimizer.image.exclude, filePath)),
+                Boolean(evaluateAnThrow(
+                    module.optimizer.image.exclude, filePath
+                )),
         generator: {
             filename:
                 join(
@@ -1439,7 +1447,9 @@ const genericLoader:GenericLoader = {
             (
                 (module.optimizer.data.exclude === null) ?
                     isFilePathInDependencies(filePath) :
-                    Boolean(evaluateAnThrow(module.optimizer.data.exclude, filePath))
+                    Boolean(evaluateAnThrow(
+                        module.optimizer.data.exclude, filePath
+                    ))
             )
         },
         generator: {
