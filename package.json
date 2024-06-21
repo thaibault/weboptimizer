@@ -363,7 +363,7 @@
         "types": {
           "default": {
             "filePathPattern": {
-              "__evaluate__": "`^${Tools.stringMaskForRegularExpression(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.js$`"
+              "__evaluate__": "`^${string.maskForRegularExpression(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.js$`"
             },
             "outputExtension": "js",
             "preinstall": {
@@ -388,7 +388,7 @@
           "cascadingStyleSheet": {
             "extension": "css",
             "filePathPattern": {
-              "__evaluate__": "`^${Tools.stringMaskForRegularExpression(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+              "__evaluate__": "`^${string.maskForRegularExpression(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
             },
             "outputExtension": "css"
           },
@@ -416,7 +416,7 @@
             "--emitDeclarationOnly",
             "--project",
             {
-              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.application.json`"
+              "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.application.json`"
             }
           ],
           "command": "tsc"
@@ -426,7 +426,7 @@
             "--noEmit",
             "--project",
             {
-              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.application.json`"
+              "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.application.json`"
             }
           ],
           "command": "tsc"
@@ -497,7 +497,7 @@
               "--ignore-pattern",
               "'*.d.ts'",
               {
-                "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? '--parser-options=project:tsconfig.json' : ''"
+                "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? '--parser-options=project:tsconfig.json' : ''"
               },
               "'**/*.{jsx,ts,tsx}'"
             ],
@@ -683,7 +683,7 @@
           },
           "template": {
             "filePath": {
-              "__evaluate__": "`${Tools.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
+              "__evaluate__": "`${filesystem.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
             },
             "postCompileOptions": {
               "compileSteps": 0
@@ -1617,7 +1617,7 @@
             "--emitDeclarationOnly",
             "--project",
             {
-              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.library.json`"
+              "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.library.json`"
             }
           ]
         },
@@ -1626,7 +1626,7 @@
             "--noEmit",
             "--project",
             {
-              "__evaluate__": "Tools.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.library.json`"
+              "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.library.json`"
             }
           ]
         },
@@ -1719,7 +1719,7 @@
         "otherMaximumFileSizeLimitInByte": 1
       },
       "libraryName": {
-        "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [Tools.stringConvertToValidVariableName(self.name), '[name]'] : '*'"
+        "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? [string.convertToValidVariableName(self.name), '[name]'] : '*'"
       },
       "offline": null,
       "path": {
