@@ -15,8 +15,9 @@
     endregion
 */
 // region imports
-import Tools, {ConsoleOutputMethods} from 'clientnode'
-import {ProcedureFunction, SynchronousProcedureFunction} from 'clientnode/type'
+import {
+    CONSOLE_METHODS, ProcedureFunction, SynchronousProcedureFunction, timeout
+} from 'clientnode'
 import {DOMWindow, VirtualConsole} from 'jsdom'
 import {LoaderContext} from 'webpack'
 
@@ -53,7 +54,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
 
         const virtualConsole:VirtualConsole =
             new VirtualConsoleImplementation()
-        for (const name of ConsoleOutputMethods)
+        for (const name of CONSOLE_METHODS)
             virtualConsole.on(name, console[name].bind(console))
         virtualConsole.on(
             'error',
@@ -155,7 +156,7 @@ else {
         browser.windowLoaded = true
     })
 
-    void Tools.timeout(():void => {
+    void timeout(():void => {
         for (const callback of onCreatedListener)
             (callback as SynchronousProcedureFunction)()
     })

@@ -11,7 +11,7 @@ import typescriptPlugin from '@typescript-eslint/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Tools = (clientnode as any).Tools
+const isFile = (clientnode as any).isFile
 
 // Remove unsupported rules.
 const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
@@ -35,7 +35,7 @@ for (const filePath of [
     './node_modules/weboptimizer/tsconfig.' +
     `${isLibrary ? 'library' : 'application'}.json`
 ])
-    if (await Tools.isFile(filePath)) {
+    if (await isFile(filePath)) {
         tsConfigFilePath = filePath
         break
     }

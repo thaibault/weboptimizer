@@ -1,11 +1,11 @@
 // #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
 'use strict'
-// region imports
+
 import {expect, jest, test} from '@jest/globals'
 import {spawnSync as spawnChildProcessSync} from 'child_process'
 import {resolve} from 'path'
-// endregion
+
 /*
     NOTE: Theses tasks can take lot longer than 5 seconds (default
     configuration).
@@ -29,7 +29,3 @@ for (const folder of ['simple', 'scss'])
                 ).status).toStrictEqual(0)
         }
     )
-// region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregion

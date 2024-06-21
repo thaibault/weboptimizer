@@ -15,8 +15,7 @@
     endregion
 */
 // region imports
-import Tools from 'clientnode'
-import {Mapping} from 'clientnode/type'
+import {copy, extend, Mapping} from 'clientnode'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import {JSDOM as DOM} from 'jsdom'
 import {Compilation, Compiler, LoaderContext} from 'webpack'
@@ -135,9 +134,9 @@ export class HTMLTransformation {
                             .compileSteps === 'number'
                     )
                         data.html = ejsLoader.bind({
-                            query: Tools.extend(
+                            query: extend(
                                 true,
-                                Tools.copy(loaderConfiguration.options) ||
+                                copy(loaderConfiguration.options) ||
                                 {},
                                 htmlFileSpecification.template
                                     .postCompileOptions
