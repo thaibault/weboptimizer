@@ -15,8 +15,24 @@
     endregion
 */
 // region imports
-import Tools, {currentRequire, optionalRequire} from 'clientnode'
-import {Mapping, PlainObject, RecursiveEvaluateable} from 'clientnode/type'
+import {
+    convertCircularObjectToJSON,
+    copy,
+    currentRequire,
+    evaluateDynamicData,
+    extend,
+    getUTCTimestamp,
+    isFileSync,
+    isPlainObject,
+    Mapping,
+    modifyObject,
+    optionalRequire,
+    parseEncodedObject,
+    PlainObject,
+    RecursiveEvaluateable,
+    removeKeyPrefixes,
+    UTILITY_SCOPE
+} from 'clientnode'
 import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
 
@@ -154,9 +170,9 @@ export const load = (
     const libraryConfiguration:PlainObject = metaConfiguration.library
     let configuration:DefaultConfiguration
     if (debug)
-        configuration = Tools.extend<DefaultConfiguration>(
+        configuration = extend<DefaultConfiguration>(
             true,
-            Tools.modifyObject<DefaultConfiguration>(
+            modifyObject<DefaultConfiguration>(
                 metaConfiguration.default as DefaultConfiguration,
                 metaConfiguration.debug
             )!,
@@ -167,15 +183,15 @@ export const load = (
 
     configuration.debug = debug
     if (typeof configuration.library === 'object')
-        Tools.extend(
+        extend(
             true,
-            Tools.modifyObject(libraryConfiguration, configuration.library)!,
+            modifyObject(libraryConfiguration, configuration.library)!,
             configuration.library
         )
     if (configuration.library && specificConfiguration?.library !== false)
-        configuration = Tools.extend(
+        configuration = extend(
             true,
-            Tools.modifyObject(configuration, libraryConfiguration)!,
+            modifyObject(configuration, libraryConfiguration)!,
             libraryConfiguration
         )
     // endregion
@@ -187,7 +203,7 @@ export const load = (
         const newFilePath =
             `${configuration.path.context}.dynamicConfiguration-${count}.json`
 
-        if (!Tools.isFileSync(newFilePath))
+        if (!isFileSync(newFilePath))
             break
 
         filePath = newFilePath
@@ -220,12 +236,12 @@ export const load = (
                 for (const configurationTarget of [
                     configuration, specificConfiguration
                 ])
-                    if (Tools.isPlainObject(configurationTarget[
+                    if (isPlainObject(configurationTarget[
                         type as keyof DefaultConfiguration
                     ]))
-                        Tools.extend(
+                        extend(
                             true,
-                            Tools.modifyObject<DefaultConfiguration>(
+                            modifyObject<DefaultConfiguration>(
                                 configurationTarget as DefaultConfiguration,
                                 configurationTarget[type]
                             )!,
@@ -247,10 +263,10 @@ export const load = (
     ///// endregion
     //// endregion
     /// endregion
-    Tools.extend(
+    extend(
         true,
-        Tools.modifyObject(
-            Tools.modifyObject(configuration, specificConfiguration),
+        modifyObject(
+            modifyObject(configuration, specificConfiguration),
             runtimeInformation
         )!,
         specificConfiguration,
@@ -259,7 +275,7 @@ export const load = (
 
     let result:null|PlainObject = null
     if (runtimeInformation.givenCommandLineArguments.length > 3)
-        result = Tools.stringParseEncodedObject(
+        result = parseEncodedObject(
             runtimeInformation.givenCommandLineArguments[
                 runtimeInformation.givenCommandLineArguments.length - 1
             ],
@@ -274,14 +290,14 @@ export const load = (
             delete result.__reference__
             for (const name of referenceNames)
                 if (Object.prototype.hasOwnProperty.call(configuration, name))
-                    Tools.extend(
+                    extend(
                         true,
                         result,
                         configuration[name as keyof DefaultConfiguration] as
                             PlainObject
                     )
-                else if (Tools.isFileSync(name))
-                    Tools.extend(
+                else if (isFileSync(name))
+                    extend(
                         true,
                         result,
                         JSON.parse(
@@ -295,10 +311,10 @@ export const load = (
                     )
         }
 
-        Tools.extend(true, Tools.modifyObject(configuration, result)!, result)
+        extend(true, modifyObject(configuration, result)!, result)
     }
     // Removing comments (default key name to delete is "#").
-    configuration = Tools.removeKeyPrefixes(configuration)
+    configuration = removeKeyPrefixes(configuration)
     // endregion
     /// region build absolute paths
     configuration.path.base =
@@ -309,7 +325,7 @@ export const load = (
             if (typeof path === 'string')
                 configuration.path[key] =
                     resolve(configuration.path.base, path) + '/'
-            else if (Tools.isPlainObject(path)) {
+            else if (isPlainObject(path)) {
                 if (Object.prototype.hasOwnProperty.call(path, 'base'))
                     configuration.path[key as 'source'].base = resolve(
                         configuration.path.base, path.base as string
@@ -323,7 +339,7 @@ export const load = (
                         path[subKey as 'manifest'] =
                             resolve(path.base as string, subPath) + '/'
                     else if (
-                        subKey !== 'options' && Tools.isPlainObject(subPath)
+                        subKey !== 'options' && isPlainObject(subPath)
                     ) {
                         subPath.base = resolve(
                             path.base as string, subPath.base as string
@@ -348,11 +364,12 @@ export const load = (
         transformed in place in the following lines of code.
     */
     const resolvedConfiguration:ResolvedConfiguration =
-        Tools.evaluateDynamicData<ResolvedConfiguration>(
+        evaluateDynamicData<ResolvedConfiguration>(
             configuration as
                 unknown as
                 RecursiveEvaluateable<ResolvedConfiguration>,
             {
+                ...UTILITY_SCOPE,
                 currentPath: currentWorkingDirectory,
                 fileSystem,
                 Helper,
@@ -360,10 +377,9 @@ export const load = (
                 optionalRequire,
                 path,
                 require: currentRequire,
-                Tools,
                 webOptimizerPath,
                 now,
-                nowUTCTimestamp: Tools.numberGetUTCTimestamp(now)
+                nowUTCTimestamp: getUTCTimestamp(now)
             }
         )
     // endregion
@@ -379,10 +395,10 @@ export const load = (
         resolvedConfiguration.buildContext.types
     ))
         resolvedConfiguration.buildContext.types[type] =
-            Tools.extend<ResolvedBuildConfigurationItem>(
+            extend<ResolvedBuildConfigurationItem>(
                 true,
-                Tools.copy(defaultConfiguration),
-                Tools.extend<ResolvedBuildConfigurationItem>(
+                copy(defaultConfiguration),
+                extend<ResolvedBuildConfigurationItem>(
                     true, {extension: type}, context, {type}
                 )
             )
@@ -517,10 +533,7 @@ export const load = (
             resolvedConfiguration.loader.aliases
                 .webOptimizerDefaultTemplateFileLoader +=
                     '?' +
-                    (
-                        Tools.convertCircularObjectToJSON(loader.options) as
-                            string
-                    )
+                    (convertCircularObjectToJSON(loader.options) as string)
     }
     resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath =
         resolvedConfiguration.files.defaultHTML.template.filePath
@@ -531,9 +544,7 @@ export const load = (
         configurations.
     */
     for (const htmlConfiguration of resolvedConfiguration.files.html) {
-        Tools.extend(
-            true, htmlConfiguration, resolvedConfiguration.files.defaultHTML
-        )
+        extend(true, htmlConfiguration, resolvedConfiguration.files.defaultHTML)
         htmlConfiguration.template.request = htmlConfiguration.template.filePath
         if (
             htmlConfiguration.template.filePath !==
@@ -542,7 +553,7 @@ export const load = (
         ) {
             const requestString:string = new String(
                 htmlConfiguration.template.request +
-                (Tools.convertCircularObjectToJSON(
+                (convertCircularObjectToJSON(
                     htmlConfiguration.template.options
                 ) as string)
             ) as string

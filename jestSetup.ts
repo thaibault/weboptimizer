@@ -15,8 +15,7 @@
     endregion
 */
 // region imports
-import {globalContext} from 'clientnode'
-import {$Global} from 'clientnode/type'
+import {$Global, globalContext} from 'clientnode'
 import {TextEncoder, TextDecoder} from 'util'
 // endregion
 ;(globalContext as $Global & {TextEncoder:typeof TextEncoder}).TextEncoder =
@@ -29,7 +28,3 @@ try {
 } catch (error) {
     // Do nothing.
 }
-// region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregion

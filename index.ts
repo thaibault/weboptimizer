@@ -24,20 +24,33 @@ import {
     ExecOptions,
     spawn as spawnChildProcess
 } from 'child_process'
-import Tools, {CloseEventNames} from 'clientnode'
 import {
     AnyFunction,
+    CLOSE_EVENT_NAMES,
+    copyDirectoryRecursiveSync,
+    copyFileSync,
+    evaluate,
     EvaluationResult,
     File,
+    getProcessCloseHandler,
+    handleChildProcess,
+    isDirectory,
+    isDirectorySync,
+    isFile,
+    isFileSync,
+    isPlainObject,
     Mapping,
+    NOOP,
+    parseEncodedObject,
     PlainObject,
     ProcedureFunction,
     ProcessCloseCallback,
     ProcessCloseReason,
     ProcessError,
     ProcessErrorCallback,
-    ProcessHandler
-} from 'clientnode/type'
+    ProcessHandler,
+    walkDirectoryRecursively
+} from 'clientnode'
 import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
 import {sync as globSync} from 'glob-all'
@@ -94,7 +107,7 @@ const main = async (
         environment
     )
 
-    let clear:() => void = Tools.noop() as () => void
+    let clear:() => void = NOOP() as () => void
 
     try {
         // region controller
@@ -133,7 +146,7 @@ const main = async (
             }
             if (
                 configuration.givenCommandLineArguments.length > 3 &&
-                Tools.stringParseEncodedObject(
+                parseEncodedObject(
                     configuration.givenCommandLineArguments[
                         configuration.givenCommandLineArguments.length - 1
                     ],
@@ -153,7 +166,7 @@ const main = async (
                     configuration.path.context,
                     `.dynamicConfiguration-${count}.json`
                 )
-                if (!(await Tools.isFile(filePath)))
+                if (!(await isFile(filePath)))
                     break
 
                 count += 1
@@ -165,7 +178,7 @@ const main = async (
             /// region register exit handler to tidy up
             clear = (error?:Error):void => {
                 // NOTE: Close handler have to be synchronous.
-                if (Tools.isFileSync(filePath))
+                if (isFileSync(filePath))
                     unlinkSync(filePath)
 
                 if (error)
@@ -202,7 +215,7 @@ const main = async (
                     resolve(configuration.path.context)
                 ) {
                     // Removes all compiled files.
-                    await Tools.walkDirectoryRecursively(
+                    await walkDirectoryRecursively(
                         configuration.path.target.base,
                         async (file:File):Promise<false|undefined> => {
                             if (Helper.isFilePathInLocation(
@@ -251,9 +264,9 @@ const main = async (
 
                     for (
                         const file of (
-                            await Tools.walkDirectoryRecursively(
+                            await walkDirectoryRecursively(
                                 configuration.path.target.base,
-                                ():false => false,
+                                () => false,
                                 configuration.encoding
                             )
                         )
@@ -265,7 +278,7 @@ const main = async (
                         configuration.path.target.base
                     )
 
-                if (await Tools.isDirectory(
+                if (await isDirectory(
                     configuration.path.apiDocumentation
                 ))
                     await removeDirectoryRecursively(
@@ -274,10 +287,10 @@ const main = async (
 
                 for (const filePath of configuration.path.tidyUpOnClear)
                     if (filePath)
-                        if (Tools.isFileSync(filePath))
+                        if (isFileSync(filePath))
                             // NOTE: Close handler have to be synchronous.
                             unlinkSync(filePath)
-                        else if (Tools.isDirectorySync(filePath))
+                        else if (isDirectorySync(filePath))
                             removeDirectoryRecursivelySync(filePath)
 
                 removeDirectoryRecursivelySync(
@@ -372,7 +385,7 @@ const main = async (
                                     configuration.buildContext.types[
                                         type
                                     ].outputExtension === 'js' &&
-                                    Tools.isFileSync(filePath)
+                                    isFileSync(filePath)
                                 )
                                     chmodSync(filePath, '755')
                             }
@@ -380,10 +393,10 @@ const main = async (
 
                     for (const filePath of configuration.path.tidyUp)
                         if (filePath)
-                            if (Tools.isFileSync(filePath))
+                            if (isFileSync(filePath))
                                 // NOTE: Close handler have to be synchronous.
                                 unlinkSync(filePath)
-                            else if (Tools.isDirectorySync(filePath))
+                            else if (isDirectorySync(filePath))
                                 removeDirectoryRecursivelySync(filePath)
 
                     removeDirectoryRecursivelySync(
@@ -438,22 +451,21 @@ const main = async (
                                 join(configuration.path.target.base, filePath)
 
                             // NOTE: Close handler have to be synchronous.
-                            if (Tools.isDirectorySync(sourcePath)) {
-                                if (Tools.isDirectorySync(targetPath))
+                            if (isDirectorySync(sourcePath)) {
+                                if (isDirectorySync(targetPath))
                                     removeDirectoryRecursivelySync(targetPath)
 
-                                Tools.copyDirectoryRecursiveSync(
+                                copyDirectoryRecursiveSync(
                                     sourcePath, targetPath
                                 )
-                            } else if (Tools.isFileSync(sourcePath))
-                                Tools.copyFileSync(sourcePath, targetPath)
+                            } else if (isFileSync(sourcePath))
+                                copyFileSync(sourcePath, targetPath)
                         }
 
                         tidyUp()
                     }
 
-                    const closeHandler:ProcessHandler =
-                        Tools.getProcessCloseHandler(
+                    const closeHandler:ProcessHandler = getProcessCloseHandler(
                             resolve,
                             reject,
                             null,
@@ -463,7 +475,7 @@ const main = async (
 
                         )
 
-                    for (const closeEventName of CloseEventNames)
+                    for (const closeEventName of CLOSE_EVENT_NAMES)
                         childProcess.on(closeEventName, closeHandler)
 
                     childProcesses.push(childProcess)
@@ -479,9 +491,7 @@ const main = async (
                 // Perform all file specific preprocessing stuff.
                 let testModuleFilePaths:Array<string> = []
                 if (
-                    Tools.isPlainObject(
-                        configuration['test:browser'].injection
-                    ) &&
+                    isPlainObject(configuration['test:browser'].injection) &&
                     configuration['test:browser'].injection.entry
                 )
                     testModuleFilePaths = Helper.determineModuleLocations(
@@ -501,18 +511,17 @@ const main = async (
                     ] as string).trim()
                     for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
-                            const evaluated:EvaluationResult =
-                                Tools.stringEvaluate(
-                                    `\`${expression}\``,
-                                    {
-                                        global,
-                                        self: configuration,
-                                        buildConfiguration,
-                                        path,
-                                        additionalArguments,
-                                        filePath
-                                    }
-                                )
+                            const evaluated:EvaluationResult = evaluate(
+                                `\`${expression}\``,
+                                {
+                                    global,
+                                    self: configuration,
+                                    buildConfiguration,
+                                    path,
+                                    additionalArguments,
+                                    filePath
+                                }
+                            )
 
                             if (evaluated.error)
                                 throw new Error(
@@ -528,7 +537,7 @@ const main = async (
                                         void,
                                     reject:(_reason:Error) => void
                                 ):Array<ChildProcess> => [
-                                    Tools.handleChildProcess(
+                                    handleChildProcess(
                                         execChildProcess(
                                             evaluated.result,
                                             {
@@ -558,7 +567,7 @@ const main = async (
                         (configuration.commandLine[type] as Array<Command>) :
                         [configuration.commandLine[type] as Command]
                 for (const task of tasks) {
-                    const evaluated:EvaluationResult = Tools.stringEvaluate(
+                    const evaluated:EvaluationResult = evaluate(
                         (
                             Object.prototype.hasOwnProperty.call(
                                 task, 'indicator'
@@ -599,9 +608,9 @@ const main = async (
                                 )
 
                             const closeHandler:ProcessHandler =
-                                Tools.getProcessCloseHandler(resolve, reject)
+                                getProcessCloseHandler(resolve, reject)
 
-                            for (const closeEventName of CloseEventNames)
+                            for (const closeEventName of CLOSE_EVENT_NAMES)
                                 childProcess.on(closeEventName, closeHandler)
                             childProcesses.push(childProcess)
 
@@ -648,7 +657,7 @@ const main = async (
 
             finished = true
         }
-        for (const closeEventName of CloseEventNames)
+        for (const closeEventName of CLOSE_EVENT_NAMES)
             process.on(closeEventName, closeHandler)
         if (
             require.main === module &&

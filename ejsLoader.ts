@@ -19,10 +19,19 @@ import {
     BabelFileResult, transformSync as babelTransformSync
 } from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
-import Tools, {currentRequire} from 'clientnode'
 import {
-    EvaluationResult, Encoding, Mapping, RecursivePartial
-} from 'clientnode/type'
+    convertSubstringInPlainObject,
+    convertToValidVariableName,
+    copy,
+    currentRequire,
+    evaluate,
+    EvaluationResult,
+    Encoding,
+    extend,
+    Mapping,
+    RecursivePartial,
+    UTILITY_SCOPE
+} from 'clientnode'
 import ejs, {Options, TemplateFunction as EJSTemplateFunction} from 'ejs'
 import {readFileSync} from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
@@ -79,8 +88,8 @@ export const loader = function(
     this:LoaderContext<LoaderConfiguration>, source:string
 ):string {
     const givenOptions:LoaderConfiguration =
-        Tools.convertSubstringInPlainObject(
-            Tools.extend<LoaderConfiguration>(
+        convertSubstringInPlainObject(
+            extend<LoaderConfiguration>(
                 true,
                 {
                     compiler: {},
@@ -136,7 +145,7 @@ export const loader = function(
 
             if (queryMatch) {
                 const evaluated:EvaluationResult<Mapping<unknown>> =
-                    Tools.stringEvaluate<Mapping<unknown>>(
+                    evaluate<Mapping<unknown>>(
                         queryMatch[1],
                         {compile, locals, request, source, template}
                     )
@@ -146,15 +155,14 @@ export const loader = function(
                         evaluated.error
                     )
                 else
-                    Tools.extend(true, nestedLocals, evaluated.result)
+                    extend(true, nestedLocals, evaluated.result)
             }
 
-            let nestedOptions:CompilerOptions =
-                Tools.copy(options) as CompilerOptions
+            let nestedOptions = copy(options) as CompilerOptions
 
             delete nestedOptions.client
 
-            nestedOptions = Tools.extend(
+            nestedOptions = extend(
                 true,
                 {encoding: configuration.encoding},
                 nestedOptions,
@@ -208,7 +216,7 @@ export const loader = function(
             givenOptions.compress?.html ?
                 minifyHTML(
                     content,
-                    Tools.extend(
+                    extend(
                         true,
                         {
                             caseSensitive: true,
@@ -261,11 +269,11 @@ export const loader = function(
                 scope = {}
                 if (step < 3 && 1 < compileSteps)
                     scope = {
+                        ...UTILITY_SCOPE,
                         configuration,
                         Helper,
                         include: require,
                         require,
-                        Tools,
                         ...(Array.isArray(stepLocals) ? {} : stepLocals)
                     }
                 else if (!Array.isArray(stepLocals))
@@ -274,7 +282,7 @@ export const loader = function(
                 originalScopeNames =
                     Array.isArray(stepLocals) ? stepLocals : Object.keys(scope)
                 scopeNames = originalScopeNames.map((name:string):string =>
-                    Tools.stringConvertToValidVariableName(name)
+                    convertToValidVariableName(name)
                 )
                 // endregion
             }

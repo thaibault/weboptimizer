@@ -1,16 +1,15 @@
 // #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
 'use strict'
-// region imports
+
 import {expect, test} from '@jest/globals'
-import Tools from 'clientnode'
-import {Mapping} from 'clientnode/type'
+import {Mapping, NOOP} from 'clientnode'
 import webpack from 'webpack'
 
 import {WebpackConfiguration} from '../type'
-// endregion
+
 // Suppress log output.
-console.debug = Tools.noop
+console.debug = NOOP
 
 test('webpackConfigurator', async ():Promise<void> => {
     const webpackConfiguration:WebpackConfiguration = (await import(
@@ -27,7 +26,3 @@ test('webpackConfigurator', async ():Promise<void> => {
     webpackConfiguration.output.filename = 'dummy.compiled.js'
     expect(webpack(webpackConfiguration)).toBeInstanceOf(Object)
 })
-// region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregion

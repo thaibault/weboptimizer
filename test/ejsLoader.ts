@@ -1,13 +1,13 @@
 // #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
 'use strict'
-// region imports
+
 import {describe, expect, test} from '@jest/globals'
-import Tools from 'clientnode'
+import {copy, extend, NOOP} from 'clientnode'
 import {LoaderContext} from 'webpack'
 
 import ejsLoader, {LoaderConfiguration} from '../ejsLoader'
-// endregion
+
 // region mockup
 const context:LoaderContext<LoaderConfiguration> = {
     debug: false,
@@ -20,11 +20,11 @@ describe('ejsLoader', ():void => {
     // region tests
     test('loader', ():void => {
         expect(ejsLoader.call(context, '<a></a>')).toStrictEqual('<a></a>')
-        const complexContext:LoaderContext<LoaderConfiguration> = Tools.extend(
+        const complexContext:LoaderContext<LoaderConfiguration> = extend(
             true,
-            Tools.copy(context),
+            copy(context),
             {
-                cacheable: Tools.noop,
+                cacheable: NOOP,
                 getOptions: function():LoaderConfiguration {
                     return this.query as LoaderConfiguration
                 },
@@ -60,7 +60,3 @@ describe('ejsLoader', ():void => {
     })
     // endregion
 })
-// region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregion

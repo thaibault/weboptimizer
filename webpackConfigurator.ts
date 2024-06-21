@@ -15,10 +15,21 @@
     endregion
 */
 // region imports
-import Tools from 'clientnode'
 import {
-    EvaluationResult, Mapping, PlainObject, RecursivePartial, Unpacked
-} from 'clientnode/type'
+    convertToValidVariableName,
+    evaluate,
+    EvaluationResult,
+    escapeRegularExpressions,
+    extend,
+    isFileSync,
+    isPlainObject,
+    Mapping,
+    mask,
+    PlainObject,
+    RecursivePartial,
+    represent,
+    Unpacked
+} from 'clientnode'
 import {
     PluginOptions as ImageMinimizerOptions
 } from 'image-minimizer-webpack-plugin'
@@ -150,7 +161,7 @@ else {
     if (['assign', 'global', 'this', 'var', 'window'].includes(
         configuration.exportFormat.self
     ))
-        libraryName = Tools.stringConvertToValidVariableName(libraryName)
+        libraryName = convertToValidVariableName(libraryName)
 }
 if (libraryName === '*')
     libraryName = ['assign', 'global', 'this', 'var', 'window'].includes(
@@ -158,9 +169,7 @@ if (libraryName === '*')
     ) ?
         Object.keys(
             configuration.injection.entry.normalized
-        ).map((name:string):string =>
-            Tools.stringConvertToValidVariableName(name)
-        ) :
+        ).map((name:string):string => convertToValidVariableName(name)) :
         undefined
 /// endregion
 /// region plugins
@@ -200,7 +209,7 @@ for (const [source, replacement] of Object.entries(
 //// region generate html file
 let htmlAvailable = false
 for (const htmlConfiguration of configuration.files.html)
-    if (Tools.isFileSync(htmlConfiguration.template.filePath)) {
+    if (isFileSync(htmlConfiguration.template.filePath)) {
         pluginInstances.push(new plugins.HTML!({
             ...htmlConfiguration,
             template: htmlConfiguration.template.request
@@ -213,9 +222,7 @@ if (
     htmlAvailable &&
     configuration.favicon &&
     plugins.Favicon &&
-    Tools.isFileSync(
-        ([] as Array<string>).concat(configuration.favicon.logo)[0]
-    )
+    isFileSync(([] as Array<string>).concat(configuration.favicon.logo)[0])
 )
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
 //// endregion
@@ -254,7 +261,7 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             .includes('injectionManifest')
     )
         pluginInstances.push(new plugins.InjectManifest!(
-            Tools.extend<WorkboxInjectManifestOptions>(
+            extend<WorkboxInjectManifestOptions>(
                 true,
                 configuration.offline.common,
                 configuration.offline.injectionManifest
@@ -265,7 +272,7 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             .concat(configuration.offline.use)
             .includes('generateServiceWorker')
     )
-        pluginInstances.push(new plugins.GenerateServiceWorker!(Tools.extend(
+        pluginInstances.push(new plugins.GenerateServiceWorker!(extend(
             true,
             configuration.offline.common,
             configuration.offline.serviceWorker
@@ -554,7 +561,7 @@ if (configuration.injection.external.modules === '__implicit__')
                         request
                     ] === 'object'
                 )
-                    Tools.extend<Mapping>(
+                    extend<Mapping>(
                         result as Mapping,
                         configuration.injection.external.aliases[request] as
                             Mapping
@@ -574,7 +581,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 result.root = ([] as Array<string>)
                     .concat(result.root!)
                     .map((name:string):string =>
-                        Tools.stringConvertToValidVariableName(name)
+                        convertToValidVariableName(name)
                     )
             const exportFormat:string = (
                 configuration.exportFormat.external ||
@@ -608,7 +615,7 @@ if (htmlAvailable)
 for (const contextReplacement of module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
         contextReplacement.map((value:string):RegExp|string => {
-            const evaluated = Tools.stringEvaluate<RegExp|string>(
+            const evaluated = evaluate<RegExp|string>(
                 value, {configuration, __dirname, __filename}
             )
 
@@ -642,7 +649,7 @@ if (module.enforceDeduplication) {
                 !targetPath.startsWith(absoluteContextPath) ||
                 /((?:^|\/)node_modules\/.+){2}/.test(targetPath)
             ) &&
-            Tools.isFileSync(targetPath)
+            isFileSync(targetPath)
         ) {
             const packageDescriptor:null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
@@ -697,7 +704,7 @@ if (module.enforceDeduplication) {
                     const alternateTargetPath:string =
                         resolve(pathPrefix, pathSuffix)
 
-                    if (Tools.isFileSync(alternateTargetPath)) {
+                    if (isFileSync(alternateTargetPath)) {
                         const otherPackageDescriptor:null|PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
                                 alternateTargetPath
@@ -873,12 +880,12 @@ const scope:EvaluationScope = {
     require: currentRequire!
 }
 
-const evaluate = <T = unknown>(
+const evaluateAnThrow = <T = unknown>(
     object:unknown, filePath:string = configuration.path.context
 ):T => {
     if (typeof object === 'string') {
         const evaluated:EvaluationResult<T> =
-            Tools.stringEvaluate<T>(object, {filePath, ...scope})
+            evaluate<T>(object, {filePath, ...scope})
 
         if (evaluated.error)
             throw new Error(
@@ -891,18 +898,18 @@ const evaluate = <T = unknown>(
 
     return object as T
 }
-const evaluateMapper = <T = unknown>(value:unknown):T => evaluate<T>(value)
+const evaluateMapper = <T = unknown>(value:unknown):T => evaluateAnThrow<T>(value)
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration:AdditionalLoaderConfiguration
 ):WebpackLoaderConfiguration => ({
     exclude: (filePath:string):boolean =>
-        Boolean(evaluate(loaderConfiguration.exclude, filePath)),
+        Boolean(evaluateAnThrow(loaderConfiguration.exclude, filePath)),
     include:
         loaderConfiguration.include &&
-        evaluate<WebpackLoaderIndicator>(loaderConfiguration.include) ||
+        evaluateAnThrow<WebpackLoaderIndicator>(loaderConfiguration.include) ||
         configuration.path.source.base,
-    test: new RegExp(evaluate<string>(loaderConfiguration.test)),
-    use: evaluate<Array<WebpackLoader>|WebpackLoader>(loaderConfiguration.use)
+    test: new RegExp(evaluateAnThrow<string>(loaderConfiguration.test)),
+    use: evaluateAnThrow<Array<WebpackLoader>|WebpackLoader>(loaderConfiguration.use)
 })
 
 const getIncludingPaths = (path:string):Array<string> =>
@@ -919,7 +926,7 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
         module.preprocessor.cascadingStyleSheet.loader ?
             {
                 loader: module.preprocessor.cascadingStyleSheet.loader,
-                options: Tools.extend(
+                options: extend(
                     true,
                     optionalRequire('postcss') ?
                         {postcssOptions: {
@@ -1055,7 +1062,7 @@ const genericLoader:GenericLoader = {
             ).includes(filePath) ||
             (module.preprocessor.ejs.exclude === null) ?
                 false :
-                Boolean(evaluate(module.preprocessor.ejs.exclude, filePath)),
+                Boolean(evaluateAnThrow(module.preprocessor.ejs.exclude, filePath)),
         include: getIncludingPaths(configuration.path.source.asset.template),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: module.preprocessor.ejs.additional.pre
@@ -1064,13 +1071,10 @@ const genericLoader:GenericLoader = {
                 {
                     loader: 'file?name=[path][name]' +
                         (
-                            (
-                                Tools.isPlainObject(
-                                    module.preprocessor.ejs.options
-                                ) ?
-                                    module.preprocessor.ejs.options as
-                                        EJSLoaderConfiguration :
-                                    {compileSteps: 2}
+                            (isPlainObject(module.preprocessor.ejs.options) ?
+                                module.preprocessor.ejs.options as
+                                    EJSLoaderConfiguration :
+                                {compileSteps: 2}
                             ).compileSteps % 2 ? '.js' : ''
                         ) +
                         `?${configuration.hashAlgorithm}=[contenthash]`
@@ -1087,12 +1091,12 @@ const genericLoader:GenericLoader = {
     // region script
     script: {
         exclude: (filePath:string):boolean =>
-            Boolean(evaluate(
+            Boolean(evaluateAnThrow(
                 module.preprocessor.javaScript.exclude, filePath
             )),
         include: (filePath:string):boolean => {
             const result:unknown =
-                evaluate(module.preprocessor.javaScript.include, filePath)
+                evaluateAnThrow(module.preprocessor.javaScript.include, filePath)
             if ([null, undefined].includes(result as null)) {
                 for (const includePath of getIncludingPaths(
                     configuration.path.source.asset.javaScript
@@ -1126,7 +1130,7 @@ const genericLoader:GenericLoader = {
         main: {
             test: new RegExp(
                 '^' +
-                Tools.stringEscapeRegularExpressions(
+                escapeRegularExpressions(
                     configuration.files.defaultHTML.template.filePath
                 ) +
                 '(?:\\?.*)?$'
@@ -1144,7 +1148,7 @@ const genericLoader:GenericLoader = {
                 ).includes(filePath) ||
                 ((module.preprocessor.html.exclude === null) ?
                     false :
-                    Boolean(evaluate(
+                    Boolean(evaluateAnThrow(
                         module.preprocessor.html.exclude, filePath
                     ))
                 ),
@@ -1164,7 +1168,7 @@ const genericLoader:GenericLoader = {
                                 '[name]' +
                                 (
                                     (
-                                        Tools.isPlainObject(
+                                        isPlainObject(
                                             module.preprocessor.html.options
                                         ) ?
                                             module.preprocessor.html.options as
@@ -1179,9 +1183,7 @@ const genericLoader:GenericLoader = {
                     },
                     (
                         (
-                            Tools.isPlainObject(
-                                module.preprocessor.html.options
-                            ) ?
+                            isPlainObject(module.preprocessor.html.options) ?
                                 module.preprocessor.html.options as
                                     EJSLoaderConfiguration :
                                 {compileSteps: 2}
@@ -1215,7 +1217,7 @@ const genericLoader:GenericLoader = {
                 (
                     (module.html.exclude === null) ?
                         true :
-                        Boolean(evaluate(module.html.exclude, filePath))
+                        Boolean(evaluateAnThrow(module.html.exclude, filePath))
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
@@ -1250,11 +1252,11 @@ const genericLoader:GenericLoader = {
         exclude: (filePath:string):boolean =>
             (module.cascadingStyleSheet.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                Boolean(evaluate(
+                Boolean(evaluateAnThrow(
                     module.cascadingStyleSheet.exclude, filePath
                 )),
         include: (filePath:string):boolean => {
-            const result:unknown = evaluate(
+            const result:unknown = evaluateAnThrow(
                 module.cascadingStyleSheet.include, filePath
             )
             if ([null, undefined].includes(result as null)) {
@@ -1280,7 +1282,7 @@ const genericLoader:GenericLoader = {
             exclude: (filePath:string):boolean =>
                 (module.optimizer.font.eot.exclude === null) ?
                     false :
-                    Boolean(evaluate(
+                    Boolean(evaluateAnThrow(
                         module.optimizer.font.eot.exclude, filePath
                     )),
             generator: {
@@ -1309,7 +1311,7 @@ const genericLoader:GenericLoader = {
             exclude: (filePath:string):boolean =>
                 (module.optimizer.font.svg.exclude === null) ?
                     false :
-                    Boolean(evaluate(
+                    Boolean(evaluateAnThrow(
                         module.optimizer.font.svg.exclude, filePath
                     )),
             include: configuration.path.source.asset.font,
@@ -1340,7 +1342,7 @@ const genericLoader:GenericLoader = {
             exclude: (filePath:string):boolean =>
                 (module.optimizer.font.ttf.exclude === null) ?
                     false :
-                    Boolean(evaluate(
+                    Boolean(evaluateAnThrow(
                         module.optimizer.font.ttf.exclude, filePath
                     )),
             generator: {
@@ -1370,7 +1372,7 @@ const genericLoader:GenericLoader = {
             exclude: (filePath:string):boolean =>
                 (module.optimizer.font.woff.exclude === null) ?
                     false :
-                    Boolean(evaluate(
+                    Boolean(evaluateAnThrow(
                         module.optimizer.font.woff.exclude, filePath
                     )),
             generator: {
@@ -1402,7 +1404,7 @@ const genericLoader:GenericLoader = {
         exclude: (filePath:string):boolean =>
             (module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                Boolean(evaluate(module.optimizer.image.exclude, filePath)),
+                Boolean(evaluateAnThrow(module.optimizer.image.exclude, filePath)),
         generator: {
             filename:
                 join(
@@ -1437,7 +1439,7 @@ const genericLoader:GenericLoader = {
             (
                 (module.optimizer.data.exclude === null) ?
                     isFilePathInDependencies(filePath) :
-                    Boolean(evaluate(module.optimizer.data.exclude, filePath))
+                    Boolean(evaluateAnThrow(module.optimizer.data.exclude, filePath))
             )
         },
         generator: {
@@ -1463,7 +1465,7 @@ const genericLoader:GenericLoader = {
     // endregion
 }
 
-Tools.extend(loader, genericLoader)
+extend(loader, genericLoader)
 
 if (
     configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract
@@ -1555,17 +1557,15 @@ if (!module.optimizer.minimizer) {
         )
 
     if (plugins.ImageMinimizer)
-        module.optimizer.minimizer.push(new plugins.ImageMinimizer(
-            Tools.extend(
-                true,
-                {
-                    minimizer: {
-                        implementation: plugins.ImageMinimizer.imageminMinify
-                    }
-                } as ImageMinimizerOptions<unknown, unknown>,
-                module.optimizer.image.content
-            )
-        ))
+        module.optimizer.minimizer.push(new plugins.ImageMinimizer(extend(
+            true,
+            {
+                minimizer: {
+                    implementation: plugins.ImageMinimizer.imageminMinify
+                }
+            } as ImageMinimizerOptions<unknown, unknown>,
+            module.optimizer.image.content
+        )))
 }
 // endregion
 // region configuration
@@ -1581,7 +1581,7 @@ if (configuration.path.configuration?.json)
             console.debug(
                 'Importing provided json webpack configuration file path ' +
                 `under "${configuration.path.configuration.json}" failed: ` +
-                Tools.represent(error)
+                represent(error)
             )
         }
     } catch (error) {
@@ -1591,7 +1591,7 @@ if (configuration.path.configuration?.json)
         )
     }
 
-export let webpackConfiguration:WebpackConfiguration = Tools.extend<
+export let webpackConfiguration:WebpackConfiguration = extend<
     WebpackConfiguration
 >(
     true,
@@ -1696,7 +1696,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
             chunkIds: configuration.debug ? 'named' : 'total-size',
             moduleIds: configuration.debug ? 'named' : 'size',
             // region common chunks
-            splitChunks: Tools.extend<NonNullable<
+            splitChunks: extend<NonNullable<
                 WebpackConfiguration['optimization']
             >['splitChunks']>(
                 true,
@@ -1743,7 +1743,7 @@ export let webpackConfiguration:WebpackConfiguration = Tools.extend<
                 configuration.injection.chunks
             ),
             // endregion
-            ...Tools.mask(
+            ...mask(
                 module.optimizer as unknown as Mapping<unknown>,
                 {
                     exclude: {
@@ -1779,7 +1779,7 @@ if (configuration.path.configuration?.javaScript)
         const result:unknown =
             optionalRequire(configuration.path.configuration.javaScript)
 
-        if (Tools.isPlainObject(result))
+        if (isPlainObject(result))
             if (Object.prototype.hasOwnProperty.call(
                 result, 'replaceWebOptimizer'
             ))
@@ -1787,8 +1787,9 @@ if (configuration.path.configuration?.javaScript)
                     unknown as
                     WebpackConfiguration
             else
-                Tools.extend(
-                    true, webpackConfiguration,
+                extend(
+                    true,
+                    webpackConfiguration,
                     result as RecursivePartial<WebpackConfiguration>
                 )
         else

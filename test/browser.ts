@@ -1,13 +1,13 @@
 // #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
 'use strict'
-// region imports
+
 import {expect, test} from '@jest/globals'
-import Tools from 'clientnode'
+import {NOOP} from 'clientnode'
 
 import getInitializedBrowser, {browser} from '../browser'
 import {Browser} from '../type'
-// endregion
+
 test('browser', (done):void => {
     expect(browser.debug).toStrictEqual(false)
     expect(browser.domContentLoaded).toStrictEqual(false)
@@ -40,6 +40,6 @@ test('browser', (done):void => {
             else
                 done()
         },
-        Tools.noop
+        NOOP
     )
 })

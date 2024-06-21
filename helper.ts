@@ -15,8 +15,22 @@
     endregion
 */
 // region imports
-import Tools, {currentRequire} from 'clientnode'
-import {Encoding, File, Mapping, PlainObject} from 'clientnode/type'
+import {
+    copy,
+    currentRequire,
+    Encoding,
+    escapeRegularExpressions,
+    extend,
+    File,
+    isAnyMatching,
+    isDirectorySync,
+    isFileSync,
+    isPlainObject,
+    Mapping,
+    PlainObject,
+    represent,
+    walkDirectoryRecursivelySync
+} from 'clientnode'
 import {existsSync, readFileSync} from 'fs'
 import {
     basename, dirname, extname, join, normalize, resolve, sep, relative
@@ -137,9 +151,7 @@ export class Helper {
         let filePath:string = template
         for (const [placeholderName, value] of Object.entries(scope))
             filePath = filePath.replace(
-                new RegExp(
-                    Tools.stringEscapeRegularExpressions(placeholderName), 'g'
-                ),
+                new RegExp(escapeRegularExpressions(placeholderName), 'g'),
                 `${value}`
             )
 
@@ -283,7 +295,7 @@ export class Helper {
         )
         if (
             resolvedRequest === false ||
-            Tools.isAnyMatching(resolvedRequest, excludePattern)
+            isAnyMatching(resolvedRequest, excludePattern)
         )
             return null
         /*
@@ -310,7 +322,7 @@ export class Helper {
         */
         if (
             !(filePath || inPlaceNormalLibrary) ||
-            Tools.isAnyMatching(resolvedRequest, includePattern)
+            isAnyMatching(resolvedRequest, includePattern)
         )
             return (
                 Helper.applyContext(
@@ -451,11 +463,11 @@ export class Helper {
         const buildConfiguration:ResolvedBuildConfiguration = []
 
         for (const value of Object.values(configuration)) {
-            const newItem:ResolvedBuildConfigurationItem = Tools.extend<
+            const newItem:ResolvedBuildConfigurationItem = extend<
                 ResolvedBuildConfigurationItem
             >(true, {filePaths: []}, value)
 
-            for (const file of Tools.walkDirectoryRecursivelySync(
+            for (const file of walkDirectoryRecursivelySync(
                 entryPath,
                 (file:File):false|void => {
                     if (Helper.isFilePathInLocation(
@@ -626,10 +638,10 @@ export class Helper {
         if (referencePath.startsWith('/'))
             referencePath = relative(context, referencePath)
 
-        const result = Tools.copy(normalizedGivenInjection)
+        const result = copy(normalizedGivenInjection)
         for (const chunk of Object.values(result)) {
             let index = 0
-            for (const moduleID of Tools.copy(chunk)) {
+            for (const moduleID of copy(chunk)) {
                 const resolvedModuleID:false|string =
                     Helper.applyModuleReplacements(
                         Helper.applyAliases(
@@ -646,10 +658,10 @@ export class Helper {
                 const resolvedPath:string =
                     resolve(referencePath, resolvedModuleID)
 
-                if (Tools.isDirectorySync(resolvedPath)) {
+                if (isDirectorySync(resolvedPath)) {
                     chunk.splice(index, 1)
 
-                    for (const file of Tools.walkDirectoryRecursivelySync(
+                    for (const file of walkDirectoryRecursivelySync(
                         resolvedPath,
                         (file:File):false|undefined => {
                             if (Helper.isFilePathInLocation(
@@ -694,7 +706,7 @@ export class Helper {
             result = {index: givenInjection}
         else if (typeof givenInjection === 'string')
             result = {index: [givenInjection]}
-        else if (Tools.isPlainObject(givenInjection)) {
+        else if (isPlainObject(givenInjection)) {
             let hasContent = false
             const chunkNamesToDelete:Array<string> = []
             for (const [chunkName, chunk] of Object.entries(givenInjection))
@@ -750,7 +762,7 @@ export class Helper {
         referencePath = '',
         pathsToIgnore:Array<string> = ['.git']
     ):T {
-        const injection:T = Tools.copy(givenInjection)
+        const injection:T = copy(givenInjection)
         const moduleFilePathsToExclude:Array<string> =
             Helper.determineModuleLocations(
                 givenInjection.autoExclude.paths,
@@ -764,7 +776,7 @@ export class Helper {
 
         for (const name of ['entry', 'external'] as const) {
             const injectionType:GivenInjection = injection[name]
-            if (Tools.isPlainObject(injectionType)) {
+            if (isPlainObject(injectionType)) {
                 for (let [chunkName, chunk] of Object.entries(injectionType))
                     if (chunk === '__auto__') {
                         chunk = injectionType[chunkName] = []
@@ -823,7 +835,7 @@ export class Helper {
             for (const moduleFilePath of buildConfiguration.filePaths)
                 if (!(
                     moduleFilePathsToExclude.includes(moduleFilePath) ||
-                    Tools.isAnyMatching(
+                    isAnyMatching(
                         moduleFilePath.substring(context.length),
                         moduleFilePathPatternToExclude
                     )
@@ -902,10 +914,10 @@ export class Helper {
             packageAliases: null
         }
 
-        if (Tools.isDirectorySync(packagePath)) {
+        if (isDirectorySync(packagePath)) {
             const pathToPackageJSON:string =
                 resolve(packagePath, 'package.json')
-            if (Tools.isFileSync(pathToPackageJSON)) {
+            if (isFileSync(pathToPackageJSON)) {
                 let localConfiguration:PlainObject = {}
                 try {
                     localConfiguration = JSON.parse(
@@ -914,7 +926,7 @@ export class Helper {
                 } catch (error) {
                     console.warn(
                         `Package configuration file "${pathToPackageJSON}" ` +
-                        `could not parsed: ${Tools.represent(error)}`
+                        `could not parsed: ${represent(error)}`
                     )
                 }
                 for (const propertyName of packageMainPropertyNames)
@@ -935,7 +947,7 @@ export class Helper {
                         Object.prototype.hasOwnProperty.call(
                             localConfiguration, propertyName
                         ) &&
-                        Tools.isPlainObject(localConfiguration[propertyName])
+                        isPlainObject(localConfiguration[propertyName])
                     ) {
                         result.packageAliases = localConfiguration[
                             propertyName
@@ -1073,7 +1085,7 @@ export class Helper {
                     ))
                         continue
 
-                    if (Tools.isFileSync(currentModuleFilePath))
+                    if (isFileSync(currentModuleFilePath))
                         return currentModuleFilePath
                 }
 

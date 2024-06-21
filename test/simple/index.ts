@@ -1,5 +1,5 @@
 // -*- coding: utf-8 -*-
-/** @module dummy */
+/** @module simple */
 'use strict'
 /* !
     region header
