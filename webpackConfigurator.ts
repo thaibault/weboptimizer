@@ -17,7 +17,7 @@
 // region imports
 import Tools from 'clientnode'
 import {
-    EvaluationResult, Mapping, PlainObject, Unpacked
+    EvaluationResult, Mapping, PlainObject, RecursivePartial, Unpacked
 } from 'clientnode/type'
 import {
     PluginOptions as ImageMinimizerOptions
@@ -1787,7 +1787,10 @@ if (configuration.path.configuration?.javaScript)
                     unknown as
                     WebpackConfiguration
             else
-                Tools.extend(true, webpackConfiguration, result)
+                Tools.extend(
+                    true, webpackConfiguration,
+                    result as RecursivePartial<WebpackConfiguration>
+                )
         else
             console.debug(
                 'Failed to load given JavaScript configuration file path "' +
