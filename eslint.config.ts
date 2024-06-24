@@ -1,7 +1,6 @@
-import clientnode from 'clientnode'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
-import {readFile} from 'fs/promises'
+import {readFile, stat} from 'fs/promises'
 import globals from 'globals'
 import {resolve} from 'path'
 import {cwd} from 'process'
@@ -10,8 +9,26 @@ import js from '@eslint/js'
 import typescriptPlugin from '@typescript-eslint/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isFile = (clientnode as any).isFile
+/**
+ * Checks if given path points to a valid file.
+ * @param filePath - Path to directory.
+ * @returns A promise holding a boolean which indicates directory existence.
+ */
+export const isFile = async (filePath:string):Promise<boolean> => {
+    try {
+        return (await stat!(filePath)).isFile()
+    } catch (error) {
+        if (
+            Object.prototype.hasOwnProperty.call(error, 'code') &&
+            ['ENOENT', 'ENOTDIR'].includes(
+                (error as NodeJS.ErrnoException).code!
+            )
+        )
+            return false
+
+        throw error
+    }
+}
 
 // Remove unsupported rules.
 const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
