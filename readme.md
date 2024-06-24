@@ -309,7 +309,13 @@ package.json (see the API-Documentation, link above, for more details):
 ...
 ```
 
-<!-- region modline
-vim: set tabstop=4 shiftwidth=4 expandtab:
-vim: foldmethod=marker foldmarker=region,endregion:
-endregion -->
+### WebStorm
+
+#### Eslint
+
+1. Set eslint package to project specific one:
+    /PATH/TO/PROJECT/node_modules/eslint
+2. Set Working directory:
+    /PATH/TO/PROJECT
+3. Set configuration file path:
+    /PATH/TO/PROJECT/node_modules/weboptimizer/eslint.config.mjs
