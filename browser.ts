@@ -202,7 +202,3 @@ export const getInitializedBrowser = async (
     return promise
 }
 export default getInitializedBrowser
-// region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregioun
