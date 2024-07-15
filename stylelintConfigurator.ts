@@ -23,7 +23,3 @@ const configuration:ResolvedConfiguration = getConfiguration()
 module.exports = configuration.stylelint
 
 export default module.exports
-// region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregion
