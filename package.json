@@ -89,7 +89,7 @@
   },
   "runkitExample": "require('@babel/runtime/package.json')\n\nconst {default: main} = require('weboptimizer')\n\nawait main('./', './', ['clear'])",
   "dependencies": {
-    "@babel/core": "^7.24.8",
+    "@babel/core": "^7.24.9",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.24.7",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
@@ -130,8 +130,8 @@
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.5",
     "@types/webpack-sources": "^3.2.3",
-    "@typescript-eslint/eslint-plugin": "^7.16.0",
-    "@typescript-eslint/parser": "^7.16.0",
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
     "css-loader": "^7.1.2",
     "cssnano": "^7.0.4",
     "documentation-website": "^1.0.328",
@@ -159,7 +159,7 @@
     "stylelint": "^16.7.0",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-config-standard-scss": "^13.1.0",
-    "typescript-eslint": "^7.16.0",
+    "typescript-eslint": "^7.16.1",
     "typescript-plugin-css-modules": "^5.1.0",
     "workbox-webpack-plugin": "^7.1.0"
   },
@@ -552,10 +552,7 @@
           },
           "historyApiFallback": true,
           "host": "0.0.0.0",
-          "hot": {
-            "#": "Indicates whether to activate the developments hot module replacement feature.",
-            "__evaluate__": "self.debug"
-          },
+          "hot": false,
           "liveReload": true,
           "port": 8080,
           "server": "http",
