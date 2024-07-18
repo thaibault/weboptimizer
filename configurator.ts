@@ -466,6 +466,7 @@ export const load = (
                 resolvedConfiguration.givenCommandLineArguments[2]
             )
     }
+
     /// region determine which asset types are needed
     for (const chunk of Object.values(
         resolvedConfiguration.injection.entry.normalized
