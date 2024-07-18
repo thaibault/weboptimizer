@@ -371,7 +371,7 @@ export const load = (
             {
                 ...UTILITY_SCOPE,
                 currentPath: currentWorkingDirectory,
-                fileSystem,
+                fs: fileSystem,
                 Helper,
                 packageConfiguration,
                 optionalRequire,
