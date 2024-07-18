@@ -125,7 +125,7 @@
     "@types/html-minifier": "^4.0.5",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/imagemin": "^9.0.0",
-    "@types/node": "^20.14.10",
+    "@types/node": "^20.14.11",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.5",
@@ -810,6 +810,9 @@
         },
         "ignorePattern": [
           {
+            "resourceRegExp": "(.*/)?deprecated/.+"
+          },
+          {
             "resourceRegExp": "(.*/)?exclude/.+"
           }
         ]
@@ -1317,6 +1320,7 @@
         "ignore": [
           ".cache",
           ".git",
+          "exclude",
           {
             "__evaluate__": "self.path.apiDocumentation"
           }
@@ -1553,6 +1557,8 @@
         "watchOptions": {
           "ignored": [
             "./*.js",
+            "**/deprecated",
+            "**/exclude",
             "**/node_modules",
             "**/package.json",
             {
