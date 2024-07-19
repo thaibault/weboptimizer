@@ -6862,9 +6862,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:3.0.1164":
-  version: 3.0.1164
-  resolution: "clientnode@npm:3.0.1164"
+"clientnode@npm:3.0.1166":
+  version: 3.0.1166
+  resolution: "clientnode@npm:3.0.1166"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -6882,7 +6882,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/2380cee9b17dc1bfbd87782cc25caf5f30a02580444d74b4c71c50c347cc9e7f44b53172bd3376f78d78e41d282c5ff673350852d16e42b50389ff985f1a8676
+  checksum: 10c0/3768f3c6dcec9c0cdf3ca29ec877cce0521315410ef2b67ccd26782b248b50cd7dd4d4287b9b374af248f5350a5f788e52fd360d44bda33bcd8333b8f86ea952
   languageName: node
   linkType: hard
 
@@ -7836,12 +7836,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"documentation-website@npm:^1.0.328":
-  version: 1.0.328
-  resolution: "documentation-website@npm:1.0.328"
+"documentation-website@npm:^1.0.329":
+  version: 1.0.329
+  resolution: "documentation-website@npm:1.0.329"
   bin:
     documentation-website: build/deploy.js
-  checksum: 10c0/ed196f581a4ec055eb0283dcb89712af7d23ff2d6dece96a2a5140e5d93551cfb30366d64c47ba8604b7d168ae074dafebf30f21f4c5b23b5d3d30ca547aca00
+  checksum: 10c0/4f1c5bd5655f720c5935d8f2c55b9115c973fafa89ca833449cc662e29436804d97371bf3acfc97754361bbd0be2a233204274a1f24c9fc4b2f2cfc0b78bebb8
   languageName: node
   linkType: hard
 
@@ -16416,10 +16416,10 @@ __metadata:
     babel-loader: "npm:^9.1.3"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:3.0.1164"
+    clientnode: "npm:3.0.1166"
     css-loader: "npm:^7.1.2"
     cssnano: "npm:^7.0.4"
-    documentation-website: "npm:^1.0.328"
+    documentation-website: "npm:^1.0.329"
     ejs: "npm:^3.1.10"
     eslint: "npm:^9.7.0"
     eslint-config-google: "npm:^0.14.0"

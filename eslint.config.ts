@@ -81,12 +81,20 @@ export default [
             sourceType: 'module'
         },
         ignores: [
-            '**/exclude/*',
             '*.compiled.*',
-            '*.d.ts',
-            '**/*.d.ts',
             '*.js',
-            '**/*.js'
+            '**/*.js',
+            '**/.git/*',
+            '**/.cache/*',
+            '**/.config/*',
+            '**/.npm/*',
+            '**/log/*',
+            '**/node_modules/*',
+            '**/backup/*',
+            '**/exclude/*',
+            '**/plugins/*',
+            '*.d.ts',
+            '**/*.d.ts'
         ],
         plugins: {
             jsdoc
