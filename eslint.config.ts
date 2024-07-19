@@ -1,3 +1,6 @@
+import js from '@eslint/js'
+import typescriptPlugin from '@typescript-eslint/eslint-plugin'
+import typescriptParser from '@typescript-eslint/parser'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
 import {readFile, stat} from 'fs/promises'
@@ -5,10 +8,6 @@ import globals from 'globals'
 import {resolve} from 'path'
 import {cwd} from 'process'
 import typescript from 'typescript-eslint'
-import js from '@eslint/js'
-import typescriptPlugin from '@typescript-eslint/eslint-plugin'
-import typescriptParser from '@typescript-eslint/parser'
-
 /**
  * Checks if given path points to a valid file.
  * @param filePath - Path to directory.
@@ -38,12 +37,10 @@ const googleRules = Object.keys(google.rules)
         (object, key) => ({...object, [key]: google.rules[key]}), {}
     )
 
-const isLibrary = (
-    JSON.parse(
-        await readFile(resolve(cwd(), './package.json'), {encoding: 'utf-8'})
-    ).default?.webOptimizer?.library ??
-    false
-)
+const libraryIndicator = JSON.parse(
+    await readFile(resolve(cwd(), './package.json'), {encoding: 'utf-8'})
+).default?.webOptimizer?.library
+const isLibrary = libraryIndicator ?? true
 
 let tsConfigFilePath = ''
 for (const filePath of [
@@ -63,6 +60,7 @@ export default [
     jsdoc.configs['flat/recommended'],
 
     {
+        files: ['**/*.{ts,tsx,html}'],
         languageOptions: {
             ecmaVersion: 'latest',
             globals: {
@@ -84,15 +82,15 @@ export default [
             '*.compiled.*',
             '*.js',
             '**/*.js',
-            '**/.git/*',
-            '**/.cache/*',
-            '**/.config/*',
-            '**/.npm/*',
-            '**/log/*',
-            '**/node_modules/*',
-            '**/backup/*',
-            '**/exclude/*',
-            '**/plugins/*',
+            '**/.git/**/*',
+            '**/.cache/**/*',
+            '**/.config/**/*',
+            '**/.npm/**/*',
+            '**/log/**/*',
+            '**/node_modules/**/*',
+            '**/backup/**/*',
+            '**/exclude/**/*',
+            '**/plugins/**/*',
             '*.d.ts',
             '**/*.d.ts'
         ],
