@@ -87,7 +87,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
 
                         window.document.addEventListener(
                             'DOMContentLoaded',
-                            ():void => {
+                            () => {
                                 /*
                                     Move template results into global
                                     pre-defined dom.
@@ -103,7 +103,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                                 browser.domContentLoaded = true
                             }
                         )
-                        window.addEventListener('load', ():void => {
+                        window.addEventListener('load', () => {
                             /*
                                 NOTE: Maybe we have miss the "DOMContentLoaded"
                                 event caused by a race condition.
