@@ -85,7 +85,7 @@ export const load = (
             directory and this library is located as a nested dependency.
         */
         metaConfiguration.default.path.context = webOptimizerPath
-        while (true) {
+        for (let level = 0; level < 1000; level++) {
             metaConfiguration.default.path.context =
                 resolve(metaConfiguration.default.path.context, '../../')
             if (
@@ -128,6 +128,7 @@ export const load = (
     // region load application specific configuration
     let specificConfiguration:PlainObject = {}
     try {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         specificConfiguration = currentRequire!(join(
             metaConfiguration.default.path.context, 'package'
         )) as PlainObject
@@ -139,13 +140,15 @@ export const load = (
     const name:string = typeof specificConfiguration.name === 'string' ?
         specificConfiguration.name :
         (
-            typeof (specificConfiguration.webOptimizer as PlainObject)?.name ===
-                'string'
+            typeof (
+                specificConfiguration.webOptimizer as Mapping|undefined
+            )?.name === 'string'
         ) ?
-            (specificConfiguration.webOptimizer as Mapping)?.name :
+            (specificConfiguration.webOptimizer as Mapping|undefined)?.name as
+                string :
             'mockup'
     specificConfiguration =
-        (specificConfiguration.webOptimizer as PlainObject) || {}
+        (specificConfiguration.webOptimizer as PlainObject|undefined) || {}
     specificConfiguration.name = name
     // endregion
     // region determine debug mode
@@ -175,7 +178,7 @@ export const load = (
             modifyObject<DefaultConfiguration>(
                 metaConfiguration.default as DefaultConfiguration,
                 metaConfiguration.debug
-            )!,
+            ),
             metaConfiguration.debug
         )
     else
@@ -185,13 +188,13 @@ export const load = (
     if (typeof configuration.library === 'object')
         extend(
             true,
-            modifyObject(libraryConfiguration, configuration.library)!,
+            modifyObject(libraryConfiguration, configuration.library),
             configuration.library
         )
-    if (configuration.library && specificConfiguration?.library !== false)
+    if (configuration.library && specificConfiguration.library !== false)
         configuration = extend(
             true,
-            modifyObject(configuration, libraryConfiguration)!,
+            modifyObject(configuration, libraryConfiguration),
             libraryConfiguration
         )
     // endregion
@@ -199,9 +202,10 @@ export const load = (
     /// region load additional dynamically given configuration
     let count = 0
     let filePath:null|string = null
-    while (true) {
+    for (let index = 0; index < 1000; index++) {
         const newFilePath =
-            `${configuration.path.context}.dynamicConfiguration-${count}.json`
+            `${configuration.path.context}.dynamicConfiguration-` +
+            `${String(count)}.json`
 
         if (!isFileSync(newFilePath))
             break
@@ -244,7 +248,7 @@ export const load = (
                             modifyObject<DefaultConfiguration>(
                                 configurationTarget as DefaultConfiguration,
                                 configurationTarget[type]
-                            )!,
+                            ),
                             configurationTarget[type] as PlainObject
                         )
     ///// endregion
@@ -268,7 +272,7 @@ export const load = (
         modifyObject(
             modifyObject(configuration, specificConfiguration),
             runtimeInformation
-        )!,
+        ),
         specificConfiguration,
         runtimeInformation
     )
@@ -311,7 +315,7 @@ export const load = (
                     )
         }
 
-        extend(true, modifyObject(configuration, result)!, result)
+        extend(true, modifyObject(configuration, result), result)
     }
     // Removing comments (default key name to delete is "#").
     configuration = removeKeyPrefixes(configuration)

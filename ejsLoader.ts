@@ -73,7 +73,7 @@ export type LoaderConfiguration =
         extensions:Extensions
         locals?:Mapping<unknown>
         module:{
-            aliases:Mapping<string>
+            aliases:Mapping
             replacements:Replacements
         }
     }
@@ -87,7 +87,7 @@ const configuration:ResolvedConfiguration = getConfiguration()
 export const loader = function(
     this:LoaderContext<LoaderConfiguration>, source:string
 ):string {
-    const givenOptions:LoaderConfiguration =
+    const givenOptions:RecursivePartial<LoaderConfiguration> =
         convertSubstringInPlainObject(
             extend<LoaderConfiguration>(
                 true,
@@ -117,9 +117,7 @@ export const loader = function(
                         replacements: {}
                     }
                 },
-                'getOptions' in this && this.getOptions() ?
-                    this.getOptions() :
-                    (this.query as RecursivePartial<LoaderConfiguration>) ?? {}
+                this.getOptions()
             ),
             /#%%%#/g,
             '!'
@@ -127,7 +125,7 @@ export const loader = function(
 
     const compile:CompileFunction = (
         template:string,
-        options:Partial<CompilerOptions> = givenOptions.compiler,
+        options = givenOptions.compiler,
         compileSteps = 2
     ):TemplateFunction => (
         locals:Array<Array<string>>|Array<Mapping<unknown>>|Mapping<unknown> =
@@ -166,8 +164,9 @@ export const loader = function(
                 true,
                 {encoding: configuration.encoding},
                 nestedOptions,
-                nestedLocals.options as Partial<CompilerOptions> || {},
-                options
+                nestedLocals.options as Partial<CompilerOptions>|undefined ||
+                {},
+                options ?? {}
             )
 
             if (nestedOptions.isString)
@@ -176,9 +175,9 @@ export const loader = function(
             const templateFilePath:null|string =
                 Helper.determineModuleFilePath(
                     template,
-                    givenOptions.module.aliases,
-                    givenOptions.module.replacements,
-                    {file: givenOptions.extensions.file.internal},
+                    givenOptions.module?.aliases,
+                    givenOptions.module?.replacements,
+                    {file: givenOptions.extensions?.file.internal || []},
                     givenOptions.context,
                     configuration.path.source.asset.base,
                     configuration.path.ignore,
@@ -243,7 +242,7 @@ export const loader = function(
                             trimCustomFragments: true,
                             useShortDoctype: true
                         },
-                        givenOptions.compress.html || {}
+                        givenOptions.compress.html
                     )
                 ) :
                 content
@@ -253,9 +252,9 @@ export const loader = function(
         delete options.isString
 
         let stepLocals:Array<string>|Mapping<unknown>
-        let scope:Mapping<unknown>
-        let originalScopeNames:Array<string>
-        let scopeNames:Array<string>
+        let scope:Mapping<unknown> = {}
+        let originalScopeNames:Array<string> = []
+        let scopeNames:Array<string> = []
 
         for (let step = 1; step <= compileSteps; step += 1) {
             // On every odd compile step we have to determine the environment.
@@ -290,8 +289,8 @@ export const loader = function(
             if (typeof result === 'string') {
                 const filePath:string|undefined =
                     isString ? options.filename : result
-                if (filePath && extname(filePath) === '.js')
-                    result = currentRequire!(filePath) as TemplateFunction
+                if (filePath && extname(filePath) === '.js' && currentRequire)
+                    result = currentRequire(filePath) as TemplateFunction
                 else {
                     if (!isString) {
                         let encoding:Encoding = configuration.encoding
@@ -315,12 +314,12 @@ export const loader = function(
                     */
                     if (options.strict || !options._with) {
                         let localsName:string = options.localsName || 'locals'
-                        while (scopeNames!.includes(localsName))
+                        while (scopeNames.includes(localsName))
                             localsName = `_${localsName}`
 
                         /* eslint-disable @typescript-eslint/no-implied-eval */
                         result = new Function(
-                            ...scopeNames!,
+                            ...scopeNames,
                             localsName,
                             `return ${result.toString()}(` +
                             `${localsName},${localsName}.escapeFn,include,` +
@@ -332,7 +331,7 @@ export const loader = function(
             } else
                 result = compressHTML(!options.strict && options._with ?
                     (result as PreCompiledTemplateFunction)(
-                        scope!, scope!.escapeFn, scope!.include
+                        scope, scope.escapeFn, scope.include
                     ) :
                     (result as PreCompiledTemplateFunction)(
                         /*
@@ -342,10 +341,10 @@ export const loader = function(
                             using "...Object.values(scope)" is not appreciate
                             here.
                         */
-                        ...originalScopeNames!
+                        ...originalScopeNames
                             .map((name:string):unknown => scope[name])
                             .concat(
-                                !options.strict && options._with ? [] : scope!
+                                !options.strict && options._with ? [] : scope
                             )
                     )
                 )
@@ -359,11 +358,11 @@ export const loader = function(
                 {
                     ast: false,
                     babelrc: false,
-                    comments: !givenOptions.compress.javaScript,
-                    compact: Boolean(givenOptions.compress.javaScript),
+                    comments: !givenOptions.compress?.javaScript,
+                    compact: Boolean(givenOptions.compress?.javaScript),
                     filename: options.filename || 'unknown',
-                    minified: Boolean(givenOptions.compress.javaScript),
-                    presets: givenOptions.compress.javaScript ?
+                    minified: Boolean(givenOptions.compress?.javaScript),
+                    presets: givenOptions.compress?.javaScript ?
                         [[
                             babelMinifyPreset, givenOptions.compress.javaScript
                         ]] :
@@ -408,7 +407,7 @@ export const loader = function(
         source,
         {
             ...givenOptions.compiler,
-            client: Boolean(givenOptions.compileSteps % 2),
+            client: Boolean((givenOptions.compileSteps ?? 2) % 2),
             compileDebug: givenOptions.debug,
             debug: givenOptions.debug,
             filename: this.resourcePath || 'unknown',

@@ -1,6 +1,7 @@
-import js from '@eslint/js'
+import eslintjs from '@eslint/js'
 import typescriptPlugin from '@stylistic/eslint-plugin-ts'
 import typescriptParser from '@typescript-eslint/parser'
+import tseslint from 'typescript-eslint'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
 import {readFile, stat} from 'fs/promises'
@@ -15,12 +16,12 @@ import typescript from 'typescript-eslint'
  */
 export const isFile = async (filePath:string):Promise<boolean> => {
     try {
-        return (await stat!(filePath)).isFile()
+        return (await stat(filePath)).isFile()
     } catch (error) {
         if (
             Object.prototype.hasOwnProperty.call(error, 'code') &&
             ['ENOENT', 'ENOTDIR'].includes(
-                (error as NodeJS.ErrnoException).code!
+                (error as NodeJS.ErrnoException).code
             )
         )
             return false
@@ -31,10 +32,12 @@ export const isFile = async (filePath:string):Promise<boolean> => {
 
 // Remove unsupported rules.
 const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
-const googleRules = Object.keys(google.rules)
+const googleRules = Object.keys((google as Mapping<unknown>).rules)
     .filter((key) => !unsuportedRules.includes(key))
     .reduce(
-        (object, key) => ({...object, [key]: google.rules[key]}), {}
+        (object, key) =>
+            ({...object, [key]: (google as Mapping<unknown>).rules[key]}),
+        {}
     )
 
 const libraryIndicator = JSON.parse(
@@ -54,11 +57,15 @@ for (const filePath of [
         break
     }
 
-export default [
-    ...typescript.configs.strictTypeChecked,
+export const config = tseslint.config(
     jsdoc.configs['flat/recommended'],
-
     {
+        extends: [
+            eslintjs.configs.recommended,
+            ...typescript.configs.strictTypeChecked,
+            ...tseslint.configs.strict,
+            ...tseslint.configs.stylistic
+        ],
         files: ['**/*.{ts,tsx,html}'],
         languageOptions: {
             ecmaVersion: 'latest',
@@ -118,9 +125,10 @@ export default [
                 }
             ],
 
+            '@typescript-eslint/array-type': ['error', {default: 'generic'}],
+            '@typescript-eslint/no-dynamic-delete': 'off',
             '@typescript-eslint/no-this-alias': [
-                'error',
-                {allowedNames: ['self']}
+                'error', {allowedNames: ['self']}
             ],
 
             'jsdoc/check-param-names': 'error',
@@ -194,4 +202,6 @@ export default [
             'space-infix-ops': 'off'
         }
     }
-]
+)
+
+export default config
