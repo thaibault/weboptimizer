@@ -36,7 +36,16 @@ import {
 import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
 
-import Helper from './helper'
+import {
+    determineAssetType,
+    determineModuleFilePath,
+    determineModuleLocations,
+    resolveAutoInjection,
+    resolveBuildConfigurationFilePaths,
+    resolveModulesInFolders,
+    normalizeGivenInjection,
+    normalizePaths
+} from './helper'
 import packageConfiguration, {
     configuration as metaConfiguration
 } from './package.json'
@@ -376,7 +385,6 @@ export const load = (
                 ...UTILITY_SCOPE,
                 currentPath: currentWorkingDirectory,
                 fs: fileSystem,
-                Helper,
                 packageConfiguration,
                 optionalRequire,
                 path,
@@ -408,7 +416,7 @@ export const load = (
             )
     // endregion
     // region resolve module location and which asset types are needed
-    resolvedConfiguration.module.locations = Helper.determineModuleLocations(
+    resolvedConfiguration.module.locations = determineModuleLocations(
         resolvedConfiguration.injection.entry.normalized,
         resolvedConfiguration.module.aliases,
         resolvedConfiguration.module.replacements.normal,
@@ -417,14 +425,14 @@ export const load = (
         resolvedConfiguration.path.source.asset.base
     )
 
-    resolvedConfiguration.injection = Helper.resolveAutoInjection(
+    resolvedConfiguration.injection = resolveAutoInjection(
         resolvedConfiguration.injection as
             unknown as
             GivenInjectionConfiguration,
-        Helper.resolveBuildConfigurationFilePaths(
+        resolveBuildConfigurationFilePaths(
             resolvedConfiguration.buildContext.types,
             resolvedConfiguration.path.source.asset.base,
-            Helper.normalizePaths(
+            normalizePaths(
                 resolvedConfiguration.path.ignore.concat(
                     resolvedConfiguration.module.directoryNames,
                     resolvedConfiguration.loader.directoryNames
@@ -447,8 +455,8 @@ export const load = (
         resolvedConfiguration.injection.entry as unknown as GivenInjection
     resolvedConfiguration.injection.entry = {
         given: givenInjection,
-        normalized: Helper.resolveModulesInFolders(
-            Helper.normalizeGivenInjection(givenInjection),
+        normalized: resolveModulesInFolders(
+            normalizeGivenInjection(givenInjection),
             resolvedConfiguration.module.aliases,
             resolvedConfiguration.module.replacements.normal,
             resolvedConfiguration.path.context,
@@ -476,7 +484,7 @@ export const load = (
         resolvedConfiguration.injection.entry.normalized
     ))
         for (const moduleID of chunk) {
-            const filePath:null|string = Helper.determineModuleFilePath(
+            const filePath:null|string = determineModuleFilePath(
                 moduleID,
                 resolvedConfiguration.module.aliases,
                 resolvedConfiguration.module.replacements.normal,
@@ -498,7 +506,7 @@ export const load = (
 
             let type:null|string = null
             if (filePath)
-                type = Helper.determineAssetType(
+                type = determineAssetType(
                     filePath,
                     resolvedConfiguration.buildContext.types,
                     resolvedConfiguration.path

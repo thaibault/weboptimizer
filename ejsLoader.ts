@@ -39,7 +39,7 @@ import {extname} from 'path'
 import {LoaderContext} from 'webpack'
 
 import getConfiguration from './configurator'
-import Helper from './helper'
+import {determineModuleFilePath} from './helper'
 import {Extensions, Replacements, ResolvedConfiguration} from './type'
 // endregion
 // region types
@@ -172,21 +172,20 @@ export const loader = function(
             if (nestedOptions.isString)
                 return compile(template, nestedOptions)(nestedLocals)
 
-            const templateFilePath:null|string =
-                Helper.determineModuleFilePath(
-                    template,
-                    givenOptions.module?.aliases,
-                    givenOptions.module?.replacements,
-                    {file: givenOptions.extensions?.file.internal || []},
-                    givenOptions.context,
-                    configuration.path.source.asset.base,
-                    configuration.path.ignore,
-                    configuration.module.directoryNames,
-                    configuration.package.main.fileNames,
-                    configuration.package.main.propertyNames,
-                    configuration.package.aliasPropertyNames,
-                    configuration.encoding
-                )
+            const templateFilePath:null|string = determineModuleFilePath(
+                template,
+                givenOptions.module?.aliases,
+                givenOptions.module?.replacements,
+                {file: givenOptions.extensions?.file.internal || []},
+                givenOptions.context,
+                configuration.path.source.asset.base,
+                configuration.path.ignore,
+                configuration.module.directoryNames,
+                configuration.package.main.fileNames,
+                configuration.package.main.propertyNames,
+                configuration.package.aliasPropertyNames,
+                configuration.encoding
+            )
 
             if (templateFilePath) {
                 if ('addDependency' in this)
@@ -270,7 +269,6 @@ export const loader = function(
                     scope = {
                         ...UTILITY_SCOPE,
                         configuration,
-                        Helper,
                         include: require,
                         require,
                         ...(Array.isArray(stepLocals) ? {} : stepLocals)

@@ -61,7 +61,15 @@ import {
 } from 'rimraf'
 
 import {load as loadConfiguration} from './configurator'
-import Helper from './helper'
+import {
+    determineAssetType,
+    determineModuleFilePath,
+    determineModuleLocations,
+    isFilePathInLocation,
+    renderFilePathTemplate,
+    resolveBuildConfigurationFilePaths,
+    stripLoader
+} from './helper'
 import {
     Command,
     CommandLineArguments,
@@ -218,7 +226,7 @@ const main = async (
                     await walkDirectoryRecursively(
                         configuration.path.target.base,
                         async (file:File):Promise<false|undefined> => {
-                            if (Helper.isFilePathInLocation(
+                            if (isFilePathInLocation(
                                 file.path,
                                 configuration.path.ignore
                                     .concat(
@@ -300,7 +308,7 @@ const main = async (
             // endregion
             // region handle build
             const buildConfigurations:ResolvedBuildConfiguration =
-                Helper.resolveBuildConfigurationFilePaths(
+                resolveBuildConfigurationFilePaths(
                     configuration.buildContext.types,
                     configuration.path.source.asset.base,
                     configuration.path.ignore.concat(
@@ -336,7 +344,7 @@ const main = async (
                     ))
                         for (const moduleID of chunk) {
                             const filePath:null|string =
-                                Helper.determineModuleFilePath(
+                                determineModuleFilePath(
                                     moduleID,
                                     configuration.module.aliases,
                                     configuration.module.replacements
@@ -359,7 +367,7 @@ const main = async (
 
                             let type:null|string = null
                             if (filePath)
-                                type = Helper.determineAssetType(
+                                type = determineAssetType(
                                     filePath,
                                     configuration.buildContext.types,
                                     configuration.path
@@ -369,9 +377,8 @@ const main = async (
                                 typeof type === 'string' &&
                                 configuration.buildContext.types[type]
                             ) {
-                                const filePath:string =
-                                    Helper.renderFilePathTemplate(
-                                        Helper.stripLoader(
+                                const filePath:string = renderFilePathTemplate(
+                                        stripLoader(
                                             configuration.files.compose
                                                 .javaScript
                                         ),
@@ -494,7 +501,7 @@ const main = async (
                     isPlainObject(configuration['test:browser'].injection) &&
                     configuration['test:browser'].injection.entry
                 )
-                    testModuleFilePaths = Helper.determineModuleLocations(
+                    testModuleFilePaths = determineModuleLocations(
                         configuration['test:browser'].injection.entry as
                             GivenInjection,
                         configuration.module.aliases,

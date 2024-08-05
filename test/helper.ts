@@ -12,7 +12,26 @@ import {resolve} from 'path'
 import {
     BuildConfiguration, PackageConfiguration, PathConfiguration, Replacements
 } from '../type'
-import Helper from '../helper'
+import {
+    applyAliases,
+    applyContext,
+    applyModuleReplacements,
+    determineAssetType,
+    determineExternalRequest,
+    determineModuleFilePath,
+    determineModuleLocations,
+    findPackageDescriptorFilePath,
+    getAutoInjection,
+    getClosestPackageDescriptor,
+    isFilePathInLocation,
+    stripLoader,
+    normalizeGivenInjection,
+    normalizePaths,
+    renderFilePathTemplate,
+    resolveAutoInjection,
+    resolveBuildConfigurationFilePaths,
+    resolveModulesInFolders
+} from '../helper'
 // endregion
 // region mockup
 const buildConfiguration:BuildConfiguration = {
@@ -39,9 +58,9 @@ const buildConfiguration:BuildConfiguration = {
 describe('helper', ():void => {
     // region tests
     /// region boolean
-    testEach<typeof Helper.isFilePathInLocation>(
+    testEach<typeof isFilePathInLocation>(
         'isFilePathInLocation',
-        Helper.isFilePathInLocation,
+        isFilePathInLocation,
 
         [true, './', ['./']],
         [true, './', ['../']],
@@ -49,9 +68,9 @@ describe('helper', ():void => {
     )
     /// endregion
     /// region string
-    testEach<typeof Helper.stripLoader>(
+    testEach<typeof stripLoader>(
         'stripLoader',
-        Helper.stripLoader,
+        stripLoader,
 
         ['', ''],
         ['a', 'a'],
@@ -66,9 +85,9 @@ describe('helper', ():void => {
     )
     /// endregion
     /// region array
-    testEach<typeof Helper.normalizePaths>(
+    testEach<typeof normalizePaths>(
         'normalizePaths',
-        Helper.normalizePaths,
+        normalizePaths,
 
         [[], []],
         [['a'], ['a']],
@@ -81,9 +100,9 @@ describe('helper', ():void => {
     )
     /// endregion
     /// region file handler
-    testEach<typeof Helper.renderFilePathTemplate>(
+    testEach<typeof renderFilePathTemplate>(
         'renderFilePathTemplate',
-        Helper.renderFilePathTemplate,
+        renderFilePathTemplate,
 
         ['', '', {}],
         ['a', 'a', {}],
@@ -98,9 +117,9 @@ describe('helper', ():void => {
             {'[id]': '[id]', '[chunkhash]': '[chunkhash]'}
         ]
     )
-    testEach<typeof Helper.applyContext>(
+    testEach<typeof applyContext>(
         'applyContext',
-        Helper.applyContext,
+        applyContext,
 
         ['', ''],
         ['a', 'a'],
@@ -112,9 +131,9 @@ describe('helper', ():void => {
         ['./a', './a', './a', './a', {a: 'b'}],
         ['b/a', './a', './a/a', './', {a: 'b'}, {}, ['a']]
     )
-    testEach<typeof Helper.determineExternalRequest>(
+    testEach<typeof determineExternalRequest>(
         'determineExternalRequest',
-        Helper.determineExternalRequest,
+        determineExternalRequest,
 
         [null, ''],
         ['a', 'a'],
@@ -129,7 +148,7 @@ describe('helper', ():void => {
         ['path', 'path', './', './', {}, []],
         ['./main.js', 'path', './', './', {}, [], {path: './main.js'}],
         ['main.js', 'path', './', './', {}, [], {path: 'main.js'}],
-        [null, 'path', './', './', {}, [], {path: './helper.ts'}],
+        [null, 'path', './', './', {}, [], {path: './ts'}],
         ['webpack', 'webpack'],
         ['webpack', 'a', './', './', {}, ['node_modules'], {a$: 'webpack'}],
         [
@@ -342,8 +361,8 @@ describe('helper', ():void => {
     test.each([[null, './'], ['javaScript', 'a.js'], [null, 'a.css']])(
         `%p === determineAssetType('%s')`,
         (
-            expected:ReturnType<typeof Helper.determineAssetType>,
-            parameter:FirstParameter<typeof Helper.determineAssetType>
+            expected:ReturnType<typeof determineAssetType>,
+            parameter:FirstParameter<typeof determineAssetType>
         ):void => {
             const paths:PathConfiguration = {
                 apiDocumentation: '',
@@ -384,13 +403,13 @@ describe('helper', ():void => {
             }
 
             expect(
-                Helper.determineAssetType(parameter, buildConfiguration, paths)
+                determineAssetType(parameter, buildConfiguration, paths)
             ).toStrictEqual(expected)
         }
     )
     test('resolveBuildConfigurationFilePaths', ():void => {
-        expect(Helper.resolveBuildConfigurationFilePaths({})).toStrictEqual([])
-        expect(Helper.resolveBuildConfigurationFilePaths(
+        expect(resolveBuildConfigurationFilePaths({})).toStrictEqual([])
+        expect(resolveBuildConfigurationFilePaths(
             buildConfiguration, './', ['.git', 'node_modules']
         )).toStrictEqual([
             {
@@ -416,16 +435,16 @@ describe('helper', ():void => {
             }
         ])
     })
-    testEach<typeof Helper.determineModuleLocations>(
+    testEach<typeof determineModuleLocations>(
         'determineModuleLocations',
-        Helper.determineModuleLocations,
+        determineModuleLocations,
 
         [{filePaths: [], directoryPaths: []}, {}],
         [{filePaths: [], directoryPaths: []}, 'example'],
         [
             {
                 directoryPaths: [resolve(__dirname, '../')],
-                filePaths: [resolve(__dirname, '../helper.js')]
+                filePaths: [resolve(__dirname, '../js')]
             },
             'helper'
         ],
@@ -433,31 +452,31 @@ describe('helper', ():void => {
         [
             {
                 directoryPaths: [resolve(__dirname, '../')],
-                filePaths: [resolve(__dirname, '../helper.js')]
+                filePaths: [resolve(__dirname, '../js')]
             },
             {example: 'helper'}
         ],
         [
             {
                 directoryPaths: [resolve(__dirname, '../')],
-                filePaths: [resolve(__dirname, '../', 'helper.ts')]
+                filePaths: [resolve(__dirname, '../', 'ts')]
             },
-            {helper: ['helper.ts']}
+            {helper: ['ts']}
         ]
     )
-    testEach<typeof Helper.resolveModulesInFolders>(
+    testEach<typeof resolveModulesInFolders>(
         'resolveModulesInFolders',
-        Helper.resolveModulesInFolders,
+        resolveModulesInFolders,
 
         [{}, {}], [{index: []}, {index: []}]
     )
     test('resolveModulesInFolders', ():void =>
-        expect(Helper.resolveModulesInFolders({a: [__dirname]}).a)
-            .toContain('./test/helper.ts')
+        expect(resolveModulesInFolders({a: [__dirname]}).a)
+            .toContain('./test/ts')
     )
-    testEach<typeof Helper.normalizeGivenInjection>(
+    testEach<typeof normalizeGivenInjection>(
         'normalizeGivenInjection',
-        Helper.normalizeGivenInjection,
+        normalizeGivenInjection,
 
         [{index: []}, []],
         [{index: []}, {}],
@@ -468,14 +487,14 @@ describe('helper', ():void => {
         [{a: ['example']}, {a: ['example'], b: []}],
         [{index: []}, {a: [], b: []}]
     )
-    testEach<typeof Helper.resolveAutoInjection>(
+    testEach<typeof resolveAutoInjection>(
         'resolveAutoInjection',
-        Helper.resolveAutoInjection,
+        resolveAutoInjection,
 
         [
             {autoExclude: {paths: [], pattern: []}, entry: [], external: {}},
             {autoExclude: {paths: [], pattern: []}, entry: [], external: {}},
-            Helper.resolveBuildConfigurationFilePaths(
+            resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
             {},
@@ -496,7 +515,7 @@ describe('helper', ():void => {
                 entry: 'a.js',
                 external: []
             },
-            Helper.resolveBuildConfigurationFilePaths(
+            resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
             {},
@@ -509,7 +528,7 @@ describe('helper', ():void => {
         [
             {autoExclude: {paths: [], pattern: []}, entry: ['a'], external: []},
             {autoExclude: {paths: [], pattern: []}, entry: ['a'], external: []},
-            Helper.resolveBuildConfigurationFilePaths(
+            resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
             {},
@@ -526,7 +545,7 @@ describe('helper', ():void => {
                 entry: '__auto__',
                 external: []
             },
-            Helper.resolveBuildConfigurationFilePaths(
+            resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
             {},
@@ -547,7 +566,7 @@ describe('helper', ():void => {
                 entry: {index: '__auto__'},
                 external: []
             },
-            Helper.resolveBuildConfigurationFilePaths(
+            resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
             {},
@@ -559,8 +578,8 @@ describe('helper', ():void => {
         ]
     )
     test('getAutoInjection', ():void =>
-        expect(Helper.getAutoInjection(
-            Helper.resolveBuildConfigurationFilePaths(
+        expect(getAutoInjection(
+            resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
             ),
             [],
@@ -568,23 +587,23 @@ describe('helper', ():void => {
             './'
         )).toStrictEqual({})
     )
-    testEach<typeof Helper.determineModuleFilePath>(
+    testEach<typeof determineModuleFilePath>(
         'determineModuleFilePath',
-        Helper.determineModuleFilePath,
+        determineModuleFilePath,
 
         [null, ''],
         [null, 'a', {}, {}, {file: []}, './', '', []],
         [null, 'a', {a: 'b'}, {}, {file: []}, './', '', []],
         [null, 'bba', {a: 'b'}, {}, {file: []}, './', '', []],
-        [resolve('helper.js'), 'helper'],
+        [resolve('js'), 'helper'],
         [null, 'helper', {}, {}, {file: []}, './', '', []],
         [null, './helper', {}, {}, {file: ['.ts']}, '', 'a', []],
-        [resolve('helper.ts'), 'helper', {}, {}, {file: ['.ts']}, './', './']
+        [resolve('ts'), 'helper', {}, {}, {file: ['.ts']}, './', './']
     )
     /// endregion
-    testEach<typeof Helper.applyAliases>(
+    testEach<typeof applyAliases>(
         'applyAliases',
-        Helper.applyAliases,
+        applyAliases,
 
         ['', '', {}],
         ['', '', {a: 'b'}],
@@ -595,9 +614,9 @@ describe('helper', ():void => {
         ['bbb', 'bba', {a: 'b'}],
         ['helper', 'helper', {}]
     )
-    testEach<typeof Helper.applyModuleReplacements>(
+    testEach<typeof applyModuleReplacements>(
         'applyModuleReplacements',
-        Helper.applyModuleReplacements,
+        applyModuleReplacements,
 
         ['', '', {}],
         ['', '', {a: 'b'} as unknown as Replacements],
@@ -609,10 +628,10 @@ describe('helper', ():void => {
         ['helper', 'helper', {}]
     )
     testEachAgainstSameExpectation<
-        typeof Helper.findPackageDescriptorFilePath
+        typeof findPackageDescriptorFilePath
     >(
         'findPackageDescriptorFilePath',
-        Helper.findPackageDescriptorFilePath,
+        findPackageDescriptorFilePath,
         resolve(__dirname, '../package.json'),
 
         ['./', 'package.json'],
@@ -622,7 +641,7 @@ describe('helper', ():void => {
         `getClosestPackageDescriptor('%s') === {configuration: ...}`,
         (modulePath:string):void => {
             const filePath:string = resolve(__dirname, '../package.json')
-            expect(Helper.getClosestPackageDescriptor(modulePath, filePath))
+            expect(getClosestPackageDescriptor(modulePath, filePath))
                 .toStrictEqual(
                     {
                         configuration: currentRequire!(filePath) as

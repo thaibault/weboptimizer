@@ -21,7 +21,7 @@ export const isFile = async (filePath:string):Promise<boolean> => {
         if (
             Object.prototype.hasOwnProperty.call(error, 'code') &&
             ['ENOENT', 'ENOTDIR'].includes(
-                (error as NodeJS.ErrnoException).code
+                (error as NodeJS.ErrnoException).code as string
             )
         )
             return false
@@ -32,11 +32,11 @@ export const isFile = async (filePath:string):Promise<boolean> => {
 
 // Remove unsupported rules.
 const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
-const googleRules = Object.keys((google as Mapping<unknown>).rules)
+const googleRules = Object.keys((google as Mapping<object>).rules)
     .filter((key) => !unsuportedRules.includes(key))
     .reduce(
         (object, key) =>
-            ({...object, [key]: (google as Mapping<unknown>).rules[key]}),
+            ({...object, [key]: (google as Mapping<Mapping>).rules[key]}),
         {}
     )
 
@@ -58,13 +58,13 @@ for (const filePath of [
     }
 
 export const config = tseslint.config(
-    jsdoc.configs['flat/recommended'],
     {
         extends: [
             eslintjs.configs.recommended,
             ...typescript.configs.strictTypeChecked,
             ...tseslint.configs.strict,
-            ...tseslint.configs.stylistic
+            ...tseslint.configs.stylistic,
+            jsdoc.configs['flat/recommended']
         ],
         files: ['**/*.{ts,tsx,html}'],
         languageOptions: {
