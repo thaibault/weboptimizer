@@ -25,6 +25,8 @@ import {TextEncoder, TextDecoder} from 'util'
 try {
     if ((eval('require') as typeof require)('jest-canvas-mock'))
         console.info('Canvas mocking module loaded.')
+/* eslint-disable @typescript-eslint/no-unused-vars */
 } catch (error) {
+/* eslint-enable @typescript-eslint/no-unused-vars */
     // Do nothing.
 }

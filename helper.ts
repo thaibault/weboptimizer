@@ -1148,9 +1148,9 @@ export class Helper {
         try {
             if (existsSync(result))
                 return result
-        /* eslint-disable no-empty */
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         } catch (error) {}
-        /* eslint-enable no-empty */
+        /* eslint-enable @typescript-eslint/no-unused-vars */
 
         return Helper.findPackageDescriptorFilePath(start, fileName)
     }

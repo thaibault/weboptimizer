@@ -94,7 +94,9 @@ const currentRequire:null|typeof require =
 export const optionalRequire = <T = unknown>(id:string):null|T => {
     try {
         return currentRequire ? currentRequire(id) as T : null
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     } catch (error) {
+    /* eslint-enable @typescript-eslint/no-unused-vars */
         return null
     }
 }

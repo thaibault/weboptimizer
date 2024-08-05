@@ -1,5 +1,5 @@
 import js from '@eslint/js'
-import typescriptPlugin from '@typescript-eslint/eslint-plugin'
+import typescriptPlugin from '@stylistic/eslint-plugin-ts'
 import typescriptParser from '@typescript-eslint/parser'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
@@ -55,8 +55,7 @@ for (const filePath of [
     }
 
 export default [
-    js.configs.recommended,
-    ...typescript.configs.recommended,
+    ...typescript.configs.strictTypeChecked,
     jsdoc.configs['flat/recommended'],
 
     {
@@ -95,27 +94,17 @@ export default [
             '**/*.d.ts'
         ],
         plugins: {
-            jsdoc
+            jsdoc,
+            '@stylistic': typescriptPlugin
         },
 
         rules: {
             ...googleRules,
-            ...typescriptPlugin.configs.recommended.rules,
 
-            '@typescript-eslint/no-implied-eval': 'error',
-            '@typescript-eslint/no-non-null-assertion': 'off',
-            '@typescript-eslint/no-this-alias': [
-                'error',
-                {allowedNames: ['self']}
-            ],
-            '@typescript-eslint/no-unused-vars': [
-                'error',
-                {
-                    argsIgnorePattern: '^_',
-                    varsIgnorePattern: '^_'
-                }
-            ],
-            '@typescript-eslint/type-annotation-spacing': [
+            '@/no-implied-eval': 'error',
+
+            '@stylistic/no-non-null-assertion': 'off',
+            '@stylistic/type-annotation-spacing': [
                 'error',
                 {
                     after: false,
@@ -127,6 +116,11 @@ export default [
                         }
                     }
                 }
+            ],
+
+            '@typescript-eslint/no-this-alias': [
+                'error',
+                {allowedNames: ['self']}
             ],
 
             'jsdoc/check-param-names': 'error',
@@ -171,10 +165,7 @@ export default [
                 }
             ],
 
-            semi: [
-                'error',
-                'never'
-            ],
+            semi: ['error', 'never'],
 
             'space-before-function-paren': [
                 'error',
