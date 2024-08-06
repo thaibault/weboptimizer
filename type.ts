@@ -18,17 +18,18 @@
 import {
     AnyFunction, Encoding, Mapping, PlainObject, SecondParameter
 } from 'clientnode'
-import FaviconWebpackPlugin from 'favicons-webpack-plugin'
+import type FaviconWebpackPlugin from 'favicons-webpack-plugin'
 import {
     FaviconWebpackPlugionOptions as FaviconWebpackPluginOptions
 } from 'favicons-webpack-plugin/src/options'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import ImageMinimizerWebpackPlugin, {
+import type ImageMinimizerWebpackPlugin from 'image-minimizer-webpack-plugin'
+import {
     PluginOptions as ImageMinimizerOptions
 } from 'image-minimizer-webpack-plugin'
 import {JSDOM} from 'jsdom'
-import MiniCSSExtractPlugin from 'mini-css-extract-plugin'
-import TerserWebpackPlugin from 'terser-webpack-plugin'
+import type MiniCSSExtractPlugin from 'mini-css-extract-plugin'
+import type TerserWebpackPlugin from 'terser-webpack-plugin'
 import {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
@@ -45,7 +46,7 @@ import {
     WebpackGenerateSWOptions as WorkboxGenerateSWOptions,
     WebpackInjectManifestOptions as WorkboxInjectManifestOptions
 } from 'workbox-build'
-import OfflinePlugin from 'workbox-webpack-plugin'
+import type OfflinePlugin from 'workbox-webpack-plugin'
 // endregion
 // region exports
 /// region generic
@@ -506,8 +507,8 @@ export interface WebpackBaseAssets {
     plugin:HtmlWebpackPlugin
 }
 export interface WebpackAssets extends WebpackBaseAssets {
-    bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
-    headTags:HtmlWebpackPlugin.HtmlTagObject[]
+    bodyTags:Array<HtmlWebpackPlugin.HtmlTagObject>
+    headTags:Array<HtmlWebpackPlugin.HtmlTagObject>
     outputName:string
     publicPath:string
     plugin:HtmlWebpackPlugin

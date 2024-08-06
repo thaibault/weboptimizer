@@ -1,6 +1,7 @@
 import eslintjs from '@eslint/js'
 import typescriptPlugin from '@stylistic/eslint-plugin-ts'
 import typescriptParser from '@typescript-eslint/parser'
+import {PlainObject} from 'clientnode'
 import tseslint from 'typescript-eslint'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
@@ -42,7 +43,7 @@ const googleRules = Object.keys((google as Mapping<object>).rules)
 
 const libraryIndicator = JSON.parse(
     await readFile(resolve(cwd(), './package.json'), {encoding: 'utf-8'})
-).default?.webOptimizer?.library
+).default?.webOptimizer?.library as PlainObject
 const isLibrary = libraryIndicator ?? true
 
 let tsConfigFilePath = ''
