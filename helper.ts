@@ -790,7 +790,9 @@ export const getAutoInjection = (
     const injectedModuleIDs:Mapping<Array<string>> = {}
 
     for (const buildConfiguration of buildConfigurations) {
-        if (!injectedModuleIDs[buildConfiguration.outputExtension])
+        if (!Object.prototype.hasOwnProperty.call(
+            injectedModuleIDs, buildConfiguration.outputExtension
+        ))
             injectedModuleIDs[buildConfiguration.outputExtension] = []
 
         for (const moduleFilePath of buildConfiguration.filePaths)
@@ -894,9 +896,7 @@ export const determineModuleFilePathInPackage = (
                     typeof localConfiguration[propertyName] === 'string' &&
                     localConfiguration[propertyName]
                 ) {
-                    result.fileName = localConfiguration[
-                        propertyName
-                    ] as string
+                    result.fileName = localConfiguration[propertyName]
                     break
                 }
             for (const propertyName of packageAliasPropertyNames)
@@ -1098,9 +1098,9 @@ export const findPackageDescriptorFilePath = (
     try {
         if (existsSync(result))
             return result
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    } catch (error) {}
-    /* eslint-enable @typescript-eslint/no-unused-vars */
+    } catch (_error) {
+        // Continue regardless of an error.
+    }
 
     return findPackageDescriptorFilePath(start, fileName)
 }
@@ -1117,11 +1117,11 @@ export const getClosestPackageDescriptor = (
 ):null|PackageDescriptor => {
     const filePath:null|string =
         findPackageDescriptorFilePath(modulePath, fileName)
-    if (!filePath)
+    if (!(filePath && currentRequire))
         return null
 
     const configuration:PackageConfiguration =
-        currentRequire!(filePath) as PackageConfiguration
+        currentRequire(filePath) as PackageConfiguration
     /*
         If the package.json does not have a name property, try again from
         one level higher.

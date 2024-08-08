@@ -3,11 +3,11 @@
     NOTE: We have to avoid importing this from "clientnode/type" to avoid a
     dependency cycle.
 */
-type Mapping<T = string> = {[key:string]:T}
+type Mapping<T = string> = Record<string, T>
 
 interface PostcssTransformer {
-    postcssPlugin: string
-    postcssVersion: string
+    postcssPlugin:string
+    postcssVersion:string
 
     (root:object, result:object):Promise<void>|void
 }

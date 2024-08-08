@@ -1,7 +1,6 @@
 import eslintjs from '@eslint/js'
 import typescriptPlugin from '@stylistic/eslint-plugin-ts'
 import typescriptParser from '@typescript-eslint/parser'
-import {PlainObject} from 'clientnode'
 import tseslint from 'typescript-eslint'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
@@ -10,6 +9,8 @@ import globals from 'globals'
 import {resolve} from 'path'
 import {cwd} from 'process'
 import typescript from 'typescript-eslint'
+
+import {ResolvedConfiguration} from './type'
 /**
  * Checks if given path points to a valid file.
  * @param filePath - Path to directory.
@@ -41,9 +42,9 @@ const googleRules = Object.keys((google as Mapping<object>).rules)
         {}
     )
 
-const libraryIndicator = JSON.parse(
+const libraryIndicator = (JSON.parse(
     await readFile(resolve(cwd(), './package.json'), {encoding: 'utf-8'})
-).default?.webOptimizer?.library as PlainObject
+) as {webOptimizer?:ResolvedConfiguration}).webOptimizer?.library
 const isLibrary = libraryIndicator ?? true
 
 let tsConfigFilePath = ''
@@ -96,10 +97,13 @@ export const config = tseslint.config(
             '**/log/**/*',
             '**/node_modules/**/*',
             '**/backup/**/*',
-            '**/exclude/**/*',
-            '**/plugins/**/*',
+            '**/exclude/**/*'
+            /*
+            ,
+            '** /plugins/** /*',
             '*.d.ts',
-            '**/*.d.ts'
+            '** /*.d.ts'
+             */
         ],
         plugins: {
             jsdoc,
@@ -131,6 +135,18 @@ export const config = tseslint.config(
             '@typescript-eslint/no-this-alias': [
                 'error', {allowedNames: ['self']}
             ],
+            '@typescript-eslint/no-unused-vars': ['error', {
+                vars: 'all',
+                varsIgnorePattern: '^_',
+                args: 'after-used',
+                caughtErrors: 'all',
+                caughtErrorsIgnorePattern: '^_',
+                ignoreRestSiblings: false,
+                reportUsedIgnorePattern: false
+            }],
+            // NOTE: Too strcit for now but could be actvated in future maybe.
+            '@typescript-eslint/no-unsafe-member-access': 'off',
+            '@typescript-eslint/no-unsafe-assignment': 'off',
 
             'jsdoc/check-param-names': 'error',
             'jsdoc/check-tag-names': 'error',
