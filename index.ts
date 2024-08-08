@@ -40,6 +40,7 @@ import {
     isFileSync,
     isPlainObject,
     Mapping,
+    MAXIMAL_NUMBER_OF_ITERATIONS,
     NOOP,
     parseEncodedObject,
     PlainObject,
@@ -164,20 +165,21 @@ const main = async (
             )
                 configuration.givenCommandLineArguments.pop()
 
-            let count = 0
             let filePath:string = resolve(
                 configuration.path.context,
-                `.dynamicConfiguration-${count}.json`
+                `.dynamicConfiguration-${String(count)}.json`
             )
-            while (true) {
+            for (
+                let count = 0;
+                count < MAXIMAL_NUMBER_OF_ITERATIONS.value;
+                count++
+            ) {
                 filePath = resolve(
                     configuration.path.context,
-                    `.dynamicConfiguration-${count}.json`
+                    `.dynamicConfiguration-${String(count)}.json`
                 )
                 if (!(await isFile(filePath)))
                     break
-
-                count += 1
             }
             await writeFile(filePath, JSON.stringify(dynamicConfiguration))
 
@@ -378,12 +380,12 @@ const main = async (
                                 configuration.buildContext.types[type]
                             ) {
                                 const filePath:string = renderFilePathTemplate(
-                                        stripLoader(
-                                            configuration.files.compose
-                                                .javaScript
-                                        ),
-                                        {'[name]': chunkName}
-                                    )
+                                    stripLoader(
+                                        configuration.files.compose
+                                            .javaScript
+                                    ),
+                                    {'[name]': chunkName}
+                                )
                                 /*
                                     NOTE: Close handler have to be
                                     synchronous.

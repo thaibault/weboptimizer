@@ -74,9 +74,7 @@ export class HTMLTransformation {
                     .replace(/<%/g, '##+#+#+##')
                     .replace(/%>/g, '##-#-#-##')
             )
-        /* eslint-enable @typescript-eslint/no-unused-vars */
-        } catch (error) {
-        /* eslint-disable @typescript-eslint/no-unused-vars */
+        } catch (_error) {
             return data
         }
 

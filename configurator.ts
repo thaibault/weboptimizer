@@ -24,6 +24,7 @@ import {
     getUTCTimestamp,
     isFileSync,
     isPlainObject,
+    MAXIMAL_NUMBER_OF_ITERATIONS,
     Mapping,
     modifyObject,
     optionalRequire,
@@ -94,7 +95,11 @@ export const load = (
             directory and this library is located as a nested dependency.
         */
         metaConfiguration.default.path.context = webOptimizerPath
-        for (let level = 0; level < 1000; level++) {
+        for (
+            let level = 0;
+            level < MAXIMAL_NUMBER_OF_ITERATIONS.value;
+            level++
+        ) {
             metaConfiguration.default.path.context =
                 resolve(metaConfiguration.default.path.context, '../../')
             if (
@@ -211,7 +216,7 @@ export const load = (
     /// region load additional dynamically given configuration
     let count = 0
     let filePath:null|string = null
-    for (let index = 0; index < 1000; index++) {
+    for (let index = 0; index < MAXIMAL_NUMBER_OF_ITERATIONS.value; index++) {
         const newFilePath =
             `${configuration.path.context}.dynamicConfiguration-` +
             `${String(count)}.json`
