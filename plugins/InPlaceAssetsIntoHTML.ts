@@ -71,11 +71,14 @@ export class InPlaceAssetsIntoHTML {
                                 publicPath ? url.replace(publicPath, '') : url
 
                             if (
-                                compilation.assets[name] &&
-                                settings![type] &&
+                                Object.prototype.hasOwnProperty.call(
+                                    compilation.assets, name
+                                ) &&
+                                settings &&
+                                settings[type] &&
                                 ([] as Array<RegExp|string>)
                                     .concat(
-                                        settings![type] as Array<RegExp|string>
+                                        settings[type] as Array<RegExp|string>
                                     )
                                     .some((pattern:RegExp|string):boolean =>
                                         (new RegExp(pattern)).test(name)

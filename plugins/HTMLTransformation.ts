@@ -90,23 +90,24 @@ export class HTMLTransformation {
                     `${tagName}[${attributeName}*="?` +
                     `${this.options.hashAlgorithm}="]`
                 )
-            ))
+            )) {
                 /*
                     NOTE: Removing symbols after a "&" in hash string is
                     necessary to match the generated request strings in offline
                     plugin.
                 */
-                domNode.setAttribute(
-                    attributeName,
-                    domNode
-                        .getAttribute(attributeName)!
-                        .replace(
+                const value = domNode.getAttribute(attributeName)
+                if (value)
+                    domNode.setAttribute(
+                        attributeName,
+                        value.replace(
                             new RegExp(
                                 `(\\?${this.options.hashAlgorithm}=[^&]+).*$`
                             ),
                             '$1'
                         )
-                )
+                    )
+            }
         // NOTE: We have to restore template delimiter and style contents.
         data.html = dom.serialize()
             .replace(/##\+#\+#\+##/g, '<%')
@@ -136,8 +137,9 @@ export class HTMLTransformation {
                         data.html = ejsLoader.bind({
                             query: extend(
                                 true,
-                                copy(loaderConfiguration.options) ||
-                                {},
+                                Object.prototype.hasOwnProperty.call(
+                                    loaderConfiguration, 'options'
+                                ) ? copy(loaderConfiguration.options) : {},
                                 htmlFileSpecification.template
                                     .postCompileOptions
                             )

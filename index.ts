@@ -165,12 +165,13 @@ const main = async (
             )
                 configuration.givenCommandLineArguments.pop()
 
+            let count = 0
             let filePath:string = resolve(
                 configuration.path.context,
                 `.dynamicConfiguration-${String(count)}.json`
             )
             for (
-                let count = 0;
+                ;
                 count < MAXIMAL_NUMBER_OF_ITERATIONS.value;
                 count++
             ) {
@@ -377,7 +378,9 @@ const main = async (
 
                             if (
                                 typeof type === 'string' &&
-                                configuration.buildContext.types[type]
+                                Object.prototype.hasOwnProperty.call(
+                                    configuration.buildContext.types, type
+                                )
                             ) {
                                 const filePath:string = renderFilePathTemplate(
                                     stripLoader(
@@ -439,7 +442,11 @@ const main = async (
                         NOTE: Take current weboptimizer's dependencies into
                         account.
                     */
-                    childProcessOptions.env!.PATH +=
+                    if (!childProcessOptions.env)
+                        childProcessOptions.env = {}
+                    if (typeof childProcessOptions.env.PATH !== 'string')
+                        childProcessOptions.env.PATH = ''
+                    childProcessOptions.env.PATH +=
                         `:${webOptimizerPath}/node_modules/.bin`
 
                     const childProcess:ChildProcess = spawnChildProcess(
@@ -554,13 +561,15 @@ const main = async (
                                                     configuration.encoding,
                                                 ...processOptions
                                             },
-                                            (error:Error|null):void =>
-                                                error ?
-                                                    reject(error) :
+                                            (error:Error|null) => {
+                                                if (error)
+                                                    reject(error)
+                                                else
                                                     resolve({
                                                         reason: 'Finished.',
                                                         parameters: []
                                                     })
+                                            }
                                         )
                                     )
                                 ])
@@ -573,8 +582,8 @@ const main = async (
             const handleTask = (type:keyof CommandLineArguments):void => {
                 const tasks:Array<Command> =
                     Array.isArray(configuration.commandLine[type]) ?
-                        (configuration.commandLine[type] as Array<Command>) :
-                        [configuration.commandLine[type] as Command]
+                        configuration.commandLine[type] :
+                        [configuration.commandLine[type]]
                 for (const task of tasks) {
                     const evaluated:EvaluationResult = evaluate(
                         (

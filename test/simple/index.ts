@@ -15,6 +15,8 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-export const main = () => console.info('Running simple dummy module')
+export const main = () => {
+    console.info('Running simple dummy module')
+}
 
 export default main

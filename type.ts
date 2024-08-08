@@ -232,7 +232,7 @@ export interface WebpackLoaderConfiguration {
 export type WebpackLoaderIndicator = WebpackRuleSetRule['include']
 //// endregion
 export interface Command {
-    arguments:Array<string>
+    arguments?:Array<string>
     command:string
     indicator?:string
 }
@@ -545,8 +545,8 @@ export type WebpackExtendedResolveData =
     }
 
 export interface HTMLWebpackPluginAssetTagGroupsData {
-    bodyTags:HtmlWebpackPlugin.HtmlTagObject[]
-    headTags:HtmlWebpackPlugin.HtmlTagObject[]
+    bodyTags:Array<HtmlWebpackPlugin.HtmlTagObject>
+    headTags:Array<HtmlWebpackPlugin.HtmlTagObject>
     outputName:string
     plugin:HtmlWebpackPlugin
 }

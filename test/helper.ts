@@ -470,10 +470,10 @@ describe('helper', ():void => {
 
         [{}, {}], [{index: []}, {index: []}]
     )
-    test('resolveModulesInFolders', ():void =>
+    test('resolveModulesInFolders', () => {
         expect(resolveModulesInFolders({a: [__dirname]}).a)
             .toContain('./test/ts')
-    )
+    })
     testEach<typeof normalizeGivenInjection>(
         'normalizeGivenInjection',
         normalizeGivenInjection,
@@ -577,7 +577,7 @@ describe('helper', ():void => {
             ['.git', 'node_modules']
         ]
     )
-    test('getAutoInjection', ():void =>
+    test('getAutoInjection', () => {
         expect(getAutoInjection(
             resolveBuildConfigurationFilePaths(
                 buildConfiguration, './', ['.git', 'node_modules']
@@ -586,7 +586,7 @@ describe('helper', ():void => {
             [/.*\/\.git\/.*/, '/.*\\/node_modules/.*\\/'],
             './'
         )).toStrictEqual({})
-    )
+    })
     testEach<typeof determineModuleFilePath>(
         'determineModuleFilePath',
         determineModuleFilePath,
@@ -644,8 +644,9 @@ describe('helper', ():void => {
             expect(getClosestPackageDescriptor(modulePath, filePath))
                 .toStrictEqual(
                     {
-                        configuration: currentRequire!(filePath) as
-                            PackageConfiguration,
+                        configuration: (
+                            currentRequire ? currentRequire(filePath) : {}
+                        ) as PackageConfiguration,
                         filePath
                     }
                 )

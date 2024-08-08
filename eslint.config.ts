@@ -86,25 +86,6 @@ export const config = tseslint.config(
             },
             sourceType: 'module'
         },
-        ignores: [
-            '*.compiled.*',
-            '*.js',
-            '**/*.js',
-            '**/.git/**/*',
-            '**/.cache/**/*',
-            '**/.config/**/*',
-            '**/.npm/**/*',
-            '**/log/**/*',
-            '**/node_modules/**/*',
-            '**/backup/**/*',
-            '**/exclude/**/*'
-            /*
-            ,
-            '** /plugins/** /*',
-            '*.d.ts',
-            '** /*.d.ts'
-             */
-        ],
         plugins: {
             jsdoc,
             '@stylistic': typescriptPlugin
@@ -218,6 +199,26 @@ export const config = tseslint.config(
             ],
             'space-infix-ops': 'off'
         }
+    },
+    // NOTE: Ignores has te be applied via a dedicated object to influence all
+    // given configuration objects.
+    {
+        ignores: [
+            '*.compiled.*',
+            '*.js',
+            '**/*.js',
+            '**/.git/**/*',
+            '**/.cache/**/*',
+            '**/.config/**/*',
+            '**/.npm/**/*',
+            '**/log/**/*',
+            '**/node_modules/**/*',
+            '**/backup/**/*',
+            '**/exclude/**/*',
+            '**/*.d.ts',
+            '!**/declarations.d.ts'
+            // '** /plugins/** /*'
+        ]
     }
 )
 

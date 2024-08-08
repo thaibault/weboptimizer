@@ -6,6 +6,6 @@ import {expect, test} from '@jest/globals'
 
 import stylelintConfigurator from '../stylelintConfigurator'
 
-test('stylelintConfigurator', ():void =>
+test('stylelintConfigurator', () => {
     expect(stylelintConfigurator).toBeTruthy()
-)
+})
