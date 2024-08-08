@@ -117,7 +117,9 @@ export const loader = function(
                         replacements: {}
                     }
                 },
-                this.getOptions()
+                Object.prototype.hasOwnProperty.call(this, 'getOptions') ?
+                    this.getOptions() :
+                    {}
             ),
             /#%%%#/g,
             '!'

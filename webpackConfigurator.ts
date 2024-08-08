@@ -99,12 +99,11 @@ const currentRequire:null|typeof require =
     */
     eval(`typeof require === 'undefined' ? null : require`) as
         null|typeof require
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export const optionalRequire = <T = unknown>(id:string):null|T => {
     try {
         return currentRequire ? currentRequire(id) as T : null
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    } catch (error) {
-    /* eslint-enable @typescript-eslint/no-unused-vars */
+    } catch (_error) {
         return null
     }
 }
@@ -218,26 +217,31 @@ for (const [source, replacement] of Object.entries(
 //// endregion
 //// region generate html file
 let htmlAvailable = false
-for (const htmlConfiguration of configuration.files.html)
-    if (isFileSync(htmlConfiguration.template.filePath)) {
-        pluginInstances.push(new plugins.HTML!({
-            ...htmlConfiguration,
-            template: htmlConfiguration.template.request
-        }))
-        htmlAvailable = true
-    }
+if (plugins.HTML)
+    for (const htmlConfiguration of configuration.files.html)
+        if (isFileSync(htmlConfiguration.template.filePath)) {
+            pluginInstances.push(new plugins.HTML({
+                ...htmlConfiguration,
+                template: htmlConfiguration.template.request
+            }))
+            htmlAvailable = true
+        }
 //// endregion
 //// region generate favicons
 if (
     htmlAvailable &&
-    configuration.favicon &&
+    Object.prototype.hasOwnProperty.call(configuration, 'favicon') &&
     plugins.Favicon &&
     isFileSync(([] as Array<string>).concat(configuration.favicon.logo)[0])
 )
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
 //// endregion
 //// region provide offline functionality
-if (htmlAvailable && configuration.offline && plugins.Offline) {
+if (
+    htmlAvailable &&
+    Object.prototype.hasOwnProperty.call(configuration, 'offline') &&
+    Object.prototype.hasOwnProperty.call(plugins, 'Offline')
+) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
     ))
@@ -266,11 +270,12 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
         }
 
     if (
+        plugins.InjectManifest &&
         ([] as Array<string>)
             .concat(configuration.offline.use)
             .includes('injectionManifest')
     )
-        pluginInstances.push(new plugins.InjectManifest!(
+        pluginInstances.push(new plugins.InjectManifest(
             extend<WorkboxInjectManifestOptions>(
                 true,
                 configuration.offline.common,
@@ -278,11 +283,12 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             )
         ))
     if (
+        plugins.GenerateServiceWorker &&
         ([] as Array<string>)
             .concat(configuration.offline.use)
             .includes('generateServiceWorker')
     )
-        pluginInstances.push(new plugins.GenerateServiceWorker!(extend(
+        pluginInstances.push(new plugins.GenerateServiceWorker(extend(
             true,
             configuration.offline.common,
             configuration.offline.serviceWorker
@@ -290,7 +296,9 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
 }
 //// endregion
 //// region provide build environment
-if (configuration.buildContext.definitions)
+if (Object.prototype.hasOwnProperty.call(
+    configuration.buildContext, 'definitions'
+))
     pluginInstances.push(
         new DefinePlugin(configuration.buildContext.definitions)
     )
@@ -322,7 +330,9 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
 
                         if (
                             type &&
-                            configuration.assetPattern[type] &&
+                            Object.prototype.hasOwnProperty.call(
+                                configuration.assetPattern, type
+                            ) &&
                             (new RegExp(
                                 configuration.assetPattern[type]
                                     .includeFilePathRegularExpression
@@ -372,18 +382,23 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
 */
 
 if (
+    plugins.HTML &&
     htmlAvailable &&
     !['serve', 'test:browser']
         .includes(configuration.givenCommandLineArguments[2]) &&
-    configuration.inPlace.cascadingStyleSheet &&
+    Object.prototype.hasOwnProperty.call(
+        configuration.inPlace, 'cascadingStyleSheet'
+    ) &&
     Object.keys(configuration.inPlace.cascadingStyleSheet).length ||
-    configuration.inPlace.javaScript &&
+    Object.prototype.hasOwnProperty.call(
+        configuration.inPlace, 'javaScript'
+    ) &&
     Object.keys(configuration.inPlace.javaScript).length
 )
     pluginInstances.push(new InPlaceAssetsIntoHTML({
         cascadingStyleSheet: configuration.inPlace.cascadingStyleSheet,
         javaScript: configuration.inPlace.javaScript,
-        htmlPlugin: plugins.HTML!
+        htmlPlugin: plugins.HTML
     }))
 ///// endregion
 ///// region mark empty javaScript modules as dummy
@@ -424,8 +439,10 @@ if (configuration.injection.external.modules === '__implicit__')
             type?:string
         ) => void
     ):void => {
-        if (typeof request !== 'string')
-            return callback()
+        if (typeof request !== 'string') {
+            callback()
+            return
+        }
 
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
