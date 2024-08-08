@@ -40,6 +40,7 @@ import {
     isFileSync,
     isPlainObject,
     Mapping,
+    MAXIMAL_NUMBER_OF_ITERATIONS,
     NOOP,
     parseEncodedObject,
     PlainObject,
@@ -61,7 +62,15 @@ import {
 } from 'rimraf'
 
 import {load as loadConfiguration} from './configurator'
-import Helper from './helper'
+import {
+    determineAssetType,
+    determineModuleFilePath,
+    determineModuleLocations,
+    isFilePathInLocation,
+    renderFilePathTemplate,
+    resolveBuildConfigurationFilePaths,
+    stripLoader
+} from './helper'
 import {
     Command,
     CommandLineArguments,
@@ -159,17 +168,19 @@ const main = async (
             let count = 0
             let filePath:string = resolve(
                 configuration.path.context,
-                `.dynamicConfiguration-${count}.json`
+                `.dynamicConfiguration-${String(count)}.json`
             )
-            while (true) {
+            for (
+                ;
+                count < MAXIMAL_NUMBER_OF_ITERATIONS.value;
+                count++
+            ) {
                 filePath = resolve(
                     configuration.path.context,
-                    `.dynamicConfiguration-${count}.json`
+                    `.dynamicConfiguration-${String(count)}.json`
                 )
                 if (!(await isFile(filePath)))
                     break
-
-                count += 1
             }
             await writeFile(filePath, JSON.stringify(dynamicConfiguration))
 
@@ -218,7 +229,7 @@ const main = async (
                     await walkDirectoryRecursively(
                         configuration.path.target.base,
                         async (file:File):Promise<false|undefined> => {
-                            if (Helper.isFilePathInLocation(
+                            if (isFilePathInLocation(
                                 file.path,
                                 configuration.path.ignore
                                     .concat(
@@ -300,7 +311,7 @@ const main = async (
             // endregion
             // region handle build
             const buildConfigurations:ResolvedBuildConfiguration =
-                Helper.resolveBuildConfigurationFilePaths(
+                resolveBuildConfigurationFilePaths(
                     configuration.buildContext.types,
                     configuration.path.source.asset.base,
                     configuration.path.ignore.concat(
@@ -336,7 +347,7 @@ const main = async (
                     ))
                         for (const moduleID of chunk) {
                             const filePath:null|string =
-                                Helper.determineModuleFilePath(
+                                determineModuleFilePath(
                                     moduleID,
                                     configuration.module.aliases,
                                     configuration.module.replacements
@@ -359,7 +370,7 @@ const main = async (
 
                             let type:null|string = null
                             if (filePath)
-                                type = Helper.determineAssetType(
+                                type = determineAssetType(
                                     filePath,
                                     configuration.buildContext.types,
                                     configuration.path
@@ -367,16 +378,17 @@ const main = async (
 
                             if (
                                 typeof type === 'string' &&
-                                configuration.buildContext.types[type]
+                                Object.prototype.hasOwnProperty.call(
+                                    configuration.buildContext.types, type
+                                )
                             ) {
-                                const filePath:string =
-                                    Helper.renderFilePathTemplate(
-                                        Helper.stripLoader(
-                                            configuration.files.compose
-                                                .javaScript
-                                        ),
-                                        {'[name]': chunkName}
-                                    )
+                                const filePath:string = renderFilePathTemplate(
+                                    stripLoader(
+                                        configuration.files.compose
+                                            .javaScript
+                                    ),
+                                    {'[name]': chunkName}
+                                )
                                 /*
                                     NOTE: Close handler have to be
                                     synchronous.
@@ -430,7 +442,11 @@ const main = async (
                         NOTE: Take current weboptimizer's dependencies into
                         account.
                     */
-                    childProcessOptions.env!.PATH +=
+                    if (!childProcessOptions.env)
+                        childProcessOptions.env = {}
+                    if (typeof childProcessOptions.env.PATH !== 'string')
+                        childProcessOptions.env.PATH = ''
+                    childProcessOptions.env.PATH +=
                         `:${webOptimizerPath}/node_modules/.bin`
 
                     const childProcess:ChildProcess = spawnChildProcess(
@@ -494,7 +510,7 @@ const main = async (
                     isPlainObject(configuration['test:browser'].injection) &&
                     configuration['test:browser'].injection.entry
                 )
-                    testModuleFilePaths = Helper.determineModuleLocations(
+                    testModuleFilePaths = determineModuleLocations(
                         configuration['test:browser'].injection.entry as
                             GivenInjection,
                         configuration.module.aliases,
@@ -545,13 +561,15 @@ const main = async (
                                                     configuration.encoding,
                                                 ...processOptions
                                             },
-                                            (error:Error|null):void =>
-                                                error ?
-                                                    reject(error) :
+                                            (error:Error|null) => {
+                                                if (error)
+                                                    reject(error)
+                                                else
                                                     resolve({
                                                         reason: 'Finished.',
                                                         parameters: []
                                                     })
+                                            }
                                         )
                                     )
                                 ])
@@ -564,8 +582,8 @@ const main = async (
             const handleTask = (type:keyof CommandLineArguments):void => {
                 const tasks:Array<Command> =
                     Array.isArray(configuration.commandLine[type]) ?
-                        (configuration.commandLine[type] as Array<Command>) :
-                        [configuration.commandLine[type] as Command]
+                        configuration.commandLine[type] :
+                        [configuration.commandLine[type]]
                 for (const task of tasks) {
                     const evaluated:EvaluationResult = evaluate(
                         (

@@ -24,7 +24,9 @@ export class BrowserEnvironment {
         return Promise.resolve()
     }
 
-    teardown() {}
+    teardown() {
+        // Stub method.
+    }
 
     runScript() {
         return null

@@ -57,7 +57,15 @@ import {
 
 import getConfiguration from './configurator'
 import {LoaderConfiguration as EJSLoaderConfiguration} from './ejsLoader'
-import Helper from './helper'
+import {
+    determineAssetType,
+    determineExternalRequest,
+    determineModuleFilePath,
+    getClosestPackageDescriptor,
+    isFilePathInLocation,
+    normalizePaths,
+    stripLoader
+} from './helper'
 import InPlaceAssetsIntoHTML from './plugins/InPlaceAssetsIntoHTML'
 import HTMLTransformation from './plugins/HTMLTransformation'
 import {
@@ -94,7 +102,9 @@ const currentRequire:null|typeof require =
 export const optionalRequire = <T = unknown>(id:string):null|T => {
     try {
         return currentRequire ? currentRequire(id) as T : null
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     } catch (error) {
+    /* eslint-enable @typescript-eslint/no-unused-vars */
         return null
     }
 }
@@ -304,7 +314,7 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
                 (assets):void => {
                     for (const [request, asset] of Object.entries(assets)) {
                         const filePath:string = request.replace(/\?[^?]+$/, '')
-                        const type:null|string = Helper.determineAssetType(
+                        const type:null|string = determineAssetType(
                             filePath,
                             configuration.buildContext.types,
                             configuration.path
@@ -430,7 +440,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 break
             }
         // region pattern based aliasing
-        const filePath:null|string = Helper.determineModuleFilePath(
+        const filePath:null|string = determineModuleFilePath(
             request,
             {},
             {},
@@ -472,7 +482,7 @@ if (configuration.injection.external.modules === '__implicit__')
                                 replacementRegularExpression, target)
 
                             if (aliasedRequest !== request)
-                                match = Boolean(Helper.determineModuleFilePath(
+                                match = Boolean(determineModuleFilePath(
                                     aliasedRequest,
                                     {},
                                     {},
@@ -502,7 +512,7 @@ if (configuration.injection.external.modules === '__implicit__')
                     }
                 }
         // endregion
-        const resolvedRequest:null|string = Helper.determineExternalRequest(
+        const resolvedRequest:null|string = determineExternalRequest(
             request,
             configuration.path.context,
             context,
@@ -652,7 +662,7 @@ if (module.enforceDeduplication) {
             isFileSync(targetPath)
         ) {
             const packageDescriptor:null|PackageDescriptor =
-                Helper.getClosestPackageDescriptor(targetPath)
+                getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
                 let pathPrefixes:Array<string>
                 let pathSuffix:string
@@ -706,9 +716,7 @@ if (module.enforceDeduplication) {
 
                     if (isFileSync(alternateTargetPath)) {
                         const otherPackageDescriptor:null|PackageDescriptor =
-                            Helper.getClosestPackageDescriptor(
-                                alternateTargetPath
-                            )
+                            getClosestPackageDescriptor(alternateTargetPath)
                         if (otherPackageDescriptor) {
                             if (
                                 packageDescriptor.configuration.version ===
@@ -856,9 +864,9 @@ new NormalModuleReplacementPlugin(
 /// endregion
 /// region loader helper
 const isFilePathInDependencies = (filePath:string):boolean => {
-    filePath = Helper.stripLoader(filePath)
+    filePath = stripLoader(filePath)
 
-    return Helper.isFilePathInLocation(
+    return isFilePathInLocation(
         filePath,
         configuration.path.ignore
             .concat(module.directoryNames, configuration.loader.directoryNames)
@@ -916,7 +924,7 @@ const evaluateAdditionalLoaderConfiguration = (
 })
 
 const getIncludingPaths = (path:string):Array<string> =>
-    Helper.normalizePaths([path].concat(module.locations.directoryPaths))
+    normalizePaths([path].concat(module.locations.directoryPaths))
 
 const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
     .map(evaluateMapper)
@@ -1056,7 +1064,7 @@ const genericLoader:GenericLoader = {
     // region generic template
     ejs: {
         exclude: (filePath:string):boolean =>
-            Helper.normalizePaths(
+            normalizePaths(
                 configuration.files.html
                     .concat(configuration.files.defaultHTML)
                     .map((htmlConfiguration:HTMLConfiguration):string =>
@@ -1145,7 +1153,7 @@ const genericLoader:GenericLoader = {
         },
         ejs: {
             exclude:
-                (filePath:string):boolean => Helper.normalizePaths(
+                (filePath:string):boolean => normalizePaths(
                     configuration.files.html
                         .concat(configuration.files.defaultHTML)
                         .map((htmlConfiguration:HTMLConfiguration):string =>
@@ -1213,7 +1221,7 @@ const genericLoader:GenericLoader = {
         },
         html: {
             exclude: (filePath:string):boolean =>
-                Helper.normalizePaths(
+                normalizePaths(
                     configuration.files.html
                         .concat(configuration.files.defaultHTML)
                         .map((htmlConfiguration:HTMLConfiguration):string =>
@@ -1442,7 +1450,7 @@ const genericLoader:GenericLoader = {
                 return false
 
             return configuration.extensions.file.internal.includes(
-                extname(Helper.stripLoader(filePath))
+                extname(stripLoader(filePath))
             ) ||
             (
                 (module.optimizer.data.exclude === null) ?
@@ -1623,7 +1631,7 @@ export let webpackConfiguration:WebpackConfiguration = extend<
             extensions: configuration.extensions.file.internal,
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,
-            modules: Helper.normalizePaths(module.directoryNames),
+            modules: normalizePaths(module.directoryNames),
             symlinks: module.resolveSymlinks,
             unsafeCache: Boolean(
                 configuration.cache?.unsafe ??

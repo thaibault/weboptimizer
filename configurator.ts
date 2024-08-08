@@ -24,6 +24,7 @@ import {
     getUTCTimestamp,
     isFileSync,
     isPlainObject,
+    MAXIMAL_NUMBER_OF_ITERATIONS,
     Mapping,
     modifyObject,
     optionalRequire,
@@ -36,7 +37,16 @@ import {
 import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
 
-import Helper from './helper'
+import {
+    determineAssetType,
+    determineModuleFilePath,
+    determineModuleLocations,
+    resolveAutoInjection,
+    resolveBuildConfigurationFilePaths,
+    resolveModulesInFolders,
+    normalizeGivenInjection,
+    normalizePaths
+} from './helper'
 import packageConfiguration, {
     configuration as metaConfiguration
 } from './package.json'
@@ -85,7 +95,11 @@ export const load = (
             directory and this library is located as a nested dependency.
         */
         metaConfiguration.default.path.context = webOptimizerPath
-        while (true) {
+        for (
+            let level = 0;
+            level < MAXIMAL_NUMBER_OF_ITERATIONS.value;
+            level++
+        ) {
             metaConfiguration.default.path.context =
                 resolve(metaConfiguration.default.path.context, '../../')
             if (
@@ -128,6 +142,7 @@ export const load = (
     // region load application specific configuration
     let specificConfiguration:PlainObject = {}
     try {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         specificConfiguration = currentRequire!(join(
             metaConfiguration.default.path.context, 'package'
         )) as PlainObject
@@ -139,13 +154,15 @@ export const load = (
     const name:string = typeof specificConfiguration.name === 'string' ?
         specificConfiguration.name :
         (
-            typeof (specificConfiguration.webOptimizer as PlainObject)?.name ===
-                'string'
+            typeof (
+                specificConfiguration.webOptimizer as Mapping|undefined
+            )?.name === 'string'
         ) ?
-            (specificConfiguration.webOptimizer as Mapping)?.name :
+            (specificConfiguration.webOptimizer as Mapping|undefined)?.name as
+                string :
             'mockup'
     specificConfiguration =
-        (specificConfiguration.webOptimizer as PlainObject) || {}
+        (specificConfiguration.webOptimizer as PlainObject|undefined) || {}
     specificConfiguration.name = name
     // endregion
     // region determine debug mode
@@ -175,7 +192,7 @@ export const load = (
             modifyObject<DefaultConfiguration>(
                 metaConfiguration.default as DefaultConfiguration,
                 metaConfiguration.debug
-            )!,
+            ),
             metaConfiguration.debug
         )
     else
@@ -185,13 +202,13 @@ export const load = (
     if (typeof configuration.library === 'object')
         extend(
             true,
-            modifyObject(libraryConfiguration, configuration.library)!,
+            modifyObject(libraryConfiguration, configuration.library),
             configuration.library
         )
-    if (configuration.library && specificConfiguration?.library !== false)
+    if (configuration.library && specificConfiguration.library !== false)
         configuration = extend(
             true,
-            modifyObject(configuration, libraryConfiguration)!,
+            modifyObject(configuration, libraryConfiguration),
             libraryConfiguration
         )
     // endregion
@@ -199,9 +216,10 @@ export const load = (
     /// region load additional dynamically given configuration
     let count = 0
     let filePath:null|string = null
-    while (true) {
+    for (let index = 0; index < MAXIMAL_NUMBER_OF_ITERATIONS.value; index++) {
         const newFilePath =
-            `${configuration.path.context}.dynamicConfiguration-${count}.json`
+            `${configuration.path.context}.dynamicConfiguration-` +
+            `${String(count)}.json`
 
         if (!isFileSync(newFilePath))
             break
@@ -244,7 +262,7 @@ export const load = (
                             modifyObject<DefaultConfiguration>(
                                 configurationTarget as DefaultConfiguration,
                                 configurationTarget[type]
-                            )!,
+                            ),
                             configurationTarget[type] as PlainObject
                         )
     ///// endregion
@@ -268,7 +286,7 @@ export const load = (
         modifyObject(
             modifyObject(configuration, specificConfiguration),
             runtimeInformation
-        )!,
+        ),
         specificConfiguration,
         runtimeInformation
     )
@@ -311,7 +329,7 @@ export const load = (
                     )
         }
 
-        extend(true, modifyObject(configuration, result)!, result)
+        extend(true, modifyObject(configuration, result), result)
     }
     // Removing comments (default key name to delete is "#").
     configuration = removeKeyPrefixes(configuration)
@@ -372,7 +390,6 @@ export const load = (
                 ...UTILITY_SCOPE,
                 currentPath: currentWorkingDirectory,
                 fs: fileSystem,
-                Helper,
                 packageConfiguration,
                 optionalRequire,
                 path,
@@ -404,7 +421,7 @@ export const load = (
             )
     // endregion
     // region resolve module location and which asset types are needed
-    resolvedConfiguration.module.locations = Helper.determineModuleLocations(
+    resolvedConfiguration.module.locations = determineModuleLocations(
         resolvedConfiguration.injection.entry.normalized,
         resolvedConfiguration.module.aliases,
         resolvedConfiguration.module.replacements.normal,
@@ -413,14 +430,14 @@ export const load = (
         resolvedConfiguration.path.source.asset.base
     )
 
-    resolvedConfiguration.injection = Helper.resolveAutoInjection(
+    resolvedConfiguration.injection = resolveAutoInjection(
         resolvedConfiguration.injection as
             unknown as
             GivenInjectionConfiguration,
-        Helper.resolveBuildConfigurationFilePaths(
+        resolveBuildConfigurationFilePaths(
             resolvedConfiguration.buildContext.types,
             resolvedConfiguration.path.source.asset.base,
-            Helper.normalizePaths(
+            normalizePaths(
                 resolvedConfiguration.path.ignore.concat(
                     resolvedConfiguration.module.directoryNames,
                     resolvedConfiguration.loader.directoryNames
@@ -443,8 +460,8 @@ export const load = (
         resolvedConfiguration.injection.entry as unknown as GivenInjection
     resolvedConfiguration.injection.entry = {
         given: givenInjection,
-        normalized: Helper.resolveModulesInFolders(
-            Helper.normalizeGivenInjection(givenInjection),
+        normalized: resolveModulesInFolders(
+            normalizeGivenInjection(givenInjection),
             resolvedConfiguration.module.aliases,
             resolvedConfiguration.module.replacements.normal,
             resolvedConfiguration.path.context,
@@ -472,7 +489,7 @@ export const load = (
         resolvedConfiguration.injection.entry.normalized
     ))
         for (const moduleID of chunk) {
-            const filePath:null|string = Helper.determineModuleFilePath(
+            const filePath:null|string = determineModuleFilePath(
                 moduleID,
                 resolvedConfiguration.module.aliases,
                 resolvedConfiguration.module.replacements.normal,
@@ -494,7 +511,7 @@ export const load = (
 
             let type:null|string = null
             if (filePath)
-                type = Helper.determineAssetType(
+                type = determineAssetType(
                     filePath,
                     resolvedConfiguration.buildContext.types,
                     resolvedConfiguration.path

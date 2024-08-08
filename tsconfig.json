@@ -23,11 +23,13 @@
         "target": "esnext"
     },
     "exclude": [
-        "**/exclude/*"
+        "**/exclude/*",
+        "test/**/*.d.ts"
     ],
     "include": [
         "*.ts", "*.tsx",
         "*/*.ts", "*/*.tsx",
+        "*/declarations.d.ts",
 
         "assets/src/**/*.ts", "/assets/src/**/*.tsx",
         "assets/source/**/*.ts", "/assets/source/**/*.tsx",

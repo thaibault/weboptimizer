@@ -1,6 +1,7 @@
-import js from '@eslint/js'
-import typescriptPlugin from '@typescript-eslint/eslint-plugin'
+import eslintjs from '@eslint/js'
+import typescriptPlugin from '@stylistic/eslint-plugin-ts'
 import typescriptParser from '@typescript-eslint/parser'
+import tseslint from 'typescript-eslint'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
 import {readFile, stat} from 'fs/promises'
@@ -8,6 +9,8 @@ import globals from 'globals'
 import {resolve} from 'path'
 import {cwd} from 'process'
 import typescript from 'typescript-eslint'
+
+import {ResolvedConfiguration} from './type'
 /**
  * Checks if given path points to a valid file.
  * @param filePath - Path to directory.
@@ -15,12 +18,12 @@ import typescript from 'typescript-eslint'
  */
 export const isFile = async (filePath:string):Promise<boolean> => {
     try {
-        return (await stat!(filePath)).isFile()
+        return (await stat(filePath)).isFile()
     } catch (error) {
         if (
             Object.prototype.hasOwnProperty.call(error, 'code') &&
             ['ENOENT', 'ENOTDIR'].includes(
-                (error as NodeJS.ErrnoException).code!
+                (error as NodeJS.ErrnoException).code as string
             )
         )
             return false
@@ -31,15 +34,17 @@ export const isFile = async (filePath:string):Promise<boolean> => {
 
 // Remove unsupported rules.
 const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
-const googleRules = Object.keys(google.rules)
+const googleRules = Object.keys((google as Mapping<object>).rules)
     .filter((key) => !unsuportedRules.includes(key))
     .reduce(
-        (object, key) => ({...object, [key]: google.rules[key]}), {}
+        (object, key) =>
+            ({...object, [key]: (google as Mapping<Mapping>).rules[key]}),
+        {}
     )
 
-const libraryIndicator = JSON.parse(
+const libraryIndicator = (JSON.parse(
     await readFile(resolve(cwd(), './package.json'), {encoding: 'utf-8'})
-).default?.webOptimizer?.library
+) as {webOptimizer?:ResolvedConfiguration}).webOptimizer?.library
 const isLibrary = libraryIndicator ?? true
 
 let tsConfigFilePath = ''
@@ -54,12 +59,15 @@ for (const filePath of [
         break
     }
 
-export default [
-    js.configs.recommended,
-    ...typescript.configs.recommended,
-    jsdoc.configs['flat/recommended'],
-
+export const config = tseslint.config(
     {
+        extends: [
+            eslintjs.configs.recommended,
+            ...typescript.configs.strictTypeChecked,
+            ...tseslint.configs.strict,
+            ...tseslint.configs.stylistic,
+            jsdoc.configs['flat/recommended']
+        ],
         files: ['**/*.{ts,tsx,html}'],
         languageOptions: {
             ecmaVersion: 'latest',
@@ -78,44 +86,18 @@ export default [
             },
             sourceType: 'module'
         },
-        ignores: [
-            '*.compiled.*',
-            '*.js',
-            '**/*.js',
-            '**/.git/**/*',
-            '**/.cache/**/*',
-            '**/.config/**/*',
-            '**/.npm/**/*',
-            '**/log/**/*',
-            '**/node_modules/**/*',
-            '**/backup/**/*',
-            '**/exclude/**/*',
-            '**/plugins/**/*',
-            '*.d.ts',
-            '**/*.d.ts'
-        ],
         plugins: {
-            jsdoc
+            jsdoc,
+            '@stylistic': typescriptPlugin
         },
 
         rules: {
             ...googleRules,
-            ...typescriptPlugin.configs.recommended.rules,
 
-            '@typescript-eslint/no-implied-eval': 'error',
-            '@typescript-eslint/no-non-null-assertion': 'off',
-            '@typescript-eslint/no-this-alias': [
-                'error',
-                {allowedNames: ['self']}
-            ],
-            '@typescript-eslint/no-unused-vars': [
-                'error',
-                {
-                    argsIgnorePattern: '^_',
-                    varsIgnorePattern: '^_'
-                }
-            ],
-            '@typescript-eslint/type-annotation-spacing': [
+            '@/no-implied-eval': 'error',
+
+            '@stylistic/no-non-null-assertion': 'off',
+            '@stylistic/type-annotation-spacing': [
                 'error',
                 {
                     after: false,
@@ -128,6 +110,24 @@ export default [
                     }
                 }
             ],
+
+            '@typescript-eslint/array-type': ['error', {default: 'generic'}],
+            '@typescript-eslint/no-dynamic-delete': 'off',
+            '@typescript-eslint/no-this-alias': [
+                'error', {allowedNames: ['self']}
+            ],
+            '@typescript-eslint/no-unused-vars': ['error', {
+                vars: 'all',
+                varsIgnorePattern: '^_',
+                args: 'after-used',
+                caughtErrors: 'all',
+                caughtErrorsIgnorePattern: '^_',
+                ignoreRestSiblings: false,
+                reportUsedIgnorePattern: false
+            }],
+            // NOTE: Too strcit for now but could be actvated in future maybe.
+            '@typescript-eslint/no-unsafe-member-access': 'off',
+            '@typescript-eslint/no-unsafe-assignment': 'off',
 
             'jsdoc/check-param-names': 'error',
             'jsdoc/check-tag-names': 'error',
@@ -171,10 +171,7 @@ export default [
                 }
             ],
 
-            semi: [
-                'error',
-                'never'
-            ],
+            semi: ['error', 'never'],
 
             'space-before-function-paren': [
                 'error',
@@ -202,5 +199,27 @@ export default [
             ],
             'space-infix-ops': 'off'
         }
+    },
+    // NOTE: Ignores has te be applied via a dedicated object to influence all
+    // given configuration objects.
+    {
+        ignores: [
+            '*.compiled.*',
+            '*.js',
+            '**/*.js',
+            '**/.git/**/*',
+            '**/.cache/**/*',
+            '**/.config/**/*',
+            '**/.npm/**/*',
+            '**/log/**/*',
+            '**/node_modules/**/*',
+            '**/backup/**/*',
+            '**/exclude/**/*',
+            '**/*.d.ts',
+            '!**/declarations.d.ts'
+            // '** /plugins/** /*'
+        ]
     }
-]
+)
+
+export default config

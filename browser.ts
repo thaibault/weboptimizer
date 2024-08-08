@@ -82,8 +82,10 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 {
                     beforeParse: (window:DOMWindow):void => {
                         // We want to use it in a polymorphic way.
-                        browser.window =
-                            global.window ?? window as unknown as Window
+                        browser.window = (
+                            global.window as unknown ??
+                            window as unknown
+                        ) as Window
 
                         window.document.addEventListener(
                             'DOMContentLoaded',
@@ -92,7 +94,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                                     Move template results into global
                                     pre-defined dom.
                                 */
-                                if (global.window)
+                                if (global.window as unknown)
                                     for (const type of [
                                         'head', 'body'
                                     ] as const)
@@ -144,7 +146,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 await import('webOptimizerDefaultTemplateFilePath') as string
             )
         // endregion
-    })().catch(console.error)
+    })().catch((error:unknown) => {
+        console.error(error)
+    })
 else {
     browser.initialized = true
     browser.window = window
@@ -156,7 +160,7 @@ else {
         browser.windowLoaded = true
     })
 
-    void timeout(():void => {
+    void timeout(() => {
         for (const callback of onCreatedListener)
             (callback as SynchronousProcedureFunction)()
     })
