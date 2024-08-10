@@ -86,7 +86,7 @@ export interface RedundantRequest {
 /// endregion
 /// region injection
 export type ExternalAliases =
-    Mapping<Mapping|string|((_request:string, _key:string) => string)>
+    Mapping<Mapping|null|string|((_request:string, _key:string) => string)>
 export type GivenInjection =
     AnyFunction|string|Array<string>|Mapping<string|Array<string>>
 export type NormalizedGivenInjection = Mapping<Array<string>>
@@ -395,7 +395,7 @@ export interface ResolvedConfiguration {
                 }
                 module?:PlainObject
             }
-            cssnano:PlainObject
+            cssnano?:PlainObject
             data:ResourceLoaderConfiguration
             font:{
                 eot:ResourceLoaderConfiguration
@@ -406,7 +406,7 @@ export interface ResolvedConfiguration {
             htmlMinifier?:PlainObject
             image:{
                 content:ImageMinimizerOptions<unknown, unknown>
-                exclude:string
+                exclude:null|string
                 loader:Array<string>
             }
         }

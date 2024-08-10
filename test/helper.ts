@@ -148,7 +148,7 @@ describe('helper', ():void => {
         ['path', 'path', './', './', {}, []],
         ['./main.js', 'path', './', './', {}, [], {path: './main.js'}],
         ['main.js', 'path', './', './', {}, [], {path: 'main.js'}],
-        [null, 'path', './', './', {}, [], {path: './ts'}],
+        [null, 'path', './', './', {}, [], {path: './helper.ts'}],
         ['webpack', 'webpack'],
         ['webpack', 'a', './', './', {}, ['node_modules'], {a$: 'webpack'}],
         [
@@ -444,7 +444,7 @@ describe('helper', ():void => {
         [
             {
                 directoryPaths: [resolve(__dirname, '../')],
-                filePaths: [resolve(__dirname, '../js')]
+                filePaths: [resolve(__dirname, '../helper.js')]
             },
             'helper'
         ],
@@ -452,16 +452,16 @@ describe('helper', ():void => {
         [
             {
                 directoryPaths: [resolve(__dirname, '../')],
-                filePaths: [resolve(__dirname, '../js')]
+                filePaths: [resolve(__dirname, '../helper.js')]
             },
             {example: 'helper'}
         ],
         [
             {
                 directoryPaths: [resolve(__dirname, '../')],
-                filePaths: [resolve(__dirname, '../', 'ts')]
+                filePaths: [resolve(__dirname, '../', 'helper.ts')]
             },
-            {helper: ['ts']}
+            {helper: ['helper.ts']}
         ]
     )
     testEach<typeof resolveModulesInFolders>(
@@ -472,7 +472,7 @@ describe('helper', ():void => {
     )
     test('resolveModulesInFolders', () => {
         expect(resolveModulesInFolders({a: [__dirname]}).a)
-            .toContain('./test/ts')
+            .toContain('./test/helper.ts')
     })
     testEach<typeof normalizeGivenInjection>(
         'normalizeGivenInjection',
@@ -595,10 +595,10 @@ describe('helper', ():void => {
         [null, 'a', {}, {}, {file: []}, './', '', []],
         [null, 'a', {a: 'b'}, {}, {file: []}, './', '', []],
         [null, 'bba', {a: 'b'}, {}, {file: []}, './', '', []],
-        [resolve('js'), 'helper'],
+        [resolve('helper.js'), 'helper'],
         [null, 'helper', {}, {}, {file: []}, './', '', []],
         [null, './helper', {}, {}, {file: ['.ts']}, '', 'a', []],
-        [resolve('ts'), 'helper', {}, {}, {file: ['.ts']}, './', './']
+        [resolve('helper.ts'), 'helper', {}, {}, {file: ['.ts']}, './', './']
     )
     /// endregion
     testEach<typeof applyAliases>(

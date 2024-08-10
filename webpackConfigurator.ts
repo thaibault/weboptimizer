@@ -102,9 +102,7 @@ const currentRequire:null|typeof require =
 export const optionalRequire = <T = unknown>(id:string):null|T => {
     try {
         return currentRequire ? currentRequire(id) as T : null
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    } catch (error) {
-    /* eslint-enable @typescript-eslint/no-unused-vars */
+    } catch (_error) {
         return null
     }
 }
@@ -218,26 +216,31 @@ for (const [source, replacement] of Object.entries(
 //// endregion
 //// region generate html file
 let htmlAvailable = false
-for (const htmlConfiguration of configuration.files.html)
-    if (isFileSync(htmlConfiguration.template.filePath)) {
-        pluginInstances.push(new plugins.HTML!({
-            ...htmlConfiguration,
-            template: htmlConfiguration.template.request
-        }))
-        htmlAvailable = true
-    }
+if (plugins.HTML)
+    for (const htmlConfiguration of configuration.files.html)
+        if (isFileSync(htmlConfiguration.template.filePath)) {
+            pluginInstances.push(new plugins.HTML({
+                ...htmlConfiguration,
+                template: htmlConfiguration.template.request
+            }))
+            htmlAvailable = true
+        }
 //// endregion
 //// region generate favicons
 if (
     htmlAvailable &&
-    configuration.favicon &&
+    Object.prototype.hasOwnProperty.call(configuration, 'favicon') &&
     plugins.Favicon &&
     isFileSync(([] as Array<string>).concat(configuration.favicon.logo)[0])
 )
     pluginInstances.push(new plugins.Favicon(configuration.favicon))
 //// endregion
 //// region provide offline functionality
-if (htmlAvailable && configuration.offline && plugins.Offline) {
+if (
+    htmlAvailable &&
+    Object.prototype.hasOwnProperty.call(configuration, 'offline') &&
+    Object.prototype.hasOwnProperty.call(plugins, 'Offline')
+) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
     ))
@@ -266,11 +269,12 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
         }
 
     if (
+        plugins.InjectManifest &&
         ([] as Array<string>)
             .concat(configuration.offline.use)
             .includes('injectionManifest')
     )
-        pluginInstances.push(new plugins.InjectManifest!(
+        pluginInstances.push(new plugins.InjectManifest(
             extend<WorkboxInjectManifestOptions>(
                 true,
                 configuration.offline.common,
@@ -278,11 +282,12 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
             )
         ))
     if (
+        plugins.GenerateServiceWorker &&
         ([] as Array<string>)
             .concat(configuration.offline.use)
             .includes('generateServiceWorker')
     )
-        pluginInstances.push(new plugins.GenerateServiceWorker!(extend(
+        pluginInstances.push(new plugins.GenerateServiceWorker(extend(
             true,
             configuration.offline.common,
             configuration.offline.serviceWorker
@@ -290,7 +295,9 @@ if (htmlAvailable && configuration.offline && plugins.Offline) {
 }
 //// endregion
 //// region provide build environment
-if (configuration.buildContext.definitions)
+if (Object.prototype.hasOwnProperty.call(
+    configuration.buildContext, 'definitions'
+))
     pluginInstances.push(
         new DefinePlugin(configuration.buildContext.definitions)
     )
@@ -322,7 +329,9 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
 
                         if (
                             type &&
-                            configuration.assetPattern[type] &&
+                            Object.prototype.hasOwnProperty.call(
+                                configuration.assetPattern, type
+                            ) &&
                             (new RegExp(
                                 configuration.assetPattern[type]
                                     .includeFilePathRegularExpression
@@ -372,18 +381,23 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
 */
 
 if (
+    plugins.HTML &&
     htmlAvailable &&
     !['serve', 'test:browser']
         .includes(configuration.givenCommandLineArguments[2]) &&
-    configuration.inPlace.cascadingStyleSheet &&
+    Object.prototype.hasOwnProperty.call(
+        configuration.inPlace, 'cascadingStyleSheet'
+    ) &&
     Object.keys(configuration.inPlace.cascadingStyleSheet).length ||
-    configuration.inPlace.javaScript &&
+    Object.prototype.hasOwnProperty.call(
+        configuration.inPlace, 'javaScript'
+    ) &&
     Object.keys(configuration.inPlace.javaScript).length
 )
     pluginInstances.push(new InPlaceAssetsIntoHTML({
         cascadingStyleSheet: configuration.inPlace.cascadingStyleSheet,
         javaScript: configuration.inPlace.javaScript,
-        htmlPlugin: plugins.HTML!
+        htmlPlugin: plugins.HTML
     }))
 ///// endregion
 ///// region mark empty javaScript modules as dummy
@@ -424,8 +438,10 @@ if (configuration.injection.external.modules === '__implicit__')
             type?:string
         ) => void
     ):void => {
-        if (typeof request !== 'string')
-            return callback()
+        if (typeof request !== 'string') {
+            callback()
+            return
+        }
 
         request = request.replace(/^!+/, '')
         if (request.startsWith('/'))
@@ -459,13 +475,12 @@ if (configuration.injection.external.modules === '__implicit__')
             for (const [pattern, targetConfiguration] of Object.entries(
                 configuration.injection.external.aliases
             ))
-                if (pattern.startsWith('^')) {
+                if (targetConfiguration && pattern.startsWith('^')) {
                     const regularExpression = new RegExp(pattern)
                     if (regularExpression.test(filePath)) {
                         let match = false
 
-                        const firstKey:string =
-                            Object.keys(targetConfiguration)[0]
+                        const firstKey = Object.keys(targetConfiguration)[0]
                         let target:string =
                             (targetConfiguration as Mapping)[firstKey]
 
@@ -586,19 +601,22 @@ if (configuration.injection.external.modules === '__implicit__')
 
             if (
                 typeof result !== 'string' &&
-                Object.prototype.hasOwnProperty.call(result, 'root')
+                Object.prototype.hasOwnProperty.call(result, 'root') &&
+                Array.isArray(result.root)
             )
                 result.root = ([] as Array<string>)
-                    .concat(result.root!)
+                    .concat(result.root)
                     .map((name:string):string =>
                         convertToValidVariableName(name)
                     )
-            const exportFormat:string = (
-                configuration.exportFormat.external ||
-                configuration.exportFormat.self
-            )
+            const exportFormat:string =
+                Object.prototype.hasOwnProperty.call(
+                    configuration.exportFormat, 'external'
+                ) ?
+                    configuration.exportFormat.external :
+                    configuration.exportFormat.self
 
-            return callback(
+            callback(
                 undefined,
                 (
                     exportFormat === 'umd' || typeof result === 'string' ?
@@ -607,17 +625,19 @@ if (configuration.injection.external.modules === '__implicit__')
                 ) as Array<string>|boolean|string|Mapping<unknown>,
                 exportFormat
             )
+
+            return
         }
 
-        return callback()
+        callback()
     }
 ///// endregion
 //// endregion
 //// region apply final html modifications/fixes
-if (htmlAvailable)
+if (htmlAvailable && plugins.HTML)
     pluginInstances.push(new HTMLTransformation({
         hashAlgorithm: configuration.hashAlgorithm,
-        htmlPlugin: plugins.HTML!,
+        htmlPlugin: plugins.HTML,
         files: configuration.files.html
     }))
 //// endregion
@@ -767,16 +787,17 @@ if (module.enforceDeduplication) {
         }
     }
 
-    pluginInstances.push({apply: (compiler:Compiler) =>
+    pluginInstances.push({apply: (compiler:Compiler) => {
         compiler.hooks.normalModuleFactory.tap(
             'WebOptimizerModuleConsolidation',
-            (nmf:ReturnType<Compiler['createNormalModuleFactory']>):void =>
+            (nmf:ReturnType<Compiler['createNormalModuleFactory']>) => {
                 nmf.hooks.afterResolve.tap(
                     'WebOptimizerModuleConsolidation',
                     consolidator as (_result:WebpackResolveData) => void
                 )
+            }
         )
-    })
+    }})
 }
 /*
 new NormalModuleReplacementPlugin(
@@ -885,7 +906,7 @@ const scope:EvaluationScope = {
     configuration,
     isFilePathInDependencies,
     loader,
-    require: currentRequire!
+    require: currentRequire ?? require
 }
 
 const evaluateAnThrow = <T = unknown>(
@@ -912,7 +933,7 @@ const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration:AdditionalLoaderConfiguration
 ):WebpackLoaderConfiguration => ({
     exclude: (filePath:string):boolean =>
-        Boolean(evaluateAnThrow(loaderConfiguration.exclude, filePath)),
+        evaluateAnThrow<boolean>(loaderConfiguration.exclude, filePath),
     include:
         loaderConfiguration.include &&
         evaluateAnThrow<WebpackLoaderIndicator>(loaderConfiguration.include) ||
@@ -982,12 +1003,14 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                             new Promise<void>((
                                                 resolve:() => void,
                                                 reject:() => void
-                                            ):void => (
-                                                configuration.files.compose
-                                                    .image ?
-                                                    resolve :
-                                                    reject
-                                            )()),
+                                            ) => {
+                                                (
+                                                    configuration.files.compose
+                                                        .image ?
+                                                        resolve :
+                                                        reject
+                                                )()
+                                            }),
                                         hooks: {
                                             onSaveSpritesheet: (
                                                 image:Mapping<unknown>
@@ -1016,20 +1039,22 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                                     value:string
                                                 },
                                                 image:Mapping<unknown>
-                                            ):void => {
-                                                if (token.value.includes(
-                                                    token.text
-                                                ))
-                                                    updateRule!(
-                                                        rule, token, image
-                                                    )
-                                                else
-                                                    token.cloneAfter({
-                                                        type: 'decl',
-                                                        prop:
-                                                            'background-image',
-                                                        value: token.value
-                                                    })
+                                            ) => {
+                                                if (updateRule)
+                                                    if (token.value.includes(
+                                                        token.text
+                                                    ))
+                                                        updateRule(
+                                                            rule, token, image
+                                                        )
+                                                    else
+                                                        token.cloneAfter({
+                                                            type: 'decl',
+                                                            prop:
+                                                                'background-' +
+                                                                'image',
+                                                            value: token.value
+                                                        })
                                             }
                                         },
                                         stylesheetPath:
@@ -1073,9 +1098,9 @@ const genericLoader:GenericLoader = {
             ).includes(filePath) ||
             (module.preprocessor.ejs.exclude === null) ?
                 false :
-                Boolean(evaluateAnThrow(
+                evaluateAnThrow<boolean>(
                     module.preprocessor.ejs.exclude, filePath
-                )),
+                ),
         include: getIncludingPaths(configuration.path.source.asset.template),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: module.preprocessor.ejs.additional.pre
@@ -1104,9 +1129,9 @@ const genericLoader:GenericLoader = {
     // region script
     script: {
         exclude: (filePath:string):boolean =>
-            Boolean(evaluateAnThrow(
+            evaluateAnThrow<boolean>(
                 module.preprocessor.javaScript.exclude, filePath
-            )),
+            ),
         include: (filePath:string):boolean => {
             const result:unknown = evaluateAnThrow(
                 module.preprocessor.javaScript.include, filePath
@@ -1162,9 +1187,9 @@ const genericLoader:GenericLoader = {
                 ).includes(filePath) ||
                 ((module.preprocessor.html.exclude === null) ?
                     false :
-                    Boolean(evaluateAnThrow(
+                    evaluateAnThrow<boolean>(
                         module.preprocessor.html.exclude, filePath
-                    ))
+                    )
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
@@ -1231,7 +1256,7 @@ const genericLoader:GenericLoader = {
                 (
                     (module.html.exclude === null) ?
                         true :
-                        Boolean(evaluateAnThrow(module.html.exclude, filePath))
+                        evaluateAnThrow<boolean>(module.html.exclude, filePath)
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
@@ -1266,9 +1291,9 @@ const genericLoader:GenericLoader = {
         exclude: (filePath:string):boolean =>
             (module.cascadingStyleSheet.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                Boolean(evaluateAnThrow(
+                evaluateAnThrow<boolean>(
                     module.cascadingStyleSheet.exclude, filePath
-                )),
+                ),
         include: (filePath:string):boolean => {
             const result:unknown = evaluateAnThrow(
                 module.cascadingStyleSheet.include, filePath
@@ -1296,9 +1321,9 @@ const genericLoader:GenericLoader = {
             exclude: (filePath:string):boolean =>
                 (module.optimizer.font.eot.exclude === null) ?
                     false :
-                    Boolean(evaluateAnThrow(
+                    evaluateAnThrow<boolean>(
                         module.optimizer.font.eot.exclude, filePath
-                    )),
+                    ),
             generator: {
                 filename:
                     join(
@@ -1325,9 +1350,9 @@ const genericLoader:GenericLoader = {
             exclude: (filePath:string):boolean =>
                 (module.optimizer.font.svg.exclude === null) ?
                     false :
-                    Boolean(evaluateAnThrow(
+                    evaluateAnThrow<boolean>(
                         module.optimizer.font.svg.exclude, filePath
-                    )),
+                    ),
             include: configuration.path.source.asset.font,
             generator: {
                 filename:
@@ -1356,9 +1381,9 @@ const genericLoader:GenericLoader = {
             exclude: (filePath:string):boolean =>
                 (module.optimizer.font.ttf.exclude === null) ?
                     false :
-                    Boolean(evaluateAnThrow(
+                    evaluateAnThrow<boolean>(
                         module.optimizer.font.ttf.exclude, filePath
-                    )),
+                    ),
             generator: {
                 filename:
                     join(
@@ -1386,9 +1411,9 @@ const genericLoader:GenericLoader = {
             exclude: (filePath:string):boolean =>
                 (module.optimizer.font.woff.exclude === null) ?
                     false :
-                    Boolean(evaluateAnThrow(
+                    evaluateAnThrow<boolean>(
                         module.optimizer.font.woff.exclude, filePath
-                    )),
+                    ),
             generator: {
                 filename:
                     join(
@@ -1418,9 +1443,9 @@ const genericLoader:GenericLoader = {
         exclude: (filePath:string):boolean =>
             (module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                Boolean(evaluateAnThrow(
+                evaluateAnThrow<boolean>(
                     module.optimizer.image.exclude, filePath
-                )),
+                ),
         generator: {
             filename:
                 join(
@@ -1455,9 +1480,9 @@ const genericLoader:GenericLoader = {
             (
                 (module.optimizer.data.exclude === null) ?
                     isFilePathInDependencies(filePath) :
-                    Boolean(evaluateAnThrow(
+                    evaluateAnThrow<boolean>(
                         module.optimizer.data.exclude, filePath
-                    ))
+                    )
             )
         },
         generator: {
@@ -1506,7 +1531,9 @@ if (
     htmlAvailable &&
     configuration.debug &&
     configuration.development.server.liveReload &&
-    !configuration.injection.entry.normalized.developmentHandler &&
+    !Object.prototype.hasOwnProperty.call(
+        configuration.injection.entry.normalized, 'developmentHandler'
+    ) &&
     (
         configuration.development.includeClient ||
         typeof configuration.development.includeClient !== 'boolean' &&
@@ -1517,12 +1544,11 @@ if (
 ) {
     configuration.injection.entry.normalized.developmentHandler = [
         'webpack-dev-server/client/index.js?' +
-        'live-reload=' +
-        (configuration.development.server.liveReload ? 'true' : 'false') +
+        'live-reload=true' +
         `&hot=${configuration.development.server.hot ? 'true' : 'false'}` +
         `&http${configuration.development.server.https ? 's' : ''}://` +
         `${configuration.development.server.host}:` +
-        `${configuration.development.server.port}`
+        String(configuration.development.server.port)
     ]
 
     if (configuration.development.server.hot) {
@@ -1588,13 +1614,13 @@ if (!module.optimizer.minimizer) {
 // endregion
 // region configuration
 let customConfiguration:PlainObject = {}
-if (configuration.path.configuration?.json)
+if (configuration.path.configuration.json)
     try {
         require.resolve(configuration.path.configuration.json)
         try {
-            customConfiguration =
-                currentRequire!(configuration.path.configuration.json) as
-                    PlainObject
+            customConfiguration = (currentRequire as typeof require)(
+                configuration.path.configuration.json
+            ) as PlainObject
         } catch (error) {
             console.debug(
                 'Importing provided json webpack configuration file path ' +
@@ -1602,7 +1628,7 @@ if (configuration.path.configuration?.json)
                 represent(error)
             )
         }
-    } catch (error) {
+    } catch (_error) {
         console.debug(
             'Optional configuration file "' +
             `${configuration.path.configuration.json}" not available.`
@@ -1737,9 +1763,7 @@ export let webpackConfiguration:WebpackConfiguration = extend<
                                     if (
                                         typeof configuration.inPlace
                                             .javaScript ===
-                                        'object' &&
-                                        configuration.inPlace.javaScript !==
-                                            null
+                                        'object'
                                     )
                                         for (const name of Object.keys(
                                             configuration.inPlace.javaScript
@@ -1783,14 +1807,22 @@ export let webpackConfiguration:WebpackConfiguration = extend<
 )
 
 if (configuration.nodeENV !== null)
-    webpackConfiguration.optimization!.nodeEnv = configuration.nodeENV
+    if (typeof webpackConfiguration.optimization === 'object')
+        webpackConfiguration.optimization.nodeEnv = configuration.nodeENV
+    else
+        webpackConfiguration.optimization = {nodeEnv: configuration.nodeENV}
 if (
     !Array.isArray(module.skipParseRegularExpressions) ||
     module.skipParseRegularExpressions.length
 )
-    webpackConfiguration.module!.noParse = module.skipParseRegularExpressions
+    if (typeof webpackConfiguration.module === 'object')
+        webpackConfiguration.module.noParse = module.skipParseRegularExpressions
+    else
+        webpackConfiguration.module = {
+            noParse: module.skipParseRegularExpressions
+        }
 
-if (configuration.path.configuration?.javaScript)
+if (configuration.path.configuration.javaScript)
     try {
         require.resolve(configuration.path.configuration.javaScript)
 
@@ -1815,7 +1847,7 @@ if (configuration.path.configuration?.javaScript)
                 'Failed to load given JavaScript configuration file path "' +
                 `${configuration.path.configuration.javaScript}".`
             )
-    } catch (error) {
+    } catch (_error) {
         console.debug(
             'Optional configuration file script "' +
             `${configuration.path.configuration.javaScript}" not available.`
