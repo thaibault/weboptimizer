@@ -128,6 +128,7 @@ export const config = tseslint.config(
             // NOTE: Too strcit for now but could be actvated in future maybe.
             '@typescript-eslint/no-unsafe-member-access': 'off',
             '@typescript-eslint/no-unsafe-assignment': 'off',
+            '@typescript-eslint/no-unnecessary-type-parameters': 'off',
 
             'jsdoc/check-param-names': 'error',
             'jsdoc/check-tag-names': 'error',
