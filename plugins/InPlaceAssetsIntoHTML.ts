@@ -55,7 +55,7 @@ export class InPlaceAssetsIntoHTML {
                             type:keyof InPlaceAssetConfiguration,
                             tag:HtmlWebpackPlugin.HtmlTagObject
                         ):HtmlWebpackPlugin.HtmlTagObject => {
-                            let settings:InPlaceAssetConfiguration|undefined
+                            let settings:InPlaceAssetConfiguration|null = null
                             let url:boolean|null|string|undefined = false
                             if (tag.tagName === 'script') {
                                 settings = this.options.javaScript

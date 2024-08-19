@@ -385,13 +385,9 @@ if (
     htmlAvailable &&
     !['serve', 'test:browser']
         .includes(configuration.givenCommandLineArguments[2]) &&
-    Object.prototype.hasOwnProperty.call(
-        configuration.inPlace, 'cascadingStyleSheet'
-    ) &&
+    configuration.inPlace.cascadingStyleSheet &&
     Object.keys(configuration.inPlace.cascadingStyleSheet).length ||
-    Object.prototype.hasOwnProperty.call(
-        configuration.inPlace, 'javaScript'
-    ) &&
+    configuration.inPlace.javaScript &&
     Object.keys(configuration.inPlace.javaScript).length
 )
     pluginInstances.push(new InPlaceAssetsIntoHTML({
@@ -1760,11 +1756,7 @@ export let webpackConfiguration:WebpackConfiguration = extend<
                         cacheGroups: {
                             defaultVendors: {
                                 chunks: (chunk:Chunk):boolean => {
-                                    if (
-                                        typeof configuration.inPlace
-                                            .javaScript ===
-                                        'object'
-                                    )
+                                    if (configuration.inPlace.javaScript)
                                         for (const name of Object.keys(
                                             configuration.inPlace.javaScript
                                         ))
