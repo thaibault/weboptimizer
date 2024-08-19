@@ -135,8 +135,8 @@ export interface HTMLTransformationOptions {
     files:Array<HTMLConfiguration>
 }
 export interface InPlaceAssetsIntoHTMLOptions {
-    cascadingStyleSheet:InPlaceAssetConfiguration
-    javaScript:InPlaceAssetConfiguration
+    cascadingStyleSheet:InPlaceAssetConfiguration|null
+    javaScript:InPlaceAssetConfiguration|null
     htmlPlugin:typeof HtmlWebpackPlugin
 }
 // endregion
@@ -300,12 +300,12 @@ export interface InPlaceAssetConfiguration {
     head?:Array<RegExp|string>|RegExp|string
 }
 export interface InPlaceConfiguration {
-    cascadingStyleSheet:InPlaceAssetConfiguration
+    cascadingStyleSheet:InPlaceAssetConfiguration|null
     externalLibrary:{
         normal:boolean
         dynamic:boolean
     }
-    javaScript:InPlaceAssetConfiguration
+    javaScript:InPlaceAssetConfiguration|null
     otherMaximumFileSizeLimitInByte:number
 }
 export interface ResolvedConfiguration {
