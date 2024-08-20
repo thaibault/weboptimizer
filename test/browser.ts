@@ -3,7 +3,6 @@
 'use strict'
 
 import {expect, test} from '@jest/globals'
-import {NOOP} from 'clientnode'
 
 import getInitializedBrowser, {browser} from '../browser'
 import {Browser} from '../type'
@@ -40,6 +39,8 @@ test('browser', (done):void => {
             else
                 done()
         },
-        NOOP
+        () => {
+            // Do nothing.
+        }
     )
 })
