@@ -93,22 +93,22 @@ process.env.UV_THREADPOOL_SIZE = '128'
  * @returns Nothing.
  */
 const main = async (
-    context?:string,
-    currentWorkingDirectory:string = process.cwd(),
-    commandLineArguments:Array<string> = process.argv,
-    webOptimizerPath:string = __dirname,
+    context?: string,
+    currentWorkingDirectory: string = process.cwd(),
+    commandLineArguments: Array<string> = process.argv,
+    webOptimizerPath: string = __dirname,
     /*
         NOTE: We have to avoid that some pre-processor removes this
         assignment.
     */
-    environment:NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
-):Promise<() => void> => {
-    if (environment.PATH && !environment.PATH.includes(':node_modules/.bin'))
-        environment.PATH += ':node_modules/.bin'
+    environment: NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
+): Promise<() => void> => {
+    if (environment.PATH && !environment.PATH.includes(': node_modules/.bin'))
+        environment.PATH += ': node_modules/.bin'
     else
         environment.PATH = 'node_modules/.bin'
 
-    const configuration:ResolvedConfiguration = loadConfiguration(
+    const configuration: ResolvedConfiguration = loadConfiguration(
         context,
         currentWorkingDirectory,
         commandLineArguments,
@@ -116,24 +116,24 @@ const main = async (
         environment
     )
 
-    let clear:() => void = NOOP() as () => void
+    let clear: () => void = NOOP() as () => void
 
     try {
         // region controller
-        const processOptions:ExecOptions = {
+        const processOptions: ExecOptions = {
             cwd: configuration.path.context,
             env: environment
         }
-        const childProcessOptions:CommonSpawnOptions = {
+        const childProcessOptions: CommonSpawnOptions = {
             shell: true,
             stdio: 'inherit',
             ...processOptions
         }
-        const childProcesses:Array<ChildProcess> = []
-        const processPromises:Array<Promise<ProcessCloseReason>> = []
-        const possibleArguments:Array<string> = [
+        const childProcesses: Array<ChildProcess> = []
+        const processPromises: Array<Promise<ProcessCloseReason>> = []
+        const possibleArguments: Array<string> = [
             'build',
-            'build:types',
+            'build: types',
             'clear',
             'document',
             'lint',
@@ -141,15 +141,15 @@ const main = async (
             'serve',
             'test',
             'test:browser',
-            'test:coverage',
-            'test:coverage:report',
-            'check:types'
+            'test: coverage',
+            'test: coverage: report',
+            'check: types'
         ]
-        const closeEventHandlers:Array<AnyFunction> = []
+        const closeEventHandlers: Array<AnyFunction> = []
         if (configuration.givenCommandLineArguments.length > 2) {
             // region temporary save dynamically given configurations
             // NOTE: We need a copy of given arguments array.
-            const dynamicConfiguration:PlainObject = {
+            const dynamicConfiguration: PlainObject = {
                 givenCommandLineArguments:
                     configuration.givenCommandLineArguments.slice()
             }
@@ -166,7 +166,7 @@ const main = async (
                 configuration.givenCommandLineArguments.pop()
 
             let count = 0
-            let filePath:string = resolve(
+            let filePath: string = resolve(
                 configuration.path.context,
                 `.dynamicConfiguration-${String(count)}.json`
             )
@@ -184,10 +184,10 @@ const main = async (
             }
             await writeFile(filePath, JSON.stringify(dynamicConfiguration))
 
-            const additionalArguments:Array<string> =
+            const additionalArguments: Array<string> =
                 commandLineArguments.splice(3)
             /// region register exit handler to tidy up
-            clear = (error?:Error):void => {
+            clear = (error?: Error): void => {
                 // NOTE: Close handler have to be synchronous.
                 if (isFileSync(filePath))
                     unlinkSync(filePath)
@@ -209,13 +209,13 @@ const main = async (
             if (
                 ![
                     'build',
-                    'build:types',
+                    'build: types',
                     'preinstall',
                     'serve',
                     'test',
                     'test:browser',
-                    'test:coverage',
-                    'test:coverage:report'
+                    'test: coverage',
+                    'test: coverage: report'
                 ].includes(configuration.givenCommandLineArguments[2]) &&
                 possibleArguments.includes(
                     configuration.givenCommandLineArguments[2]
@@ -228,7 +228,7 @@ const main = async (
                     // Removes all compiled files.
                     await walkDirectoryRecursively(
                         configuration.path.target.base,
-                        async (file:File):Promise<false|undefined> => {
+                        async (file: File): Promise<false|undefined> => {
                             if (isFilePathInLocation(
                                 file.path,
                                 configuration.path.ignore
@@ -236,13 +236,13 @@ const main = async (
                                         configuration.module.directoryNames,
                                         configuration.loader.directoryNames
                                     )
-                                    .map((filePath:string):string =>
+                                    .map((filePath: string): string =>
                                         resolve(
                                             configuration.path.context,
                                             filePath
                                         )
                                     )
-                                    .filter((filePath:string):boolean =>
+                                    .filter((filePath: string): boolean =>
                                         !configuration.path.context.startsWith(
                                             filePath
                                         )
@@ -310,16 +310,16 @@ const main = async (
             }
             // endregion
             // region handle build
-            const buildConfigurations:ResolvedBuildConfiguration =
+            const buildConfigurations: ResolvedBuildConfiguration =
                 resolveBuildConfigurationFilePaths(
                     configuration.buildContext.types,
                     configuration.path.source.asset.base,
                     configuration.path.ignore.concat(
                         configuration.module.directoryNames,
                         configuration.loader.directoryNames
-                    ).map((filePath:string):string =>
+                    ).map((filePath: string): string =>
                         resolve(configuration.path.context, filePath)
-                    ).filter((filePath:string):boolean =>
+                    ).filter((filePath: string): boolean =>
                         !configuration.path.context.startsWith(filePath)
                     ),
                     configuration.package.main.fileNames
@@ -329,11 +329,11 @@ const main = async (
                 'build',
                 'document',
                 'test',
-                'test:coverage',
-                'test:coverage:report'
+                'test: coverage',
+                'test: coverage: report'
             ].includes(commandLineArguments[2])) {
                 let tidiedUp = false
-                const tidyUp = ():void => {
+                const tidyUp = (): void => {
                     /*
                         Determines all none javaScript entities which have been
                         emitted as single module to remove.
@@ -346,7 +346,7 @@ const main = async (
                         configuration.injection.entry.normalized
                     ))
                         for (const moduleID of chunk) {
-                            const filePath:null|string =
+                            const filePath: null|string =
                                 determineModuleFilePath(
                                     moduleID,
                                     configuration.module.aliases,
@@ -368,7 +368,7 @@ const main = async (
                                     configuration.encoding
                                 )
 
-                            let type:null|string = null
+                            let type: null|string = null
                             if (filePath)
                                 type = determineAssetType(
                                     filePath,
@@ -382,7 +382,7 @@ const main = async (
                                     configuration.buildContext.types, type
                                 )
                             ) {
-                                const filePath:string = renderFilePathTemplate(
+                                const filePath: string = renderFilePathTemplate(
                                     stripLoader(
                                         configuration.files.compose
                                             .javaScript
@@ -423,9 +423,9 @@ const main = async (
                     final productive output.
                 */
                 processPromises.push(new Promise<ProcessCloseReason>((
-                    resolve:ProcessCloseCallback, reject:ProcessErrorCallback
-                ):Array<ChildProcess> => {
-                    const commandLineArguments:Array<string> = (
+                    resolve: ProcessCloseCallback, reject: ProcessErrorCallback
+                ): Array<ChildProcess> => {
+                    const commandLineArguments: Array<string> = (
                         configuration.commandLine.build.arguments || []
                     ).concat(additionalArguments)
 
@@ -447,23 +447,23 @@ const main = async (
                     if (typeof childProcessOptions.env.PATH !== 'string')
                         childProcessOptions.env.PATH = ''
                     childProcessOptions.env.PATH +=
-                        `:${webOptimizerPath}/node_modules/.bin`
+                        `: ${webOptimizerPath}/node_modules/.bin`
 
-                    const childProcess:ChildProcess = spawnChildProcess(
+                    const childProcess: ChildProcess = spawnChildProcess(
                         configuration.commandLine.build.command,
                         commandLineArguments,
                         childProcessOptions
                     )
 
-                    const copyAdditionalFilesAndTidyUp:ProcedureFunction = (
-                    ):void => {
+                    const copyAdditionalFilesAndTidyUp: ProcedureFunction = (
+                    ): void => {
                         for (
                             const filePath of
                             configuration.files.additionalPaths
                         ) {
-                            const sourcePath:string =
+                            const sourcePath: string =
                                 join(configuration.path.source.base, filePath)
-                            const targetPath:string =
+                            const targetPath: string =
                                 join(configuration.path.target.base, filePath)
 
                             // NOTE: Close handler have to be synchronous.
@@ -481,7 +481,7 @@ const main = async (
                         tidyUp()
                     }
 
-                    const closeHandler:ProcessHandler = getProcessCloseHandler(
+                    const closeHandler: ProcessHandler = getProcessCloseHandler(
                         resolve,
                         reject,
                         null,
@@ -505,7 +505,7 @@ const main = async (
                 configuration.givenCommandLineArguments[2] === 'preinstall'
             ) {
                 // Perform all file specific preprocessing stuff.
-                let testModuleFilePaths:Array<string> = []
+                let testModuleFilePaths: Array<string> = []
                 if (
                     isPlainObject(configuration['test:browser'].injection) &&
                     configuration['test:browser'].injection.entry
@@ -521,13 +521,13 @@ const main = async (
                         configuration.path.ignore
                     ).filePaths
                 for (const buildConfiguration of buildConfigurations) {
-                    const expression:string = (buildConfiguration[
+                    const expression: string = (buildConfiguration[
                         configuration.givenCommandLineArguments[2] as keyof
                             ResolvedBuildConfigurationItem
                     ] as string).trim()
                     for (const filePath of buildConfiguration.filePaths)
                         if (!testModuleFilePaths.includes(filePath)) {
-                            const evaluated:EvaluationResult = evaluate(
+                            const evaluated: EvaluationResult = evaluate(
                                 `\`${expression}\``,
                                 {
                                     global,
@@ -549,10 +549,10 @@ const main = async (
 
                             processPromises.push(
                                 new Promise<ProcessCloseReason>((
-                                    resolve:(_value:ProcessCloseReason) =>
+                                    resolve: (_value: ProcessCloseReason) =>
                                         void,
-                                    reject:(_reason:Error) => void
-                                ):Array<ChildProcess> => [
+                                    reject: (_reason: Error) => void
+                                ): Array<ChildProcess> => [
                                     handleChildProcess(
                                         execChildProcess(
                                             evaluated.result,
@@ -561,7 +561,7 @@ const main = async (
                                                     configuration.encoding,
                                                 ...processOptions
                                             },
-                                            (error:Error|null) => {
+                                            (error: Error|null) => {
                                                 if (error)
                                                     reject(error)
                                                 else
@@ -579,13 +579,13 @@ const main = async (
             }
             // endregion
             // region handle remaining tasks
-            const handleTask = (type:keyof CommandLineArguments):void => {
-                const tasks:Array<Command> =
+            const handleTask = (type: keyof CommandLineArguments): void => {
+                const tasks: Array<Command> =
                     Array.isArray(configuration.commandLine[type]) ?
                         configuration.commandLine[type] :
                         [configuration.commandLine[type]]
                 for (const task of tasks) {
-                    const evaluated:EvaluationResult = evaluate(
+                    const evaluated: EvaluationResult = evaluate(
                         (
                             Object.prototype.hasOwnProperty.call(
                                 task, 'indicator'
@@ -602,10 +602,10 @@ const main = async (
 
                     if (evaluated.result)
                         processPromises.push(new Promise<ProcessCloseReason>((
-                            resolve:ProcessCloseCallback,
-                            reject:ProcessErrorCallback
-                        ):Array<ChildProcess> => {
-                            const commandLineArguments:Array<string> = (
+                            resolve: ProcessCloseCallback,
+                            reject: ProcessErrorCallback
+                        ): Array<ChildProcess> => {
+                            const commandLineArguments: Array<string> = (
                                 task.arguments || []
                             ).concat(additionalArguments)
 
@@ -618,14 +618,14 @@ const main = async (
                                 '"'
                             )
 
-                            const childProcess:ChildProcess =
+                            const childProcess: ChildProcess =
                                 spawnChildProcess(
                                     task.command,
                                     commandLineArguments,
                                     childProcessOptions
                                 )
 
-                            const closeHandler:ProcessHandler =
+                            const closeHandler: ProcessHandler =
                                 getProcessCloseHandler(resolve, reject)
 
                             for (const closeEventName of CLOSE_EVENT_NAMES)
@@ -640,8 +640,8 @@ const main = async (
             if ([
                 'document',
                 'test',
-                'test:coverage',
-                'test:coverage:report'
+                'test: coverage',
+                'test: coverage: report'
             ].includes(
                 configuration.givenCommandLineArguments[2]
             )) {
@@ -652,8 +652,8 @@ const main = async (
                         CommandLineArguments
                 )
             } else if ([
-                'build:types',
-                'check:types',
+                'build: types',
+                'check: types',
                 'lint',
                 'serve',
                 'test:browser'
@@ -666,9 +666,9 @@ const main = async (
             // endregion
         }
         let finished = false
-        const closeHandler:ProcessHandler = (
-            ...parameters:Array<unknown>
-        ):void => {
+        const closeHandler: ProcessHandler = (
+            ...parameters: Array<unknown>
+        ): void => {
             if (!finished)
                 for (const closeEventHandler of closeEventHandlers)
                     closeEventHandler(...parameters)

@@ -92,14 +92,14 @@ import {
 } from './type'
 /// region optional imports
 // NOTE: Has to be defined here to ensure to resolve from here.
-const currentRequire:null|typeof require =
+const currentRequire: null|typeof require =
     /*
         typeof __non_webpack_require__ === 'function' ?
             __non_webpack_require__ :
     */
     eval(`typeof require === 'undefined' ? null : require`) as
         null|typeof require
-export const optionalRequire = <T = unknown>(id:string):null|T => {
+export const optionalRequire = <T = unknown>(id: string): null|T => {
     try {
         return currentRequire ? currentRequire(id) as T : null
     } catch (_error) {
@@ -107,7 +107,7 @@ export const optionalRequire = <T = unknown>(id:string):null|T => {
     }
 }
 
-const postcssCSSnano:null|typeof import('cssnano') =
+const postcssCSSnano: null|typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
 const postcssFontpath =
     optionalRequire<typeof import('postcss-fontpath').default>(
@@ -121,17 +121,17 @@ const postcssSprites =
     )
 
 type UpdateRule = (
-    _node:PostcssNode, _token:PostcssNode, _image:Mapping<unknown>
+    _node: PostcssNode, _token: PostcssNode, _image: Mapping<unknown>
 ) => void
-const updateRule:undefined|UpdateRule =
-    optionalRequire<{updateRule:UpdateRule}>(
+const updateRule: undefined|UpdateRule =
+    optionalRequire<{updateRule: UpdateRule}>(
         'postcss-sprites/lib/core'
     )?.updateRule
 
 const postcssURL =
     optionalRequire<typeof import('postcss-url')>('postcss-url')
 /// endregion
-const pluginNameResourceMapping:Mapping = {
+const pluginNameResourceMapping: Mapping = {
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
     Favicon: 'favicons-webpack-plugin',
@@ -140,10 +140,10 @@ const pluginNameResourceMapping:Mapping = {
     Terser: 'terser-webpack-plugin'
 }
 
-const plugins:WebpackPlugins = {}
+const plugins: WebpackPlugins = {}
 
 for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
-    const plugin:null|WebpackPlugin = optionalRequire(alias)
+    const plugin: null|WebpackPlugin = optionalRequire(alias)
     if (plugin)
         plugins[name] = plugin
     else
@@ -155,11 +155,11 @@ if (plugins.Offline) {
     plugins.InjectManifest = plugins.Offline.InjectManifest
 }
 // endregion
-const configuration:ResolvedConfiguration = getConfiguration()
-const module:ResolvedConfiguration['module'] = configuration.module
+const configuration: ResolvedConfiguration = getConfiguration()
+const module: ResolvedConfiguration['module'] = configuration.module
 // region initialisation
 /// region determine library name
-let libraryName:Array<string>|string|undefined
+let libraryName: Array<string>|string|undefined
 if (configuration.libraryName)
     libraryName = configuration.libraryName
 else if (Object.keys(configuration.injection.entry.normalized).length > 1)
@@ -177,25 +177,25 @@ if (libraryName === '*')
     ) ?
         Object.keys(
             configuration.injection.entry.normalized
-        ).map((name:string):string => convertToValidVariableName(name)) :
+        ).map((name: string): string => convertToValidVariableName(name)) :
         undefined
 /// endregion
 /// region plugins
-const pluginInstances:WebpackConfiguration['plugins'] = []
+const pluginInstances: WebpackConfiguration['plugins'] = []
 //// region define modules to ignore
 for (const pattern of ([] as Array<IgnorePattern>).concat(
     configuration.injection.ignorePattern
 )) {
-    if (typeof (pattern as {contextRegExp:string}).contextRegExp === 'string')
-        (pattern as {contextRegExp:RegExp}).contextRegExp =
-            new RegExp((pattern as {contextRegExp:string}).contextRegExp)
+    if (typeof (pattern as {contextRegExp: string}).contextRegExp === 'string')
+        (pattern as {contextRegExp: RegExp}).contextRegExp =
+            new RegExp((pattern as {contextRegExp: string}).contextRegExp)
 
     if (
-        typeof (pattern as {resourceRegExp:string}).resourceRegExp ===
+        typeof (pattern as {resourceRegExp: string}).resourceRegExp ===
             'string'
     )
-        (pattern as {resourceRegExp:RegExp}).resourceRegExp =
-            new RegExp((pattern as {resourceRegExp:string}).resourceRegExp)
+        (pattern as {resourceRegExp: RegExp}).resourceRegExp =
+            new RegExp((pattern as {resourceRegExp: string}).resourceRegExp)
 
     pluginInstances.push(new IgnorePlugin(pattern as IgnorePlugin['options']))
 }
@@ -208,7 +208,7 @@ for (const [source, replacement] of Object.entries(
 
     pluginInstances.push(new NormalModuleReplacementPlugin(
         search,
-        (resource:{request:string}):void => {
+        (resource: {request: string}): void => {
             resource.request = resource.request.replace(search, replacement)
         }
     ))
@@ -248,10 +248,10 @@ if (
             cascadingStyleSheet: 'css',
             javaScript: 'js'
         })) {
-            const type:keyof InPlaceConfiguration =
+            const type: keyof InPlaceConfiguration =
                 name as keyof InPlaceConfiguration
             if (configuration.inPlace[type]) {
-                const matches:Array<string> =
+                const matches: Array<string> =
                     Object.keys(configuration.inPlace[type])
                 if (!Array.isArray(configuration.offline.common.excludeChunks))
                     configuration.offline.common.excludeChunks = []
@@ -306,22 +306,22 @@ if (module.provide)
 //// endregion
 //// region modules/assets
 ///// region apply module pattern
-pluginInstances.push({apply: (compiler:Compiler):void => {
+pluginInstances.push({apply: (compiler: Compiler): void => {
     const name = 'ApplyModulePattern'
 
     compiler.hooks.compilation.tap(
         name,
-        (compilation:Compilation):void => {
+        (compilation: Compilation): void => {
             compilation.hooks.processAssets.tap(
                 {
                     name,
                     additionalAssets: true,
                     stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS
                 },
-                (assets):void => {
+                (assets): void => {
                     for (const [request, asset] of Object.entries(assets)) {
-                        const filePath:string = request.replace(/\?[^?]+$/, '')
-                        const type:null|string = determineAssetType(
+                        const filePath: string = request.replace(/\?[^?]+$/, '')
+                        const type: null|string = determineAssetType(
                             filePath,
                             configuration.buildContext.types,
                             configuration.path
@@ -341,7 +341,7 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
                                     .excludeFilePathRegularExpression
                             )).test(filePath)
                         ) {
-                            const source:Buffer|string = asset.source()
+                            const source: Buffer|string = asset.source()
                             if (typeof source === 'string')
                                 compilation.assets[request] =
                                     new WebpackRawSource(
@@ -368,7 +368,7 @@ pluginInstances.push({apply: (compiler:Compiler):void => {
         sequences and translate it back later to avoid unexpected escape
         sequences in resulting html.
     /
-    const window:DOMWindow = (new DOM(
+    const window: DOMWindow = (new DOM(
         content
             .replace(/<%/g, '##+#+#+##')
             .replace(/%>/g, '##-#-#-##')
@@ -408,7 +408,7 @@ if (!(
     )
 ///// endregion
 ///// region extract cascading style sheets
-const cssOutputPath:string|((_asset:unknown) => string) =
+const cssOutputPath: string|((_asset: unknown) => string) =
     configuration.files.compose.cascadingStyleSheet
 if (cssOutputPath && plugins.MiniCSSExtract)
     pluginInstances.push(new plugins.MiniCSSExtract({
@@ -428,12 +428,12 @@ if (configuration.injection.external.modules === '__implicit__')
     */
     configuration.injection.external.modules = (
         {context, request},
-        callback:(
-            error?:Error|undefined,
-            result?:Array<string>|boolean|string|Mapping<unknown>,
-            type?:string
+        callback: (
+            error?: Error|undefined,
+            result?: Array<string>|boolean|string|Mapping<unknown>,
+            type?: string
         ) => void
-    ):void => {
+    ): void => {
         if (typeof request !== 'string') {
             callback()
             return
@@ -452,7 +452,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 break
             }
         // region pattern based aliasing
-        const filePath:null|string = determineModuleFilePath(
+        const filePath: null|string = determineModuleFilePath(
             request,
             {},
             {},
@@ -477,7 +477,7 @@ if (configuration.injection.external.modules === '__implicit__')
                         let match = false
 
                         const firstKey = Object.keys(targetConfiguration)[0]
-                        let target:string =
+                        let target: string =
                             (targetConfiguration as Mapping)[firstKey]
 
                         if (typeof target !== 'string')
@@ -489,7 +489,7 @@ if (configuration.injection.external.modules === '__implicit__')
                         if (target.startsWith('?')) {
                             target = target.substring(1)
 
-                            const aliasedRequest:string = request.replace(
+                            const aliasedRequest: string = request.replace(
                                 replacementRegularExpression, target)
 
                             if (aliasedRequest !== request)
@@ -523,7 +523,7 @@ if (configuration.injection.external.modules === '__implicit__')
                     }
                 }
         // endregion
-        const resolvedRequest:null|string = determineExternalRequest(
+        const resolvedRequest: null|string = determineExternalRequest(
             request,
             configuration.path.context,
             context,
@@ -546,8 +546,8 @@ if (configuration.injection.external.modules === '__implicit__')
         )
 
         if (resolvedRequest) {
-            const keys:Array<string> = ['amd', 'commonjs', 'commonjs2', 'root']
-            let result:(Mapping & {root?:Array<string>})|string =
+            const keys: Array<string> = ['amd', 'commonjs', 'commonjs2', 'root']
+            let result: (Mapping & {root?: Array<string>})|string =
                 resolvedRequest
             if (Object.prototype.hasOwnProperty.call(
                 configuration.injection.external.aliases, request
@@ -572,7 +572,7 @@ if (configuration.injection.external.modules === '__implicit__')
                         result[key] = (
                             configuration.injection.external.aliases[
                                 request
-                            ] as (_request:string, _key:string) => string
+                            ] as (_request: string, _key: string) => string
                         )(request, key)
                 else if (
                     configuration.injection.external.aliases[
@@ -602,10 +602,10 @@ if (configuration.injection.external.modules === '__implicit__')
             )
                 result.root = ([] as Array<string>)
                     .concat(result.root)
-                    .map((name:string):string =>
+                    .map((name: string): string =>
                         convertToValidVariableName(name)
                     )
-            const exportFormat:string =
+            const exportFormat: string =
                 Object.prototype.hasOwnProperty.call(
                     configuration.exportFormat, 'external'
                 ) ?
@@ -640,7 +640,7 @@ if (htmlAvailable && plugins.HTML)
 //// region context replacements
 for (const contextReplacement of module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
-        contextReplacement.map((value:string):RegExp|string => {
+        contextReplacement.map((value: string): RegExp|string => {
             const evaluated = evaluate<RegExp|string>(
                 value, {configuration, __dirname, __filename}
             )
@@ -663,28 +663,28 @@ for (const contextReplacement of module.replacements.context)
     them as same dependency.
 */
 if (module.enforceDeduplication) {
-    const absoluteContextPath:string = resolve(configuration.path.context)
+    const absoluteContextPath: string = resolve(configuration.path.context)
 
-    const consolidator = (result:WebpackExtendedResolveData):void => {
-        const targetPath:string = result.createData.resource
+    const consolidator = (result: WebpackExtendedResolveData): void => {
+        const targetPath: string = result.createData.resource
 
         if (
             targetPath &&
-            /((?:^|\/)node_modules\/.+)/.test(targetPath) &&
+            /((?: ^|\/)node_modules\/.+)/.test(targetPath) &&
             (
                 !targetPath.startsWith(absoluteContextPath) ||
-                /((?:^|\/)node_modules\/.+){2}/.test(targetPath)
+                /((?: ^|\/)node_modules\/.+){2}/.test(targetPath)
             ) &&
             isFileSync(targetPath)
         ) {
-            const packageDescriptor:null|PackageDescriptor =
+            const packageDescriptor: null|PackageDescriptor =
                 getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
-                let pathPrefixes:Array<string>
-                let pathSuffix:string
+                let pathPrefixes: Array<string>
+                let pathSuffix: string
                 if (targetPath.startsWith(absoluteContextPath)) {
-                    const matches:null|RegExpMatchArray =
-                        targetPath.match(/((?:^|.*?\/)node_modules\/)/g)
+                    const matches: null|RegExpMatchArray =
+                        targetPath.match(/((?: ^|.*?\/)node_modules\/)/g)
                     if (matches === null)
                         return
 
@@ -705,7 +705,7 @@ if (module.enforceDeduplication) {
                     }
 
                     pathSuffix = targetPath.replace(
-                        /(?:^|.*\/)node_modules\/(.+$)/, '$1'
+                        /(?: ^|.*\/)node_modules\/(.+$)/, '$1'
                     )
                 } else {
                     pathPrefixes = [
@@ -725,13 +725,13 @@ if (module.enforceDeduplication) {
                         .replace(/^.*\/node_modules\//, '')
                 }
 
-                let redundantRequest:null|RedundantRequest = null
+                let redundantRequest: null|RedundantRequest = null
                 for (const pathPrefix of pathPrefixes) {
-                    const alternateTargetPath:string =
+                    const alternateTargetPath: string =
                         resolve(pathPrefix, pathSuffix)
 
                     if (isFileSync(alternateTargetPath)) {
-                        const otherPackageDescriptor:null|PackageDescriptor =
+                        const otherPackageDescriptor: null|PackageDescriptor =
                             getClosestPackageDescriptor(alternateTargetPath)
                         if (otherPackageDescriptor) {
                             if (
@@ -783,13 +783,13 @@ if (module.enforceDeduplication) {
         }
     }
 
-    pluginInstances.push({apply: (compiler:Compiler) => {
+    pluginInstances.push({apply: (compiler: Compiler) => {
         compiler.hooks.normalModuleFactory.tap(
             'WebOptimizerModuleConsolidation',
-            (nmf:ReturnType<Compiler['createNormalModuleFactory']>) => {
+            (nmf: ReturnType<Compiler['createNormalModuleFactory']>) => {
                 nmf.hooks.afterResolve.tap(
                     'WebOptimizerModuleConsolidation',
-                    consolidator as (_result:WebpackResolveData) => void
+                    consolidator as (_result: WebpackResolveData) => void
                 )
             }
         )
@@ -798,45 +798,45 @@ if (module.enforceDeduplication) {
 /*
 new NormalModuleReplacementPlugin(
     /.+/,
-    (result:{
-        context:string
-        createData:{resource:string}
-        request:string
-    }):void => {
-        const isResource:boolean = Boolean(result.createData.resource)
-        const targetPath:string = isResource ?
+    (result: {
+        context: string
+        createData: {resource: string}
+        request: string
+    }): void => {
+        const isResource: boolean = Boolean(result.createData.resource)
+        const targetPath: string = isResource ?
             result.createData.resource :
             resolve(result.context, result.request)
         if (
             targetPath &&
-            /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &&
+            /((?: ^|\/)node_modules\/.+){2}/.test(targetPath) &&
             isFileSync(targetPath)
         ) {
-            const packageDescriptor:null|PackageDescriptor =
+            const packageDescriptor: null|PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
-                const pathPrefixes:null|RegExpMatchArray = targetPath.match(
-                    /((?:^|.*?\/)node_modules\/)/g
+                const pathPrefixes: null|RegExpMatchArray = targetPath.match(
+                    /((?: ^|.*?\/)node_modules\/)/g
                 )
                 if (pathPrefixes === null)
                     return
                 // Avoid finding the same artefact.
                 pathPrefixes.pop()
-                let index:number = 0
+                let index: number = 0
                 for (const pathPrefix of pathPrefixes) {
                     if (index > 0)
                         pathPrefixes[index] =
                             resolve(pathPrefixes[index - 1], pathPrefix)
                     index += 1
                 }
-                const pathSuffix:string =
-                    targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1')
-                let redundantRequest:null|PlainObject = null
+                const pathSuffix: string =
+                    targetPath.replace(/(?: ^|.*\/)node_modules\/(.+$)/, '$1')
+                let redundantRequest: null|PlainObject = null
                 for (const pathPrefix of pathPrefixes) {
-                    const alternateTargetPath:string =
+                    const alternateTargetPath: string =
                         resolve(pathPrefix, pathSuffix)
                     if (isFileSync(alternateTargetPath)) {
-                        const otherPackageDescriptor:null|PackageDescriptor =
+                        const otherPackageDescriptor: null|PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
                                 alternateTargetPath
                             )
@@ -880,25 +880,25 @@ new NormalModuleReplacementPlugin(
 //// endregion
 /// endregion
 /// region loader helper
-const isFilePathInDependencies = (filePath:string):boolean => {
+const isFilePathInDependencies = (filePath: string): boolean => {
     filePath = stripLoader(filePath)
 
     return isFilePathInLocation(
         filePath,
         configuration.path.ignore
             .concat(module.directoryNames, configuration.loader.directoryNames)
-            .map((filePath:string):string =>
+            .map((filePath: string): string =>
                 resolve(configuration.path.context, filePath)
             )
-            .filter((filePath:string):boolean =>
+            .filter((filePath: string): boolean =>
                 !configuration.path.context.startsWith(filePath)
             )
     )
 }
 
-const loader:Loader = {} as unknown as Loader
+const loader: Loader = {} as unknown as Loader
 
-const scope:EvaluationScope = {
+const scope: EvaluationScope = {
     configuration,
     isFilePathInDependencies,
     loader,
@@ -906,10 +906,10 @@ const scope:EvaluationScope = {
 }
 
 const evaluateAnThrow = <T = unknown>(
-    object:unknown, filePath:string = configuration.path.context
-):T => {
+    object: unknown, filePath: string = configuration.path.context
+): T => {
     if (typeof object === 'string') {
-        const evaluated:EvaluationResult<T> =
+        const evaluated: EvaluationResult<T> =
             evaluate<T>(object, {filePath, ...scope})
 
         if (evaluated.error)
@@ -924,11 +924,11 @@ const evaluateAnThrow = <T = unknown>(
     return object as T
 }
 const evaluateMapper =
-    <T = unknown>(value:unknown):T => evaluateAnThrow<T>(value)
+    <T = unknown>(value: unknown): T => evaluateAnThrow<T>(value)
 const evaluateAdditionalLoaderConfiguration = (
-    loaderConfiguration:AdditionalLoaderConfiguration
-):WebpackLoaderConfiguration => ({
-    exclude: (filePath:string):boolean =>
+    loaderConfiguration: AdditionalLoaderConfiguration
+): WebpackLoaderConfiguration => ({
+    exclude: (filePath: string): boolean =>
         evaluateAnThrow<boolean>(loaderConfiguration.exclude, filePath),
     include:
         loaderConfiguration.include &&
@@ -940,10 +940,10 @@ const evaluateAdditionalLoaderConfiguration = (
     )
 })
 
-const getIncludingPaths = (path:string):Array<string> =>
+const getIncludingPaths = (path: string): Array<string> =>
     normalizePaths([path].concat(module.locations.directoryPaths))
 
-const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
+const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
     .map(evaluateMapper)
     .concat(
         {loader: module.style.loader, options: module.style.options || {}},
@@ -995,10 +995,10 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                     [],
                                 postcssSprites ?
                                     postcssSprites({
-                                        filterBy: ():Promise<void> =>
+                                        filterBy: (): Promise<void> =>
                                             new Promise<void>((
-                                                resolve:() => void,
-                                                reject:() => void
+                                                resolve: () => void,
+                                                reject: () => void
                                             ) => {
                                                 (
                                                     configuration.files.compose
@@ -1009,8 +1009,8 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                             }),
                                         hooks: {
                                             onSaveSpritesheet: (
-                                                image:Mapping<unknown>
-                                            ):string =>
+                                                image: Mapping<unknown>
+                                            ): string =>
                                                 join(
                                                     image.spritePath as string,
                                                     relative(
@@ -1029,12 +1029,12 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                                 (e.g. linear gradient instead).
                                             */
                                             onUpdateRule: (
-                                                rule:PostcssNode,
-                                                token:PostcssNode & {
-                                                    text:string
-                                                    value:string
+                                                rule: PostcssNode,
+                                                token: PostcssNode & {
+                                                    text: string
+                                                    value: string
                                                 },
-                                                image:Mapping<unknown>
+                                                image: Mapping<unknown>
                                             ) => {
                                                 if (updateRule)
                                                     if (token.value.includes(
@@ -1080,15 +1080,15 @@ const cssUse:RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
             .map(evaluateMapper)
     ) as RuleSet
 
-const genericLoader:GenericLoader = {
+const genericLoader: GenericLoader = {
     // Convert to compatible native web types.
     // region generic template
     ejs: {
-        exclude: (filePath:string):boolean =>
+        exclude: (filePath: string): boolean =>
             normalizePaths(
                 configuration.files.html
                     .concat(configuration.files.defaultHTML)
-                    .map((htmlConfiguration:HTMLConfiguration):string =>
+                    .map((htmlConfiguration: HTMLConfiguration): string =>
                         htmlConfiguration.template.filePath
                     )
             ).includes(filePath) ||
@@ -1124,12 +1124,12 @@ const genericLoader:GenericLoader = {
     // endregion
     // region script
     script: {
-        exclude: (filePath:string):boolean =>
+        exclude: (filePath: string): boolean =>
             evaluateAnThrow<boolean>(
                 module.preprocessor.javaScript.exclude, filePath
             ),
-        include: (filePath:string):boolean => {
-            const result:unknown = evaluateAnThrow(
+        include: (filePath: string): boolean => {
+            const result: unknown = evaluateAnThrow(
                 module.preprocessor.javaScript.include, filePath
             )
             if ([null, undefined].includes(result as null)) {
@@ -1168,16 +1168,16 @@ const genericLoader:GenericLoader = {
                 escapeRegularExpressions(
                     configuration.files.defaultHTML.template.filePath
                 ) +
-                '(?:\\?.*)?$'
+                '(?: \\?.*)?$'
             ),
             use: configuration.files.defaultHTML.template.use
         },
         ejs: {
             exclude:
-                (filePath:string):boolean => normalizePaths(
+                (filePath: string): boolean => normalizePaths(
                     configuration.files.html
                         .concat(configuration.files.defaultHTML)
-                        .map((htmlConfiguration:HTMLConfiguration):string =>
+                        .map((htmlConfiguration: HTMLConfiguration): string =>
                             htmlConfiguration.template.filePath
                         )
                 ).includes(filePath) ||
@@ -1188,7 +1188,7 @@ const genericLoader:GenericLoader = {
                     )
                 ),
             include: configuration.path.source.asset.template,
-            test: /\.html\.ejs(?:\?.*)?$/i,
+            test: /\.html\.ejs(?: \?.*)?$/i,
             use: module.preprocessor.html.additional.pre
                 .map(evaluateMapper)
                 .concat(
@@ -1241,11 +1241,11 @@ const genericLoader:GenericLoader = {
                 ) as RuleSet
         },
         html: {
-            exclude: (filePath:string):boolean =>
+            exclude: (filePath: string): boolean =>
                 normalizePaths(
                     configuration.files.html
                         .concat(configuration.files.defaultHTML)
-                        .map((htmlConfiguration:HTMLConfiguration):string =>
+                        .map((htmlConfiguration: HTMLConfiguration): string =>
                             htmlConfiguration.template.filePath
                         )
                 ).includes(filePath) ||
@@ -1255,7 +1255,7 @@ const genericLoader:GenericLoader = {
                         evaluateAnThrow<boolean>(module.html.exclude, filePath)
                 ),
             include: configuration.path.source.asset.template,
-            test: /\.html(?:\?.*)?$/i,
+            test: /\.html(?: \?.*)?$/i,
             use: module.html.additional.pre
                 .map(evaluateMapper)
                 .concat(
@@ -1284,14 +1284,14 @@ const genericLoader:GenericLoader = {
     // Load dependencies.
     // region style
     style: {
-        exclude: (filePath:string):boolean =>
+        exclude: (filePath: string): boolean =>
             (module.cascadingStyleSheet.exclude === null) ?
                 isFilePathInDependencies(filePath) :
                 evaluateAnThrow<boolean>(
                     module.cascadingStyleSheet.exclude, filePath
                 ),
-        include: (filePath:string):boolean => {
-            const result:unknown = evaluateAnThrow(
+        include: (filePath: string): boolean => {
+            const result: unknown = evaluateAnThrow(
                 module.cascadingStyleSheet.include, filePath
             )
             if ([null, undefined].includes(result as null)) {
@@ -1306,7 +1306,7 @@ const genericLoader:GenericLoader = {
 
             return Boolean(result)
         },
-        test: /\.s?css(?:\?.*)?$/i,
+        test: /\.s?css(?: \?.*)?$/i,
         use: cssUse
     },
     // endregion
@@ -1314,7 +1314,7 @@ const genericLoader:GenericLoader = {
     // region font
     font: {
         eot: {
-            exclude: (filePath:string):boolean =>
+            exclude: (filePath: string): boolean =>
                 (module.optimizer.font.eot.exclude === null) ?
                     false :
                     evaluateAnThrow<boolean>(
@@ -1331,7 +1331,7 @@ const genericLoader:GenericLoader = {
                     ) +
                     `?${configuration.hashAlgorithm}=[contenthash]`
             },
-            test: /\.eot(?:\?.*)?$/i,
+            test: /\.eot(?: \?.*)?$/i,
             type: 'asset/resource',
             parser: {
                 dataUrlCondition: {
@@ -1343,7 +1343,7 @@ const genericLoader:GenericLoader = {
                 RuleSet
         },
         svg: {
-            exclude: (filePath:string):boolean =>
+            exclude: (filePath: string): boolean =>
                 (module.optimizer.font.svg.exclude === null) ?
                     false :
                     evaluateAnThrow<boolean>(
@@ -1368,13 +1368,13 @@ const genericLoader:GenericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            test: /\.svg(?:\?.*)?$/i,
+            test: /\.svg(?: \?.*)?$/i,
             type: 'asset/resource',
             use: module.optimizer.font.svg.loader.map(evaluateMapper) as
                 RuleSet
         },
         ttf: {
-            exclude: (filePath:string):boolean =>
+            exclude: (filePath: string): boolean =>
                 (module.optimizer.font.ttf.exclude === null) ?
                     false :
                     evaluateAnThrow<boolean>(
@@ -1391,7 +1391,7 @@ const genericLoader:GenericLoader = {
                     ) +
                     `?${configuration.hashAlgorithm}=[contenthash]`
             },
-            test: /\.ttf(?:\?.*)?$/i,
+            test: /\.ttf(?: \?.*)?$/i,
             type: 'asset/resource',
             mimetype: 'application/octet-stream',
             parser: {
@@ -1404,7 +1404,7 @@ const genericLoader:GenericLoader = {
                 RuleSet
         },
         woff: {
-            exclude: (filePath:string):boolean =>
+            exclude: (filePath: string): boolean =>
                 (module.optimizer.font.woff.exclude === null) ?
                     false :
                     evaluateAnThrow<boolean>(
@@ -1421,7 +1421,7 @@ const genericLoader:GenericLoader = {
                     ) +
                     `?${configuration.hashAlgorithm}=[contenthash]`
             },
-            test: /\.woff2?(?:\?.*)?$/i,
+            test: /\.woff2?(?: \?.*)?$/i,
             type: 'asset/resource',
             parser: {
                 dataUrlCondition: {
@@ -1436,7 +1436,7 @@ const genericLoader:GenericLoader = {
     // endregion
     // region image
     image: {
-        exclude: (filePath:string):boolean =>
+        exclude: (filePath: string): boolean =>
             (module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
                 evaluateAnThrow<boolean>(
@@ -1454,7 +1454,7 @@ const genericLoader:GenericLoader = {
                 `?${configuration.hashAlgorithm}=[contenthash]`
         },
         include: configuration.path.source.asset.image,
-        test: /\.(?:gif|ico|jpg|png|svg)(?:\?.*)?$/i,
+        test: /\.(?: gif|ico|jpg|png|svg)(?: \?.*)?$/i,
         type: 'asset/resource',
         parser: {
             dataUrlCondition: {
@@ -1466,7 +1466,7 @@ const genericLoader:GenericLoader = {
     // endregion
     // region data
     data: {
-        exclude: (filePath:string):boolean => {
+        exclude: (filePath: string): boolean => {
             if (typeof filePath !== 'string')
                 return false
 
@@ -1542,8 +1542,8 @@ if (
         'webpack-dev-server/client/index.js?' +
         'live-reload=true' +
         `&hot=${configuration.development.server.hot ? 'true' : 'false'}` +
-        `&http${configuration.development.server.https ? 's' : ''}://` +
-        `${configuration.development.server.host}:` +
+        `&http${configuration.development.server.https ? 's' : ''}: //` +
+        `${configuration.development.server.host}: ` +
         String(configuration.development.server.port)
     ]
 
@@ -1559,10 +1559,10 @@ if (
 // endregion
 // region plugins
 for (const pluginConfiguration of configuration.plugins) {
-    type Initializer = new (..._parameters:Array<unknown>) =>
+    type Initializer = new (..._parameters: Array<unknown>) =>
         Unpacked<WebpackConfiguration['plugins']>
 
-    const plugin:Mapping<Initializer>|null =
+    const plugin: Mapping<Initializer>|null =
         optionalRequire(pluginConfiguration.name.module)
     if (plugin)
         pluginInstances.push(
@@ -1590,7 +1590,7 @@ if (!module.optimizer.minimizer) {
         */
         module.optimizer.minimizer.push(
             new plugins.Terser({
-                exclude: /\\.html(?:\\.js)?(?:\\?.*)?$/,
+                exclude: /\\.html(?: \\.js)?(?: \\?.*)?$/,
                 extractComments: false,
                 parallel: true
             })
@@ -1609,7 +1609,7 @@ if (!module.optimizer.minimizer) {
 }
 // endregion
 // region configuration
-let customConfiguration:PlainObject = {}
+let customConfiguration: PlainObject = {}
 if (configuration.path.configuration.json)
     try {
         require.resolve(configuration.path.configuration.json)
@@ -1631,7 +1631,7 @@ if (configuration.path.configuration.json)
         )
     }
 
-export let webpackConfiguration:WebpackConfiguration = extend<
+export let webpackConfiguration: WebpackConfiguration = extend<
     WebpackConfiguration
 >(
     true,
@@ -1755,7 +1755,7 @@ export let webpackConfiguration:WebpackConfiguration = extend<
                         chunks: 'all',
                         cacheGroups: {
                             defaultVendors: {
-                                chunks: (chunk:Chunk):boolean => {
+                                chunks: (chunk: Chunk): boolean => {
                                     if (configuration.inPlace.javaScript)
                                         for (const name of Object.keys(
                                             configuration.inPlace.javaScript
@@ -1818,7 +1818,7 @@ if (configuration.path.configuration.javaScript)
     try {
         require.resolve(configuration.path.configuration.javaScript)
 
-        const result:unknown =
+        const result: unknown =
             optionalRequire(configuration.path.configuration.javaScript)
 
         if (isPlainObject(result))
@@ -1848,12 +1848,12 @@ if (configuration.path.configuration.javaScript)
 
 if (configuration.showConfiguration) {
     console.info(
-        'Using internal configuration:',
+        'Using internal configuration: ',
         util.inspect(configuration, {depth: null})
     )
     console.info('-----------------------------------------------------------')
     console.info(
-        'Using webpack configuration:',
+        'Using webpack configuration: ',
         util.inspect(webpackConfiguration, {depth: null})
     )
 }

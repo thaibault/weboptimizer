@@ -34,7 +34,7 @@ import {
 } from '../helper'
 // endregion
 // region mockup
-const buildConfiguration:BuildConfiguration = {
+const buildConfiguration: BuildConfiguration = {
     example: {
         extension: 'example',
         filePathPattern: '',
@@ -55,7 +55,7 @@ const buildConfiguration:BuildConfiguration = {
     }
 }
 // endregion
-describe('helper', ():void => {
+describe('helper', (): void => {
     // region tests
     /// region boolean
     testEach<typeof isFilePathInLocation>(
@@ -361,10 +361,10 @@ describe('helper', ():void => {
     test.each([[null, './'], ['javaScript', 'a.js'], [null, 'a.css']])(
         `%p === determineAssetType('%s')`,
         (
-            expected:ReturnType<typeof determineAssetType>,
-            parameter:FirstParameter<typeof determineAssetType>
-        ):void => {
-            const paths:PathConfiguration = {
+            expected: ReturnType<typeof determineAssetType>,
+            parameter: FirstParameter<typeof determineAssetType>
+        ): void => {
+            const paths: PathConfiguration = {
                 apiDocumentation: '',
                 base: '',
                 configuration: {javaScript: '', json: '', typeScript: ''},
@@ -407,7 +407,7 @@ describe('helper', ():void => {
             ).toStrictEqual(expected)
         }
     )
-    test('resolveBuildConfigurationFilePaths', ():void => {
+    test('resolveBuildConfigurationFilePaths', (): void => {
         expect(resolveBuildConfigurationFilePaths({})).toStrictEqual([])
         expect(resolveBuildConfigurationFilePaths(
             buildConfiguration, './', ['.git', 'node_modules']
@@ -639,8 +639,8 @@ describe('helper', ():void => {
     )
     test.each([['./'], ['../']])(
         `getClosestPackageDescriptor('%s') === {configuration: ...}`,
-        (modulePath:string):void => {
-            const filePath:string = resolve(__dirname, '../package.json')
+        (modulePath: string): void => {
+            const filePath: string = resolve(__dirname, '../package.json')
             expect(getClosestPackageDescriptor(modulePath, filePath))
                 .toStrictEqual(
                     {

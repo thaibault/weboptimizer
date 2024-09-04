@@ -52,7 +52,7 @@ import {
 } from './type'
 // endregion
 // region constants
-export const KNOWN_FILE_EXTENSIONS:Array<string> = [
+export const KNOWN_FILE_EXTENSIONS: Array<string> = [
     'js', 'ts',
     'json',
     'css',
@@ -78,8 +78,8 @@ export const KNOWN_FILE_EXTENSIONS:Array<string> = [
  * "false" otherwise.
  */
 export const isFilePathInLocation = (
-    filePath:string, locationsToCheck:Array<string>
-):boolean => {
+    filePath: string, locationsToCheck: Array<string>
+): boolean => {
     for (const pathToCheck of locationsToCheck)
         if (resolve(filePath).startsWith(resolve(pathToCheck)))
             return true
@@ -94,8 +94,8 @@ export const isFilePathInLocation = (
  * @param moduleID - Module request to strip.
  * @returns Given module id stripped.
  */
-export const stripLoader = (moduleID:string):string => {
-    const moduleIDWithoutLoader:string = moduleID
+export const stripLoader = (moduleID: string): string => {
+    const moduleIDWithoutLoader: string = moduleID
         .substring(moduleID.lastIndexOf('!') + 1)
         .replace(/\.webpack\[.+\/.+\]$/, '')
 
@@ -112,8 +112,8 @@ export const stripLoader = (moduleID:string):string => {
  * @param paths - File paths.
  * @returns The given file path list with normalized unique values.
  */
-export const normalizePaths = (paths:Array<string>):Array<string> =>
-    Array.from(new Set(paths.map((givenPath:string):string => {
+export const normalizePaths = (paths: Array<string>): Array<string> =>
+    Array.from(new Set(paths.map((givenPath: string): string => {
         givenPath = normalize(givenPath)
 
         if (givenPath.endsWith('/'))
@@ -131,8 +131,8 @@ export const normalizePaths = (paths:Array<string>):Array<string> =>
  * @returns Processed file path.
  */
 export const renderFilePathTemplate = (
-    template:string, scope:Mapping<number|string> = {}
-):string => {
+    template: string, scope: Mapping<number|string> = {}
+): string => {
     scope = {
         '[chunkhash]': '.__dummy__',
         '[contenthash]': '.__dummy__',
@@ -142,7 +142,7 @@ export const renderFilePathTemplate = (
         ...scope
     }
 
-    let filePath:string = template
+    let filePath: string = template
     for (const [placeholderName, value] of Object.entries(scope))
         filePath = filePath.replace(
             new RegExp(escapeRegularExpressions(placeholderName), 'g'),
@@ -163,19 +163,19 @@ export const renderFilePathTemplate = (
  * @returns A new resolved request.
  */
 export const applyContext = (
-    request:string,
+    request: string,
     context = './',
     referencePath = './',
-    aliases:Mapping = {},
-    moduleReplacements:Replacements = {},
-    relativeModuleLocations:Array<string> = ['node_modules']
-):false|string => {
+    aliases: Mapping = {},
+    moduleReplacements: Replacements = {},
+    relativeModuleLocations: Array<string> = ['node_modules']
+): false|string => {
     referencePath = resolve(referencePath)
     if (request.startsWith('./') && resolve(context) !== referencePath) {
         request = resolve(context, request)
 
         for (const modulePath of relativeModuleLocations) {
-            const pathPrefix:string = resolve(referencePath, modulePath)
+            const pathPrefix: string = resolve(referencePath, modulePath)
 
             if (request.startsWith(pathPrefix)) {
                 request = request.substring(pathPrefix.length)
@@ -246,36 +246,36 @@ export const applyContext = (
  * external one.
  */
 export const determineExternalRequest = (
-    request:string,
+    request: string,
     context = './',
     requestContext = './',
-    normalizedGivenInjection:NormalizedGivenInjection = {},
-    relativeExternalModuleLocations:Array<string> = ['node_modules'],
-    aliases:Mapping = {},
-    moduleReplacements:Replacements = {},
-    extensions:Extensions = {file: {
+    normalizedGivenInjection: NormalizedGivenInjection = {},
+    relativeExternalModuleLocations: Array<string> = ['node_modules'],
+    aliases: Mapping = {},
+    moduleReplacements: Replacements = {},
+    extensions: Extensions = {file: {
         external: ['.compiled.js', '.js', '.json'],
-        internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+        internal: KNOWN_FILE_EXTENSIONS.map((suffix: string): string =>
             `.${suffix}`
         )
     }},
     referencePath = './',
-    pathsToIgnore:Array<string> = ['.git'],
-    relativeModuleLocations:Array<string> = ['node_modules'],
-    packageEntryFileNames:Array<string> = ['index', 'main'],
-    packageMainPropertyNames:Array<string> = ['main', 'module'],
-    packageAliasPropertyNames:Array<string> = [],
-    includePattern:Array<string|RegExp> = [],
-    excludePattern:Array<string|RegExp> = [],
+    pathsToIgnore: Array<string> = ['.git'],
+    relativeModuleLocations: Array<string> = ['node_modules'],
+    packageEntryFileNames: Array<string> = ['index', 'main'],
+    packageMainPropertyNames: Array<string> = ['main', 'module'],
+    packageAliasPropertyNames: Array<string> = [],
+    includePattern: Array<string|RegExp> = [],
+    excludePattern: Array<string|RegExp> = [],
     inPlaceNormalLibrary = false,
     inPlaceDynamicLibrary = true,
-    encoding:Encoding = 'utf-8'
-):null|string => {
+    encoding: Encoding = 'utf-8'
+): null|string => {
     context = resolve(context)
     requestContext = resolve(requestContext)
     referencePath = resolve(referencePath)
     // NOTE: We apply alias on externals additionally.
-    const resolvedRequest:false|string = applyModuleReplacements(
+    const resolvedRequest: false|string = applyModuleReplacements(
         applyAliases(request.substring(request.lastIndexOf('!') + 1), aliases),
         moduleReplacements
     )
@@ -288,7 +288,7 @@ export const determineExternalRequest = (
         NOTE: Aliases and module replacements doesn't have to be forwarded
         since we pass an already resolved request.
     */
-    const filePath:null|string = determineModuleFilePath(
+    const filePath: null|string = determineModuleFilePath(
         resolvedRequest,
         {},
         {},
@@ -340,8 +340,8 @@ export const determineExternalRequest = (
             ) === filePath)
                 return null
 
-    const parts:Array<string> = context.split('/')
-    const externalModuleLocations:Array<string> = []
+    const parts: Array<string> = context.split('/')
+    const externalModuleLocations: Array<string> = []
     while (parts.length > 0) {
         for (const relativePath of relativeExternalModuleLocations)
             externalModuleLocations.push(
@@ -397,11 +397,11 @@ export const determineExternalRequest = (
  * determined.
  */
 export const determineAssetType = (
-    filePath:string,
-    buildConfiguration:BuildConfiguration,
-    paths:PathConfiguration
-):null|string => {
-    let result:null|string = null
+    filePath: string,
+    buildConfiguration: BuildConfiguration,
+    paths: PathConfiguration
+): null|string => {
+    let result: null|string = null
     for (const type in buildConfiguration)
         if (
             extname(filePath) === `.${buildConfiguration[type].extension}`
@@ -436,21 +436,21 @@ export const determineAssetType = (
  * @returns Converted build configuration.
  */
 export const resolveBuildConfigurationFilePaths = (
-    configuration:BuildConfiguration,
+    configuration: BuildConfiguration,
     entryPath = './',
-    pathsToIgnore:Array<string> = ['.git'],
-    mainFileBasenames:Array<string> = ['index', 'main']
-):ResolvedBuildConfiguration => {
-    const buildConfiguration:ResolvedBuildConfiguration = []
+    pathsToIgnore: Array<string> = ['.git'],
+    mainFileBasenames: Array<string> = ['index', 'main']
+): ResolvedBuildConfiguration => {
+    const buildConfiguration: ResolvedBuildConfiguration = []
 
     for (const value of Object.values(configuration)) {
-        const newItem:ResolvedBuildConfigurationItem = extend<
+        const newItem: ResolvedBuildConfigurationItem = extend<
             ResolvedBuildConfigurationItem
         >(true, {filePaths: []}, value)
 
         for (const file of walkDirectoryRecursivelySync(
             entryPath,
-            (file:File):false|undefined => {
+            (file: File): false|undefined => {
                 if (isFilePathInLocation(file.path, pathsToIgnore))
                     return false
             }
@@ -467,8 +467,8 @@ export const resolveBuildConfigurationFilePaths = (
                 newItem.filePaths.push(file.path)
 
         newItem.filePaths.sort((
-            firstFilePath:string, secondFilePath:string
-        ):number => {
+            firstFilePath: string, secondFilePath: string
+        ): number => {
             if (mainFileBasenames.includes(basename(
                 firstFilePath, extname(firstFilePath)
             ))) {
@@ -488,9 +488,9 @@ export const resolveBuildConfigurationFilePaths = (
     }
 
     return buildConfiguration.sort((
-        first:ResolvedBuildConfigurationItem,
-        second:ResolvedBuildConfigurationItem
-    ):number => {
+        first: ResolvedBuildConfigurationItem,
+        second: ResolvedBuildConfigurationItem
+    ): number => {
         if (first.outputExtension !== second.outputExtension) {
             if (first.outputExtension === 'js')
                 return -1
@@ -529,31 +529,31 @@ export const resolveBuildConfigurationFilePaths = (
  * corresponding list of paths.
  */
 export const determineModuleLocations = (
-    givenInjection:GivenInjection,
-    aliases:Mapping = {},
-    moduleReplacements:Replacements = {},
-    extensions:SpecificExtensions = {
-        file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+    givenInjection: GivenInjection,
+    aliases: Mapping = {},
+    moduleReplacements: Replacements = {},
+    extensions: SpecificExtensions = {
+        file: KNOWN_FILE_EXTENSIONS.map((suffix: string): string =>
             `.${suffix}`
         )
     },
     context = './',
     referencePath = '',
-    pathsToIgnore:Array<string> = ['.git'],
-    relativeModuleLocations:Array<string> = ['node_modules'],
-    packageEntryFileNames:Array<string> = [
+    pathsToIgnore: Array<string> = ['.git'],
+    relativeModuleLocations: Array<string> = ['node_modules'],
+    packageEntryFileNames: Array<string> = [
         '__package__', '', 'index', 'main'
     ],
-    packageMainPropertyNames:Array<string> = ['main', 'module'],
-    packageAliasPropertyNames:Array<string> = [],
-    encoding:Encoding = 'utf-8'
-):{
-    directoryPaths:Array<string>
-    filePaths:Array<string>
+    packageMainPropertyNames: Array<string> = ['main', 'module'],
+    packageAliasPropertyNames: Array<string> = [],
+    encoding: Encoding = 'utf-8'
+): {
+    directoryPaths: Array<string>
+    filePaths: Array<string>
 } => {
-    const filePaths:Array<string> = []
-    const directoryPaths:Array<string> = []
-    const normalizedGivenInjection:NormalizedGivenInjection =
+    const filePaths: Array<string> = []
+    const directoryPaths: Array<string> = []
+    const normalizedGivenInjection: NormalizedGivenInjection =
         resolveModulesInFolders(
             normalizeGivenInjection(givenInjection),
             aliases,
@@ -565,7 +565,7 @@ export const determineModuleLocations = (
 
     for (const chunk of Object.values(normalizedGivenInjection))
         for (const moduleID of chunk) {
-            const filePath:null|string = determineModuleFilePath(
+            const filePath: null|string = determineModuleFilePath(
                 moduleID,
                 aliases,
                 moduleReplacements,
@@ -582,7 +582,7 @@ export const determineModuleLocations = (
 
             if (filePath) {
                 filePaths.push(filePath)
-                const directoryPath:string = dirname(filePath)
+                const directoryPath: string = dirname(filePath)
                 if (!directoryPaths.includes(directoryPath))
                     directoryPaths.push(directoryPath)
             }
@@ -603,13 +603,13 @@ export const determineModuleLocations = (
  * @returns Given injections with resolved folder pointing modules.
  */
 export const resolveModulesInFolders = (
-    normalizedGivenInjection:NormalizedGivenInjection,
-    aliases:Mapping = {},
-    moduleReplacements:Replacements = {},
+    normalizedGivenInjection: NormalizedGivenInjection,
+    aliases: Mapping = {},
+    moduleReplacements: Replacements = {},
     context = './',
     referencePath = '',
-    pathsToIgnore:Array<string> = ['.git']
-):NormalizedGivenInjection => {
+    pathsToIgnore: Array<string> = ['.git']
+): NormalizedGivenInjection => {
     if (referencePath.startsWith('/'))
         referencePath = relative(context, referencePath)
 
@@ -617,7 +617,7 @@ export const resolveModulesInFolders = (
     for (const chunk of Object.values(result)) {
         let index = 0
         for (const moduleID of copy(chunk)) {
-            const resolvedModuleID:false|string = applyModuleReplacements(
+            const resolvedModuleID: false|string = applyModuleReplacements(
                 applyAliases(stripLoader(moduleID), aliases),
                 moduleReplacements
             )
@@ -627,7 +627,7 @@ export const resolveModulesInFolders = (
                 continue
             }
 
-            const resolvedPath:string =
+            const resolvedPath: string =
                 resolve(referencePath, resolvedModuleID)
 
             if (isDirectorySync(resolvedPath)) {
@@ -635,7 +635,7 @@ export const resolveModulesInFolders = (
 
                 for (const file of walkDirectoryRecursivelySync(
                     resolvedPath,
-                    (file:File):false|undefined => {
+                    (file: File): false|undefined => {
                         if (isFilePathInLocation(file.path, pathsToIgnore))
                             return false
                     }
@@ -667,16 +667,16 @@ export const resolveModulesInFolders = (
  * @returns Normalized representation of given entry injection.
  */
 export const normalizeGivenInjection = (
-    givenInjection:GivenInjection
-):NormalizedGivenInjection => {
-    let result:NormalizedGivenInjection = {}
+    givenInjection: GivenInjection
+): NormalizedGivenInjection => {
+    let result: NormalizedGivenInjection = {}
     if (Array.isArray(givenInjection))
         result = {index: givenInjection}
     else if (typeof givenInjection === 'string')
         result = {index: [givenInjection]}
     else if (isPlainObject(givenInjection)) {
         let hasContent = false
-        const chunkNamesToDelete:Array<string> = []
+        const chunkNamesToDelete: Array<string> = []
         for (const [chunkName, chunk] of Object.entries(givenInjection))
             if (Array.isArray(chunk))
                 if (chunk.length > 0) {
@@ -713,22 +713,22 @@ export const normalizeGivenInjection = (
  * @returns Given injection with resolved marked indicators.
  */
 export const resolveAutoInjection = <T extends GivenInjectionConfiguration>(
-    givenInjection:T,
-    buildConfigurations:ResolvedBuildConfiguration,
-    aliases:Mapping = {},
-    moduleReplacements:Replacements = {},
-    extensions:Extensions = {file: {
+    givenInjection: T,
+    buildConfigurations: ResolvedBuildConfiguration,
+    aliases: Mapping = {},
+    moduleReplacements: Replacements = {},
+    extensions: Extensions = {file: {
         external: ['compiled.js', '.js', '.json'],
-        internal: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+        internal: KNOWN_FILE_EXTENSIONS.map((suffix: string): string =>
             `.${suffix}`
         )
     }},
     context = './',
     referencePath = '',
-    pathsToIgnore:Array<string> = ['.git']
-):T => {
-    const injection:T = copy(givenInjection)
-    const moduleFilePathsToExclude:Array<string> = determineModuleLocations(
+    pathsToIgnore: Array<string> = ['.git']
+): T => {
+    const injection: T = copy(givenInjection)
+    const moduleFilePathsToExclude: Array<string> = determineModuleLocations(
         givenInjection.autoExclude.paths,
         aliases,
         moduleReplacements,
@@ -739,12 +739,12 @@ export const resolveAutoInjection = <T extends GivenInjectionConfiguration>(
     ).filePaths
 
     for (const name of ['entry', 'external'] as const) {
-        const injectionType:GivenInjection = injection[name]
+        const injectionType: GivenInjection = injection[name]
         if (isPlainObject(injectionType)) {
             for (let [chunkName, chunk] of Object.entries(injectionType))
                 if (chunk === '__auto__') {
                     chunk = injectionType[chunkName] = []
-                    const modules:Mapping = getAutoInjection(
+                    const modules: Mapping = getAutoInjection(
                         buildConfigurations,
                         moduleFilePathsToExclude,
                         givenInjection.autoExclude.pattern,
@@ -781,13 +781,13 @@ export const resolveAutoInjection = <T extends GivenInjectionConfiguration>(
  * @returns All determined module file paths.
  */
 export const getAutoInjection = (
-    buildConfigurations:ResolvedBuildConfiguration,
-    moduleFilePathsToExclude:Array<string>,
-    moduleFilePathPatternToExclude:Array<RegExp|string>,
-    context:string
-):Mapping => {
-    const result:Mapping = {}
-    const injectedModuleIDs:Mapping<Array<string>> = {}
+    buildConfigurations: ResolvedBuildConfiguration,
+    moduleFilePathsToExclude: Array<string>,
+    moduleFilePathPatternToExclude: Array<RegExp|string>,
+    context: string
+): Mapping => {
+    const result: Mapping = {}
+    const injectedModuleIDs: Mapping<Array<string>> = {}
 
     for (const buildConfiguration of buildConfigurations) {
         if (!Object.prototype.hasOwnProperty.call(
@@ -805,14 +805,14 @@ export const getAutoInjection = (
             )) {
                 const relativeModuleFilePath =
                     `./${relative(context, moduleFilePath)}`
-                const directoryPath:string =
+                const directoryPath: string =
                     dirname(relativeModuleFilePath)
-                const baseName:string = basename(
+                const baseName: string = basename(
                     relativeModuleFilePath,
                     `.${buildConfiguration.extension}`
                 )
 
-                let moduleID:string = baseName
+                let moduleID: string = baseName
                 if (directoryPath !== '.')
                     moduleID = join(directoryPath, baseName)
 
@@ -857,27 +857,27 @@ export const getAutoInjection = (
  * @returns Path if found and / or additional package aliases to consider.
  */
 export const determineModuleFilePathInPackage = (
-    packagePath:string,
-    packageMainPropertyNames:Array<string> = ['main'],
-    packageAliasPropertyNames:Array<string> = [],
-    encoding:Encoding = 'utf-8'
-):{
-    fileName:null|string
-    packageAliases:Mapping|null
+    packagePath: string,
+    packageMainPropertyNames: Array<string> = ['main'],
+    packageAliasPropertyNames: Array<string> = [],
+    encoding: Encoding = 'utf-8'
+): {
+    fileName: null|string
+    packageAliases: Mapping|null
 } => {
-    const result:{
-        fileName:null|string
-        packageAliases:Mapping|null
+    const result: {
+        fileName: null|string
+        packageAliases: Mapping|null
     } = {
         fileName: null,
         packageAliases: null
     }
 
     if (isDirectorySync(packagePath)) {
-        const pathToPackageJSON:string =
+        const pathToPackageJSON: string =
             resolve(packagePath, 'package.json')
         if (isFileSync(pathToPackageJSON)) {
-            let localConfiguration:PlainObject = {}
+            let localConfiguration: PlainObject = {}
             try {
                 localConfiguration = JSON.parse(
                     readFileSync(pathToPackageJSON, {encoding})
@@ -939,23 +939,23 @@ export const determineModuleFilePathInPackage = (
  * necessary.
  */
 export const determineModuleFilePath = (
-    moduleID:false|string,
-    aliases:Mapping = {},
-    moduleReplacements:Replacements = {},
-    extensions:SpecificExtensions = {
-        file: KNOWN_FILE_EXTENSIONS.map((suffix:string):string =>
+    moduleID: false|string,
+    aliases: Mapping = {},
+    moduleReplacements: Replacements = {},
+    extensions: SpecificExtensions = {
+        file: KNOWN_FILE_EXTENSIONS.map((suffix: string): string =>
             `.${suffix}`
         )
     },
     context = './',
     referencePath = '',
-    pathsToIgnore:Array<string> = ['.git'],
-    relativeModuleLocations:Array<string> = ['node_modules'],
-    packageEntryFileNames:Array<string> = ['index'],
-    packageMainPropertyNames:Array<string> = ['main'],
-    packageAliasPropertyNames:Array<string> = [],
-    encoding:Encoding = 'utf-8'
-):null|string => {
+    pathsToIgnore: Array<string> = ['.git'],
+    relativeModuleLocations: Array<string> = ['node_modules'],
+    packageEntryFileNames: Array<string> = ['index'],
+    packageMainPropertyNames: Array<string> = ['main'],
+    packageAliasPropertyNames: Array<string> = [],
+    encoding: Encoding = 'utf-8'
+): null|string => {
     if (!moduleID)
         return null
 
@@ -965,12 +965,12 @@ export const determineModuleFilePath = (
     if (!moduleID)
         return null
 
-    let moduleFilePath:string = moduleID
+    let moduleFilePath: string = moduleID
     if (moduleFilePath.startsWith('./'))
         moduleFilePath = join(referencePath, moduleFilePath)
 
     const moduleLocations = [referencePath].concat(
-        relativeModuleLocations.map((filePath:string):string =>
+        relativeModuleLocations.map((filePath: string): string =>
             resolve(context, filePath)
         )
     )
@@ -989,18 +989,18 @@ export const determineModuleFilePath = (
             packageEntryFileNames
         ))
             for (const fileExtension of [''].concat(extensions.file)) {
-                let currentModuleFilePath:string
+                let currentModuleFilePath: string
                 if (moduleFilePath.startsWith('/'))
                     currentModuleFilePath = resolve(moduleFilePath)
                 else
                     currentModuleFilePath =
                         resolve(moduleLocation, moduleFilePath)
 
-                let packageAliases:Mapping = {}
+                let packageAliases: Mapping = {}
                 if (fileName === '__package__') {
-                    const result:{
-                        fileName:null|string
-                        packageAliases:Mapping|null
+                    const result: {
+                        fileName: null|string
+                        packageAliases: Mapping|null
                     } = determineModuleFilePathInPackage(
                         currentModuleFilePath,
                         packageMainPropertyNames,
@@ -1016,7 +1016,7 @@ export const determineModuleFilePath = (
                         continue
                 }
 
-                const resolvedFileName:false|string = applyModuleReplacements(
+                const resolvedFileName: false|string = applyModuleReplacements(
                     applyAliases(fileName, packageAliases),
                     moduleReplacements
                 )
@@ -1048,7 +1048,7 @@ export const determineModuleFilePath = (
  * @param aliases - Mapping of aliases to take into account.
  * @returns The alias applied given module id.
  */
-export const applyAliases = (moduleID:string, aliases:Mapping):string => {
+export const applyAliases = (moduleID: string, aliases: Mapping): string => {
     for (const [name, alias] of Object.entries(aliases))
         if (name.endsWith('$')) {
             if (moduleID === name.substring(0, name.length - 1))
@@ -1066,8 +1066,8 @@ export const applyAliases = (moduleID:string, aliases:Mapping):string => {
  * @returns The replacement applied given module id.
  */
 export const applyModuleReplacements = (
-    moduleID:false|string, replacements:Replacements
-):false|string => {
+    moduleID: false|string, replacements: Replacements
+): false|string => {
     if (moduleID === false)
         return moduleID
 
@@ -1083,8 +1083,8 @@ export const applyModuleReplacements = (
  * @returns Determined file path.
  */
 export const findPackageDescriptorFilePath = (
-    start:Array<string>|string, fileName = 'package.json'
-):null|string => {
+    start: Array<string>|string, fileName = 'package.json'
+): null|string => {
     if (typeof start === 'string') {
         if (!start.endsWith(sep))
             start += sep
@@ -1094,7 +1094,7 @@ export const findPackageDescriptorFilePath = (
         return null
 
     start.pop()
-    const result:string = resolve(start.join(sep), fileName)
+    const result: string = resolve(start.join(sep), fileName)
     try {
         if (existsSync(result))
             return result
@@ -1113,14 +1113,14 @@ export const findPackageDescriptorFilePath = (
  * corresponding file path.
  */
 export const getClosestPackageDescriptor = (
-    modulePath:string, fileName = 'package.json'
-):null|PackageDescriptor => {
-    const filePath:null|string =
+    modulePath: string, fileName = 'package.json'
+): null|PackageDescriptor => {
+    const filePath: null|string =
         findPackageDescriptorFilePath(modulePath, fileName)
     if (!(filePath && currentRequire))
         return null
 
-    const configuration:PackageConfiguration =
+    const configuration: PackageConfiguration =
         currentRequire(filePath) as PackageConfiguration
     /*
         If the package.json does not have a name property, try again from
