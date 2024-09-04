@@ -27,36 +27,36 @@ import {
 // endregion
 
 export class InPlaceAssetsIntoHTML {
-    private defaultOptions:Partial<InPlaceAssetsIntoHTMLOptions> = {}
-    private options:InPlaceAssetsIntoHTMLOptions
+    private defaultOptions: Partial<InPlaceAssetsIntoHTMLOptions> = {}
+    private options: InPlaceAssetsIntoHTMLOptions
 
-    constructor(options:Partial<InPlaceAssetsIntoHTMLOptions> = {}) {
+    constructor(options: Partial<InPlaceAssetsIntoHTMLOptions> = {}) {
         this.options = {...this.defaultOptions, ...options} as
             InPlaceAssetsIntoHTMLOptions
     }
 
-    apply(compiler:Compiler):void {
-        let publicPath:string =
+    apply(compiler: Compiler): void {
+        let publicPath: string =
             compiler.options.output.publicPath as string || ''
         if (publicPath && !publicPath.endsWith('/'))
             publicPath += '/'
 
         compiler.hooks.compilation.tap(
             'inPlaceHTMLAssets',
-            (compilation:Compilation):void => {
-                const hooks:HtmlWebpackPlugin.Hooks =
+            (compilation: Compilation): void => {
+                const hooks: HtmlWebpackPlugin.Hooks =
                     this.options.htmlPlugin.getHooks(compilation)
-                const inPlacedAssetNames:Array<string> = []
+                const inPlacedAssetNames: Array<string> = []
 
                 hooks.alterAssetTagGroups.tap(
                     'inPlaceHTMLAssets',
-                    (assets:WebpackAssets):WebpackAssets => {
+                    (assets: WebpackAssets): WebpackAssets => {
                         const inPlace = (
-                            type:keyof InPlaceAssetConfiguration,
-                            tag:HtmlWebpackPlugin.HtmlTagObject
-                        ):HtmlWebpackPlugin.HtmlTagObject => {
-                            let settings:InPlaceAssetConfiguration|null = null
-                            let url:boolean|null|string|undefined = false
+                            type: keyof InPlaceAssetConfiguration,
+                            tag: HtmlWebpackPlugin.HtmlTagObject
+                        ): HtmlWebpackPlugin.HtmlTagObject => {
+                            let settings: InPlaceAssetConfiguration|null = null
+                            let url: boolean|null|string|undefined = false
                             if (tag.tagName === 'script') {
                                 settings = this.options.javaScript
                                 url = tag.attributes.src
@@ -67,7 +67,7 @@ export class InPlaceAssetsIntoHTML {
                             if (!(url && typeof url === 'string'))
                                 return tag
 
-                            const name:string =
+                            const name: string =
                                 publicPath ? url.replace(publicPath, '') : url
 
                             if (
@@ -80,11 +80,11 @@ export class InPlaceAssetsIntoHTML {
                                     .concat(
                                         settings[type] as Array<RegExp|string>
                                     )
-                                    .some((pattern:RegExp|string):boolean =>
+                                    .some((pattern: RegExp|string): boolean =>
                                         (new RegExp(pattern)).test(name)
                                     )
                             ) {
-                                const newAttributes:(
+                                const newAttributes: (
                                     HtmlWebpackPlugin.HtmlTagObject[
                                         'attributes'
                                     ]
@@ -119,7 +119,7 @@ export class InPlaceAssetsIntoHTML {
                 // NOTE: Avoid if you still want to emit the runtime chunks:
                 hooks.afterEmit.tap(
                     'inPlaceHTMLAssets',
-                    (asset:WebpackBaseAssets):WebpackBaseAssets => {
+                    (asset: WebpackBaseAssets): WebpackBaseAssets => {
                         for (const name of inPlacedAssetNames)
                             delete compilation.assets[name]
 

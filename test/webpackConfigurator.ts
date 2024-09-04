@@ -11,8 +11,8 @@ import {WebpackConfiguration} from '../type'
 // Suppress log output.
 console.debug = NOOP
 
-test('webpackConfigurator', async ():Promise<void> => {
-    const webpackConfiguration:WebpackConfiguration = (await import(
+test('webpackConfigurator', async (): Promise<void> => {
+    const webpackConfiguration: WebpackConfiguration = (await import(
         '../webpackConfigurator'
     )).default
 

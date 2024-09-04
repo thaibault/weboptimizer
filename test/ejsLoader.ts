@@ -9,23 +9,23 @@ import {LoaderContext} from 'webpack'
 import ejsLoader, {LoaderConfiguration} from '../ejsLoader'
 
 // region mockup
-const context:LoaderContext<LoaderConfiguration> = {
+const context: LoaderContext<LoaderConfiguration> = {
     debug: false,
     loaders: [],
     resourcePath: '',
     query: ''
 } as unknown as LoaderContext<LoaderConfiguration>
 // endregion
-describe('ejsLoader', ():void => {
+describe('ejsLoader', (): void => {
     // region tests
-    test('loader', ():void => {
+    test('loader', (): void => {
         expect(ejsLoader.call(context, '<a></a>')).toStrictEqual('<a></a>')
-        const complexContext:LoaderContext<LoaderConfiguration> = extend(
+        const complexContext: LoaderContext<LoaderConfiguration> = extend(
             true,
             copy(context),
             {
                 cacheable: NOOP,
-                getOptions: function():LoaderConfiguration {
+                getOptions: function(): LoaderConfiguration {
                     return this.query as LoaderConfiguration
                 },
                 query: {

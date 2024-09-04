@@ -61,7 +61,7 @@ import {
     SubConfigurationTypes
 } from './type'
 // endregion
-export let loadedConfiguration:null|ResolvedConfiguration = null
+export let loadedConfiguration: null|ResolvedConfiguration = null
 /**
  * Main entry point to determine current configuration.
  * @param context - Location from where to build current application.
@@ -73,17 +73,17 @@ export let loadedConfiguration:null|ResolvedConfiguration = null
  * @returns Nothing.
  */
 export const load = (
-    context?:string,
-    currentWorkingDirectory:string = process.cwd(),
-    commandLineArguments:Array<string> = process.argv,
-    webOptimizerPath:string = __dirname,
+    context?: string,
+    currentWorkingDirectory: string = process.cwd(),
+    commandLineArguments: Array<string> = process.argv,
+    webOptimizerPath: string = __dirname,
     /*
         NOTE: We have to avoid that some pre-processor removes this
         assignment.
     */
     // eslint-disable-next-lien no-eval
-    environment:NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
-):ResolvedConfiguration => {
+    environment: NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
+): ResolvedConfiguration => {
     // region determine application context location
     if (context)
         metaConfiguration.default.path.context = context
@@ -140,7 +140,7 @@ export const load = (
     }
     // endregion
     // region load application specific configuration
-    let specificConfiguration:PlainObject = {}
+    let specificConfiguration: PlainObject = {}
     try {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         specificConfiguration = currentRequire!(join(
@@ -151,7 +151,7 @@ export const load = (
     }
     // endregion
     // region determine application name and web optimizer configuration
-    const name:string = typeof specificConfiguration.name === 'string' ?
+    const name: string = typeof specificConfiguration.name === 'string' ?
         specificConfiguration.name :
         (
             typeof (
@@ -168,7 +168,7 @@ export const load = (
     // region determine debug mode
     // NOTE: Given node command line arguments results in "npm_config_*"
     // environment variables.
-    let debug:boolean = metaConfiguration.default.debug
+    let debug: boolean = metaConfiguration.default.debug
     if (typeof specificConfiguration.debug === 'boolean')
         debug = specificConfiguration.debug
     else if (
@@ -184,8 +184,8 @@ export const load = (
     metaConfiguration.default.path.context += '/'
     // Merges final default configuration object depending on given target
     // environment.
-    const libraryConfiguration:PlainObject = metaConfiguration.library
-    let configuration:DefaultConfiguration
+    const libraryConfiguration: PlainObject = metaConfiguration.library
+    let configuration: DefaultConfiguration
     if (debug)
         configuration = extend<DefaultConfiguration>(
             true,
@@ -215,7 +215,7 @@ export const load = (
     // region merging and evaluating task specific and dynamic configurations
     /// region load additional dynamically given configuration
     let count = 0
-    let filePath:null|string = null
+    let filePath: null|string = null
     for (let index = 0; index < MAXIMAL_NUMBER_OF_ITERATIONS.value; index++) {
         const newFilePath =
             `${configuration.path.context}.dynamicConfiguration-` +
@@ -228,10 +228,10 @@ export const load = (
         count += 1
     }
 
-    let runtimeInformation:RuntimeInformation =
+    let runtimeInformation: RuntimeInformation =
         {givenCommandLineArguments: commandLineArguments}
     if (filePath) {
-        const fileContent:string = readFileSync(
+        const fileContent: string = readFileSync(
             filePath, {encoding: configuration.encoding}
         )
         runtimeInformation = JSON.parse(fileContent) as RuntimeInformation
@@ -246,7 +246,7 @@ export const load = (
                 debug && type === 'debug' ||
                 type === 'test' &&
                 runtimeInformation.givenCommandLineArguments[2].startsWith(
-                    'test:'
+                    'test: '
                 ) &&
                 runtimeInformation.givenCommandLineArguments[2] !==
                     'test:browser'
@@ -291,7 +291,7 @@ export const load = (
         runtimeInformation
     )
 
-    let result:null|PlainObject = null
+    let result: null|PlainObject = null
     if (runtimeInformation.givenCommandLineArguments.length > 3)
         result = parseEncodedObject(
             runtimeInformation.givenCommandLineArguments[
@@ -303,7 +303,7 @@ export const load = (
 
     if (result !== null && typeof result === 'object') {
         if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
-            const referenceNames:Array<string> =
+            const referenceNames: Array<string> =
                 ([] as Array<string>).concat(result.__reference__ as string)
             delete result.__reference__
             for (const name of referenceNames)
@@ -376,12 +376,12 @@ export const load = (
             }
     /// endregion
     // region evaluate dynamic configuration structures
-    const now:Date = new Date()
+    const now: Date = new Date()
     /*
         NOTE: The configuration is not yet fully resolved but will be
         transformed in place in the following lines of code.
     */
-    const resolvedConfiguration:ResolvedConfiguration =
+    const resolvedConfiguration: ResolvedConfiguration =
         evaluateDynamicData<ResolvedConfiguration>(
             configuration as
                 unknown as
@@ -403,7 +403,7 @@ export const load = (
     // region consolidate file specific build configuration
     // Apply default file level build configurations to all file type specific
     // ones.
-    const defaultConfiguration:PlainObject =
+    const defaultConfiguration: PlainObject =
         resolvedConfiguration.buildContext.types.default as
             unknown as
             PlainObject
@@ -441,9 +441,9 @@ export const load = (
                 resolvedConfiguration.path.ignore.concat(
                     resolvedConfiguration.module.directoryNames,
                     resolvedConfiguration.loader.directoryNames
-                ).map((filePath:string):string =>
+                ).map((filePath: string): string =>
                     resolve(resolvedConfiguration.path.context, filePath)
-                ).filter((filePath:string):boolean =>
+                ).filter((filePath: string): boolean =>
                     !resolvedConfiguration.path.context.startsWith(filePath)
                 )
             ),
@@ -456,7 +456,7 @@ export const load = (
         resolvedConfiguration.path.source.asset.base,
         resolvedConfiguration.path.ignore
     ) as unknown as InjectionConfiguration
-    const givenInjection:GivenInjection =
+    const givenInjection: GivenInjection =
         resolvedConfiguration.injection.entry as unknown as GivenInjection
     resolvedConfiguration.injection.entry = {
         given: givenInjection,
@@ -469,9 +469,9 @@ export const load = (
             resolvedConfiguration.path.ignore.concat(
                 resolvedConfiguration.module.directoryNames,
                 resolvedConfiguration.loader.directoryNames
-            ).map((filePath:string):string =>
+            ).map((filePath: string): string =>
                 resolve(resolvedConfiguration.path.context, filePath)
-            ).filter((filePath:string):boolean =>
+            ).filter((filePath: string): boolean =>
                 !resolvedConfiguration.path.context.startsWith(filePath)
             )
         )
@@ -489,7 +489,7 @@ export const load = (
         resolvedConfiguration.injection.entry.normalized
     ))
         for (const moduleID of chunk) {
-            const filePath:null|string = determineModuleFilePath(
+            const filePath: null|string = determineModuleFilePath(
                 moduleID,
                 resolvedConfiguration.module.aliases,
                 resolvedConfiguration.module.replacements.normal,
@@ -509,7 +509,7 @@ export const load = (
                 resolvedConfiguration.encoding
             )
 
-            let type:null|string = null
+            let type: null|string = null
             if (filePath)
                 type = determineAssetType(
                     filePath,
@@ -569,13 +569,13 @@ export const load = (
                 resolvedConfiguration.files.defaultHTML.template.filePath &&
             htmlConfiguration.template.options
         ) {
-            const requestString:string = new String(
+            const requestString: string = new String(
                 htmlConfiguration.template.request +
                 (convertCircularObjectToJSON(
                     htmlConfiguration.template.options
                 ) as string)
             ) as string
-            requestString.replace = ((value:string) => ():string => value)(
+            requestString.replace = ((value: string) => (): string => value)(
                 htmlConfiguration.template.filePath
             )
             htmlConfiguration.template.request = requestString
@@ -588,7 +588,7 @@ export const load = (
  * Get cached or determined configuration object.
  * @returns Nothing.
  */
-export const get = ():ResolvedConfiguration => {
+export const get = (): ResolvedConfiguration => {
     if (loadedConfiguration)
         return loadedConfiguration
 

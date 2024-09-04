@@ -25,13 +25,13 @@ import {LoaderConfiguration} from './ejsLoader'
 import {Browser, InitializedBrowser} from './type'
 // endregion
 // region declaration
-declare const NAME:string
-declare const TARGET_TECHNOLOGY:string
+declare const NAME: string
+declare const TARGET_TECHNOLOGY: string
 //  endregion
 //  region variables
-const onCreatedListener:Array<ProcedureFunction> = []
+const onCreatedListener: Array<ProcedureFunction> = []
 
-export const browser:Browser = {
+export const browser: Browser = {
     debug: false,
     domContentLoaded: false,
     DOM: null,
@@ -47,21 +47,21 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
         NOTE: We use an asynchronous wrapper method to initialize
         "browser.initialized" at module loading time.
     */
-    (async ():Promise<void> => {
+    (async (): Promise<void> => {
         // region mock browser environment
         const [{JSDOM, VirtualConsole: VirtualConsoleImplementation}, path] =
             await Promise.all([import('jsdom'), import('path')])
 
-        const virtualConsole:VirtualConsole =
+        const virtualConsole: VirtualConsole =
             new VirtualConsoleImplementation()
         for (const name of CONSOLE_METHODS)
             virtualConsole.on(name, console[name].bind(console))
         virtualConsole.on(
             'error',
-            (error:Error & {
-                detail:string
-                type:string
-            }):void => {
+            (error: Error & {
+                detail: string
+                type: string
+            }): void => {
                 if (
                     !browser.debug &&
                     ['XMLHttpRequest', 'resource loading'].includes(error.type)
@@ -74,13 +74,13 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             }
         )
 
-        const render = (template:string):void => {
+        const render = (template: string): void => {
             browser.DOM = JSDOM
             browser.initialized = true
             browser.instance = new browser.DOM(
                 template,
                 {
-                    beforeParse: (window:DOMWindow):void => {
+                    beforeParse: (window: DOMWindow): void => {
                         // We want to use it in a polymorphic way.
                         browser.window = (
                             global.window as unknown ??
@@ -120,20 +120,20 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     },
                     resources: 'usable',
                     runScripts: 'dangerously',
-                    url: 'http://localhost',
+                    url: 'http: //localhost',
                     virtualConsole
                 }
             )
         }
 
         if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
-            const filePath:string = path.join(__dirname, 'index.html.ejs')
+            const filePath: string = path.join(__dirname, 'index.html.ejs')
             /*
                 NOTE: We load dependencies now to avoid having file imports
                 after test runner has finished to isolate the environment.
             */
             const ejsLoader = (await import('./ejsLoader')).default
-            const content:string = await (await import('fs')).promises
+            const content: string = await (await import('fs')).promises
                 .readFile(filePath, {encoding: 'utf-8'})
 
             render(ejsLoader.bind(
@@ -146,17 +146,17 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 await import('webOptimizerDefaultTemplateFilePath') as string
             )
         // endregion
-    })().catch((error:unknown) => {
+    })().catch((error: unknown) => {
         console.error(error)
     })
 else {
     browser.initialized = true
     browser.window = window
 
-    window.document.addEventListener('DOMContentLoaded', ():void => {
+    window.document.addEventListener('DOMContentLoaded', (): void => {
         browser.domContentLoaded = true
     })
-    window.addEventListener('load', ():void => {
+    window.addEventListener('load', (): void => {
         browser.windowLoaded = true
     })
 
@@ -174,10 +174,10 @@ else {
  */
 export const getInitializedBrowser = async (
     replaceWindow = true
-):Promise<InitializedBrowser> => {
-    let resolvePromise:(_browser:InitializedBrowser) => void
+): Promise<InitializedBrowser> => {
+    let resolvePromise: (_browser: InitializedBrowser) => void
     const promise = new Promise<InitializedBrowser>(
-        (resolve:(_browser:InitializedBrowser) => void):void => {
+        (resolve: (_browser: InitializedBrowser) => void): void => {
             resolvePromise = resolve
         }
     )
@@ -186,13 +186,13 @@ export const getInitializedBrowser = async (
         NOTE: We have to define window globally before anything is loaded to
         ensure that all future instances share the same window object.
     */
-    const wrappedCallback = ():void => {
+    const wrappedCallback = (): void => {
         if (
             replaceWindow &&
             typeof global !== 'undefined' &&
             (global as unknown as Window) !== browser.window
         )
-            (global as unknown as {window:Window}).window =
+            (global as unknown as {window: Window}).window =
                 browser.window as Window
 
         resolvePromise(browser as InitializedBrowser)

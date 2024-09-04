@@ -18,7 +18,7 @@
 import getConfiguration from './configurator'
 import {ResolvedConfiguration} from './type'
 // endregion
-const configuration:ResolvedConfiguration = getConfiguration()
+const configuration: ResolvedConfiguration = getConfiguration()
 
 module.exports = configuration.stylelint
 

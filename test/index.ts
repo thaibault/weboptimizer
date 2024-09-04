@@ -13,9 +13,9 @@ import {resolve} from 'path'
 jest.setTimeout(60 * 1000)
 
 for (const folder of ['simple', 'scss'])
-    test.each(['check:types', 'lint', 'build', 'test'])(
-        `index (${folder}:%s)`,
-        (command:string):void => {
+    test.each(['check: types', 'lint', 'build', 'test'])(
+        `index (${folder}: %s)`,
+        (command: string): void => {
             for (const currentCommand of ['clear', command, 'clear'])
                 expect(spawnChildProcessSync(
                     'yarn',

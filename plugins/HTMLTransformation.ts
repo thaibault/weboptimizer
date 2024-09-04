@@ -31,38 +31,38 @@ import {
 // endregion
 
 export class HTMLTransformation {
-    private defaultOptions:Partial<HTMLTransformationOptions> = {}
-    private options:HTMLTransformationOptions
+    private defaultOptions: Partial<HTMLTransformationOptions> = {}
+    private options: HTMLTransformationOptions
 
-    constructor(options:Partial<HTMLTransformationOptions> = {}) {
+    constructor(options: Partial<HTMLTransformationOptions> = {}) {
         this.options = {...this.defaultOptions, ...options} as
             HTMLTransformationOptions
     }
 
     private process(
-        data:HTMLWebpackPluginBeforeEmitData
-    ):HTMLWebpackPluginBeforeEmitData {
+        data: HTMLWebpackPluginBeforeEmitData
+    ): HTMLWebpackPluginBeforeEmitData {
         /*
             NOTE: We have to prevent creating native "style" dom nodes to
             prevent jsdom from parsing the entire cascading style sheet. Which
             is error prune and very resource intensive.
         */
-        const styleContents:Array<string> = []
+        const styleContents: Array<string> = []
         data.html = data.html.replace(
             /(<style[^>]*>)([\s\S]*?)(<\/style[^>]*>)/gi,
             (
-                match:string,
-                startTag:string,
-                content:string,
-                endTag:string
-            ):string => {
+                match: string,
+                startTag: string,
+                content: string,
+                endTag: string
+            ): string => {
                 styleContents.push(content)
 
                 return `${startTag}${endTag}`
             }
         )
 
-        let dom:DOM
+        let dom: DOM
         try {
             /*
                 NOTE: We have to translate template delimiter to html
@@ -78,7 +78,7 @@ export class HTMLTransformation {
             return data
         }
 
-        const linkables:Mapping = {
+        const linkables: Mapping = {
             link: 'href',
             script: 'src'
         }
@@ -115,8 +115,8 @@ export class HTMLTransformation {
             .replace(
                 /(<style[^>]*>)[\s\S]*?(<\/style[^>]*>)/gi,
                 (
-                    match:string, startTag:string, endTag:string
-                ):string =>
+                    match: string, startTag: string, endTag: string
+                ): string =>
                     `${startTag}${styleContents.shift() as string}${endTag}`
             )
         // region post compilation
@@ -124,7 +124,7 @@ export class HTMLTransformation {
             if (htmlFileSpecification.filename === (
                 data.plugin as
                     unknown as
-                    {options:HtmlWebpackPlugin.ProcessedOptions}
+                    {options: HtmlWebpackPlugin.ProcessedOptions}
             ).options.filename) {
                 for (const loaderConfiguration of (
                     [] as Array<WebpackLoader>
@@ -151,10 +151,10 @@ export class HTMLTransformation {
         return data
     }
 
-    apply(compiler:Compiler):void {
+    apply(compiler: Compiler): void {
         compiler.hooks.compilation.tap(
             'WebOptimizer',
-            (compilation:Compilation):void => {
+            (compilation: Compilation): void => {
                 this.options.htmlPlugin
                     .getHooks(compilation)
                     .beforeEmit.tap(

@@ -44,50 +44,50 @@ import {Extensions, Replacements, ResolvedConfiguration} from './type'
 // endregion
 // region types
 export type PreCompiledTemplateFunction =
-    ((..._parameters:Array<unknown>) => string)
+    ((..._parameters: Array<unknown>) => string)
 export type TemplateFunction =
     EJSTemplateFunction | PreCompiledTemplateFunction
 export type CompilerOptions =
     Options &
     {
-        encoding:Encoding
-        isString?:boolean
+        encoding: Encoding
+        isString?: boolean
     }
 export type CompileFunction =
     (
-        template:string,
-        options?:Partial<CompilerOptions>,
-        compileSteps?:number
+        template: string,
+        options?: Partial<CompilerOptions>,
+        compileSteps?: number
     ) => TemplateFunction
 export type LoaderConfiguration =
     Mapping<unknown> &
     {
-        compiler:Partial<CompilerOptions>
-        compileSteps:number
-        compress:{
-            html:Mapping<unknown>
-            javaScript:Mapping<unknown>
+        compiler: Partial<CompilerOptions>
+        compileSteps: number
+        compress: {
+            html: Mapping<unknown>
+            javaScript: Mapping<unknown>
         }
-        context:string
-        debug:boolean
-        extensions:Extensions
-        locals?:Mapping<unknown>
-        module:{
-            aliases:Mapping
-            replacements:Replacements
+        context: string
+        debug: boolean
+        extensions: Extensions
+        locals?: Mapping<unknown>
+        module: {
+            aliases: Mapping
+            replacements: Replacements
         }
     }
 // endregion
-const configuration:ResolvedConfiguration = getConfiguration()
+const configuration: ResolvedConfiguration = getConfiguration()
 /**
  * Main transformation function.
  * @param source - Input string to transform.
  * @returns Transformed string.
  */
 export const loader = function(
-    this:LoaderContext<LoaderConfiguration>, source:string
-):string {
-    const givenOptions:RecursivePartial<LoaderConfiguration> =
+    this: LoaderContext<LoaderConfiguration>, source: string
+): string {
+    const givenOptions: RecursivePartial<LoaderConfiguration> =
         convertSubstringInPlainObject(
             extend<LoaderConfiguration>(
                 true,
@@ -125,26 +125,26 @@ export const loader = function(
             '!'
         )
 
-    const compile:CompileFunction = (
-        template:string,
+    const compile: CompileFunction = (
+        template: string,
         options = givenOptions.compiler,
         compileSteps = 2
-    ):TemplateFunction => (
-        locals:Array<Array<string>>|Array<Mapping<unknown>>|Mapping<unknown> =
+    ): TemplateFunction => (
+        locals: Array<Array<string>>|Array<Mapping<unknown>>|Mapping<unknown> =
         {}
-    ):string => {
+    ): string => {
         options = {filename: template, ...options}
-        const givenLocals:Array<unknown> =
+        const givenLocals: Array<unknown> =
             ([] as Array<unknown>).concat(locals)
 
         const require = (
-            request:string, nestedLocals:Mapping<unknown> = {}
-        ):string => {
-            const template:string = request.replace(/^(.+)\?[^?]+$/, '$1')
-            const queryMatch:Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
+            request: string, nestedLocals: Mapping<unknown> = {}
+        ): string => {
+            const template: string = request.replace(/^(.+)\?[^?]+$/, '$1')
+            const queryMatch: Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
 
             if (queryMatch) {
-                const evaluated:EvaluationResult<Mapping<unknown>> =
+                const evaluated: EvaluationResult<Mapping<unknown>> =
                     evaluate<Mapping<unknown>>(
                         queryMatch[1],
                         {compile, locals, request, source, template}
@@ -174,7 +174,7 @@ export const loader = function(
             if (nestedOptions.isString)
                 return compile(template, nestedOptions)(nestedLocals)
 
-            const templateFilePath:null|string = determineModuleFilePath(
+            const templateFilePath: null|string = determineModuleFilePath(
                 template,
                 givenOptions.module?.aliases,
                 givenOptions.module?.replacements,
@@ -212,7 +212,7 @@ export const loader = function(
             )
         }
 
-        const compressHTML = (content:string):string =>
+        const compressHTML = (content: string): string =>
             givenOptions.compress?.html ?
                 minifyHTML(
                     content,
@@ -248,20 +248,20 @@ export const loader = function(
                 ) :
                 content
 
-        let result:string|TemplateFunction = template
+        let result: string|TemplateFunction = template
         const isString = Boolean(options.isString)
         delete options.isString
 
-        let stepLocals:Array<string>|Mapping<unknown>
-        let scope:Mapping<unknown> = {}
-        let originalScopeNames:Array<string> = []
-        let scopeNames:Array<string> = []
+        let stepLocals: Array<string>|Mapping<unknown>
+        let scope: Mapping<unknown> = {}
+        let originalScopeNames: Array<string> = []
+        let scopeNames: Array<string> = []
 
         for (let step = 1; step <= compileSteps; step += 1) {
             // On every odd compile step we have to determine the environment.
             if (step % 2) {
                 // region determine scope
-                const localsIndex:number = Math.round(step / 2) - 1
+                const localsIndex: number = Math.round(step / 2) - 1
                 stepLocals = (localsIndex < givenLocals.length) ?
                     givenLocals[localsIndex] as
                         Array<string>|Mapping<unknown> :
@@ -280,20 +280,20 @@ export const loader = function(
 
                 originalScopeNames =
                     Array.isArray(stepLocals) ? stepLocals : Object.keys(scope)
-                scopeNames = originalScopeNames.map((name:string):string =>
+                scopeNames = originalScopeNames.map((name: string): string =>
                     convertToValidVariableName(name)
                 )
                 // endregion
             }
 
             if (typeof result === 'string') {
-                const filePath:string|undefined =
+                const filePath: string|undefined =
                     isString ? options.filename : result
                 if (filePath && extname(filePath) === '.js' && currentRequire)
                     result = currentRequire(filePath) as TemplateFunction
                 else {
                     if (!isString) {
-                        let encoding:Encoding = configuration.encoding
+                        let encoding: Encoding = configuration.encoding
                         if (typeof options.encoding === 'string')
                             encoding = options.encoding
                         result = readFileSync(result, {encoding})
@@ -313,7 +313,7 @@ export const loader = function(
                         enabled
                     */
                     if (options.strict || !options._with) {
-                        let localsName:string = options.localsName || 'locals'
+                        let localsName: string = options.localsName || 'locals'
                         while (scopeNames.includes(localsName))
                             localsName = `_${localsName}`
 
@@ -342,7 +342,7 @@ export const loader = function(
                             here.
                         */
                         ...originalScopeNames
-                            .map((name:string):unknown => scope[name])
+                            .map((name: string): unknown => scope[name])
                             .concat(
                                 !options.strict && options._with ? [] : scope
                             )
@@ -353,7 +353,7 @@ export const loader = function(
         if (compileSteps % 2) {
             let code = `module.exports = ${result.toString()}`
 
-            const processed:BabelFileResult|null = babelTransformSync(
+            const processed: BabelFileResult|null = babelTransformSync(
                 code,
                 {
                     ast: false,
@@ -383,7 +383,7 @@ export const loader = function(
                 .replace(
                     new RegExp(
                         `<script +processing-workaround *` +
-                        `(?:= *(?:" *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
+                        `(?: = *(?: " *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
                         'ig'
                     ),
                     '$1'
@@ -391,7 +391,7 @@ export const loader = function(
                 .replace(
                     new RegExp(
                         `<script +processing(-+)-workaround *` +
-                        `(?:= *(?:" *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
+                        `(?: = *(?: " *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
                         'ig'
                     ),
                     '<script processing$1workaround>$2</script>'

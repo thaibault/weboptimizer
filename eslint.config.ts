@@ -1,7 +1,6 @@
 import eslintjs from '@eslint/js'
 import typescriptPlugin from '@stylistic/eslint-plugin-ts'
 import typescriptParser from '@typescript-eslint/parser'
-import tseslint from 'typescript-eslint'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
 import {readFile, stat} from 'fs/promises'
@@ -16,7 +15,7 @@ import {ResolvedConfiguration} from './type'
  * @param filePath - Path to directory.
  * @returns A promise holding a boolean which indicates directory existence.
  */
-export const isFile = async (filePath:string):Promise<boolean> => {
+export const isFile = async (filePath: string): Promise<boolean> => {
     try {
         return (await stat(filePath)).isFile()
     } catch (error) {
@@ -44,7 +43,7 @@ const googleRules = Object.keys((google as Mapping<object>).rules)
 
 const libraryIndicator = (JSON.parse(
     await readFile(resolve(cwd(), './package.json'), {encoding: 'utf-8'})
-) as {webOptimizer?:ResolvedConfiguration}).webOptimizer?.library
+) as {webOptimizer?: ResolvedConfiguration}).webOptimizer?.library
 const isLibrary = libraryIndicator ?? true
 
 let tsConfigFilePath = ''
@@ -59,13 +58,13 @@ for (const filePath of [
         break
     }
 
-export const config = tseslint.config(
+export const config = typescript.config(
     {
         extends: [
             eslintjs.configs.recommended,
             ...typescript.configs.strictTypeChecked,
-            ...tseslint.configs.strict,
-            ...tseslint.configs.stylistic,
+            ...typescript.configs.strict,
+            ...typescript.configs.stylistic,
             jsdoc.configs['flat/recommended']
         ],
         files: ['**/*.{ts,tsx,html}'],
@@ -97,19 +96,7 @@ export const config = tseslint.config(
             '@/no-implied-eval': 'error',
 
             '@stylistic/no-non-null-assertion': 'off',
-            '@stylistic/type-annotation-spacing': [
-                'error',
-                {
-                    after: false,
-                    before: false,
-                    overrides: {
-                        arrow: {
-                            after: true,
-                            before: true
-                        }
-                    }
-                }
-            ],
+            '@stylistic/type-annotation-spacing': 'error',
 
             '@typescript-eslint/array-type': ['error', {default: 'generic'}],
             '@typescript-eslint/no-dynamic-delete': 'off',

@@ -18,9 +18,9 @@
 import {$Global, globalContext} from 'clientnode'
 import {TextEncoder, TextDecoder} from 'util'
 // endregion
-;(globalContext as $Global & {TextEncoder:typeof TextEncoder}).TextEncoder =
+;(globalContext as $Global & {TextEncoder: typeof TextEncoder}).TextEncoder =
     TextEncoder
-;(globalContext as $Global & {TextDecoder:typeof TextDecoder}).TextDecoder =
+;(globalContext as $Global & {TextDecoder: typeof TextDecoder}).TextDecoder =
     TextDecoder
 try {
     if ((eval('require') as typeof require)('jest-canvas-mock'))
