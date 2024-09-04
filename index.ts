@@ -133,7 +133,7 @@ const main = async (
         const processPromises: Array<Promise<ProcessCloseReason>> = []
         const possibleArguments: Array<string> = [
             'build',
-            'build: types',
+            'build:types',
             'clear',
             'document',
             'lint',
@@ -141,9 +141,9 @@ const main = async (
             'serve',
             'test',
             'test:browser',
-            'test: coverage',
-            'test: coverage: report',
-            'check: types'
+            'test:coverage',
+            'test:coverage:report',
+            'check:types'
         ]
         const closeEventHandlers: Array<AnyFunction> = []
         if (configuration.givenCommandLineArguments.length > 2) {
@@ -209,13 +209,13 @@ const main = async (
             if (
                 ![
                     'build',
-                    'build: types',
+                    'build:types',
                     'preinstall',
                     'serve',
                     'test',
                     'test:browser',
-                    'test: coverage',
-                    'test: coverage: report'
+                    'test:coverage',
+                    'test:coverage:report'
                 ].includes(configuration.givenCommandLineArguments[2]) &&
                 possibleArguments.includes(
                     configuration.givenCommandLineArguments[2]
@@ -652,8 +652,8 @@ const main = async (
                         CommandLineArguments
                 )
             } else if ([
-                'build: types',
-                'check: types',
+                'build:types',
+                'check:types',
                 'lint',
                 'serve',
                 'test:browser'
