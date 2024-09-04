@@ -243,7 +243,7 @@ export interface CommandLineArguments {
     serve: Array<Command>|Command
     test: Array<Command>|Command
     'test:browser': Array<Command>|Command
-    'check: types': Array<Command>|Command
+    'check:types': Array<Command>|Command
 }
 export type NodeEnvironment = BaseWebpackConfiguration['node'] & {'#': string}
 export interface PluginConfiguration {

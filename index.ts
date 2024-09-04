@@ -329,8 +329,8 @@ const main = async (
                 'build',
                 'document',
                 'test',
-                'test: coverage',
-                'test: coverage: report'
+                'test:coverage',
+                'test:coverage:report'
             ].includes(commandLineArguments[2])) {
                 let tidiedUp = false
                 const tidyUp = (): void => {
@@ -640,8 +640,8 @@ const main = async (
             if ([
                 'document',
                 'test',
-                'test: coverage',
-                'test: coverage: report'
+                'test:coverage',
+                'test:coverage:report'
             ].includes(
                 configuration.givenCommandLineArguments[2]
             )) {
