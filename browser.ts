@@ -120,7 +120,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     },
                     resources: 'usable',
                     runScripts: 'dangerously',
-                    url: 'http: //localhost',
+                    url: 'http://localhost',
                     virtualConsole
                 }
             )
