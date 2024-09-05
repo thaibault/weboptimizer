@@ -618,7 +618,6 @@ const main = async (
                                 '"'
                             )
 
-                            console.log('A', childProcessOptions)
                             const childProcess: ChildProcess =
                                 spawnChildProcess(
                                     task.command,
