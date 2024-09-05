@@ -103,8 +103,8 @@ const main = async (
     */
     environment: NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
 ): Promise<() => void> => {
-    if (environment.PATH && !environment.PATH.includes(': node_modules/.bin'))
-        environment.PATH += ': node_modules/.bin'
+    if (environment.PATH && !environment.PATH.includes(':node_modules/.bin'))
+        environment.PATH += ':node_modules/.bin'
     else
         environment.PATH = 'node_modules/.bin'
 
@@ -618,6 +618,7 @@ const main = async (
                                 '"'
                             )
 
+                            console.log('A', childProcessOptions)
                             const childProcess: ChildProcess =
                                 spawnChildProcess(
                                     task.command,
