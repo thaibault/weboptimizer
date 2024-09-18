@@ -246,7 +246,7 @@ export const load = (
                 debug && type === 'debug' ||
                 type === 'test' &&
                 runtimeInformation.givenCommandLineArguments[2].startsWith(
-                    'test: '
+                    'test:'
                 ) &&
                 runtimeInformation.givenCommandLineArguments[2] !==
                     'test:browser'
