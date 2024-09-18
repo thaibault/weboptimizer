@@ -429,7 +429,7 @@ if (configuration.injection.external.modules === '__implicit__')
     configuration.injection.external.modules = (
         {context, request},
         callback: (
-            error?: Error|undefined,
+            error?: Error,
             result?: Array<string>|boolean|string|Mapping<unknown>,
             type?: string
         ) => void
