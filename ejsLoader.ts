@@ -85,7 +85,7 @@ const configuration: ResolvedConfiguration = getConfiguration()
  * @returns Transformed string.
  */
 export const loader = function(
-    this: LoaderContext<LoaderConfiguration>, source: string
+    this: Partial<LoaderContext<LoaderConfiguration>>, source: string
 ): string {
     const givenOptions: RecursivePartial<LoaderConfiguration> =
         convertSubstringInPlainObject(
@@ -117,9 +117,11 @@ export const loader = function(
                         replacements: {}
                     }
                 },
-                Object.prototype.hasOwnProperty.call(this, 'getOptions') ?
+                this.getOptions ?
                     this.getOptions() :
-                    {}
+                    (
+                        this.query as RecursivePartial<LoaderConfiguration>|null
+                    ) ?? {}
             ),
             /#%%%#/g,
             '!'
@@ -190,7 +192,7 @@ export const loader = function(
             )
 
             if (templateFilePath) {
-                if ('addDependency' in this)
+                if (this.addDependency)
                     this.addDependency(templateFilePath)
                 /*
                     NOTE: If there aren't any locals options or variables and
