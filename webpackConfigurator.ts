@@ -238,7 +238,7 @@ if (
 //// region provide offline functionality
 if (
     htmlAvailable &&
-    Object.prototype.hasOwnProperty.call(configuration, 'offline') &&
+    configuration.offline &&
     Object.prototype.hasOwnProperty.call(plugins, 'Offline')
 ) {
     if (!['serve', 'test:browser'].includes(
@@ -270,7 +270,6 @@ if (
 
     if (
         plugins.InjectManifest &&
-        configuration.offline &&
         ([] as Array<string>)
             .concat(configuration.offline.use)
             .includes('injectionManifest')
