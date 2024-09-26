@@ -436,12 +436,15 @@ export interface ResolvedConfiguration {
     needed: Mapping<boolean>
     nodeENV: false|null|string
     nodeEnvironment: NodeEnvironment
-    offline: {
-        common: WorkboxBaseCommonOptions & WorkboxCommonOptions
-        injectionManifest: WorkboxInjectManifestOptions
-        serviceWorker: WorkboxGenerateSWOptions
-        use: 'injectionManifest'|'serviceWorker'
-    }
+    offline: (
+        null |
+        {
+            common: WorkboxBaseCommonOptions & WorkboxCommonOptions
+            injectionManifest: WorkboxInjectManifestOptions
+            serviceWorker: WorkboxGenerateSWOptions
+            use: 'injectionManifest'|'serviceWorker'
+        }
+    )
     package: {
         aliasPropertyNames: Array<string>
         main: {
