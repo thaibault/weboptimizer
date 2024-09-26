@@ -270,6 +270,7 @@ if (
 
     if (
         plugins.InjectManifest &&
+        configuration.offline &&
         ([] as Array<string>)
             .concat(configuration.offline.use)
             .includes('injectionManifest')
