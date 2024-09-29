@@ -4783,12 +4783,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.7.0":
-  version: 22.7.0
-  resolution: "@types/node@npm:22.7.0"
+"@types/node@npm:^22.7.4":
+  version: 22.7.4
+  resolution: "@types/node@npm:22.7.4"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/127b1ac3eebe8c2b09e3d2de277ee906710c4908b4573cde23b9c7cec1cb1aaf1af8bdabbccdac08d005f820b770e7447b22c8eb56ca63344f4d2e26bcdc29fb
+  checksum: 10c0/c22bf54515c78ff3170142c1e718b90e2a0003419dc2d55f79c9c9362edd590a6ab1450deb09ff6e1b32d1b4698da407930b16285e8be3a009ea6cd2695cac01
   languageName: node
   linkType: hard
 
@@ -7195,9 +7195,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:3.0.1185":
-  version: 3.0.1185
-  resolution: "clientnode@npm:3.0.1185"
+"clientnode@npm:3.0.1189":
+  version: 3.0.1189
+  resolution: "clientnode@npm:3.0.1189"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -7215,7 +7215,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/b20b4ef43e19635a5771c59b4c17237fa6009c669f4c2c65896d1aa615849f82d23467e1789db991c1673a20b406675807aff0a952fa1aa52f6982df3bbcaeb0
+  checksum: 10c0/8b7baf7cc18d9789d18d1327495e4946d204ac28cadfdefc0de4ff62bfd43f7aec0d969dc25eb2467ac782326f0f3f271e236d4f2b0da6dc5e98211f6fecc84a
   languageName: node
   linkType: hard
 
@@ -8657,9 +8657,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^50.2.4":
-  version: 50.2.4
-  resolution: "eslint-plugin-jsdoc@npm:50.2.4"
+"eslint-plugin-jsdoc@npm:^50.3.0":
+  version: 50.3.0
+  resolution: "eslint-plugin-jsdoc@npm:50.3.0"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.48.0"
     are-docs-informative: "npm:^0.0.2"
@@ -8674,7 +8674,7 @@ __metadata:
     synckit: "npm:^0.9.1"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/9635726563213781dd18ee07459cc85ca4aca0f3b45bf02504cd880cb78757ef627578a0f9e5d412c401abcd7f6bab6d78f79198572b982ad2a71a74e03a416f
+  checksum: 10c0/2188f10c350f3306f476913f63880bb3324932006a40f28f4b7b95c10d147e8fd98b03917357c01ae2f81d60bc1c169dbdacc72031e2c1ae602445f39e574da1
   languageName: node
   linkType: hard
 
@@ -16797,7 +16797,7 @@ __metadata:
     "@types/html-minifier": "npm:^4.0.5"
     "@types/html-minifier-terser": "npm:^7.0.2"
     "@types/imagemin": "npm:^9.0.0"
-    "@types/node": "npm:^22.7.0"
+    "@types/node": "npm:^22.7.4"
     "@types/postcss-import": "npm:^14.0.3"
     "@types/postcss-url": "npm:^10.0.4"
     "@types/webpack-env": "npm:^1.18.5"
@@ -16806,14 +16806,14 @@ __metadata:
     babel-loader: "npm:^9.2.1"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:3.0.1185"
+    clientnode: "npm:3.0.1189"
     css-loader: "npm:^7.1.2"
     cssnano: "npm:^7.0.6"
     documentation-website: "npm:^1.0.332"
     ejs: "npm:^3.1.10"
     eslint: "npm:^9.11.1"
     eslint-config-google: "npm:^0.14.0"
-    eslint-plugin-jsdoc: "npm:^50.2.4"
+    eslint-plugin-jsdoc: "npm:^50.3.0"
     exports-loader: "npm:^5.0.0"
     extract-loader: "npm:^5.1.0"
     favicons: "npm:^7.2.0"
@@ -16848,7 +16848,7 @@ __metadata:
     typescript: "npm:^5.6.2"
     typescript-eslint: "npm:^8.7.0"
     typescript-plugin-css-modules: "npm:^5.1.0"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-cli: "npm:^5.1.4"
     webpack-sources: "npm:^3.2.3"
     workbox-webpack-plugin: "npm:^7.1.0"
@@ -17025,9 +17025,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.94.0":
-  version: 5.94.0
-  resolution: "webpack@npm:5.94.0"
+"webpack@npm:^5.95.0":
+  version: 5.95.0
+  resolution: "webpack@npm:5.95.0"
   dependencies:
     "@types/estree": "npm:^1.0.5"
     "@webassemblyjs/ast": "npm:^1.12.1"
@@ -17057,7 +17057,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10c0/b4d1b751f634079bd177a89eef84d80fa5bb8d6fc15d72ab40fc2b9ca5167a79b56585e1a849e9e27e259803ee5c4365cb719e54af70a43c06358ec268ff4ebf
+  checksum: 10c0/b9e6d0f8ebcbf0632494ac0b90fe4acb8f4a9b83f7ace4a67a15545a36fe58599c912ab58e625e1bf58ab3b0916c75fe99da6196d412ee0cab0b5065edd84238
   languageName: node
   linkType: hard
 
