@@ -113,9 +113,10 @@ export const config = typescript.config(
                 reportUsedIgnorePattern: false
             }],
             // NOTE: Too strcit for now but could be actvated in future maybe.
+            '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'off',
+            '@typescript-eslint/no-unnecessary-type-parameters': 'off',
             '@typescript-eslint/no-unsafe-member-access': 'off',
             '@typescript-eslint/no-unsafe-assignment': 'off',
-            '@typescript-eslint/no-unnecessary-type-parameters': 'off',
 
             'jsdoc/check-param-names': 'error',
             'jsdoc/check-tag-names': 'error',
