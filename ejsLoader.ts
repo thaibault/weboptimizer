@@ -156,7 +156,7 @@ export const loader = function(
                         'Error occurred during processing given query: ' +
                         evaluated.error
                     )
-                else
+                else if (evaluated.result)
                     extend(true, nestedLocals, evaluated.result)
             }
 

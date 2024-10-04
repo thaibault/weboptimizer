@@ -26,6 +26,7 @@ import {
     Mapping,
     mask,
     PlainObject,
+    PositiveEvaluationResult,
     RecursivePartial,
     represent,
     Unpacked
@@ -641,9 +642,10 @@ if (htmlAvailable && plugins.HTML)
 for (const contextReplacement of module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
         contextReplacement.map((value: string): RegExp|string => {
-            const evaluated = evaluate<RegExp|string>(
-                value, {configuration, __dirname, __filename}
-            )
+            const evaluated: EvaluationResult<RegExp|string> =
+                evaluate<RegExp|string>(
+                    value, {configuration, __dirname, __filename}
+                )
 
             if (evaluated.error)
                 throw new Error(
@@ -651,7 +653,8 @@ for (const contextReplacement of module.replacements.context)
                     `replacement: ${evaluated.error}`
                 )
 
-            return evaluated.result
+            return (evaluated as PositiveEvaluationResult<RegExp|string>)
+                .result
         }) as [RegExp, string]
     )))
 //// endregion
@@ -918,7 +921,7 @@ const evaluateAnThrow = <T = unknown>(
                 evaluated.error
             )
 
-        return evaluated.result
+        return (evaluated as PositiveEvaluationResult<T>).result
     }
 
     return object as T

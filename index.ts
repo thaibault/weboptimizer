@@ -44,6 +44,7 @@ import {
     NOOP,
     parseEncodedObject,
     PlainObject,
+    PositiveEvaluationResult,
     ProcedureFunction,
     ProcessCloseCallback,
     ProcessCloseReason,
@@ -545,17 +546,24 @@ const main = async (
                                     `command: ${evaluated.error}`
                                 )
 
-                            console.info(`Running "${evaluated.result}"`)
+                            console.info(
+                                `Running "${(
+                                    evaluated as PositiveEvaluationResult
+                                ).result}"`
+                            )
 
                             processPromises.push(
                                 new Promise<ProcessCloseReason>((
-                                    resolve: (_value: ProcessCloseReason) =>
-                                        void,
-                                    reject: (_reason: Error) => void
+                                    resolve:
+                                        (value: ProcessCloseReason) => void,
+                                    reject: (reason: Error) => void
                                 ): Array<ChildProcess> => [
                                     handleChildProcess(
                                         execChildProcess(
-                                            evaluated.result,
+                                            (
+                                                evaluated as
+                                                    PositiveEvaluationResult
+                                            ).result,
                                             {
                                                 encoding:
                                                     configuration.encoding,
