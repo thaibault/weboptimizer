@@ -216,7 +216,11 @@ export const load = (
     /// region load additional dynamically given configuration
     let count = 0
     let filePath: null|string = null
-    for (let index = 0; index < MAXIMAL_NUMBER_OF_ITERATIONS.value; index++) {
+    for (
+        let iteration = 0;
+        iteration < MAXIMAL_NUMBER_OF_ITERATIONS.value;
+        iteration++
+    ) {
         const newFilePath =
             `${configuration.path.context}.dynamicConfiguration-` +
             `${String(count)}.json`
