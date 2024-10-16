@@ -61,7 +61,7 @@ import {
     SubConfigurationTypes
 } from './type'
 // endregion
-export let loadedConfiguration: null|ResolvedConfiguration = null
+export let loadedConfiguration: null | ResolvedConfiguration = null
 /**
  * Main entry point to determine current configuration.
  * @param context - Location from where to build current application.
@@ -155,14 +155,14 @@ export const load = (
         specificConfiguration.name :
         (
             typeof (
-                specificConfiguration.webOptimizer as Mapping|undefined
+                specificConfiguration.webOptimizer as Mapping | undefined
             )?.name === 'string'
         ) ?
-            (specificConfiguration.webOptimizer as Mapping|undefined)?.name as
+            (specificConfiguration.webOptimizer as Mapping | undefined)?.name as
                 string :
             'mockup'
     specificConfiguration =
-        (specificConfiguration.webOptimizer as PlainObject|undefined) || {}
+        (specificConfiguration.webOptimizer as PlainObject | undefined) || {}
     specificConfiguration.name = name
     // endregion
     // region determine debug mode
@@ -215,7 +215,7 @@ export const load = (
     // region merging and evaluating task specific and dynamic configurations
     /// region load additional dynamically given configuration
     let count = 0
-    let filePath: null|string = null
+    let filePath: null | string = null
     for (
         let iteration = 0;
         iteration < MAXIMAL_NUMBER_OF_ITERATIONS.value;
@@ -295,7 +295,7 @@ export const load = (
         runtimeInformation
     )
 
-    let result: null|PlainObject = null
+    let result: null | PlainObject = null
     if (runtimeInformation.givenCommandLineArguments.length > 3)
         result = parseEncodedObject(
             runtimeInformation.givenCommandLineArguments[
@@ -493,7 +493,7 @@ export const load = (
         resolvedConfiguration.injection.entry.normalized
     ))
         for (const moduleID of chunk) {
-            const filePath: null|string = determineModuleFilePath(
+            const filePath: null | string = determineModuleFilePath(
                 moduleID,
                 resolvedConfiguration.module.aliases,
                 resolvedConfiguration.module.replacements.normal,
@@ -513,7 +513,7 @@ export const load = (
                 resolvedConfiguration.encoding
             )
 
-            let type: null|string = null
+            let type: null | string = null
             if (filePath)
                 type = determineAssetType(
                     filePath,

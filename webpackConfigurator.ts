@@ -93,14 +93,14 @@ import {
 } from './type'
 /// region optional imports
 // NOTE: Has to be defined here to ensure to resolve from here.
-const currentRequire: null|typeof require =
+const currentRequire: null | typeof require =
     /*
         typeof __non_webpack_require__ === 'function' ?
             __non_webpack_require__ :
     */
     eval(`typeof require === 'undefined' ? null : require`) as
-        null|typeof require
-export const optionalRequire = <T = unknown>(id: string): null|T => {
+        null | typeof require
+export const optionalRequire = <T = unknown>(id: string): null | T => {
     try {
         return currentRequire ? currentRequire(id) as T : null
     } catch (_error) {
@@ -108,7 +108,7 @@ export const optionalRequire = <T = unknown>(id: string): null|T => {
     }
 }
 
-const postcssCSSnano: null|typeof import('cssnano') =
+const postcssCSSnano: null | typeof import('cssnano') =
     optionalRequire<typeof import('cssnano')>('cssnano')
 const postcssFontpath =
     optionalRequire<typeof import('postcss-fontpath').default>(
@@ -124,7 +124,7 @@ const postcssSprites =
 type UpdateRule = (
     _node: PostcssNode, _token: PostcssNode, _image: Mapping<unknown>
 ) => void
-const updateRule: undefined|UpdateRule =
+const updateRule: undefined | UpdateRule =
     optionalRequire<{updateRule: UpdateRule}>(
         'postcss-sprites/lib/core'
     )?.updateRule
@@ -144,7 +144,7 @@ const pluginNameResourceMapping: Mapping = {
 const plugins: WebpackPlugins = {}
 
 for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
-    const plugin: null|WebpackPlugin = optionalRequire(alias)
+    const plugin: null | WebpackPlugin = optionalRequire(alias)
     if (plugin)
         plugins[name] = plugin
     else
@@ -160,7 +160,7 @@ const configuration: ResolvedConfiguration = getConfiguration()
 const module: ResolvedConfiguration['module'] = configuration.module
 // region initialisation
 /// region determine library name
-let libraryName: Array<string>|string|undefined
+let libraryName: Array<string> | string | undefined
 if (configuration.libraryName)
     libraryName = configuration.libraryName
 else if (Object.keys(configuration.injection.entry.normalized).length > 1)
@@ -322,7 +322,7 @@ pluginInstances.push({apply: (compiler: Compiler): void => {
                 (assets): void => {
                     for (const [request, asset] of Object.entries(assets)) {
                         const filePath: string = request.replace(/\?[^?]+$/, '')
-                        const type: null|string = determineAssetType(
+                        const type: null | string = determineAssetType(
                             filePath,
                             configuration.buildContext.types,
                             configuration.path
@@ -342,7 +342,7 @@ pluginInstances.push({apply: (compiler: Compiler): void => {
                                     .excludeFilePathRegularExpression
                             )).test(filePath)
                         ) {
-                            const source: Buffer|string = asset.source()
+                            const source: Buffer | string = asset.source()
                             if (typeof source === 'string')
                                 compilation.assets[request] =
                                     new WebpackRawSource(
@@ -409,7 +409,7 @@ if (!(
     )
 ///// endregion
 ///// region extract cascading style sheets
-const cssOutputPath: string|((_asset: unknown) => string) =
+const cssOutputPath: string | ((_asset: unknown) => string) =
     configuration.files.compose.cascadingStyleSheet
 if (cssOutputPath && plugins.MiniCSSExtract)
     pluginInstances.push(new plugins.MiniCSSExtract({
@@ -431,7 +431,7 @@ if (configuration.injection.external.modules === '__implicit__')
         {context, request},
         callback: (
             error?: Error,
-            result?: Array<string>|boolean|string|Mapping<unknown>,
+            result?: Array<string> | boolean | string | Mapping<unknown>,
             type?: string
         ) => void
     ): void => {
@@ -453,7 +453,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 break
             }
         // region pattern based aliasing
-        const filePath: null|string = determineModuleFilePath(
+        const filePath: null | string = determineModuleFilePath(
             request,
             {},
             {},
@@ -524,7 +524,7 @@ if (configuration.injection.external.modules === '__implicit__')
                     }
                 }
         // endregion
-        const resolvedRequest: null|string = determineExternalRequest(
+        const resolvedRequest: null | string = determineExternalRequest(
             request,
             configuration.path.context,
             context,
@@ -548,7 +548,7 @@ if (configuration.injection.external.modules === '__implicit__')
 
         if (resolvedRequest) {
             const keys: Array<string> = ['amd', 'commonjs', 'commonjs2', 'root']
-            let result: (Mapping & {root?: Array<string>})|string =
+            let result: (Mapping & {root?: Array<string>}) | string =
                 resolvedRequest
             if (Object.prototype.hasOwnProperty.call(
                 configuration.injection.external.aliases, request
@@ -619,7 +619,7 @@ if (configuration.injection.external.modules === '__implicit__')
                     exportFormat === 'umd' || typeof result === 'string' ?
                         result :
                         result[exportFormat]
-                ) as Array<string>|boolean|string|Mapping<unknown>,
+                ) as Array<string> | boolean | string | Mapping<unknown>,
                 exportFormat
             )
 
@@ -641,9 +641,9 @@ if (htmlAvailable && plugins.HTML)
 //// region context replacements
 for (const contextReplacement of module.replacements.context)
     pluginInstances.push(new ContextReplacementPlugin(...(
-        contextReplacement.map((value: string): RegExp|string => {
-            const evaluated: EvaluationResult<RegExp|string> =
-                evaluate<RegExp|string>(
+        contextReplacement.map((value: string): RegExp | string => {
+            const evaluated: EvaluationResult<RegExp | string> =
+                evaluate<RegExp | string>(
                     value, {configuration, __dirname, __filename}
                 )
 
@@ -653,7 +653,7 @@ for (const contextReplacement of module.replacements.context)
                     `replacement: ${evaluated.error}`
                 )
 
-            return (evaluated as PositiveEvaluationResult<RegExp|string>)
+            return (evaluated as PositiveEvaluationResult<RegExp | string>)
                 .result
         }) as [RegExp, string]
     )))
@@ -680,13 +680,13 @@ if (module.enforceDeduplication) {
             ) &&
             isFileSync(targetPath)
         ) {
-            const packageDescriptor: null|PackageDescriptor =
+            const packageDescriptor: null | PackageDescriptor =
                 getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
                 let pathPrefixes: Array<string>
                 let pathSuffix: string
                 if (targetPath.startsWith(absoluteContextPath)) {
-                    const matches: null|RegExpMatchArray =
+                    const matches: null | RegExpMatchArray =
                         targetPath.match(/((?: ^|.*?\/)node_modules\/)/g)
                     if (matches === null)
                         return
@@ -728,13 +728,13 @@ if (module.enforceDeduplication) {
                         .replace(/^.*\/node_modules\//, '')
                 }
 
-                let redundantRequest: null|RedundantRequest = null
+                let redundantRequest: null | RedundantRequest = null
                 for (const pathPrefix of pathPrefixes) {
                     const alternateTargetPath: string =
                         resolve(pathPrefix, pathSuffix)
 
                     if (isFileSync(alternateTargetPath)) {
-                        const otherPackageDescriptor: null|PackageDescriptor =
+                        const otherPackageDescriptor: null | PackageDescriptor =
                             getClosestPackageDescriptor(alternateTargetPath)
                         if (otherPackageDescriptor) {
                             if (
@@ -815,10 +815,10 @@ new NormalModuleReplacementPlugin(
             /((?: ^|\/)node_modules\/.+){2}/.test(targetPath) &&
             isFileSync(targetPath)
         ) {
-            const packageDescriptor: null|PackageDescriptor =
+            const packageDescriptor: null | PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
-                const pathPrefixes: null|RegExpMatchArray = targetPath.match(
+                const pathPrefixes: null | RegExpMatchArray = targetPath.match(
                     /((?: ^|.*?\/)node_modules\/)/g
                 )
                 if (pathPrefixes === null)
@@ -834,12 +834,12 @@ new NormalModuleReplacementPlugin(
                 }
                 const pathSuffix: string =
                     targetPath.replace(/(?: ^|.*\/)node_modules\/(.+$)/, '$1')
-                let redundantRequest: null|PlainObject = null
+                let redundantRequest: null | PlainObject = null
                 for (const pathPrefix of pathPrefixes) {
                     const alternateTargetPath: string =
                         resolve(pathPrefix, pathSuffix)
                     if (isFileSync(alternateTargetPath)) {
-                        const otherPackageDescriptor: null|PackageDescriptor =
+                        const otherPackageDescriptor: null | PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
                                 alternateTargetPath
                             )
@@ -938,7 +938,7 @@ const evaluateAdditionalLoaderConfiguration = (
         evaluateAnThrow<WebpackLoaderIndicator>(loaderConfiguration.include) ||
         configuration.path.source.base,
     test: new RegExp(evaluateAnThrow<string>(loaderConfiguration.test)),
-    use: evaluateAnThrow<Array<WebpackLoader>|WebpackLoader>(
+    use: evaluateAnThrow<Array<WebpackLoader> | WebpackLoader>(
         loaderConfiguration.use
     )
 })
@@ -1565,7 +1565,7 @@ for (const pluginConfiguration of configuration.plugins) {
     type Initializer = new (..._parameters: Array<unknown>) =>
         Unpacked<WebpackConfiguration['plugins']>
 
-    const plugin: Mapping<Initializer>|null =
+    const plugin: Mapping<Initializer> | null =
         optionalRequire(pluginConfiguration.name.module)
     if (plugin)
         pluginInstances.push(
@@ -1710,7 +1710,7 @@ export let webpackConfiguration: WebpackConfiguration = extend<
             rules: (
                 module.additional.pre.map(
                     evaluateAdditionalLoaderConfiguration
-                ) as Array<(RuleSetRule|'...')>
+                ) as Array<(RuleSetRule | '...')>
             ).concat(
                 loader.ejs,
 

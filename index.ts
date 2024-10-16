@@ -229,7 +229,7 @@ const main = async (
                     // Removes all compiled files.
                     await walkDirectoryRecursively(
                         configuration.path.target.base,
-                        async (file: File): Promise<false|undefined> => {
+                        async (file: File): Promise<false | undefined> => {
                             if (isFilePathInLocation(
                                 file.path,
                                 configuration.path.ignore
@@ -347,7 +347,7 @@ const main = async (
                         configuration.injection.entry.normalized
                     ))
                         for (const moduleID of chunk) {
-                            const filePath: null|string =
+                            const filePath: null | string =
                                 determineModuleFilePath(
                                     moduleID,
                                     configuration.module.aliases,
@@ -369,7 +369,7 @@ const main = async (
                                     configuration.encoding
                                 )
 
-                            let type: null|string = null
+                            let type: null | string = null
                             if (filePath)
                                 type = determineAssetType(
                                     filePath,
@@ -569,7 +569,7 @@ const main = async (
                                                     configuration.encoding,
                                                 ...processOptions
                                             },
-                                            (error: Error|null) => {
+                                            (error: Error | null) => {
                                                 if (error)
                                                     reject(error)
                                                 else

@@ -53,10 +53,10 @@ import type OfflinePlugin from 'workbox-webpack-plugin'
 export interface Browser {
     debug: boolean
     domContentLoaded: boolean
-    DOM: typeof JSDOM|null
+    DOM: typeof JSDOM | null
     initialized: boolean
-    instance: JSDOM|null
-    window: null|Window
+    instance: JSDOM | null
+    window: null | Window
     windowLoaded: boolean
 }
 export interface InitializedBrowser extends Browser {
@@ -77,7 +77,7 @@ export interface PackageDescriptor {
 export type Replacements = Mapping<SecondParameter<string['replace']>>
 
 export type Resolvable =
-    {[_K in '__evaluate__'|'__execute__']?: Resolvable} & Mapping<unknown>
+    {[_K in '__evaluate__' | '__execute__']?: Resolvable} & Mapping<unknown>
 
 export interface RedundantRequest {
     path: string
@@ -85,15 +85,16 @@ export interface RedundantRequest {
 }
 /// endregion
 /// region injection
-export type ExternalAliases =
-    Mapping<Mapping|null|string|((_request: string, _key: string) => string)>
+export type ExternalAliases = Mapping<
+    Mapping | null | string | ((request: string, key: string) => string)
+>
 export type GivenInjection =
-    AnyFunction|string|Array<string>|Mapping<string|Array<string>>
+    AnyFunction | string | Array<string> | Mapping<string | Array<string>>
 export type NormalizedGivenInjection = Mapping<Array<string>>
 export interface GivenInjectionConfiguration {
     autoExclude: {
         paths: Array<string>
-        pattern: Array<RegExp|string>
+        pattern: Array<RegExp | string>
     }
     entry: GivenInjection
     external: GivenInjection
@@ -115,16 +116,16 @@ export interface InjectionConfiguration {
         aliases: ExternalAliases
         implicit: {
             pattern: {
-                exclude: Array<RegExp|string>
-                include: Array<RegExp|string>
+                exclude: Array<RegExp | string>
+                include: Array<RegExp | string>
             }
         }
         modules: BaseWebpackConfiguration['externals']
     }
     externalAliases: Mapping
-    ignorePattern: Array<IgnorePattern>|IgnorePattern
-    implicitExternalExcludePattern: Array<RegExp|string>
-    implicitExternalIncludePattern: Array<RegExp|string>
+    ignorePattern: Array<IgnorePattern> | IgnorePattern
+    implicitExternalExcludePattern: Array<RegExp | string>
+    implicitExternalIncludePattern: Array<RegExp | string>
 }
 /// endregion
 /// region configuration
@@ -135,8 +136,8 @@ export interface HTMLTransformationOptions {
     files: Array<HTMLConfiguration>
 }
 export interface InPlaceAssetsIntoHTMLOptions {
-    cascadingStyleSheet: InPlaceAssetConfiguration|null
-    javaScript: InPlaceAssetConfiguration|null
+    cascadingStyleSheet: InPlaceAssetConfiguration | null
+    javaScript: InPlaceAssetConfiguration | null
     htmlPlugin: typeof HtmlWebpackPlugin
 }
 // endregion
@@ -195,12 +196,12 @@ export const SubConfigurationTypes = [
 export const TaskTypes = ['build', 'serve', ...SubConfigurationTypes] as const
 //// endregion
 //// region loader
-export type BooleanExpression = boolean|null|string
+export type BooleanExpression = boolean | null | string
 export interface AdditionalLoaderConfiguration {
     exclude?: BooleanExpression
     include?: BooleanExpression
     test: string
-    use: Array<WebpackLoader>|WebpackLoader|string
+    use: Array<WebpackLoader> | WebpackLoader | string
 }
 export interface AdditionalLoaderConfigurations {
     post: Array<AdditionalLoaderConfiguration>
@@ -227,7 +228,7 @@ export interface WebpackLoaderConfiguration {
     exclude: WebpackLoaderIndicator
     include: WebpackLoaderIndicator
     test: RegExp
-    use: Array<WebpackLoader>|WebpackLoader
+    use: Array<WebpackLoader> | WebpackLoader
 }
 export type WebpackLoaderIndicator = WebpackRuleSetRule['include']
 //// endregion
@@ -238,12 +239,12 @@ export interface Command {
 }
 export interface CommandLineArguments {
     build: Command
-    document: Array<Command>|Command
-    lint: Array<Command>|Command
-    serve: Array<Command>|Command
-    test: Array<Command>|Command
-    'test:browser': Array<Command>|Command
-    'check:types': Array<Command>|Command
+    document: Array<Command> | Command
+    lint: Array<Command> | Command
+    serve: Array<Command> | Command
+    test: Array<Command> | Command
+    'test:browser': Array<Command> | Command
+    'check:types': Array<Command> | Command
 }
 export type NodeEnvironment = BaseWebpackConfiguration['node'] & {'#': string}
 export interface PluginConfiguration {
@@ -267,7 +268,7 @@ export interface DefaultConfiguration {
     'test:browser': PlainObject
 }
 /* eslint-disable max-len */
-export type ExportFormat = 'amd'|'amd-require'|'assign'|'global'|'jsonp'|'var'|'this'|'commonjs'|'commonjs2'|'umd'
+export type ExportFormat = 'amd' | 'amd-require' | 'assign' | 'global' | 'jsonp' | 'var' | 'this' | 'commonjs' | 'commonjs2' | 'umd'
 /* eslint-enable max-len */
 export interface HTMLConfiguration {
     filename: string
@@ -276,7 +277,7 @@ export interface HTMLConfiguration {
         options?: PlainObject
         postCompileOptions: PlainObject
         request: string
-        use: Array<WebpackLoader>|WebpackLoader
+        use: Array<WebpackLoader> | WebpackLoader
     }
 }
 export interface MetaConfiguration {
@@ -296,16 +297,16 @@ export interface Extensions {
 }
 export interface SpecificExtensions {file: Array<string>}
 export interface InPlaceAssetConfiguration {
-    body?: Array<RegExp|string>|RegExp|string
-    head?: Array<RegExp|string>|RegExp|string
+    body?: Array<RegExp | string> | RegExp | string
+    head?: Array<RegExp | string> | RegExp | string
 }
 export interface InPlaceConfiguration {
-    cascadingStyleSheet: InPlaceAssetConfiguration|null
+    cascadingStyleSheet: InPlaceAssetConfiguration | null
     externalLibrary: {
         normal: boolean
         dynamic: boolean
     }
-    javaScript: InPlaceAssetConfiguration|null
+    javaScript: InPlaceAssetConfiguration | null
     otherMaximumFileSizeLimitInByte: number
 }
 export interface ResolvedConfiguration {
@@ -326,7 +327,7 @@ export interface ResolvedConfiguration {
     contextType: string
     debug: boolean
     development: {
-        includeClient?: boolean|null
+        includeClient?: boolean | null
         server: (
             WebpackOptionsNormalized['devServer'] &
             {
@@ -355,7 +356,7 @@ export interface ResolvedConfiguration {
     files: {
         additionalPaths: Array<string>
         compose: {
-            cascadingStyleSheet: string|((_asset: unknown) => string)
+            cascadingStyleSheet: string | ((_asset: unknown) => string)
             image: string
             javaScript: string
         }
@@ -406,7 +407,7 @@ export interface ResolvedConfiguration {
             htmlMinifier?: PlainObject
             image: {
                 content: ImageMinimizerOptions<unknown, unknown>
-                exclude: null|string
+                exclude: null | string
                 loader: Array<string>
             }
         }
@@ -423,7 +424,7 @@ export interface ResolvedConfiguration {
                 loader: string
             }
         }
-        provide: Mapping|null
+        provide: Mapping | null
         replacements: {
             context: Array<[string, string]>
             normal: Replacements
@@ -434,7 +435,7 @@ export interface ResolvedConfiguration {
     }
     name: string
     needed: Mapping<boolean>
-    nodeENV: false|null|string
+    nodeENV: false | null | string
     nodeEnvironment: NodeEnvironment
     offline: (
         null |
@@ -442,7 +443,7 @@ export interface ResolvedConfiguration {
             common: WorkboxBaseCommonOptions & WorkboxCommonOptions
             injectionManifest: WorkboxInjectManifestOptions
             serviceWorker: WorkboxGenerateSWOptions
-            use: 'injectionManifest'|'serviceWorker'
+            use: 'injectionManifest' | 'serviceWorker'
         }
     )
     package: {
@@ -483,7 +484,7 @@ export interface GenericLoader {
         html: RuleSetRule
         main: {
             test: RegExp
-            use: Array<WebpackLoader>|WebpackLoader
+            use: Array<WebpackLoader> | WebpackLoader
         }
     }
     style: RuleSetRule

@@ -55,8 +55,9 @@ export class InPlaceAssetsIntoHTML {
                             type: keyof InPlaceAssetConfiguration,
                             tag: HtmlWebpackPlugin.HtmlTagObject
                         ): HtmlWebpackPlugin.HtmlTagObject => {
-                            let settings: InPlaceAssetConfiguration|null = null
-                            let url: boolean|null|string|undefined = false
+                            let settings: InPlaceAssetConfiguration | null =
+                                null
+                            let url: boolean | null | string | undefined = false
                             if (tag.tagName === 'script') {
                                 settings = this.options.javaScript
                                 url = tag.attributes.src
@@ -76,11 +77,11 @@ export class InPlaceAssetsIntoHTML {
                                 ) &&
                                 settings &&
                                 settings[type] &&
-                                ([] as Array<RegExp|string>)
+                                ([] as Array<RegExp | string>)
                                     .concat(
-                                        settings[type] as Array<RegExp|string>
+                                        settings[type] as Array<RegExp | string>
                                     )
-                                    .some((pattern: RegExp|string): boolean =>
+                                    .some((pattern: RegExp | string): boolean =>
                                         (new RegExp(pattern)).test(name)
                                     )
                             ) {
