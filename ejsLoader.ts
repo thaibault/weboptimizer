@@ -120,7 +120,8 @@ export const loader = function(
                 this.getOptions ?
                     this.getOptions() :
                     (
-                        this.query as RecursivePartial<LoaderConfiguration>|null
+                        this.query as
+                            RecursivePartial<LoaderConfiguration> | null
                     ) ?? {}
             ),
             /#%%%#/g,
@@ -132,8 +133,9 @@ export const loader = function(
         options = givenOptions.compiler,
         compileSteps = 2
     ): TemplateFunction => (
-        locals: Array<Array<string>>|Array<Mapping<unknown>>|Mapping<unknown> =
-        {}
+        locals:(
+            Array<Array<string>> | Array<Mapping<unknown>> | Mapping<unknown>
+        ) = {}
     ): string => {
         options = {filename: template, ...options}
         const givenLocals: Array<unknown> =
@@ -143,7 +145,8 @@ export const loader = function(
             request: string, nestedLocals: Mapping<unknown> = {}
         ): string => {
             const template: string = request.replace(/^(.+)\?[^?]+$/, '$1')
-            const queryMatch: Array<string>|null = /^[^?]+\?(.+)$/.exec(request)
+            const queryMatch: Array<string> | null =
+                /^[^?]+\?(.+)$/.exec(request)
 
             if (queryMatch) {
                 const evaluated: EvaluationResult<Mapping<unknown>> =
@@ -168,7 +171,7 @@ export const loader = function(
                 true,
                 {encoding: configuration.encoding},
                 nestedOptions,
-                nestedLocals.options as Partial<CompilerOptions>|undefined ||
+                nestedLocals.options as Partial<CompilerOptions> | undefined ||
                 {},
                 options ?? {}
             )
@@ -176,7 +179,7 @@ export const loader = function(
             if (nestedOptions.isString)
                 return compile(template, nestedOptions)(nestedLocals)
 
-            const templateFilePath: null|string = determineModuleFilePath(
+            const templateFilePath: null | string = determineModuleFilePath(
                 template,
                 givenOptions.module?.aliases,
                 givenOptions.module?.replacements,
@@ -250,11 +253,11 @@ export const loader = function(
                 ) :
                 content
 
-        let result: string|TemplateFunction = template
+        let result: string | TemplateFunction = template
         const isString = Boolean(options.isString)
         delete options.isString
 
-        let stepLocals: Array<string>|Mapping<unknown>
+        let stepLocals: Array<string> | Mapping<unknown>
         let scope: Mapping<unknown> = {}
         let originalScopeNames: Array<string> = []
         let scopeNames: Array<string> = []
@@ -266,7 +269,7 @@ export const loader = function(
                 const localsIndex: number = Math.round(step / 2) - 1
                 stepLocals = (localsIndex < givenLocals.length) ?
                     givenLocals[localsIndex] as
-                        Array<string>|Mapping<unknown> :
+                        Array<string> | Mapping<unknown> :
                     {}
                 scope = {}
                 if (step < 3 && 1 < compileSteps)
@@ -289,7 +292,7 @@ export const loader = function(
             }
 
             if (typeof result === 'string') {
-                const filePath: string|undefined =
+                const filePath: string | undefined =
                     isString ? options.filename : result
                 if (filePath && extname(filePath) === '.js' && currentRequire)
                     result = currentRequire(filePath) as TemplateFunction
@@ -355,7 +358,7 @@ export const loader = function(
         if (compileSteps % 2) {
             let code = `module.exports = ${result.toString()}`
 
-            const processed: BabelFileResult|null = babelTransformSync(
+            const processed: BabelFileResult | null = babelTransformSync(
                 code,
                 {
                     ast: false,

@@ -131,7 +131,7 @@ export const normalizePaths = (paths: Array<string>): Array<string> =>
  * @returns Processed file path.
  */
 export const renderFilePathTemplate = (
-    template: string, scope: Mapping<number|string> = {}
+    template: string, scope: Mapping<number | string> = {}
 ): string => {
     scope = {
         '[chunkhash]': '.__dummy__',
@@ -169,7 +169,7 @@ export const applyContext = (
     aliases: Mapping = {},
     moduleReplacements: Replacements = {},
     relativeModuleLocations: Array<string> = ['node_modules']
-): false|string => {
+): false | string => {
     referencePath = resolve(referencePath)
     if (request.startsWith('./') && resolve(context) !== referencePath) {
         request = resolve(context, request)
@@ -265,17 +265,17 @@ export const determineExternalRequest = (
     packageEntryFileNames: Array<string> = ['index', 'main'],
     packageMainPropertyNames: Array<string> = ['main', 'module'],
     packageAliasPropertyNames: Array<string> = [],
-    includePattern: Array<string|RegExp> = [],
-    excludePattern: Array<string|RegExp> = [],
+    includePattern: Array<string | RegExp> = [],
+    excludePattern: Array<string | RegExp> = [],
     inPlaceNormalLibrary = false,
     inPlaceDynamicLibrary = true,
     encoding: Encoding = 'utf-8'
-): null|string => {
+): null | string => {
     context = resolve(context)
     requestContext = resolve(requestContext)
     referencePath = resolve(referencePath)
     // NOTE: We apply alias on externals additionally.
-    const resolvedRequest: false|string = applyModuleReplacements(
+    const resolvedRequest: false | string = applyModuleReplacements(
         applyAliases(request.substring(request.lastIndexOf('!') + 1), aliases),
         moduleReplacements
     )
@@ -288,7 +288,7 @@ export const determineExternalRequest = (
         NOTE: Aliases and module replacements doesn't have to be forwarded
         since we pass an already resolved request.
     */
-    const filePath: null|string = determineModuleFilePath(
+    const filePath: null | string = determineModuleFilePath(
         resolvedRequest,
         {},
         {},
@@ -400,8 +400,8 @@ export const determineAssetType = (
     filePath: string,
     buildConfiguration: BuildConfiguration,
     paths: PathConfiguration
-): null|string => {
-    let result: null|string = null
+): null | string => {
+    let result: null | string = null
     for (const type in buildConfiguration)
         if (
             extname(filePath) === `.${buildConfiguration[type].extension}`
@@ -450,7 +450,7 @@ export const resolveBuildConfigurationFilePaths = (
 
         for (const file of walkDirectoryRecursivelySync(
             entryPath,
-            (file: File): false|undefined => {
+            (file: File): false | undefined => {
                 if (isFilePathInLocation(file.path, pathsToIgnore))
                     return false
             }
@@ -565,7 +565,7 @@ export const determineModuleLocations = (
 
     for (const chunk of Object.values(normalizedGivenInjection))
         for (const moduleID of chunk) {
-            const filePath: null|string = determineModuleFilePath(
+            const filePath: null | string = determineModuleFilePath(
                 moduleID,
                 aliases,
                 moduleReplacements,
@@ -617,7 +617,7 @@ export const resolveModulesInFolders = (
     for (const chunk of Object.values(result)) {
         let index = 0
         for (const moduleID of copy(chunk)) {
-            const resolvedModuleID: false|string = applyModuleReplacements(
+            const resolvedModuleID: false | string = applyModuleReplacements(
                 applyAliases(stripLoader(moduleID), aliases),
                 moduleReplacements
             )
@@ -635,7 +635,7 @@ export const resolveModulesInFolders = (
 
                 for (const file of walkDirectoryRecursivelySync(
                     resolvedPath,
-                    (file: File): false|undefined => {
+                    (file: File): false | undefined => {
                         if (isFilePathInLocation(file.path, pathsToIgnore))
                             return false
                     }
@@ -783,7 +783,7 @@ export const resolveAutoInjection = <T extends GivenInjectionConfiguration>(
 export const getAutoInjection = (
     buildConfigurations: ResolvedBuildConfiguration,
     moduleFilePathsToExclude: Array<string>,
-    moduleFilePathPatternToExclude: Array<RegExp|string>,
+    moduleFilePathPatternToExclude: Array<RegExp | string>,
     context: string
 ): Mapping => {
     const result: Mapping = {}
@@ -862,12 +862,12 @@ export const determineModuleFilePathInPackage = (
     packageAliasPropertyNames: Array<string> = [],
     encoding: Encoding = 'utf-8'
 ): {
-    fileName: null|string
-    packageAliases: Mapping|null
+    fileName: null | string
+    packageAliases: Mapping | null
 } => {
     const result: {
-        fileName: null|string
-        packageAliases: Mapping|null
+        fileName: null | string
+        packageAliases: Mapping | null
     } = {
         fileName: null,
         packageAliases: null
@@ -939,7 +939,7 @@ export const determineModuleFilePathInPackage = (
  * necessary.
  */
 export const determineModuleFilePath = (
-    moduleID: false|string,
+    moduleID: false | string,
     aliases: Mapping = {},
     moduleReplacements: Replacements = {},
     extensions: SpecificExtensions = {
@@ -955,7 +955,7 @@ export const determineModuleFilePath = (
     packageMainPropertyNames: Array<string> = ['main'],
     packageAliasPropertyNames: Array<string> = [],
     encoding: Encoding = 'utf-8'
-): null|string => {
+): null | string => {
     if (!moduleID)
         return null
 
@@ -999,8 +999,8 @@ export const determineModuleFilePath = (
                 let packageAliases: Mapping = {}
                 if (fileName === '__package__') {
                     const result: {
-                        fileName: null|string
-                        packageAliases: Mapping|null
+                        fileName: null | string
+                        packageAliases: Mapping | null
                     } = determineModuleFilePathInPackage(
                         currentModuleFilePath,
                         packageMainPropertyNames,
@@ -1016,10 +1016,11 @@ export const determineModuleFilePath = (
                         continue
                 }
 
-                const resolvedFileName: false|string = applyModuleReplacements(
-                    applyAliases(fileName, packageAliases),
-                    moduleReplacements
-                )
+                const resolvedFileName: false | string =
+                    applyModuleReplacements(
+                        applyAliases(fileName, packageAliases),
+                        moduleReplacements
+                    )
                 if (resolvedFileName === false)
                     continue
 
@@ -1066,8 +1067,8 @@ export const applyAliases = (moduleID: string, aliases: Mapping): string => {
  * @returns The replacement applied given module id.
  */
 export const applyModuleReplacements = (
-    moduleID: false|string, replacements: Replacements
-): false|string => {
+    moduleID: false | string, replacements: Replacements
+): false | string => {
     if (moduleID === false)
         return moduleID
 
@@ -1083,8 +1084,8 @@ export const applyModuleReplacements = (
  * @returns Determined file path.
  */
 export const findPackageDescriptorFilePath = (
-    start: Array<string>|string, fileName = 'package.json'
-): null|string => {
+    start: Array<string> | string, fileName = 'package.json'
+): null | string => {
     if (typeof start === 'string') {
         if (!start.endsWith(sep))
             start += sep
@@ -1114,8 +1115,8 @@ export const findPackageDescriptorFilePath = (
  */
 export const getClosestPackageDescriptor = (
     modulePath: string, fileName = 'package.json'
-): null|PackageDescriptor => {
-    const filePath: null|string =
+): null | PackageDescriptor => {
+    const filePath: null | string =
         findPackageDescriptorFilePath(modulePath, fileName)
     if (!(filePath && currentRequire))
         return null

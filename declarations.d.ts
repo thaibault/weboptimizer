@@ -9,7 +9,7 @@ interface PostcssTransformer {
     postcssPlugin: string
     postcssVersion: string
 
-    (root: object, result: object): Promise<void>|void
+    (root: object, result: object): Promise<void> | void
 }
 
 /** @module declarations */
@@ -42,7 +42,7 @@ declare module 'postcss-sprites' {
             ) => void
         }
         spritePath: string
-        stylesheetPath: null|string
+        stylesheetPath: null | string
         verbose: boolean
     }>): PostcssTransformer
 }
