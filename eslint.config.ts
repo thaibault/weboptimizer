@@ -189,7 +189,7 @@ export const config = typescript.config(
             'space-infix-ops': 'off'
         }
     },
-    // NOTE: Ignores has te be applied via a dedicated object to influence all
+    // NOTE: Ignores has to be applied via a dedicated object to influence all
     // given configuration objects.
     {
         ignores: [
