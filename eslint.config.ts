@@ -7,7 +7,7 @@ import {readFile, stat} from 'fs/promises'
 import globals from 'globals'
 import {resolve} from 'path'
 import {cwd} from 'process'
-import typescript from 'typescript-eslint'
+import typescript, {ConfigWithExtends} from 'typescript-eslint'
 
 import {ResolvedConfiguration} from './type'
 /**
@@ -32,30 +32,40 @@ export const isFile = async (filePath: string): Promise<boolean> => {
 }
 
 // Remove unsupported rules.
-const unsuportedRules = ['require-jsdoc', 'valid-jsdoc']
-const googleRules = Object.keys((google as Mapping<object>).rules)
-    .filter((key) => !unsuportedRules.includes(key))
+const UNSUPORTED_RULES = ['require-jsdoc', 'valid-jsdoc']
+const GOOGLE_RULES = Object.keys((google as Mapping<object>).rules)
+    .filter((key) => !UNSUPORTED_RULES.includes(key))
     .reduce(
         (object, key) =>
             ({...object, [key]: (google as Mapping<Mapping>).rules[key]}),
         {}
     )
 
-const libraryIndicator = (JSON.parse(
+const PACKAGE_CONFIGURATION = (JSON.parse(
     await readFile(resolve(cwd(), './package.json'), {encoding: 'utf-8'})
-) as {webOptimizer?: ResolvedConfiguration}).webOptimizer?.library
-const isLibrary = libraryIndicator ?? true
+) as {name?: string, webOptimizer?: ResolvedConfiguration})
+const LIBRARY_INDICATOR = PACKAGE_CONFIGURATION.webOptimizer?.library
+const IS_LIBRARY = LIBRARY_INDICATOR ?? true
 
-let tsConfigFilePath = ''
+let TSCONFIG_FILE_PATH = ''
 for (const filePath of [
     './tsconfig.json',
 
     './node_modules/weboptimizer/tsconfig.' +
-    `${isLibrary ? 'library' : 'application'}.json`
+    `${IS_LIBRARY ? 'library' : 'application'}.json`
 ])
     if (await isFile(filePath)) {
-        tsConfigFilePath = filePath
+        TSCONFIG_FILE_PATH = filePath
         break
+    }
+
+let PROJECT_SPECIFIG_CONFIGURATION: Array<ConfigWithExtends> = []
+if (PACKAGE_CONFIGURATION.name !== 'weboptimizer')
+    try {
+        PROJECT_SPECIFIG_CONFIGURATION = PROJECT_SPECIFIG_CONFIGURATION
+            .concat(await import('./eslint.config') as ConfigWithExtends)
+    } catch (_error) {
+        // Ignore regardless of an error.
     }
 
 export const config = typescript.config(
@@ -81,7 +91,7 @@ export const config = typescript.config(
                     jsx: true
                 },
                 impliedStrict: true,
-                project: tsConfigFilePath
+                project: TSCONFIG_FILE_PATH
             },
             sourceType: 'module'
         },
@@ -91,7 +101,7 @@ export const config = typescript.config(
         },
 
         rules: {
-            ...googleRules,
+            ...GOOGLE_RULES,
 
             '@/no-implied-eval': 'error',
 
@@ -208,7 +218,8 @@ export const config = typescript.config(
             '!**/declarations.d.ts'
             // '** /plugins/** /*'
         ]
-    }
+    },
+    ...PROJECT_SPECIFIG_CONFIGURATION
 )
 
 export default config
