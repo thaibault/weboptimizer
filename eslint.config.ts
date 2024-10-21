@@ -62,8 +62,15 @@ for (const filePath of [
 let PROJECT_SPECIFIG_CONFIGURATION: Array<ConfigWithExtends> = []
 if (PACKAGE_CONFIGURATION.name !== 'weboptimizer')
     try {
-        PROJECT_SPECIFIG_CONFIGURATION = PROJECT_SPECIFIG_CONFIGURATION
-            .concat(await import('./eslint.config') as ConfigWithExtends)
+        type Type = ConfigWithExtends & Array<ConfigWithExtends>
+        // @ts-ignore
+        const config = await import('../../eslint.config.mjs') as
+            Type & {default?: Type} & {config?: Type} & {configuration?: Type}
+        const resolvedConfig =
+            config.config ?? config.default ?? config.configuration ?? config
+
+        PROJECT_SPECIFIG_CONFIGURATION =
+            PROJECT_SPECIFIG_CONFIGURATION.concat(resolvedConfig)
     } catch (_error) {
         // Ignore regardless of an error.
     }
