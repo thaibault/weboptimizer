@@ -211,6 +211,7 @@ const main = async (
                 ![
                     'build',
                     'build:types',
+                    'lint',
                     'preinstall',
                     'serve',
                     'test',
