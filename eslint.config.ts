@@ -216,7 +216,6 @@ export const config = typescript.config(
             '**/exclude/**/*',
             '**/*.d.ts',
             '!**/declarations.d.ts'
-            // '** /plugins/** /*'
         ]
     },
     ...PROJECT_SPECIFIG_CONFIGURATION
