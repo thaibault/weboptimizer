@@ -1177,15 +1177,15 @@
               "plugins": [
                 "@babel/plugin-proposal-nullish-coalescing-operator",
                 [
-                  "@babel/plugin-transform-private-methods",
+                  "@babel/plugin-proposal-decorators",
                   {
-                    "loose": true
+                    "version": "legacy"
                   }
                 ],
                 [
-                  "@babel/plugin-proposal-decorators",
+                  "@babel/plugin-transform-private-methods",
                   {
-                    "legacy": true
+                    "loose": true
                   }
                 ],
                 [
