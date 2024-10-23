@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "*",
+    "@babel/plugin-transform-private-methods": "*",
     "@babel/plugin-transform-proto-to-assign": "*",
     "@types/ejs": "*",
     "@types/html-minifier": "*",
