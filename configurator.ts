@@ -23,6 +23,7 @@ import {
     extend,
     getUTCTimestamp,
     isFileSync,
+    isObject,
     isPlainObject,
     MAXIMAL_NUMBER_OF_ITERATIONS,
     Mapping,
@@ -305,7 +306,7 @@ export const load = (
             'configuration'
         )
 
-    if (result !== null && typeof result === 'object') {
+    if (isObject(result)) {
         if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
             const referenceNames: Array<string> =
                 ([] as Array<string>).concat(result.__reference__ as string)
