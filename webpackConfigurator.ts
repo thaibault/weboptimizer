@@ -22,6 +22,7 @@ import {
     escapeRegularExpressions,
     extend,
     isFileSync,
+    isObject,
     isPlainObject,
     Mapping,
     mask,
@@ -575,14 +576,9 @@ if (configuration.injection.external.modules === '__implicit__')
                                 request
                             ] as (_request: string, _key: string) => string
                         )(request, key)
-                else if (
-                    configuration.injection.external.aliases[
-                        request
-                    ] !== null &&
-                    typeof configuration.injection.external.aliases[
-                        request
-                    ] === 'object'
-                )
+                else if (isObject(configuration.injection.external.aliases[
+                    request
+                ]))
                     extend<Mapping>(
                         result as Mapping,
                         configuration.injection.external.aliases[request] as

@@ -77,7 +77,10 @@ export interface PackageDescriptor {
 export type Replacements = Mapping<SecondParameter<string['replace']>>
 
 export type Resolvable =
-    {[_K in '__evaluate__' | '__execute__']?: Resolvable} & Mapping<unknown>
+    /* eslint-disable @typescript-eslint/consistent-indexed-object-style */
+    {[_K in '__evaluate__' | '__execute__']?: Resolvable} &
+    /* eslint-enable @typescript-eslint/consistent-indexed-object-style */
+    Mapping<unknown>
 
 export interface RedundantRequest {
     path: string
