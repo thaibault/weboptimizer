@@ -74,7 +74,7 @@ export class HTMLTransformation {
                     .replace(/<%/g, '##+#+#+##')
                     .replace(/%>/g, '##-#-#-##')
             )
-        } catch (_error) {
+        } catch {
             return data
         }
 

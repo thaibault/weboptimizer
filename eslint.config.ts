@@ -71,7 +71,7 @@ if (PACKAGE_CONFIGURATION.name !== 'weboptimizer')
 
         PROJECT_SPECIFIG_CONFIGURATION =
             PROJECT_SPECIFIG_CONFIGURATION.concat(resolvedConfig)
-    } catch (_error) {
+    } catch {
         // Ignore regardless of an error.
     }
 
