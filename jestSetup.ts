@@ -25,6 +25,6 @@ import {TextEncoder, TextDecoder} from 'util'
 try {
     if ((eval('require') as typeof require)('jest-canvas-mock'))
         console.info('Canvas mocking module loaded.')
-} catch (_error) {
+} catch {
     // Do nothing.
 }

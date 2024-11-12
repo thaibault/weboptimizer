@@ -104,7 +104,7 @@ const currentRequire: null | typeof require =
 export const optionalRequire = <T = unknown>(id: string): null | T => {
     try {
         return currentRequire ? currentRequire(id) as T : null
-    } catch (_error) {
+    } catch {
         return null
     }
 }
@@ -1623,7 +1623,7 @@ if (configuration.path.configuration.json)
                 represent(error)
             )
         }
-    } catch (_error) {
+    } catch {
         console.debug(
             'Optional configuration file "' +
             `${configuration.path.configuration.json}" not available.`
@@ -1838,7 +1838,7 @@ if (configuration.path.configuration.javaScript)
                 'Failed to load given JavaScript configuration file path "' +
                 `${configuration.path.configuration.javaScript}".`
             )
-    } catch (_error) {
+    } catch {
         console.debug(
             'Optional configuration file script "' +
             `${configuration.path.configuration.javaScript}" not available.`

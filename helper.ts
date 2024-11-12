@@ -1099,7 +1099,7 @@ export const findPackageDescriptorFilePath = (
     try {
         if (existsSync(result))
             return result
-    } catch (_error) {
+    } catch {
         // Continue regardless of an error.
     }
 
