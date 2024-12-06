@@ -114,12 +114,12 @@
     "rimraf": "^6.0.1",
     "script-loader": "^0.7.2",
     "typescript": "^5.7.2",
-    "webpack": "^5.97.0",
+    "webpack": "^5.97.1",
     "webpack-cli": "^5.1.4",
     "webpack-sources": "^3.2.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.25.9",
+    "@babel/cli": "^7.26.4",
     "@babel/eslint-parser": "^7.25.9",
     "@stylistic/eslint-plugin": "^2.11.0",
     "@stylistic/eslint-plugin-ts": "^2.11.0",
@@ -160,7 +160,7 @@
     "style-loader": "^4.0.0",
     "stylelint": "^16.11.0",
     "stylelint-config-standard": "^36.0.1",
-    "stylelint-config-standard-scss": "^13.1.0",
+    "stylelint-config-standard-scss": "^14.0.0",
     "typescript-eslint": "^8.17.0",
     "typescript-plugin-css-modules": "^5.1.0",
     "workbox-webpack-plugin": "^7.3.0"
