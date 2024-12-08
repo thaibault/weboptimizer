@@ -3,9 +3,8 @@
 'use strict'
 // region imports
 import {describe, expect, test} from '@jest/globals'
-import {
-    currentRequire, FirstParameter, testEach, testEachAgainstSameExpectation
-} from 'clientnode'
+import {currentRequire, FirstParameter} from 'clientnode'
+import {testEach, testEachAgainstSameExpectation} from 'clientnode/test-helper'
 import {resolve} from 'path'
 
 import {
