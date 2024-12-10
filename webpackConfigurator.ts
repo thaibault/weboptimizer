@@ -134,11 +134,11 @@ const postcssURL =
     optionalRequire<typeof import('postcss-url')>('postcss-url')
 /// endregion
 const pluginNameResourceMapping: Mapping = {
-    HTML: 'html-webpack-plugin',
-    MiniCSSExtract: 'mini-css-extract-plugin',
     Favicon: 'favicons-webpack-plugin',
     ImageMinimizer: 'image-minimizer-webpack-plugin',
-    Offline: 'workbox-webpack-plugin',
+    HTML: 'html-webpack-plugin',
+    MiniCSSExtract: 'mini-css-extract-plugin',
+    offline: 'workbox-webpack-plugin',
     Terser: 'terser-webpack-plugin'
 }
 
@@ -150,11 +150,6 @@ for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
         plugins[name] = plugin
     else
         console.debug(`Optional webpack plugin "${name}" not available.`)
-}
-
-if (plugins.Offline) {
-    plugins.GenerateServiceWorker = plugins.Offline.GenerateSW
-    plugins.InjectManifest = plugins.Offline.InjectManifest
 }
 // endregion
 const configuration: ResolvedConfiguration = getConfiguration()
@@ -241,7 +236,7 @@ if (
 if (
     htmlAvailable &&
     configuration.offline &&
-    Object.prototype.hasOwnProperty.call(plugins, 'Offline')
+    Object.prototype.hasOwnProperty.call(plugins, 'offline')
 ) {
     if (!['serve', 'test:browser'].includes(
         configuration.givenCommandLineArguments[2]
@@ -270,30 +265,30 @@ if (
             }
         }
 
-    if (
-        plugins.InjectManifest &&
-        ([] as Array<string>)
-            .concat(configuration.offline.use)
-            .includes('injectionManifest')
-    )
-        pluginInstances.push(new plugins.InjectManifest(
-            extend<WorkboxInjectManifestOptions>(
+    if (plugins.offline) {
+        if (
+            ([] as Array<string>)
+                .concat(configuration.offline.use)
+                .includes('injectionManifest')
+        )
+            pluginInstances.push(new plugins.offline.InjectManifest(
+                extend<WorkboxInjectManifestOptions>(
+                    true,
+                    configuration.offline.common,
+                    configuration.offline.injectionManifest
+                )
+            ))
+        if (
+            ([] as Array<string>)
+                .concat(configuration.offline.use)
+                .includes('generateServiceWorker')
+        )
+            pluginInstances.push(new plugins.offline.GenerateSW(extend(
                 true,
                 configuration.offline.common,
-                configuration.offline.injectionManifest
-            )
-        ))
-    if (
-        plugins.GenerateServiceWorker &&
-        ([] as Array<string>)
-            .concat(configuration.offline.use)
-            .includes('generateServiceWorker')
-    )
-        pluginInstances.push(new plugins.GenerateServiceWorker(extend(
-            true,
-            configuration.offline.common,
-            configuration.offline.serviceWorker
-        )))
+                configuration.offline.generateServiceWorker
+            )))
+    }
 }
 //// endregion
 //// region provide build environment
