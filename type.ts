@@ -443,7 +443,7 @@ export interface ResolvedConfiguration {
         {
             common: WorkboxBaseCommonOptions & WorkboxCommonOptions
             injectionManifest: WorkboxInjectManifestOptions
-            serviceWorker: WorkboxGenerateSWOptions
+            generateServiceWorker: WorkboxGenerateSWOptions
             use: 'injectionManifest' | 'serviceWorker'
         }
     )
@@ -524,11 +524,9 @@ export type WebpackPlugins =
     Mapping<WebpackPlugin> &
     {
         Favicon?: typeof FaviconWebpackPlugin
-        GenerateServiceWorker?: typeof OfflinePlugin.GenerateSW
         HTML?: typeof HtmlWebpackPlugin
         ImageMinimizer?: typeof ImageMinimizerWebpackPlugin
-        InjectManifest?: typeof OfflinePlugin.InjectManifest
-        Offline?: {
+        offline?: {
             GenerateSW: typeof OfflinePlugin.GenerateSW
             InjectManifest: typeof OfflinePlugin.InjectManifest
         }
