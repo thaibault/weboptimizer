@@ -120,8 +120,8 @@
   "devDependencies": {
     "@babel/cli": "^7.26.4",
     "@babel/eslint-parser": "^7.26.5",
-    "@stylistic/eslint-plugin": "^3.0.0",
-    "@stylistic/eslint-plugin-ts": "^3.0.0",
+    "@stylistic/eslint-plugin": "^3.0.1",
+    "@stylistic/eslint-plugin-ts": "^3.0.1",
     "@types/ejs": "^3.1.5",
     "@types/eslint": "^9.6.1",
     "@types/html-minifier": "^4.0.5",
