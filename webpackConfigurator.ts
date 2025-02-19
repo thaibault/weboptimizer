@@ -1097,18 +1097,6 @@ const genericLoader: GenericLoader = {
             .map(evaluateMapper)
             .concat(
                 {
-                    loader: 'file?name=[path][name]' +
-                        (
-                            (isPlainObject(module.preprocessor.ejs.options) ?
-                                module.preprocessor.ejs.options as
-                                    EJSLoaderConfiguration :
-                                {compileSteps: 2}
-                            ).compileSteps % 2 ? '.js' : ''
-                        ) +
-                        `?${configuration.hashAlgorithm}=[contenthash]`
-                },
-                {loader: 'extract'},
-                {
                     loader: module.preprocessor.ejs.loader,
                     options: module.preprocessor.ejs.options || {}
                 },
@@ -1186,30 +1174,11 @@ const genericLoader: GenericLoader = {
             use: module.preprocessor.html.additional.pre
                 .map(evaluateMapper)
                 .concat(
-                    {
-                        loader:
-                            'file?name=' +
-                            join(
-                                relative(
-                                    configuration.path.target.asset.base,
-                                    configuration.path.target.asset.template
-                                ),
-                                '[name]' +
-                                (
-                                    (
-                                        isPlainObject(
-                                            module.preprocessor.html.options
-                                        ) ?
-                                            module.preprocessor.html.options as
-                                                EJSLoaderConfiguration :
-                                            {compileSteps: 2}
-                                    ).compileSteps % 2 ?
-                                        '.js' :
-                                        ''
-                                ) +
-                                `?${configuration.hashAlgorithm}=[contenthash]`
-                            )
-                    },
+                    /*
+                        We might need to evaluate ejs before we are able to
+                        parse html beforhand. If not we parse it as html
+                        directly.
+                    */
                     (
                         (
                             isPlainObject(module.preprocessor.html.options) ?
