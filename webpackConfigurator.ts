@@ -900,11 +900,13 @@ const scope: EvaluationScope = {
 }
 
 const evaluateAnThrow = <T = unknown>(
-    object: unknown, filePath: string = configuration.path.context
+    object: unknown, givenOptions: {filePath?: string; type?: string} = {}
 ): T => {
+    const options = {filePath: configuration.path.context, ...givenOptions}
     if (typeof object === 'string') {
-        const evaluated: EvaluationResult<T> =
-            evaluate<T>(object, {filePath, ...scope})
+        const evaluated: EvaluationResult<T> = evaluate<T>(
+            object, {filePath: options.filePath, ...scope, type: options.type}
+        )
 
         if (evaluated.error)
             throw new Error(
@@ -917,13 +919,13 @@ const evaluateAnThrow = <T = unknown>(
 
     return object as T
 }
-const evaluateMapper =
-    <T = unknown>(value: unknown): T => evaluateAnThrow<T>(value)
+const createEvaluateMapper = <T = unknown>(type: string) =>
+    (value: unknown): T => evaluateAnThrow<T>(value, {type})
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration: AdditionalLoaderConfiguration
 ): WebpackLoaderConfiguration => ({
     exclude: (filePath: string): boolean =>
-        evaluateAnThrow<boolean>(loaderConfiguration.exclude, filePath),
+        evaluateAnThrow<boolean>(loaderConfiguration.exclude, {filePath}),
     include:
         loaderConfiguration.include &&
         evaluateAnThrow<WebpackLoaderIndicator>(loaderConfiguration.include) ||
@@ -938,7 +940,7 @@ const getIncludingPaths = (path: string): Array<string> =>
     normalizePaths([path].concat(module.locations.directoryPaths))
 
 const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
-    .map(evaluateMapper)
+    .map(createEvaluateMapper('css'))
     .concat(
         {loader: module.style.loader, options: module.style.options || {}},
         {
@@ -965,8 +967,9 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                     [],
                                 module.preprocessor
                                     .cascadingStyleSheet.additional.plugins.pre
-                                    .map(evaluateMapper) as
-                                        Array<PostcssTransformer>,
+                                    .map(createEvaluateMapper(
+                                        'css.postcss'
+                                    )),
                                 /*
                                     NOTE: Checking path doesn't work if fonts
                                     are referenced in libraries provided in
@@ -1057,8 +1060,9 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                     [],
                                 module.preprocessor
                                     .cascadingStyleSheet.additional.plugins
-                                    .post.map(evaluateMapper) as
-                                        Array<PostcssTransformer>,
+                                    .post.map(createEvaluateMapper(
+                                        'css.postcss'
+                                    )),
                                 (module.optimizer.cssnano && postcssCSSnano) ?
                                     postcssCSSnano(
                                         module.optimizer.cssnano
@@ -1071,7 +1075,7 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                 )} :
             [],
         module.preprocessor.cascadingStyleSheet.additional.post
-            .map(evaluateMapper)
+            .map(createEvaluateMapper('css'))
     ) as RuleSet
 
 const genericLoader: GenericLoader = {
@@ -1089,18 +1093,20 @@ const genericLoader: GenericLoader = {
             (module.preprocessor.ejs.exclude === null) ?
                 false :
                 evaluateAnThrow<boolean>(
-                    module.preprocessor.ejs.exclude, filePath
+                    module.preprocessor.ejs.exclude, {filePath}
                 ),
         include: getIncludingPaths(configuration.path.source.asset.template),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
         use: module.preprocessor.ejs.additional.pre
-            .map(evaluateMapper)
+            .map(createEvaluateMapper('ejs'))
             .concat(
                 {
                     loader: module.preprocessor.ejs.loader,
                     options: module.preprocessor.ejs.options || {}
                 },
-                module.preprocessor.ejs.additional.post.map(evaluateMapper)
+                module.preprocessor.ejs.additional.post.map(
+                    createEvaluateMapper('ejs')
+                )
             ) as RuleSet
     },
     // endregion
@@ -1108,11 +1114,13 @@ const genericLoader: GenericLoader = {
     script: {
         exclude: (filePath: string): boolean =>
             evaluateAnThrow<boolean>(
-                module.preprocessor.javaScript.exclude, filePath
+                module.preprocessor.javaScript.exclude,
+                {filePath, type: 'script'}
             ),
         include: (filePath: string): boolean => {
             const result: unknown = evaluateAnThrow(
-                module.preprocessor.javaScript.include, filePath
+                module.preprocessor.javaScript.include,
+                {filePath, type: 'script'}
             )
             if ([null, undefined].includes(result as null)) {
                 for (const includePath of getIncludingPaths(
@@ -1130,14 +1138,14 @@ const genericLoader: GenericLoader = {
             module.preprocessor.javaScript.regularExpression, 'i'
         ),
         use: module.preprocessor.javaScript.additional.pre
-            .map(evaluateMapper)
+            .map(createEvaluateMapper('script'))
             .concat(
                 {
                     loader: module.preprocessor.javaScript.loader,
                     options: module.preprocessor.javaScript.options || {}
                 },
                 module.preprocessor.javaScript.additional.post
-                    .map(evaluateMapper)
+                    .map(createEvaluateMapper('script'))
             ) as RuleSet
     },
     // endregion
@@ -1166,13 +1174,14 @@ const genericLoader: GenericLoader = {
                 ((module.preprocessor.html.exclude === null) ?
                     false :
                     evaluateAnThrow<boolean>(
-                        module.preprocessor.html.exclude, filePath
+                        module.preprocessor.html.exclude,
+                        {filePath, type: 'html.ejs'}
                     )
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?: \?.*)?$/i,
             use: module.preprocessor.html.additional.pre
-                .map(evaluateMapper)
+                .map(createEvaluateMapper('html.ejs'))
                 .concat(
                     /*
                         We might need to evaluate ejs before we are able to
@@ -1200,7 +1209,7 @@ const genericLoader: GenericLoader = {
                         options: module.preprocessor.html.options || {}
                     },
                     module.preprocessor.html.additional.post
-                        .map(evaluateMapper)
+                        .map(createEvaluateMapper('html.ejs'))
                 ) as RuleSet
         },
         html: {
@@ -1215,12 +1224,14 @@ const genericLoader: GenericLoader = {
                 (
                     (module.html.exclude === null) ?
                         true :
-                        evaluateAnThrow<boolean>(module.html.exclude, filePath)
+                        evaluateAnThrow<boolean>(module.html.exclude,
+                            {filePath, type: 'html'}
+                        )
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html(?: \?.*)?$/i,
             use: module.html.additional.pre
-                .map(evaluateMapper)
+                .map(createEvaluateMapper('html'))
                 .concat(
                     {
                         loader:
@@ -1239,7 +1250,9 @@ const genericLoader: GenericLoader = {
                         loader: module.html.loader,
                         options: module.html.options || {}
                     },
-                    module.html.additional.post.map(evaluateMapper)
+                    module.html.additional.post.map(
+                        createEvaluateMapper('html')
+                    )
                 ) as RuleSet
         }
     },
@@ -1251,11 +1264,12 @@ const genericLoader: GenericLoader = {
             (module.cascadingStyleSheet.exclude === null) ?
                 isFilePathInDependencies(filePath) :
                 evaluateAnThrow<boolean>(
-                    module.cascadingStyleSheet.exclude, filePath
+                    module.cascadingStyleSheet.exclude,
+                    {filePath, type: 'style'}
                 ),
         include: (filePath: string): boolean => {
             const result: unknown = evaluateAnThrow(
-                module.cascadingStyleSheet.include, filePath
+                module.cascadingStyleSheet.include, {filePath, type: 'style'}
             )
             if ([null, undefined].includes(result as null)) {
                 for (const includePath of getIncludingPaths(
@@ -1281,7 +1295,8 @@ const genericLoader: GenericLoader = {
                 (module.optimizer.font.eot.exclude === null) ?
                     false :
                     evaluateAnThrow<boolean>(
-                        module.optimizer.font.eot.exclude, filePath
+                        module.optimizer.font.eot.exclude,
+                        {filePath, type: 'font.eot'}
                     ),
             generator: {
                 filename:
@@ -1302,15 +1317,17 @@ const genericLoader: GenericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            use: module.optimizer.font.eot.loader.map(evaluateMapper) as
-                RuleSet
+            use: module.optimizer.font.eot.loader.map(
+                createEvaluateMapper('font.eot')
+            ) as RuleSet
         },
         svg: {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.svg.exclude === null) ?
                     false :
                     evaluateAnThrow<boolean>(
-                        module.optimizer.font.svg.exclude, filePath
+                        module.optimizer.font.svg.exclude,
+                        {filePath, type: 'svg'}
                     ),
             include: configuration.path.source.asset.font,
             generator: {
@@ -1333,15 +1350,17 @@ const genericLoader: GenericLoader = {
             },
             test: /\.svg(?: \?.*)?$/i,
             type: 'asset/resource',
-            use: module.optimizer.font.svg.loader.map(evaluateMapper) as
-                RuleSet
+            use: module.optimizer.font.svg.loader.map(
+                createEvaluateMapper('font.svg')
+            ) as RuleSet
         },
         ttf: {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.ttf.exclude === null) ?
                     false :
                     evaluateAnThrow<boolean>(
-                        module.optimizer.font.ttf.exclude, filePath
+                        module.optimizer.font.ttf.exclude,
+                        {filePath, type: 'ttf'}
                     ),
             generator: {
                 filename:
@@ -1363,15 +1382,17 @@ const genericLoader: GenericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            use: module.optimizer.font.ttf.loader.map(evaluateMapper) as
-                RuleSet
+            use: module.optimizer.font.ttf.loader.map(createEvaluateMapper(
+                'font.ttf'
+            )) as RuleSet
         },
         woff: {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.woff.exclude === null) ?
                     false :
                     evaluateAnThrow<boolean>(
-                        module.optimizer.font.woff.exclude, filePath
+                        module.optimizer.font.woff.exclude,
+                        {filePath, type: 'woff'}
                     ),
             generator: {
                 filename:
@@ -1392,8 +1413,9 @@ const genericLoader: GenericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            use: module.optimizer.font.woff.loader.map(evaluateMapper) as
-                RuleSet
+            use: module.optimizer.font.woff.loader.map(createEvaluateMapper(
+                'font.woff'
+            )) as RuleSet
         }
     },
     // endregion
@@ -1403,7 +1425,7 @@ const genericLoader: GenericLoader = {
             (module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
                 evaluateAnThrow<boolean>(
-                    module.optimizer.image.exclude, filePath
+                    module.optimizer.image.exclude, {filePath, type: 'image'}
                 ),
         generator: {
             filename:
@@ -1424,7 +1446,9 @@ const genericLoader: GenericLoader = {
                 maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
             }
         },
-        use: module.optimizer.image.loader.map(evaluateMapper) as RuleSet
+        use: module.optimizer.image.loader.map(createEvaluateMapper(
+            'image'
+        )) as RuleSet
     },
     // endregion
     // region data
@@ -1440,7 +1464,7 @@ const genericLoader: GenericLoader = {
                 (module.optimizer.data.exclude === null) ?
                     isFilePathInDependencies(filePath) :
                     evaluateAnThrow<boolean>(
-                        module.optimizer.data.exclude, filePath
+                        module.optimizer.data.exclude, {filePath, type: 'data'}
                     )
             )
         },
@@ -1462,7 +1486,9 @@ const genericLoader: GenericLoader = {
                 maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
             }
         },
-        use: module.optimizer.data.loader.map(evaluateMapper) as RuleSet
+        use: module.optimizer.data.loader.map(createEvaluateMapper(
+            'data'
+        )) as RuleSet
     }
     // endregion
 }
