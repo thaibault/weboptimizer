@@ -1099,7 +1099,7 @@
               },
               "compress": {
                 "html": {
-                  "__evaluate__": "type && type.includes('html') && self.module.optimizer.htmlMinifier"
+                  "__evaluate__": "self.module.optimizer.htmlMinifier"
                 },
                 "javaScript": {
                   "__evaluate__": "self.module.optimizer.babelMinify.module"

@@ -1102,7 +1102,11 @@ const genericLoader: GenericLoader = {
             .concat(
                 {
                     loader: module.preprocessor.ejs.loader,
-                    options: module.preprocessor.ejs.options || {}
+                    options: extend(
+                        true,
+                        module.preprocessor.ejs.options || {},
+                        {compress: {html: false}}
+                    )
                 },
                 module.preprocessor.ejs.additional.post.map(
                     createEvaluateMapper('ejs')
