@@ -6912,24 +6912,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30001587, caniuse-lite@npm:^1.0.30001599, caniuse-lite@npm:^1.0.30001646":
-  version: 1.0.30001655
-  resolution: "caniuse-lite@npm:1.0.30001655"
-  checksum: 10c0/fff0c0c3ffcba89828bfa6b99f118e82c064f46f15bb8655b9f2a352a3f552ccac0b87a9fe9532f8c5a29e284aae5579791e196480ec717d11ef1d1a1c2e3ff9
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001663":
-  version: 1.0.30001666
-  resolution: "caniuse-lite@npm:1.0.30001666"
-  checksum: 10c0/2d49e9be676233c24717f12aad3d01b3e5f902b457fe1deefaa8d82e64786788a8f79381ae437c61b50e15c9aea8aeb59871b1d54cb4c28b9190d53d292e2339
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001688":
-  version: 1.0.30001699
-  resolution: "caniuse-lite@npm:1.0.30001699"
-  checksum: 10c0/e87b3a0602c3124131f6a21f1eb262378e17a2ee3089e3c472ac8b9caa85cf7d6a219655379302c29c6f10a74051f2a712639d7f98ee0444c73fefcbaf25d519
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30001587, caniuse-lite@npm:^1.0.30001599, caniuse-lite@npm:^1.0.30001646, caniuse-lite@npm:^1.0.30001663, caniuse-lite@npm:^1.0.30001688":
+  version: 1.0.30001701
+  resolution: "caniuse-lite@npm:1.0.30001701"
+  checksum: 10c0/a814bd4dd8b49645ca51bc6ee42120660a36394bb54eb6084801d3f2bbb9471e5e1a9a8a25f44f83086a032d46e66b33031e2aa345f699b90a7e84a9836b819c
   languageName: node
   linkType: hard
 
@@ -7076,9 +7062,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:3.0.1271":
-  version: 3.0.1271
-  resolution: "clientnode@npm:3.0.1271"
+"clientnode@npm:3.0.1272":
+  version: 3.0.1272
+  resolution: "clientnode@npm:3.0.1272"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -7096,7 +7082,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/26056884c992e7c1ad10ed5273b369339612d72bfefd840402bf51a37f3622991256c3991053899e8ecb5726ca4f1b5ee7ccafb8ab70b925c39532e50932bbf9
+  checksum: 10c0/4df1326abbae917e9f9638ebddabb7565f4b111989950e1f0b23f5fb408bc0e59ae3e0f451df7c2159f2e77b6338e2e78b50e658823006a9d401c431176b52e6
   languageName: node
   linkType: hard
 
@@ -16903,7 +16889,7 @@ __metadata:
     babel-loader: "npm:^9.2.1"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:3.0.1271"
+    clientnode: "npm:3.0.1272"
     css-loader: "npm:^7.1.2"
     cssnano: "npm:^7.0.6"
     documentation-website: "npm:^1.0.344"
