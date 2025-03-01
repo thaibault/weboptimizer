@@ -327,7 +327,9 @@ export const loader = function(
                             ...scopeNames,
                             localsName,
                             `return ${result.toString()}(` +
-                            `${localsName},${localsName}.escapeFn,include,` +
+                            `${localsName},` +
+                            `${localsName}.escapeFn,` +
+                            `${localsName}.include,` +
                             `${localsName}.rethrow)`
                         ) as PreCompiledTemplateFunction
                         /* eslint-enable @typescript-eslint/no-implied-eval */
