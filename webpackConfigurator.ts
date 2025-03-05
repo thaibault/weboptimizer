@@ -1577,13 +1577,8 @@ if (!module.optimizer.minimizer) {
     module.optimizer.minimizer = []
 
     if (plugins.Terser)
-        /*
-            HTML-Templates shouldn't be transformed via terser to avoid html
-            webpack plugin throwing to not get markup as intermediate result.
-        */
         module.optimizer.minimizer.push(
             new plugins.Terser({
-                exclude: /\\.html(?: \\.js)?(?: \\?.*)?$/,
                 extractComments: false,
                 parallel: true
             })
