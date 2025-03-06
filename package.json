@@ -668,7 +668,9 @@
               "__evaluate__": "`${filesystem.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
             },
             "postCompileOptions": {
-              "compileSteps": 0
+              "compileSteps": 0,
+              "strict": true,
+              "_with": false
             },
             "use": [
               {
@@ -1089,7 +1091,9 @@
                 "cache": true,
                 "compileDebug": false,
                 "debug": false,
-                "localsName": "_"
+                "localsName": "_",
+                "strict": true,
+                "_with": false
               },
               "compress": {
                 "html": {
