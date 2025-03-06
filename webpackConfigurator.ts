@@ -1162,7 +1162,7 @@ const genericLoader: GenericLoader = {
                 escapeRegularExpressions(
                     configuration.files.defaultHTML.template.filePath
                 ) +
-                '(?: \\?.*)?$'
+                '(?:\\?.*)?$'
             ),
             use: configuration.files.defaultHTML.template.use
         },
@@ -1183,7 +1183,7 @@ const genericLoader: GenericLoader = {
                     )
                 ),
             include: configuration.path.source.asset.template,
-            test: /\.html\.ejs(?: \?.*)?$/i,
+            test: /\.html\.ejs(?:\?.*)?$/i,
             use: module.preprocessor.html.additional.pre
                 .map(createEvaluateMapper('html.ejs'))
                 .concat(
@@ -1233,7 +1233,7 @@ const genericLoader: GenericLoader = {
                         )
                 ),
             include: configuration.path.source.asset.template,
-            test: /\.html(?: \?.*)?$/i,
+            test: /\.html(?:\?.*)?$/i,
             use: module.html.additional.pre
                 .map(createEvaluateMapper('html'))
                 .concat(
@@ -1535,7 +1535,7 @@ if (
         'webpack-dev-server/client/index.js?' +
         'live-reload=true' +
         `&hot=${configuration.development.server.hot ? 'true' : 'false'}` +
-        `&http${configuration.development.server.https ? 's' : ''}: //` +
+        `&http${configuration.development.server.https ? 's' : ''}://` +
         `${configuration.development.server.host}: ` +
         String(configuration.development.server.port)
     ]

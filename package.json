@@ -915,11 +915,6 @@
         "optimizer": {
           "babelMinify": {
             "bundle": {
-              "plugin": {
-                "parserOpts": {
-                  "strictMode": false
-                }
-              },
               "transform": {
                 "removeConsole": true,
                 "removeDebugger": true,
@@ -1094,8 +1089,7 @@
                 "cache": true,
                 "compileDebug": false,
                 "debug": false,
-                "strict": true,
-                "_with": false
+                "localsName": "_"
               },
               "compress": {
                 "html": {
