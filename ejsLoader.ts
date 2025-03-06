@@ -127,9 +127,6 @@ export const loader = function(
             /#%%%#/g,
             '!'
         )
-    console.log()
-    console.log('A', givenOptions, source.substring(0, 300))
-    console.log()
 
     const compile: CompileFunction = (
         template: string,
