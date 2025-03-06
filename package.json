@@ -1594,7 +1594,9 @@
             "options": {
               "compiler": {
                 "compileDebug": true,
-                "debug": true
+                "debug": true,
+                "strict": true,
+                "_with": false
               }
             }
           }
