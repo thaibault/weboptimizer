@@ -1241,14 +1241,6 @@
         "__filename": "mock",
         "__dirname": "mock"
       },
-      "#": "Not yet working in webpack 5 but in webpack 4.",
-      "nodeEnvironmentBackup": {
-        "console": false,
-        "fs": "empty",
-        "process": true,
-        "Buffer": true,
-        "setImmediate": true
-      },
       "offline": {
         "common": {
           "exclude": [
