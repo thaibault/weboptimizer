@@ -528,11 +528,11 @@
       "development": {
         "includeClient": null,
         "server": {
+          "allowedHosts": "all",
           "client": false,
           "compress": {
             "__evaluate__": "!self.debug"
           },
-          "disableHostCheck": true,
           "historyApiFallback": true,
           "host": "0.0.0.0",
           "hot": false,
