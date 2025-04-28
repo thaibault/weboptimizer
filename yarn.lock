@@ -6982,14 +6982,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30001587, caniuse-lite@npm:^1.0.30001646, caniuse-lite@npm:^1.0.30001663, caniuse-lite@npm:^1.0.30001688":
-  version: 1.0.30001701
-  resolution: "caniuse-lite@npm:1.0.30001701"
-  checksum: 10c0/a814bd4dd8b49645ca51bc6ee42120660a36394bb54eb6084801d3f2bbb9471e5e1a9a8a25f44f83086a032d46e66b33031e2aa345f699b90a7e84a9836b819c
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001702":
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30001587, caniuse-lite@npm:^1.0.30001646, caniuse-lite@npm:^1.0.30001663, caniuse-lite@npm:^1.0.30001688, caniuse-lite@npm:^1.0.30001702":
   version: 1.0.30001715
   resolution: "caniuse-lite@npm:1.0.30001715"
   checksum: 10c0/0109a7da797ffbe1aa197baa5242b205011098eecec1087ef3d0c58ceea19be325ab6679b2751a78660adc3051a9f77e99d5789938fd1eb1235e6fdf6a1dbf8e
@@ -7139,9 +7132,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:3.0.1275":
-  version: 3.0.1275
-  resolution: "clientnode@npm:3.0.1275"
+"clientnode@npm:3.0.1276":
+  version: 3.0.1276
+  resolution: "clientnode@npm:3.0.1276"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -7159,7 +7152,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/cba5825dc687de41f4be5ffdd2d578627e2b7f147da646393f8e26e6afc3fa0b56fbaf82388146e3941e7c2b915829d194d8827858a34901d2a34cd36e628c76
+  checksum: 10c0/9bf0157974d0e3ae6e04ccf0a2b897810fcc8d17620571829b023f74d1d3f63ddc723eb475c1c6b4161f84d4943979622d76d5093042697717e90e285077f84c
   languageName: node
   linkType: hard
 
@@ -16951,7 +16944,7 @@ __metadata:
     babel-loader: "npm:^10.0.0"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:3.0.1275"
+    clientnode: "npm:3.0.1276"
     css-loader: "npm:^7.1.2"
     cssnano: "npm:^7.0.6"
     documentation-website: "npm:^1.0.345"
