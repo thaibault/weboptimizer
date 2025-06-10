@@ -29,3 +29,4 @@ for (const folder of ['simple', 'scss'])
                 ).status).toStrictEqual(0)
         }
     )
+

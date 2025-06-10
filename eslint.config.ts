@@ -1,5 +1,5 @@
 import eslintjs from '@eslint/js'
-import typescriptPlugin from '@stylistic/eslint-plugin-ts'
+import javascriptPlugin from '@stylistic/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
@@ -104,7 +104,7 @@ export const config = typescript.config(
         },
         plugins: {
             jsdoc,
-            '@stylistic': typescriptPlugin
+            '@stylistic': javascriptPlugin
         },
 
         rules: {
