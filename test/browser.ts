@@ -24,8 +24,8 @@ test('browser', async (): Promise<void> => {
     let onWindowLoaded: (event: Event) => void = () => {
         // Do nothing.
     }
-    const promise = new Promise<void>(
-        (resolve: () => void, reject: (error: unknown) => void
+    const promise = new Promise<void>((
+        resolve: () => void, reject: (error: Error) => void
     ) => {
         onWindowLoaded = (event: Event): void => {
             try {
@@ -38,7 +38,9 @@ test('browser', async (): Promise<void> => {
                 }
                 expect(browser.windowLoaded).toStrictEqual(true)
             } catch (error) {
-                reject(error)
+                reject(
+                    error instanceof Error ? error : new Error(error as string)
+                )
             }
 
             resolve()
