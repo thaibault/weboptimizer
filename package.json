@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.1587-2",
+  "version": "2.0.1588",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
