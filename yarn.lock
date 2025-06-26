@@ -8107,12 +8107,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"documentation-website@npm:^1.0.382":
-  version: 1.0.382
-  resolution: "documentation-website@npm:1.0.382"
+"documentation-website@npm:^1.0.383":
+  version: 1.0.383
+  resolution: "documentation-website@npm:1.0.383"
   bin:
     documentation-website: build/deploy.js
-  checksum: 10c0/20371b4ee2eaccf311e99ab362d4375380e6c26e4ce361c91bbafd40dcd43d21143e14fec699cc9735ce05ef2837bce2a067cab0855fab10c1f9f2f648ba165b
+  checksum: 10c0/5ad107db10f0e105ce41079161a6d5b3618f8255c170386bd9a1f64e6f4644823a242a8bd38ebd2b6fd1d5dffa731f7cc06eff592c4e1f1bdc23e578aaffb57e
   languageName: node
   linkType: hard
 
@@ -16908,7 +16908,7 @@ __metadata:
     clientnode: "npm:3.0.1292"
     css-loader: "npm:^7.1.2"
     cssnano: "npm:^7.0.7"
-    documentation-website: "npm:^1.0.382"
+    documentation-website: "npm:^1.0.383"
     ejs: "npm:^3.1.10"
     eslint: "npm:^9.29.0"
     eslint-config-google: "npm:^0.14.0"
