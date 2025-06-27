@@ -54,26 +54,21 @@ var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers
 var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
-var _clientnode = _interopRequireDefault(require("clientnode"));
-var _jsdom = require("jsdom");
+var _clientnode = require("clientnode");
 var _path = require("path");
 var _util = _interopRequireDefault(require("util"));
 var _webpack = require("webpack");
 var _webpackSources = require("webpack-sources");
 var _configurator = _interopRequireDefault(require("./configurator"));
-var _helper = _interopRequireDefault(require("./helper"));
-var _ejsLoader = _interopRequireDefault(require("./ejsLoader"));
-var _optionalRequire,
-  _this = void 0,
-  _configuration$path$c,
-  _configuration$cache,
-  _configuration$cache2,
-  _configuration$path$c2;
+var _helper = require("./helper");
+var _InPlaceAssetsIntoHTML = _interopRequireDefault(require("./plugins/InPlaceAssetsIntoHTML"));
+var _HTMLTransformation = _interopRequireDefault(require("./plugins/HTMLTransformation"));
+var _optionalRequire, _configuration$cache$, _configuration$cache, _configuration$cache2, _configuration$cache3;
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r &amp;&amp; (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r &lt; arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" &amp;&amp; o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike &amp;&amp; o &amp;&amp; typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion &amp;&amp; it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" &amp;&amp; o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i &lt; len; i++) arr2[i] = arr[i]; return arr2; }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol &amp;&amp; r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e &amp;&amp; r &amp;&amp; "number" == typeof r.length) { t &amp;&amp; (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t &amp;&amp; r.constructor &amp;&amp; (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) &amp;&amp; (a = r.length); for (var e = 0, n = Array(a); e &lt; a; e++) n[e] = r[e]; return n; }
 /// region optional imports
 // NOTE: Has to be defined here to ensure to resolve from here.
 var currentRequire =
@@ -85,7 +80,7 @@ eval("typeof require === 'undefined' ? null : require");
 var optionalRequire = exports.optionalRequire = function optionalRequire(id) {
   try {
     return currentRequire ? currentRequire(id) : null;
-  } catch (error) {
+  } catch (_unused) {
     return null;
   }
 };
@@ -97,11 +92,11 @@ var updateRule = (_optionalRequire = optionalRequire('postcss-sprites/lib/core')
 var postcssURL = optionalRequire('postcss-url');
 /// endregion
 var pluginNameResourceMapping = {
-  HTML: 'html-webpack-plugin',
-  MiniCSSExtract: 'mini-css-extract-plugin',
   Favicon: 'favicons-webpack-plugin',
   ImageMinimizer: 'image-minimizer-webpack-plugin',
-  Offline: 'workbox-webpack-plugin',
+  HTML: 'html-webpack-plugin',
+  MiniCSSExtract: 'mini-css-extract-plugin',
+  offline: 'workbox-webpack-plugin',
   Terser: 'terser-webpack-plugin'
 };
 var plugins = {};
@@ -112,10 +107,6 @@ for (var _i = 0, _Object$entries = Object.entries(pluginNameResourceMapping); _i
   var plugin = optionalRequire(alias);
   if (plugin) plugins[name] = plugin;else console.debug("Optional webpack plugin \"".concat(name, "\" not available."));
 }
-if (plugins.Offline) {
-  plugins.GenerateServiceWorker = plugins.Offline.GenerateSW;
-  plugins.InjectManifest = plugins.Offline.InjectManifest;
-}
 // endregion
 var configuration = (0, _configurator["default"])();
 var _module = configuration.module;
@@ -124,10 +115,10 @@ var _module = configuration.module;
 var libraryName;
 if (configuration.libraryName) libraryName = configuration.libraryName;else if (Object.keys(configuration.injection.entry.normalized).length > 1) libraryName = '[name]';else {
   libraryName = configuration.name;
-  if (['assign', 'global', 'this', 'var', 'window'].includes(configuration.exportFormat.self)) libraryName = _clientnode["default"].stringConvertToValidVariableName(libraryName);
+  if (['assign', 'global', 'this', 'var', 'window'].includes(configuration.exportFormat.self)) libraryName = (0, _clientnode.convertToValidVariableName)(libraryName);
 }
 if (libraryName === '*') libraryName = ['assign', 'global', 'this', 'var', 'window'].includes(configuration.exportFormat.self) ? Object.keys(configuration.injection.entry.normalized).map(function (name) {
-  return _clientnode["default"].stringConvertToValidVariableName(name);
+  return (0, _clientnode.convertToValidVariableName)(name);
 }) : undefined;
 /// endregion
 /// region plugins
@@ -164,29 +155,31 @@ for (var _i2 = 0, _Object$entries2 = Object.entries(_module.replacements.normal)
 //// endregion
 //// region generate html file
 var htmlAvailable = false;
-var _iterator2 = _createForOfIteratorHelper(configuration.files.html),
-  _step2;
-try {
-  for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-    var htmlConfiguration = _step2.value;
-    if (_clientnode["default"].isFileSync(htmlConfiguration.template.filePath)) {
-      pluginInstances.push(new plugins.HTML(_objectSpread(_objectSpread({}, htmlConfiguration), {}, {
-        template: htmlConfiguration.template.request
-      })));
-      htmlAvailable = true;
+if (plugins.HTML) {
+  var _iterator2 = _createForOfIteratorHelper(configuration.files.html),
+    _step2;
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var htmlConfiguration = _step2.value;
+      if ((0, _clientnode.isFileSync)(htmlConfiguration.template.filePath)) {
+        pluginInstances.push(new plugins.HTML(_objectSpread(_objectSpread({}, htmlConfiguration), {}, {
+          template: htmlConfiguration.template.request
+        })));
+        htmlAvailable = true;
+      }
     }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
   }
-  //// endregion
-  //// region generate favicons
-} catch (err) {
-  _iterator2.e(err);
-} finally {
-  _iterator2.f();
 }
-if (htmlAvailable &amp;&amp; configuration.favicon &amp;&amp; plugins.Favicon &amp;&amp; _clientnode["default"].isFileSync([].concat(configuration.favicon.logo)[0])) pluginInstances.push(new plugins.Favicon(configuration.favicon));
+//// endregion
+//// region generate favicons
+if (htmlAvailable &amp;&amp; Object.prototype.hasOwnProperty.call(configuration, 'favicon') &amp;&amp; plugins.Favicon &amp;&amp; (0, _clientnode.isFileSync)([].concat(configuration.favicon.logo)[0])) pluginInstances.push(new plugins.Favicon(configuration.favicon));
 //// endregion
 //// region provide offline functionality
-if (htmlAvailable &amp;&amp; configuration.offline &amp;&amp; plugins.Offline) {
+if (htmlAvailable &amp;&amp; configuration.offline &amp;&amp; Object.prototype.hasOwnProperty.call(plugins, 'offline')) {
   if (!['serve', 'test:browser'].includes(configuration.givenCommandLineArguments[2])) for (var _i3 = 0, _Object$entries3 = Object.entries({
       cascadingStyleSheet: 'css',
       javaScript: 'js'
@@ -194,22 +187,24 @@ if (htmlAvailable &amp;&amp; configuration.offline &amp;&amp; plugins.Offline) {
     var _Object$entries3$_i = (0, _slicedToArray2["default"])(_Object$entries3[_i3], 2),
       _name = _Object$entries3$_i[0],
       extension = _Object$entries3$_i[1];
-    var _type = _name;
-    if (configuration.inPlace[_type]) {
-      var matches = Object.keys(configuration.inPlace[_type]);
+    var type = _name;
+    if (configuration.inPlace[type]) {
+      var matches = Object.keys(configuration.inPlace[type]);
       if (!Array.isArray(configuration.offline.common.excludeChunks)) configuration.offline.common.excludeChunks = [];
       for (var _i4 = 0, _matches = matches; _i4 &lt; _matches.length; _i4++) {
         var _name2 = _matches[_i4];
-        configuration.offline.common.excludeChunks.push((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset[_type]) + "".concat(_name2, ".").concat(extension, "?").concat(configuration.hashAlgorithm, "=*"));
+        configuration.offline.common.excludeChunks.push((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset[type]) + "".concat(_name2, ".").concat(extension, "?").concat(configuration.hashAlgorithm, "=*"));
       }
     }
   }
-  if ([].concat(configuration.offline.use).includes('injectionManifest')) pluginInstances.push(new plugins.InjectManifest(_clientnode["default"].extend(true, configuration.offline.common, configuration.offline.injectionManifest)));
-  if ([].concat(configuration.offline.use).includes('generateServiceWorker')) pluginInstances.push(new plugins.GenerateServiceWorker(_clientnode["default"].extend(true, configuration.offline.common, configuration.offline.serviceWorker)));
+  if (plugins.offline) {
+    if ([].concat(configuration.offline.use).includes('injectionManifest')) pluginInstances.push(new plugins.offline.InjectManifest((0, _clientnode.extend)(true, configuration.offline.common, configuration.offline.injectionManifest)));
+    if ([].concat(configuration.offline.use).includes('generateServiceWorker')) pluginInstances.push(new plugins.offline.GenerateSW((0, _clientnode.extend)(true, configuration.offline.common, configuration.offline.generateServiceWorker)));
+  }
 }
 //// endregion
 //// region provide build environment
-if (configuration.buildContext.definitions) pluginInstances.push(new _webpack.DefinePlugin(configuration.buildContext.definitions));
+if (Object.prototype.hasOwnProperty.call(configuration.buildContext, 'definitions')) pluginInstances.push(new _webpack.DefinePlugin(configuration.buildContext.definitions));
 if (_module.provide) pluginInstances.push(new _webpack.ProvidePlugin(_module.provide));
 //// endregion
 //// region modules/assets
@@ -228,10 +223,10 @@ pluginInstances.push({
             request = _Object$entries4$_i[0],
             asset = _Object$entries4$_i[1];
           var filePath = request.replace(/\?[^?]+$/, '');
-          var _type2 = _helper["default"].determineAssetType(filePath, configuration.buildContext.types, configuration.path);
-          if (_type2 &amp;&amp; configuration.assetPattern[_type2] &amp;&amp; new RegExp(configuration.assetPattern[_type2].includeFilePathRegularExpression).test(filePath) &amp;&amp; !new RegExp(configuration.assetPattern[_type2].excludeFilePathRegularExpression).test(filePath)) {
+          var _type = (0, _helper.determineAssetType)(filePath, configuration.buildContext.types, configuration.path);
+          if (_type &amp;&amp; Object.prototype.hasOwnProperty.call(configuration.assetPattern, _type) &amp;&amp; new RegExp(configuration.assetPattern[_type].includeFilePathRegularExpression).test(filePath) &amp;&amp; !new RegExp(configuration.assetPattern[_type].excludeFilePathRegularExpression).test(filePath)) {
             var source = asset.source();
-            if (typeof source === 'string') compilation.assets[request] = new _webpackSources.RawSource(configuration.assetPattern[_type2].pattern.replace(/\{1\}/g, source.replace(/\$/g, '$$$')));
+            if (typeof source === 'string') compilation.assets[request] = new _webpackSources.RawSource(configuration.assetPattern[_type].pattern.replace(/\{1\}/g, source.replace(/\$/g, '$$$')));
           }
         }
       });
@@ -248,7 +243,7 @@ pluginInstances.push({
         sequences and translate it back later to avoid unexpected escape
         sequences in resulting html.
     /
-    const window:DOMWindow = (new DOM(
+    const window: DOMWindow = (new DOM(
         content
             .replace(/&lt;%/g, '##+#+#+##')
             .replace(/%>/g, '##-#-#-##')
@@ -260,57 +255,11 @@ pluginInstances.push({
     .replace(/##-#-#-##/g, '%>')
 */
 
-if (htmlAvailable &amp;&amp; !['serve', 'test:browser'].includes(configuration.givenCommandLineArguments[2]) &amp;&amp; configuration.inPlace.cascadingStyleSheet &amp;&amp; Object.keys(configuration.inPlace.cascadingStyleSheet).length || configuration.inPlace.javaScript &amp;&amp; Object.keys(configuration.inPlace.javaScript).length) pluginInstances.push({
-  apply: function apply(compiler) {
-    var publicPath = compiler.options.output.publicPath || '';
-    if (publicPath &amp;&amp; !publicPath.endsWith('/')) publicPath += '/';
-    compiler.hooks.compilation.tap('inPlaceHTMLAssets', function (compilation) {
-      var hooks = plugins.HTML.getHooks(compilation);
-      var inPlacedAssetNames = [];
-      hooks.alterAssetTagGroups.tap('inPlaceHTMLAssets', function (assets) {
-        var inPlace = function inPlace(type, tag) {
-          var settings;
-          var url = false;
-          if (tag.tagName === 'script') {
-            settings = configuration.inPlace.javaScript;
-            url = tag.attributes.src;
-          } else if (tag.tagName === 'style') {
-            settings = configuration.inPlace.cascadingStyleSheet;
-            url = tag.attributes.href;
-          }
-          if (!(url &amp;&amp; typeof url === 'string')) return tag;
-          var name = publicPath ? url.replace(publicPath, '') : url;
-          if (compilation.assets[name] &amp;&amp; settings[type] &amp;&amp; [].concat(settings[type]).some(function (pattern) {
-            return new RegExp(pattern).test(name);
-          })) {
-            var newAttributes = _objectSpread({}, tag.attributes);
-            delete newAttributes.href;
-            delete newAttributes.src;
-            inPlacedAssetNames.push(name);
-            return _objectSpread(_objectSpread({}, tag), {}, {
-              attributes: newAttributes,
-              innerHTML: compilation.assets[name].source(),
-              tagName: 'script'
-            });
-          }
-          return tag;
-        };
-        assets.headTags = assets.headTags.map(inPlace.bind(_this, 'head'));
-        assets.bodyTags = assets.bodyTags.map(inPlace.bind(_this, 'body'));
-        return assets;
-      });
-
-      // NOTE: Avoid if you still want to emit the runtime chunks:
-      hooks.afterEmit.tap('inPlaceHTMLAssets', function (asset) {
-        for (var _i6 = 0, _inPlacedAssetNames = inPlacedAssetNames; _i6 &lt; _inPlacedAssetNames.length; _i6++) {
-          var _name3 = _inPlacedAssetNames[_i6];
-          delete compilation.assets[_name3];
-        }
-        return asset;
-      });
-    });
-  }
-});
+if (plugins.HTML &amp;&amp; htmlAvailable &amp;&amp; !['serve', 'test:browser'].includes(configuration.givenCommandLineArguments[2]) &amp;&amp; configuration.inPlace.cascadingStyleSheet &amp;&amp; Object.keys(configuration.inPlace.cascadingStyleSheet).length || configuration.inPlace.javaScript &amp;&amp; Object.keys(configuration.inPlace.javaScript).length) pluginInstances.push(new _InPlaceAssetsIntoHTML["default"]({
+  cascadingStyleSheet: configuration.inPlace.cascadingStyleSheet,
+  javaScript: configuration.inPlace.javaScript,
+  htmlPlugin: plugins.HTML
+}));
 ///// endregion
 ///// region mark empty javaScript modules as dummy
 if (!(configuration.needed.javaScript || configuration.needed.javaScriptExtension || configuration.needed.typeScript || configuration.needed.typeScriptExtension)) configuration.files.compose.javaScript = (0, _path.resolve)(configuration.path.target.asset.javaScript, '.__dummy__.compiled.js');
@@ -327,13 +276,16 @@ if (configuration.injection.external.modules === '__implicit__')
       We only want to process modules from local context in library mode,
       since a concrete project using this library should combine all assets
       (and de-duplicate them) for optimal bundling results.
-      NOTE: Only native java script and json modules will be marked as
+      NOTE: Only native javascript and json modules will be marked as
       external dependency.
   */
   configuration.injection.external.modules = function (_ref, callback) {
     var context = _ref.context,
       request = _ref.request;
-    if (typeof request !== 'string') return callback();
+    if (typeof request !== 'string') {
+      callback();
+      return;
+    }
     request = request.replace(/^!+/, '');
     if (request.startsWith('/')) request = (0, _path.relative)(configuration.path.context, request);
     var _iterator3 = _createForOfIteratorHelper(_module.directoryNames),
@@ -353,14 +305,14 @@ if (configuration.injection.external.modules === '__implicit__')
     } finally {
       _iterator3.f();
     }
-    var filePath = _helper["default"].determineModuleFilePath(request, {}, {}, {
+    var filePath = (0, _helper.determineModuleFilePath)(request, {}, {}, {
       file: configuration.extensions.file.external
     }, configuration.path.context, context, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.encoding);
-    if (filePath) for (var _i7 = 0, _Object$entries5 = Object.entries(configuration.injection.external.aliases); _i7 &lt; _Object$entries5.length; _i7++) {
-      var _Object$entries5$_i = (0, _slicedToArray2["default"])(_Object$entries5[_i7], 2),
+    if (filePath) for (var _i6 = 0, _Object$entries5 = Object.entries(configuration.injection.external.aliases); _i6 &lt; _Object$entries5.length; _i6++) {
+      var _Object$entries5$_i = (0, _slicedToArray2["default"])(_Object$entries5[_i6], 2),
         pattern = _Object$entries5$_i[0],
         targetConfiguration = _Object$entries5$_i[1];
-      if (pattern.startsWith('^')) {
+      if (targetConfiguration &amp;&amp; pattern.startsWith('^')) {
         var regularExpression = new RegExp(pattern);
         if (regularExpression.test(filePath)) {
           var match = false;
@@ -371,7 +323,7 @@ if (configuration.injection.external.modules === '__implicit__')
           if (target.startsWith('?')) {
             target = target.substring(1);
             var aliasedRequest = request.replace(replacementRegularExpression, target);
-            if (aliasedRequest !== request) match = Boolean(_helper["default"].determineModuleFilePath(aliasedRequest, {}, {}, {
+            if (aliasedRequest !== request) match = Boolean((0, _helper.determineModuleFilePath)(aliasedRequest, {}, {}, {
               file: configuration.extensions.file.external
             }, configuration.path.context, context, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.encoding));
           } else match = true;
@@ -383,13 +335,13 @@ if (configuration.injection.external.modules === '__implicit__')
       }
     }
     // endregion
-    var resolvedRequest = _helper["default"].determineExternalRequest(request, configuration.path.context, context, configuration.injection.entry.normalized, _module.directoryNames, _module.aliases, _module.replacements.normal, configuration.extensions, configuration.path.source.asset.base, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.injection.external.implicit.pattern.include, configuration.injection.external.implicit.pattern.exclude, configuration.inPlace.externalLibrary.normal, configuration.inPlace.externalLibrary.dynamic, configuration.encoding);
+    var resolvedRequest = (0, _helper.determineExternalRequest)(request, configuration.path.context, context, configuration.injection.entry.normalized, _module.directoryNames, _module.aliases, _module.replacements.normal, configuration.extensions, configuration.path.source.asset.base, configuration.path.ignore, _module.directoryNames, configuration["package"].main.fileNames, configuration["package"].main.propertyNames, configuration["package"].aliasPropertyNames, configuration.injection.external.implicit.pattern.include, configuration.injection.external.implicit.pattern.exclude, configuration.inPlace.externalLibrary.normal, configuration.inPlace.externalLibrary.dynamic, configuration.encoding);
     if (resolvedRequest) {
       var keys = ['amd', 'commonjs', 'commonjs2', 'root'];
-      var _result2 = resolvedRequest;
+      var result = resolvedRequest;
       if (Object.prototype.hasOwnProperty.call(configuration.injection.external.aliases, request)) {
         // region normal alias replacement
-        _result2 = {
+        result = {
           "default": request
         };
         if (typeof configuration.injection.external.aliases[request] === 'string') {
@@ -398,7 +350,7 @@ if (configuration.injection.external.modules === '__implicit__')
           try {
             for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
               var key = _step4.value;
-              _result2[key] = configuration.injection.external.aliases[request];
+              result[key] = configuration.injection.external.aliases[request];
             }
           } catch (err) {
             _iterator4.e(err);
@@ -411,21 +363,21 @@ if (configuration.injection.external.modules === '__implicit__')
           try {
             for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
               var _key2 = _step5.value;
-              _result2[_key2] = configuration.injection.external.aliases[request](request, _key2);
+              result[_key2] = configuration.injection.external.aliases[request](request, _key2);
             }
           } catch (err) {
             _iterator5.e(err);
           } finally {
             _iterator5.f();
           }
-        } else if (configuration.injection.external.aliases[request] !== null &amp;&amp; (0, _typeof2["default"])(configuration.injection.external.aliases[request]) === 'object') _clientnode["default"].extend(_result2, configuration.injection.external.aliases[request]);
-        if (Object.prototype.hasOwnProperty.call(_result2, 'default')) {
+        } else if ((0, _clientnode.isObject)(configuration.injection.external.aliases[request])) (0, _clientnode.extend)(result, configuration.injection.external.aliases[request]);
+        if (Object.prototype.hasOwnProperty.call(result, 'default')) {
           var _iterator6 = _createForOfIteratorHelper(keys),
             _step6;
           try {
             for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
               var _key3 = _step6.value;
-              if (!Object.prototype.hasOwnProperty.call(_result2, _key3)) _result2[_key3] = _result2["default"];
+              if (!Object.prototype.hasOwnProperty.call(result, _key3)) result[_key3] = result["default"];
             }
           } catch (err) {
             _iterator6.e(err);
@@ -435,113 +387,32 @@ if (configuration.injection.external.modules === '__implicit__')
         }
         // endregion
       }
-
-      if (typeof _result2 !== 'string' &amp;&amp; Object.prototype.hasOwnProperty.call(_result2, 'root')) _result2.root = [].concat(_result2.root).map(function (name) {
-        return _clientnode["default"].stringConvertToValidVariableName(name);
+      if (typeof result !== 'string' &amp;&amp; Object.prototype.hasOwnProperty.call(result, 'root') &amp;&amp; Array.isArray(result.root)) result.root = [].concat(result.root).map(function (name) {
+        return (0, _clientnode.convertToValidVariableName)(name);
       });
-      var exportFormat = configuration.exportFormat.external || configuration.exportFormat.self;
-      return callback(undefined, exportFormat === 'umd' || typeof _result2 === 'string' ? _result2 : _result2[exportFormat], exportFormat);
+      var exportFormat = Object.prototype.hasOwnProperty.call(configuration.exportFormat, 'external') ? configuration.exportFormat.external : configuration.exportFormat.self;
+      callback(undefined, exportFormat === 'umd' || typeof result === 'string' ? result : result[exportFormat], exportFormat);
+      return;
     }
-    return callback();
+    callback();
   };
 ///// endregion
 //// endregion
-//// region apply final cascadingStyleSheet/dom/javaScript modifications/fixes
-if (htmlAvailable) pluginInstances.push({
-  apply: function apply(compiler) {
-    return compiler.hooks.compilation.tap('WebOptimizer', function (compilation) {
-      plugins.HTML.getHooks(compilation).beforeEmit.tap('WebOptimizerPostProcessHTML', function (data) {
-        /*
-            NOTE: We have to prevent creating native "style" dom nodes
-            to prevent jsdom from parsing the entire cascading style
-            sheet. Which is error prune and very resource intensive.
-        */
-        var styleContents = [];
-        data.html = data.html.replace(/(&lt;style[^>]*>)([\s\S]*?)(&lt;\/style[^>]*>)/gi, function (match, startTag, content, endTag) {
-          styleContents.push(content);
-          return "".concat(startTag).concat(endTag);
-        });
-        var dom;
-        try {
-          /*
-              NOTE: We have to translate template delimiter to html
-              compatible sequences and translate it back later to
-              avoid unexpected escape sequences in resulting html.
-          */
-          dom = new _jsdom.JSDOM(data.html.replace(/&lt;%/g, '##+#+#+##').replace(/%>/g, '##-#-#-##'));
-        } catch (error) {
-          return data;
-        }
-        var linkables = {
-          link: 'href',
-          script: 'src'
-        };
-        for (var _i8 = 0, _Object$entries6 = Object.entries(linkables); _i8 &lt; _Object$entries6.length; _i8++) {
-          var _Object$entries6$_i = (0, _slicedToArray2["default"])(_Object$entries6[_i8], 2),
-            tagName = _Object$entries6$_i[0],
-            attributeName = _Object$entries6$_i[1];
-          for (var _i9 = 0, _Array$from = Array.from(dom.window.document.querySelectorAll("".concat(tagName, "[").concat(attributeName, "*=\"?") + "".concat(configuration.hashAlgorithm, "=\"]"))); _i9 &lt; _Array$from.length; _i9++) {
-            var domNode = _Array$from[_i9];
-            /*
-                NOTE: Removing symbols after a "&amp;" in hash
-                string is necessary to match the generated
-                request strings in offline plugin.
-            */
-            domNode.setAttribute(attributeName, domNode.getAttribute(attributeName).replace(new RegExp('(\\?' + "".concat(configuration.hashAlgorithm, "=") + '[^&amp;]+).*$'), '$1'));
-          }
-        }
-        /*
-            NOTE: We have to restore template delimiter and style
-            contents.
-        */
-        data.html = dom.serialize().replace(/##\+#\+#\+##/g, '&lt;%').replace(/##-#-#-##/g, '%>').replace(/(&lt;style[^>]*>)[\s\S]*?(&lt;\/style[^>]*>)/gi, function (match, startTag, endTag) {
-          return "".concat(startTag).concat(styleContents.shift()) + endTag;
-        });
-        // region post compilation
-        var _iterator7 = _createForOfIteratorHelper(configuration.files.html),
-          _step7;
-        try {
-          for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-            var htmlFileSpecification = _step7.value;
-            if (htmlFileSpecification.filename === data.plugin.options.filename) {
-              var _iterator8 = _createForOfIteratorHelper([].concat(htmlFileSpecification.template.use)),
-                _step8;
-              try {
-                for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-                  var _loaderConfiguration$;
-                  var loaderConfiguration = _step8.value;
-                  if ((_loaderConfiguration$ = loaderConfiguration.options) !== null &amp;&amp; _loaderConfiguration$ !== void 0 &amp;&amp; _loaderConfiguration$.compileSteps &amp;&amp; typeof loaderConfiguration.options.compileSteps === 'number') data.html = _ejsLoader["default"].bind({
-                    query: _clientnode["default"].extend(true, _clientnode["default"].copy(loaderConfiguration.options) || {}, htmlFileSpecification.template.postCompileOptions)
-                  })(data.html);
-                }
-              } catch (err) {
-                _iterator8.e(err);
-              } finally {
-                _iterator8.f();
-              }
-              break;
-            }
-          }
-          // endregion
-        } catch (err) {
-          _iterator7.e(err);
-        } finally {
-          _iterator7.f();
-        }
-        return data;
-      });
-    });
-  }
-});
+//// region apply final html modifications/fixes
+if (htmlAvailable &amp;&amp; plugins.HTML) pluginInstances.push(new _HTMLTransformation["default"]({
+  hashAlgorithm: configuration.hashAlgorithm,
+  htmlPlugin: plugins.HTML,
+  files: configuration.files.html
+}));
 //// endregion
 //// region context replacements
-var _iterator9 = _createForOfIteratorHelper(_module.replacements.context),
-  _step9;
+var _iterator7 = _createForOfIteratorHelper(_module.replacements.context),
+  _step7;
 try {
-  for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-    var contextReplacement = _step9.value;
+  for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+    var contextReplacement = _step7.value;
     pluginInstances.push((0, _construct2["default"])(_webpack.ContextReplacementPlugin, (0, _toConsumableArray2["default"])(contextReplacement.map(function (value) {
-      var evaluated = _clientnode["default"].stringEvaluate(value, {
+      var evaluated = (0, _clientnode.evaluate)(value, {
         configuration: configuration,
         __dirname: __dirname,
         __filename: __filename
@@ -559,21 +430,21 @@ try {
       them as same dependency.
   */
 } catch (err) {
-  _iterator9.e(err);
+  _iterator7.e(err);
 } finally {
-  _iterator9.f();
+  _iterator7.f();
 }
 if (_module.enforceDeduplication) {
   var absoluteContextPath = (0, _path.resolve)(configuration.path.context);
   var consolidator = function consolidator(result) {
     var targetPath = result.createData.resource;
-    if (targetPath &amp;&amp; /((?:^|\/)node_modules\/.+)/.test(targetPath) &amp;&amp; (!targetPath.startsWith(absoluteContextPath) || /((?:^|\/)node_modules\/.+){2}/.test(targetPath)) &amp;&amp; _clientnode["default"].isFileSync(targetPath)) {
-      var packageDescriptor = _helper["default"].getClosestPackageDescriptor(targetPath);
+    if (targetPath &amp;&amp; /((?: ^|\/)node_modules\/.+)/.test(targetPath) &amp;&amp; (!targetPath.startsWith(absoluteContextPath) || /((?: ^|\/)node_modules\/.+){2}/.test(targetPath)) &amp;&amp; (0, _clientnode.isFileSync)(targetPath)) {
+      var packageDescriptor = (0, _helper.getClosestPackageDescriptor)(targetPath);
       if (packageDescriptor) {
         var pathPrefixes;
         var pathSuffix;
         if (targetPath.startsWith(absoluteContextPath)) {
-          var _matches2 = targetPath.match(/((?:^|.*?\/)node_modules\/)/g);
+          var _matches2 = targetPath.match(/((?: ^|.*?\/)node_modules\/)/g);
           if (_matches2 === null) return;
           pathPrefixes = Array.from(_matches2);
           /*
@@ -582,20 +453,20 @@ if (_module.enforceDeduplication) {
           */
           pathPrefixes.pop();
           var index = 0;
-          var _iterator10 = _createForOfIteratorHelper(pathPrefixes),
-            _step10;
+          var _iterator8 = _createForOfIteratorHelper(pathPrefixes),
+            _step8;
           try {
-            for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-              var pathPrefix = _step10.value;
+            for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+              var pathPrefix = _step8.value;
               if (index > 0) pathPrefixes[index] = (0, _path.resolve)(pathPrefixes[index - 1], pathPrefix);
               index += 1;
             }
           } catch (err) {
-            _iterator10.e(err);
+            _iterator8.e(err);
           } finally {
-            _iterator10.f();
+            _iterator8.f();
           }
-          pathSuffix = targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1');
+          pathSuffix = targetPath.replace(/(?: ^|.*\/)node_modules\/(.+$)/, '$1');
         } else {
           pathPrefixes = [(0, _path.resolve)(absoluteContextPath, 'node_modules')];
           // Find longest common prefix.
@@ -604,14 +475,14 @@ if (_module.enforceDeduplication) {
           pathSuffix = targetPath.substring(_index).replace(/^.*\/node_modules\//, '');
         }
         var redundantRequest = null;
-        var _iterator11 = _createForOfIteratorHelper(pathPrefixes),
-          _step11;
+        var _iterator9 = _createForOfIteratorHelper(pathPrefixes),
+          _step9;
         try {
-          for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
-            var _pathPrefix = _step11.value;
+          for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+            var _pathPrefix = _step9.value;
             var alternateTargetPath = (0, _path.resolve)(_pathPrefix, pathSuffix);
-            if (_clientnode["default"].isFileSync(alternateTargetPath)) {
-              var otherPackageDescriptor = _helper["default"].getClosestPackageDescriptor(alternateTargetPath);
+            if ((0, _clientnode.isFileSync)(alternateTargetPath)) {
+              var otherPackageDescriptor = (0, _helper.getClosestPackageDescriptor)(alternateTargetPath);
               if (otherPackageDescriptor) {
                 if (packageDescriptor.configuration.version === otherPackageDescriptor.configuration.version) {
                   console.info('\nConsolidate module request "' + "".concat(targetPath, "\" to \"") + "".concat(alternateTargetPath, "\"."));
@@ -633,9 +504,9 @@ if (_module.enforceDeduplication) {
             }
           }
         } catch (err) {
-          _iterator11.e(err);
+          _iterator9.e(err);
         } finally {
-          _iterator11.f();
+          _iterator9.f();
         }
         if (redundantRequest) console.warn('\nIncluding different versions of same package "' + "".concat(packageDescriptor.configuration.name, "\". Module \"") + "".concat(targetPath, "\" (version ") + "".concat(packageDescriptor.configuration.version, ") has ") + "redundancies with \"".concat(redundantRequest.path, "\" (") + "version ".concat(redundantRequest.version, ")."));
       }
@@ -643,8 +514,8 @@ if (_module.enforceDeduplication) {
   };
   pluginInstances.push({
     apply: function apply(compiler) {
-      return compiler.hooks.normalModuleFactory.tap('WebOptimizerModuleConsolidation', function (nmf) {
-        return nmf.hooks.afterResolve.tap('WebOptimizerModuleConsolidation', consolidator);
+      compiler.hooks.normalModuleFactory.tap('WebOptimizerModuleConsolidation', function (nmf) {
+        nmf.hooks.afterResolve.tap('WebOptimizerModuleConsolidation', consolidator);
       });
     }
   });
@@ -652,45 +523,45 @@ if (_module.enforceDeduplication) {
 /*
 new NormalModuleReplacementPlugin(
     /.+/,
-    (result:{
-        context:string
-        createData:{resource:string}
-        request:string
-    }):void => {
-        const isResource:boolean = Boolean(result.createData.resource)
-        const targetPath:string = isResource ?
+    (result: {
+        context: string
+        createData: {resource: string}
+        request: string
+    }): void => {
+        const isResource: boolean = Boolean(result.createData.resource)
+        const targetPath: string = isResource ?
             result.createData.resource :
             resolve(result.context, result.request)
         if (
             targetPath &amp;&amp;
-            /((?:^|\/)node_modules\/.+){2}/.test(targetPath) &amp;&amp;
-            Tools.isFileSync(targetPath)
+            /((?: ^|\/)node_modules\/.+){2}/.test(targetPath) &amp;&amp;
+            isFileSync(targetPath)
         ) {
-            const packageDescriptor:null|PackageDescriptor =
+            const packageDescriptor: null | PackageDescriptor =
                 Helper.getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
-                const pathPrefixes:null|RegExpMatchArray = targetPath.match(
-                    /((?:^|.*?\/)node_modules\/)/g
+                const pathPrefixes: null | RegExpMatchArray = targetPath.match(
+                    /((?: ^|.*?\/)node_modules\/)/g
                 )
                 if (pathPrefixes === null)
                     return
                 // Avoid finding the same artefact.
                 pathPrefixes.pop()
-                let index:number = 0
+                let index: number = 0
                 for (const pathPrefix of pathPrefixes) {
                     if (index > 0)
                         pathPrefixes[index] =
                             resolve(pathPrefixes[index - 1], pathPrefix)
                     index += 1
                 }
-                const pathSuffix:string =
-                    targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1')
-                let redundantRequest:null|PlainObject = null
+                const pathSuffix: string =
+                    targetPath.replace(/(?: ^|.*\/)node_modules\/(.+$)/, '$1')
+                let redundantRequest: null | PlainObject = null
                 for (const pathPrefix of pathPrefixes) {
-                    const alternateTargetPath:string =
+                    const alternateTargetPath: string =
                         resolve(pathPrefix, pathSuffix)
-                    if (Tools.isFileSync(alternateTargetPath)) {
-                        const otherPackageDescriptor:null|PackageDescriptor =
+                    if (isFileSync(alternateTargetPath)) {
+                        const otherPackageDescriptor: null | PackageDescriptor =
                             Helper.getClosestPackageDescriptor(
                                 alternateTargetPath
                             )
@@ -735,8 +606,8 @@ new NormalModuleReplacementPlugin(
 /// endregion
 /// region loader helper
 var isFilePathInDependencies = function isFilePathInDependencies(filePath) {
-  filePath = _helper["default"].stripLoader(filePath);
-  return _helper["default"].isFilePathInLocation(filePath, configuration.path.ignore.concat(_module.directoryNames, configuration.loader.directoryNames).map(function (filePath) {
+  filePath = (0, _helper.stripLoader)(filePath);
+  return (0, _helper.isFilePathInLocation)(filePath, configuration.path.ignore.concat(_module.directoryNames, configuration.loader.directoryNames).map(function (filePath) {
     return (0, _path.resolve)(configuration.path.context, filePath);
   }).filter(function (filePath) {
     return !configuration.path.context.startsWith(filePath);
@@ -747,36 +618,47 @@ var scope = {
   configuration: configuration,
   isFilePathInDependencies: isFilePathInDependencies,
   loader: loader,
-  require: currentRequire
+  require: currentRequire !== null &amp;&amp; currentRequire !== void 0 ? currentRequire : require
 };
-var evaluate = function evaluate(object) {
-  var filePath = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : configuration.path.context;
+var evaluateAnThrow = function evaluateAnThrow(object) {
+  var givenOptions = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : {};
+  var options = _objectSpread({
+    filePath: configuration.path.context
+  }, givenOptions);
   if (typeof object === 'string') {
-    var evaluated = _clientnode["default"].stringEvaluate(object, _objectSpread({
-      filePath: filePath
-    }, scope));
+    var evaluated = (0, _clientnode.evaluate)(object, _objectSpread(_objectSpread({
+      filePath: options.filePath
+    }, scope), {}, {
+      type: options.type
+    }));
     if (evaluated.error) throw new Error('Error occurred during processing given expression: ' + evaluated.error);
     return evaluated.result;
   }
   return object;
 };
-var evaluateMapper = function evaluateMapper(value) {
-  return evaluate(value);
+var createEvaluateMapper = function createEvaluateMapper(type) {
+  return function (value) {
+    return evaluateAnThrow(value, {
+      type: type
+    });
+  };
 };
 var evaluateAdditionalLoaderConfiguration = function evaluateAdditionalLoaderConfiguration(loaderConfiguration) {
   return {
     exclude: function exclude(filePath) {
-      return Boolean(evaluate(loaderConfiguration.exclude, filePath));
+      return evaluateAnThrow(loaderConfiguration.exclude, {
+        filePath: filePath
+      });
     },
-    include: loaderConfiguration.include &amp;&amp; evaluate(loaderConfiguration.include) || configuration.path.source.base,
-    test: new RegExp(evaluate(loaderConfiguration.test)),
-    use: evaluate(loaderConfiguration.use)
+    include: loaderConfiguration.include &amp;&amp; evaluateAnThrow(loaderConfiguration.include) || configuration.path.source.base,
+    test: new RegExp(evaluateAnThrow(loaderConfiguration.test)),
+    use: evaluateAnThrow(loaderConfiguration.use)
   };
 };
 var getIncludingPaths = function getIncludingPaths(path) {
-  return _helper["default"].normalizePaths([path].concat(_module.locations.directoryPaths));
+  return (0, _helper.normalizePaths)([path].concat(_module.locations.directoryPaths));
 };
-var cssUse = _module.preprocessor.cascadingStyleSheet.additional.pre.map(evaluateMapper).concat({
+var cssUse = _module.preprocessor.cascadingStyleSheet.additional.pre.map(createEvaluateMapper('css')).concat({
   loader: _module.style.loader,
   options: _module.style.options || {}
 }, {
@@ -784,7 +666,7 @@ var cssUse = _module.preprocessor.cascadingStyleSheet.additional.pre.map(evaluat
   options: _module.cascadingStyleSheet.options || {}
 }, _module.preprocessor.cascadingStyleSheet.loader ? {
   loader: _module.preprocessor.cascadingStyleSheet.loader,
-  options: _clientnode["default"].extend(true, optionalRequire('postcss') ? {
+  options: (0, _clientnode.extend)(true, optionalRequire('postcss') ? {
     postcssOptions: {
       /*
           NOTE: Some plugins like "postcss-import" are
@@ -793,7 +675,7 @@ var cssUse = _module.preprocessor.cascadingStyleSheet.additional.pre.map(evaluat
       */
       plugins: [].concat(postcssImport ? postcssImport({
         root: configuration.path.context
-      }) : [], _module.preprocessor.cascadingStyleSheet.additional.plugins.pre.map(evaluateMapper),
+      }) : [], _module.preprocessor.cascadingStyleSheet.additional.plugins.pre.map(createEvaluateMapper('css.postcss')),
       /*
           NOTE: Checking path doesn't work if fonts
           are referenced in libraries provided in
@@ -814,7 +696,7 @@ var cssUse = _module.preprocessor.cascadingStyleSheet.additional.pre.map(evaluat
       }) : [], postcssSprites ? postcssSprites({
         filterBy: function filterBy() {
           return new Promise(function (resolve, reject) {
-            return (configuration.files.compose.image ? resolve : reject)();
+            (configuration.files.compose.image ? resolve : reject)();
           });
         },
         hooks: {
@@ -829,93 +711,105 @@ var cssUse = _module.preprocessor.cascadingStyleSheet.additional.pre.map(evaluat
               (e.g. linear gradient instead).
           */
           onUpdateRule: function onUpdateRule(rule, token, image) {
-            if (token.value.includes(token.text)) updateRule(rule, token, image);else token.cloneAfter({
+            if (updateRule) if (token.value.includes(token.text)) updateRule(rule, token, image);else token.cloneAfter({
               type: 'decl',
-              prop: 'background-image',
+              prop: 'background-' + 'image',
               value: token.value
             });
           }
         },
         stylesheetPath: configuration.path.source.asset.cascadingStyleSheet,
         spritePath: configuration.path.source.asset.image
-      }) : [], _module.preprocessor.cascadingStyleSheet.additional.plugins.post.map(evaluateMapper), _module.optimizer.cssnano &amp;&amp; postcssCSSnano ? postcssCSSnano(_module.optimizer.cssnano) : [])
+      }) : [], _module.preprocessor.cascadingStyleSheet.additional.plugins.post.map(createEvaluateMapper('css.postcss')), _module.optimizer.cssnano &amp;&amp; postcssCSSnano ? postcssCSSnano(_module.optimizer.cssnano) : [])
     }
   } : {}, _module.preprocessor.cascadingStyleSheet.options || {})
-} : [], _module.preprocessor.cascadingStyleSheet.additional.post.map(evaluateMapper));
+} : [], _module.preprocessor.cascadingStyleSheet.additional.post.map(createEvaluateMapper('css')));
 var genericLoader = {
   // Convert to compatible native web types.
   // region generic template
   ejs: {
     exclude: function exclude(filePath) {
-      return _helper["default"].normalizePaths(configuration.files.html.concat(configuration.files.defaultHTML).map(function (htmlConfiguration) {
+      return (0, _helper.normalizePaths)(configuration.files.html.concat(configuration.files.defaultHTML).map(function (htmlConfiguration) {
         return htmlConfiguration.template.filePath;
-      })).includes(filePath) || _module.preprocessor.ejs.exclude === null ? false : Boolean(evaluate(_module.preprocessor.ejs.exclude, filePath));
+      })).includes(filePath) || _module.preprocessor.ejs.exclude === null ? false : evaluateAnThrow(_module.preprocessor.ejs.exclude, {
+        filePath: filePath
+      });
     },
     include: getIncludingPaths(configuration.path.source.asset.template),
     test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
-    use: _module.preprocessor.ejs.additional.pre.map(evaluateMapper).concat({
-      loader: 'file?name=[path][name]' + ((_clientnode["default"].isPlainObject(_module.preprocessor.ejs.options) ? _module.preprocessor.ejs.options : {
-        compileSteps: 2
-      }).compileSteps % 2 ? '.js' : '') + "?".concat(configuration.hashAlgorithm, "=[contenthash]")
-    }, {
-      loader: 'extract'
-    }, {
+    use: _module.preprocessor.ejs.additional.pre.map(createEvaluateMapper('ejs')).concat({
       loader: _module.preprocessor.ejs.loader,
-      options: _module.preprocessor.ejs.options || {}
-    }, _module.preprocessor.ejs.additional.post.map(evaluateMapper))
+      options: (0, _clientnode.extend)(true, _module.preprocessor.ejs.options || {}, {
+        compress: {
+          html: false
+        }
+      })
+    }, _module.preprocessor.ejs.additional.post.map(createEvaluateMapper('ejs')))
   },
   // endregion
   // region script
   script: {
     exclude: function exclude(filePath) {
-      return Boolean(evaluate(_module.preprocessor.javaScript.exclude, filePath));
+      return evaluateAnThrow(_module.preprocessor.javaScript.exclude, {
+        filePath: filePath,
+        type: 'script'
+      });
     },
     include: function include(filePath) {
-      var result = evaluate(_module.preprocessor.javaScript.include, filePath);
+      var result = evaluateAnThrow(_module.preprocessor.javaScript.include, {
+        filePath: filePath,
+        type: 'script'
+      });
       if ([null, undefined].includes(result)) {
-        var _iterator12 = _createForOfIteratorHelper(getIncludingPaths(configuration.path.source.asset.javaScript)),
-          _step12;
+        var _iterator0 = _createForOfIteratorHelper(getIncludingPaths(configuration.path.source.asset.javaScript)),
+          _step0;
         try {
-          for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
-            var includePath = _step12.value;
+          for (_iterator0.s(); !(_step0 = _iterator0.n()).done;) {
+            var includePath = _step0.value;
             if (filePath.startsWith(includePath)) return true;
           }
         } catch (err) {
-          _iterator12.e(err);
+          _iterator0.e(err);
         } finally {
-          _iterator12.f();
+          _iterator0.f();
         }
         return false;
       }
       return Boolean(result);
     },
     test: new RegExp(_module.preprocessor.javaScript.regularExpression, 'i'),
-    use: _module.preprocessor.javaScript.additional.pre.map(evaluateMapper).concat({
+    use: _module.preprocessor.javaScript.additional.pre.map(createEvaluateMapper('script')).concat({
       loader: _module.preprocessor.javaScript.loader,
       options: _module.preprocessor.javaScript.options || {}
-    }, _module.preprocessor.javaScript.additional.post.map(evaluateMapper))
+    }, _module.preprocessor.javaScript.additional.post.map(createEvaluateMapper('script')))
   },
   // endregion
   // region html template
   html: {
     // NOTE: This is only for the main entry template.
     main: {
-      test: new RegExp('^' + _clientnode["default"].stringEscapeRegularExpressions(configuration.files.defaultHTML.template.filePath) + '(?:\\?.*)?$'),
+      test: new RegExp('^' + (0, _clientnode.escapeRegularExpressions)(configuration.files.defaultHTML.template.filePath) + '(?:\\?.*)?$'),
       use: configuration.files.defaultHTML.template.use
     },
     ejs: {
       exclude: function exclude(filePath) {
-        return _helper["default"].normalizePaths(configuration.files.html.concat(configuration.files.defaultHTML).map(function (htmlConfiguration) {
+        return (0, _helper.normalizePaths)(configuration.files.html.concat(configuration.files.defaultHTML).map(function (htmlConfiguration) {
           return htmlConfiguration.template.filePath;
-        })).includes(filePath) || (_module.preprocessor.html.exclude === null ? false : Boolean(evaluate(_module.preprocessor.html.exclude, filePath)));
+        })).includes(filePath) || (_module.preprocessor.html.exclude === null ? false : evaluateAnThrow(_module.preprocessor.html.exclude, {
+          filePath: filePath,
+          type: 'html.ejs'
+        }));
       },
       include: configuration.path.source.asset.template,
       test: /\.html\.ejs(?:\?.*)?$/i,
-      use: _module.preprocessor.html.additional.pre.map(evaluateMapper).concat({
-        loader: 'file?name=' + (0, _path.join)((0, _path.relative)(configuration.path.target.asset.base, configuration.path.target.asset.template), '[name]' + ((_clientnode["default"].isPlainObject(_module.preprocessor.html.options) ? _module.preprocessor.html.options : {
-          compileSteps: 2
-        }).compileSteps % 2 ? '.js' : '') + "?".concat(configuration.hashAlgorithm, "=[contenthash]"))
-      }, (_clientnode["default"].isPlainObject(_module.preprocessor.html.options) ? _module.preprocessor.html.options : {
+      use: _module.preprocessor.html.additional.pre.map(createEvaluateMapper('html.ejs')).concat(
+      /*
+          We might need to evaluate ejs before we are able to
+          parse html beforhand. If not we parse it as html
+          directly.
+      */
+
+      ((0, _clientnode.isPlainObject)(_module.preprocessor.html.options) ? _module.preprocessor.html.options : {
         compileSteps: 2
       }).compileSteps % 2 ? [] : [{
         loader: 'extract'
@@ -925,24 +819,27 @@ var genericLoader = {
       }], {
         loader: _module.preprocessor.html.loader,
         options: _module.preprocessor.html.options || {}
-      }, _module.preprocessor.html.additional.post.map(evaluateMapper))
+      }, _module.preprocessor.html.additional.post.map(createEvaluateMapper('html.ejs')))
     },
     html: {
       exclude: function exclude(filePath) {
-        return _helper["default"].normalizePaths(configuration.files.html.concat(configuration.files.defaultHTML).map(function (htmlConfiguration) {
+        return (0, _helper.normalizePaths)(configuration.files.html.concat(configuration.files.defaultHTML).map(function (htmlConfiguration) {
           return htmlConfiguration.template.filePath;
-        })).includes(filePath) || (_module.html.exclude === null ? true : Boolean(evaluate(_module.html.exclude, filePath)));
+        })).includes(filePath) || (_module.html.exclude === null ? true : evaluateAnThrow(_module.html.exclude, {
+          filePath: filePath,
+          type: 'html'
+        }));
       },
       include: configuration.path.source.asset.template,
       test: /\.html(?:\?.*)?$/i,
-      use: _module.html.additional.pre.map(evaluateMapper).concat({
+      use: _module.html.additional.pre.map(createEvaluateMapper('html')).concat({
         loader: 'file?name=' + (0, _path.join)((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset.template), "[name][ext]?".concat(configuration.hashAlgorithm, "=") + '[contenthash]')
       }, {
         loader: 'extract'
       }, {
         loader: _module.html.loader,
         options: _module.html.options || {}
-      }, _module.html.additional.post.map(evaluateMapper))
+      }, _module.html.additional.post.map(createEvaluateMapper('html')))
     }
   },
   // endregion
@@ -950,28 +847,34 @@ var genericLoader = {
   // region style
   style: {
     exclude: function exclude(filePath) {
-      return _module.cascadingStyleSheet.exclude === null ? isFilePathInDependencies(filePath) : Boolean(evaluate(_module.cascadingStyleSheet.exclude, filePath));
+      return _module.cascadingStyleSheet.exclude === null ? isFilePathInDependencies(filePath) : evaluateAnThrow(_module.cascadingStyleSheet.exclude, {
+        filePath: filePath,
+        type: 'style'
+      });
     },
     include: function include(filePath) {
-      var result = evaluate(_module.cascadingStyleSheet.include, filePath);
+      var result = evaluateAnThrow(_module.cascadingStyleSheet.include, {
+        filePath: filePath,
+        type: 'style'
+      });
       if ([null, undefined].includes(result)) {
-        var _iterator13 = _createForOfIteratorHelper(getIncludingPaths(configuration.path.source.asset.cascadingStyleSheet)),
-          _step13;
+        var _iterator1 = _createForOfIteratorHelper(getIncludingPaths(configuration.path.source.asset.cascadingStyleSheet)),
+          _step1;
         try {
-          for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
-            var includePath = _step13.value;
+          for (_iterator1.s(); !(_step1 = _iterator1.n()).done;) {
+            var includePath = _step1.value;
             if (filePath.startsWith(includePath)) return true;
           }
         } catch (err) {
-          _iterator13.e(err);
+          _iterator1.e(err);
         } finally {
-          _iterator13.f();
+          _iterator1.f();
         }
         return false;
       }
       return Boolean(result);
     },
-    test: /\.s?css(?:\?.*)?$/i,
+    test: /\.s?css(?: \?.*)?$/i,
     use: cssUse
   },
   // endregion
@@ -980,23 +883,29 @@ var genericLoader = {
   font: {
     eot: {
       exclude: function exclude(filePath) {
-        return _module.optimizer.font.eot.exclude === null ? false : Boolean(evaluate(_module.optimizer.font.eot.exclude, filePath));
+        return _module.optimizer.font.eot.exclude === null ? false : evaluateAnThrow(_module.optimizer.font.eot.exclude, {
+          filePath: filePath,
+          type: 'font.eot'
+        });
       },
       generator: {
         filename: (0, _path.join)((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset.font), '[name][ext]') + "?".concat(configuration.hashAlgorithm, "=[contenthash]")
       },
-      test: /\.eot(?:\?.*)?$/i,
+      test: /\.eot(?: \?.*)?$/i,
       type: 'asset/resource',
       parser: {
         dataUrlCondition: {
           maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
         }
       },
-      use: _module.optimizer.font.eot.loader.map(evaluateMapper)
+      use: _module.optimizer.font.eot.loader.map(createEvaluateMapper('font.eot'))
     },
     svg: {
       exclude: function exclude(filePath) {
-        return _module.optimizer.font.svg.exclude === null ? false : Boolean(evaluate(_module.optimizer.font.svg.exclude, filePath));
+        return _module.optimizer.font.svg.exclude === null ? false : evaluateAnThrow(_module.optimizer.font.svg.exclude, {
+          filePath: filePath,
+          type: 'svg'
+        });
       },
       include: configuration.path.source.asset.font,
       generator: {
@@ -1008,18 +917,21 @@ var genericLoader = {
           maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
         }
       },
-      test: /\.svg(?:\?.*)?$/i,
+      test: /\.svg(?: \?.*)?$/i,
       type: 'asset/resource',
-      use: _module.optimizer.font.svg.loader.map(evaluateMapper)
+      use: _module.optimizer.font.svg.loader.map(createEvaluateMapper('font.svg'))
     },
     ttf: {
       exclude: function exclude(filePath) {
-        return _module.optimizer.font.ttf.exclude === null ? false : Boolean(evaluate(_module.optimizer.font.ttf.exclude, filePath));
+        return _module.optimizer.font.ttf.exclude === null ? false : evaluateAnThrow(_module.optimizer.font.ttf.exclude, {
+          filePath: filePath,
+          type: 'ttf'
+        });
       },
       generator: {
         filename: (0, _path.join)((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset.font), '[name][ext]') + "?".concat(configuration.hashAlgorithm, "=[contenthash]")
       },
-      test: /\.ttf(?:\?.*)?$/i,
+      test: /\.ttf(?: \?.*)?$/i,
       type: 'asset/resource',
       mimetype: 'application/octet-stream',
       parser: {
@@ -1027,50 +939,59 @@ var genericLoader = {
           maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
         }
       },
-      use: _module.optimizer.font.ttf.loader.map(evaluateMapper)
+      use: _module.optimizer.font.ttf.loader.map(createEvaluateMapper('font.ttf'))
     },
     woff: {
       exclude: function exclude(filePath) {
-        return _module.optimizer.font.woff.exclude === null ? false : Boolean(evaluate(_module.optimizer.font.woff.exclude, filePath));
+        return _module.optimizer.font.woff.exclude === null ? false : evaluateAnThrow(_module.optimizer.font.woff.exclude, {
+          filePath: filePath,
+          type: 'woff'
+        });
       },
       generator: {
         filename: (0, _path.join)((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset.font), '[name][ext]') + "?".concat(configuration.hashAlgorithm, "=[contenthash]")
       },
-      test: /\.woff2?(?:\?.*)?$/i,
+      test: /\.woff2?(?: \?.*)?$/i,
       type: 'asset/resource',
       parser: {
         dataUrlCondition: {
           maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
         }
       },
-      use: _module.optimizer.font.woff.loader.map(evaluateMapper)
+      use: _module.optimizer.font.woff.loader.map(createEvaluateMapper('font.woff'))
     }
   },
   // endregion
   // region image
   image: {
     exclude: function exclude(filePath) {
-      return _module.optimizer.image.exclude === null ? isFilePathInDependencies(filePath) : Boolean(evaluate(_module.optimizer.image.exclude, filePath));
+      return _module.optimizer.image.exclude === null ? isFilePathInDependencies(filePath) : evaluateAnThrow(_module.optimizer.image.exclude, {
+        filePath: filePath,
+        type: 'image'
+      });
     },
     generator: {
       filename: (0, _path.join)((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset.image), '[name][ext]') + "?".concat(configuration.hashAlgorithm, "=[contenthash]")
     },
     include: configuration.path.source.asset.image,
-    test: /\.(?:gif|ico|jpg|png|svg)(?:\?.*)?$/i,
+    test: /\.(?: gif|ico|jpg|png|svg)(?: \?.*)?$/i,
     type: 'asset/resource',
     parser: {
       dataUrlCondition: {
         maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
       }
     },
-    use: _module.optimizer.image.loader.map(evaluateMapper)
+    use: _module.optimizer.image.loader.map(createEvaluateMapper('image'))
   },
   // endregion
   // region data
   data: {
     exclude: function exclude(filePath) {
       if (typeof filePath !== 'string') return false;
-      return configuration.extensions.file.internal.includes((0, _path.extname)(_helper["default"].stripLoader(filePath))) || (_module.optimizer.data.exclude === null ? isFilePathInDependencies(filePath) : Boolean(evaluate(_module.optimizer.data.exclude, filePath)));
+      return configuration.extensions.file.internal.includes((0, _path.extname)((0, _helper.stripLoader)(filePath))) || (_module.optimizer.data.exclude === null ? isFilePathInDependencies(filePath) : evaluateAnThrow(_module.optimizer.data.exclude, {
+        filePath: filePath,
+        type: 'data'
+      }));
     },
     generator: {
       filename: (0, _path.join)((0, _path.relative)(configuration.path.target.base, configuration.path.target.asset.data), '[name][ext]') + "?".concat(configuration.hashAlgorithm, "=[contenthash]")
@@ -1082,12 +1003,11 @@ var genericLoader = {
         maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
       }
     },
-    use: _module.optimizer.data.loader.map(evaluateMapper)
+    use: _module.optimizer.data.loader.map(createEvaluateMapper('data'))
   }
   // endregion
 };
-
-_clientnode["default"].extend(loader, genericLoader);
+(0, _clientnode.extend)(loader, genericLoader);
 if (configuration.files.compose.cascadingStyleSheet &amp;&amp; plugins.MiniCSSExtract) {
   /*
       NOTE: We have to remove the client side javascript hmr style loader
@@ -1105,8 +1025,8 @@ if (configuration.files.compose.cascadingStyleSheet &amp;&amp; plugins.MiniCSSEx
     last module which would shadow main module (e.g. index).
     So we inject live reload and hot module replacement manually.
 */
-if (htmlAvailable &amp;&amp; configuration.debug &amp;&amp; configuration.development.server.liveReload &amp;&amp; !configuration.injection.entry.normalized.developmentHandler &amp;&amp; ['serve', 'test:browser'].includes(configuration.givenCommandLineArguments[2])) {
-  configuration.injection.entry.normalized.developmentHandler = ['webpack-dev-server/client/index.js?live-reload=true&amp;hot=' + "".concat(configuration.development.server.hot ? 'true' : 'false', "&amp;http") + "".concat(configuration.development.server.https ? 's' : '', "://") + "".concat(configuration.development.server.host, ":") + "".concat(configuration.development.server.port)];
+if (htmlAvailable &amp;&amp; configuration.debug &amp;&amp; configuration.development.server.liveReload &amp;&amp; !Object.prototype.hasOwnProperty.call(configuration.injection.entry.normalized, 'developmentHandler') &amp;&amp; (configuration.development.includeClient || typeof configuration.development.includeClient !== 'boolean' &amp;&amp; ['serve', 'test:browser'].includes(configuration.givenCommandLineArguments[2]))) {
+  configuration.injection.entry.normalized.developmentHandler = ['webpack-dev-server/client/index.js?' + 'live-reload=true' + "&amp;hot=".concat(configuration.development.server.hot ? 'true' : 'false') + "&amp;http".concat(configuration.development.server.https ? 's' : '', "://") + "".concat(configuration.development.server.host, ": ") + String(configuration.development.server.port)];
   if (configuration.development.server.hot) {
     configuration.injection.entry.normalized.developmentHandler.push('webpack/hot/dev-server.js');
     configuration.development.server.hot = false;
@@ -1116,11 +1036,11 @@ if (htmlAvailable &amp;&amp; configuration.debug &amp;&amp; configuration.develo
 /// endregion
 // endregion
 // region plugins
-var _iterator14 = _createForOfIteratorHelper(configuration.plugins),
-  _step14;
+var _iterator10 = _createForOfIteratorHelper(configuration.plugins),
+  _step10;
 try {
-  for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-    var pluginConfiguration = _step14.value;
+  for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+    var pluginConfiguration = _step10.value;
     var _plugin = optionalRequire(pluginConfiguration.name.module);
     if (_plugin) pluginInstances.push((0, _construct2["default"])(_plugin[pluginConfiguration.name.initializer], (0, _toConsumableArray2["default"])(pluginConfiguration.parameters)));else console.warn("Configured plugin module \"".concat(pluginConfiguration.name.module, "\" ") + 'could not be loaded.');
   }
@@ -1129,23 +1049,17 @@ try {
   // NOTE: This plugin should be loaded at last to ensure that all emitted images
   // ran through.
 } catch (err) {
-  _iterator14.e(err);
+  _iterator10.e(err);
 } finally {
-  _iterator14.f();
+  _iterator10.f();
 }
 if (!_module.optimizer.minimizer) {
   _module.optimizer.minimizer = [];
-  if (plugins.Terser)
-    /*
-        HTML-Templates shouldn't be transformed via terser to avoid html
-        webpack plugin throwing to not get markup as intermediate result.
-    */
-    _module.optimizer.minimizer.push(new plugins.Terser({
-      exclude: /\\.html(?:\\.js)?(?:\\?.*)?$/,
-      extractComments: false,
-      parallel: true
-    }));
-  if (plugins.ImageMinimizer) _module.optimizer.minimizer.push(new plugins.ImageMinimizer(_clientnode["default"].extend(true, {
+  if (plugins.Terser) _module.optimizer.minimizer.push(new plugins.Terser({
+    extractComments: false,
+    parallel: true
+  }));
+  if (plugins.ImageMinimizer) _module.optimizer.minimizer.push(new plugins.ImageMinimizer((0, _clientnode.extend)(true, {
     minimizer: {
       implementation: plugins.ImageMinimizer.imageminMinify
     }
@@ -1154,17 +1068,17 @@ if (!_module.optimizer.minimizer) {
 // endregion
 // region configuration
 var customConfiguration = {};
-if ((_configuration$path$c = configuration.path.configuration) !== null &amp;&amp; _configuration$path$c !== void 0 &amp;&amp; _configuration$path$c.json) try {
+if (configuration.path.configuration.json) try {
   require.resolve(configuration.path.configuration.json);
   try {
     customConfiguration = currentRequire(configuration.path.configuration.json);
   } catch (error) {
-    console.debug('Importing provided json webpack configuration file path ' + "under \"".concat(configuration.path.configuration.json, "\" failed: ") + _clientnode["default"].represent(error));
+    console.debug('Importing provided json webpack configuration file path ' + "under \"".concat(configuration.path.configuration.json, "\" failed: ") + (0, _clientnode.represent)(error));
   }
-} catch (error) {
+} catch (_unused2) {
   console.debug('Optional configuration file "' + "".concat(configuration.path.configuration.json, "\" not available."));
 }
-var webpackConfiguration = exports.webpackConfiguration = _clientnode["default"].extend(true, {
+var webpackConfiguration = exports.webpackConfiguration = (0, _clientnode.extend)(true, {
   bail: !configuration.givenCommandLineArguments.includes('--watch'),
   context: configuration.path.context,
   devtool: configuration.development.tool,
@@ -1181,9 +1095,9 @@ var webpackConfiguration = exports.webpackConfiguration = _clientnode["default"]
     extensions: configuration.extensions.file.internal,
     mainFields: configuration["package"].main.propertyNames,
     mainFiles: configuration["package"].main.fileNames,
-    modules: _helper["default"].normalizePaths(_module.directoryNames),
+    modules: (0, _helper.normalizePaths)(_module.directoryNames),
     symlinks: _module.resolveSymlinks,
-    unsafeCache: Boolean((_configuration$cache = configuration.cache) === null || _configuration$cache === void 0 ? void 0 : _configuration$cache.unsafe)
+    unsafeCache: Boolean((_configuration$cache$ = (_configuration$cache = configuration.cache) === null || _configuration$cache === void 0 ? void 0 : _configuration$cache.unsafe) !== null &amp;&amp; _configuration$cache$ !== void 0 ? _configuration$cache$ : (_configuration$cache2 = configuration.cache) === null || _configuration$cache2 === void 0 ? void 0 : _configuration$cache2.main)
   },
   resolveLoader: {
     alias: configuration.loader.aliases,
@@ -1226,7 +1140,7 @@ var webpackConfiguration = exports.webpackConfiguration = _clientnode["default"]
     chunkIds: configuration.debug ? 'named' : 'total-size',
     moduleIds: configuration.debug ? 'named' : 'size',
     // region common chunks
-    splitChunks: _clientnode["default"].extend(true, !configuration.injection.chunks || configuration.targetTechnology.payload === 'node' || configuration.givenCommandLineArguments[2] === 'test' ? {
+    splitChunks: (0, _clientnode.extend)(true, !configuration.injection.chunks || configuration.targetTechnology.payload === 'node' || configuration.givenCommandLineArguments[2] === 'test' ? {
       cacheGroups: {
         "default": false,
         defaultVendors: false
@@ -1236,9 +1150,9 @@ var webpackConfiguration = exports.webpackConfiguration = _clientnode["default"]
       cacheGroups: {
         defaultVendors: {
           chunks: function chunks(chunk) {
-            if ((0, _typeof2["default"])(configuration.inPlace.javaScript) === 'object' &amp;&amp; configuration.inPlace.javaScript !== null) for (var _i10 = 0, _Object$keys = Object.keys(configuration.inPlace.javaScript); _i10 &lt; _Object$keys.length; _i10++) {
-              var _name4 = _Object$keys[_i10];
-              if (_name4 === '*' || _name4 === chunk.name) return false;
+            if (configuration.inPlace.javaScript) for (var _i7 = 0, _Object$keys = Object.keys(configuration.inPlace.javaScript); _i7 &lt; _Object$keys.length; _i7++) {
+              var _name3 = _Object$keys[_i7];
+              if (_name3 === '*' || _name3 === chunk.name) return false;
             }
             return true;
           },
@@ -1248,7 +1162,7 @@ var webpackConfiguration = exports.webpackConfiguration = _clientnode["default"]
         }
       }
     }, configuration.injection.chunks)
-  }, _clientnode["default"].mask(_module.optimizer, {
+  }, (0, _clientnode.mask)(_module.optimizer, {
     exclude: {
       babelMinify: true,
       cssnano: true,
@@ -1259,34 +1173,35 @@ var webpackConfiguration = exports.webpackConfiguration = _clientnode["default"]
     }
   })),
   plugins: pluginInstances
-}, (_configuration$cache2 = configuration.cache) !== null &amp;&amp; _configuration$cache2 !== void 0 &amp;&amp; _configuration$cache2.main ? {
+}, (_configuration$cache3 = configuration.cache) !== null &amp;&amp; _configuration$cache3 !== void 0 &amp;&amp; _configuration$cache3.main ? {
   cache: configuration.cache.main
 } : {}, configuration.webpack, customConfiguration);
-if (configuration.nodeENV !== null) webpackConfiguration.optimization.nodeEnv = configuration.nodeENV;
-if (!Array.isArray(_module.skipParseRegularExpressions) || _module.skipParseRegularExpressions.length) webpackConfiguration.module.noParse = _module.skipParseRegularExpressions;
-if ((_configuration$path$c2 = configuration.path.configuration) !== null &amp;&amp; _configuration$path$c2 !== void 0 &amp;&amp; _configuration$path$c2.javaScript) try {
+if (configuration.nodeENV !== null) if ((0, _typeof2["default"])(webpackConfiguration.optimization) === 'object') webpackConfiguration.optimization.nodeEnv = configuration.nodeENV;else webpackConfiguration.optimization = {
+  nodeEnv: configuration.nodeENV
+};
+if (!Array.isArray(_module.skipParseRegularExpressions) || _module.skipParseRegularExpressions.length) if ((0, _typeof2["default"])(webpackConfiguration.module) === 'object') webpackConfiguration.module.noParse = _module.skipParseRegularExpressions;else webpackConfiguration.module = {
+  noParse: _module.skipParseRegularExpressions
+};
+if (configuration.path.configuration.javaScript) try {
   require.resolve(configuration.path.configuration.javaScript);
-  var _result3 = optionalRequire(configuration.path.configuration.javaScript);
-  if (_clientnode["default"].isPlainObject(_result3)) {
-    if (Object.prototype.hasOwnProperty.call(_result3, 'replaceWebOptimizer')) exports.webpackConfiguration = webpackConfiguration = _result3.replaceWebOptimizer;else _clientnode["default"].extend(true, webpackConfiguration, _result3);
+  var result = optionalRequire(configuration.path.configuration.javaScript);
+  if ((0, _clientnode.isPlainObject)(result)) {
+    if (Object.prototype.hasOwnProperty.call(result, 'replaceWebOptimizer')) exports.webpackConfiguration = webpackConfiguration = result.replaceWebOptimizer;else (0, _clientnode.extend)(true, webpackConfiguration, result);
   } else console.debug('Failed to load given JavaScript configuration file path "' + "".concat(configuration.path.configuration.javaScript, "\"."));
-} catch (error) {
+} catch (_unused3) {
   console.debug('Optional configuration file script "' + "".concat(configuration.path.configuration.javaScript, "\" not available."));
 }
 if (configuration.showConfiguration) {
-  console.info('Using internal configuration:', _util["default"].inspect(configuration, {
+  console.info('Using internal configuration: ', _util["default"].inspect(configuration, {
     depth: null
   }));
   console.info('-----------------------------------------------------------');
-  console.info('Using webpack configuration:', _util["default"].inspect(webpackConfiguration, {
+  console.info('Using webpack configuration: ', _util["default"].inspect(webpackConfiguration, {
     depth: null
   }));
 }
 // endregion
-var _default = exports["default"] = webpackConfiguration; // region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregion
+var _default = exports["default"] = webpackConfiguration;
 </code></pre>
         </article>
     </section>
@@ -1297,13 +1212,13 @@ var _default = exports["default"] = webpackConfiguration; // region vim modline
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-jestEnvironmentBrowser.html">jestEnvironmentBrowser</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Mon Nov 06 2023 14:54:34 GMT+0100 (GMT+01:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jun 27 2025 23:24:33 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>
