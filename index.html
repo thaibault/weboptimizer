@@ -107,34 +107,35 @@ npm run serve
     ...
 },
 ...
-</code></pre><p>You can even execute scripts to determine a value:</p><p>``JSON … “webOptimizer”: { … “path”: { … “source”: { … “base”: “/“, “asset”: { … “template”: { “<strong>execute</strong>“: “test = self.path.source.base; if (test.endsWith(‘js’)) return ‘bar/‘;return ‘foo/‘“ }, … }, … }, … }, … }, …</p><pre><code>
-For all available configuration possibilities please have a look at the
-**package.json** file in this project since these values will be extended on
-runtime.
-
-Additionally its even possible to overwrite any value on runtime via a
-complete generic command line interface: The last argument should evaluate to
-a javaScript object which will be used as source for extending the default
-behavior. Any javaScript will be supported:
-
-    npm run build '{module:{preprocessor:{javaScript:{loader:"babel"}}}}'
-
-If you're using weboptimizer in a toolchain were none printable or none unicode
-compatible symbols should be used (for example content which should replace
-placeholder) you can encode your javaScript expression as base64 code:
-
-    npm run build '{module:{preprocessor:{ejs:{locals:{name:'häns'}}}}}'
-
-    # is the same as:
-
-    npm run build 'e21vZHVsZTp7cHJlcHJvY2Vzc29yOntwdWc6e2xvY2Fsczp7bmFtZTonaMOkbnMnfX19fX0='
-
-There is a static tool [clientnode](https://torben.website/clientNode) and
-helper instance provided to each evaluation or execution context within the
-package.json (see the API-Documentation, link above, for more details):
-
-```JSON
+</code></pre><p>You can even execute scripts to determine a value:</p><pre><code class="language-JSON">...
+"webOptimizer": {
+    ...
+    "path": {
+        ...
+        "source": {
+            ...
+            "base": "/",
+            "asset": {
+                ...
+                "template": {
+                    "__execute__": "test = self.path.source.base; if (test.endsWith('js')) return 'bar/';return 'foo/'"
+                },
+                ...
+            },
+            ...
+        },
+        ...
+    },
+    ...
+},
 ...
+</code></pre><p>For all available configuration possibilities please have a look at the <strong>package.json</strong> file in this project since these values will be extended on runtime.</p><p>Additionally its even possible to overwrite any value on runtime via a complete generic command line interface: The last argument should evaluate to a javaScript object which will be used as source for extending the default behavior. Any javaScript will be supported:</p><pre><code>npm run build '{module:{preprocessor:{javaScript:{loader:"babel"}}}}'
+</code></pre><p>If you’re using weboptimizer in a toolchain were none printable or none unicode compatible symbols should be used (for example content which should replace placeholder) you can encode your javaScript expression as base64 code:</p><pre><code>npm run build '{module:{preprocessor:{ejs:{locals:{name:'häns'}}}}}'
+
+# is the same as:
+
+npm run build 'e21vZHVsZTp7cHJlcHJvY2Vzc29yOntwdWc6e2xvY2Fsczp7bmFtZTonaMOkbnMnfX19fX0='
+</code></pre><p>There is a static tool <a href="https://torben.website/clientNode">clientnode</a> and helper instance provided to each evaluation or execution context within the package.json (see the API-Documentation, link above, for more details):</p><pre><code class="language-JSON">...
 "webOptimizer": {
     ...
     "libraryName": {"__evaluate__": indicator.isPlainObject(self.name) ? helper.stripLoader(self.request) : 'random'},
