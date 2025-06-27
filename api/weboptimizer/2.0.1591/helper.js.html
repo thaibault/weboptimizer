@@ -1,4 +1,32 @@
-// #!/usr/bin/env babel-node
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: helper.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: helper.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
 /** @module helper */
 'use strict';
@@ -26,11 +54,11 @@ var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/de
 var _clientnode = require("clientnode");
 var _fs = require("fs");
 var _path = require("path");
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r &amp;&amp; (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r &lt; arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol &amp;&amp; r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e &amp;&amp; r &amp;&amp; "number" == typeof r.length) { t &amp;&amp; (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t &amp;&amp; r.constructor &amp;&amp; (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) &amp;&amp; (a = r.length); for (var e = 0, n = Array(a); e &lt; a; e++) n[e] = r[e]; return n; }
 // endregion
 // region constants
 var KNOWN_FILE_EXTENSIONS = exports.KNOWN_FILE_EXTENSIONS = ['js', 'ts', 'json', 'css', 'eot', 'gif', 'html', 'ico', 'jpg', 'png', 'ejs', 'svg', 'ttf', 'woff', '.woff2'];
@@ -95,7 +123,7 @@ var normalizePaths = exports.normalizePaths = function normalizePaths(paths) {
  * @returns Processed file path.
  */
 var renderFilePathTemplate = exports.renderFilePathTemplate = function renderFilePathTemplate(template) {
-  var scope = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var scope = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : {};
   scope = _objectSpread({
     '[chunkhash]': '.__dummy__',
     '[contenthash]': '.__dummy__',
@@ -104,7 +132,7 @@ var renderFilePathTemplate = exports.renderFilePathTemplate = function renderFil
     '[name]': '.__dummy__'
   }, scope);
   var filePath = template;
-  for (var _i = 0, _Object$entries = Object.entries(scope); _i < _Object$entries.length; _i++) {
+  for (var _i = 0, _Object$entries = Object.entries(scope); _i &lt; _Object$entries.length; _i++) {
     var _Object$entries$_i = (0, _slicedToArray2["default"])(_Object$entries[_i], 2),
       placeholderName = _Object$entries$_i[0],
       value = _Object$entries$_i[1];
@@ -124,13 +152,13 @@ var renderFilePathTemplate = exports.renderFilePathTemplate = function renderFil
  * @returns A new resolved request.
  */
 var applyContext = exports.applyContext = function applyContext(request) {
-  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : './';
-  var referencePath = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : './';
-  var aliases = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-  var moduleReplacements = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-  var relativeModuleLocations = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : ['node_modules'];
+  var context = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : './';
+  var referencePath = arguments.length > 2 &amp;&amp; arguments[2] !== undefined ? arguments[2] : './';
+  var aliases = arguments.length > 3 &amp;&amp; arguments[3] !== undefined ? arguments[3] : {};
+  var moduleReplacements = arguments.length > 4 &amp;&amp; arguments[4] !== undefined ? arguments[4] : {};
+  var relativeModuleLocations = arguments.length > 5 &amp;&amp; arguments[5] !== undefined ? arguments[5] : ['node_modules'];
   referencePath = (0, _path.resolve)(referencePath);
-  if (request.startsWith('./') && (0, _path.resolve)(context) !== referencePath) {
+  if (request.startsWith('./') &amp;&amp; (0, _path.resolve)(context) !== referencePath) {
     request = (0, _path.resolve)(context, request);
     var _iterator2 = _createForOfIteratorHelper(relativeModuleLocations),
       _step2;
@@ -194,13 +222,13 @@ var applyContext = exports.applyContext = function applyContext(request) {
  * external one.
  */
 var determineExternalRequest = exports.determineExternalRequest = function determineExternalRequest(request) {
-  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : './';
-  var requestContext = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : './';
-  var normalizedGivenInjection = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-  var relativeExternalModuleLocations = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : ['node_modules'];
-  var aliases = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {};
-  var moduleReplacements = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : {};
-  var extensions = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : {
+  var context = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : './';
+  var requestContext = arguments.length > 2 &amp;&amp; arguments[2] !== undefined ? arguments[2] : './';
+  var normalizedGivenInjection = arguments.length > 3 &amp;&amp; arguments[3] !== undefined ? arguments[3] : {};
+  var relativeExternalModuleLocations = arguments.length > 4 &amp;&amp; arguments[4] !== undefined ? arguments[4] : ['node_modules'];
+  var aliases = arguments.length > 5 &amp;&amp; arguments[5] !== undefined ? arguments[5] : {};
+  var moduleReplacements = arguments.length > 6 &amp;&amp; arguments[6] !== undefined ? arguments[6] : {};
+  var extensions = arguments.length > 7 &amp;&amp; arguments[7] !== undefined ? arguments[7] : {
     file: {
       external: ['.compiled.js', '.js', '.json'],
       internal: KNOWN_FILE_EXTENSIONS.map(function (suffix) {
@@ -208,17 +236,17 @@ var determineExternalRequest = exports.determineExternalRequest = function deter
       })
     }
   };
-  var referencePath = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : './';
-  var pathsToIgnore = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : ['.git'];
-  var relativeModuleLocations = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : ['node_modules'];
-  var packageEntryFileNames = arguments.length > 11 && arguments[11] !== undefined ? arguments[11] : ['index', 'main'];
-  var packageMainPropertyNames = arguments.length > 12 && arguments[12] !== undefined ? arguments[12] : ['main', 'module'];
-  var packageAliasPropertyNames = arguments.length > 13 && arguments[13] !== undefined ? arguments[13] : [];
-  var includePattern = arguments.length > 14 && arguments[14] !== undefined ? arguments[14] : [];
-  var excludePattern = arguments.length > 15 && arguments[15] !== undefined ? arguments[15] : [];
-  var inPlaceNormalLibrary = arguments.length > 16 && arguments[16] !== undefined ? arguments[16] : false;
-  var inPlaceDynamicLibrary = arguments.length > 17 && arguments[17] !== undefined ? arguments[17] : true;
-  var encoding = arguments.length > 18 && arguments[18] !== undefined ? arguments[18] : 'utf-8';
+  var referencePath = arguments.length > 8 &amp;&amp; arguments[8] !== undefined ? arguments[8] : './';
+  var pathsToIgnore = arguments.length > 9 &amp;&amp; arguments[9] !== undefined ? arguments[9] : ['.git'];
+  var relativeModuleLocations = arguments.length > 10 &amp;&amp; arguments[10] !== undefined ? arguments[10] : ['node_modules'];
+  var packageEntryFileNames = arguments.length > 11 &amp;&amp; arguments[11] !== undefined ? arguments[11] : ['index', 'main'];
+  var packageMainPropertyNames = arguments.length > 12 &amp;&amp; arguments[12] !== undefined ? arguments[12] : ['main', 'module'];
+  var packageAliasPropertyNames = arguments.length > 13 &amp;&amp; arguments[13] !== undefined ? arguments[13] : [];
+  var includePattern = arguments.length > 14 &amp;&amp; arguments[14] !== undefined ? arguments[14] : [];
+  var excludePattern = arguments.length > 15 &amp;&amp; arguments[15] !== undefined ? arguments[15] : [];
+  var inPlaceNormalLibrary = arguments.length > 16 &amp;&amp; arguments[16] !== undefined ? arguments[16] : false;
+  var inPlaceDynamicLibrary = arguments.length > 17 &amp;&amp; arguments[17] !== undefined ? arguments[17] : true;
+  var encoding = arguments.length > 18 &amp;&amp; arguments[18] !== undefined ? arguments[18] : 'utf-8';
   context = (0, _path.resolve)(context);
   requestContext = (0, _path.resolve)(requestContext);
   referencePath = (0, _path.resolve)(referencePath);
@@ -237,7 +265,7 @@ var determineExternalRequest = exports.determineExternalRequest = function deter
       resolved or are specified to be external explicitly.
   */
   if (!(filePath || inPlaceNormalLibrary) || (0, _clientnode.isAnyMatching)(resolvedRequest, includePattern)) return applyContext(resolvedRequest, requestContext, referencePath, aliases, moduleReplacements, relativeModuleLocations) || null;
-  for (var _i2 = 0, _Object$values = Object.values(normalizedGivenInjection); _i2 < _Object$values.length; _i2++) {
+  for (var _i2 = 0, _Object$values = Object.values(normalizedGivenInjection); _i2 &lt; _Object$values.length; _i2++) {
     var chunk = _Object$values[_i2];
     var _iterator3 = _createForOfIteratorHelper(chunk),
       _step3;
@@ -276,7 +304,7 @@ var determineExternalRequest = exports.determineExternalRequest = function deter
       loader in their request and aren't part of the current main package or
       have a file extension other than javaScript aware.
   */
-  if (!inPlaceNormalLibrary && (extensions.file.external.length === 0 || filePath && extensions.file.external.includes((0, _path.extname)(filePath)) || !filePath && extensions.file.external.includes('')) && !(inPlaceDynamicLibrary && request.includes('!')) && (!filePath && inPlaceDynamicLibrary || filePath && (!filePath.startsWith(context) || isFilePathInLocation(filePath, externalModuleLocations)))) return applyContext(resolvedRequest, requestContext, referencePath, aliases, moduleReplacements, relativeModuleLocations) || null;
+  if (!inPlaceNormalLibrary &amp;&amp; (extensions.file.external.length === 0 || filePath &amp;&amp; extensions.file.external.includes((0, _path.extname)(filePath)) || !filePath &amp;&amp; extensions.file.external.includes('')) &amp;&amp; !(inPlaceDynamicLibrary &amp;&amp; request.includes('!')) &amp;&amp; (!filePath &amp;&amp; inPlaceDynamicLibrary || filePath &amp;&amp; (!filePath.startsWith(context) || isFilePathInLocation(filePath, externalModuleLocations)))) return applyContext(resolvedRequest, requestContext, referencePath, aliases, moduleReplacements, relativeModuleLocations) || null;
   return null;
 };
 /**
@@ -294,13 +322,13 @@ var determineAssetType = exports.determineAssetType = function determineAssetTyp
     result = type;
     break;
   }
-  if (!result) for (var _i3 = 0, _arr = [paths.source, paths.target]; _i3 < _arr.length; _i3++) {
+  if (!result) for (var _i3 = 0, _arr = [paths.source, paths.target]; _i3 &lt; _arr.length; _i3++) {
     var _type = _arr[_i3];
-    for (var _i4 = 0, _Object$entries2 = Object.entries(_type.asset); _i4 < _Object$entries2.length; _i4++) {
+    for (var _i4 = 0, _Object$entries2 = Object.entries(_type.asset); _i4 &lt; _Object$entries2.length; _i4++) {
       var _Object$entries2$_i = (0, _slicedToArray2["default"])(_Object$entries2[_i4], 2),
         assetType = _Object$entries2$_i[0],
         assetConfiguration = _Object$entries2$_i[1];
-      if (assetType !== 'base' && assetConfiguration && filePath.startsWith(assetConfiguration)) return assetType;
+      if (assetType !== 'base' &amp;&amp; assetConfiguration &amp;&amp; filePath.startsWith(assetConfiguration)) return assetType;
     }
   }
   return result;
@@ -317,11 +345,11 @@ var determineAssetType = exports.determineAssetType = function determineAssetTyp
  * @returns Converted build configuration.
  */
 var resolveBuildConfigurationFilePaths = exports.resolveBuildConfigurationFilePaths = function resolveBuildConfigurationFilePaths(configuration) {
-  var entryPath = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : './';
-  var pathsToIgnore = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ['.git'];
-  var mainFileBasenames = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['index', 'main'];
+  var entryPath = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : './';
+  var pathsToIgnore = arguments.length > 2 &amp;&amp; arguments[2] !== undefined ? arguments[2] : ['.git'];
+  var mainFileBasenames = arguments.length > 3 &amp;&amp; arguments[3] !== undefined ? arguments[3] : ['index', 'main'];
   var buildConfiguration = [];
-  for (var _i5 = 0, _Object$values2 = Object.values(configuration); _i5 < _Object$values2.length; _i5++) {
+  for (var _i5 = 0, _Object$values2 = Object.values(configuration); _i5 &lt; _Object$values2.length; _i5++) {
     var value = _Object$values2[_i5];
     var newItem = (0, _clientnode.extend)(true, {
       filePaths: []
@@ -334,7 +362,7 @@ var resolveBuildConfigurationFilePaths = exports.resolveBuildConfigurationFilePa
       for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
         var _file$stats;
         var file = _step5.value;
-        if ((_file$stats = file.stats) !== null && _file$stats !== void 0 && _file$stats.isFile() && file.path.endsWith(".".concat(newItem.extension)) && !(newItem.ignoredExtension && file.path.endsWith(".".concat(newItem.ignoredExtension))) && !new RegExp(newItem.filePathPattern).test(file.path)) newItem.filePaths.push(file.path);
+        if ((_file$stats = file.stats) !== null &amp;&amp; _file$stats !== void 0 &amp;&amp; _file$stats.isFile() &amp;&amp; file.path.endsWith(".".concat(newItem.extension)) &amp;&amp; !(newItem.ignoredExtension &amp;&amp; file.path.endsWith(".".concat(newItem.ignoredExtension))) &amp;&amp; !new RegExp(newItem.filePathPattern).test(file.path)) newItem.filePaths.push(file.path);
       }
     } catch (err) {
       _iterator5.e(err);
@@ -353,7 +381,7 @@ var resolveBuildConfigurationFilePaths = exports.resolveBuildConfigurationFilePa
     if (first.outputExtension !== second.outputExtension) {
       if (first.outputExtension === 'js') return -1;
       if (second.outputExtension === 'js') return 1;
-      return first.outputExtension < second.outputExtension ? -1 : 1;
+      return first.outputExtension &lt; second.outputExtension ? -1 : 1;
     }
     return 0;
   });
@@ -383,25 +411,25 @@ var resolveBuildConfigurationFilePaths = exports.resolveBuildConfigurationFilePa
  * corresponding list of paths.
  */
 var determineModuleLocations = exports.determineModuleLocations = function determineModuleLocations(givenInjection) {
-  var aliases = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var moduleReplacements = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var extensions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {
+  var aliases = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : {};
+  var moduleReplacements = arguments.length > 2 &amp;&amp; arguments[2] !== undefined ? arguments[2] : {};
+  var extensions = arguments.length > 3 &amp;&amp; arguments[3] !== undefined ? arguments[3] : {
     file: KNOWN_FILE_EXTENSIONS.map(function (suffix) {
       return ".".concat(suffix);
     })
   };
-  var context = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : './';
-  var referencePath = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
-  var pathsToIgnore = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : ['.git'];
-  var relativeModuleLocations = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : ['node_modules'];
-  var packageEntryFileNames = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : ['__package__', '', 'index', 'main'];
-  var packageMainPropertyNames = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : ['main', 'module'];
-  var packageAliasPropertyNames = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : [];
-  var encoding = arguments.length > 11 && arguments[11] !== undefined ? arguments[11] : 'utf-8';
+  var context = arguments.length > 4 &amp;&amp; arguments[4] !== undefined ? arguments[4] : './';
+  var referencePath = arguments.length > 5 &amp;&amp; arguments[5] !== undefined ? arguments[5] : '';
+  var pathsToIgnore = arguments.length > 6 &amp;&amp; arguments[6] !== undefined ? arguments[6] : ['.git'];
+  var relativeModuleLocations = arguments.length > 7 &amp;&amp; arguments[7] !== undefined ? arguments[7] : ['node_modules'];
+  var packageEntryFileNames = arguments.length > 8 &amp;&amp; arguments[8] !== undefined ? arguments[8] : ['__package__', '', 'index', 'main'];
+  var packageMainPropertyNames = arguments.length > 9 &amp;&amp; arguments[9] !== undefined ? arguments[9] : ['main', 'module'];
+  var packageAliasPropertyNames = arguments.length > 10 &amp;&amp; arguments[10] !== undefined ? arguments[10] : [];
+  var encoding = arguments.length > 11 &amp;&amp; arguments[11] !== undefined ? arguments[11] : 'utf-8';
   var filePaths = [];
   var directoryPaths = [];
   var normalizedGivenInjection = resolveModulesInFolders(normalizeGivenInjection(givenInjection), aliases, moduleReplacements, context, referencePath, pathsToIgnore);
-  for (var _i6 = 0, _Object$values3 = Object.values(normalizedGivenInjection); _i6 < _Object$values3.length; _i6++) {
+  for (var _i6 = 0, _Object$values3 = Object.values(normalizedGivenInjection); _i6 &lt; _Object$values3.length; _i6++) {
     var chunk = _Object$values3[_i6];
     var _iterator6 = _createForOfIteratorHelper(chunk),
       _step6;
@@ -439,14 +467,14 @@ var determineModuleLocations = exports.determineModuleLocations = function deter
  * @returns Given injections with resolved folder pointing modules.
  */
 var resolveModulesInFolders = exports.resolveModulesInFolders = function resolveModulesInFolders(normalizedGivenInjection) {
-  var aliases = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var moduleReplacements = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var context = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : './';
-  var referencePath = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '';
-  var pathsToIgnore = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : ['.git'];
+  var aliases = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : {};
+  var moduleReplacements = arguments.length > 2 &amp;&amp; arguments[2] !== undefined ? arguments[2] : {};
+  var context = arguments.length > 3 &amp;&amp; arguments[3] !== undefined ? arguments[3] : './';
+  var referencePath = arguments.length > 4 &amp;&amp; arguments[4] !== undefined ? arguments[4] : '';
+  var pathsToIgnore = arguments.length > 5 &amp;&amp; arguments[5] !== undefined ? arguments[5] : ['.git'];
   if (referencePath.startsWith('/')) referencePath = (0, _path.relative)(context, referencePath);
   var result = (0, _clientnode.copy)(normalizedGivenInjection);
-  for (var _i7 = 0, _Object$values4 = Object.values(result); _i7 < _Object$values4.length; _i7++) {
+  for (var _i7 = 0, _Object$values4 = Object.values(result); _i7 &lt; _Object$values4.length; _i7++) {
     var chunk = _Object$values4[_i7];
     var index = 0;
     var _iterator7 = _createForOfIteratorHelper((0, _clientnode.copy)(chunk)),
@@ -470,14 +498,14 @@ var resolveModulesInFolders = exports.resolveModulesInFolders = function resolve
             for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
               var _file$stats2;
               var file = _step8.value;
-              if ((_file$stats2 = file.stats) !== null && _file$stats2 !== void 0 && _file$stats2.isFile()) chunk.push('./' + (0, _path.relative)(context, (0, _path.resolve)(resolvedPath, file.path)));
+              if ((_file$stats2 = file.stats) !== null &amp;&amp; _file$stats2 !== void 0 &amp;&amp; _file$stats2.isFile()) chunk.push('./' + (0, _path.relative)(context, (0, _path.resolve)(resolvedPath, file.path)));
             }
           } catch (err) {
             _iterator8.e(err);
           } finally {
             _iterator8.f();
           }
-        } else if (resolvedModuleID.startsWith('./') && !resolvedModuleID.startsWith("./".concat((0, _path.relative)(context, referencePath)))) chunk[index] = "./".concat((0, _path.relative)(context, resolvedPath));
+        } else if (resolvedModuleID.startsWith('./') &amp;&amp; !resolvedModuleID.startsWith("./".concat((0, _path.relative)(context, referencePath)))) chunk[index] = "./".concat((0, _path.relative)(context, resolvedPath));
         index += 1;
       }
     } catch (err) {
@@ -504,7 +532,7 @@ var normalizeGivenInjection = exports.normalizeGivenInjection = function normali
   };else if ((0, _clientnode.isPlainObject)(givenInjection)) {
     var hasContent = false;
     var chunkNamesToDelete = [];
-    for (var _i8 = 0, _Object$entries3 = Object.entries(givenInjection); _i8 < _Object$entries3.length; _i8++) {
+    for (var _i8 = 0, _Object$entries3 = Object.entries(givenInjection); _i8 &lt; _Object$entries3.length; _i8++) {
       var _Object$entries3$_i = (0, _slicedToArray2["default"])(_Object$entries3[_i8], 2),
         chunkName = _Object$entries3$_i[0],
         chunk = _Object$entries3$_i[1];
@@ -553,9 +581,9 @@ var normalizeGivenInjection = exports.normalizeGivenInjection = function normali
  * @returns Given injection with resolved marked indicators.
  */
 var resolveAutoInjection = exports.resolveAutoInjection = function resolveAutoInjection(givenInjection, buildConfigurations) {
-  var aliases = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var moduleReplacements = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-  var extensions = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {
+  var aliases = arguments.length > 2 &amp;&amp; arguments[2] !== undefined ? arguments[2] : {};
+  var moduleReplacements = arguments.length > 3 &amp;&amp; arguments[3] !== undefined ? arguments[3] : {};
+  var extensions = arguments.length > 4 &amp;&amp; arguments[4] !== undefined ? arguments[4] : {
     file: {
       external: ['compiled.js', '.js', '.json'],
       internal: KNOWN_FILE_EXTENSIONS.map(function (suffix) {
@@ -563,9 +591,9 @@ var resolveAutoInjection = exports.resolveAutoInjection = function resolveAutoIn
       })
     }
   };
-  var context = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : './';
-  var referencePath = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : '';
-  var pathsToIgnore = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : ['.git'];
+  var context = arguments.length > 5 &amp;&amp; arguments[5] !== undefined ? arguments[5] : './';
+  var referencePath = arguments.length > 6 &amp;&amp; arguments[6] !== undefined ? arguments[6] : '';
+  var pathsToIgnore = arguments.length > 7 &amp;&amp; arguments[7] !== undefined ? arguments[7] : ['.git'];
   var injection = (0, _clientnode.copy)(givenInjection);
   var moduleFilePathsToExclude = determineModuleLocations(givenInjection.autoExclude.paths, aliases, moduleReplacements, {
     file: extensions.file.internal
@@ -577,14 +605,14 @@ var resolveAutoInjection = exports.resolveAutoInjection = function resolveAutoIn
       var name = _step0.value;
       var injectionType = injection[name];
       if ((0, _clientnode.isPlainObject)(injectionType)) {
-        for (var _i9 = 0, _Object$entries4 = Object.entries(injectionType); _i9 < _Object$entries4.length; _i9++) {
+        for (var _i9 = 0, _Object$entries4 = Object.entries(injectionType); _i9 &lt; _Object$entries4.length; _i9++) {
           var _Object$entries4$_i = (0, _slicedToArray2["default"])(_Object$entries4[_i9], 2),
             chunkName = _Object$entries4$_i[0],
             chunk = _Object$entries4$_i[1];
           if (chunk === '__auto__') {
             chunk = injectionType[chunkName] = [];
             var modules = getAutoInjection(buildConfigurations, moduleFilePathsToExclude, givenInjection.autoExclude.pattern, referencePath);
-            for (var _i0 = 0, _Object$values5 = Object.values(modules); _i0 < _Object$values5.length; _i0++) {
+            for (var _i0 = 0, _Object$values5 = Object.values(modules); _i0 &lt; _Object$values5.length; _i0++) {
               var subChunk = _Object$values5[_i0];
               chunk.push(subChunk);
             }
@@ -678,9 +706,9 @@ var getAutoInjection = exports.getAutoInjection = function getAutoInjection(buil
  * @returns Path if found and / or additional package aliases to consider.
  */
 var determineModuleFilePathInPackage = exports.determineModuleFilePathInPackage = function determineModuleFilePathInPackage(packagePath) {
-  var packageMainPropertyNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['main'];
-  var packageAliasPropertyNames = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-  var encoding = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'utf-8';
+  var packageMainPropertyNames = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : ['main'];
+  var packageAliasPropertyNames = arguments.length > 2 &amp;&amp; arguments[2] !== undefined ? arguments[2] : [];
+  var encoding = arguments.length > 3 &amp;&amp; arguments[3] !== undefined ? arguments[3] : 'utf-8';
   var result = {
     fileName: null,
     packageAliases: null
@@ -701,7 +729,7 @@ var determineModuleFilePathInPackage = exports.determineModuleFilePathInPackage 
       try {
         for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
           var propertyName = _step11.value;
-          if (Object.prototype.hasOwnProperty.call(localConfiguration, propertyName) && typeof localConfiguration[propertyName] === 'string' && localConfiguration[propertyName]) {
+          if (Object.prototype.hasOwnProperty.call(localConfiguration, propertyName) &amp;&amp; typeof localConfiguration[propertyName] === 'string' &amp;&amp; localConfiguration[propertyName]) {
             result.fileName = localConfiguration[propertyName];
             break;
           }
@@ -716,7 +744,7 @@ var determineModuleFilePathInPackage = exports.determineModuleFilePathInPackage 
       try {
         for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
           var _propertyName = _step12.value;
-          if (Object.prototype.hasOwnProperty.call(localConfiguration, _propertyName) && (0, _clientnode.isPlainObject)(localConfiguration[_propertyName])) {
+          if (Object.prototype.hasOwnProperty.call(localConfiguration, _propertyName) &amp;&amp; (0, _clientnode.isPlainObject)(localConfiguration[_propertyName])) {
             result.packageAliases = localConfiguration[_propertyName];
             break;
           }
@@ -753,21 +781,21 @@ var determineModuleFilePathInPackage = exports.determineModuleFilePathInPackage 
  * necessary.
  */
 var determineModuleFilePath = exports.determineModuleFilePath = function determineModuleFilePath(moduleID) {
-  var aliases = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var moduleReplacements = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var extensions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {
+  var aliases = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : {};
+  var moduleReplacements = arguments.length > 2 &amp;&amp; arguments[2] !== undefined ? arguments[2] : {};
+  var extensions = arguments.length > 3 &amp;&amp; arguments[3] !== undefined ? arguments[3] : {
     file: KNOWN_FILE_EXTENSIONS.map(function (suffix) {
       return ".".concat(suffix);
     })
   };
-  var context = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : './';
-  var referencePath = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
-  var pathsToIgnore = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : ['.git'];
-  var relativeModuleLocations = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : ['node_modules'];
-  var packageEntryFileNames = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : ['index'];
-  var packageMainPropertyNames = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : ['main'];
-  var packageAliasPropertyNames = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : [];
-  var encoding = arguments.length > 11 && arguments[11] !== undefined ? arguments[11] : 'utf-8';
+  var context = arguments.length > 4 &amp;&amp; arguments[4] !== undefined ? arguments[4] : './';
+  var referencePath = arguments.length > 5 &amp;&amp; arguments[5] !== undefined ? arguments[5] : '';
+  var pathsToIgnore = arguments.length > 6 &amp;&amp; arguments[6] !== undefined ? arguments[6] : ['.git'];
+  var relativeModuleLocations = arguments.length > 7 &amp;&amp; arguments[7] !== undefined ? arguments[7] : ['node_modules'];
+  var packageEntryFileNames = arguments.length > 8 &amp;&amp; arguments[8] !== undefined ? arguments[8] : ['index'];
+  var packageMainPropertyNames = arguments.length > 9 &amp;&amp; arguments[9] !== undefined ? arguments[9] : ['main'];
+  var packageAliasPropertyNames = arguments.length > 10 &amp;&amp; arguments[10] !== undefined ? arguments[10] : [];
+  var encoding = arguments.length > 11 &amp;&amp; arguments[11] !== undefined ? arguments[11] : 'utf-8';
   if (!moduleID) return null;
   moduleID = applyModuleReplacements(applyAliases(stripLoader(moduleID), aliases), moduleReplacements);
   if (!moduleID) return null;
@@ -850,7 +878,7 @@ var determineModuleFilePath = exports.determineModuleFilePath = function determi
  * @returns The alias applied given module id.
  */
 var applyAliases = exports.applyAliases = function applyAliases(moduleID, aliases) {
-  for (var _i1 = 0, _Object$entries5 = Object.entries(aliases); _i1 < _Object$entries5.length; _i1++) {
+  for (var _i1 = 0, _Object$entries5 = Object.entries(aliases); _i1 &lt; _Object$entries5.length; _i1++) {
     var _Object$entries5$_i = (0, _slicedToArray2["default"])(_Object$entries5[_i1], 2),
       name = _Object$entries5$_i[0],
       alias = _Object$entries5$_i[1];
@@ -869,7 +897,7 @@ var applyAliases = exports.applyAliases = function applyAliases(moduleID, aliase
  */
 var applyModuleReplacements = exports.applyModuleReplacements = function applyModuleReplacements(moduleID, replacements) {
   if (moduleID === false) return moduleID;
-  for (var _i10 = 0, _Object$entries6 = Object.entries(replacements); _i10 < _Object$entries6.length; _i10++) {
+  for (var _i10 = 0, _Object$entries6 = Object.entries(replacements); _i10 &lt; _Object$entries6.length; _i10++) {
     var _Object$entries6$_i = (0, _slicedToArray2["default"])(_Object$entries6[_i10], 2),
       search = _Object$entries6$_i[0],
       replacement = _Object$entries6$_i[1];
@@ -884,7 +912,7 @@ var applyModuleReplacements = exports.applyModuleReplacements = function applyMo
  * @returns Determined file path.
  */
 var _findPackageDescriptorFilePath = exports.findPackageDescriptorFilePath = function findPackageDescriptorFilePath(start) {
-  var fileName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'package.json';
+  var fileName = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : 'package.json';
   if (typeof start === 'string') {
     if (!start.endsWith(_path.sep)) start += _path.sep;
     start = start.split(_path.sep);
@@ -908,9 +936,9 @@ var _findPackageDescriptorFilePath = exports.findPackageDescriptorFilePath = fun
  * corresponding file path.
  */
 var _getClosestPackageDescriptor = exports.getClosestPackageDescriptor = function getClosestPackageDescriptor(modulePath) {
-  var fileName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'package.json';
+  var fileName = arguments.length > 1 &amp;&amp; arguments[1] !== undefined ? arguments[1] : 'package.json';
   var filePath = _findPackageDescriptorFilePath(modulePath, fileName);
-  if (!(filePath && _clientnode.currentRequire)) return null;
+  if (!(filePath &amp;&amp; _clientnode.currentRequire)) return null;
   var configuration = (0, _clientnode.currentRequire)(filePath);
   /*
       If the package.json does not have a name property, try again from
@@ -924,3 +952,26 @@ var _getClosestPackageDescriptor = exports.getClosestPackageDescriptor = functio
   };
 };
 // endregion
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jun 27 2025 23:24:33 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

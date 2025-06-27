@@ -53,14 +53,14 @@ exports.getInitializedBrowser = exports["default"] = exports.browser = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-var _clientnode = _interopRequireWildcard(require("clientnode"));
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" &amp;&amp; o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike &amp;&amp; o &amp;&amp; typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion &amp;&amp; it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" &amp;&amp; o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i &lt; len; i++) arr2[i] = arr[i]; return arr2; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r &amp;&amp; e &amp;&amp; e.__esModule) return e; if (null === e || "object" != _typeof(e) &amp;&amp; "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t &amp;&amp; t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty &amp;&amp; Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u &amp;&amp; Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i &amp;&amp; (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t &amp;&amp; t.set(e, n), n; }
+var _clientnode = require("clientnode");
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol &amp;&amp; r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e &amp;&amp; r &amp;&amp; "number" == typeof r.length) { t &amp;&amp; (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t &amp;&amp; r.constructor &amp;&amp; (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) &amp;&amp; (a = r.length); for (var e = 0, n = Array(a); e &lt; a; e++) n[e] = r[e]; return n; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t &amp;&amp; e &amp;&amp; e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) &amp;&amp; "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t &amp;&amp; {}.hasOwnProperty.call(e, _t) &amp;&amp; ((i = (o = Object.defineProperty) &amp;&amp; Object.getOwnPropertyDescriptor(e, _t)) &amp;&amp; (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 // endregion
 // region declaration
+
 //  endregion
 //  region variables
 var onCreatedListener = [];
@@ -80,7 +80,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
       NOTE: We use an asynchronous wrapper method to initialize
       "browser.initialized" at module loading time.
   */
-  (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+  (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee() {
     var _yield$Promise$all, _yield$Promise$all2, _yield$Promise$all2$, JSDOM, VirtualConsoleImplementation, path, virtualConsole, _iterator, _step, name, render, filePath, ejsLoader, content;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
@@ -99,7 +99,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
           VirtualConsoleImplementation = _yield$Promise$all2$.VirtualConsole;
           path = _yield$Promise$all2[1];
           virtualConsole = new VirtualConsoleImplementation();
-          _iterator = _createForOfIteratorHelper(_clientnode.ConsoleOutputMethods);
+          _iterator = _createForOfIteratorHelper(_clientnode.CONSOLE_METHODS);
           try {
             for (_iterator.s(); !(_step = _iterator.n()).done;) {
               name = _step.value;
@@ -118,9 +118,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             browser.initialized = true;
             browser.instance = new browser.DOM(template, {
               beforeParse: function beforeParse(window) {
-                var _global$window;
+                var _ref2;
                 // We want to use it in a polymorphic way.
-                browser.window = (_global$window = global.window) !== null &amp;&amp; _global$window !== void 0 ? _global$window : window;
+                browser.window = (_ref2 = global.window) !== null &amp;&amp; _ref2 !== void 0 ? _ref2 : window;
                 window.document.addEventListener('DOMContentLoaded', function () {
                   /*
                       Move template results into global
@@ -213,7 +213,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
           return _context.stop();
       }
     }, _callee);
-  }))()["catch"](console.error);else {
+  }))()["catch"](function (error) {
+    console.error(error);
+  });else {
   browser.initialized = true;
   browser.window = window;
   window.document.addEventListener('DOMContentLoaded', function () {
@@ -222,7 +224,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
   window.addEventListener('load', function () {
     browser.windowLoaded = true;
   });
-  void _clientnode["default"].timeout(function () {
+  void (0, _clientnode.timeout)(function () {
     var _iterator4 = _createForOfIteratorHelper(onCreatedListener),
       _step4;
     try {
@@ -242,11 +244,10 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
  * Provides a generic browser api in node or web contexts.
  * @param replaceWindow - Indicates whether a potential existing window object
  * should be replaced or not.
- *
  * @returns Determined environment.
  */
 var getInitializedBrowser = exports.getInitializedBrowser = /*#__PURE__*/function () {
-  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+  var _ref3 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee2() {
     var replaceWindow,
       resolvePromise,
       promise,
@@ -276,13 +277,10 @@ var getInitializedBrowser = exports.getInitializedBrowser = /*#__PURE__*/functio
     }, _callee2);
   }));
   return function getInitializedBrowser() {
-    return _ref2.apply(this, arguments);
+    return _ref3.apply(this, arguments);
   };
 }();
-var _default = exports["default"] = getInitializedBrowser; // region vim modline
-// vim: set tabstop=4 shiftwidth=4 expandtab:
-// vim: foldmethod=marker foldmarker=region,endregion:
-// endregioun
+var _default = exports["default"] = getInitializedBrowser;
 </code></pre>
         </article>
     </section>
@@ -293,13 +291,13 @@ var _default = exports["default"] = getInitializedBrowser; // region vim modline
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-jestEnvironmentBrowser.html">jestEnvironmentBrowser</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Mon Nov 06 2023 14:54:34 GMT+0100 (GMT+01:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jun 27 2025 23:24:33 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>
