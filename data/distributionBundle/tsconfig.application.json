@@ -1,0 +1,32 @@
+{
+    "extends": "./tsconfig.json",
+
+    "compilerOptions": {
+        "declaration": false,
+        "paths": {
+            "@asset/*": ["source/*"],
+            "@cascadingStyleSheet/*": ["source/cascadingStyleSheet/*"],
+            "@data/*": ["source/data/*"],
+            "@font/*": ["source/font/*"],
+            "@image/*": ["source/image/*"],
+            "@javaScript/*": ["source/javaScript/*"],
+            "@root/*": ["source/*"],
+            "@source/*": ["source/*"],
+            "@template/*": ["source/template/*"]
+        }
+    },
+
+    "include": [
+        "../../*.ts", "../../*.tsx",
+        "../../*/*.ts", "../../*/*.tsx",
+
+        "../../assets/source/**/*.ts", "../../assets/source/**/*.tsx",
+        "../../assets/src/**/*.ts", "../../assets/src/**/*.tsx",
+
+        "../../source/**/*.ts", "../../source/**/*.tsx",
+        "../../src/**/*.ts", "../../src/**/*.tsx",
+
+        "../../test/*.ts", "../../test/*.tsx",
+        "../../test/*/*.ts", "../../test/*/*.tsx"
+    ]
+}
