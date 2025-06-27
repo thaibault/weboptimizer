@@ -1,0 +1,43 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "allowUmdGlobalAccess": true,
+        "baseUrl": "../../",
+        "checkJs": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "isolatedModules": true,
+        "jsx": "react-jsx",
+        "lib": ["DOM", "ESNext"],
+        "module": "esnext",
+        "moduleResolution": "node",
+        "paths": {
+            "@root/*": ["*"]
+        },
+        "plugins": [{"name": "typescript-plugin-css-modules"}],
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "esnext"
+    },
+    "exclude": [
+        "**/exclude/*",
+        "test/**/*.d.ts"
+    ],
+    "include": [
+        "*.ts", "*.tsx",
+        "*/*.ts", "*/*.tsx",
+        "*/declarations.d.ts",
+
+        "assets/src/**/*.ts", "/assets/src/**/*.tsx",
+        "assets/source/**/*.ts", "/assets/source/**/*.tsx",
+
+        "source/**/*.ts", "source/**/*.tsx",
+        "src/**/*.ts", "src/**/*.tsx",
+
+        "test/*.ts", "test/*.tsx",
+        "test/*/*.ts", "test/*/*.tsx"
+    ]
+}
