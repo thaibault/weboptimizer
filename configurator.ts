@@ -24,6 +24,7 @@ import {
     getUTCTimestamp,
     isFileSync,
     isObject,
+    isolatedRequire,
     isPlainObject,
     MAXIMAL_NUMBER_OF_ITERATIONS,
     Mapping,
@@ -329,7 +330,7 @@ export const load = (
                     )
                 else
                     console.warn(
-                        `Given dynamic referenced configuration "${name}" ` +
+                        `Given dynamic referenced configuration "${name}"`,
                         'could not be resolved.'
                     )
         }
@@ -398,7 +399,7 @@ export const load = (
                 packageConfiguration,
                 optionalRequire,
                 path,
-                require: currentRequire,
+                require: isolatedRequire,
                 webOptimizerPath,
                 now,
                 nowUTCTimestamp: getUTCTimestamp(now)

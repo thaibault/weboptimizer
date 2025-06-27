@@ -189,6 +189,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/core@npm:^7.27.7":
+  version: 7.27.7
+  resolution: "@babel/core@npm:7.27.7"
+  dependencies:
+    "@ampproject/remapping": "npm:^2.2.0"
+    "@babel/code-frame": "npm:^7.27.1"
+    "@babel/generator": "npm:^7.27.5"
+    "@babel/helper-compilation-targets": "npm:^7.27.2"
+    "@babel/helper-module-transforms": "npm:^7.27.3"
+    "@babel/helpers": "npm:^7.27.6"
+    "@babel/parser": "npm:^7.27.7"
+    "@babel/template": "npm:^7.27.2"
+    "@babel/traverse": "npm:^7.27.7"
+    "@babel/types": "npm:^7.27.7"
+    convert-source-map: "npm:^2.0.0"
+    debug: "npm:^4.1.0"
+    gensync: "npm:^1.0.0-beta.2"
+    json5: "npm:^2.2.3"
+    semver: "npm:^6.3.1"
+  checksum: 10c0/02c0cd475821c5333d5ee5eb9a0565af1a38234b37859ae09c4c95d7171bbc11a23a6f733c31b3cb12dc523311bdc8f7f9d705136f33eeb6704b7fbd6e6468ca
+  languageName: node
+  linkType: hard
+
 "@babel/eslint-parser@npm:^7.27.5":
   version: 7.27.5
   resolution: "@babel/eslint-parser@npm:7.27.5"
@@ -737,7 +760,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helpers@npm:^7.27.4":
+"@babel/helpers@npm:^7.27.4, @babel/helpers@npm:^7.27.6":
   version: 7.27.6
   resolution: "@babel/helpers@npm:7.27.6"
   dependencies:
@@ -816,6 +839,17 @@ __metadata:
   bin:
     parser: ./bin/babel-parser.js
   checksum: 10c0/f7faaebf21cc1f25d9ca8ac02c447ed38ef3460ea95be7ea760916dcf529476340d72a5a6010c6641d9ed9d12ad827c8424840277ec2295c5b082ba0f291220a
+  languageName: node
+  linkType: hard
+
+"@babel/parser@npm:^7.27.7":
+  version: 7.27.7
+  resolution: "@babel/parser@npm:7.27.7"
+  dependencies:
+    "@babel/types": "npm:^7.27.7"
+  bin:
+    parser: ./bin/babel-parser.js
+  checksum: 10c0/f6202faeb873f0b3083022e50a5046fe07266d337c0a3bd80a491f8435ba6d9e383d49725e3dcd666b3b52c0dccb4e0f1f1004915762345f7eeed5ba54ea9fd2
   languageName: node
   linkType: hard
 
@@ -2731,6 +2765,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/traverse@npm:^7.27.7":
+  version: 7.27.7
+  resolution: "@babel/traverse@npm:7.27.7"
+  dependencies:
+    "@babel/code-frame": "npm:^7.27.1"
+    "@babel/generator": "npm:^7.27.5"
+    "@babel/parser": "npm:^7.27.7"
+    "@babel/template": "npm:^7.27.2"
+    "@babel/types": "npm:^7.27.7"
+    debug: "npm:^4.3.1"
+    globals: "npm:^11.1.0"
+  checksum: 10c0/941fecd0248546f059d58230590a2765d128ef072c8521c9e0bcf6037abf28a0ea4736003d0d695513128d07fe00a7bc57acaada2ed905941d44619b9f49cf0c
+  languageName: node
+  linkType: hard
+
 "@babel/types@npm:^7.0.0, @babel/types@npm:^7.20.7, @babel/types@npm:^7.22.15, @babel/types@npm:^7.22.19, @babel/types@npm:^7.22.5, @babel/types@npm:^7.23.0, @babel/types@npm:^7.23.6, @babel/types@npm:^7.24.0, @babel/types@npm:^7.4.4, @babel/types@npm:^7.8.3":
   version: 7.24.0
   resolution: "@babel/types@npm:7.24.0"
@@ -2759,6 +2808,16 @@ __metadata:
     "@babel/helper-string-parser": "npm:^7.27.1"
     "@babel/helper-validator-identifier": "npm:^7.27.1"
   checksum: 10c0/39d556be114f2a6d874ea25ad39826a9e3a0e98de0233ae6d932f6d09a4b222923a90a7274c635ed61f1ba49bbd345329226678800900ad1c8d11afabd573aaf
+  languageName: node
+  linkType: hard
+
+"@babel/types@npm:^7.27.7":
+  version: 7.27.7
+  resolution: "@babel/types@npm:7.27.7"
+  dependencies:
+    "@babel/helper-string-parser": "npm:^7.27.1"
+    "@babel/helper-validator-identifier": "npm:^7.27.1"
+  checksum: 10c0/1d1dcb5fa7cfba2b4034a3ab99ba17049bfc4af9e170935575246cdb1cee68b04329a0111506d9ae83fb917c47dbd4394a6db5e32fbd041b7834ffbb17ca086b
   languageName: node
   linkType: hard
 
@@ -2881,15 +2940,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@csstools/postcss-cascade-layers@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "@csstools/postcss-cascade-layers@npm:5.0.1"
+"@csstools/postcss-cascade-layers@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "@csstools/postcss-cascade-layers@npm:5.0.2"
   dependencies:
     "@csstools/selector-specificity": "npm:^5.0.0"
     postcss-selector-parser: "npm:^7.0.0"
   peerDependencies:
     postcss: ^8.4
-  checksum: 10c0/5cc3c6f220d9216f7ab16e716a20d6db845f127c917521e6236342bfa871accd63eb662a04c1e24a28e396412dcb47b1c4abccc490b88e4010cd704d14a702f1
+  checksum: 10c0/dd8e29cfd3a93932fa35e3a59aa62fd2e720772d450f40f38f65ce1e736e2fe839635eb6f033abcc8ee8bc2856161a297f4458b352b26d2216856feb03176612
   languageName: node
   linkType: hard
 
@@ -4592,12 +4651,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.0.4":
-  version: 24.0.4
-  resolution: "@types/node@npm:24.0.4"
+"@types/node@npm:^24.0.5":
+  version: 24.0.5
+  resolution: "@types/node@npm:24.0.5"
   dependencies:
     undici-types: "npm:~7.8.0"
-  checksum: 10c0/590e8cb0ec59fb9cd566402120e690d87ecbdf57f1ee2b8493266121ed33aa4b25949a0c6156b84a6ffb9250baaf1f80e9af142da542ed603e6ee73fc4d1115f
+  checksum: 10c0/5e0f6aedce6984087d0e62cd5e4147276b8fc14f5ec2987ef1cd89ff20ea79566db5c61ffa7bdfd9dfe67f22794422e3b2b922ad4b22e769d1ef67095e66b331
   languageName: node
   linkType: hard
 
@@ -7129,9 +7188,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:3.0.1292":
-  version: 3.0.1292
-  resolution: "clientnode@npm:3.0.1292"
+"clientnode@npm:3.0.1293":
+  version: 3.0.1293
+  resolution: "clientnode@npm:3.0.1293"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -7149,7 +7208,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/bf6806e64e95e1497d528ed5d76c7b6a4ea80ecd5696eb8fea92dc9b2c545a3def129614f2d4cabe1f022538330dfcfee034493102d5a890c5c05cea36a841d3
+  checksum: 10c0/c4a577f2b922307340a2936f5595f75f363ab76a786fe2d6f17529ccac81bf98b45f5a010bb3fcaca9009f2229b68f9d97081db500f9fb3a795a0117e99c8874
   languageName: node
   linkType: hard
 
@@ -13814,11 +13873,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-preset-env@npm:^10.2.3":
-  version: 10.2.3
-  resolution: "postcss-preset-env@npm:10.2.3"
+"postcss-preset-env@npm:^10.2.4":
+  version: 10.2.4
+  resolution: "postcss-preset-env@npm:10.2.4"
   dependencies:
-    "@csstools/postcss-cascade-layers": "npm:^5.0.1"
+    "@csstools/postcss-cascade-layers": "npm:^5.0.2"
     "@csstools/postcss-color-function": "npm:^4.0.10"
     "@csstools/postcss-color-mix-function": "npm:^3.0.10"
     "@csstools/postcss-color-mix-variadic-function-arguments": "npm:^1.0.0"
@@ -13884,7 +13943,7 @@ __metadata:
     postcss-selector-not: "npm:^8.0.1"
   peerDependencies:
     postcss: ^8.4
-  checksum: 10c0/f3d2ea8b95083acad2cf74aca93904dd3158639bf692d1d471598b538e0c6b4447ae306e7bc1c2426dd465e7c9715373678855b7e211e194b507ef8184e83f99
+  checksum: 10c0/d7f8494d355567dc4ea66fe765c86ba9b1e9ce5061ada5c80c51fdf6c98b004b0b7ef17b5f64d197e1bec2e22ef4b6c613b998e1c1bcad0b53f0a3e303ded2fe
   languageName: node
   linkType: hard
 
@@ -16880,7 +16939,7 @@ __metadata:
   resolution: "weboptimizer@workspace:."
   dependencies:
     "@babel/cli": "npm:^7.27.2"
-    "@babel/core": "npm:^7.27.4"
+    "@babel/core": "npm:^7.27.7"
     "@babel/eslint-parser": "npm:^7.27.5"
     "@babel/plugin-proposal-class-properties": "npm:^7.18.6"
     "@babel/plugin-proposal-decorators": "npm:^7.27.1"
@@ -16896,7 +16955,7 @@ __metadata:
     "@types/html-minifier": "npm:^4.0.5"
     "@types/html-minifier-terser": "npm:^7.0.2"
     "@types/imagemin": "npm:^9.0.1"
-    "@types/node": "npm:^24.0.4"
+    "@types/node": "npm:^24.0.5"
     "@types/postcss-import": "npm:^14.0.3"
     "@types/postcss-url": "npm:^10.0.4"
     "@types/webpack-env": "npm:^1.18.8"
@@ -16905,7 +16964,7 @@ __metadata:
     babel-loader: "npm:^10.0.0"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:3.0.1292"
+    clientnode: "npm:3.0.1293"
     css-loader: "npm:^7.1.2"
     cssnano: "npm:^7.0.7"
     documentation-website: "npm:^1.0.383"
@@ -16934,7 +16993,7 @@ __metadata:
     postcss-fontpath: "npm:^1.0.0"
     postcss-import: "npm:^16.1.1"
     postcss-loader: "npm:^8.1.1"
-    postcss-preset-env: "npm:^10.2.3"
+    postcss-preset-env: "npm:^10.2.4"
     postcss-sprites: "npm:^4.2.1"
     postcss-url: "npm:^10.1.3"
     rimraf: "npm:^6.0.1"
