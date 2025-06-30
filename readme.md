@@ -250,7 +250,7 @@ dynamically though a complete javaScript compatible evaluation mechanism:
 
 You can even execute scripts to determine a value:
 
-``JSON
+```JSON
 ...
 "webOptimizer": {
     ...
