@@ -25,7 +25,7 @@ Project status
 
 [![code coverage](https://img.shields.io/coverallsCoverage/github/thaibault/weboptimizer?label=code%20coverage&style=for-the-badge)](https://coveralls.io/github/thaibault/weboptimizer)
 
-[![deploy documentation website](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/deploy-documentation-website.yaml?style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/deploy-documentation-website.yaml)
+[![deploy documentation website](https://img.shields.io/github/actions/workflow/status/thaibault/weboptimizer/deploy-documentation-website.yaml?label=deploy%20documentation%20website&style=for-the-badge)](https://github.com/thaibault/weboptimizer/actions/workflows/deploy-documentation-website.yaml)
 [![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/weboptimizer.svg?label=documentation-website&style=for-the-badge)](https://torben.website/weboptimizer)
 
 [![Try out](https://img.shields.io/badge/Try%20it%20on%20runkit-%2345cc11?style=for-the-badge)](https://npm.runkit.com/weboptimizer)
