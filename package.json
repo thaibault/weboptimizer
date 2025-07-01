@@ -124,7 +124,7 @@
     "@types/html-minifier": "^4.0.5",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/imagemin": "^9.0.1",
-    "@types/node": "^24.0.7",
+    "@types/node": "^24.0.8",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
