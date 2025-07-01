@@ -7188,9 +7188,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:3.0.1297":
-  version: 3.0.1297
-  resolution: "clientnode@npm:3.0.1297"
+"clientnode@npm:3.0.1298":
+  version: 3.0.1298
+  resolution: "clientnode@npm:3.0.1298"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -7208,7 +7208,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/17d179276dc24ad094e1e40cf547cb003d2871e31fd4e71140672e3d30ff91245c46030b24f6b7d7cf36fa32be38bca192a0914c618b30b8744b40f305f8858c
+  checksum: 10c0/8f20bef6cb1ed8f64dbf2ed7dabf4d09575ea3dcca3eeb1f6b80c9a37230f78a3f42acfd12738c42b78472113aa80b459dd17c7e27b5cabbb1e8d6ff124e33d6
   languageName: node
   linkType: hard
 
@@ -8166,12 +8166,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"documentation-website@npm:^1.0.387":
-  version: 1.0.387
-  resolution: "documentation-website@npm:1.0.387"
+"documentation-website@npm:^1.0.390":
+  version: 1.0.390
+  resolution: "documentation-website@npm:1.0.390"
   bin:
     documentation-website: build/deploy.js
-  checksum: 10c0/2067d42d64485c68d2972a59663931df833eabeca34e3c20b8a87a31cbf2554f8981e53b3c7b9842beedfe990817d4fa82b03276356162c32db6135d917d34dd
+  checksum: 10c0/4d903376f29f554888c31314b0754e89c2344c4743d3147469bbe6a5bfbac535be55fec338e74ab8b327e70097c1c99490ea8344642d65421e306957e3629ffd
   languageName: node
   linkType: hard
 
@@ -9670,10 +9670,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^16.2.0":
-  version: 16.2.0
-  resolution: "globals@npm:16.2.0"
-  checksum: 10c0/c2b3ea163faa6f8a38076b471b12f4bda891f7df7f7d2e8294fb4801d735a51a73431bf4c1696c5bf5dbca5e0a0db894698acfcbd3068730c6b12eef185dea25
+"globals@npm:^16.3.0":
+  version: 16.3.0
+  resolution: "globals@npm:16.3.0"
+  checksum: 10c0/c62dc20357d1c0bf2be4545d6c4141265d1a229bf1c3294955efb5b5ef611145391895e3f2729f8603809e81b30b516c33e6c2597573844449978606aad6eb38
   languageName: node
   linkType: hard
 
@@ -16964,10 +16964,10 @@ __metadata:
     babel-loader: "npm:^10.0.0"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:3.0.1297"
+    clientnode: "npm:3.0.1298"
     css-loader: "npm:^7.1.2"
     cssnano: "npm:^7.0.7"
-    documentation-website: "npm:^1.0.387"
+    documentation-website: "npm:^1.0.390"
     ejs: "npm:^3.1.10"
     eslint: "npm:^9.30.0"
     eslint-config-google: "npm:^0.14.0"
@@ -16977,7 +16977,7 @@ __metadata:
     favicons: "npm:^7.2.0"
     favicons-webpack-plugin: "npm:^6.0.1"
     glob-all: "npm:^3.3.1"
-    globals: "npm:^16.2.0"
+    globals: "npm:^16.3.0"
     html-loader: "npm:^5.1.0"
     html-minifier: "npm:^4.0.0"
     html-webpack-plugin: "npm:^5.6.3"
