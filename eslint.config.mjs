@@ -5,7 +5,7 @@ import google from 'eslint-config-google';
 import jsdoc from 'eslint-plugin-jsdoc';
 import { readFile, stat } from 'fs/promises';
 import globals from 'globals';
-import { resolve } from 'path';
+import { dirname, resolve } from 'path';
 import { cwd } from 'process';
 import typescript from 'typescript-eslint';
 /**
@@ -63,7 +63,8 @@ export const config = typescript.config({
         jsx: true
       },
       impliedStrict: true,
-      project: TSCONFIG_FILE_PATH
+      project: TSCONFIG_FILE_PATH,
+      tsconfigRootDir: dirname(TSCONFIG_FILE_PATH)
     },
     sourceType: 'module'
   },
