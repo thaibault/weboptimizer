@@ -1,3 +1,4 @@
+import {defineConfig} from 'eslint/config'
 import eslintjs from '@eslint/js'
 import javascriptPlugin from '@stylistic/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
@@ -10,6 +11,7 @@ import {cwd} from 'process'
 import typescript, {ConfigWithExtends} from 'typescript-eslint'
 
 import {ResolvedConfiguration} from './type'
+import {ConfigWithExtendsArray} from '@eslint/config-helpers'
 /**
  * Checks if given path points to a valid file.
  * @param filePath - Path to directory.
@@ -32,9 +34,9 @@ export const isFile = async (filePath: string): Promise<boolean> => {
 }
 
 // Remove unsupported rules.
-const UNSUPORTED_RULES = ['require-jsdoc', 'valid-jsdoc']
+const UNSUPPORTED_RULES = ['require-jsdoc', 'valid-jsdoc']
 const GOOGLE_RULES = Object.keys((google as Mapping<object>).rules)
-    .filter((key) => !UNSUPORTED_RULES.includes(key))
+    .filter((key) => !UNSUPPORTED_RULES.includes(key))
     .reduce(
         (object, key) =>
             ({...object, [key]: (google as Mapping<Mapping>).rules[key]}),
@@ -59,23 +61,25 @@ for (const filePath of [
         break
     }
 
-let PROJECT_SPECIFIG_CONFIGURATION: Array<ConfigWithExtends> = []
+let PROJECT_SPECIFIC_CONFIGURATION: ConfigWithExtendsArray = []
 if (PACKAGE_CONFIGURATION.name !== 'weboptimizer')
     try {
         type Type = ConfigWithExtends & Array<ConfigWithExtends>
-        // @ts-expect-error Need to create polomorphic type.
+        // @ts-expect-error Need to create polymorphic type.
         const config = await import('../../eslint.config.mjs') as
             Type & {default?: Type} & {config?: Type} & {configuration?: Type}
         const resolvedConfig =
             config.config ?? config.default ?? config.configuration ?? config
 
-        PROJECT_SPECIFIG_CONFIGURATION =
-            PROJECT_SPECIFIG_CONFIGURATION.concat(resolvedConfig)
+        PROJECT_SPECIFIC_CONFIGURATION =
+            PROJECT_SPECIFIC_CONFIGURATION.concat(
+                resolvedConfig as ConfigWithExtendsArray
+            )
     } catch {
         // Ignore regardless of an error.
     }
 
-export const config = typescript.config(
+export const config = defineConfig(
     {
         extends: [
             eslintjs.configs.recommended,
@@ -99,7 +103,7 @@ export const config = typescript.config(
                 },
                 impliedStrict: true,
                 project: TSCONFIG_FILE_PATH,
-                tsconfigRootDir: dirname(TSCONFIG_FILE_PATH)
+                tsconfigRootDir: resolve(dirname(TSCONFIG_FILE_PATH))
             },
             sourceType: 'module'
         },
@@ -130,7 +134,7 @@ export const config = typescript.config(
                 ignoreRestSiblings: false,
                 reportUsedIgnorePattern: false
             }],
-            // NOTE: Too strcit for now but could be actvated in future maybe.
+            // NOTE: Too strict for now but could be activated in the future.
             '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'off',
             '@typescript-eslint/no-unnecessary-type-parameters': 'off',
             '@typescript-eslint/no-unsafe-member-access': 'off',
@@ -226,7 +230,7 @@ export const config = typescript.config(
             '!**/declarations.d.ts'
         ]
     },
-    ...PROJECT_SPECIFIG_CONFIGURATION
+    ...PROJECT_SPECIFIC_CONFIGURATION
 )
 
 export default config
