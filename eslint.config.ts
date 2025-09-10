@@ -6,7 +6,7 @@ import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
 import {readFile, stat} from 'fs/promises'
 import globals from 'globals'
-import {dirname, resolve} from 'path'
+import {basename, dirname, resolve} from 'path'
 import {cwd} from 'process'
 import typescript, {ConfigWithExtends} from 'typescript-eslint'
 
@@ -102,7 +102,7 @@ export const config = defineConfig(
                     jsx: true
                 },
                 impliedStrict: true,
-                project: TSCONFIG_FILE_PATH,
+                project: basename(TSCONFIG_FILE_PATH),
                 tsconfigRootDir: resolve(dirname(TSCONFIG_FILE_PATH))
             },
             sourceType: 'module'
