@@ -279,6 +279,7 @@ export const determineExternalRequest = (
         applyAliases(request.substring(request.lastIndexOf('!') + 1), aliases),
         moduleReplacements
     )
+
     if (
         resolvedRequest === false ||
         isAnyMatching(resolvedRequest, excludePattern)
@@ -351,9 +352,9 @@ export const determineExternalRequest = (
         parts.splice(-1, 1)
     }
     /*
-        NOTE: We mark dependencies as external if they does not contain a
-        loader in their request and aren't part of the current main package or
-        have a file extension other than javaScript aware.
+        NOTE: We mark dependencies as external if they do not contain a loader
+        in their request and aren't part of the current main package or have a
+        file extension other than javaScript aware.
     */
     if (
         !inPlaceNormalLibrary &&
