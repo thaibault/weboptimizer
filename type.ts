@@ -77,7 +77,7 @@ export interface PackageDescriptor {
 export type Replacements = Mapping<SecondParameter<string['replace']>>
 
 export type Resolvable =
-    {[_K in '__evaluate__' | '__execute__']?: Resolvable} &
+    {[K in '__evaluate__' | '__execute__']?: Resolvable} &
     Mapping<unknown>
 
 export interface RedundantRequest {
@@ -357,7 +357,7 @@ export interface ResolvedConfiguration {
     files: {
         additionalPaths: Array<string>
         compose: {
-            cascadingStyleSheet: string | ((_asset: unknown) => string)
+            cascadingStyleSheet: string | ((asset: unknown) => string)
             image: string
             javaScript: string
         }
@@ -501,7 +501,7 @@ export interface GenericLoader {
 export type Loader = GenericLoader & Mapping<WebpackRuleSetRule>
 export interface EvaluationScope {
     configuration: ResolvedConfiguration
-    isFilePathInDependencies: (_filePath: string) => boolean
+    isFilePathInDependencies: (filePath: string) => boolean
     loader: Loader
     require: typeof require
 }

@@ -4877,12 +4877,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.3.1":
-  version: 24.3.1
-  resolution: "@types/node@npm:24.3.1"
+"@types/node@npm:^24.3.3":
+  version: 24.3.3
+  resolution: "@types/node@npm:24.3.3"
   dependencies:
     undici-types: "npm:~7.10.0"
-  checksum: 10c0/99b86fc32294fcd61136ca1f771026443a1e370e9f284f75e243b29299dd878e18c193deba1ce29a374932db4e30eb80826e1049b9aad02d36f5c30b94b6f928
+  checksum: 10c0/5324108314b3d9abaafd82ea04a91ea6904580c1fbe47c52600881ae250fef3b2d3d28c7d68cb979b07241d29fe889b66bd9f92346902bea65a3e562937c7d9a
   languageName: node
   linkType: hard
 
@@ -8885,9 +8885,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^56.1.2":
-  version: 56.1.2
-  resolution: "eslint-plugin-jsdoc@npm:56.1.2"
+"eslint-plugin-jsdoc@npm:^57.0.7":
+  version: 57.0.7
+  resolution: "eslint-plugin-jsdoc@npm:57.0.7"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.58.0"
     are-docs-informative: "npm:^0.0.2"
@@ -8902,7 +8902,7 @@ __metadata:
     spdx-expression-parse: "npm:^4.0.0"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/5f5f379ab2a2868049e793341a851fb9fd6d5541a9cdc87d61556defc55a94ff281435cf6bff6f7e9ce8b8426723ce6b063240a81c8d311f12180c9bdb306c6e
+  checksum: 10c0/bf93ae2b0bedf31bd4f79bbc3f682b56bff3c5d70bfcfd1886ee5a2740df09ffa12349000e120da38f5fe903e3a01a91b8f334cb48d1f26beff13346d171efca
   languageName: node
   linkType: hard
 
@@ -17250,7 +17250,7 @@ __metadata:
     "@types/html-minifier": "npm:^4.0.5"
     "@types/html-minifier-terser": "npm:^7.0.2"
     "@types/imagemin": "npm:^9.0.1"
-    "@types/node": "npm:^24.3.1"
+    "@types/node": "npm:^24.3.3"
     "@types/postcss-import": "npm:^14.0.3"
     "@types/postcss-url": "npm:^10.0.4"
     "@types/webpack-env": "npm:^1.18.8"
@@ -17266,7 +17266,7 @@ __metadata:
     ejs: "npm:^3.1.10"
     eslint: "npm:^9.35.0"
     eslint-config-google: "npm:^0.14.0"
-    eslint-plugin-jsdoc: "npm:^56.1.2"
+    eslint-plugin-jsdoc: "npm:^57.0.7"
     exports-loader: "npm:^5.0.0"
     extract-loader: "npm:^5.1.0"
     favicons: "npm:^7.2.0"

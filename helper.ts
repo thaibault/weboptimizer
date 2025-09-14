@@ -293,7 +293,7 @@ export const determineExternalRequest = (
         resolvedRequest,
         {},
         {},
-        {file: extensions.file.external},
+        {file: extensions.file.external.concat(extensions.file.internal)},
         context,
         requestContext,
         pathsToIgnore,
