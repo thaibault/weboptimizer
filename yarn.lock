@@ -4877,12 +4877,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.5.1":
-  version: 24.5.1
-  resolution: "@types/node@npm:24.5.1"
+"@types/node@npm:^24.5.2":
+  version: 24.5.2
+  resolution: "@types/node@npm:24.5.2"
   dependencies:
     undici-types: "npm:~7.12.0"
-  checksum: 10c0/5f0cb038be789b58170e616452ba1f8ebb85bf2fbce58a7e32b1eb08391f64f5e31a9cdbccefbfcd9e6d73b66b564b5e037a1d678ab20213559a32e1d7b6ce17
+  checksum: 10c0/96baaca6564d39c6f7f6eddd73ce41e2a7594ef37225cd52df3be36fad31712af8ae178387a72d0b80f2e2799e7fd30c014bc0ae9eb9f962d9079b691be00c48
   languageName: node
   linkType: hard
 
@@ -7426,9 +7426,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:3.0.1306":
-  version: 3.0.1306
-  resolution: "clientnode@npm:3.0.1306"
+"clientnode@npm:3.0.1307":
+  version: 3.0.1307
+  resolution: "clientnode@npm:3.0.1307"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -7446,7 +7446,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/c18daaf416eb8316570a3c0095bbd46760aeb754a668038d4f58b475e6ad22324a663e07f318bde2cc067f97e55a364ab7601bced8a97434b08de5b84bb19709
+  checksum: 10c0/c2e272614161e7117ed8907bc579753fccc04697cfdbf2e14ef61c0ef4e03c0f5066df5579cf1b4246ab61fb4e6e8e61fe061938ba60d957e162d14752590b15
   languageName: node
   linkType: hard
 
@@ -8904,9 +8904,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^58.1.1":
-  version: 58.1.1
-  resolution: "eslint-plugin-jsdoc@npm:58.1.1"
+"eslint-plugin-jsdoc@npm:^59.0.0":
+  version: 59.0.0
+  resolution: "eslint-plugin-jsdoc@npm:59.0.0"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.58.0"
     are-docs-informative: "npm:^0.0.2"
@@ -8921,7 +8921,7 @@ __metadata:
     spdx-expression-parse: "npm:^4.0.0"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/73a0bf35c583f9e3373aeebb9f8c72f08131042dc043049e3229d0925e06cc1afe505de1785aaef97b2600eadfce2398999008699b3827f34d8a20a13c2110fe
+  checksum: 10c0/211d46c7ef26ac9980a9fd0a1fa7013d6d4f0ff3ec38db7349af2edc6d957b5e9f3ed398c9cf6de6536e91ef25784a67ab928eaa3ee5988b8b7b066c3fa86a67
   languageName: node
   linkType: hard
 
@@ -17269,7 +17269,7 @@ __metadata:
     "@types/html-minifier": "npm:^4.0.5"
     "@types/html-minifier-terser": "npm:^7.0.2"
     "@types/imagemin": "npm:^9.0.1"
-    "@types/node": "npm:^24.5.1"
+    "@types/node": "npm:^24.5.2"
     "@types/postcss-import": "npm:^14.0.3"
     "@types/postcss-url": "npm:^10.0.4"
     "@types/webpack-env": "npm:^1.18.8"
@@ -17278,14 +17278,14 @@ __metadata:
     babel-loader: "npm:^10.0.0"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:3.0.1306"
+    clientnode: "npm:3.0.1307"
     css-loader: "npm:^7.1.2"
     cssnano: "npm:^7.1.1"
     documentation-website: "npm:^1.0.394"
     ejs: "npm:^3.1.10"
     eslint: "npm:^9.35.0"
     eslint-config-google: "npm:^0.14.0"
-    eslint-plugin-jsdoc: "npm:^58.1.1"
+    eslint-plugin-jsdoc: "npm:^59.0.0"
     exports-loader: "npm:^5.0.0"
     extract-loader: "npm:^5.1.0"
     favicons: "npm:^7.2.0"
