@@ -208,20 +208,27 @@ const main = async (
                 during pre-install phase.
             */
             if (
+                possibleArguments.includes(
+                    configuration.givenCommandLineArguments[2]
+                ) &&
                 ![
                     'build',
                     'build:types',
                     'lint',
                     'preinstall',
-                    'serve',
                     'test',
                     'test:browser',
                     'test:coverage',
                     'test:coverage:report'
-                ].includes(configuration.givenCommandLineArguments[2]) &&
-                possibleArguments.includes(
-                    configuration.givenCommandLineArguments[2]
-                )
+                ].includes(configuration.givenCommandLineArguments[2]) ||
+                /*
+                    NOTE: If target artefacts are located next to their source
+                    files, we need to clear them first when performing a
+                    "serve" to avoid utilizing pre-build artefacts in dev mode.
+                */
+                configuration.givenCommandLineArguments[2] === 'serve' &&
+                configuration.path.source.base ===
+                    configuration.path.target.base
             ) {
                 if (
                     resolve(configuration.path.target.base) ===
