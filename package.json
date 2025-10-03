@@ -1544,8 +1544,8 @@
             {
               "__evaluate__": "path.resolve(self.path.target.base, '*.js')"
             },
-            "# NOTE: We need to ignore build js files but not the whole \"node_modules\" folder potentially. That means that we can only completly ignore files in target if it is not the same as the root folder",
             {
+              "#": "NOTE: We need to ignore build js files but not the whole \"node_modules\" folder potentially. That means that we can only completly ignore files in target if it is not the same as the root folder",
               "__evaluate__": "filesystem.isDirectorySync(path.resolve(self.path.target.base, 'node_modules')) ? path.resolve(self.path.target.base, '*/*.js') : path.resolve(self.path.target.base, '**/*.js')"
             }
           ]
