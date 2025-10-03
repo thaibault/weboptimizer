@@ -212,26 +212,31 @@ const main = async (
                 possibleArguments.includes(
                     configuration.givenCommandLineArguments[2]
                 ) &&
-                ![
-                    'build',
-                    'build:types',
-                    'lint',
-                    'preinstall',
-                    'test',
-                    'test:browser',
-                    'test:coverage',
-                    'test:coverage:report'
-                ].includes(configuration.givenCommandLineArguments[2]) ||
-                /*
-                    NOTE: If target artefacts are located next to their source
-                    files, we need to clear them first when running dev mode
-                    (watching source files and reloading build automatically).
-                */
-                ['serve', 'watch'].includes(
-                    configuration.givenCommandLineArguments[2]
-                ) &&
-                configuration.path.source.base ===
-                    configuration.path.target.base
+                (
+                    ![
+                        'build',
+                        'build:types',
+                        'lint',
+                        'preinstall',
+                        'test',
+                        'test:browser',
+                        'test:coverage',
+                        'test:coverage:report',
+                        'serve',
+                        'watch'
+                    ].includes(configuration.givenCommandLineArguments[2]) ||
+                    /*
+                        NOTE: If target artefacts are located next to their
+                        source files, we need to clear them first when running
+                        dev mode (watching source files and reloading build
+                        automatically).
+                    */
+                    ['serve', 'watch'].includes(
+                        configuration.givenCommandLineArguments[2]
+                    ) &&
+                    configuration.path.source.base ===
+                        configuration.path.target.base
+                )
             ) {
                 if (
                     resolve(configuration.path.target.base) ===
