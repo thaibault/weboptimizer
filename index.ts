@@ -223,10 +223,12 @@ const main = async (
                 ].includes(configuration.givenCommandLineArguments[2]) ||
                 /*
                     NOTE: If target artefacts are located next to their source
-                    files, we need to clear them first when performing a
-                    "serve" to avoid utilizing pre-build artefacts in dev mode.
+                    files, we need to clear them first when running dev mode
+                    (watching source files and reloading build automatically).
                 */
-                configuration.givenCommandLineArguments[2] === 'serve' &&
+                ['service', 'watch'].includes(
+                    configuration.givenCommandLineArguments[2]
+                ) &&
                 configuration.path.source.base ===
                     configuration.path.target.base
             ) {
