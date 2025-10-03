@@ -135,6 +135,7 @@ const main = async (
         const possibleArguments: Array<string> = [
             'build',
             'build:types',
+            'check:types',
             'clear',
             'document',
             'lint',
@@ -144,7 +145,7 @@ const main = async (
             'test:browser',
             'test:coverage',
             'test:coverage:report',
-            'check:types'
+            'watch'
         ]
         const closeEventHandlers: Array<AnyFunction> = []
         if (configuration.givenCommandLineArguments.length > 2) {
@@ -226,7 +227,7 @@ const main = async (
                     files, we need to clear them first when running dev mode
                     (watching source files and reloading build automatically).
                 */
-                ['service', 'watch'].includes(
+                ['serve', 'watch'].includes(
                     configuration.givenCommandLineArguments[2]
                 ) &&
                 configuration.path.source.base ===
