@@ -122,6 +122,7 @@ export const config = defineConfig(
 
             '@typescript-eslint/array-type': ['error', {default: 'generic'}],
             '@typescript-eslint/no-dynamic-delete': 'off',
+            '@typescript-eslint/no-redundant-type-constituents': 'off',
             '@typescript-eslint/no-this-alias': [
                 'error', {allowedNames: ['self']}
             ],
