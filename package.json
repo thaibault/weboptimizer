@@ -212,6 +212,9 @@
     "@types/html-minifier": {
       "optional": true
     },
+    "@types/imagemin": {
+      "optional": true
+    },
     "@types/node": {
       "optional": true
     },
