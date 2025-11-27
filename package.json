@@ -245,6 +245,9 @@
     "identity-obj-proxy": {
       "optional": true
     },
+    "imagemin": {
+      "optional": true
+    },
     "image-minimizer-webpack-plugin": {
       "optional": true
     },
