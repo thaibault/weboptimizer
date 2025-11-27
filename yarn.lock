@@ -17802,6 +17802,8 @@ __metadata:
       optional: true
     image-minimizer-webpack-plugin:
       optional: true
+    imagemin:
+      optional: true
     jest:
       optional: true
     jest-canvas-mock:

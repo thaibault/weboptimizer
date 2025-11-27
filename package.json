@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.1625",
+  "version": "2.0.1626",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -245,10 +245,10 @@
     "identity-obj-proxy": {
       "optional": true
     },
-    "imagemin": {
+    "image-minimizer-webpack-plugin": {
       "optional": true
     },
-    "image-minimizer-webpack-plugin": {
+    "imagemin": {
       "optional": true
     },
     "jest": {
