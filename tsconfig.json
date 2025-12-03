@@ -12,7 +12,7 @@
         "jsx": "react-jsx",
         "lib": ["DOM", "ESNext"],
         "module": "esnext",
-        "moduleResolution": "NodeNext",
+        "moduleResolution": "bundler",
         "paths": {
             "@root/*": ["*"]
         },
