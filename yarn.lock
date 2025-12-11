@@ -5111,12 +5111,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.10.2":
-  version: 24.10.2
-  resolution: "@types/node@npm:24.10.2"
+"@types/node@npm:^25.0.0":
+  version: 25.0.0
+  resolution: "@types/node@npm:25.0.0"
   dependencies:
     undici-types: "npm:~7.16.0"
-  checksum: 10c0/560c894e1a9bf7468718ceca8cd520361fd0d3fcc0b020c2f028fc722b28b5b56aecd16736a9b753d52a14837c066cf23480a8582ead59adc63a7e4333bc976c
+  checksum: 10c0/5a10d6f873ad326e46fac923ea4305b7fea3de0cf7e11c835d1fdc99d4b4d0f3f108035432ec1732f505c97d367b9abf618ecbdfb02a75a5306665ecce2a81a6
   languageName: node
   linkType: hard
 
@@ -7694,9 +7694,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:3.0.1335":
-  version: 3.0.1335
-  resolution: "clientnode@npm:3.0.1335"
+"clientnode@npm:3.0.1336":
+  version: 3.0.1336
+  resolution: "clientnode@npm:3.0.1336"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -7714,7 +7714,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/f2ddd5924404b9b5d4f89dc0e75170b32eddaf05fd05ec6a1f7e372b4a73b092d9ece9bbdb0e142bd9605c163272b3e1af44b58453bf3b31acf06e3523c3903d
+  checksum: 10c0/7a5c6b9053d800a3ec25587d3024c19f931fb0f971a857bc1b1f23bbe9e1ef6812bf77d3ea270e0d237488b65901d1db5ee7fc12b3ee6c58e3d205e5cb7ea467
   languageName: node
   linkType: hard
 
@@ -17677,7 +17677,7 @@ __metadata:
     "@types/html-minifier": "npm:^4.0.6"
     "@types/html-minifier-terser": "npm:^7.0.2"
     "@types/imagemin": "npm:^9.0.1"
-    "@types/node": "npm:^24.10.2"
+    "@types/node": "npm:^25.0.0"
     "@types/postcss-import": "npm:^14.0.3"
     "@types/postcss-url": "npm:^10.0.4"
     "@types/webpack-env": "npm:^1.18.8"
@@ -17686,7 +17686,7 @@ __metadata:
     babel-loader: "npm:^10.0.0"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:3.0.1335"
+    clientnode: "npm:3.0.1336"
     css-loader: "npm:^7.1.2"
     cssnano: "npm:^7.1.2"
     documentation-website: "npm:^1.0.397"
