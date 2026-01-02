@@ -53,8 +53,10 @@ const IS_LIBRARY = LIBRARY_INDICATOR ?? true
 
 let TSCONFIG_FILE_PATH = ''
 for (const filePath of [
-    './eslint.tsconfig.json',
+    './tsconfig.eslint.json',
     './tsconfig.json',
+    './tsconfig.application.json',
+    './tsconfig.library.json',
 
     './node_modules/weboptimizer/tsconfig.' +
     `${IS_LIBRARY ? 'library' : 'application'}.json`
