@@ -1,7 +1,4 @@
 import {defineConfig} from 'eslint/config'
-import eslintjs from '@eslint/js'
-import javascriptPlugin from '@stylistic/eslint-plugin'
-import typescriptParser from '@typescript-eslint/parser'
 import google from 'eslint-config-google'
 import jsdoc from 'eslint-plugin-jsdoc'
 import {readFile, stat} from 'fs/promises'
@@ -10,8 +7,13 @@ import {basename, dirname, resolve} from 'path'
 import {cwd} from 'process'
 import typescript, {ConfigWithExtends} from 'typescript-eslint'
 
-import {ResolvedConfiguration} from './type'
 import {ConfigWithExtendsArray} from '@eslint/config-helpers'
+import eslintjs from '@eslint/js'
+import javascriptPlugin from '@stylistic/eslint-plugin'
+import typescriptParser from '@typescript-eslint/parser'
+
+import {ResolvedConfiguration} from './type'
+
 /**
  * Checks if given path points to a valid file.
  * @param filePath - Path to directory.
