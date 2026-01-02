@@ -51,6 +51,7 @@ const IS_LIBRARY = LIBRARY_INDICATOR ?? true
 
 let TSCONFIG_FILE_PATH = ''
 for (const filePath of [
+    './eslint.tsconfig.json',
     './tsconfig.json',
 
     './node_modules/weboptimizer/tsconfig.' +
