@@ -483,9 +483,6 @@
               {
                 "__evaluate__": "`'${self.path.apiDocumentation}'`"
               },
-              {
-                "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? '--parser-options=project:tsconfig.json' : ''"
-              },
               "--no-warn-ignored",
               "'**/*.{jsx,ts,tsx}'"
             ],
