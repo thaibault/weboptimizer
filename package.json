@@ -433,7 +433,7 @@
             "--noEmit",
             "--project",
             {
-              "__evaluate__": "self.commandLine['build:types'].arguments[self.commandLine['build:types'].arguments.length - 1]"
+              "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.application.json')) ? path.resolve(currentPath, 'tsconfig.application.json') : filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.library.json')) ? path.resolve(currentPath, 'tsconfig.library.json') : `${webOptimizerPath}/tsconfig.application.json`"
             }
           ],
           "command": "tsc"
@@ -1613,7 +1613,7 @@
             "--emitDeclarationOnly",
             "--project",
             {
-              "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.library.json`"
+              "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.library.json')) ? path.resolve(currentPath, 'tsconfig.library.json') : filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.application.json')) ? path.resolve(currentPath, 'tsconfig.application.json') : `${webOptimizerPath}/tsconfig.library.json`"
             }
           ]
         },
@@ -1622,7 +1622,7 @@
             "--noEmit",
             "--project",
             {
-              "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : `${webOptimizerPath}/tsconfig.library.json`"
+              "__evaluate__": "filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.json')) ? path.resolve(currentPath, 'tsconfig.json') : filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.library.json')) ? path.resolve(currentPath, 'tsconfig.library.json') : filesystem.isFileSync(path.resolve(currentPath, 'tsconfig.application.json')) ? path.resolve(currentPath, 'tsconfig.application.json') : `${webOptimizerPath}/tsconfig.library.json`"
             }
           ]
         },
