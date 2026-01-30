@@ -587,8 +587,11 @@ describe('helper', (): void => {
     })
     test('determineModuleFilePathInPackage', () => {
         expect(determineModuleFilePathInPackage(
-            '../node_modules/clientnode/package.json'
-        ).fileName).toStrictEqual('')
+            'not/existing/location'
+        ).fileName).toStrictEqual(null)
+        expect(determineModuleFilePathInPackage(
+            'node_modules/clientnode'
+        ).fileName).toStrictEqual('dist/index.js')
     })
     testEach<typeof determineModuleFilePath>(
         'determineModuleFilePath',
