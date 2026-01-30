@@ -28,7 +28,7 @@ import {
     renderFilePathTemplate,
     resolveAutoInjection,
     resolveBuildConfigurationFilePaths,
-    resolveModulesInFolders
+    resolveModulesInFolders, determineModuleFilePathInPackage
 } from '../helper'
 // endregion
 // region mockup
@@ -584,6 +584,14 @@ describe('helper', (): void => {
             [/.*\/\.git\/.*/, '/.*\\/node_modules/.*\\/'],
             './'
         )).toStrictEqual({})
+    })
+    test('determineModuleFilePathInPackage', () => {
+        expect(determineModuleFilePathInPackage(
+            'not/existing/location'
+        ).fileName).toStrictEqual(null)
+        expect(determineModuleFilePathInPackage(
+            'node_modules/clientnode'
+        ).fileName).toStrictEqual('dist/index.js')
     })
     testEach<typeof determineModuleFilePath>(
         'determineModuleFilePath',

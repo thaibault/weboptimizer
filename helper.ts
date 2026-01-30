@@ -846,7 +846,6 @@ export const getAutoInjection = (
 
     return result
 }
-// TODO test
 /**
  * Determines a resolved module file path in given package path.
  * @param packagePath - Path to package to resolve in.

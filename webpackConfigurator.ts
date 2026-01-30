@@ -357,26 +357,6 @@ pluginInstances.push({apply: (compiler: Compiler): void => {
 }})
 ///// endregion
 ///// region in-place configured assets in the main html file
-/*
-    TODO
-
-    /
-        NOTE: We have to translate template delimiter to html compatible
-        sequences and translate it back later to avoid unexpected escape
-        sequences in resulting html.
-    /
-    const window: DOMWindow = (new DOM(
-        content
-            .replace(/<%/g, '##+#+#+##')
-            .replace(/%>/g, '##-#-#-##')
-    )).window
-
-    ->
-
-    .replace(/##\+#\+#\+##/g, '<%')
-    .replace(/##-#-#-##/g, '%>')
-*/
-
 if (
     plugins.HTML &&
     htmlAvailable &&
