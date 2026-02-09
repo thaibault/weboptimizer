@@ -515,7 +515,7 @@ export const load = (
                 resolvedConfiguration.encoding
             )
 
-            let type: null | string = null
+            let type: null | string | undefined
             if (filePath)
                 type = determineAssetType(
                     filePath,

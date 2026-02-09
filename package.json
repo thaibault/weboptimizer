@@ -118,6 +118,7 @@
   "devDependencies": {
     "@babel/cli": "^7.28.6",
     "@babel/eslint-parser": "^7.28.6",
+    "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.8.0",
     "@types/ejs": "^3.1.5",
     "@types/eslint": "^9.6.1",
