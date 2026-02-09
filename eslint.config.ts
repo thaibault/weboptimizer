@@ -126,6 +126,7 @@ export const config = defineConfig(
             '@stylistic/type-annotation-spacing': 'error',
 
             '@typescript-eslint/array-type': ['error', {default: 'generic'}],
+            '@typescript-eslint/consistent-generic-constructors': 'off',
             '@typescript-eslint/no-deprecated': 'off',
             '@typescript-eslint/no-dynamic-delete': 'off',
             '@typescript-eslint/no-redundant-type-constituents': 'off',

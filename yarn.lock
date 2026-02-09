@@ -3993,6 +3993,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint/js@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "@eslint/js@npm:10.0.1"
+  peerDependencies:
+    eslint: ^10.0.0
+  peerDependenciesMeta:
+    eslint:
+      optional: true
+  checksum: 10c0/9f3fcaf71ba7fdf65d82e8faad6ecfe97e11801cc3c362b306a88ea1ed1344ae0d35330dddb0e8ad18f010f6687a70b75491b9e01c8af57acd7987cee6b3ec6c
+  languageName: node
+  linkType: hard
+
 "@eslint/object-schema@npm:^3.0.1":
   version: 3.0.1
   resolution: "@eslint/object-schema@npm:3.0.1"
@@ -7767,9 +7779,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:3.0.1344":
-  version: 3.0.1344
-  resolution: "clientnode@npm:3.0.1344"
+"clientnode@npm:3.0.1345":
+  version: 3.0.1345
+  resolution: "clientnode@npm:3.0.1345"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -7787,7 +7799,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/826a8993def211498fe568911ae8606b8a73685ede216eabc01a3ef83848fd3f4121c7566173db0d1f4a8bd3c04f453bbdfc14c90f91e1d3ea8d1ba588a7b46d
+  checksum: 10c0/334319e0e7c837c9b9213ccd2c000bdd16df5e6e2c0dbf29bf07ea24fac5926bb649d2e3521b33ce98d1dfed95179761f487a1f788a0f2a0e2709972c521ba05
   languageName: node
   linkType: hard
 
@@ -17844,6 +17856,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.29.0"
     "@babel/preset-typescript": "npm:^7.28.5"
     "@babel/runtime": "npm:^7.28.6"
+    "@eslint/js": "npm:^10.0.1"
     "@stylistic/eslint-plugin": "npm:^5.8.0"
     "@types/ejs": "npm:^3.1.5"
     "@types/eslint": "npm:^9.6.1"
@@ -17859,7 +17872,7 @@ __metadata:
     babel-loader: "npm:^10.0.0"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:3.0.1344"
+    clientnode: "npm:3.0.1345"
     css-loader: "npm:^7.1.3"
     cssnano: "npm:^7.1.2"
     documentation-website: "npm:^1.0.398"
