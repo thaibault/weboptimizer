@@ -736,7 +736,7 @@
           "last 2 major versions",
           "> 5%"
         ],
-        "testCommandLine": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --config node_modules/weboptimizer/jest.json --noStackTrace --test-regex",
+        "testCommandLine": "jest --config node_modules/weboptimizer/jest.json --noStackTrace --test-regex",
         "testCommandLineCoverageArguments": "--ci --coverage --coverage-reporters=text --coverage-reporters=text-summary --silent --test-location-in-results"
       },
       "givenCommandLineArguments": [],
