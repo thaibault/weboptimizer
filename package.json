@@ -489,7 +489,9 @@
                 "__evaluate__": "`'${self.path.apiDocumentation}'`"
               },
               "--no-warn-ignored",
-              "'**/*.{jsx,ts,tsx}'"
+              {
+                "__evaluate__": "`'${self.path.source.base}**/*.{jsx,ts,tsx}'`"
+              }
             ],
             "command": "eslint",
             "indicator": "self.needed.javaScript || self.needed.javaScriptExtension || self.needed.typeScript || self.needed.typeScriptExtension"
@@ -1434,7 +1436,12 @@
           "__evaluate__": "optionalRequire('stylelint-config-standard-scss') ? 'stylelint-config-standard-scss' : 'stylelint-config-standard'"
         },
         "ignoreFiles": "**/node_modules/*",
+        "plugins": ["stylelint-scss"],
         "rules": {
+          "#": "Deaktivates default CSS checks for unknwin @-ruels.",
+          "at-rule-no-unknown": null,
+          "#1": "Activates SCSS checks for \"@use\", \"@forward\" and so on.",
+          "scss/at-rule-no-unknown": true,
           "at-rule-empty-line-before": [
             "always",
             {
