@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "2.0.1649",
+  "version": "2.0.1650",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -1436,7 +1436,9 @@
           "__evaluate__": "optionalRequire('stylelint-config-standard-scss') ? 'stylelint-config-standard-scss' : 'stylelint-config-standard'"
         },
         "ignoreFiles": "**/node_modules/*",
-        "plugins": ["stylelint-scss"],
+        "plugins": [
+          "stylelint-scss"
+        ],
         "rules": {
           "#": "Deaktivates default CSS checks for unknwin @-ruels.",
           "at-rule-no-unknown": null,
