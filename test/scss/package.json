@@ -125,6 +125,20 @@
           }
         }
       }
+    },
+    "stylelint": {
+      "customSyntax": "postcss-scss",
+      "extends": "stylelint-config-standard-scss",
+      "ignoreFiles": "**/node_modules/*",
+      "plugins": [
+        "stylelint-scss"
+      ],
+      "rules": {
+        "#": "Deactivates default CSS checks for unknown \"@-ruels\".",
+        "at-rule-no-unknown": null,
+        "#1": "Activates SCSS checks for \"@use\", \"@forward\" and so on.",
+        "scss/at-rule-no-unknown": true
+      }
     }
   },
   "resolutions": {
