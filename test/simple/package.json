@@ -70,6 +70,7 @@
     "postcss-import": "*",
     "postcss-loader": "*",
     "postcss-preset-env": "*",
+    "postcss-scss": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
     "rimraf": ">=5",
