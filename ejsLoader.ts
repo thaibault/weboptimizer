@@ -43,10 +43,7 @@ import {determineModuleFilePath} from './helper'
 import {Extensions, Replacements, ResolvedConfiguration} from './type'
 // endregion
 // region types
-export type PreCompiledTemplateFunction =
-    ((..._parameters: Array<unknown>) => string)
-export type TemplateFunction =
-    EJSTemplateFunction | PreCompiledTemplateFunction
+export type TemplateFunction = EJSTemplateFunction
 export type CompilerOptions =
     Options &
     {
@@ -259,8 +256,6 @@ export const loader = function(
 
         let stepLocals: Array<string> | Mapping<unknown>
         let scope: Mapping<unknown> = {}
-        let originalScopeNames: Array<string> = []
-        let scopeNames: Array<string> = []
 
         for (let step = 1; step <= compileSteps; step += 1) {
             // On every odd compile step we have to determine the environment.
@@ -282,12 +277,6 @@ export const loader = function(
                     }
                 else if (!Array.isArray(stepLocals))
                     scope = stepLocals
-
-                originalScopeNames =
-                    Array.isArray(stepLocals) ? stepLocals : Object.keys(scope)
-                scopeNames = originalScopeNames.map((name: string): string =>
-                    convertToValidVariableName(name)
-                )
                 // endregion
             }
 
@@ -312,49 +301,12 @@ export const loader = function(
 
                     result = ejs.compile(result, options) as
                         EJSTemplateFunction
-
-                    /*
-                        Provide all scope names when "_with" options isn't
-                        enabled
-                    */
-                    if (options.strict || !options._with) {
-                        let localsName: string = options.localsName || 'locals'
-                        while (scopeNames.includes(localsName))
-                            localsName = `_${localsName}`
-
-                        /* eslint-disable @typescript-eslint/no-implied-eval */
-                        result = new Function(
-                            ...scopeNames,
-                            localsName,
-                            `return ${result.toString()}(` +
-                            `${localsName},` +
-                            `${localsName}.escapeFn,` +
-                            `${localsName}.include,` +
-                            `${localsName}.rethrow)`
-                        ) as PreCompiledTemplateFunction
-                        /* eslint-enable @typescript-eslint/no-implied-eval */
-                    }
                 }
-            } else
-                result = compressHTML(!options.strict && options._with ?
-                    (result as PreCompiledTemplateFunction)(
-                        scope, scope.escapeFn, scope.include
-                    ) :
-                    (result as PreCompiledTemplateFunction)(
-                        /*
-                            NOTE: We want to be ensure to have same ordering as
-                            we have for the scope names and to call internal
-                            registered getter by retrieving values. So simple
-                            using "...Object.values(scope)" is not appreciate
-                            here.
-                        */
-                        ...originalScopeNames
-                            .map((name: string): unknown => scope[name])
-                            .concat(
-                                !options.strict && options._with ? [] : scope
-                            )
-                    )
-                )
+            } else {
+                result = result(scope)
+
+                result = compressHTML(result)
+            }
         }
 
         if (compileSteps % 2) {
