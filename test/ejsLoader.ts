@@ -18,8 +18,9 @@ const context: LoaderContext<LoaderConfiguration> = {
 // endregion
 describe('ejsLoader', (): void => {
     // region tests
-    test('loader', (): void => {
+    test.only('loader', (): void => {
         expect(ejsLoader.call(context, '<a></a>')).toStrictEqual('<a></a>')
+
         const complexContext: LoaderContext<LoaderConfiguration> = extend(
             true,
             copy(context),
@@ -35,12 +36,15 @@ describe('ejsLoader', (): void => {
             }
         )
 
-        expect(ejsLoader.call(complexContext, '<a><%- test %></a>'))
+        expect(ejsLoader.call(complexContext, '<a><%- locals.test %></a>'))
             .toStrictEqual('<a>hans</a>')
+
         expect(ejsLoader.call(
             complexContext,
-            `<a></a><%- include('<a>test</a>?{options: {isString: true}}') %>`
+            '<a></a>' +
+            `<%- locals.include('<a>test</a>?{options: {isString: true}}') %>`
         )).toStrictEqual('<a></a><a>test</a>')
+
         ;(complexContext.query as LoaderConfiguration).compileSteps = 0
         expect(ejsLoader.call(complexContext, '<a></a>'))
             .toStrictEqual('<a></a>')
