@@ -215,44 +215,46 @@ export const loader = function(
         }
 
         const compressHTML = (content: string): string =>
-            givenOptions.compress?.html ?
-                minifyHTML(
-                    content,
-                    extend(
-                        true,
-                        {
-                            caseSensitive: true,
-                            collapseInlineTagWhitespace: true,
-                            collapseWhitespace: true,
-                            conservativeCollapse: true,
-                            minifyCSS: true,
-                            minifyJS: true,
-                            processScripts: [
-                                'text/ng-template',
-                                'text/x-handlebars-template'
-                            ],
-                            removeAttributeQuotes: true,
-                            removeComments: true,
-                            removeRedundantAttributes: true,
-                            removeScriptTypeAttributes: true,
-                            removeStyleLinkTypeAttributes: true,
-                            sortAttributes: true,
-                            sortClassName: true,
-                            /*
-                                NOTE: Avoids whitespace around placeholder in
-                                tags.
-                            */
-                            trimCustomFragments: true,
-                            useShortDoctype: true
-                        },
-                        givenOptions.compress.html
-                    )
-                ) :
-                content
+            minifyHTML(
+                content,
+                extend(
+                    true,
+                    {
+                        caseSensitive: true,
+                        collapseInlineTagWhitespace: true,
+                        collapseWhitespace: true,
+                        conservativeCollapse: true,
+                        minifyCSS: true,
+                        minifyJS: true,
+                        processScripts: [
+                            'text/ng-template',
+                            'text/x-handlebars-template'
+                        ],
+                        removeAttributeQuotes: true,
+                        removeComments: true,
+                        removeRedundantAttributes: true,
+                        removeScriptTypeAttributes: true,
+                        removeStyleLinkTypeAttributes: true,
+                        sortAttributes: true,
+                        sortClassName: true,
+                        /*
+                            NOTE: Avoids whitespace around placeholder in
+                            tags.
+                        */
+                        trimCustomFragments: true,
+                        useShortDoctype: true
+                    },
+                    givenOptions.compress?.html || {}
+                )
+            )
 
         let result: string | TemplateFunction = template
         const isString = Boolean(options.isString)
         delete options.isString
+
+        // NOTE: Needed to have standalone useable js code afterwards.
+        if (compileSteps % 2)
+            options.client = true
 
         let stepLocals: Array<string> | Mapping<unknown>
         let scope: Mapping<unknown> = {}
@@ -292,28 +294,78 @@ export const loader = function(
                             encoding = options.encoding
                         result = readFileSync(result, {encoding})
                     }
-                    if (step === compileSteps)
+                    if (step === compileSteps && givenOptions.compress?.html)
                         result = compressHTML(result)
 
-                    if (options.strict || !options._with)
-                        // NOTE: Needed to manipulate code after compiling.
-                        options.client = true
+                    if (step === compileSteps && compileSteps % 2) {
+                        // Wir nutzen die Template-Klasse direkt, um an den generierten Quellcode zu kommen
+                        const templateInstance =
+                            new ejs.Template(template, options)
 
-                    result = ejs.compile(result, options) as
-                        EJSTemplateFunction
+                        // Generiert den JS-Code der Funktion als String
+                        templateInstance.compile()
+                        const compiledSourceCode =
+                            templateInstance.source
+
+                        result = `
+                            module.exports = function(${options.localsName}) {
+                                var escapeFn = function(value) {
+                                    return String(value)
+                                        .replace(
+                                            /[&<>"']/g,
+                                            function(char) {
+                                                return {
+                                                    '&': '&amp;',
+                                                    '<': '&lt;',
+                                                    '>': '&gt;',
+                                                    '"': '&quot;',
+                                                    "'": "&#39;"
+                                                }[char]
+                                            }
+                                        )
+                                };
+                                var include = function() {
+                                    throw new Error('Include not implemented.')
+                                };
+                                var rethrow = function rethrow(err, str, flnm, lineno, esc) {
+                                    var lines = str.split('\\n');
+                                    var start = Math.max(lineno - 3, 0);
+                                    var end = Math.min(lines.length, lineno + 3);
+                                    var filename = esc(flnm);
+                                    // Error context
+                                    var context = lines.slice(start, end).map(function (line, i) {
+                                        var curr = i + start + 1;
+                                        return (curr == lineno ? ' >> ' : '    ')
+                                            + curr
+                                            + '| '
+                                            + line;
+                                    }).join('\\n');
+                                    // Alter exception message
+                                    err.path = filename;
+                                    err.message = (filename || 'ejs') + ':'
+                                        + lineno + '\\n'
+                                        + context + '\\n\\n'
+                                        + err.message;
+                                    throw err;
+                                };
+                                ${compiledSourceCode}
+                            };
+                        `.trim()
+                    } else
+                        result = ejs.compile(result, options) as
+                            EJSTemplateFunction
                 }
             } else {
                 result = result(scope)
 
-                result = compressHTML(result)
+                if (givenOptions.compress?.html)
+                    result = compressHTML(result)
             }
         }
 
         if (compileSteps % 2) {
-            let code = `module.exports = ${result.toString()}`
-
             const processed: BabelFileResult | null = babelTransformSync(
-                code,
+                result as string,
                 {
                     ast: false,
                     babelrc: false,
@@ -332,9 +384,9 @@ export const loader = function(
             )
 
             if (typeof processed?.code === 'string')
-                code = processed.code
+                result = processed.code
 
-            return `${options.strict ? `'use strict';\n` : ''}${code}`
+            return `${options.strict ? `'use strict';\n` : ''}${result}`
         }
 
         if (typeof result === 'string') {
