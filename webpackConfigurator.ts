@@ -554,7 +554,7 @@ if (configuration.injection.external.modules === '__implicit__')
                 else if (isObject(configuration.injection.external.aliases[
                     request
                 ]))
-                    extend<Mapping>(
+                    extend(
                         result as Mapping,
                         configuration.injection.external.aliases[request] as
                             Mapping
@@ -910,7 +910,7 @@ const evaluateAdditionalLoaderConfiguration = (
         loaderConfiguration.include &&
         evaluateAnThrow<WebpackLoaderIndicator>(loaderConfiguration.include) ||
         configuration.path.source.base,
-    test: new RegExp(evaluateAnThrow<string>(loaderConfiguration.test)),
+    test: new RegExp(evaluateAnThrow(loaderConfiguration.test)),
     use: evaluateAnThrow<Array<WebpackLoader> | WebpackLoader>(
         loaderConfiguration.use
     )

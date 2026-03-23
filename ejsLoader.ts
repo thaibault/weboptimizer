@@ -335,25 +335,35 @@ export const loader = function(
                                 ) {
                                     var lines = str.split('\\n');
                                     var start = Math.max(lineno - 3, 0);
-                                    var end = Math.min(lines.length, lineno + 3);
+                                    var end = Math.min(
+                                        lines.length, lineno + 3
+                                    );
                                     var filename = esc(flnm);
                                     // Error context
-                                    var context =
-                                        lines.slice(start, end)
-                                             .map(function (line, i) {
-                                                 var curr = i + start + 1;
-                                                 return (curr == lineno ? ' >> ' : '    ')
-                                                     + curr
-                                                     + '| '
-                                                     + line;
-                                                })
-                                             .join('\\n');
+                                    var context = lines
+                                        .slice(start, end)
+                                        .map(function (line, i) {
+                                            var curr = i + start + 1;
+                                            return (
+                                                curr == lineno ?
+                                                    ' >> ' :
+                                                    '    '
+                                                ) +
+                                                curr +
+                                                '| ' +
+                                                line;
+                                        })
+                                        .join('\\n');
                                     // Alter exception message
                                     err.path = filename;
-                                    err.message = (filename || 'ejs') + ':'
-                                        + lineno + '\\n'
-                                        + context + '\\n\\n'
-                                        + err.message;
+                                    err.message =
+                                        (filename || 'ejs') +
+                                        ':' +
+                                        lineno +
+                                        '\\n' +
+                                        context +
+                                        '\\n\\n' +
+                                        err.message;
                                     throw err;
                                 };
                                 ${compiledSourceCode}
@@ -394,7 +404,9 @@ export const loader = function(
             if (typeof processed?.code === 'string')
                 result = processed.code
 
-            return `${options.strict ? `'use strict';\n` : ''}${result}`
+            return (
+                `${options.strict ? `'use strict';\n` : ''}${result as string}`
+            )
         }
 
         if (typeof result === 'string') {
