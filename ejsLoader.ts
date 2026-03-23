@@ -21,7 +21,6 @@ import {
 import babelMinifyPreset from 'babel-preset-minify'
 import {
     convertSubstringInPlainObject,
-    convertToValidVariableName,
     copy,
     currentRequire,
     evaluate,
@@ -298,17 +297,21 @@ export const loader = function(
                         result = compressHTML(result)
 
                     if (step === compileSteps && compileSteps % 2) {
-                        // Wir nutzen die Template-Klasse direkt, um an den generierten Quellcode zu kommen
+                        /*
+                            We have to use the templace class directly to get
+                            the generated source code.
+                         */
                         const templateInstance =
                             new ejs.Template(template, options)
 
-                        // Generiert den JS-Code der Funktion als String
                         templateInstance.compile()
                         const compiledSourceCode =
                             templateInstance.source
 
                         result = `
-                            module.exports = function(${options.localsName}) {
+                            module.exports = function(
+                                ${options.localsName as string}
+                            ) {
                                 var escapeFn = function(value) {
                                     return String(value)
                                         .replace(
@@ -327,19 +330,24 @@ export const loader = function(
                                 var include = function() {
                                     throw new Error('Include not implemented.')
                                 };
-                                var rethrow = function rethrow(err, str, flnm, lineno, esc) {
+                                var rethrow = function rethrow(
+                                    err, str, flnm, lineno, esc
+                                ) {
                                     var lines = str.split('\\n');
                                     var start = Math.max(lineno - 3, 0);
                                     var end = Math.min(lines.length, lineno + 3);
                                     var filename = esc(flnm);
                                     // Error context
-                                    var context = lines.slice(start, end).map(function (line, i) {
-                                        var curr = i + start + 1;
-                                        return (curr == lineno ? ' >> ' : '    ')
-                                            + curr
-                                            + '| '
-                                            + line;
-                                    }).join('\\n');
+                                    var context =
+                                        lines.slice(start, end)
+                                             .map(function (line, i) {
+                                                 var curr = i + start + 1;
+                                                 return (curr == lineno ? ' >> ' : '    ')
+                                                     + curr
+                                                     + '| '
+                                                     + line;
+                                                })
+                                             .join('\\n');
                                     // Alter exception message
                                     err.path = filename;
                                     err.message = (filename || 'ejs') + ':'
