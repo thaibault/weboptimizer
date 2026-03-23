@@ -189,9 +189,9 @@ export const load = (
     const libraryConfiguration: PlainObject = metaConfiguration.library
     let configuration: DefaultConfiguration
     if (debug)
-        configuration = extend<DefaultConfiguration>(
+        configuration = extend(
             true,
-            modifyObject<DefaultConfiguration>(
+            modifyObject(
                 metaConfiguration.default as DefaultConfiguration,
                 metaConfiguration.debug
             ),
@@ -265,7 +265,7 @@ export const load = (
                     ]))
                         extend(
                             true,
-                            modifyObject<DefaultConfiguration>(
+                            modifyObject(
                                 configurationTarget as DefaultConfiguration,
                                 configurationTarget[type]
                             ),

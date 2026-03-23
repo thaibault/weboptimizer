@@ -56,7 +56,7 @@ const buildConfiguration: BuildConfiguration = {
 describe('helper', (): void => {
     // region tests
     /// region boolean
-    testEach<typeof isFilePathInLocation>(
+    testEach(
         'isFilePathInLocation',
         isFilePathInLocation,
 
@@ -66,7 +66,7 @@ describe('helper', (): void => {
     )
     /// endregion
     /// region string
-    testEach<typeof stripLoader>(
+    testEach(
         'stripLoader',
         stripLoader,
 
@@ -83,7 +83,7 @@ describe('helper', (): void => {
     )
     /// endregion
     /// region array
-    testEach<typeof normalizePaths>(
+    testEach(
         'normalizePaths',
         normalizePaths,
 
@@ -98,7 +98,7 @@ describe('helper', (): void => {
     )
     /// endregion
     /// region file handler
-    testEach<typeof renderFilePathTemplate>(
+    testEach(
         'renderFilePathTemplate',
         renderFilePathTemplate,
 
@@ -115,7 +115,7 @@ describe('helper', (): void => {
             {'[id]': '[id]', '[chunkhash]': '[chunkhash]'}
         ]
     )
-    testEach<typeof applyContext>(
+    testEach(
         'applyContext',
         applyContext,
 
@@ -129,7 +129,7 @@ describe('helper', (): void => {
         ['./a', './a', './a', './a', {a: 'b'}],
         ['b/a', './a', './a/a', './', {a: 'b'}, {}, ['a']]
     )
-    testEach<typeof determineExternalRequest>(
+    testEach(
         'determineExternalRequest',
         determineExternalRequest,
 
@@ -433,7 +433,7 @@ describe('helper', (): void => {
             }
         ])
     })
-    testEach<typeof determineModuleLocations>(
+    testEach(
         'determineModuleLocations',
         determineModuleLocations,
 
@@ -462,7 +462,7 @@ describe('helper', (): void => {
             {helper: ['helper.ts']}
         ]
     )
-    testEach<typeof resolveModulesInFolders>(
+    testEach(
         'resolveModulesInFolders',
         resolveModulesInFolders,
 
@@ -472,7 +472,7 @@ describe('helper', (): void => {
         expect(resolveModulesInFolders({a: [__dirname]}).a)
             .toContain('./test/helper.ts')
     })
-    testEach<typeof normalizeGivenInjection>(
+    testEach(
         'normalizeGivenInjection',
         normalizeGivenInjection,
 
@@ -485,7 +485,7 @@ describe('helper', (): void => {
         [{a: ['example']}, {a: ['example'], b: []}],
         [{index: []}, {a: [], b: []}]
     )
-    testEach<typeof resolveAutoInjection>(
+    testEach(
         'resolveAutoInjection',
         resolveAutoInjection,
 
@@ -593,7 +593,7 @@ describe('helper', (): void => {
             'node_modules/clientnode'
         ).fileName).toStrictEqual('dist/index.js')
     })
-    testEach<typeof determineModuleFilePath>(
+    testEach(
         'determineModuleFilePath',
         determineModuleFilePath,
 
@@ -607,7 +607,7 @@ describe('helper', (): void => {
         [resolve('helper.ts'), 'helper', {}, {}, {file: ['.ts']}, './', './']
     )
     /// endregion
-    testEach<typeof applyAliases>(
+    testEach(
         'applyAliases',
         applyAliases,
 
@@ -620,7 +620,7 @@ describe('helper', (): void => {
         ['bbb', 'bba', {a: 'b'}],
         ['helper', 'helper', {}]
     )
-    testEach<typeof applyModuleReplacements>(
+    testEach(
         'applyModuleReplacements',
         applyModuleReplacements,
 
@@ -633,9 +633,7 @@ describe('helper', (): void => {
         ['ba', 'aa', {a: 'b'} as unknown as Replacements],
         ['helper', 'helper', {}]
     )
-    testEachAgainstSameExpectation<
-        typeof findPackageDescriptorFilePath
-    >(
+    testEachAgainstSameExpectation(
         'findPackageDescriptorFilePath',
         findPackageDescriptorFilePath,
         resolve(__dirname, '../package.json'),
