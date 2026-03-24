@@ -39,6 +39,7 @@ import {
     isFile,
     isFileSync,
     isPlainObject,
+    Logger,
     Mapping,
     MAXIMAL_NUMBER_OF_ITERATIONS,
     NOOP,
@@ -81,6 +82,8 @@ import {
     ResolvedConfiguration
 } from './type'
 // endregion
+export const log =
+    new Logger({name: 'weboptimizer-main-logger', level: 'warn'})
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128'
 /**
@@ -446,7 +449,7 @@ const main = async (
                         configuration.commandLine.build.arguments || []
                     ).concat(additionalArguments)
 
-                    console.info(
+                    log.info(
                         'Running "' +
                         (
                             `${configuration.commandLine.build.command} ` +
@@ -562,7 +565,7 @@ const main = async (
                                     `command: ${evaluated.error}`
                                 )
 
-                            console.info(
+                            log.info(
                                 `Running "${(
                                     evaluated as PositiveEvaluationResult
                                 ).result}"`
@@ -633,7 +636,7 @@ const main = async (
                                 task.arguments || []
                             ).concat(additionalArguments)
 
-                            console.info(
+                            log.info(
                                 'Running "' +
                                 (
                                     `${task.command} ` +
@@ -710,9 +713,9 @@ const main = async (
                 )
             )
         )
-            console.info(
-                `Give one of "${possibleArguments.join('", "')}" as command ` +
-                'line argument. You can provide a json string as second ' +
+            log.info(
+                `Give one of "${possibleArguments.join('", "')}" as command`,
+                'line argument. You can provide a json string as second',
                 'parameter to dynamically overwrite some configurations.\n'
             )
         // endregion
@@ -720,7 +723,7 @@ const main = async (
         try {
             await Promise.all(processPromises)
         } catch (error) {
-            console.error(error)
+            log.error(error)
 
             process.exit((error as ProcessError).returnCode)
         }
@@ -729,7 +732,7 @@ const main = async (
         if (configuration.debug)
             throw error
         else
-            console.error(error)
+            log.error(error)
     }
 
     return clear

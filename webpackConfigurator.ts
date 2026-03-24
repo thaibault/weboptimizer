@@ -24,6 +24,7 @@ import {
     isFileSync,
     isObject,
     isPlainObject,
+    Logger,
     Mapping,
     mask,
     PlainObject,
@@ -92,6 +93,9 @@ import {
     WebpackPlugins,
     WebpackResolveData
 } from './type'
+export const log = new Logger(
+    {name: 'weboptimizer-webpack-configurator-logger', level: 'warn'}
+)
 /// region optional imports
 // NOTE: Has to be defined here to ensure to resolve from here.
 const currentRequire: null | typeof require =
@@ -149,7 +153,7 @@ for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
     if (plugin)
         plugins[name] = plugin
     else
-        console.debug(`Optional webpack plugin "${name}" not available.`)
+        log.debug(`Optional webpack plugin "${name}" not available.`)
 }
 // endregion
 const configuration: ResolvedConfiguration = getConfiguration()
@@ -712,10 +716,10 @@ if (module.enforceDeduplication) {
                                 packageDescriptor.configuration.version ===
                                 otherPackageDescriptor.configuration.version
                             ) {
-                                console.info(
-                                    '\nConsolidate module request "' +
-                                    `${targetPath}" to "` +
-                                    `${alternateTargetPath}".`
+                                log.info(
+                                    '\nConsolidate module request',
+                                    `"${targetPath}" to`,
+                                    `"${alternateTargetPath}".`
                                 )
                                 /*
                                     NOTE: Only overwriting
@@ -745,13 +749,13 @@ if (module.enforceDeduplication) {
                 }
 
                 if (redundantRequest)
-                    console.warn(
-                        '\nIncluding different versions of same package "' +
-                        `${packageDescriptor.configuration.name}". Module "` +
-                        `${targetPath}" (version ` +
-                        `${packageDescriptor.configuration.version}) has ` +
-                        `redundancies with "${redundantRequest.path}" (` +
-                        `version ${redundantRequest.version}).`
+                    log.warn(
+                        '\nIncluding different versions of same package',
+                        `"${packageDescriptor.configuration.name}". Module`,
+                        `"${targetPath}" (version`,
+                        `${packageDescriptor.configuration.version}) has`,
+                        `redundancies with "${redundantRequest.path}"`,
+                        `(version ${redundantRequest.version}).`
                     )
             }
         }
@@ -819,10 +823,10 @@ new NormalModuleReplacementPlugin(
                                 packageDescriptor.configuration.version ===
                                 otherPackageDescriptor.configuration.version
                             ) {
-                                console.info(
-                                    '\nConsolidate module request "' +
-                                    `${targetPath}" to "` +
-                                    `${alternateTargetPath}".`
+                                log.info(
+                                    '\nConsolidate module request',
+                                    `"${targetPath}" to`,
+                                    `"${alternateTargetPath}".`
                                 )
                                 result.createData.resource =
                                     alternateTargetPath
@@ -839,13 +843,13 @@ new NormalModuleReplacementPlugin(
                     }
                 }
                 if (redundantRequest)
-                    console.warn(
-                        '\nIncluding different versions of same package "' +
-                        `${packageDescriptor.configuration.name}". Module "` +
-                        `${targetPath}" (version ` +
-                        `${packageDescriptor.configuration.version}) has ` +
-                        `redundancies with "${redundantRequest.path}" (` +
-                        `version ${redundantRequest.version}).`
+                    log.warn(
+                        '\nIncluding different versions of same package',
+                        `"${packageDescriptor.configuration.name}". Module`,
+                        `"${targetPath}" (version`,
+                        `${packageDescriptor.configuration.version}) has`,
+                        `redundancies with "${redundantRequest.path}"`,
+                        `(version ${redundantRequest.version}).`
                     )
             }
         }
@@ -1544,8 +1548,8 @@ for (const pluginConfiguration of configuration.plugins) {
             ))
         )
     else
-        console.warn(
-            `Configured plugin module "${pluginConfiguration.name.module}" ` +
+        log.warn(
+            `Configured plugin module "${pluginConfiguration.name.module}"`,
             'could not be loaded.'
         )
 }
@@ -1586,16 +1590,16 @@ if (configuration.path.configuration.json)
                 configuration.path.configuration.json
             ) as PlainObject
         } catch (error) {
-            console.debug(
-                'Importing provided json webpack configuration file path ' +
-                `under "${configuration.path.configuration.json}" failed: ` +
+            log.debug(
+                'Importing provided json webpack configuration file path',
+                `under "${configuration.path.configuration.json}" failed:`,
                 represent(error)
             )
         }
     } catch {
-        console.debug(
-            'Optional configuration file "' +
-            `${configuration.path.configuration.json}" not available.`
+        log.debug(
+            'Optional configuration file',
+            `"${configuration.path.configuration.json}" not available.`
         )
     }
 
@@ -1803,25 +1807,25 @@ if (configuration.path.configuration.javaScript)
                     result as RecursivePartial<WebpackConfiguration>
                 )
         else
-            console.debug(
-                'Failed to load given JavaScript configuration file path "' +
-                `${configuration.path.configuration.javaScript}".`
+            log.debug(
+                'Failed to load given JavaScript configuration file path',
+                `"${configuration.path.configuration.javaScript}".`
             )
     } catch {
-        console.debug(
-            'Optional configuration file script "' +
-            `${configuration.path.configuration.javaScript}" not available.`
+        log.debug(
+            'Optional configuration file script',
+            `"${configuration.path.configuration.javaScript}" not available.`
         )
     }
 
 if (configuration.showConfiguration) {
-    console.info(
-        'Using internal configuration: ',
+    log.info(
+        'Using internal configuration:',
         util.inspect(configuration, {depth: null})
     )
-    console.info('-----------------------------------------------------------')
-    console.info(
-        'Using webpack configuration: ',
+    log.info('-----------------------------------------------------------')
+    log.info(
+        'Using webpack configuration:',
         util.inspect(webpackConfiguration, {depth: null})
     )
 }

@@ -34,7 +34,7 @@ import {
     PlainObject,
     RecursiveEvaluateable,
     removeKeyPrefixes,
-    UTILITY_SCOPE
+    UTILITY_SCOPE, Logger
 } from 'clientnode'
 import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
@@ -64,6 +64,8 @@ import {
 } from './type'
 // endregion
 export let loadedConfiguration: null | ResolvedConfiguration = null
+export const log =
+    new Logger({name: 'weboptimizer-configurator-logger', level: 'warn'})
 /**
  * Main entry point to determine current configuration.
  * @param context - Location from where to build current application.
@@ -329,7 +331,7 @@ export const load = (
                         ) as PlainObject
                     )
                 else
-                    console.warn(
+                    log.warn(
                         `Given dynamic referenced configuration "${name}"`,
                         'could not be resolved.'
                     )

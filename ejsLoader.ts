@@ -27,6 +27,7 @@ import {
     EvaluationResult,
     Encoding,
     extend,
+    Logger,
     Mapping,
     RecursivePartial,
     UTILITY_SCOPE
@@ -75,6 +76,8 @@ export type LoaderConfiguration =
     }
 // endregion
 const configuration: ResolvedConfiguration = getConfiguration()
+export const log =
+    new Logger({name: 'weboptimizer-ejs-loader-logger', level: 'warn'})
 /**
  * Main transformation function.
  * @param source - Input string to transform.
@@ -88,7 +91,7 @@ export const loader = function(
             extend<LoaderConfiguration>(
                 true,
                 {
-                    compiler: {},
+                    compiler: {localsName: '_'},
                     compileSteps: 2,
                     compress: {
                         html: {},
@@ -129,7 +132,7 @@ export const loader = function(
         options = givenOptions.compiler,
         compileSteps = 2
     ): TemplateFunction => (
-        locals:(
+        locals: (
             Array<Array<string>> | Array<Mapping<unknown>> | Mapping<unknown>
         ) = {}
     ): string => {
@@ -151,8 +154,8 @@ export const loader = function(
                         {compile, locals, request, source, template}
                     )
                 if (evaluated.error)
-                    console.warn(
-                        'Error occurred during processing given query: ' +
+                    log.warn(
+                        'Error occurred during processing given query:',
                         evaluated.error
                     )
                 else if (evaluated.result)
