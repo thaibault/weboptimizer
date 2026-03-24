@@ -3,7 +3,6 @@
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "allowUmdGlobalAccess": true,
-        "baseUrl": "../../",
         "checkJs": true,
         "esModuleInterop": true,
         "experimentalDecorators": true,
@@ -12,9 +11,9 @@
         "jsx": "react-jsx",
         "lib": ["DOM", "ESNext"],
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "paths": {
-            "@root/*": ["*"]
+            "@root/*": ["../../*"]
         },
         "plugins": [{"name": "typescript-plugin-css-modules"}],
         "resolveJsonModule": true,

@@ -17,6 +17,7 @@ import {
     determineAssetType,
     determineExternalRequest,
     determineModuleFilePath,
+    determineModuleFilePathInPackage,
     determineModuleLocations,
     findPackageDescriptorFilePath,
     getAutoInjection,
@@ -28,7 +29,7 @@ import {
     renderFilePathTemplate,
     resolveAutoInjection,
     resolveBuildConfigurationFilePaths,
-    resolveModulesInFolders, determineModuleFilePathInPackage
+    resolveModulesInFolders
 } from '../helper'
 // endregion
 // region mockup
