@@ -26,6 +26,7 @@ import {
     isDirectorySync,
     isFileSync,
     isPlainObject,
+    Logger,
     Mapping,
     PlainObject,
     represent,
@@ -67,6 +68,8 @@ export const KNOWN_FILE_EXTENSIONS: Array<string> = [
     'ttf',
     'woff', '.woff2'
 ]
+export const log =
+    new Logger({name: 'weboptimizer-helper-logger', level: 'warn'})
 // endregion
 // region functions
 // region boolean
@@ -883,8 +886,8 @@ export const determineModuleFilePathInPackage = (
                     readFileSync(pathToPackageJSON, {encoding})
                 ) as PlainObject
             } catch (error) {
-                console.warn(
-                    `Package configuration file "${pathToPackageJSON}" ` +
+                log.warn(
+                    `Package configuration file "${pathToPackageJSON}"`,
                     `could not parsed: ${represent(error)}`
                 )
             }

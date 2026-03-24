@@ -16,7 +16,11 @@
 */
 // region imports
 import {
-    CONSOLE_METHODS, ProcedureFunction, SynchronousProcedureFunction, timeout
+    CONSOLE_METHODS,
+    Logger,
+    ProcedureFunction,
+    SynchronousProcedureFunction,
+    timeout
 } from 'clientnode'
 import {DOMWindow, VirtualConsole} from 'jsdom'
 import {LoaderContext} from 'webpack'
@@ -40,6 +44,8 @@ export const browser: Browser = {
     window: null,
     windowLoaded: false
 }
+export const log =
+    new Logger({name: 'weboptimizer-browser-logger', level: 'warn'})
 // endregion
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
@@ -66,11 +72,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     !browser.debug &&
                     ['XMLHttpRequest', 'resource loading'].includes(error.type)
                 )
-                    console.warn(
-                        `Loading resource failed: ${error.toString()}.`
-                    )
+                    log.warn(`Loading resource failed: ${error.toString()}.`)
                 else
-                    console.error(error.stack, error.detail)
+                    log.error(error.stack, error.detail)
             }
         )
 
@@ -147,7 +151,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             )
         // endregion
     })().catch((error: unknown) => {
-        console.error(error)
+        log.error(error)
     })
 else {
     browser.initialized = true
