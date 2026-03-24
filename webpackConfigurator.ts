@@ -923,6 +923,12 @@ const evaluateAdditionalLoaderConfiguration = (
 const getIncludingPaths = (path: string): Array<string> =>
     normalizePaths([path].concat(module.locations.directoryPaths))
 
+const postCSSResolver = (name: string, _context: string) => {
+    for (const [source, target] of Object.entries(configuration.module.aliases))
+        if (source.startsWith(name))
+            return target
+    return name
+}
 const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
     .map(createEvaluateMapper('css'))
     .concat(
@@ -945,9 +951,12 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                             */
                             plugins: ([] as Array<PostcssTransformer>).concat(
                                 postcssImport ?
-                                    postcssImport({
-                                        root: configuration.path.context
-                                    }) as unknown as PostcssTransformer :
+                                    postcssImport(
+                                        {
+                                            root: configuration.path.context,
+                                            resolve: postCSSResolver
+                                        }
+                                    ) as unknown as PostcssTransformer :
                                     [],
                                 module.preprocessor
                                     .cascadingStyleSheet.additional.plugins.pre
