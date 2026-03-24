@@ -4,15 +4,15 @@
     "compilerOptions": {
         "declaration": true,
         "paths": {
-            "@asset/*": ["*"],
-            "@cascadingStyleSheet/*": ["*"],
-            "@data/*": ["*"],
-            "@font/*": ["*"],
-            "@image/*": ["*"],
-            "@javaScript/*": ["*"],
-            "@root/*": ["*"],
-            "@source/*": ["*"],
-            "@template/*": ["*"]
+            "@asset/*": ["../../*"],
+            "@cascadingStyleSheet/*": ["../../*"],
+            "@data/*": ["../../*"],
+            "@font/*": ["../../*"],
+            "@image/*": ["../../*"],
+            "@javaScript/*": ["../../*"],
+            "@root/*": ["../../*"],
+            "@source/*": ["../../*"],
+            "@template/*": ["../../*"]
         }
     },
 
