@@ -15,13 +15,13 @@
     endregion
 */
 // region imports
-import {$Global, globalContext} from 'clientnode'
+import {globalContext} from 'clientnode'
 import {TextEncoder, TextDecoder} from 'util'
 // endregion
-;(globalContext as $Global & {TextEncoder: typeof TextEncoder}).TextEncoder =
-    TextEncoder
-;(globalContext as $Global & {TextDecoder: typeof TextDecoder}).TextDecoder =
-    TextDecoder
+;(globalContext as typeof globalContext & {TextEncoder: typeof TextEncoder})
+    .TextEncoder = TextEncoder
+;(globalContext as typeof globalContext & {TextDecoder: typeof TextDecoder})
+    .TextDecoder = TextDecoder
 try {
     if ((eval('require') as typeof require)('jest-canvas-mock'))
         console.info('Canvas mocking module loaded.')
