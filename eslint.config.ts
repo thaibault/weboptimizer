@@ -137,6 +137,7 @@ export const config = defineConfig(
                 vars: 'all',
                 varsIgnorePattern: '^_',
                 args: 'after-used',
+                argsIgnorePattern: '^_',
                 caughtErrors: 'all',
                 caughtErrorsIgnorePattern: '^_',
                 ignoreRestSiblings: false,
