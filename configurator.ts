@@ -26,6 +26,7 @@ import {
     isObject,
     isolatedRequire,
     isPlainObject,
+    Logger,
     MAXIMAL_NUMBER_OF_ITERATIONS,
     Mapping,
     modifyObject,
@@ -34,7 +35,7 @@ import {
     PlainObject,
     RecursiveEvaluateable,
     removeKeyPrefixes,
-    UTILITY_SCOPE, Logger
+    UTILITY_SCOPE
 } from 'clientnode'
 import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
