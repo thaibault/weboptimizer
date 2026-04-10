@@ -68,8 +68,7 @@ export const KNOWN_FILE_EXTENSIONS: Array<string> = [
     'ttf',
     'woff', '.woff2'
 ]
-export const log =
-    new Logger({name: 'weboptimizer-helper-logger', level: 'warn'})
+export const log = new Logger({name: 'weboptimizer-helper-logger'})
 // endregion
 // region functions
 // region boolean
