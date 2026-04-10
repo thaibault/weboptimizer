@@ -82,8 +82,7 @@ import {
     ResolvedConfiguration
 } from './type'
 // endregion
-export const log =
-    new Logger({name: 'weboptimizer-main-logger', level: 'warn'})
+export const log = new Logger({name: 'weboptimizer-main-logger'})
 
 Logger.configureAllInstances({
     level: process.env.NODE_ENV === 'debug' ? 'debug' : 'warn'

@@ -44,8 +44,7 @@ export const browser: Browser = {
     window: null,
     windowLoaded: false
 }
-export const log =
-    new Logger({name: 'weboptimizer-browser-logger', level: 'warn'})
+export const log = new Logger({name: 'weboptimizer-browser-logger'})
 // endregion
 // region ensure presence of common browser environment
 if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')

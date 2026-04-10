@@ -93,9 +93,8 @@ import {
     WebpackPlugins,
     WebpackResolveData
 } from './type'
-export const log = new Logger(
-    {name: 'weboptimizer-webpack-configurator-logger', level: 'warn'}
-)
+export const log =
+    new Logger({name: 'weboptimizer-webpack-configurator-logger'})
 /// region optional imports
 // NOTE: Has to be defined here to ensure to resolve from here.
 const currentRequire: null | typeof require =

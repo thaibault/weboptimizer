@@ -76,8 +76,7 @@ export type LoaderConfiguration =
     }
 // endregion
 const configuration: ResolvedConfiguration = getConfiguration()
-export const log =
-    new Logger({name: 'weboptimizer-ejs-loader-logger', level: 'warn'})
+export const log = new Logger({name: 'weboptimizer-ejs-loader-logger'})
 /**
  * Main transformation function.
  * @param source - Input string to transform.
