@@ -457,7 +457,6 @@ export interface ResolvedConfiguration {
     path: PathConfiguration
     performanceHints: BaseWebpackConfiguration['performance']
     plugins: Array<PluginConfiguration>
-    showConfiguration: boolean
     stylelint: PlainObject
     targetTechnology: {
         boilerplate: string
