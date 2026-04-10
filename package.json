@@ -318,8 +318,8 @@
     }
   },
   "engines": {
-    "node": ">=20",
-    "npm": ">=10",
+    "node": ">=24",
+    "npm": ">=11",
     "yarn": ">=4"
   },
   "resolutions": {
@@ -772,9 +772,6 @@
         },
         "external": {
           "aliases": {
-            "jquery": {
-              "root": "jQuery"
-            },
             "^.+/node_modules/.+(?:\\.css)?$": {
               "^(.+)(?:\\.css)?$": "?$1.compiled.css"
             },
@@ -1231,9 +1228,6 @@
         },
         "#1": "NOTE: Breaks linked files live reloading when disabled.",
         "resolveSymlinks": true,
-        "skipParseRegularExpressions": {
-          "__evaluate__": "/(?:^|\\/)(?:(?:jquery\\/dist\\/jquery))(?:\\.min)?\\.js(?:\\?.+|$)/"
-        },
         "style": {
           "#": "Includes referenced (hot module replaced) css files in-place into the html header to dynamically migrate them on changes without browser refresh.",
           "loader": "style-loader",
