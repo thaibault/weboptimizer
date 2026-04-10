@@ -85,7 +85,9 @@ import {
 export const log = new Logger({name: 'weboptimizer-main-logger'})
 
 Logger.configureAllInstances({
-    level: process.env.NODE_ENV === 'debug' ? 'debug' : 'warn'
+    level: ['debug', 'development'].includes(process.env.NODE_ENV ?? '') ?
+        'debug' :
+        'warn'
 })
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128'

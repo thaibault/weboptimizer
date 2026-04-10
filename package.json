@@ -1425,9 +1425,6 @@
         "hints": false
       },
       "plugins": [],
-      "showConfiguration": {
-        "__evaluate__": "self.debug"
-      },
       "stylelint": {
         "customSyntax": "postcss-scss",
         "extends": "stylelint-config-standard",

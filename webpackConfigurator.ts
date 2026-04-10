@@ -95,6 +95,12 @@ import {
 } from './type'
 export const log =
     new Logger({name: 'weboptimizer-webpack-configurator-logger'})
+
+Logger.configureAllInstances({
+    level: ['debug', 'development'].includes(process.env.NODE_ENV ?? '') ?
+        'debug' :
+        'warn'
+})
 /// region optional imports
 // NOTE: Has to be defined here to ensure to resolve from here.
 const currentRequire: null | typeof require =
@@ -156,6 +162,8 @@ for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
 }
 // endregion
 const configuration: ResolvedConfiguration = getConfiguration()
+Logger.configureAllInstances({level: configuration.debug ? 'debug' : 'warn'})
+
 const module: ResolvedConfiguration['module'] = configuration.module
 // region initialisation
 /// region determine library name
@@ -1826,16 +1834,15 @@ if (configuration.path.configuration.javaScript)
         )
     }
 
-if (configuration.showConfiguration) {
-    log.info(
-        'Using internal configuration:',
-        util.inspect(configuration, {depth: null})
-    )
-    log.info('-----------------------------------------------------------')
-    log.info(
-        'Using webpack configuration:',
-        util.inspect(webpackConfiguration, {depth: null})
-    )
-}
+log.debug(
+    'Using internal configuration:',
+    util.inspect(configuration, {depth: null})
+)
+log.debug('-----------------------------------------------------------')
+log.debug(
+    'Using webpack configuration:',
+    util.inspect(webpackConfiguration, {depth: null})
+)
+
 // endregion
 export default webpackConfiguration
