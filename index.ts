@@ -84,6 +84,10 @@ import {
 // endregion
 export const log =
     new Logger({name: 'weboptimizer-main-logger', level: 'warn'})
+
+Logger.configureAllInstances({
+    level: process.env.NODE_ENV === 'debug' ? 'debug' : 'warn'
+})
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128'
 /**
