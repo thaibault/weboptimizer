@@ -20,7 +20,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.stripLoader = exports.resolveModulesInFolders = exports.resolveBuildConfigurationFilePaths = exports.resolveAutoInjection = exports.renderFilePathTemplate = exports.normalizePaths = exports.normalizeGivenInjection = exports.isFilePathInLocation = exports.getClosestPackageDescriptor = exports.getAutoInjection = exports.findPackageDescriptorFilePath = exports.determineModuleLocations = exports.determineModuleFilePathInPackage = exports.determineModuleFilePath = exports.determineExternalRequest = exports.determineAssetType = exports.applyModuleReplacements = exports.applyContext = exports.applyAliases = exports.KNOWN_FILE_EXTENSIONS = void 0;
+exports.stripLoader = exports.resolveModulesInFolders = exports.resolveBuildConfigurationFilePaths = exports.resolveAutoInjection = exports.renderFilePathTemplate = exports.normalizePaths = exports.normalizeGivenInjection = exports.log = exports.isFilePathInLocation = exports.getClosestPackageDescriptor = exports.getAutoInjection = exports.findPackageDescriptorFilePath = exports.determineModuleLocations = exports.determineModuleFilePathInPackage = exports.determineModuleFilePath = exports.determineExternalRequest = exports.determineAssetType = exports.applyModuleReplacements = exports.applyContext = exports.applyAliases = exports.KNOWN_FILE_EXTENSIONS = void 0;
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _clientnode = require("clientnode");
@@ -34,6 +34,9 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 // endregion
 // region constants
 var KNOWN_FILE_EXTENSIONS = exports.KNOWN_FILE_EXTENSIONS = ['js', 'ts', 'json', 'css', 'eot', 'gif', 'html', 'ico', 'jpg', 'png', 'ejs', 'svg', 'ttf', 'woff', '.woff2'];
+var log = exports.log = new _clientnode.Logger({
+  name: 'weboptimizer-helper-logger'
+});
 // endregion
 // region functions
 // region boolean
@@ -230,7 +233,7 @@ var determineExternalRequest = exports.determineExternalRequest = function deter
       since we pass an already resolved request.
   */
   var filePath = determineModuleFilePath(resolvedRequest, {}, {}, {
-    file: extensions.file.external
+    file: extensions.file.external.concat(extensions.file.internal)
   }, context, requestContext, pathsToIgnore, relativeModuleLocations, packageEntryFileNames, packageMainPropertyNames, packageAliasPropertyNames, encoding);
   /*
       NOTE: We mark dependencies as external if there file couldn't be
@@ -272,9 +275,9 @@ var determineExternalRequest = exports.determineExternalRequest = function deter
     parts.splice(-1, 1);
   }
   /*
-      NOTE: We mark dependencies as external if they does not contain a
-      loader in their request and aren't part of the current main package or
-      have a file extension other than javaScript aware.
+      NOTE: We mark dependencies as external if they do not contain a loader
+      in their request and aren't part of the current main package or have a
+      file extension other than javaScript aware.
   */
   if (!inPlaceNormalLibrary && (extensions.file.external.length === 0 || filePath && extensions.file.external.includes((0, _path.extname)(filePath)) || !filePath && extensions.file.external.includes('')) && !(inPlaceDynamicLibrary && request.includes('!')) && (!filePath && inPlaceDynamicLibrary || filePath && (!filePath.startsWith(context) || isFilePathInLocation(filePath, externalModuleLocations)))) return applyContext(resolvedRequest, requestContext, referencePath, aliases, moduleReplacements, relativeModuleLocations) || null;
   return null;
@@ -666,7 +669,6 @@ var getAutoInjection = exports.getAutoInjection = function getAutoInjection(buil
   }
   return result;
 };
-// TODO test
 /**
  * Determines a resolved module file path in given package path.
  * @param packagePath - Path to package to resolve in.
@@ -694,7 +696,7 @@ var determineModuleFilePathInPackage = exports.determineModuleFilePathInPackage 
           encoding: encoding
         }));
       } catch (error) {
-        console.warn("Package configuration file \"".concat(pathToPackageJSON, "\" ") + "could not parsed: ".concat((0, _clientnode.represent)(error)));
+        log.warn("Package configuration file \"".concat(pathToPackageJSON, "\""), "could not parsed: ".concat((0, _clientnode.represent)(error)));
       }
       var _iterator11 = _createForOfIteratorHelper(packageMainPropertyNames),
         _step11;

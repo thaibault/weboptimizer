@@ -23,7 +23,7 @@ var _typeof = require("@babel/runtime/helpers/typeof");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = void 0;
+exports.log = exports["default"] = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
@@ -37,13 +37,20 @@ var _path = _interopRequireWildcard(require("path"));
 var _rimraf = require("rimraf");
 var _configurator = require("./configurator");
 var _helper = require("./helper");
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var _process$env$NODE_ENV;
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t9 in e) "default" !== _t9 && {}.hasOwnProperty.call(e, _t9) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t9)) && (i.get || i.set) ? o(f, _t9, i) : f[_t9] = e[_t9]); return f; })(e, t); }
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 // endregion
+var log = exports.log = new _clientnode.Logger({
+  name: 'weboptimizer-main-logger'
+});
+_clientnode.Logger.configureAllInstances({
+  level: ['debug', 'development'].includes((_process$env$NODE_ENV = process.env.NODE_ENV) !== null && _process$env$NODE_ENV !== void 0 ? _process$env$NODE_ENV : '') ? 'debug' : 'warn'
+});
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128';
 /**
@@ -63,14 +70,14 @@ var main = function main(context) {
     var webOptimizerPath = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : __dirname;
     var environment = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : eval('process.env');
     return (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-      var configuration, clear, processOptions, childProcessOptions, childProcesses, processPromises, possibleArguments, closeEventHandlers, dynamicConfiguration, count, filePath, additionalArguments, _iterator, _step, file, _iterator2, _step2, _filePath, buildConfigurations, tidiedUp, tidyUp, testModuleFilePaths, _iterator7, _step7, buildConfiguration, expression, _iterator8, _step8, _loop, handleTask, finished, closeHandler, _iterator1, _step1, closeEventName;
-      return _regenerator["default"].wrap(function _callee2$(_context3) {
+      var configuration, clear, processOptions, childProcessOptions, childProcesses, processPromises, possibleArguments, closeEventHandlers, dynamicConfiguration, count, filePath, additionalArguments, _iterator, _step, file, _iterator2, _step2, _filePath, buildConfigurations, tidiedUp, tidyUp, testModuleFilePaths, _iterator7, _step7, buildConfiguration, expression, _iterator8, _step8, _loop, handleTask, finished, closeHandler, _iterator1, _step1, closeEventName, _t3, _t4, _t5, _t6, _t7, _t8;
+      return _regenerator["default"].wrap(function (_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
             if (environment.PATH && !environment.PATH.includes(':node_modules/.bin')) environment.PATH += ':node_modules/.bin';else environment.PATH = 'node_modules/.bin';
             configuration = (0, _configurator.load)(context, currentWorkingDirectory, commandLineArguments, webOptimizerPath, environment);
             clear = (0, _clientnode.NOOP)();
-            _context3.prev = 3;
+            _context3.prev = 1;
             // region controller
             processOptions = {
               cwd: configuration.path.context,
@@ -82,10 +89,10 @@ var main = function main(context) {
             }, processOptions);
             childProcesses = [];
             processPromises = [];
-            possibleArguments = ['build', 'build:types', 'clear', 'document', 'lint', 'preinstall', 'serve', 'test', 'test:browser', 'test:coverage', 'test:coverage:report', 'check:types'];
+            possibleArguments = ['build', 'build:types', 'check:types', 'clear', 'document', 'lint', 'preinstall', 'serve', 'test', 'test:browser', 'test:coverage', 'test:coverage:report', 'watch'];
             closeEventHandlers = [];
             if (!(configuration.givenCommandLineArguments.length > 2)) {
-              _context3.next = 118;
+              _context3.next = 37;
               break;
             }
             // region temporary save dynamically given configurations
@@ -96,28 +103,28 @@ var main = function main(context) {
             if (configuration.givenCommandLineArguments.length > 3 && (0, _clientnode.parseEncodedObject)(configuration.givenCommandLineArguments[configuration.givenCommandLineArguments.length - 1], configuration, 'configuration')) configuration.givenCommandLineArguments.pop();
             count = 0;
             filePath = (0, _path.resolve)(configuration.path.context, ".dynamicConfiguration-".concat(String(count), ".json"));
-          case 15:
+          case 2:
             if (!(count < _clientnode.MAXIMAL_NUMBER_OF_ITERATIONS.value)) {
-              _context3.next = 24;
+              _context3.next = 5;
               break;
             }
             filePath = (0, _path.resolve)(configuration.path.context, ".dynamicConfiguration-".concat(String(count), ".json"));
-            _context3.next = 19;
+            _context3.next = 3;
             return (0, _clientnode.isFile)(filePath);
-          case 19:
+          case 3:
             if (_context3.sent) {
-              _context3.next = 21;
+              _context3.next = 4;
               break;
             }
-            return _context3.abrupt("break", 24);
-          case 21:
+            return _context3.abrupt("continue", 5);
+          case 4:
             count++;
-            _context3.next = 15;
+            _context3.next = 2;
             break;
-          case 24:
-            _context3.next = 26;
+          case 5:
+            _context3.next = 6;
             return (0, _promises.writeFile)(filePath, JSON.stringify(dynamicConfiguration));
-          case 26:
+          case 6:
             additionalArguments = commandLineArguments.splice(3); /// region register exit handler to tidy up
             clear = function clear(error) {
               // NOTE: Close handler have to be synchronous.
@@ -135,19 +142,26 @@ var main = function main(context) {
                 NOTE: If we have a dependency cycle we need to preserve files
                 during pre-install phase.
             */
-            if (!(!['build', 'build:types', 'lint', 'preinstall', 'serve', 'test', 'test:browser', 'test:coverage', 'test:coverage:report'].includes(configuration.givenCommandLineArguments[2]) && possibleArguments.includes(configuration.givenCommandLineArguments[2]))) {
-              _context3.next = 67;
+            if (!(possibleArguments.includes(configuration.givenCommandLineArguments[2]) && (!['build', 'build:types', 'lint', 'preinstall', 'test', 'test:browser', 'test:coverage', 'test:coverage:report', 'serve', 'watch'].includes(configuration.givenCommandLineArguments[2]) ||
+            /*
+                NOTE: If target artefacts are located next to their
+                source files, we need to clear them first when running
+                dev mode (watching source files and reloading build
+                automatically).
+            */
+            ['serve', 'watch'].includes(configuration.givenCommandLineArguments[2]) && configuration.path.source.base === configuration.path.target.base))) {
+              _context3.next = 20;
               break;
             }
             if (!((0, _path.resolve)(configuration.path.target.base) === (0, _path.resolve)(configuration.path.context))) {
-              _context3.next = 57;
+              _context3.next = 16;
               break;
             }
-            _context3.next = 33;
+            _context3.next = 7;
             return (0, _clientnode.walkDirectoryRecursively)(configuration.path.target.base, /*#__PURE__*/function () {
               var _ref2 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee(file) {
-                var type, _file$stats;
-                return _regenerator["default"].wrap(function _callee$(_context) {
+                var type, _file$stats, _t, _t2;
+                return _regenerator["default"].wrap(function (_context) {
                   while (1) switch (_context.prev = _context.next) {
                     case 0:
                       if (!(0, _helper.isFilePathInLocation)(file.path, configuration.path.ignore.concat(configuration.module.directoryNames, configuration.loader.directoryNames).map(function (filePath) {
@@ -155,39 +169,39 @@ var main = function main(context) {
                       }).filter(function (filePath) {
                         return !configuration.path.context.startsWith(filePath);
                       }))) {
-                        _context.next = 2;
+                        _context.next = 1;
                         break;
                       }
                       return _context.abrupt("return", false);
+                    case 1:
+                      _t = _regenerator["default"].keys(configuration.buildContext.types);
                     case 2:
-                      _context.t0 = _regenerator["default"].keys(configuration.buildContext.types);
-                    case 3:
-                      if ((_context.t1 = _context.t0()).done) {
-                        _context.next = 15;
+                      if ((_t2 = _t()).done) {
+                        _context.next = 7;
                         break;
                       }
-                      type = _context.t1.value;
+                      type = _t2.value;
                       if (!new RegExp(configuration.buildContext.types[type].filePathPattern).test(file.path)) {
-                        _context.next = 13;
+                        _context.next = 6;
                         break;
                       }
                       if (!((_file$stats = file.stats) !== null && _file$stats !== void 0 && _file$stats.isDirectory())) {
-                        _context.next = 10;
+                        _context.next = 4;
                         break;
                       }
-                      _context.next = 9;
-                      return (0, _rimraf.rimraf)(file.path);
-                    case 9:
-                      return _context.abrupt("return", false);
-                    case 10:
-                      _context.next = 12;
-                      return (0, _promises.unlink)(file.path);
-                    case 12:
-                      return _context.abrupt("break", 15);
-                    case 13:
                       _context.next = 3;
+                      return (0, _rimraf.rimraf)(file.path);
+                    case 3:
+                      return _context.abrupt("return", false);
+                    case 4:
+                      _context.next = 5;
+                      return (0, _promises.unlink)(file.path);
+                    case 5:
+                      return _context.abrupt("continue", 7);
+                    case 6:
+                      _context.next = 2;
                       break;
-                    case 15:
+                    case 7:
                     case "end":
                       return _context.stop();
                   }
@@ -197,60 +211,59 @@ var main = function main(context) {
                 return _ref2.apply(this, arguments);
               };
             }());
-          case 33:
-            _context3.t0 = _createForOfIteratorHelper;
-            _context3.next = 36;
+          case 7:
+            _t3 = _createForOfIteratorHelper;
+            _context3.next = 8;
             return (0, _clientnode.walkDirectoryRecursively)(configuration.path.target.base, function () {
               return false;
             }, configuration.encoding);
-          case 36:
-            _context3.t1 = _context3.sent;
-            _iterator = (0, _context3.t0)(_context3.t1);
-            _context3.prev = 38;
+          case 8:
+            _iterator = _t3(_context3.sent);
+            _context3.prev = 9;
             _iterator.s();
-          case 40:
+          case 10:
             if ((_step = _iterator.n()).done) {
-              _context3.next = 47;
+              _context3.next = 12;
               break;
             }
             file = _step.value;
             if (!file.name.startsWith('npm-debug')) {
-              _context3.next = 45;
+              _context3.next = 11;
               break;
             }
-            _context3.next = 45;
+            _context3.next = 11;
             return (0, _promises.unlink)(file.path);
-          case 45:
-            _context3.next = 40;
+          case 11:
+            _context3.next = 10;
             break;
-          case 47:
-            _context3.next = 52;
+          case 12:
+            _context3.next = 14;
             break;
-          case 49:
-            _context3.prev = 49;
-            _context3.t2 = _context3["catch"](38);
-            _iterator.e(_context3.t2);
-          case 52:
-            _context3.prev = 52;
+          case 13:
+            _context3.prev = 13;
+            _t4 = _context3["catch"](9);
+            _iterator.e(_t4);
+          case 14:
+            _context3.prev = 14;
             _iterator.f();
-            return _context3.finish(52);
-          case 55:
-            _context3.next = 59;
+            return _context3.finish(14);
+          case 15:
+            _context3.next = 17;
             break;
-          case 57:
-            _context3.next = 59;
+          case 16:
+            _context3.next = 17;
             return (0, _rimraf.rimraf)(configuration.path.target.base);
-          case 59:
-            _context3.next = 61;
+          case 17:
+            _context3.next = 18;
             return (0, _clientnode.isDirectory)(configuration.path.apiDocumentation);
-          case 61:
+          case 18:
             if (!_context3.sent) {
-              _context3.next = 64;
+              _context3.next = 19;
               break;
             }
-            _context3.next = 64;
+            _context3.next = 19;
             return (0, _rimraf.rimraf)(configuration.path.apiDocumentation);
-          case 64:
+          case 19:
             _iterator2 = _createForOfIteratorHelper(configuration.path.tidyUpOnClear);
             try {
               for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
@@ -265,7 +278,7 @@ var main = function main(context) {
               _iterator2.f();
             }
             (0, _rimraf.sync)((0, _globAll.sync)(configuration.path.tidyUpOnClearGlobs));
-          case 67:
+          case 20:
             // endregion
             // region handle build
             buildConfigurations = (0, _helper.resolveBuildConfigurationFilePaths)(configuration.buildContext.types, configuration.path.source.asset.base, configuration.path.ignore.concat(configuration.module.directoryNames, configuration.loader.directoryNames).map(function (filePath) {
@@ -274,7 +287,7 @@ var main = function main(context) {
               return !configuration.path.context.startsWith(filePath);
             }), configuration["package"].main.fileNames);
             if (!['build', 'document', 'test', 'test:coverage', 'test:coverage:report'].includes(commandLineArguments[2])) {
-              _context3.next = 75;
+              _context3.next = 21;
               break;
             }
             tidiedUp = false;
@@ -340,7 +353,7 @@ var main = function main(context) {
             */
             processPromises.push(new Promise(function (resolve, reject) {
               var commandLineArguments = (configuration.commandLine.build.arguments || []).concat(additionalArguments);
-              console.info('Running "' + ("".concat(configuration.commandLine.build.command, " ") + commandLineArguments.join(' ')).trim() + '"');
+              log.info('Running "' + ("".concat(configuration.commandLine.build.command, " ") + commandLineArguments.join(' ')).trim() + '"');
 
               /*
                   NOTE: Take current weboptimizer's dependencies into
@@ -390,11 +403,11 @@ var main = function main(context) {
             }));
             // endregion
             // region handle pre-install
-            _context3.next = 110;
+            _context3.next = 34;
             break;
-          case 75:
+          case 21:
             if (!(configuration.library && configuration.givenCommandLineArguments[2] === 'preinstall')) {
-              _context3.next = 110;
+              _context3.next = 34;
               break;
             }
             // Perform all file specific preprocessing stuff.
@@ -403,25 +416,25 @@ var main = function main(context) {
               file: configuration.extensions.file.internal
             }, configuration.path.context, configuration.path.source.asset.base, configuration.path.ignore).filePaths;
             _iterator7 = _createForOfIteratorHelper(buildConfigurations);
-            _context3.prev = 79;
+            _context3.prev = 22;
             _iterator7.s();
-          case 81:
+          case 23:
             if ((_step7 = _iterator7.n()).done) {
-              _context3.next = 102;
+              _context3.next = 31;
               break;
             }
             buildConfiguration = _step7.value;
             expression = buildConfiguration[configuration.givenCommandLineArguments[2]].trim();
             _iterator8 = _createForOfIteratorHelper(buildConfiguration.filePaths);
-            _context3.prev = 85;
+            _context3.prev = 24;
             _loop = /*#__PURE__*/_regenerator["default"].mark(function _loop() {
               var filePath, evaluated;
-              return _regenerator["default"].wrap(function _loop$(_context2) {
+              return _regenerator["default"].wrap(function (_context2) {
                 while (1) switch (_context2.prev = _context2.next) {
                   case 0:
                     filePath = _step8.value;
                     if (testModuleFilePaths.includes(filePath)) {
-                      _context2.next = 7;
+                      _context2.next = 2;
                       break;
                     }
                     evaluated = (0, _clientnode.evaluate)("`".concat(expression, "`"), {
@@ -433,12 +446,12 @@ var main = function main(context) {
                       filePath: filePath
                     });
                     if (!evaluated.error) {
-                      _context2.next = 5;
+                      _context2.next = 1;
                       break;
                     }
                     throw new Error('Error occurred during processing given ' + "command: ".concat(evaluated.error));
-                  case 5:
-                    console.info("Running \"".concat(evaluated.result, "\""));
+                  case 1:
+                    log.info("Running \"".concat(evaluated.result, "\""));
                     processPromises.push(new Promise(function (resolve, reject) {
                       return [(0, _clientnode.handleChildProcess)((0, _child_process.exec)(evaluated.result, _objectSpread({
                         encoding: configuration.encoding
@@ -449,48 +462,48 @@ var main = function main(context) {
                         });
                       }))];
                     }));
-                  case 7:
+                  case 2:
                   case "end":
                     return _context2.stop();
                 }
               }, _loop);
             });
             _iterator8.s();
-          case 88:
+          case 25:
             if ((_step8 = _iterator8.n()).done) {
-              _context3.next = 92;
+              _context3.next = 27;
               break;
             }
-            return _context3.delegateYield(_loop(), "t3", 90);
-          case 90:
-            _context3.next = 88;
+            return _context3.delegateYield(_loop(), "t0", 26);
+          case 26:
+            _context3.next = 25;
             break;
-          case 92:
-            _context3.next = 97;
+          case 27:
+            _context3.next = 29;
             break;
-          case 94:
-            _context3.prev = 94;
-            _context3.t4 = _context3["catch"](85);
-            _iterator8.e(_context3.t4);
-          case 97:
-            _context3.prev = 97;
+          case 28:
+            _context3.prev = 28;
+            _t5 = _context3["catch"](24);
+            _iterator8.e(_t5);
+          case 29:
+            _context3.prev = 29;
             _iterator8.f();
-            return _context3.finish(97);
-          case 100:
-            _context3.next = 81;
+            return _context3.finish(29);
+          case 30:
+            _context3.next = 23;
             break;
-          case 102:
-            _context3.next = 107;
+          case 31:
+            _context3.next = 33;
             break;
-          case 104:
-            _context3.prev = 104;
-            _context3.t5 = _context3["catch"](79);
-            _iterator7.e(_context3.t5);
-          case 107:
-            _context3.prev = 107;
+          case 32:
+            _context3.prev = 32;
+            _t6 = _context3["catch"](22);
+            _iterator7.e(_t6);
+          case 33:
+            _context3.prev = 33;
             _iterator7.f();
-            return _context3.finish(107);
-          case 110:
+            return _context3.finish(33);
+          case 34:
             // endregion
             // region handle remaining tasks
             handleTask = function handleTask(type) {
@@ -508,7 +521,7 @@ var main = function main(context) {
                   if (evaluated.error) throw new Error('Error occurred during processing given task: ' + evaluated.error);
                   if (evaluated.result) processPromises.push(new Promise(function (resolve, reject) {
                     var commandLineArguments = (task.arguments || []).concat(additionalArguments);
-                    console.info('Running "' + ("".concat(task.command, " ") + commandLineArguments.join(' ')).trim() + '"');
+                    log.info('Running "' + ("".concat(task.command, " ") + commandLineArguments.join(' ')).trim() + '"');
                     var childProcess = (0, _child_process.spawn)(task.command, commandLineArguments, childProcessOptions);
                     var closeHandler = (0, _clientnode.getProcessCloseHandler)(resolve, reject);
                     var _iterator0 = _createForOfIteratorHelper(_clientnode.CLOSE_EVENT_NAMES),
@@ -537,18 +550,18 @@ var main = function main(context) {
               }
             }; /// region a-/synchronous
             if (!['document', 'test', 'test:coverage', 'test:coverage:report'].includes(configuration.givenCommandLineArguments[2])) {
-              _context3.next = 117;
+              _context3.next = 36;
               break;
             }
-            _context3.next = 114;
+            _context3.next = 35;
             return Promise.all(processPromises);
-          case 114:
+          case 35:
             handleTask(configuration.givenCommandLineArguments[2]);
-            _context3.next = 118;
+            _context3.next = 37;
             break;
-          case 117:
+          case 36:
             if (['build:types', 'check:types', 'lint', 'serve', 'test:browser'].includes(configuration.givenCommandLineArguments[2])) handleTask(configuration.givenCommandLineArguments[2]);
-          case 118:
+          case 37:
             finished = false;
             closeHandler = function closeHandler() {
               if (!finished) for (var _i2 = 0, _closeEventHandlers = closeEventHandlers; _i2 < _closeEventHandlers.length; _i2++) {
@@ -568,40 +581,40 @@ var main = function main(context) {
             } finally {
               _iterator1.f();
             }
-            if (require.main === module && (configuration.givenCommandLineArguments.length < 3 || !possibleArguments.includes(configuration.givenCommandLineArguments[2]))) console.info("Give one of \"".concat(possibleArguments.join('", "'), "\" as command ") + 'line argument. You can provide a json string as second ' + 'parameter to dynamically overwrite some configurations.\n');
+            if (require.main === module && (configuration.givenCommandLineArguments.length < 3 || !possibleArguments.includes(configuration.givenCommandLineArguments[2]))) log.info("Give one of \"".concat(possibleArguments.join('", "'), "\" as command"), 'line argument. You can provide a json string as second', 'parameter to dynamically overwrite some configurations.\n');
             // endregion
             // region forward nested return codes
-            _context3.prev = 123;
-            _context3.next = 126;
+            _context3.prev = 38;
+            _context3.next = 39;
             return Promise.all(processPromises);
-          case 126:
-            _context3.next = 132;
+          case 39:
+            _context3.next = 41;
             break;
-          case 128:
-            _context3.prev = 128;
-            _context3.t6 = _context3["catch"](123);
-            console.error(_context3.t6);
-            process.exit(_context3.t6.returnCode);
-          case 132:
-            _context3.next = 141;
+          case 40:
+            _context3.prev = 40;
+            _t7 = _context3["catch"](38);
+            log.error(_t7);
+            process.exit(_t7.returnCode);
+          case 41:
+            _context3.next = 44;
             break;
-          case 134:
-            _context3.prev = 134;
-            _context3.t7 = _context3["catch"](3);
+          case 42:
+            _context3.prev = 42;
+            _t8 = _context3["catch"](1);
             if (!configuration.debug) {
-              _context3.next = 140;
+              _context3.next = 43;
               break;
             }
-            throw _context3.t7;
-          case 140:
-            console.error(_context3.t7);
-          case 141:
+            throw _t8;
+          case 43:
+            log.error(_t8);
+          case 44:
             return _context3.abrupt("return", clear);
-          case 142:
+          case 45:
           case "end":
             return _context3.stop();
         }
-      }, _callee2, null, [[3, 134], [38, 49, 52, 55], [79, 104, 107, 110], [85, 94, 97, 100], [123, 128]]);
+      }, _callee2, null, [[1, 42], [9, 13, 14, 15], [22, 32, 33, 34], [24, 28, 29, 30], [38, 40]]);
     }))();
   } catch (e) {
     return Promise.reject(e);

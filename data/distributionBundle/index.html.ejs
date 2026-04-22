@@ -15,18 +15,18 @@
     <head>
         <meta charset="utf-8">
         <%_ if (
-            2 < configuration.givenCommandLineArguments.length &&
+            2 < _.configuration.givenCommandLineArguments.length &&
             ['serve', 'test', 'test:browser'].includes(
-                configuration.givenCommandLineArguments[2]
+                _.configuration.givenCommandLineArguments[2]
             )
         ) { _%>
             <!--Prevent browser caching-->
             <meta http-equiv="cache-control" content="no-cache">
             <meta http-equiv="expires" content="0">
             <meta http-equiv="pragma" content="no-cache">
-            <title><%- configuration.name %> - test</title>
+            <title><%- _.configuration.name %> - test</title>
         <%_ } else { _%>
-            <title><%- configuration.name %></title>
+            <title><%- _.configuration.name %></title>
         <%_ } _%>
         <script>
             window.document.documentElement.className =
