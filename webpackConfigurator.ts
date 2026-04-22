@@ -50,8 +50,7 @@ import {
     IgnorePlugin,
     NormalModuleReplacementPlugin,
     ProvidePlugin,
-    RuleSetRule,
-    sources
+    RuleSetRule
 } from 'webpack'
 import {RawSource as WebpackRawSource} from 'webpack-sources'
 import {
@@ -164,7 +163,7 @@ for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
 const configuration: ResolvedConfiguration = getConfiguration()
 Logger.configureAllInstances({level: configuration.debug ? 'debug' : 'warn'})
 
-const module: ResolvedConfiguration['module'] = configuration.module
+const module = configuration.module
 // region initialisation
 /// region determine library name
 let libraryName: Array<string> | string | undefined
@@ -358,7 +357,7 @@ pluginInstances.push({apply: (compiler: Compiler): void => {
                                                 /\{1\}/g,
                                                 source.replace(/\$/g, '$$$')
                                             )
-                                    ) as unknown as sources.Source
+                                    )
                         }
                     }
                 }
@@ -601,7 +600,7 @@ if (configuration.injection.external.modules === '__implicit__')
                     exportFormat === 'umd' || typeof result === 'string' ?
                         result :
                         result[exportFormat]
-                ) as Array<string> | boolean | string | Mapping<unknown>,
+                ),
                 exportFormat
             )
 
@@ -1323,7 +1322,7 @@ const genericLoader: GenericLoader = {
             },
             use: module.optimizer.font.eot.loader.map(
                 createEvaluateMapper('font.eot')
-            ) as RuleSet
+            )
         },
         svg: {
             exclude: (filePath: string): boolean =>
@@ -1356,7 +1355,7 @@ const genericLoader: GenericLoader = {
             type: 'asset/resource',
             use: module.optimizer.font.svg.loader.map(
                 createEvaluateMapper('font.svg')
-            ) as RuleSet
+            )
         },
         ttf: {
             exclude: (filePath: string): boolean =>
@@ -1388,7 +1387,7 @@ const genericLoader: GenericLoader = {
             },
             use: module.optimizer.font.ttf.loader.map(createEvaluateMapper(
                 'font.ttf'
-            )) as RuleSet
+            ))
         },
         woff: {
             exclude: (filePath: string): boolean =>
@@ -1419,7 +1418,7 @@ const genericLoader: GenericLoader = {
             },
             use: module.optimizer.font.woff.loader.map(createEvaluateMapper(
                 'font.woff'
-            )) as RuleSet
+            ))
         }
     },
     // endregion
@@ -1452,7 +1451,7 @@ const genericLoader: GenericLoader = {
         },
         use: module.optimizer.image.loader.map(createEvaluateMapper(
             'image'
-        )) as RuleSet
+        ))
     },
     // endregion
     // region data
@@ -1492,7 +1491,7 @@ const genericLoader: GenericLoader = {
         },
         use: module.optimizer.data.loader.map(createEvaluateMapper(
             'data'
-        )) as RuleSet
+        ))
     }
     // endregion
 }
