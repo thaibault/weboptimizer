@@ -15,13 +15,7 @@
     endregion
 */
 // region imports
-import {
-    CONSOLE_METHODS,
-    Logger,
-    ProcedureFunction,
-    SynchronousProcedureFunction,
-    timeout
-} from 'clientnode'
+import {CONSOLE_METHODS, Logger, ProcedureFunction, timeout} from 'clientnode'
 import {DOMWindow, VirtualConsole} from 'jsdom'
 import {LoaderContext} from 'webpack'
 
@@ -85,10 +79,17 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 {
                     beforeParse: (window: DOMWindow): void => {
                         // We want to use it in a polymorphic way.
-                        browser.window = (
-                            global.window as unknown ??
-                            window as unknown
-                        ) as Window
+                        /*
+                            eslint-disable
+                            @typescript-eslint/no-unnecessary-type-assertion
+                        */
+                        browser.window =
+                            (global.window as Window | null) ?? window as
+                                unknown as Window
+                        /*
+                            eslint-enable
+                            @typescript-eslint/no-unnecessary-type-assertion
+                        */
 
                         window.document.addEventListener(
                             'DOMContentLoaded',
@@ -119,7 +120,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                         })
 
                         for (const callback of onCreatedListener)
-                            (callback as SynchronousProcedureFunction)()
+                            void callback()
                     },
                     resources: 'usable',
                     runScripts: 'dangerously',
@@ -165,7 +166,7 @@ else {
 
     void timeout(() => {
         for (const callback of onCreatedListener)
-            (callback as SynchronousProcedureFunction)()
+            void callback()
     })
 }
 // endregion
