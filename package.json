@@ -82,7 +82,7 @@
     "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info",
     "test:watch": "yarn test --watch",
     "test:watch:all": "yarn test --watchAll",
-    "update:documentation": "documentation-website"
+    "update:documentation": "web-documentation"
   },
   "runkitExample": "require('@babel/runtime/package.json')\n\nconst {default: main} = require('weboptimizer')\n\nawait main('./', './', ['clear'])",
   "dependencies": {
@@ -133,7 +133,7 @@
     "@typescript-eslint/parser": "^8.58.1",
     "css-loader": "^7.1.4",
     "cssnano": "^7.1.4",
-    "documentation-website": "^1.0.401",
+    "web-documentation": "^1.0.0",
     "eslint": "^10.2.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-jsdoc": "^62.9.0",
