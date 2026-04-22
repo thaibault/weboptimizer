@@ -84,7 +84,6 @@
     "test:watch:all": "yarn test --watchAll",
     "update:documentation": "web-documentation"
   },
-  "runkitExample": "require('@babel/runtime/package.json')\n\nconst {default: main} = require('weboptimizer')\n\nawait main('./', './', ['clear'])",
   "dependencies": {
     "@babel/core": "^7.29.0",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
