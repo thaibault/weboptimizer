@@ -21,7 +21,7 @@ var _typeof3 = require("@babel/runtime/helpers/typeof");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.loadedConfiguration = exports.load = exports.get = exports["default"] = void 0;
+exports.log = exports.loadedConfiguration = exports.load = exports.get = exports["default"] = void 0;
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
@@ -39,6 +39,9 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 // endregion
 var loadedConfiguration = exports.loadedConfiguration = null;
+var log = exports.log = new _clientnode.Logger({
+  name: 'weboptimizer-configurator-logger'
+});
 /**
  * Main entry point to determine current configuration.
  * @param context - Location from where to build current application.
@@ -192,7 +195,7 @@ var load = exports.load = function load(context) {
         try {
           for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
             var _name = _step3.value;
-            if (Object.prototype.hasOwnProperty.call(configuration, _name)) (0, _clientnode.extend)(true, result, configuration[_name]);else if ((0, _clientnode.isFileSync)(_name)) (0, _clientnode.extend)(true, result, JSON.parse((0, _fs.readFileSync)(_name, configuration.encoding)));else console.warn("Given dynamic referenced configuration \"".concat(_name, "\""), 'could not be resolved.');
+            if (Object.prototype.hasOwnProperty.call(configuration, _name)) (0, _clientnode.extend)(true, result, configuration[_name]);else if ((0, _clientnode.isFileSync)(_name)) (0, _clientnode.extend)(true, result, JSON.parse((0, _fs.readFileSync)(_name, configuration.encoding)));else log.warn("Given dynamic referenced configuration \"".concat(_name, "\""), 'could not be resolved.');
           }
         } catch (err) {
           _iterator3.e(err);
@@ -303,7 +306,7 @@ var load = exports.load = function load(context) {
               already have resolved all module ids.
           */
           '', resolvedConfiguration.path.ignore, resolvedConfiguration.module.directoryNames, resolvedConfiguration["package"].main.fileNames, resolvedConfiguration["package"].main.propertyNames, resolvedConfiguration["package"].aliasPropertyNames, resolvedConfiguration.encoding);
-          var _type2 = null;
+          var _type2 = void 0;
           if (_filePath) _type2 = (0, _helper.determineAssetType)(_filePath, resolvedConfiguration.buildContext.types, resolvedConfiguration.path);else throw new Error("Given request \"".concat(moduleID, "\" couldn't be resolved."));
           if (_type2) resolvedConfiguration.needed[_type2] = true;
         }

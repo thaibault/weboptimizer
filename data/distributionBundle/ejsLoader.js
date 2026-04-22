@@ -20,9 +20,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.loader = exports["default"] = void 0;
-var _construct2 = _interopRequireDefault(require("@babel/runtime/helpers/construct"));
-var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
+exports.log = exports.loader = exports["default"] = void 0;
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _core = require("@babel/core");
 var _babelPresetMinify = _interopRequireDefault(require("babel-preset-minify"));
@@ -40,6 +38,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
 // endregion
 var configuration = (0, _configurator["default"])();
+var log = exports.log = new _clientnode.Logger({
+  name: 'weboptimizer-ejs-loader-logger'
+});
 /**
  * Main transformation function.
  * @param source - Input string to transform.
@@ -50,7 +51,9 @@ var loader = exports.loader = function loader(source) {
     _this = this,
     _givenOptions$compile;
   var givenOptions = (0, _clientnode.convertSubstringInPlainObject)((0, _clientnode.extend)(true, {
-    compiler: {},
+    compiler: {
+      localsName: '_'
+    },
     compileSteps: 2,
     compress: {
       html: {},
@@ -91,7 +94,7 @@ var loader = exports.loader = function loader(source) {
             source: source,
             template: template
           });
-          if (evaluated.error) console.warn('Error occurred during processing given query: ' + evaluated.error);else if (evaluated.result) (0, _clientnode.extend)(true, nestedLocals, evaluated.result);
+          if (evaluated.error) log.warn('Error occurred during processing given query:', evaluated.error);else if (evaluated.result) (0, _clientnode.extend)(true, nestedLocals, evaluated.result);
         }
         var nestedOptions = (0, _clientnode.copy)(options);
         delete nestedOptions.client;
@@ -118,7 +121,7 @@ var loader = exports.loader = function loader(source) {
       };
       var compressHTML = function compressHTML(content) {
         var _givenOptions$compres;
-        return (_givenOptions$compres = givenOptions.compress) !== null && _givenOptions$compres !== void 0 && _givenOptions$compres.html ? (0, _htmlMinifier.minify)(content, (0, _clientnode.extend)(true, {
+        return (0, _htmlMinifier.minify)(content, (0, _clientnode.extend)(true, {
           caseSensitive: true,
           collapseInlineTagWhitespace: true,
           collapseWhitespace: true,
@@ -139,15 +142,16 @@ var loader = exports.loader = function loader(source) {
           */
           trimCustomFragments: true,
           useShortDoctype: true
-        }, givenOptions.compress.html)) : content;
+        }, ((_givenOptions$compres = givenOptions.compress) === null || _givenOptions$compres === void 0 ? void 0 : _givenOptions$compres.html) || {}));
       };
       var result = template;
       var isString = Boolean(options.isString);
       delete options.isString;
+
+      // NOTE: Needed to have standalone useable js code afterwards.
+      if (compileSteps % 2) options.client = true;
       var stepLocals;
       var scope = {};
-      var originalScopeNames = [];
-      var scopeNames = [];
       for (var step = 1; step <= compileSteps; step += 1) {
         // On every odd compile step we have to determine the environment.
         if (step % 2) {
@@ -160,15 +164,12 @@ var loader = exports.loader = function loader(source) {
             include: require,
             require: require
           }, Array.isArray(stepLocals) ? {} : stepLocals);else if (!Array.isArray(stepLocals)) scope = stepLocals;
-          originalScopeNames = Array.isArray(stepLocals) ? stepLocals : Object.keys(scope);
-          scopeNames = originalScopeNames.map(function (name) {
-            return (0, _clientnode.convertToValidVariableName)(name);
-          });
           // endregion
         }
         if (typeof result === 'string') {
           var filePath = isString ? options.filename : result;
           if (filePath && (0, _path.extname)(filePath) === '.js' && _clientnode.currentRequire) result = (0, _clientnode.currentRequire)(filePath);else {
+            var _givenOptions$compres2;
             if (!isString) {
               var encoding = configuration.encoding;
               if (typeof options.encoding === 'string') encoding = options.encoding;
@@ -176,45 +177,39 @@ var loader = exports.loader = function loader(source) {
                 encoding: encoding
               });
             }
-            if (step === compileSteps) result = compressHTML(result);
-            if (options.strict || !options._with)
-              // NOTE: Needed to manipulate code after compiling.
-              options.client = true;
-            result = _ejs["default"].compile(result, options);
-
-            /*
-                Provide all scope names when "_with" options isn't
-                enabled
-            */
-            if (options.strict || !options._with) {
-              var localsName = options.localsName || 'locals';
-              while (scopeNames.includes(localsName)) localsName = "_".concat(localsName);
-
-              /* eslint-disable @typescript-eslint/no-implied-eval */
-              result = (0, _construct2["default"])(Function, (0, _toConsumableArray2["default"])(scopeNames).concat([localsName, "return ".concat(result.toString(), "(") + "".concat(localsName, ",") + "".concat(localsName, ".escapeFn,") + "".concat(localsName, ".include,") + "".concat(localsName, ".rethrow)")]));
-              /* eslint-enable @typescript-eslint/no-implied-eval */
-            }
+            if (step === compileSteps && (_givenOptions$compres2 = givenOptions.compress) !== null && _givenOptions$compres2 !== void 0 && _givenOptions$compres2.html) result = compressHTML(result);
+            if (step === compileSteps && compileSteps % 2) {
+              /*
+                  We have to use the templace class directly to get
+                  the generated source code.
+               */
+              var templateInstance = new _ejs["default"].Template(template, options);
+              templateInstance.compile();
+              var compiledSourceCode = templateInstance.source;
+              result = "\n                            module.exports = function(\n                                ".concat(options.localsName, "\n                            ) {\n                                var escapeFn = function(value) {\n                                    return String(value)\n                                        .replace(\n                                            /[&<>\"']/g,\n                                            function(char) {\n                                                return {\n                                                    '&': '&amp;',\n                                                    '<': '&lt;',\n                                                    '>': '&gt;',\n                                                    '\"': '&quot;',\n                                                    \"'\": \"&#39;\"\n                                                }[char]\n                                            }\n                                        )\n                                };\n                                var include = function() {\n                                    throw new Error('Include not implemented.')\n                                };\n                                var rethrow = function rethrow(\n                                    err, str, flnm, lineno, esc\n                                ) {\n                                    var lines = str.split('\\n');\n                                    var start = Math.max(lineno - 3, 0);\n                                    var end = Math.min(\n                                        lines.length, lineno + 3\n                                    );\n                                    var filename = esc(flnm);\n                                    // Error context\n                                    var context = lines\n                                        .slice(start, end)\n                                        .map(function (line, i) {\n                                            var curr = i + start + 1;\n                                            return (\n                                                curr == lineno ?\n                                                    ' >> ' :\n                                                    '    '\n                                                ) +\n                                                curr +\n                                                '| ' +\n                                                line;\n                                        })\n                                        .join('\\n');\n                                    // Alter exception message\n                                    err.path = filename;\n                                    err.message =\n                                        (filename || 'ejs') +\n                                        ':' +\n                                        lineno +\n                                        '\\n' +\n                                        context +\n                                        '\\n\\n' +\n                                        err.message;\n                                    throw err;\n                                };\n                                ").concat(compiledSourceCode, "\n                            };\n                        ").trim();
+            } else result = _ejs["default"].compile(result, options);
           }
-        } else result = compressHTML(!options.strict && options._with ? result(scope, scope.escapeFn, scope.include) : result.apply(void 0, (0, _toConsumableArray2["default"])(originalScopeNames.map(function (name) {
-          return scope[name];
-        }).concat(!options.strict && options._with ? [] : scope))));
+        } else {
+          var _givenOptions$compres3;
+          result = result(scope);
+          if ((_givenOptions$compres3 = givenOptions.compress) !== null && _givenOptions$compres3 !== void 0 && _givenOptions$compres3.html) result = compressHTML(result);
+        }
       }
       if (compileSteps % 2) {
-        var _givenOptions$compres2, _givenOptions$compres3, _givenOptions$compres4, _givenOptions$compres5;
-        var code = "module.exports = ".concat(result.toString());
-        var processed = (0, _core.transformSync)(code, {
+        var _givenOptions$compres4, _givenOptions$compres5, _givenOptions$compres6, _givenOptions$compres7;
+        var processed = (0, _core.transformSync)(result, {
           ast: false,
           babelrc: false,
-          comments: !((_givenOptions$compres2 = givenOptions.compress) !== null && _givenOptions$compres2 !== void 0 && _givenOptions$compres2.javaScript),
-          compact: Boolean((_givenOptions$compres3 = givenOptions.compress) === null || _givenOptions$compres3 === void 0 ? void 0 : _givenOptions$compres3.javaScript),
+          comments: !((_givenOptions$compres4 = givenOptions.compress) !== null && _givenOptions$compres4 !== void 0 && _givenOptions$compres4.javaScript),
+          compact: Boolean((_givenOptions$compres5 = givenOptions.compress) === null || _givenOptions$compres5 === void 0 ? void 0 : _givenOptions$compres5.javaScript),
           filename: options.filename || 'unknown',
-          minified: Boolean((_givenOptions$compres4 = givenOptions.compress) === null || _givenOptions$compres4 === void 0 ? void 0 : _givenOptions$compres4.javaScript),
-          presets: (_givenOptions$compres5 = givenOptions.compress) !== null && _givenOptions$compres5 !== void 0 && _givenOptions$compres5.javaScript ? [[_babelPresetMinify["default"], givenOptions.compress.javaScript]] : [],
+          minified: Boolean((_givenOptions$compres6 = givenOptions.compress) === null || _givenOptions$compres6 === void 0 ? void 0 : _givenOptions$compres6.javaScript),
+          presets: (_givenOptions$compres7 = givenOptions.compress) !== null && _givenOptions$compres7 !== void 0 && _givenOptions$compres7.javaScript ? [[_babelPresetMinify["default"], givenOptions.compress.javaScript]] : [],
           sourceMaps: false,
           sourceType: 'script'
         });
-        if (typeof (processed === null || processed === void 0 ? void 0 : processed.code) === 'string') code = processed.code;
-        return "".concat(options.strict ? "'use strict';\n" : '').concat(code);
+        if (typeof (processed === null || processed === void 0 ? void 0 : processed.code) === 'string') result = processed.code;
+        return "".concat(options.strict ? "'use strict';\n" : '').concat(result);
       }
       if (typeof result === 'string') {
         result = result.replace(new RegExp("<script +processing-workaround *" + "(?: = *(?: \" *\"|' *') *)?>([\\s\\S]*?)</ *script *>", 'ig'), '$1').replace(new RegExp("<script +processing(-+)-workaround *" + "(?: = *(?: \" *\"|' *') *)?>([\\s\\S]*?)</ *script *>", 'ig'), '<script processing$1workaround>$2</script>');
