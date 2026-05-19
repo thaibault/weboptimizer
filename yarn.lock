@@ -8085,9 +8085,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1398":
-  version: 4.0.1398
-  resolution: "clientnode@npm:4.0.1398"
+"clientnode@npm:4.0.1399":
+  version: 4.0.1399
+  resolution: "clientnode@npm:4.0.1399"
   peerDependencies:
     "@babel/runtime": "*"
     "@types/prop-types": "*"
@@ -8102,7 +8102,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/07839f3c6889ba151c5e5f7c4a71ccad6bc8cca942a098e0ad931272eed8475d5c96fa5077afb62aee50b7019bde5dcb8b2cb63173f6950b004097e279603d5b
+  checksum: 10c0/1af6e9e1cafe50647225f7f6efd3dc32e550ea3aa5a82b82168ce115f7a753d6b55af456533b788ab4aac02fb4ae663adc66d4bee38576e669b867ae9a6a5ae9
   languageName: node
   linkType: hard
 
@@ -19049,7 +19049,7 @@ __metadata:
     babel-loader: "npm:^10.1.1"
     babel-plugin-transform-modern-regexp: "npm:^0.0.6"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:4.0.1398"
+    clientnode: "npm:4.0.1399"
     css-loader: "npm:^7.1.4"
     cssnano: "npm:^8.0.1"
     ejs: "npm:^5.0.2"
