@@ -325,8 +325,7 @@
     "colors": "1.4.0"
   },
   "sideEffects": true,
-  "documentationWebsite": {
-    "name": "weboptimizer",
+  "webDocumentation": {
     "trackingCode": "UA-40192634-11"
   },
   "configuration": {
