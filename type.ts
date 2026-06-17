@@ -366,6 +366,7 @@ export interface ResolvedConfiguration {
     }
     givenCommandLineArguments: Array<string>
     hashAlgorithm: string
+    imageSprite: PlainObject
     injection: InjectionConfiguration
     inPlace: InPlaceConfiguration
     library: boolean
