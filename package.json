@@ -741,6 +741,7 @@
       },
       "givenCommandLineArguments": [],
       "hashAlgorithm": "md5",
+      "imageSprite": {},
       "injection": {
         "autoExclude": {
           "paths": [

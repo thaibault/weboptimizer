@@ -164,7 +164,7 @@ const configuration: ResolvedConfiguration = getConfiguration()
 Logger.configureAllInstances({level: configuration.debug ? 'debug' : 'warn'})
 
 const module = configuration.module
-// region initialisation
+// region initialization
 /// region determine library name
 let libraryName: Array<string> | string | undefined
 if (configuration.libraryName)
@@ -992,17 +992,9 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                 postcssSprites ?
                                     postcssSprites({
                                         filterBy: (): Promise<void> =>
-                                            new Promise<void>((
-                                                resolve: () => void,
-                                                reject: () => void
-                                            ) => {
-                                                (
-                                                    configuration.files.compose
-                                                        .image ?
-                                                        resolve :
-                                                        reject
-                                                )()
-                                            }),
+                                            configuration.files.compose.image ?
+                                                Promise.resolve() :
+                                                Promise.reject(new Error()),
                                         hooks: {
                                             onSaveSpritesheet: (
                                                 image: Mapping<unknown>
@@ -1054,7 +1046,8 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                                 .cascadingStyleSheet,
                                         spritePath:
                                             configuration.path.source.asset
-                                                .image
+                                                .image,
+                                        ...configuration.imageSprite
                                     }) :
                                     [],
                                 module.preprocessor
