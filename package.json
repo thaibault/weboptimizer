@@ -637,7 +637,7 @@
           "__evaluate__": "self.path.source.asset.favicon"
         },
         "prefix": {
-          "__evaluate__": "`${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, 'favicons-[chunkhash]'))}/`"
+          "__evaluate__": "typeof self.path.target.asset.image === 'string' ? `${path.relative(self.path.target.base, path.resolve(self.path.target.asset.image, 'favicons-[chunkhash]'))}/` : `${path.relative(self.path.target.base, 'favicons-[chunkhash]')}/`"
         }
       },
       "files": {
@@ -655,7 +655,7 @@
             "__evaluate__": "self.debug || self.generic.isWeb ? `${path.resolve(self.path.target.asset.cascadingStyleSheet, '[name].css')}?${self.hashAlgorithm}=[chunkhash]` : null"
           },
           "image": {
-            "__evaluate__": "self.debug ? null : path.resolve(self.path.target.asset.image, 'sprite.png')"
+            "__evaluate__": "self.debug ? null : typeof self.path.target.asset.image === 'string' ? path.resolve(self.path.target.asset.image, 'sprite.png') : path.resolve(self.path.target.asset.base, 'sprite.png')"
           },
           "javaScript": {
             "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name]')}.js?${self.hashAlgorithm}=[chunkhash]`"
@@ -1330,7 +1330,7 @@
             "cascadingStyleSheet": "cascadingStyleSheet/",
             "data": "data/",
             "favicon": {
-              "__evaluate__": "path.join(self.path.target.asset.image, 'favicon.png')"
+              "__evaluate__": "typeof self.path.target.asset.image === 'string' ? path.join(self.path.target.asset.image, 'favicon.png') : self.path.target.asset.image"
             },
             "font": "font/",
             "image": "image/",
@@ -1366,9 +1366,6 @@
           },
           {
             "__evaluate__": "path.resolve(self.path.target.asset.javaScript, 'styles.bundle.js.map')"
-          },
-          {
-            "__evaluate__": "self.files.compose.image ? path.resolve(self.path.source.asset.image, path.relative(self.path.target.asset.image, self.files.compose.image)) : null"
           }
         ],
         "tidyUpGlobs": [
