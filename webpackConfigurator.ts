@@ -1425,14 +1425,16 @@ const genericLoader: GenericLoader = {
                 ),
         generator: {
             filename:
-                join(
-                    relative(
-                        configuration.path.target.base,
-                        configuration.path.target.asset.image
-                    ),
-                    '[name][ext]'
-                ) +
-                `?${configuration.hashAlgorithm}=[contenthash]`
+                typeof configuration.path.target.asset.image === 'string' ?
+                    join(
+                        relative(
+                            configuration.path.target.base,
+                            configuration.path.target.asset.image
+                        ),
+                        '[name][ext]'
+                    ) +
+                    `?${configuration.hashAlgorithm}=[contenthash]` :
+                    configuration.path.target.asset.image
         },
         include: configuration.path.source.asset.image,
         test: /\.(?: gif|ico|jpg|png|svg)(?: \?.*)?$/i,
