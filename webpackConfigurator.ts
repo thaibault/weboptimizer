@@ -92,8 +92,7 @@ import {
     WebpackPlugins,
     WebpackResolveData
 } from './type'
-export const log =
-    new Logger({name: 'weboptimizer-webpack-configurator-logger'})
+export const log = new Logger({name: 'weboptimizer.webpack-configurator'})
 
 Logger.configureAllInstances({
     level: ['debug', 'development'].includes(process.env.NODE_ENV ?? '') ?
