@@ -65,7 +65,7 @@ import {
 } from './type'
 // endregion
 export let loadedConfiguration: null | ResolvedConfiguration = null
-export const log = new Logger({name: 'weboptimizer-configurator-logger'})
+export const log = new Logger({name: 'weboptimizer.configurator'})
 /**
  * Main entry point to determine current configuration.
  * @param context - Location from where to build current application.

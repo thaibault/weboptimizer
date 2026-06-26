@@ -82,7 +82,7 @@ import {
     ResolvedConfiguration
 } from './type'
 // endregion
-export const log = new Logger({name: 'weboptimizer-main-logger'})
+export const log = new Logger({name: 'weboptimizer'})
 
 Logger.configureAllInstances({
     level: ['debug', 'development'].includes(process.env.NODE_ENV ?? '') ?
