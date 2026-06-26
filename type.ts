@@ -19,7 +19,7 @@ import {
     AnyFunction, Encoding, Mapping, PlainObject, SecondParameter
 } from 'clientnode'
 import type FaviconWebpackPlugin from 'favicons-webpack-plugin'
-import {
+import type {
     FaviconWebpackPlugionOptions as FaviconWebpackPluginOptions
 } from 'favicons-webpack-plugin/src/options'
 import HtmlWebpackPlugin from 'html-webpack-plugin'

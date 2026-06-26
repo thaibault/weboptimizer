@@ -92,6 +92,7 @@
     "@babel/preset-typescript": "^8.0.1",
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
+    "babel-plugin-transform-rewrite-imports": "^1.5.4",
     "babel-preset-minify": "^0.5.2",
     "clientnode": "4.0.1428",
     "core-js": "^3.49.0",
