@@ -63,11 +63,11 @@
   },
   "scripts": {
     "build": "yarn build:types; yarn build:lint; yarn build:plain",
-    "build:lint": "           babel --extensions '.ts' --plugins @babel/plugin-transform-class-properties,@babel/plugin-syntax-top-level-await,babel-plugin-transform-modern-regexp                                 --presets @babel/preset-typescript --out-file eslint.config.mjs eslint.config.ts",
-    "build:plain": "command=\"babel --extensions '.ts' --plugins @babel/plugin-transform-class-properties,@babel/plugin-syntax-top-level-await,babel-plugin-polyfill-corejs3,babel-plugin-transform-modern-regexp --presets @babel/preset-env,@babel/preset-typescript --out-file\" && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestSetup.js jestSetup.ts && $command plugins/HTMLTransformation.js plugins/HTMLTransformation.ts && $command plugins/InPlaceAssetsIntoHTML.js plugins/InPlaceAssetsIntoHTML.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && shx chmod +x index.js && shx sed -i 's/(#!\\\\/usr\\\\/bin\\\\/env )babel-(node)/$1$2/' index.js 1>/dev/null",
+    "build:lint": "           babel --extensions '.ts' --plugins @babel/plugin-transform-class-properties                               --presets @babel/preset-env,@babel/preset-typescript --out-file eslint.config.mjs eslint.config.ts",
+    "build:plain": "command=\"babel --extensions '.ts' --plugins @babel/plugin-transform-class-properties,babel-plugin-polyfill-corejs3 --presets @babel/preset-env,@babel/preset-typescript --out-file\" && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestSetup.js jestSetup.ts && $command plugins/HTMLTransformation.js plugins/HTMLTransformation.ts && $command plugins/InPlaceAssetsIntoHTML.js plugins/InPlaceAssetsIntoHTML.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && shx chmod +x index.js && shx sed -i 's/(#!\\\\/usr\\\\/bin\\\\/env )babel-(node)/$1$2/' index.js 1>/dev/null",
     "build:copy-test-artefacts": "cd test/simple && shx touch yarn.lock && rimraf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../ && cd test/scss && shx touch yarn.lock && rimraf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../ && rimraf node_modules/weboptimizer test/simple/node_modules/weboptimizer test/scss/node_modules/weboptimizer && shx mkdir -p node_modules/weboptimizer test/simple/node_modules/weboptimizer test/scss/node_modules/weboptimizer && copyCommand='shx cp -r plugins *.ts *.js *.mjs *.json *.ejs' && $copyCommand node_modules/weboptimizer/ && $copyCommand test/simple/node_modules/weboptimizer/ && $copyCommand test/scss/node_modules/weboptimizer/",
-    "build:test": "           yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-transform-class-properties,@babel/plugin-syntax-top-level-await,babel-plugin-polyfill-corejs3 --presets @babel/preset-env,@babel/preset-typescript                      --source-root ../ --out-file' && yarn build:copy-test-artefacts && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
-    "build:test:source-map": "yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-transform-class-properties,@babel/plugin-syntax-top-level-await,babel-plugin-polyfill-corejs3 --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --source-root ../ --out-file' && yarn build:copy-test-artefacts && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
+    "build:test": "           yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-transform-class-properties,babel-plugin-polyfill-corejs3 --presets @babel/preset-env,@babel/preset-typescript                      --source-root ../ --out-file' && yarn build:copy-test-artefacts && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
+    "build:test:source-map": "yarn clear && yarn build && command='babel --extensions '.ts' --plugins @babel/plugin-transform-class-properties,babel-plugin-polyfill-corejs3 --presets @babel/preset-env,@babel/preset-typescript --source-maps inline --source-root ../ --out-file' && yarn build:copy-test-artefacts && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
     "build:types": "tsc --declaration --emitDeclarationOnly",
     "check": "yarn check:types; yarn lint",
     "check:types": "tsc --noEmit",
@@ -85,16 +85,13 @@
     "update:documentation": "web-documentation"
   },
   "dependencies": {
-    "@babel/core": "^7.29.7",
+    "@babel/core": "^8.0.1",
+    "@babel/plugin-proposal-decorators": "^8.0.2",
     "@babel/plugin-transform-class-properties": "^8.0.1",
-    "@babel/plugin-proposal-decorators": "^7.29.7",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
-    "@babel/plugin-syntax-top-level-await": "^7.14.5",
-    "@babel/preset-env": "^7.29.7",
-    "@babel/preset-typescript": "^7.29.7",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-typescript": "^8.0.1",
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
-    "babel-plugin-transform-modern-regexp": "^0.0.6",
     "babel-preset-minify": "^0.5.2",
     "clientnode": "4.0.1428",
     "ejs": "^6.0.1",
@@ -114,8 +111,8 @@
     "webpack-sources": "^3.5.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.29.7",
-    "@babel/eslint-parser": "^7.29.7",
+    "@babel/cli": "^8.0.1",
+    "@babel/eslint-parser": "^8.0.1",
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/ejs": "^3.1.5",
@@ -123,7 +120,7 @@
     "@types/html-minifier": "^4.0.6",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/imagemin": "^9.0.1",
-    "@types/node": "^25.9.4",
+    "@types/node": "^26.0.1",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
@@ -1182,9 +1179,7 @@
               "minified": {
                 "__evaluate__": "!self.debug"
               },
-              "#": "NOTE: \"@babel/plugin-proposal-nullish-coalescing-operator\" and \"@babel/plugin-proposal-optional-chaining\" is needed to let typescript be able to parse result. \"@babel/plugin-transform-parameters\" is needed caused by a bug when transforming parameters coming from the preceding transformer.",
               "plugins": [
-                "@babel/plugin-proposal-nullish-coalescing-operator",
                 [
                   "@babel/plugin-proposal-decorators",
                   {
@@ -1197,7 +1192,9 @@
                     "loose": true
                   }
                 ],
-                ["@babel/plugin-transform-class-properties"],
+                [
+                  "@babel/plugin-transform-class-properties"
+                ],
                 [
                   "transform-modern-regexp",
                   {

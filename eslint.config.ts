@@ -5,14 +5,16 @@ import {readFile, stat} from 'fs/promises'
 import globals from 'globals'
 import {basename, dirname, resolve} from 'path'
 import {cwd} from 'process'
-import typescript, {ConfigWithExtends} from 'typescript-eslint'
+import typescript from 'typescript-eslint'
 
-import {ConfigWithExtendsArray} from '@eslint/config-helpers'
 import eslintjs from '@eslint/js'
 import javascriptPlugin from '@stylistic/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
 
-import {ResolvedConfiguration} from './type'
+import type {ConfigWithExtends} from 'typescript-eslint'
+import type {ConfigWithExtendsArray} from '@eslint/config-helpers'
+
+import type {ResolvedConfiguration} from './type'
 
 /**
  * Checks if given path points to a valid file.
