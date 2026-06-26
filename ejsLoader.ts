@@ -15,9 +15,7 @@
     endregion
 */
 // region imports
-import {
-    BabelFileResult, transformSync as babelTransformSync
-} from '@babel/core'
+import {FileResult, transformSync as babelTransformSync} from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
 import {
     convertSubstringInPlainObject,
@@ -384,7 +382,7 @@ export const loader = function(
         }
 
         if (compileSteps % 2) {
-            const processed: BabelFileResult | null = babelTransformSync(
+            const processed: FileResult | null = babelTransformSync(
                 result as string,
                 {
                     ast: false,
