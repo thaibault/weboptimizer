@@ -97,7 +97,7 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-transform-modern-regexp": "^0.0.6",
     "babel-preset-minify": "^0.5.2",
-    "clientnode": "4.0.1423",
+    "clientnode": "4.0.1428",
     "ejs": "^6.0.1",
     "exports-loader": "^5.0.0",
     "extract-loader": "^5.1.0",
@@ -110,8 +110,8 @@
     "rimraf": "^6.1.3",
     "script-loader": "^0.7.2",
     "typescript": "^6.0.3",
-    "webpack": "^5.107.2",
-    "webpack-cli": "^7.0.3",
+    "webpack": "^5.108.1",
+    "webpack-cli": "^7.1.0",
     "webpack-sources": "^3.5.0"
   },
   "devDependencies": {
@@ -124,20 +124,20 @@
     "@types/html-minifier": "^4.0.6",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/imagemin": "^9.0.1",
-    "@types/node": "^25.9.3",
+    "@types/node": "^25.9.4",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
     "@types/webpack-sources": "^3.2.3",
-    "@typescript-eslint/parser": "^8.61.1",
+    "@typescript-eslint/parser": "^8.62.0",
     "css-loader": "^7.1.4",
     "cssnano": "^8.0.2",
     "eslint": "^10.5.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^63.0.5",
+    "eslint-plugin-jsdoc": "^63.0.9",
     "favicons": "^7.3.0",
     "favicons-webpack-plugin": "^6.0.1",
-    "globals": "^17.6.0",
+    "globals": "^17.7.0",
     "image-minimizer-webpack-plugin": "^5.0.0",
     "jest": "^30.4.2",
     "jsdoc": "^4.0.5",
@@ -153,12 +153,13 @@
     "postcss-url": "^10.1.4",
     "shx": "^0.4.0",
     "style-loader": "^4.0.0",
-    "stylelint": "^17.13.0",
+    "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-config-standard-scss": "^17.0.0",
-    "typescript-eslint": "^8.61.1",
+    "terser-webpack-plugin": "^5.6.1",
+    "typescript-eslint": "^8.62.0",
     "typescript-plugin-css-modules": "^5.2.0",
-    "web-documentation": "^1.0.40",
+    "web-documentation": "^1.0.42",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "peerDependencies": {
@@ -195,6 +196,7 @@
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "stylelint-config-standard-scss": "*",
+    "terser-webpack-plugin": "*",
     "typescript-eslint": "*",
     "typescript-plugin-css-modules": "*",
     "webpack-dev-server": "*",
@@ -301,6 +303,9 @@
       "optional": true
     },
     "stylelint-config-standard-scss": {
+      "optional": true
+    },
+    "terser-webpack-plugin": {
       "optional": true
     },
     "typescript-eslint": {
