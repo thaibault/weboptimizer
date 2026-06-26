@@ -1,0 +1,17 @@
+{
+  "targets": "> 0.25%, not dead",
+  "plugins": [
+    ["@babel/plugin-transform-class-properties"],
+    [
+      "polyfill-corejs3",
+      {
+        "method": "usage-global",
+        "version": "3.48"
+      }
+    ]
+  ],
+  "presets": [
+    ["@babel/preset-env"],
+    ["@babel/preset-typescript"]
+  ]
+}
