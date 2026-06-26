@@ -3,11 +3,11 @@ babel (ohne polyfill oder Helper-Runtime)
 
 Alle Helper werden im Code inline eingefügt.
 
-+ Keine Abhängikeiten
++ Keine Abhängigkeiten
 + Keine Verschmutzung des globalen Scopes
 - Redundanter Code
 
-@babel/plugin-transform-runtime
+babel-plugin-polyfill-corejs3
 ---------------------------------------------------------
 
 biegt alle Polyfill-Helper zum Paket "@babel/runtime" um.
@@ -15,7 +15,7 @@ biegt alle Polyfill-Helper zum Paket "@babel/runtime" um.
 + Weniger Code-Redundanz
 - Code hat "babel-runtime" Abhängigkeit
 
-@babel/polyfill
+core-js/stable
 --------------
 
 modifiziert die globale Umgebung
@@ -31,18 +31,18 @@ Best Practice (für beste Performance)
 #### Maximale Performance
 
 Hier sollte "@babel/plugin-transform-runtime" genutzt werden und eine
-Abhängigkeit zu "@babel/runtime" und ggf. zu "@babel/polyfill" kommuniziert
+Abhängigkeit zu "@babel/runtime" und ggf. zu "core-js/stable" kommuniziert
 werden (um das Optimierungspotential für Anwendungen nicht zu verschenken):
 
 package.json:
 
 ...
-"devDependencies": {"@babel/polyfill": "..."}
+"devDependencies": {"core-js/stable": "..."}
 ...
 "dependencies": {"babel-runtime": "..."}
 ...
 
-Für lokale Tests muss "babel-runtime" und zusätzlich "@babel/polyfill"
+Für lokale Tests muss "babel-runtime" und zusätzlich "core-js/stable"
 eingefügt werden.
 
 #### Maximale Kompatibilität
@@ -54,10 +54,10 @@ nicht vorgenommen.
 ### Applikation
 
 Hier sollte "@babel/plugin-transform-runtime" genutzt werden und
-"@babel/runtime" sowie "@babel/polyfill" eingebaut werden:
+"@babel/runtime" sowie "core-js/stable" eingebaut werden:
 
 package.json:
 
 ...
-"devDepenedencies": {"@babel/polyfill": "...", "babel-runtime": "..."}
+"devDepenedencies": {"core-js/stable": "...", "babel-runtime": "..."}
 ...
