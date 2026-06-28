@@ -15,29 +15,9 @@
     endregion
 */
 // region imports
-import {
-    copy,
-    currentRequire,
-    Encoding,
-    escapeRegularExpressions,
-    extend,
-    File,
-    isAnyMatching,
-    isDirectorySync,
-    isFileSync,
-    isPlainObject,
-    Logger,
-    Mapping,
-    PlainObject,
-    represent,
-    walkDirectoryRecursivelySync
-} from 'clientnode'
-import {existsSync, readFileSync} from 'fs'
-import {
-    basename, dirname, extname, join, normalize, resolve, sep, relative
-} from 'path'
+import type {Encoding, File, Mapping, PlainObject} from 'clientnode'
 
-import {
+import type {
     BuildConfiguration,
     Extensions,
     GivenInjection,
@@ -51,6 +31,25 @@ import {
     ResolvedBuildConfigurationItem,
     SpecificExtensions
 } from './type'
+
+import clientnode from 'clientnode'
+const {
+    copy,
+    currentRequire,
+    escapeRegularExpressions,
+    extend,
+    isAnyMatching,
+    isDirectorySync,
+    isFileSync,
+    isPlainObject,
+    Logger,
+    represent,
+    walkDirectoryRecursivelySync
+} = clientnode
+import {existsSync, readFileSync} from 'fs'
+import {
+    basename, dirname, extname, join, normalize, resolve, sep, relative
+} from 'path'
 // endregion
 // region constants
 export const KNOWN_FILE_EXTENSIONS: Array<string> = [

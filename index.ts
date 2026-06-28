@@ -17,21 +17,42 @@
     endregion
 */
 // region imports
-import {
-    ChildProcess,
-    CommonSpawnOptions,
-    exec as execChildProcess,
-    ExecOptions,
-    spawn as spawnChildProcess
-} from 'child_process'
-import {
+import type {
     AnyFunction,
+    EvaluationResult,
+    File,
+    Mapping,
+    PlainObject,
+    PositiveEvaluationResult,
+    ProcedureFunction,
+    ProcessCloseCallback,
+    ProcessCloseReason,
+    ProcessError,
+    ProcessErrorCallback,
+    ProcessHandler
+} from 'clientnode'
+import type {
+    ChildProcess, CommonSpawnOptions, ExecOptions
+} from 'child_process'
+
+import type {
+    Command,
+    CommandLineArguments,
+    GivenInjection,
+    ResolvedBuildConfiguration,
+    ResolvedBuildConfigurationItem,
+    ResolvedConfiguration
+} from './type'
+
+import {
+    exec as execChildProcess, spawn as spawnChildProcess
+} from 'child_process'
+import clientnode from 'clientnode'
+const {
     CLOSE_EVENT_NAMES,
     copyDirectoryRecursiveSync,
     copyFileSync,
     evaluate,
-    EvaluationResult,
-    File,
     getProcessCloseHandler,
     handleChildProcess,
     isDirectory,
@@ -40,23 +61,14 @@ import {
     isFileSync,
     isPlainObject,
     Logger,
-    Mapping,
     MAXIMAL_NUMBER_OF_ITERATIONS,
     NOOP,
     parseEncodedObject,
-    PlainObject,
-    PositiveEvaluationResult,
-    ProcedureFunction,
-    ProcessCloseCallback,
-    ProcessCloseReason,
-    ProcessError,
-    ProcessErrorCallback,
-    ProcessHandler,
     walkDirectoryRecursively
-} from 'clientnode'
+} = clientnode
 import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
-import {sync as globSync} from 'glob-all'
+import globAll from 'glob-all'
 import path, {join, resolve} from 'path'
 import {
     rimraf as removeDirectoryRecursively,
@@ -73,14 +85,6 @@ import {
     resolveBuildConfigurationFilePaths,
     stripLoader
 } from './helper'
-import {
-    Command,
-    CommandLineArguments,
-    GivenInjection,
-    ResolvedBuildConfiguration,
-    ResolvedBuildConfigurationItem,
-    ResolvedConfiguration
-} from './type'
 // endregion
 export const log = new Logger({name: 'weboptimizer'})
 
@@ -330,7 +334,7 @@ const main = async (
                             removeDirectoryRecursivelySync(filePath)
 
                 removeDirectoryRecursivelySync(
-                    globSync(configuration.path.tidyUpOnClearGlobs)
+                    globAll.sync(configuration.path.tidyUpOnClearGlobs)
                 )
             }
             // endregion
@@ -437,7 +441,7 @@ const main = async (
                                 removeDirectoryRecursivelySync(filePath)
 
                     removeDirectoryRecursivelySync(
-                        globSync(configuration.path.tidyUpGlobs)
+                        globAll.sync(configuration.path.tidyUpGlobs)
                     )
                 }
 

@@ -86,6 +86,7 @@
   },
   "dependencies": {
     "@babel/core": "^8.0.1",
+    "@babel/plugin-transform-proto-to-assign": "^8.0.1",
     "@babel/plugin-proposal-decorators": "^8.0.2",
     "@babel/plugin-transform-class-properties": "^8.0.1",
     "@babel/preset-env": "^8.0.2",
@@ -1210,7 +1211,7 @@
               ],
               "presets": {
                 "#": "NOTE: We have to disable module export/import transformation to allow tree shaking by the final (minimizer).",
-                "__evaluate__": "[['@babel/preset-env', {modules: false, targets: self.generic.isWeb ? {browsers: self.generic.supportedBrowsers, node: packageConfiguration.engines.node.replace(/>?=?([0-9]+)/, '$1')} : {node: packageConfiguration.engines.node.replace(/>?=?([0-9]+)/, '$1')}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
+                "__evaluate__": "[['@babel/preset-env', {targets: self.generic.isWeb ? {browsers: self.generic.supportedBrowsers, node: packageConfiguration.engines.node.replace(/>?=?([0-9]+)/, '$1')} : {node: packageConfiguration.engines.node.replace(/>?=?([0-9]+)/, '$1')}}], '@babel/preset-typescript'].concat((self.debug || !self.module.optimizer.babelMinify.module || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'document') ? [] : [['minify', self.module.optimizer.babelMinify.module]])"
               }
             },
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"

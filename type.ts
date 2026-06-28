@@ -15,22 +15,22 @@
     endregion
 */
 // region imports
-import {
+import type {
     AnyFunction, Encoding, Mapping, PlainObject, SecondParameter
 } from 'clientnode'
 import type FaviconWebpackPlugin from 'favicons-webpack-plugin'
 import type {
     FaviconWebpackPlugionOptions as FaviconWebpackPluginOptions
 } from 'favicons-webpack-plugin/src/options'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
+import type HtmlWebpackPlugin from 'html-webpack-plugin'
 import type ImageMinimizerWebpackPlugin from 'image-minimizer-webpack-plugin'
-import {
+import type {
     PluginOptions as ImageMinimizerOptions
 } from 'image-minimizer-webpack-plugin'
-import {JSDOM} from 'jsdom'
+import type {JSDOM} from 'jsdom'
 import type MiniCSSExtractPlugin from 'mini-css-extract-plugin'
 import type TerserWebpackPlugin from 'terser-webpack-plugin'
-import {
+import type {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
     IgnorePlugin as WebpackIgnorePlugin,
@@ -40,7 +40,7 @@ import {
     RuleSetUseItem as WebpackRuleSetUseItem,
     WebpackOptionsNormalized
 } from 'webpack'
-import {
+import type {
     WebpackPartial as WorkboxBaseCommonOptions,
     BasePartial as WorkboxCommonOptions,
     WebpackGenerateSWOptions as WorkboxGenerateSWOptions,

@@ -13,7 +13,7 @@
       "babel-plugin-transform-rewrite-imports",
       {
         "appendExtension": ".js",
-        "recognizedExtensions": [".js", ".jsx", ".ts", ".tsx", ".json"]
+        "recognizedExtensions": [".js", ".jsx", ".d.ts", ".ts", ".tsx", ".json"]
       }
     ]
   ],
