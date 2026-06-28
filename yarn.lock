@@ -2322,6 +2322,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-transform-proto-to-assign@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "@babel/plugin-transform-proto-to-assign@npm:8.0.1"
+  dependencies:
+    "@babel/helper-plugin-utils": "npm:^8.0.1"
+  peerDependencies:
+    "@babel/core": ^8.0.0
+  checksum: 10c0/58957764f0da9fe6a39517392c1b2bd91487538c59538e91c44b8e6e6b803a4214b46f8632bbea9c9d8178a654a3955b1abe9c19676bf4554dff8a775773f140
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-transform-regenerator@npm:^7.23.3":
   version: 7.23.3
   resolution: "@babel/plugin-transform-regenerator@npm:7.23.3"
@@ -18548,6 +18559,7 @@ __metadata:
     "@babel/eslint-parser": "npm:^8.0.1"
     "@babel/plugin-proposal-decorators": "npm:^8.0.2"
     "@babel/plugin-transform-class-properties": "npm:^8.0.1"
+    "@babel/plugin-transform-proto-to-assign": "npm:^8.0.1"
     "@babel/preset-env": "npm:^8.0.2"
     "@babel/preset-typescript": "npm:^8.0.1"
     "@eslint/js": "npm:^10.0.1"

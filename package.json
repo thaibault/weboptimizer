@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -86,9 +86,9 @@
   },
   "dependencies": {
     "@babel/core": "^8.0.1",
-    "@babel/plugin-transform-proto-to-assign": "^8.0.1",
     "@babel/plugin-proposal-decorators": "^8.0.2",
     "@babel/plugin-transform-class-properties": "^8.0.1",
+    "@babel/plugin-transform-proto-to-assign": "^8.0.1",
     "@babel/preset-env": "^8.0.2",
     "@babel/preset-typescript": "^8.0.1",
     "babel-loader": "^10.1.1",
