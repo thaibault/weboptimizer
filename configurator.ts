@@ -15,7 +15,20 @@
     endregion
 */
 // region imports
-import {
+import type {Mapping, PlainObject, RecursiveEvaluateable} from 'clientnode'
+
+import type {
+    DefaultConfiguration,
+    GivenInjection,
+    GivenInjectionConfiguration,
+    InjectionConfiguration,
+    ResolvedBuildConfigurationItem,
+    ResolvedConfiguration,
+    RuntimeInformation
+} from './type'
+
+import clientnode from 'clientnode'
+const {
     convertCircularObjectToJSON,
     copy,
     currentRequire,
@@ -28,15 +41,12 @@ import {
     isPlainObject,
     Logger,
     MAXIMAL_NUMBER_OF_ITERATIONS,
-    Mapping,
     modifyObject,
     optionalRequire,
     parseEncodedObject,
-    PlainObject,
-    RecursiveEvaluateable,
     removeKeyPrefixes,
     UTILITY_SCOPE
-} from 'clientnode'
+} = clientnode
 import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
 
@@ -50,20 +60,11 @@ import {
     normalizeGivenInjection,
     normalizePaths
 } from './helper'
-import packageConfiguration, {
-    configuration as metaConfiguration
-} from './package.json'
-import {
-    DefaultConfiguration,
-    GivenInjection,
-    GivenInjectionConfiguration,
-    InjectionConfiguration,
-    ResolvedBuildConfigurationItem,
-    ResolvedConfiguration,
-    RuntimeInformation,
-    SubConfigurationTypes
-} from './type'
+import packageConfiguration from './package.json' with {type: 'json'}
+import {SubConfigurationTypes} from './type'
 // endregion
+const {configuration: metaConfiguration} = packageConfiguration
+
 export let loadedConfiguration: null | ResolvedConfiguration = null
 export const log = new Logger({name: 'weboptimizer.configurator'})
 /**
