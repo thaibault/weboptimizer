@@ -32,8 +32,7 @@ import type {
     SpecificExtensions
 } from './type'
 
-import clientnode from 'clientnode'
-const {
+import {
     copy,
     currentRequire,
     escapeRegularExpressions,
@@ -45,7 +44,7 @@ const {
     Logger,
     represent,
     walkDirectoryRecursivelySync
-} = clientnode
+} from 'clientnode'
 import {existsSync, readFileSync} from 'fs'
 import {
     basename, dirname, extname, join, normalize, resolve, sep, relative

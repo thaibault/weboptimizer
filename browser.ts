@@ -131,7 +131,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
         }
 
         if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
-            const filePath: string = path.join(__dirname, 'index.html.ejs')
+            const filePath: string = path.join(import.meta.dirname, 'index.html.ejs')
             /*
                 NOTE: We load dependencies now to avoid having file imports
                 after test runner has finished to isolate the environment.

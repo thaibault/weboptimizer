@@ -47,8 +47,7 @@ import type {
 import {
     exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
-import clientnode from 'clientnode'
-const {
+import {
     CLOSE_EVENT_NAMES,
     copyDirectoryRecursiveSync,
     copyFileSync,
@@ -65,7 +64,7 @@ const {
     NOOP,
     parseEncodedObject,
     walkDirectoryRecursively
-} = clientnode
+} from 'clientnode'
 import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
 import globAll from 'glob-all'
@@ -109,7 +108,7 @@ const main = async (
     context?: string,
     currentWorkingDirectory: string = process.cwd(),
     commandLineArguments: Array<string> = process.argv,
-    webOptimizerPath: string = __dirname,
+    webOptimizerPath: string = import.meta.dirname,
     /*
         NOTE: We have to avoid that some pre-processor removes this
         assignment.
@@ -714,7 +713,7 @@ const main = async (
         for (const closeEventName of CLOSE_EVENT_NAMES)
             process.on(closeEventName, closeHandler)
         if (
-            require.main === module &&
+            import.meta.main &&
             (
                 configuration.givenCommandLineArguments.length < 3 ||
                 !possibleArguments.includes(
@@ -747,7 +746,7 @@ const main = async (
     return clear
 }
 
-if (require.main === module)
+if (import.meta.main)
     void main()
 
 export default main

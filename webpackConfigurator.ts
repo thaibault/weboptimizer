@@ -624,7 +624,7 @@ for (const contextReplacement of module.replacements.context)
         contextReplacement.map((value: string): RegExp | string => {
             const evaluated: EvaluationResult<RegExp | string> =
                 evaluate<RegExp | string>(
-                    value, {configuration, __dirname, __filename}
+                    value, {configuration, metaImport: import.meta}
                 )
 
             if (evaluated.error)

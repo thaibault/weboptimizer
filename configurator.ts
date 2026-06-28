@@ -27,8 +27,7 @@ import type {
     RuntimeInformation
 } from './type'
 
-import clientnode from 'clientnode'
-const {
+import {
     convertCircularObjectToJSON,
     copy,
     currentRequire,
@@ -46,7 +45,7 @@ const {
     parseEncodedObject,
     removeKeyPrefixes,
     UTILITY_SCOPE
-} = clientnode
+} from 'clientnode'
 import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
 import path, {basename, dirname, join, resolve} from 'path'
 
@@ -81,7 +80,7 @@ export const load = (
     context?: string,
     currentWorkingDirectory: string = process.cwd(),
     commandLineArguments: Array<string> = process.argv,
-    webOptimizerPath: string = __dirname,
+    webOptimizerPath: string = import.meta.dirname,
     /*
         NOTE: We have to avoid that some pre-processor removes this
         assignment.
