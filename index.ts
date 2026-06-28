@@ -54,6 +54,7 @@ import {
     evaluate,
     getProcessCloseHandler,
     handleChildProcess,
+    importsPromise,
     isDirectory,
     isDirectorySync,
     isFile,
@@ -94,6 +95,10 @@ Logger.configureAllInstances({
 })
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128'
+
+// Wait until optional filesystem modules have been loaded.
+await importsPromise
+
 /**
  * Main entry point.
  * @param context - Location from where to build current application.
@@ -237,7 +242,7 @@ const main = async (
                         'watch'
                     ].includes(configuration.givenCommandLineArguments[2]) ||
                     /*
-                        NOTE: If target artefacts are located next to their
+                        NOTE: If target artifacts are located next to their
                         source files, we need to clear them first when running
                         dev mode (watching source files and reloading build
                         automatically).
@@ -312,10 +317,11 @@ const main = async (
                     )
                         if (file.name.startsWith('npm-debug'))
                             await unlink(file.path)
-                } else
+                } else {
                     await removeDirectoryRecursively(
                         configuration.path.target.base
                     )
+                }
 
                 if (await isDirectory(
                     configuration.path.apiDocumentation

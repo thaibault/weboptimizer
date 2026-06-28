@@ -17,16 +17,19 @@
 // region imports
 import {
     convertToValidVariableName,
+    currentRequire,
     evaluate,
     EvaluationResult,
     escapeRegularExpressions,
     extend,
+    importsPromise,
     isFileSync,
     isObject,
     isPlainObject,
     Logger,
     Mapping,
     mask,
+    optionalImport,
     PlainObject,
     PositiveEvaluationResult,
     RecursivePartial,
@@ -99,33 +102,21 @@ Logger.configureAllInstances({
         'debug' :
         'warn'
 })
-/// region optional imports
-// NOTE: Has to be defined here to ensure to resolve from here.
-const currentRequire: null | typeof require =
-    /*
-        typeof __non_webpack_require__ === 'function' ?
-            __non_webpack_require__ :
-    */
-    eval(`typeof require === 'undefined' ? null : require`) as
-        null | typeof require
-export const optionalRequire = <T = unknown>(id: string): null | T => {
-    try {
-        return currentRequire ? currentRequire(id) as T : null
-    } catch {
-        return null
-    }
-}
 
+// Wait until optional filesystem modules have been loaded.
+await importsPromise
+
+/// region optional imports
 const postcssCSSnano: null | typeof import('cssnano') =
-    optionalRequire<typeof import('cssnano')>('cssnano')
+    await optionalImport<typeof import('cssnano')>('cssnano')
 const postcssFontpath =
-    optionalRequire<typeof import('postcss-fontpath').default>(
+    await optionalImport<typeof import('postcss-fontpath').default>(
         'postcss-fontpath'
     )
 const postcssImport =
-    optionalRequire<typeof import('postcss-import')>('postcss-import')
+    await optionalImport<typeof import('postcss-import')>('postcss-import')
 const postcssSprites =
-    optionalRequire<typeof import('postcss-sprites').default>(
+    await optionalImport<typeof import('postcss-sprites').default>(
         'postcss-sprites'
     )
 
@@ -133,12 +124,12 @@ type UpdateRule = (
     _node: PostcssNode, _token: PostcssNode, _image: Mapping<unknown>
 ) => void
 const updateRule: undefined | UpdateRule =
-    optionalRequire<{updateRule: UpdateRule}>(
+    (await optionalImport<{updateRule: UpdateRule}>(
         'postcss-sprites/lib/core'
-    )?.updateRule
+    ))?.updateRule
 
 const postcssURL =
-    optionalRequire<typeof import('postcss-url')>('postcss-url')
+    await optionalImport<typeof import('postcss-url')>('postcss-url')
 /// endregion
 const pluginNameResourceMapping: Mapping = {
     Favicon: 'favicons-webpack-plugin',
@@ -152,7 +143,7 @@ const pluginNameResourceMapping: Mapping = {
 const plugins: WebpackPlugins = {}
 
 for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
-    const plugin: null | WebpackPlugin = optionalRequire(alias)
+    const plugin: null | WebpackPlugin = await optionalImport(alias)
     if (plugin)
         plugins[name] = plugin
     else
@@ -365,7 +356,7 @@ pluginInstances.push({apply: (compiler: Compiler): void => {
     )
 }})
 ///// endregion
-///// region in-place configured assets in the main html file
+///// region in-place configured assets in the main HTML file
 if (
     plugins.HTML &&
     htmlAvailable &&
@@ -382,7 +373,7 @@ if (
         htmlPlugin: plugins.HTML
     }))
 ///// endregion
-///// region mark empty javaScript modules as dummy
+///// region mark empty JavaScript modules as dummy
 if (!(
     configuration.needed.javaScript ||
     configuration.needed.javaScriptExtension ||
@@ -409,7 +400,7 @@ if (configuration.injection.external.modules === '__implicit__')
         We only want to process modules from local context in library mode,
         since a concrete project using this library should combine all assets
         (and de-duplicate them) for optimal bundling results.
-        NOTE: Only native javascript and json modules will be marked as
+        NOTE: Only native JavaScript and json modules will be marked as
         external dependency.
     */
     configuration.injection.external.modules = (
@@ -610,7 +601,7 @@ if (configuration.injection.external.modules === '__implicit__')
     }
 ///// endregion
 //// endregion
-//// region apply final html modifications/fixes
+//// region apply final HTML modifications/fixes
 if (htmlAvailable && plugins.HTML)
     pluginInstances.push(new HTMLTransformation({
         hashAlgorithm: configuration.hashAlgorithm,
@@ -642,7 +633,7 @@ for (const contextReplacement of module.replacements.context)
 /*
     NOTE: Redundancies usually occur when symlinks aren't converted to their
     real paths since real paths can be de-duplicated by webpack but if two
-    linked modules share the same transitive dependency webpack wont recognize
+    linked modules share the same transitive dependency webpack won't recognize
     them as same dependency.
 */
 if (module.enforceDeduplication) {
@@ -947,7 +938,7 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                 loader: module.preprocessor.cascadingStyleSheet.loader,
                 options: extend(
                     true,
-                    optionalRequire('postcss') ?
+                    await optionalImport('postcss') ?
                         {postcssOptions: {
                             /*
                                 NOTE: Some plugins like "postcss-import" are
@@ -1144,7 +1135,7 @@ const genericLoader: GenericLoader = {
             ) as RuleSet
     },
     // endregion
-    // region html template
+    // region HTML template
     html: {
         // NOTE: This is only for the main entry template.
         main: {
@@ -1496,7 +1487,7 @@ if (
     configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract
 ) {
     /*
-        NOTE: We have to remove the client side javascript hmr style loader
+        NOTE: We have to remove the client side JavaScript hmr style loader
         first.
     */
     loader.style.use.shift()
@@ -1549,7 +1540,7 @@ for (const pluginConfiguration of configuration.plugins) {
         Unpacked<WebpackConfiguration['plugins']>
 
     const plugin: Mapping<Initializer> | null =
-        optionalRequire(pluginConfiguration.name.module)
+        await optionalImport(pluginConfiguration.name.module)
     if (plugin)
         pluginInstances.push(
             (new (plugin[pluginConfiguration.name.initializer])(
@@ -1800,7 +1791,7 @@ if (configuration.path.configuration.javaScript)
         require.resolve(configuration.path.configuration.javaScript)
 
         const result: unknown =
-            optionalRequire(configuration.path.configuration.javaScript)
+            await optionalImport(configuration.path.configuration.javaScript)
 
         if (isPlainObject(result))
             if (Object.prototype.hasOwnProperty.call(

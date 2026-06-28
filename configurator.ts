@@ -34,6 +34,7 @@ import {
     evaluateDynamicData,
     extend,
     getUTCTimestamp,
+    importsPromise,
     isFileSync,
     isObject,
     isolatedRequire,
@@ -66,6 +67,10 @@ const {configuration: metaConfiguration} = packageConfiguration
 
 export let loadedConfiguration: null | ResolvedConfiguration = null
 export const log = new Logger({name: 'weboptimizer.configurator'})
+
+// Wait until optional filesystem modules have been loaded.
+await importsPromise
+
 /**
  * Main entry point to determine current configuration.
  * @param context - Location from where to build current application.
