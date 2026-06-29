@@ -30,7 +30,6 @@ import type {
 import {
     convertCircularObjectToJSON,
     copy,
-    currentRequire,
     evaluateDynamicData,
     extend,
     getUTCTimestamp,
@@ -42,12 +41,13 @@ import {
     Logger,
     MAXIMAL_NUMBER_OF_ITERATIONS,
     modifyObject,
-    optionalRequire,
+    optionalImport,
     parseEncodedObject,
     removeKeyPrefixes,
     UTILITY_SCOPE
 } from 'clientnode'
 import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
+import {createRequire} from 'node:module'
 import path, {basename, dirname, join, resolve} from 'path'
 
 import {
@@ -63,6 +63,15 @@ import {
 import packageConfiguration from './package.json' with {type: 'json'}
 import {SubConfigurationTypes} from './type'
 // endregion
+const require = createRequire(import.meta.url)
+export const optionalRequire = <T = unknown>(id: string): null | T => {
+    try {
+        return require(id) as T
+    } catch {
+        return null
+    }
+}
+
 const {configuration: metaConfiguration} = packageConfiguration
 
 export let loadedConfiguration: null | ResolvedConfiguration = null
@@ -81,7 +90,7 @@ await importsPromise
  * @param environment - Environment variables to take into account.
  * @returns Nothing.
  */
-export const load = (
+export const load = async (
     context?: string,
     currentWorkingDirectory: string = process.cwd(),
     commandLineArguments: Array<string> = process.argv,
@@ -92,7 +101,7 @@ export const load = (
     */
     // eslint-disable-next-lien no-eval
     environment: NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
-): ResolvedConfiguration => {
+): Promise<ResolvedConfiguration> => {
     // region determine application context location
     if (context)
         metaConfiguration.default.path.context = context
@@ -151,10 +160,12 @@ export const load = (
     // region load application specific configuration
     let specificConfiguration: PlainObject = {}
     try {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        specificConfiguration = currentRequire!(join(
-            metaConfiguration.default.path.context, 'package'
-        )) as PlainObject
+        specificConfiguration = (await optionalImport(
+            join(
+                metaConfiguration.default.path.context, 'package.json'
+            ),
+            {with: {type: 'json'}}
+        ) as PlainObject).default as PlainObject
     } catch {
         metaConfiguration.default.path.context = currentWorkingDirectory
     }
@@ -400,16 +411,18 @@ export const load = (
                 unknown as
                 RecursiveEvaluateable<ResolvedConfiguration>,
             {
-                ...UTILITY_SCOPE,
-                currentPath: currentWorkingDirectory,
-                fs: fileSystem,
-                packageConfiguration,
-                optionalRequire,
-                path,
-                require: isolatedRequire,
-                webOptimizerPath,
-                now,
-                nowUTCTimestamp: getUTCTimestamp(now)
+                scope: {
+                    ...UTILITY_SCOPE,
+                    currentPath: currentWorkingDirectory,
+                    fs: fileSystem,
+                    optionalRequire,
+                    packageConfiguration,
+                    path,
+                    require: isolatedRequire,
+                    webOptimizerPath,
+                    now,
+                    nowUTCTimestamp: getUTCTimestamp(now)
+                }
             }
         )
     // endregion
@@ -601,13 +614,11 @@ export const load = (
  * Get cached or determined configuration object.
  * @returns Nothing.
  */
-export const get = (): ResolvedConfiguration => {
+export const get = async (): Promise<ResolvedConfiguration> => {
     if (loadedConfiguration)
         return loadedConfiguration
 
-    loadedConfiguration = load()
-
-    return loadedConfiguration
+    return await load()
 }
 
 export default get

@@ -15,65 +15,25 @@
     endregion
 */
 // region imports
-import {
-    convertToValidVariableName,
-    currentRequire,
-    evaluate,
-    EvaluationResult,
-    escapeRegularExpressions,
-    extend,
-    importsPromise,
-    isFileSync,
-    isObject,
-    isPlainObject,
-    Logger,
+import type {
     Mapping,
-    mask,
-    optionalImport,
     PlainObject,
     PositiveEvaluationResult,
     RecursivePartial,
-    represent,
     Unpacked
 } from 'clientnode'
-import {
+import type {Transformer as PostcssTransformer} from 'postcss'
+import type PostcssNode from 'postcss/lib/node'
+import type {
     PluginOptions as ImageMinimizerOptions
 } from 'image-minimizer-webpack-plugin'
-import {extname, join, relative, resolve} from 'path'
-import {Transformer as PostcssTransformer} from 'postcss'
-import PostcssNode from 'postcss/lib/node'
-import util from 'util'
-import {
-    Chunk,
-    Compiler,
-    Compilation,
-    ContextReplacementPlugin,
-    DefinePlugin,
-    HotModuleReplacementPlugin,
-    IgnorePlugin,
-    NormalModuleReplacementPlugin,
-    ProvidePlugin,
-    RuleSetRule
-} from 'webpack'
-import {RawSource as WebpackRawSource} from 'webpack-sources'
-import {
+import type {Chunk, Compiler, RuleSetRule} from 'webpack'
+import type {
     InjectManifestOptions as WorkboxInjectManifestOptions
 } from 'workbox-build'
 
-import getConfiguration from './configurator'
-import {LoaderConfiguration as EJSLoaderConfiguration} from './ejsLoader'
-import {
-    determineAssetType,
-    determineExternalRequest,
-    determineModuleFilePath,
-    getClosestPackageDescriptor,
-    isFilePathInLocation,
-    normalizePaths,
-    stripLoader
-} from './helper'
-import InPlaceAssetsIntoHTML from './plugins/InPlaceAssetsIntoHTML'
-import HTMLTransformation from './plugins/HTMLTransformation'
-import {
+import type {LoaderConfiguration as EJSLoaderConfiguration} from './ejsLoader'
+import type {
     AdditionalLoaderConfiguration,
     AssetPathConfiguration,
     EvaluationScope,
@@ -95,13 +55,48 @@ import {
     WebpackPlugins,
     WebpackResolveData
 } from './type'
-export const log = new Logger({name: 'weboptimizer.webpack-configurator'})
 
-Logger.configureAllInstances({
-    level: ['debug', 'development'].includes(process.env.NODE_ENV ?? '') ?
-        'debug' :
-        'warn'
-})
+import {
+    convertToValidVariableName,
+    currentRequire,
+    evaluate,
+    EvaluationResult,
+    escapeRegularExpressions,
+    extend,
+    importsPromise,
+    isFileSync,
+    isObject,
+    isPlainObject,
+    Logger,
+    mask,
+    optionalImport,
+    represent
+} from 'clientnode'
+import {extname, join, relative, resolve} from 'path'
+import util from 'util'
+import {
+    Compilation,
+    ContextReplacementPlugin,
+    DefinePlugin,
+    HotModuleReplacementPlugin,
+    IgnorePlugin,
+    NormalModuleReplacementPlugin,
+    ProvidePlugin
+} from 'webpack'
+import {RawSource as WebpackRawSource} from 'webpack-sources'
+
+import getConfiguration from './configurator'
+import {
+    determineAssetType,
+    determineExternalRequest,
+    determineModuleFilePath,
+    getClosestPackageDescriptor,
+    isFilePathInLocation,
+    normalizePaths,
+    stripLoader
+} from './helper'
+import InPlaceAssetsIntoHTML from './plugins/InPlaceAssetsIntoHTML'
+import HTMLTransformation from './plugins/HTMLTransformation'
 
 // Wait until optional filesystem modules have been loaded.
 await importsPromise
@@ -131,6 +126,13 @@ const updateRule: undefined | UpdateRule =
 const postcssURL =
     await optionalImport<typeof import('postcss-url')>('postcss-url')
 /// endregion
+export const log = new Logger({name: 'weboptimizer.webpack-configurator'})
+Logger.configureAllInstances({
+    level: ['debug', 'development'].includes(process.env.NODE_ENV ?? '') ?
+        'debug' :
+        'warn'
+})
+
 const pluginNameResourceMapping: Mapping = {
     Favicon: 'favicons-webpack-plugin',
     ImageMinimizer: 'image-minimizer-webpack-plugin',
@@ -150,7 +152,7 @@ for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
         log.debug(`Optional webpack plugin "${name}" not available.`)
 }
 // endregion
-const configuration: ResolvedConfiguration = getConfiguration()
+const configuration: ResolvedConfiguration = await getConfiguration()
 Logger.configureAllInstances({level: configuration.debug ? 'debug' : 'warn'})
 
 const module = configuration.module

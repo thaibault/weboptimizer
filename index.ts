@@ -125,7 +125,7 @@ const main = async (
     else
         environment.PATH = 'node_modules/.bin'
 
-    const configuration: ResolvedConfiguration = loadConfiguration(
+    const configuration: ResolvedConfiguration = await loadConfiguration(
         context,
         currentWorkingDirectory,
         commandLineArguments,

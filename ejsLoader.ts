@@ -73,7 +73,7 @@ export type LoaderConfiguration =
         }
     }
 // endregion
-const configuration: ResolvedConfiguration = getConfiguration()
+const configuration: ResolvedConfiguration = await getConfiguration()
 export const log = new Logger({name: 'weboptimizer.ejs-loader'})
 /**
  * Main transformation function.
