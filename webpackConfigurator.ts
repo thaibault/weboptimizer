@@ -16,6 +16,7 @@
 */
 // region imports
 import type {
+    EvaluationResult,
     Mapping,
     PlainObject,
     PositiveEvaluationResult,
@@ -27,7 +28,13 @@ import type PostcssNode from 'postcss/lib/node'
 import type {
     PluginOptions as ImageMinimizerOptions
 } from 'image-minimizer-webpack-plugin'
-import type {Chunk, Compiler, RuleSetRule} from 'webpack'
+import type {
+    Chunk,
+    Compiler,
+    Compilation as CompilationType,
+    IgnorePlugin as IgnorePluginType,
+    RuleSetRule
+} from 'webpack'
 import type {
     InjectManifestOptions as WorkboxInjectManifestOptions
 } from 'workbox-build'
@@ -58,9 +65,7 @@ import type {
 
 import {
     convertToValidVariableName,
-    currentRequire,
     evaluate,
-    EvaluationResult,
     escapeRegularExpressions,
     extend,
     importsPromise,
@@ -74,7 +79,8 @@ import {
 } from 'clientnode'
 import {extname, join, relative, resolve} from 'path'
 import util from 'util'
-import {
+import webpack from 'webpack'
+const {
     Compilation,
     ContextReplacementPlugin,
     DefinePlugin,
@@ -82,10 +88,11 @@ import {
     IgnorePlugin,
     NormalModuleReplacementPlugin,
     ProvidePlugin
-} from 'webpack'
-import {RawSource as WebpackRawSource} from 'webpack-sources'
+} = webpack
+import webpackSources from 'webpack-sources'
+const {RawSource: WebpackRawSource} = webpackSources
 
-import getConfiguration from './configurator'
+import getConfiguration, {require} from './configurator'
 import {
     determineAssetType,
     determineExternalRequest,
@@ -145,9 +152,13 @@ const pluginNameResourceMapping: Mapping = {
 const plugins: WebpackPlugins = {}
 
 for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
-    const plugin: null | WebpackPlugin = await optionalImport(alias)
+    const plugin: null | WebpackPlugin | {default: WebpackPlugin} =
+        await optionalImport(alias)
     if (plugin)
-        plugins[name] = plugin
+        if ('default' in plugin)
+            plugins[name] = plugin.default as WebpackPlugin
+        else
+            plugins[name] = plugin
     else
         log.debug(`Optional webpack plugin "${name}" not available.`)
 }
@@ -196,7 +207,9 @@ for (const pattern of ([] as Array<IgnorePattern>).concat(
         (pattern as {resourceRegExp: RegExp}).resourceRegExp =
             new RegExp((pattern as {resourceRegExp: string}).resourceRegExp)
 
-    pluginInstances.push(new IgnorePlugin(pattern as IgnorePlugin['options']))
+    pluginInstances.push(
+        new IgnorePlugin(pattern as IgnorePluginType['options'])
+    )
 }
 //// endregion
 //// region define modules to replace
@@ -310,7 +323,7 @@ pluginInstances.push({apply: (compiler: Compiler): void => {
 
     compiler.hooks.compilation.tap(
         name,
-        (compilation: Compilation): void => {
+        (compilation: CompilationType): void => {
             compilation.hooks.processAssets.tap(
                 {
                     name,
@@ -878,7 +891,7 @@ const scope: EvaluationScope = {
     configuration,
     isFilePathInDependencies,
     loader,
-    require: currentRequire ?? require
+    require
 }
 
 const evaluateAnThrow = <T = unknown>(
@@ -1588,7 +1601,7 @@ if (configuration.path.configuration.json)
     try {
         require.resolve(configuration.path.configuration.json)
         try {
-            customConfiguration = (currentRequire as typeof require)(
+            customConfiguration = require(
                 configuration.path.configuration.json
             ) as PlainObject
         } catch (error) {

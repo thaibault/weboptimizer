@@ -14,31 +14,35 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports
-import {FileResult, transformSync as babelTransformSync} from '@babel/core'
+// region
+import type {
+    EvaluationResult, Encoding, Mapping, RecursivePartial
+} from 'clientnode'
+import type {Options, TemplateFunction as EJSTemplateFunction} from 'ejs'
+import type {LoaderContext} from 'webpack'
+
+import type {FileResult} from '@babel/core'
+
+import type {Extensions, Replacements, ResolvedConfiguration} from './type'
+
+import {transformSync as babelTransformSync} from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
 import {
     convertSubstringInPlainObject,
     copy,
     currentRequire,
     evaluate,
-    EvaluationResult,
-    Encoding,
     extend,
     Logger,
-    Mapping,
-    RecursivePartial,
     UTILITY_SCOPE
 } from 'clientnode'
-import ejs, {Options, TemplateFunction as EJSTemplateFunction} from 'ejs'
+import ejs from 'ejs'
 import {readFileSync} from 'fs'
 import {minify as minifyHTML} from 'html-minifier'
 import {extname} from 'path'
-import {LoaderContext} from 'webpack'
 
 import getConfiguration from './configurator'
 import {determineModuleFilePath} from './helper'
-import {Extensions, Replacements, ResolvedConfiguration} from './type'
 // endregion
 // region types
 export type TemplateFunction = EJSTemplateFunction

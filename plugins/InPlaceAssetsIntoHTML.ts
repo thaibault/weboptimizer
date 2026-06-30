@@ -15,15 +15,15 @@
     endregion
 */
 // region imports
-import {Compilation, Compiler} from 'webpack'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
-
-import {
+import type {Compiler, Compilation} from 'webpack'
+import type {
     InPlaceAssetConfiguration,
     InPlaceAssetsIntoHTMLOptions,
     WebpackAssets,
     WebpackBaseAssets
 } from '../type'
+
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 // endregion
 
 export class InPlaceAssetsIntoHTML {
