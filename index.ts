@@ -68,7 +68,10 @@ import {
 } from 'clientnode'
 import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
-import {sync as globAllSync} from 'glob-all'
+import globAll from 'glob-all'
+const {sync: globAllSync} = globAll as
+    unknown as
+    {sync: (expression: Array<string>) => Array<string>}
 import path, {join, resolve} from 'path'
 import {
     rimraf as removeDirectoryRecursively,
