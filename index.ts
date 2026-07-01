@@ -47,14 +47,14 @@ import type {
 import {
     exec as execChildProcess, spawn as spawnChildProcess
 } from 'child_process'
-import clientnode from 'clientnode'
-const {
+import {
     CLOSE_EVENT_NAMES,
     copyDirectoryRecursiveSync,
     copyFileSync,
     evaluate,
     getProcessCloseHandler,
     handleChildProcess,
+    importsPromise,
     isDirectory,
     isDirectorySync,
     isFile,
@@ -65,7 +65,7 @@ const {
     NOOP,
     parseEncodedObject,
     walkDirectoryRecursively
-} = clientnode
+} from 'clientnode'
 import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
 import globAll from 'glob-all'
@@ -95,6 +95,10 @@ Logger.configureAllInstances({
 })
 // NOTE: Environment variables can only be strings.
 process.env.UV_THREADPOOL_SIZE = '128'
+
+// Wait until optional filesystem modules have been loaded.
+await importsPromise
+
 /**
  * Main entry point.
  * @param context - Location from where to build current application.
@@ -109,7 +113,7 @@ const main = async (
     context?: string,
     currentWorkingDirectory: string = process.cwd(),
     commandLineArguments: Array<string> = process.argv,
-    webOptimizerPath: string = __dirname,
+    webOptimizerPath: string = import.meta.dirname,
     /*
         NOTE: We have to avoid that some pre-processor removes this
         assignment.
@@ -121,7 +125,7 @@ const main = async (
     else
         environment.PATH = 'node_modules/.bin'
 
-    const configuration: ResolvedConfiguration = loadConfiguration(
+    const configuration: ResolvedConfiguration = await loadConfiguration(
         context,
         currentWorkingDirectory,
         commandLineArguments,
@@ -238,7 +242,7 @@ const main = async (
                         'watch'
                     ].includes(configuration.givenCommandLineArguments[2]) ||
                     /*
-                        NOTE: If target artefacts are located next to their
+                        NOTE: If target artifacts are located next to their
                         source files, we need to clear them first when running
                         dev mode (watching source files and reloading build
                         automatically).
@@ -313,10 +317,11 @@ const main = async (
                     )
                         if (file.name.startsWith('npm-debug'))
                             await unlink(file.path)
-                } else
+                } else {
                     await removeDirectoryRecursively(
                         configuration.path.target.base
                     )
+                }
 
                 if (await isDirectory(
                     configuration.path.apiDocumentation
@@ -714,7 +719,7 @@ const main = async (
         for (const closeEventName of CLOSE_EVENT_NAMES)
             process.on(closeEventName, closeHandler)
         if (
-            require.main === module &&
+            import.meta.main &&
             (
                 configuration.givenCommandLineArguments.length < 3 ||
                 !possibleArguments.includes(
@@ -747,7 +752,7 @@ const main = async (
     return clear
 }
 
-if (require.main === module)
+if (import.meta.main)
     void main()
 
 export default main

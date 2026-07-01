@@ -15,19 +15,21 @@
     endregion
 */
 // region imports
-import {copy, extend, Mapping} from 'clientnode'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
-import {JSDOM as DOM} from 'jsdom'
-import {Compilation, Compiler, LoaderContext} from 'webpack'
+import type {Mapping} from 'clientnode'
+import type {Compilation, Compiler, LoaderContext} from 'webpack'
 
-import ejsLoader, {
-    LoaderConfiguration as EJSLoaderConfiguration
-} from '../ejsLoader'
-import {
+import type {LoaderConfiguration as EJSLoaderConfiguration} from '../ejsLoader'
+import type {
     HTMLTransformationOptions,
     HTMLWebpackPluginBeforeEmitData,
     WebpackLoader
 } from '../type'
+
+import {copy, extend} from 'clientnode'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import {JSDOM as DOM} from 'jsdom'
+
+import ejsLoader from '../ejsLoader'
 // endregion
 
 export class HTMLTransformation {

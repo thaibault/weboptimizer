@@ -15,62 +15,32 @@
     endregion
 */
 // region imports
-import {
-    convertToValidVariableName,
-    evaluate,
+import type {
     EvaluationResult,
-    escapeRegularExpressions,
-    extend,
-    isFileSync,
-    isObject,
-    isPlainObject,
-    Logger,
     Mapping,
-    mask,
     PlainObject,
     PositiveEvaluationResult,
     RecursivePartial,
-    represent,
     Unpacked
 } from 'clientnode'
-import {
+import type {Transformer as PostcssTransformer} from 'postcss'
+import type PostcssNode from 'postcss/lib/node'
+import type {
     PluginOptions as ImageMinimizerOptions
 } from 'image-minimizer-webpack-plugin'
-import {extname, join, relative, resolve} from 'path'
-import {Transformer as PostcssTransformer} from 'postcss'
-import PostcssNode from 'postcss/lib/node'
-import util from 'util'
-import {
+import type {
     Chunk,
     Compiler,
-    Compilation,
-    ContextReplacementPlugin,
-    DefinePlugin,
-    HotModuleReplacementPlugin,
-    IgnorePlugin,
-    NormalModuleReplacementPlugin,
-    ProvidePlugin,
+    Compilation as CompilationType,
+    IgnorePlugin as IgnorePluginType,
     RuleSetRule
 } from 'webpack'
-import {RawSource as WebpackRawSource} from 'webpack-sources'
-import {
+import type {
     InjectManifestOptions as WorkboxInjectManifestOptions
 } from 'workbox-build'
 
-import getConfiguration from './configurator'
-import {LoaderConfiguration as EJSLoaderConfiguration} from './ejsLoader'
-import {
-    determineAssetType,
-    determineExternalRequest,
-    determineModuleFilePath,
-    getClosestPackageDescriptor,
-    isFilePathInLocation,
-    normalizePaths,
-    stripLoader
-} from './helper'
-import InPlaceAssetsIntoHTML from './plugins/InPlaceAssetsIntoHTML'
-import HTMLTransformation from './plugins/HTMLTransformation'
-import {
+import type {LoaderConfiguration as EJSLoaderConfiguration} from './ejsLoader'
+import type {
     AdditionalLoaderConfiguration,
     AssetPathConfiguration,
     EvaluationScope,
@@ -92,40 +62,63 @@ import {
     WebpackPlugins,
     WebpackResolveData
 } from './type'
-export const log = new Logger({name: 'weboptimizer.webpack-configurator'})
 
-Logger.configureAllInstances({
-    level: ['debug', 'development'].includes(process.env.NODE_ENV ?? '') ?
-        'debug' :
-        'warn'
-})
+import {
+    convertToValidVariableName,
+    evaluate,
+    escapeRegularExpressions,
+    extend,
+    importsPromise,
+    isFileSync,
+    isObject,
+    isPlainObject,
+    Logger,
+    mask,
+    optionalImport,
+    represent
+} from 'clientnode'
+import {extname, join, relative, resolve} from 'path'
+import util from 'util'
+import webpack from 'webpack'
+const {
+    Compilation,
+    ContextReplacementPlugin,
+    DefinePlugin,
+    HotModuleReplacementPlugin,
+    IgnorePlugin,
+    NormalModuleReplacementPlugin,
+    ProvidePlugin
+} = webpack
+import webpackSources from 'webpack-sources'
+const {RawSource: WebpackRawSource} = webpackSources
+
+import getConfiguration, {require} from './configurator'
+import {
+    determineAssetType,
+    determineExternalRequest,
+    determineModuleFilePath,
+    getClosestPackageDescriptor,
+    isFilePathInLocation,
+    normalizePaths,
+    stripLoader
+} from './helper'
+import InPlaceAssetsIntoHTML from './plugins/InPlaceAssetsIntoHTML'
+import HTMLTransformation from './plugins/HTMLTransformation'
+
+// Wait until optional filesystem modules have been loaded.
+await importsPromise
+
 /// region optional imports
-// NOTE: Has to be defined here to ensure to resolve from here.
-const currentRequire: null | typeof require =
-    /*
-        typeof __non_webpack_require__ === 'function' ?
-            __non_webpack_require__ :
-    */
-    eval(`typeof require === 'undefined' ? null : require`) as
-        null | typeof require
-export const optionalRequire = <T = unknown>(id: string): null | T => {
-    try {
-        return currentRequire ? currentRequire(id) as T : null
-    } catch {
-        return null
-    }
-}
-
 const postcssCSSnano: null | typeof import('cssnano') =
-    optionalRequire<typeof import('cssnano')>('cssnano')
+    await optionalImport<typeof import('cssnano')>('cssnano')
 const postcssFontpath =
-    optionalRequire<typeof import('postcss-fontpath').default>(
+    await optionalImport<typeof import('postcss-fontpath').default>(
         'postcss-fontpath'
     )
 const postcssImport =
-    optionalRequire<typeof import('postcss-import')>('postcss-import')
+    await optionalImport<typeof import('postcss-import')>('postcss-import')
 const postcssSprites =
-    optionalRequire<typeof import('postcss-sprites').default>(
+    await optionalImport<typeof import('postcss-sprites').default>(
         'postcss-sprites'
     )
 
@@ -133,13 +126,20 @@ type UpdateRule = (
     _node: PostcssNode, _token: PostcssNode, _image: Mapping<unknown>
 ) => void
 const updateRule: undefined | UpdateRule =
-    optionalRequire<{updateRule: UpdateRule}>(
+    (await optionalImport<{updateRule: UpdateRule}>(
         'postcss-sprites/lib/core'
-    )?.updateRule
+    ))?.updateRule
 
 const postcssURL =
-    optionalRequire<typeof import('postcss-url')>('postcss-url')
+    await optionalImport<typeof import('postcss-url')>('postcss-url')
 /// endregion
+export const log = new Logger({name: 'weboptimizer.webpack-configurator'})
+Logger.configureAllInstances({
+    level: ['debug', 'development'].includes(process.env.NODE_ENV ?? '') ?
+        'debug' :
+        'warn'
+})
+
 const pluginNameResourceMapping: Mapping = {
     Favicon: 'favicons-webpack-plugin',
     ImageMinimizer: 'image-minimizer-webpack-plugin',
@@ -152,14 +152,18 @@ const pluginNameResourceMapping: Mapping = {
 const plugins: WebpackPlugins = {}
 
 for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
-    const plugin: null | WebpackPlugin = optionalRequire(alias)
+    const plugin: null | WebpackPlugin | {default: WebpackPlugin} =
+        await optionalImport(alias)
     if (plugin)
-        plugins[name] = plugin
+        if ('default' in plugin)
+            plugins[name] = plugin.default as WebpackPlugin
+        else
+            plugins[name] = plugin
     else
         log.debug(`Optional webpack plugin "${name}" not available.`)
 }
 // endregion
-const configuration: ResolvedConfiguration = getConfiguration()
+const configuration: ResolvedConfiguration = await getConfiguration()
 Logger.configureAllInstances({level: configuration.debug ? 'debug' : 'warn'})
 
 const module = configuration.module
@@ -203,7 +207,9 @@ for (const pattern of ([] as Array<IgnorePattern>).concat(
         (pattern as {resourceRegExp: RegExp}).resourceRegExp =
             new RegExp((pattern as {resourceRegExp: string}).resourceRegExp)
 
-    pluginInstances.push(new IgnorePlugin(pattern as IgnorePlugin['options']))
+    pluginInstances.push(
+        new IgnorePlugin(pattern as IgnorePluginType['options'])
+    )
 }
 //// endregion
 //// region define modules to replace
@@ -317,7 +323,7 @@ pluginInstances.push({apply: (compiler: Compiler): void => {
 
     compiler.hooks.compilation.tap(
         name,
-        (compilation: Compilation): void => {
+        (compilation: CompilationType): void => {
             compilation.hooks.processAssets.tap(
                 {
                     name,
@@ -365,7 +371,7 @@ pluginInstances.push({apply: (compiler: Compiler): void => {
     )
 }})
 ///// endregion
-///// region in-place configured assets in the main html file
+///// region in-place configured assets in the main HTML file
 if (
     plugins.HTML &&
     htmlAvailable &&
@@ -382,7 +388,7 @@ if (
         htmlPlugin: plugins.HTML
     }))
 ///// endregion
-///// region mark empty javaScript modules as dummy
+///// region mark empty JavaScript modules as dummy
 if (!(
     configuration.needed.javaScript ||
     configuration.needed.javaScriptExtension ||
@@ -409,7 +415,7 @@ if (configuration.injection.external.modules === '__implicit__')
         We only want to process modules from local context in library mode,
         since a concrete project using this library should combine all assets
         (and de-duplicate them) for optimal bundling results.
-        NOTE: Only native javascript and json modules will be marked as
+        NOTE: Only native JavaScript and json modules will be marked as
         external dependency.
     */
     configuration.injection.external.modules = (
@@ -610,7 +616,7 @@ if (configuration.injection.external.modules === '__implicit__')
     }
 ///// endregion
 //// endregion
-//// region apply final html modifications/fixes
+//// region apply final HTML modifications/fixes
 if (htmlAvailable && plugins.HTML)
     pluginInstances.push(new HTMLTransformation({
         hashAlgorithm: configuration.hashAlgorithm,
@@ -624,7 +630,7 @@ for (const contextReplacement of module.replacements.context)
         contextReplacement.map((value: string): RegExp | string => {
             const evaluated: EvaluationResult<RegExp | string> =
                 evaluate<RegExp | string>(
-                    value, {configuration, __dirname, __filename}
+                    value, {configuration, metaImport: import.meta}
                 )
 
             if (evaluated.error)
@@ -642,7 +648,7 @@ for (const contextReplacement of module.replacements.context)
 /*
     NOTE: Redundancies usually occur when symlinks aren't converted to their
     real paths since real paths can be de-duplicated by webpack but if two
-    linked modules share the same transitive dependency webpack wont recognize
+    linked modules share the same transitive dependency webpack won't recognize
     them as same dependency.
 */
 if (module.enforceDeduplication) {
@@ -885,7 +891,7 @@ const scope: EvaluationScope = {
     configuration,
     isFilePathInDependencies,
     loader,
-    require: currentRequire ?? require
+    require
 }
 
 const evaluateAnThrow = <T = unknown>(
@@ -947,7 +953,7 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                 loader: module.preprocessor.cascadingStyleSheet.loader,
                 options: extend(
                     true,
-                    optionalRequire('postcss') ?
+                    await optionalImport('postcss') ?
                         {postcssOptions: {
                             /*
                                 NOTE: Some plugins like "postcss-import" are
@@ -1144,7 +1150,7 @@ const genericLoader: GenericLoader = {
             ) as RuleSet
     },
     // endregion
-    // region html template
+    // region HTML template
     html: {
         // NOTE: This is only for the main entry template.
         main: {
@@ -1496,7 +1502,7 @@ if (
     configuration.files.compose.cascadingStyleSheet && plugins.MiniCSSExtract
 ) {
     /*
-        NOTE: We have to remove the client side javascript hmr style loader
+        NOTE: We have to remove the client side JavaScript hmr style loader
         first.
     */
     loader.style.use.shift()
@@ -1549,7 +1555,7 @@ for (const pluginConfiguration of configuration.plugins) {
         Unpacked<WebpackConfiguration['plugins']>
 
     const plugin: Mapping<Initializer> | null =
-        optionalRequire(pluginConfiguration.name.module)
+        await optionalImport(pluginConfiguration.name.module)
     if (plugin)
         pluginInstances.push(
             (new (plugin[pluginConfiguration.name.initializer])(
@@ -1595,7 +1601,7 @@ if (configuration.path.configuration.json)
     try {
         require.resolve(configuration.path.configuration.json)
         try {
-            customConfiguration = (currentRequire as typeof require)(
+            customConfiguration = require(
                 configuration.path.configuration.json
             ) as PlainObject
         } catch (error) {
@@ -1800,7 +1806,7 @@ if (configuration.path.configuration.javaScript)
         require.resolve(configuration.path.configuration.javaScript)
 
         const result: unknown =
-            optionalRequire(configuration.path.configuration.javaScript)
+            await optionalImport(configuration.path.configuration.javaScript)
 
         if (isPlainObject(result))
             if (Object.prototype.hasOwnProperty.call(
