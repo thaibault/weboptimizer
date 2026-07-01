@@ -15,12 +15,15 @@
     endregion
 */
 // region imports
-import {CONSOLE_METHODS, Logger, ProcedureFunction, timeout} from 'clientnode'
+import type {ProcedureFunction} from 'clientnode'
+
+import {Browser, InitializedBrowser} from './type'
+
+import {CONSOLE_METHODS, Logger, timeout} from 'clientnode'
 import {DOMWindow, VirtualConsole} from 'jsdom'
 import {LoaderContext} from 'webpack'
 
 import {LoaderConfiguration} from './ejsLoader'
-import {Browser, InitializedBrowser} from './type'
 // endregion
 // region declaration
 declare const NAME: string

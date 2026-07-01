@@ -15,7 +15,7 @@
     endregion
 */
 // region imports
-import type {Compiler, Compilation} from 'webpack'
+import type {Compilation, Compiler} from 'webpack'
 import type {
     InPlaceAssetConfiguration,
     InPlaceAssetsIntoHTMLOptions,
