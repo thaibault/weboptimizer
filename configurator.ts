@@ -522,7 +522,7 @@ export const load = async (
                 {file: resolvedConfiguration.extensions.file.internal},
                 resolvedConfiguration.path.context,
                 /*
-                    NOTE: We doesn't use
+                    NOTE: We don't use
                     "resolvedConfiguration.path.source.asset.base" because we
                     already have resolved all module ids.
                 */
@@ -582,7 +582,7 @@ export const load = async (
     resolvedConfiguration.module.aliases.webOptimizerDefaultTemplateFilePath =
         resolvedConfiguration.files.defaultHTML.template.filePath
     // endregion
-    // region apply html webpack plugin workarounds
+    // region apply HTML webpack plugin workarounds
     /*
         NOTE: Provides a workaround to handle a bug with chained loader
         configurations.
@@ -615,10 +615,10 @@ export const load = async (
  * @returns Nothing.
  */
 export const get = async (): Promise<ResolvedConfiguration> => {
-    if (loadedConfiguration)
-        return loadedConfiguration
+    if (!loadedConfiguration)
+        loadedConfiguration = await load()
 
-    return await load()
+    return loadedConfiguration
 }
 
 export default get

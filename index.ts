@@ -68,7 +68,7 @@ import {
 } from 'clientnode'
 import {chmodSync, unlinkSync} from 'fs'
 import {writeFile, unlink} from 'fs/promises'
-import globAll from 'glob-all'
+import {sync as globAllSync} from 'glob-all'
 import path, {join, resolve} from 'path'
 import {
     rimraf as removeDirectoryRecursively,
@@ -218,7 +218,7 @@ const main = async (
             // endregion
             // region handle clear
             /*
-                NOTE: Some tasks could depend on previously created artefacts
+                NOTE: Some tasks could depend on previously created artifacts
                 packages so a preceding clear should not be performed in that
                 cases.
                 NOTE: If we have a dependency cycle we need to preserve files
@@ -317,11 +317,10 @@ const main = async (
                     )
                         if (file.name.startsWith('npm-debug'))
                             await unlink(file.path)
-                } else {
+                } else
                     await removeDirectoryRecursively(
                         configuration.path.target.base
                     )
-                }
 
                 if (await isDirectory(
                     configuration.path.apiDocumentation
@@ -339,7 +338,7 @@ const main = async (
                             removeDirectoryRecursivelySync(filePath)
 
                 removeDirectoryRecursivelySync(
-                    globAll.sync(configuration.path.tidyUpOnClearGlobs)
+                    globAllSync(configuration.path.tidyUpOnClearGlobs)
                 )
             }
             // endregion
@@ -446,7 +445,7 @@ const main = async (
                                 removeDirectoryRecursivelySync(filePath)
 
                     removeDirectoryRecursivelySync(
-                        globAll.sync(configuration.path.tidyUpGlobs)
+                        globAllSync(configuration.path.tidyUpGlobs)
                     )
                 }
 
