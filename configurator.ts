@@ -412,7 +412,6 @@ export const load = async (
             ...UTILITY_SCOPE,
             currentPath: currentWorkingDirectory,
             fs: fileSystem,
-            optionalRequire,
             packageConfiguration,
             path,
             webOptimizerPath,

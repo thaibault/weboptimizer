@@ -1,15 +1,31 @@
 // #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
 'use strict'
+/* !
+    region header
+    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
 
+    License
+    -------
+
+    This library written by Torben Sickert stands under a creative commons
+    naming 3.0 unported license.
+    See https://creativecommons.org/licenses/by/3.0/deed.de
+    endregion
+*/
+// region imports
 import {describe, expect, test} from '@jest/globals'
 import {copy, extend, NOOP} from 'clientnode'
 import {LoaderContext} from 'webpack'
 
 import ejsLoader, {LoaderConfiguration} from '../ejsLoader'
-
+// endregion
 // region mockup
+let lastResult = ''
 const context: LoaderContext<LoaderConfiguration> = {
+    async: (_error: Error | null, result: string) => {
+        lastResult = result
+    },
     debug: false,
     loaders: [],
     resourcePath: '',
@@ -18,8 +34,9 @@ const context: LoaderContext<LoaderConfiguration> = {
 // endregion
 describe('ejsLoader', (): void => {
     // region tests
-    test('loader', (): void => {
-        expect(ejsLoader.call(context, '<a></a>')).toStrictEqual('<a></a>')
+    test('loader', async (): Promise<void> => {
+        await ejsLoader.call(context, '<a></a>')
+        expect(lastResult).toStrictEqual('<a></a>')
 
         const complexContext: LoaderContext<LoaderConfiguration> = extend(
             true,
@@ -36,31 +53,33 @@ describe('ejsLoader', (): void => {
             }
         )
 
-        expect(ejsLoader.call(complexContext, '<a><%- _.test %></a>'))
-            .toStrictEqual('<a>hans</a>')
+        await ejsLoader.call(complexContext, '<a><%- _.test %></a>')
+        expect(lastResult).toStrictEqual('<a>hans</a>')
 
-        expect(ejsLoader.call(
+        await ejsLoader.call(
             complexContext,
             '<a></a>' +
             `<%- _.include('<a>test</a>?{options: {isString: true}}') %>`
-        )).toStrictEqual('<a></a><a>test</a>')
+        )
+        expect(lastResult).toStrictEqual('<a></a><a>test</a>')
 
         ;(complexContext.query as LoaderConfiguration).compileSteps = 0
-        expect(ejsLoader.call(complexContext, '<a></a>'))
-            .toStrictEqual('<a></a>')
+        await ejsLoader.call(complexContext, '<a></a>')
+        expect(lastResult).toStrictEqual('<a></a>')
+
         ;(complexContext.query as LoaderConfiguration).compileSteps = 1
-        expect(
-            ejsLoader.call(complexContext, '<a></a>')
-                .startsWith(`'use strict';\nmodule.exports=`)
-        ).toStrictEqual(true)
+        await ejsLoader.call(complexContext, '<a></a>')
+        expect(lastResult.startsWith(`'use strict';\nmodule.exports=`))
+            .toStrictEqual(true)
+
         ;(complexContext.query as LoaderConfiguration).compileSteps = 2
-        expect(ejsLoader.call(complexContext, '<a></a>'))
-            .toStrictEqual('<a></a>')
+        await ejsLoader.call(complexContext, '<a></a>')
+        expect(lastResult).toStrictEqual('<a></a>')
+
         ;(complexContext.query as LoaderConfiguration).compileSteps = 3
-        expect(
-            ejsLoader.call(complexContext, '<a></a>')
-                .startsWith(`'use strict';\nmodule.exports=`)
-        ).toStrictEqual(true)
+        await ejsLoader.call(complexContext, '<a></a>')
+        expect(lastResult.startsWith(`'use strict';\nmodule.exports=`))
+            .toStrictEqual(true)
     })
     // endregion
 })

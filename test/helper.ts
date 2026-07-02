@@ -1,15 +1,29 @@
 // #!/usr/bin/env babel-node
 // -*- coding: utf-8 -*-
 'use strict'
+/* !
+    region header
+    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+    License
+    -------
+
+    This library written by Torben Sickert stands under a creative commons
+    naming 3.0 unported license.
+    See https://creativecommons.org/licenses/by/3.0/deed.de
+    endregion
+*/
 // region imports
+import type {FirstParameter} from 'clientnode'
+
+import type {
+    BuildConfiguration, PackageConfiguration, PathConfiguration, Replacements
+} from '../type'
+
 import {describe, expect, test} from '@jest/globals'
-import {currentRequire, FirstParameter} from 'clientnode'
 import {testEach, testEachAgainstSameExpectation} from 'clientnode/test-helper'
 import {resolve} from 'path'
 
-import {
-    BuildConfiguration, PackageConfiguration, PathConfiguration, Replacements
-} from '../type'
 import {
     applyAliases,
     applyContext,
@@ -644,14 +658,13 @@ describe('helper', (): void => {
     )
     test.each([['./'], ['../']])(
         `getClosestPackageDescriptor('%s') === {configuration: ...}`,
-        (modulePath: string): void => {
+        async (modulePath: string) => {
             const filePath: string = resolve(__dirname, '../package.json')
-            expect(getClosestPackageDescriptor(modulePath, filePath))
-                .toStrictEqual(
+            await expect(getClosestPackageDescriptor(modulePath, filePath))
+                .resolves.toStrictEqual(
                     {
-                        configuration: (
-                            currentRequire ? currentRequire(filePath) : {}
-                        ) as PackageConfiguration,
+                        configuration: (await import(filePath)) as
+                            PackageConfiguration,
                         filePath
                     }
                 )

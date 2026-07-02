@@ -43,7 +43,6 @@ import type {LoaderConfiguration as EJSLoaderConfiguration} from './ejsLoader'
 import type {
     AdditionalLoaderConfiguration,
     AssetPathConfiguration,
-    EvaluationScope,
     GenericLoader,
     HTMLConfiguration,
     IgnorePattern,
@@ -75,7 +74,8 @@ import {
     Logger,
     mask,
     optionalImport,
-    represent
+    represent,
+    UTILITY_SCOPE
 } from 'clientnode'
 import {extname, join, relative, resolve} from 'path'
 import util from 'util'
@@ -92,7 +92,7 @@ const {
 import webpackSources from 'webpack-sources'
 const {RawSource: WebpackRawSource} = webpackSources
 
-import getConfiguration, {require} from './configurator'
+import getConfiguration from './configurator'
 import {
     determineAssetType,
     determineExternalRequest,
@@ -654,7 +654,9 @@ for (const contextReplacement of module.replacements.context)
 if (module.enforceDeduplication) {
     const absoluteContextPath: string = resolve(configuration.path.context)
 
-    const consolidator = (result: WebpackExtendedResolveData): void => {
+    const consolidator = async (
+        result: WebpackExtendedResolveData
+    ): Promise<void> => {
         const targetPath: string = result.createData.resource
 
         if (
@@ -667,7 +669,7 @@ if (module.enforceDeduplication) {
             isFileSync(targetPath)
         ) {
             const packageDescriptor: null | PackageDescriptor =
-                getClosestPackageDescriptor(targetPath)
+                await getClosestPackageDescriptor(targetPath)
             if (packageDescriptor) {
                 let pathPrefixes: Array<string>
                 let pathSuffix: string
@@ -721,7 +723,9 @@ if (module.enforceDeduplication) {
 
                     if (isFileSync(alternateTargetPath)) {
                         const otherPackageDescriptor: null | PackageDescriptor =
-                            getClosestPackageDescriptor(alternateTargetPath)
+                            await getClosestPackageDescriptor(
+                                alternateTargetPath
+                            )
                         if (otherPackageDescriptor) {
                             if (
                                 packageDescriptor.configuration.version ===
@@ -776,96 +780,15 @@ if (module.enforceDeduplication) {
         compiler.hooks.normalModuleFactory.tap(
             'WebOptimizerModuleConsolidation',
             (nmf: ReturnType<Compiler['createNormalModuleFactory']>) => {
-                nmf.hooks.afterResolve.tap(
+                nmf.hooks.afterResolve.tapPromise(
                     'WebOptimizerModuleConsolidation',
-                    consolidator as (_result: WebpackResolveData) => void
+                    consolidator as
+                        (result: WebpackResolveData) => Promise<void>
                 )
             }
         )
     }})
 }
-/*
-new NormalModuleReplacementPlugin(
-    /.+/,
-    (result: {
-        context: string
-        createData: {resource: string}
-        request: string
-    }): void => {
-        const isResource: boolean = Boolean(result.createData.resource)
-        const targetPath: string = isResource ?
-            result.createData.resource :
-            resolve(result.context, result.request)
-        if (
-            targetPath &&
-            /((?: ^|\/)node_modules\/.+){2}/.test(targetPath) &&
-            isFileSync(targetPath)
-        ) {
-            const packageDescriptor: null | PackageDescriptor =
-                Helper.getClosestPackageDescriptor(targetPath)
-            if (packageDescriptor) {
-                const pathPrefixes: null | RegExpMatchArray = targetPath.match(
-                    /((?: ^|.*?\/)node_modules\/)/g
-                )
-                if (pathPrefixes === null)
-                    return
-                // Avoid finding the same artefact.
-                pathPrefixes.pop()
-                let index: number = 0
-                for (const pathPrefix of pathPrefixes) {
-                    if (index > 0)
-                        pathPrefixes[index] =
-                            resolve(pathPrefixes[index - 1], pathPrefix)
-                    index += 1
-                }
-                const pathSuffix: string =
-                    targetPath.replace(/(?: ^|.*\/)node_modules\/(.+$)/, '$1')
-                let redundantRequest: null | PlainObject = null
-                for (const pathPrefix of pathPrefixes) {
-                    const alternateTargetPath: string =
-                        resolve(pathPrefix, pathSuffix)
-                    if (isFileSync(alternateTargetPath)) {
-                        const otherPackageDescriptor: null | PackageDescriptor =
-                            Helper.getClosestPackageDescriptor(
-                                alternateTargetPath
-                            )
-                        if (otherPackageDescriptor) {
-                            if (
-                                packageDescriptor.configuration.version ===
-                                otherPackageDescriptor.configuration.version
-                            ) {
-                                log.info(
-                                    '\nConsolidate module request',
-                                    `"${targetPath}" to`,
-                                    `"${alternateTargetPath}".`
-                                )
-                                result.createData.resource =
-                                    alternateTargetPath
-                                result.request = alternateTargetPath
-                                return
-                            }
-                            redundantRequest = {
-                                path: alternateTargetPath,
-                                version:
-                                    otherPackageDescriptor.configuration
-                                        .version
-                            }
-                        }
-                    }
-                }
-                if (redundantRequest)
-                    log.warn(
-                        '\nIncluding different versions of same package',
-                        `"${packageDescriptor.configuration.name}". Module`,
-                        `"${targetPath}" (version`,
-                        `${packageDescriptor.configuration.version}) has`,
-                        `redundancies with "${redundantRequest.path}"`,
-                        `(version ${redundantRequest.version}).`
-                    )
-            }
-        }
-    }
-))*/
 //// endregion
 /// endregion
 /// region loader helper
@@ -887,14 +810,15 @@ const isFilePathInDependencies = (filePath: string): boolean => {
 
 const loader: Loader = {} as unknown as Loader
 
-const scope: EvaluationScope = {
+const scope = {
+    ...UTILITY_SCOPE,
     configuration,
     isFilePathInDependencies,
     loader,
     require
 }
 
-const evaluateAnThrow = <T = unknown>(
+const evaluateAndThrow = <T = unknown>(
     object: unknown, givenOptions: {filePath?: string; type?: string} = {}
 ): T => {
     const options = {filePath: configuration.path.context, ...givenOptions}
@@ -915,18 +839,18 @@ const evaluateAnThrow = <T = unknown>(
     return object as T
 }
 const createEvaluateMapper = <T = unknown>(type: string) =>
-    (value: unknown): T => evaluateAnThrow<T>(value, {type})
+    (value: unknown): T => evaluateAndThrow<T>(value, {type})
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration: AdditionalLoaderConfiguration
 ): WebpackLoaderConfiguration => ({
     exclude: (filePath: string): boolean =>
-        evaluateAnThrow<boolean>(loaderConfiguration.exclude, {filePath}),
+        evaluateAndThrow<boolean>(loaderConfiguration.exclude, {filePath}),
     include:
         loaderConfiguration.include &&
-        evaluateAnThrow<WebpackLoaderIndicator>(loaderConfiguration.include) ||
+        evaluateAndThrow<WebpackLoaderIndicator>(loaderConfiguration.include) ||
         configuration.path.source.base,
-    test: new RegExp(evaluateAnThrow(loaderConfiguration.test)),
-    use: evaluateAnThrow<Array<WebpackLoader> | WebpackLoader>(
+    test: new RegExp(evaluateAndThrow(loaderConfiguration.test)),
+    use: evaluateAndThrow<Array<WebpackLoader> | WebpackLoader>(
         loaderConfiguration.use
     )
 })
@@ -1089,7 +1013,7 @@ const genericLoader: GenericLoader = {
             ).includes(filePath) ||
             (module.preprocessor.ejs.exclude === null) ?
                 false :
-                evaluateAnThrow<boolean>(
+                evaluateAndThrow<boolean>(
                     module.preprocessor.ejs.exclude, {filePath}
                 ),
         include: getIncludingPaths(configuration.path.source.asset.template),
@@ -1114,12 +1038,12 @@ const genericLoader: GenericLoader = {
     // region script
     script: {
         exclude: (filePath: string): boolean =>
-            evaluateAnThrow<boolean>(
+            evaluateAndThrow<boolean>(
                 module.preprocessor.javaScript.exclude,
                 {filePath, type: 'script'}
             ),
         include: (filePath: string): boolean => {
-            const result: unknown = evaluateAnThrow(
+            const result: unknown = evaluateAndThrow(
                 module.preprocessor.javaScript.include,
                 {filePath, type: 'script'}
             )
@@ -1174,7 +1098,7 @@ const genericLoader: GenericLoader = {
                 ).includes(filePath) ||
                 ((module.preprocessor.html.exclude === null) ?
                     false :
-                    evaluateAnThrow<boolean>(
+                    evaluateAndThrow<boolean>(
                         module.preprocessor.html.exclude,
                         {filePath, type: 'html.ejs'}
                     )
@@ -1225,7 +1149,7 @@ const genericLoader: GenericLoader = {
                 (
                     (module.html.exclude === null) ?
                         true :
-                        evaluateAnThrow<boolean>(module.html.exclude,
+                        evaluateAndThrow<boolean>(module.html.exclude,
                             {filePath, type: 'html'}
                         )
                 ),
@@ -1264,12 +1188,12 @@ const genericLoader: GenericLoader = {
         exclude: (filePath: string): boolean =>
             (module.cascadingStyleSheet.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                evaluateAnThrow<boolean>(
+                evaluateAndThrow<boolean>(
                     module.cascadingStyleSheet.exclude,
                     {filePath, type: 'style'}
                 ),
         include: (filePath: string): boolean => {
-            const result: unknown = evaluateAnThrow(
+            const result: unknown = evaluateAndThrow(
                 module.cascadingStyleSheet.include, {filePath, type: 'style'}
             )
             if ([null, undefined].includes(result as null)) {
@@ -1295,7 +1219,7 @@ const genericLoader: GenericLoader = {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.eot.exclude === null) ?
                     false :
-                    evaluateAnThrow<boolean>(
+                    evaluateAndThrow<boolean>(
                         module.optimizer.font.eot.exclude,
                         {filePath, type: 'font.eot'}
                     ),
@@ -1326,7 +1250,7 @@ const genericLoader: GenericLoader = {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.svg.exclude === null) ?
                     false :
-                    evaluateAnThrow<boolean>(
+                    evaluateAndThrow<boolean>(
                         module.optimizer.font.svg.exclude,
                         {filePath, type: 'svg'}
                     ),
@@ -1359,7 +1283,7 @@ const genericLoader: GenericLoader = {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.ttf.exclude === null) ?
                     false :
-                    evaluateAnThrow<boolean>(
+                    evaluateAndThrow<boolean>(
                         module.optimizer.font.ttf.exclude,
                         {filePath, type: 'ttf'}
                     ),
@@ -1391,7 +1315,7 @@ const genericLoader: GenericLoader = {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.woff.exclude === null) ?
                     false :
-                    evaluateAnThrow<boolean>(
+                    evaluateAndThrow<boolean>(
                         module.optimizer.font.woff.exclude,
                         {filePath, type: 'woff'}
                     ),
@@ -1425,7 +1349,7 @@ const genericLoader: GenericLoader = {
         exclude: (filePath: string): boolean =>
             (module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                evaluateAnThrow<boolean>(
+                evaluateAndThrow<boolean>(
                     module.optimizer.image.exclude, {filePath, type: 'image'}
                 ),
         generator: {
@@ -1466,7 +1390,7 @@ const genericLoader: GenericLoader = {
             (
                 (module.optimizer.data.exclude === null) ?
                     isFilePathInDependencies(filePath) :
-                    evaluateAnThrow<boolean>(
+                    evaluateAndThrow<boolean>(
                         module.optimizer.data.exclude, {filePath, type: 'data'}
                     )
             )
@@ -1599,9 +1523,10 @@ if (!module.optimizer.minimizer) {
 let customConfiguration: PlainObject = {}
 if (configuration.path.configuration.json)
     try {
-        require.resolve(configuration.path.configuration.json)
+        import.meta.resolve(configuration.path.configuration.json)
+
         try {
-            customConfiguration = require(
+            customConfiguration = await import(
                 configuration.path.configuration.json
             ) as PlainObject
         } catch (error) {
@@ -1803,7 +1728,7 @@ if (
 
 if (configuration.path.configuration.javaScript)
     try {
-        require.resolve(configuration.path.configuration.javaScript)
+        import.meta.resolve(configuration.path.configuration.javaScript)
 
         const result: unknown =
             await optionalImport(configuration.path.configuration.javaScript)
