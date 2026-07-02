@@ -15,7 +15,9 @@
     endregion
 */
 // region imports
-import type {Mapping, PlainObject, RecursiveEvaluateable} from 'clientnode'
+import type {
+    Mapping, PlainObject, RecursiveAsyncEvaluateable, RecursiveEvaluateable
+} from 'clientnode'
 
 import type {
     DefaultConfiguration,
@@ -30,13 +32,13 @@ import type {
 import {
     convertCircularObjectToJSON,
     copy,
+    evaluateAsyncDynamicData,
     evaluateDynamicData,
     extend,
     getUTCTimestamp,
     importsPromise,
     isFileSync,
     isObject,
-    isolatedRequire,
     isPlainObject,
     Logger,
     MAXIMAL_NUMBER_OF_ITERATIONS,
@@ -405,25 +407,30 @@ export const load = async (
         NOTE: The configuration is not yet fully resolved but will be
         transformed in place in the following lines of code.
     */
+    const evaluationOptions = {
+        scope: {
+            ...UTILITY_SCOPE,
+            currentPath: currentWorkingDirectory,
+            fs: fileSystem,
+            optionalRequire,
+            packageConfiguration,
+            path,
+            webOptimizerPath,
+            now,
+            nowUTCTimestamp: getUTCTimestamp(now)
+        }
+    }
     const resolvedConfiguration: ResolvedConfiguration =
-        evaluateDynamicData<ResolvedConfiguration>(
-            configuration as
+        await evaluateAsyncDynamicData<ResolvedConfiguration>(
+            evaluateDynamicData<ResolvedConfiguration>(
+                configuration as
+                    unknown as
+                    RecursiveEvaluateable<ResolvedConfiguration>,
+                evaluationOptions
+            ) as
                 unknown as
-                RecursiveEvaluateable<ResolvedConfiguration>,
-            {
-                scope: {
-                    ...UTILITY_SCOPE,
-                    currentPath: currentWorkingDirectory,
-                    fs: fileSystem,
-                    optionalRequire,
-                    packageConfiguration,
-                    path,
-                    require: isolatedRequire,
-                    webOptimizerPath,
-                    now,
-                    nowUTCTimestamp: getUTCTimestamp(now)
-                }
-            }
+                RecursiveAsyncEvaluateable<ResolvedConfiguration>,
+            evaluationOptions
         )
     // endregion
     // region consolidate file specific build configuration
