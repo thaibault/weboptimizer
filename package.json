@@ -95,7 +95,7 @@
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
     "babel-preset-minify": "^0.5.2",
-    "clientnode": "4.0.1433",
+    "clientnode": "4.0.1434",
     "core-js": "^3.49.0",
     "ejs": "^6.0.1",
     "exports-loader": "^5.0.0",
@@ -946,7 +946,7 @@
             "#": "The autoprefixer has to be disabled in this context since it would remove all needed vendor prefixes from the preceding processing (every prefix should be needed here).",
             "preset": [
               {
-                "__evaluate__": "optionalRequire('cssnano-preset-default')"
+                "__await_evaluate__": "module.optionalImport('cssnano-preset-default')"
               },
               {
                 "autoprefixer": false,
@@ -1084,7 +1084,7 @@
               "pre": []
             },
             "loader": {
-              "__evaluate__": "optionalRequire('postcss-loader') ? 'postcss-loader' : null"
+              "__await_evaluate__": "module.optionalImport('postcss-loader').then((result) => result ? 'postcss-loader' : null)"
             },
             "options": {}
           },
