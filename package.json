@@ -342,7 +342,7 @@
           },
           "includeFilePathRegularExpression": "^.*$",
           "pattern": {
-            "__evaluate__": "`${self.generic.assetPattern.javaScript.pattern}if(typeof window==='undefined'||window===null)var window=(typeof global==='undefined'||global===null)?{}:global;{1}`"
+            "__evaluate__": "`if(typeof window==='undefined'||window===null)var window=(typeof global==='undefined'||global===null)?{}:global;{1}`"
           }
         }
       },
@@ -582,11 +582,10 @@
       },
       "encoding": "utf-8",
       "exportFormat": {
-        "external": "umd",
         "globalObject": {
           "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'window' : 'this'"
         },
-        "self": "umd"
+        "self": "modern-module"
       },
       "extensions": {
         "file": {
@@ -1451,13 +1450,9 @@
           "javaScript": {
             "pattern": {
               "#": "This is how we can make our test artefact executable.",
-              "__evaluate__": "`#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n${self.generic.assetPattern.javaScript.pattern}{1}`"
+              "__evaluate__": "`#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n{1}`"
             }
           }
-        },
-        "exportFormat": {
-          "external": "commonjs2",
-          "self": "commonjs2"
         },
         "files": {
           "defaultHTML": {

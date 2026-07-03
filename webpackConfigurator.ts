@@ -1554,7 +1554,8 @@ export let webpackConfiguration: WebpackConfiguration = extend<
         devServer: configuration.development.server as
             WebpackConfiguration['devServer'],
         experiments: {
-            topLevelAwait: true
+            futureDefaults: true,
+            outputModule: true
         },
         // region input
         entry: configuration.injection.entry.normalized,
