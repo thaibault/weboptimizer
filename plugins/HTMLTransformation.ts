@@ -41,9 +41,9 @@ export class HTMLTransformation {
             HTMLTransformationOptions
     }
 
-    private process(
+    private async process(
         data: HTMLWebpackPluginBeforeEmitData
-    ): HTMLWebpackPluginBeforeEmitData {
+    ): Promise<HTMLWebpackPluginBeforeEmitData> {
         /*
             NOTE: We have to prevent creating native "style" dom nodes to
             prevent jsdom from parsing the entire cascading style sheet. Which
@@ -136,16 +136,28 @@ export class HTMLTransformation {
                         typeof loaderConfiguration.options
                             .compileSteps === 'number'
                     )
-                        data.html = ejsLoader.bind({
-                            query: extend(
-                                true,
-                                Object.prototype.hasOwnProperty.call(
-                                    loaderConfiguration, 'options'
-                                ) ? copy(loaderConfiguration.options) : {},
-                                htmlFileSpecification.template
-                                    .postCompileOptions
+                        data.html = await new Promise((resolve, reject) => {
+                            void ejsLoader.bind({
+                                query: extend(
+                                    true,
+                                    Object.prototype.hasOwnProperty.call(
+                                        loaderConfiguration, 'options'
+                                    ) ? copy(loaderConfiguration.options) : {},
+                                    htmlFileSpecification.template
+                                        .postCompileOptions
+                                ),
+                                async: (
+                                    error: Error | null, result: null | string
+                                ) => {
+                                    if (error)
+                                        reject(error)
+                                    else
+                                        resolve(result as string)
+                                }
+                            } as LoaderContext<EJSLoaderConfiguration>)(
+                                data.html
                             )
-                        } as LoaderContext<EJSLoaderConfiguration>)(data.html)
+                        })
 
                 break
             }
@@ -159,8 +171,9 @@ export class HTMLTransformation {
             (compilation: Compilation): void => {
                 this.options.htmlPlugin
                     .getHooks(compilation)
-                    .beforeEmit.tap(
-                        'WebOptimizerPostProcessHTML', this.process.bind(this)
+                    .beforeEmit.tapPromise(
+                        'WebOptimizerPostProcessHTML',
+                        this.process.bind(this)
                     )
             }
         )

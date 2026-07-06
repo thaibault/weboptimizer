@@ -14,17 +14,13 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports
-import {globalContext} from 'clientnode'
+import {globalContext, optionalImport} from 'clientnode'
 import {TextEncoder, TextDecoder} from 'util'
-// endregion
+
 ;(globalContext as typeof globalContext & {TextEncoder: typeof TextEncoder})
     .TextEncoder = TextEncoder
 ;(globalContext as typeof globalContext & {TextDecoder: typeof TextDecoder})
     .TextDecoder = TextDecoder
-try {
-    if ((eval('require') as typeof require)('jest-canvas-mock'))
-        console.info('Canvas mocking module loaded.')
-} catch {
-    // Do nothing.
-}
+
+if (await optionalImport('jest-canvas-mock'))
+    console.info('Canvas mocking module loaded.')

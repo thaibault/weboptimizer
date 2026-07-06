@@ -16,7 +16,7 @@
 */
 // region imports
 import type {
-    AnyFunction, Encoding, Mapping, PlainObject, SecondParameter
+    AnyFunction, Encoding, Mapping, PlainObject, SecondParameter, UTILITY_SCOPE
 } from 'clientnode'
 import type FaviconWebpackPlugin from 'favicons-webpack-plugin'
 import type {
@@ -499,12 +499,14 @@ export interface GenericLoader {
     data: RuleSetRule
 }
 export type Loader = GenericLoader & Mapping<WebpackRuleSetRule>
-export interface EvaluationScope {
-    configuration: ResolvedConfiguration
-    isFilePathInDependencies: (filePath: string) => boolean
-    loader: Loader
-    require: typeof require
-}
+export type EvaluationScope =
+    (typeof UTILITY_SCOPE) &
+    {
+        configuration: ResolvedConfiguration
+        isFilePathInDependencies: (filePath: string) => boolean
+        loader: Loader
+        require: typeof require
+    }
 /// endregion
 // NOTE: Not yet defined in webpack types.
 export interface WebpackBaseAssets {

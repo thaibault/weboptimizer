@@ -34,7 +34,6 @@ import type {
 
 import {
     copy,
-    currentRequire,
     escapeRegularExpressions,
     extend,
     isAnyMatching,
@@ -1113,22 +1112,22 @@ export const findPackageDescriptorFilePath = (
  * @returns A object containing found parsed configuration an their
  * corresponding file path.
  */
-export const getClosestPackageDescriptor = (
+export const getClosestPackageDescriptor = async (
     modulePath: string, fileName = 'package.json'
-): null | PackageDescriptor => {
+): Promise<null | PackageDescriptor> => {
     const filePath: null | string =
         findPackageDescriptorFilePath(modulePath, fileName)
-    if (!(filePath && currentRequire))
+    if (!filePath)
         return null
 
     const configuration: PackageConfiguration =
-        currentRequire(filePath) as PackageConfiguration
+        await import(filePath) as PackageConfiguration
     /*
         If the package.json does not have a name property, try again from
         one level higher.
     */
     if (!configuration.name)
-        return getClosestPackageDescriptor(
+        return await getClosestPackageDescriptor(
             resolve(dirname(filePath), '..'), fileName
         )
 

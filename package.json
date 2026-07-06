@@ -109,9 +109,9 @@
     "rimraf": "^6.1.3",
     "script-loader": "^0.7.2",
     "typescript": "^6.0.3",
-    "webpack": "^5.108.3",
-    "webpack-cli": "^7.1.0",
-    "webpack-sources": "^3.5.0"
+    "webpack": "^5.108.4",
+    "webpack-cli": "^7.2.1",
+    "webpack-sources": "^3.5.1"
   },
   "devDependencies": {
     "@babel/cli": "^8.0.1",
@@ -128,12 +128,12 @@
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
     "@types/webpack-sources": "^3.2.3",
-    "@typescript-eslint/parser": "^8.62.1",
+    "@typescript-eslint/parser": "^8.63.0",
     "css-loader": "^7.1.4",
     "cssnano": "^8.0.2",
     "eslint": "^10.6.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^63.0.10",
+    "eslint-plugin-jsdoc": "^63.0.12",
     "favicons": "^7.3.0",
     "favicons-webpack-plugin": "^6.0.1",
     "globals": "^17.7.0",
@@ -156,7 +156,7 @@
     "stylelint-config-standard": "^40.0.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "terser-webpack-plugin": "^5.6.1",
-    "typescript-eslint": "^8.62.1",
+    "typescript-eslint": "^8.63.0",
     "typescript-plugin-css-modules": "^5.2.0",
     "web-documentation": "^1.0.42",
     "workbox-webpack-plugin": "^7.4.1"
@@ -342,7 +342,7 @@
           },
           "includeFilePathRegularExpression": "^.*$",
           "pattern": {
-            "__evaluate__": "`${self.generic.assetPattern.javaScript.pattern}if(typeof window==='undefined'||window===null)var window=(typeof global==='undefined'||global===null)?{}:global;{1}`"
+            "__evaluate__": "`if(typeof window==='undefined'||window===null)var window=(typeof global==='undefined'||global===null)?{}:global;{1}`"
           }
         }
       },
@@ -582,11 +582,10 @@
       },
       "encoding": "utf-8",
       "exportFormat": {
-        "external": "umd",
         "globalObject": {
           "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'window' : 'this'"
         },
-        "self": "umd"
+        "self": "modern-module"
       },
       "extensions": {
         "file": {
@@ -728,12 +727,6 @@
         ]
       },
       "generic": {
-        "assetPattern": {
-          "javaScript": {
-            "#": "We have to ensure, that the highest resolvable dependency inside this project will be used in node environments to ensure one instance of each dependent artefact for linked projects. We have to wrap \"require\" into an eval call to avoid other pre-processing scripts to replace this statement here.",
-            "pattern": "'use strict';if(typeof module!=='undefined'&&module!==null&&eval('typeof require')!=='undefined'&&eval('require')!==null&&'main'in eval('require')&&eval('typeof require.main')!=='undefined'&&eval('require.main')!==null){var ORIGINAL_MAIN_MODULE=module;if(module!==eval('require.main')&&'paths'in module&&'paths'in eval('require.main')&&typeof __dirname!=='undefined'&&__dirname!==null)module.paths=eval('require.main.paths').concat(module.paths.filter(function(path){return eval('require.main.paths').includes(path)}))};"
-          }
-        },
         "cascadingStyleSheetFileExtension": "css",
         "isWeb": true,
         "supportedBrowsers": [
@@ -1457,13 +1450,9 @@
           "javaScript": {
             "pattern": {
               "#": "This is how we can make our test artefact executable.",
-              "__evaluate__": "`#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n${self.generic.assetPattern.javaScript.pattern}{1}`"
+              "__evaluate__": "`#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n{1}`"
             }
           }
-        },
-        "exportFormat": {
-          "external": "commonjs2",
-          "self": "commonjs2"
         },
         "files": {
           "defaultHTML": {

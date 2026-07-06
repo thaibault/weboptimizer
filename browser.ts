@@ -16,14 +16,13 @@
 */
 // region imports
 import type {ProcedureFunction} from 'clientnode'
+import type {DOMWindow, VirtualConsole} from 'jsdom'
+import type {LoaderContext} from 'webpack'
 
-import {Browser, InitializedBrowser} from './type'
+import type {LoaderConfiguration} from './ejsLoader'
+import type {Browser, InitializedBrowser} from './type'
 
 import {CONSOLE_METHODS, Logger, timeout} from 'clientnode'
-import {DOMWindow, VirtualConsole} from 'jsdom'
-import {LoaderContext} from 'webpack'
-
-import {LoaderConfiguration} from './ejsLoader'
 // endregion
 // region declaration
 declare const NAME: string
@@ -143,11 +142,21 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             const content: string = await (await import('fs')).promises
                 .readFile(filePath, {encoding: 'utf-8'})
 
-            render(ejsLoader.bind(
-                {resourcePath: filePath} as
+            let evaluatedContent = ''
+            await ejsLoader.bind(
+                {
+                    resourcePath: filePath,
+                    async: (error: Error | null, result: null | string) => {
+                        if (error)
+                            throw error
+                        else
+                            evaluatedContent = result as string
+                    }
+                } as
                     unknown as
                     LoaderContext<LoaderConfiguration>
-            )(content))
+            )(content)
+            render(evaluatedContent)
         } else
             render(
                 await import('webOptimizerDefaultTemplateFilePath') as string

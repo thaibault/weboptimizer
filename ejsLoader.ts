@@ -18,26 +18,27 @@
 import type {
     EvaluationResult, Encoding, Mapping, RecursivePartial
 } from 'clientnode'
-import type {Options, TemplateFunction as EJSTemplateFunction} from 'ejs'
+import type {
+    Options, AsyncTemplateFunction as EJSAsyncTemplateFunction
+} from 'ejs'
 import type {LoaderContext} from 'webpack'
 
 import type {FileResult} from '@babel/core'
 
 import type {Extensions, Replacements, ResolvedConfiguration} from './type'
 
-import {transformSync as babelTransformSync} from '@babel/core'
+import {transform as babelTransform} from '@babel/core'
 import babelMinifyPreset from 'babel-preset-minify'
 import {
     convertSubstringInPlainObject,
     copy,
-    currentRequire,
     evaluate,
     extend,
     Logger,
     UTILITY_SCOPE
 } from 'clientnode'
 import ejs from 'ejs'
-import {readFileSync} from 'fs'
+import {readFile} from 'fs/promises'
 import {minify as minifyHTML} from 'html-minifier'
 import {extname} from 'path'
 
@@ -45,7 +46,7 @@ import getConfiguration from './configurator'
 import {determineModuleFilePath} from './helper'
 // endregion
 // region types
-export type TemplateFunction = EJSTemplateFunction
+export type TemplateFunction = EJSAsyncTemplateFunction
 export type CompilerOptions =
     Options &
     {
@@ -84,15 +85,24 @@ export const log = new Logger({name: 'weboptimizer.ejs-loader'})
  * @param source - Input string to transform.
  * @returns Transformed string.
  */
-export const loader = function(
-    this: Partial<LoaderContext<LoaderConfiguration>>, source: string
-): string {
+export const loader = async function(
+    this: (
+        Partial<LoaderContext<LoaderConfiguration>> &
+        {async: (result: unknown) => void}
+    ),
+    source: string
+): Promise<void> {
+    const callback = this.async()
+
     const givenOptions: RecursivePartial<LoaderConfiguration> =
         convertSubstringInPlainObject(
             extend<LoaderConfiguration>(
                 true,
                 {
-                    compiler: {localsName: '_'},
+                    compiler: {
+                        async: true,
+                        localsName: '_'
+                    },
                     compileSteps: 2,
                     compress: {
                         html: {},
@@ -130,20 +140,20 @@ export const loader = function(
 
     const compile: CompileFunction = (
         template: string,
-        options = givenOptions.compiler,
+        nestedGivenOptions = givenOptions.compiler,
         compileSteps = 2
-    ): TemplateFunction => (
+    ): TemplateFunction => async (
         locals: (
             Array<Array<string>> | Array<Mapping<unknown>> | Mapping<unknown>
         ) = {}
-    ): string => {
-        options = {filename: template, ...options}
+    ): Promise<string> => {
+        const options = {filename: template, ...nestedGivenOptions || {}}
         const givenLocals: Array<unknown> =
             ([] as Array<unknown>).concat(locals)
 
-        const require = (
+        const importFile = async (
             request: string, nestedLocals: Mapping<unknown> = {}
-        ): string => {
+        ): Promise<string> => {
             const template: string = request.replace(/^(.+)\?[^?]+$/, '$1')
             const queryMatch: Array<string> | null =
                 /^[^?]+\?(.+)$/.exec(request)
@@ -173,11 +183,11 @@ export const loader = function(
                 nestedOptions,
                 nestedLocals.options as Partial<CompilerOptions> | undefined ||
                 {},
-                options ?? {}
+                options
             )
 
             if (nestedOptions.isString)
-                return compile(template, nestedOptions)(nestedLocals)
+                return await compile(template, nestedOptions)(nestedLocals)
 
             const templateFilePath: null | string = determineModuleFilePath(
                 template,
@@ -203,11 +213,11 @@ export const loader = function(
                     included file content.
                 */
                 if (queryMatch || templateFilePath.endsWith('.ejs'))
-                    return compile(templateFilePath, nestedOptions)(
+                    return await compile(templateFilePath, nestedOptions)(
                         nestedLocals
                     )
 
-                return readFileSync(
+                return await readFile(
                     templateFilePath, {encoding: nestedOptions.encoding}
                 )
             }
@@ -276,8 +286,7 @@ export const loader = function(
                     scope = {
                         ...UTILITY_SCOPE,
                         configuration,
-                        include: require,
-                        require,
+                        include: importFile,
                         ...(Array.isArray(stepLocals) ? {} : stepLocals)
                     }
                 else if (!Array.isArray(stepLocals))
@@ -288,14 +297,14 @@ export const loader = function(
             if (typeof result === 'string') {
                 const filePath: string | undefined =
                     isString ? options.filename : result
-                if (filePath && extname(filePath) === '.js' && currentRequire)
-                    result = currentRequire(filePath) as TemplateFunction
+                if (filePath && extname(filePath) === '.js')
+                    result = await import(filePath) as TemplateFunction
                 else {
                     if (!isString) {
                         let encoding: Encoding = configuration.encoding
                         if (typeof options.encoding === 'string')
                             encoding = options.encoding
-                        result = readFileSync(result, {encoding})
+                        result = await readFile(result, {encoding})
                     }
                     if (step === compileSteps && givenOptions.compress?.html)
                         result = compressHTML(result)
@@ -375,10 +384,10 @@ export const loader = function(
                         `.trim()
                     } else
                         result = ejs.compile(result, options) as
-                            EJSTemplateFunction
+                            EJSAsyncTemplateFunction
                 }
             } else {
-                result = result(scope)
+                result = await result(scope)
 
                 if (givenOptions.compress?.html)
                     result = compressHTML(result)
@@ -386,24 +395,36 @@ export const loader = function(
         }
 
         if (compileSteps % 2) {
-            const processed: FileResult | null = babelTransformSync(
-                result as string,
-                {
-                    ast: false,
-                    babelrc: false,
-                    comments: !givenOptions.compress?.javaScript,
-                    compact: Boolean(givenOptions.compress?.javaScript),
-                    filename: options.filename || 'unknown',
-                    minified: Boolean(givenOptions.compress?.javaScript),
-                    presets: givenOptions.compress?.javaScript ?
-                        [[
-                            babelMinifyPreset, givenOptions.compress.javaScript
-                        ]] :
-                        [],
-                    sourceMaps: false,
-                    sourceType: 'script'
-                }
-            )
+            const processed: FileResult | null = await new Promise(
+                (resolve, reject) => {
+                    babelTransform(
+                        result as string,
+                        {
+                            ast: false,
+                            babelrc: false,
+                            comments: !givenOptions.compress?.javaScript,
+                            compact:
+                                Boolean(givenOptions.compress?.javaScript),
+                            filename: options.filename || 'unknown',
+                            minified:
+                                Boolean(givenOptions.compress?.javaScript),
+                            presets: givenOptions.compress?.javaScript ?
+                                [[
+                                    babelMinifyPreset, givenOptions.compress
+                                        .javaScript
+                                ]] :
+                                [],
+                            sourceMaps: false,
+                            sourceType: 'script'
+                        },
+                        (error: Error | null, file: FileResult | null) => {
+                            if (error)
+                                reject(error)
+                            else
+                                resolve(file)
+                        }
+                    )
+                })
 
             if (typeof processed?.code === 'string')
                 result = processed.code
@@ -438,18 +459,25 @@ export const loader = function(
         return ''
     }
 
-    return compile(
-        source,
-        {
-            ...givenOptions.compiler,
-            client: Boolean((givenOptions.compileSteps ?? 2) % 2),
-            compileDebug: givenOptions.debug,
-            debug: givenOptions.debug,
-            filename: this.resourcePath || 'unknown',
-            isString: true
-        },
-        givenOptions.compileSteps
-    )(givenOptions.locals || {})
+    try {
+        callback(
+            null,
+            await compile(
+                source,
+                {
+                    ...givenOptions.compiler,
+                    client: Boolean((givenOptions.compileSteps ?? 2) % 2),
+                    compileDebug: givenOptions.debug,
+                    debug: givenOptions.debug,
+                    filename: this.resourcePath || 'unknown',
+                    isString: true
+                },
+                givenOptions.compileSteps
+            )(givenOptions.locals || {})
+        )
+    } catch (error) {
+        callback(error as Error)
+    }
 }
 
 export default loader
