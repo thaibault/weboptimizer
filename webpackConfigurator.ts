@@ -814,8 +814,7 @@ const scope = {
     ...UTILITY_SCOPE,
     configuration,
     isFilePathInDependencies,
-    loader,
-    require
+    loader
 }
 
 const evaluateAndThrow = <T = unknown>(
