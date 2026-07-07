@@ -1719,11 +1719,13 @@ if (configuration.nodeENV !== null)
     else
         webpackConfiguration.optimization = {nodeEnv: configuration.nodeENV}
 if (
+    module.skipParseRegularExpressions &&
     !Array.isArray(module.skipParseRegularExpressions) ||
     module.skipParseRegularExpressions.length
 )
     if (typeof webpackConfiguration.module === 'object')
-        webpackConfiguration.module.noParse = module.skipParseRegularExpressions
+        webpackConfiguration.module.noParse =
+            module.skipParseRegularExpressions
     else
         webpackConfiguration.module = {
             noParse: module.skipParseRegularExpressions
