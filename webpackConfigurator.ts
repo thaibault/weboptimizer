@@ -169,6 +169,9 @@ Logger.configureAllInstances({level: configuration.debug ? 'debug' : 'warn'})
 const module = configuration.module
 // region initialization
 /// region determine library name
+const exportFormatsNeedingAValidVariableName =
+    ['assign', 'global', 'this', 'var', 'window']
+
 let libraryName: Array<string> | string | undefined
 if (configuration.libraryName)
     libraryName = configuration.libraryName
@@ -176,13 +179,13 @@ else if (Object.keys(configuration.injection.entry.normalized).length > 1)
     libraryName = '[name]'
 else {
     libraryName = configuration.name
-    if (['assign', 'global', 'this', 'var', 'window'].includes(
+    if (exportFormatsNeedingAValidVariableName.includes(
         configuration.exportFormat.self
     ))
         libraryName = convertToValidVariableName(libraryName)
 }
 if (libraryName === '*')
-    libraryName = ['assign', 'global', 'this', 'var', 'window'].includes(
+    libraryName = exportFormatsNeedingAValidVariableName.includes(
         configuration.exportFormat.self
     ) ?
         Object.keys(
@@ -1458,7 +1461,7 @@ if (
         'live-reload=true' +
         `&hot=${configuration.development.server.hot ? 'true' : 'false'}` +
         `&http${configuration.development.server.https ? 's' : ''}://` +
-        `${configuration.development.server.host}: ` +
+        `${configuration.development.server.host}:` +
         String(configuration.development.server.port)
     ]
 
