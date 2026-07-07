@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "4.0.9",
+  "version": "4.0.10",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -1177,7 +1177,9 @@
                 "__evaluate__": "!self.debug"
               },
               "plugins": [
-                ["@babel/plugin-transform-class-properties"],
+                [
+                  "@babel/plugin-transform-class-properties"
+                ],
                 [
                   "@babel/plugin-proposal-decorators",
                   {
@@ -1188,12 +1190,21 @@
                   "babel-plugin-transform-rewrite-imports",
                   {
                     "appendExtension": ".js",
-                    "recognizedExtensions": [".js", ".jsx", ".d.ts", ".ts", ".tsx", ".json"]
+                    "recognizedExtensions": [
+                      ".js",
+                      ".jsx",
+                      ".d.ts",
+                      ".ts",
+                      ".tsx",
+                      ".json"
+                    ]
                   }
                 ],
                 [
                   "polyfill-corejs3",
-                  {"method": "usage-global"}
+                  {
+                    "method": "usage-global"
+                  }
                 ]
               ],
               "presets": {
