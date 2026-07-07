@@ -3,18 +3,15 @@
   "plugins": [
     ["@babel/plugin-transform-class-properties"],
     [
-      "polyfill-corejs3",
-      {
-        "method": "usage-global",
-        "version": "3.48"
-      }
-    ],
-    [
       "babel-plugin-transform-rewrite-imports",
       {
         "appendExtension": ".js",
         "recognizedExtensions": [".js", ".jsx", ".d.ts", ".ts", ".tsx", ".json"]
       }
+    ],
+    [
+      "polyfill-corejs3",
+      {"method": "usage-global"}
     ]
   ],
   "presets": [

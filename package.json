@@ -1177,6 +1177,7 @@
                 "__evaluate__": "!self.debug"
               },
               "plugins": [
+                ["@babel/plugin-transform-class-properties"],
                 [
                   "@babel/plugin-proposal-decorators",
                   {
@@ -1184,10 +1185,15 @@
                   }
                 ],
                 [
-                  "babel-plugin-polyfill-corejs3",
+                  "babel-plugin-transform-rewrite-imports",
                   {
-                    "method": "usage-global"
+                    "appendExtension": ".js",
+                    "recognizedExtensions": [".js", ".jsx", ".d.ts", ".ts", ".tsx", ".json"]
                   }
+                ],
+                [
+                  "polyfill-corejs3",
+                  {"method": "usage-global"}
                 ]
               ],
               "presets": {
