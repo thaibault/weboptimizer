@@ -595,17 +595,16 @@ if (configuration.injection.external.modules === '__implicit__')
                     .map((name: string): string =>
                         convertToValidVariableName(name)
                     )
-            const exportFormat: string =
-                Object.prototype.hasOwnProperty.call(
-                    configuration.exportFormat, 'external'
-                ) ?
-                    configuration.exportFormat.external :
-                    configuration.exportFormat.self
+            const {external: exportFormat} = configuration.exportFormat
 
             let reference =
                 exportFormat === 'umd' || typeof result === 'string' ?
                     result :
                     result[exportFormat]
+
+            console.log()
+            console.log('EX', reference, exportFormat)
+            console.log()
 
             if (
                 typeof reference === 'string' &&

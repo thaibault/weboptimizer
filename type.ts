@@ -269,7 +269,35 @@ export interface DefaultConfiguration {
     'test:browser': PlainObject
 }
 /* eslint-disable max-len */
-export type ExportFormat = 'amd' | 'amd-require' | 'assign' | 'global' | 'jsonp' | 'var' | 'this' | 'commonjs' | 'commonjs2' | 'umd'
+export type BaseExportFormat =
+    'amd' |
+    'amd-require' |
+    'assign' |
+    'commonjs' |
+    'commonjs-module' |
+    'global' |
+    'jsonp' |
+    'module' |
+    'self' |
+    'system' |
+    'this' |
+    'umd' |
+    'umd2' |
+    'var' |
+    'window'
+export type ExternalExportFormat =
+    BaseExportFormat |
+    'import' |
+    'module-import' |
+    'node-commonjs' |
+    'promise' |
+    'script'
+export type ExportFormat =
+    BaseExportFormat |
+    'assign-properties' |
+    'modern-module' |
+    'commonjs2' |
+    'commonjs-static'
 /* eslint-enable max-len */
 export interface HTMLConfiguration {
     filename: string
@@ -348,7 +376,7 @@ export interface ResolvedConfiguration {
     document: PlainObject
     encoding: Encoding
     exportFormat: {
-        external: ExportFormat
+        external: ExternalExportFormat
         globalObject: string
         self: ExportFormat
     }
