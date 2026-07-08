@@ -356,7 +356,7 @@
             "__evaluate__": "self.debug"
           },
           "EXTERNAL_EXPORT_FORMAT": {
-            "__evaluate__": "`'${self.exportFormat.external}'`"
+            "__evaluate__": "`'${self.exportFormat.external ?? self.exportFormat.self}'`"
           },
           "NAME": {
             "__evaluate__": "`'${self.name}'`"
@@ -587,7 +587,7 @@
           "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'window' : 'this'"
         },
         "self": {
-          "__evaluate__": "2 < self.givenCommandLineArguments.length && ['document', 'serve'].includes(self.givenCommandLineArguments[2]) ? 'var' : 'modern-module'"
+          "__evaluate__": "2 < self.givenCommandLineArguments.length && ['document', 'serve'].includes(self.givenCommandLineArguments[2]) ? 'window' : 'modern-module'"
         }
       },
       "extensions": {
