@@ -123,7 +123,7 @@
     "@types/html-minifier": "^4.0.6",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/imagemin": "^9.0.1",
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.1.1",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
