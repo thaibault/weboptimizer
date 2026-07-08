@@ -602,15 +602,17 @@ if (configuration.injection.external.modules === '__implicit__')
                     configuration.exportFormat.external :
                     configuration.exportFormat.self
 
-            callback(
-                undefined,
-                (
-                    exportFormat === 'umd' || typeof result === 'string' ?
-                        result :
-                        result[exportFormat]
-                ),
-                exportFormat
+            let reference = exportFormat === 'umd' || typeof result === 'string' ?
+                result :
+                result[exportFormat]
+
+            if (
+                typeof reference === 'string' &&
+                ['window', 'var'].includes(exportFormat)
             )
+                reference = convertToValidVariableName(reference)
+
+            callback(undefined, reference, exportFormat)
 
             return
         }
