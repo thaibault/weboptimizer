@@ -330,6 +330,11 @@
   },
   "sideEffects": true,
   "type": "module",
+  "exports": {
+    ".": "/.index.js",
+    "./browser": "./browser.js",
+    "./ejsLoader": "./ejsLoader.js"
+  },
   "webDocumentation": {
     "trackingCode": "UA-40192634-11"
   },
@@ -356,7 +361,7 @@
             "__evaluate__": "self.debug"
           },
           "EXTERNAL_EXPORT_FORMAT": {
-            "__evaluate__": "`'${self.exportFormat.external ?? self.exportFormat.self}'`"
+            "__evaluate__": "`'${self.exportFormat.external}'`"
           },
           "NAME": {
             "__evaluate__": "`'${self.name}'`"
@@ -583,6 +588,9 @@
       },
       "encoding": "utf-8",
       "exportFormat": {
+        "external": {
+          "__evaluate__": "2 < self.givenCommandLineArguments.length && ['document', 'serve'].includes(self.givenCommandLineArguments[2]) ? 'window' : 'module-import'"
+        },
         "globalObject": {
           "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'window' : 'this'"
         },
@@ -736,7 +744,7 @@
           "last 2 major versions",
           "> 5%"
         ],
-        "testCommandLine": "jest --config node_modules/weboptimizer/jest.json --noStackTrace --test-regex",
+        "testCommandLine": "node --experimental-vm-modules node_modules/.bin/jest --config node_modules/weboptimizer/jest.json --noStackTrace --test-regex",
         "testCommandLineCoverageArguments": "--ci --coverage --coverage-reporters=text --coverage-reporters=text-summary --silent --test-location-in-results"
       },
       "givenCommandLineArguments": [],
