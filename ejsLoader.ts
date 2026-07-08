@@ -92,6 +92,7 @@ export const loader = async function(
     ),
     source: string
 ): Promise<void> {
+    console.log('AA', this.async, this.async())
     const callback = this.async()
 
     const givenOptions: RecursivePartial<LoaderConfiguration> =

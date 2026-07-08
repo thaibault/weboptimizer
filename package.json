@@ -564,7 +564,7 @@
             }
           ],
           "watchFiles": {
-            "__evaluate__": "self.webpack.watchOptions ? {options: self.webpack.watchOptions} : {}"
+            "__evaluate__": "{paths: [], options: {cwd: self.path.target.base, ...(self.webpack.watchOptions ?? {})}}"
           }
         },
         "tool": false
@@ -586,7 +586,9 @@
         "globalObject": {
           "__evaluate__": "2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] === 'serve' ? 'window' : 'this'"
         },
-        "self": "modern-module"
+        "self": {
+          "__evaluate__": "2 < self.givenCommandLineArguments.length && ['document', 'serve'].includes(self.givenCommandLineArguments[2]) ? 'var' : 'modern-module'"
+        }
       },
       "extensions": {
         "file": {
@@ -1650,9 +1652,6 @@
               }
             ]
           }
-        },
-        "exportFormat": {
-          "self": "var"
         },
         "generic": {
           "isWeb": false

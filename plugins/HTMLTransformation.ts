@@ -146,7 +146,7 @@ export class HTMLTransformation {
                                     htmlFileSpecification.template
                                         .postCompileOptions
                                 ),
-                                async: (
+                                async: () => (
                                     error: Error | null, result: null | string
                                 ) => {
                                     if (error)
