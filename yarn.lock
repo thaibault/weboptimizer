@@ -7899,9 +7899,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1444":
-  version: 4.0.1444
-  resolution: "clientnode@npm:4.0.1444"
+"clientnode@npm:4.0.1445":
+  version: 4.0.1445
+  resolution: "clientnode@npm:4.0.1445"
   peerDependencies:
     "@types/prop-types": "*"
     node-fetch: "*"
@@ -7913,7 +7913,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/ccfd9973e2b00c57da7e5e7ce78d9e4b47b8d98d7d31b1e3cee405b25c3f2a5eca05dc516b1a80d0addce73d57c20606ecd26f4c45b59f682827eb822c4be5ad
+  checksum: 10c0/b773570382d2232a96ddee46190d34362069cfb07d24797685dc75bbc7628ccd2881903f3c8a8a3da6287baad46b2378b240410ec8edbda2525bf626d2f2e93e
   languageName: node
   linkType: hard
 
@@ -18600,7 +18600,7 @@ __metadata:
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
     babel-preset-minify: "npm:^0.5.2"
-    clientnode: "npm:4.0.1444"
+    clientnode: "npm:4.0.1445"
     core-js: "npm:^3.49.0"
     css-loader: "npm:^7.1.4"
     cssnano: "npm:^8.0.2"
