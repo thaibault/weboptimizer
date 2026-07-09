@@ -268,7 +268,6 @@ export interface DefaultConfiguration {
     test: PlainObject
     'test:browser': PlainObject
 }
-/* eslint-disable max-len */
 export type BaseExportFormat =
     'amd' |
     'amd-require' |
@@ -298,7 +297,6 @@ export type ExportFormat =
     'modern-module' |
     'commonjs2' |
     'commonjs-static'
-/* eslint-enable max-len */
 export interface HTMLConfiguration {
     filename: string
     template: {
