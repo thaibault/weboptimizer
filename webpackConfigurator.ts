@@ -602,10 +602,6 @@ if (configuration.injection.external.modules === '__implicit__')
                     result :
                     result[exportFormat]
 
-            console.log()
-            console.log('EX', reference, exportFormat)
-            console.log()
-
             if (
                 typeof reference === 'string' &&
                 ['window', 'var'].includes(exportFormat)
