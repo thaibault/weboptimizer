@@ -82,6 +82,7 @@
     "webpack-dev-server": "*",
     "workbox-webpack-plugin": "*"
   },
+  "type": "module",
   "engines": {
     "node": ">=24",
     "npm": ">=11",
