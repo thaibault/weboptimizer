@@ -23,6 +23,7 @@ import type {LoaderConfiguration} from './ejsLoader'
 import type {Browser, InitializedBrowser} from './type'
 
 import {CONSOLE_METHODS, Logger, timeout} from 'clientnode'
+import webOptimizerDefaultTemplate from 'webOptimizerDefaultTemplateFilePath'
 // endregion
 // region declaration
 declare const NAME: string
@@ -132,6 +133,7 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             )
         }
 
+        let evaluatedContent = ''
         if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
             const filePath = path.join(import.meta.dirname, 'index.html.ejs')
             /*
@@ -142,7 +144,6 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             const content: string = await (await import('fs')).promises
                 .readFile(filePath, {encoding: 'utf-8'})
 
-            let evaluatedContent = ''
             await ejsLoader.bind(
                 {
                     resourcePath: filePath,
@@ -156,11 +157,10 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     unknown as
                     LoaderContext<LoaderConfiguration>
             )(content)
-            render(evaluatedContent)
         } else
-            render(
-                await import('webOptimizerDefaultTemplateFilePath') as string
-            )
+            evaluatedContent = webOptimizerDefaultTemplate
+
+        render(evaluatedContent)
         // endregion
     })().catch((error: unknown) => {
         log.error(error)
