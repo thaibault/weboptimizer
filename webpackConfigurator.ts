@@ -110,11 +110,11 @@ await importsPromise
 
 /// region optional imports
 const postcssCSSnano: null | typeof import('cssnano') =
-    await optionalImport<typeof import('cssnano')>('cssnano')
+    await optionalImport<typeof import('cssnano')>('cssnano').default
 const postcssFontpath =
-    await optionalImport<typeof import('postcss-fontpath').default>(
+    await optionalImport<typeof import('postcss-fontpath')>(
         'postcss-fontpath'
-    )
+    ).default
 const postcssImport =
     await optionalImport<typeof import('postcss-import')>('postcss-import')
         .default
