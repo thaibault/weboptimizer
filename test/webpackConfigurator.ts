@@ -14,11 +14,12 @@
     endregion
 */
 // region imports
-import {expect, test} from '@jest/globals'
-import {Mapping} from 'clientnode'
-import webpack from 'webpack'
+import type {Mapping} from 'clientnode'
 
-import {WebpackConfiguration} from '../type'
+import type {WebpackConfiguration} from '../type'
+
+import {expect, test} from '@jest/globals'
+import webpack from 'webpack'
 // endregion
 test('webpackConfigurator', async (): Promise<void> => {
     const webpackConfiguration: WebpackConfiguration = (await import(
@@ -31,7 +32,7 @@ test('webpackConfigurator', async (): Promise<void> => {
     if (!webpackConfiguration.output)
         webpackConfiguration.output = {}
 
-    webpackConfiguration.output.path = __dirname
+    webpackConfiguration.output.path = import.meta.dirname
     webpackConfiguration.output.filename = 'dummy.compiled.js'
     expect(webpack(webpackConfiguration)).toBeInstanceOf(Object)
 })

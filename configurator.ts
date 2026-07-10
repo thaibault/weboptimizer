@@ -73,7 +73,6 @@ export const optionalRequire = <T = unknown>(id: string): null | T => {
         return null
     }
 }
-
 const {configuration: metaConfiguration} = packageConfiguration
 
 export let loadedConfiguration: null | ResolvedConfiguration = null
@@ -227,12 +226,22 @@ export const load = async (
             modifyObject(libraryConfiguration, configuration.library),
             configuration.library
         )
-    if (configuration.library && specificConfiguration.library !== false)
+
+    if (configuration.library && specificConfiguration.library !== false) {
+        const modifiedConfiguration =
+            modifyObject(configuration, libraryConfiguration)
+
         configuration = extend(
             true,
-            modifyObject(configuration, libraryConfiguration),
-            libraryConfiguration
+            /*
+                NOTE: We have to copy both objects otherwise the
+                substucture under "path" is not extended as expected.
+            */
+            copy(modifiedConfiguration),
+            copy(libraryConfiguration)
         )
+    }
+
     // endregion
     // region merging and evaluating task specific and dynamic configurations
     /// region load additional dynamically given configuration

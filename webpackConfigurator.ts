@@ -117,10 +117,17 @@ const postcssFontpath =
     )
 const postcssImport =
     await optionalImport<typeof import('postcss-import')>('postcss-import')
+        .default
 const postcssSprites =
     await optionalImport<typeof import('postcss-sprites').default>(
         'postcss-sprites'
     )
+console.log(
+    'A',
+    Object.keys(postcssCSSnano),
+    Object.keys(postcssFontpath),
+    Object.keys(postcssSprites)
+)
 
 type UpdateRule = (
     _node: PostcssNode, _token: PostcssNode, _image: Mapping<unknown>
