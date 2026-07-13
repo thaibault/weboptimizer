@@ -17,6 +17,6 @@ import {expect, test} from '@jest/globals'
 
 import loadConfiguration from '../configurator'
 
-test('loadConfiguration', () => {
-    expect(loadConfiguration()).toHaveProperty('name', 'mockup')
-})
+test('loadConfiguration', () =>
+    expect(loadConfiguration()).resolves.toHaveProperty('name', 'mockup')
+)

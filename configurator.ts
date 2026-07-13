@@ -65,14 +65,6 @@ import {
 import packageConfiguration from './package.json' with {type: 'json'}
 import {SubConfigurationTypes} from './type'
 // endregion
-export const require = createRequire(import.meta.url)
-export const optionalRequire = <T = unknown>(id: string): null | T => {
-    try {
-        return require(id) as T
-    } catch {
-        return null
-    }
-}
 const {configuration: metaConfiguration} = packageConfiguration
 
 export let loadedConfiguration: null | ResolvedConfiguration = null

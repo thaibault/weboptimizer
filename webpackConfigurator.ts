@@ -109,36 +109,34 @@ import HTMLTransformation from './plugins/HTMLTransformation'
 await importsPromise
 
 /// region optional imports
-const postcssCSSnano: null | typeof import('cssnano') =
-    await optionalImport<typeof import('cssnano')>('cssnano').default
+const postcssCSSnano = (
+    await optionalImport<{default: typeof import('cssnano')}>('cssnano')
+)?.default
 const postcssFontpath =
-    await optionalImport<typeof import('postcss-fontpath')>(
+    (await optionalImport<typeof import('postcss-fontpath')>(
         'postcss-fontpath'
-    ).default
+    ))?.default
 const postcssImport =
-    await optionalImport<typeof import('postcss-import')>('postcss-import')
-        .default
+    (await optionalImport<{default: typeof import('postcss-import')}>(
+        'postcss-import'
+    ))?.default
 const postcssSprites =
-    await optionalImport<typeof import('postcss-sprites').default>(
+    (await optionalImport<typeof import('postcss-sprites')>(
         'postcss-sprites'
-    )
-console.log(
-    'A',
-    Object.keys(postcssCSSnano),
-    Object.keys(postcssFontpath),
-    Object.keys(postcssSprites)
-)
+    ))?.default
 
 type UpdateRule = (
     _node: PostcssNode, _token: PostcssNode, _image: Mapping<unknown>
 ) => void
 const updateRule: undefined | UpdateRule =
-    (await optionalImport<{updateRule: UpdateRule}>(
+    (await optionalImport<{default: {updateRule: UpdateRule}}>(
         'postcss-sprites/lib/core'
-    ))?.updateRule
+    ))?.default.updateRule
 
 const postcssURL =
-    await optionalImport<typeof import('postcss-url')>('postcss-url')
+    (await optionalImport<{default: typeof import('postcss-url')}>(
+        'postcss-url'
+    ))?.default
 /// endregion
 export const log = new Logger({name: 'weboptimizer.webpack-configurator'})
 Logger.configureAllInstances({
@@ -169,11 +167,12 @@ for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
     else
         log.debug(`Optional webpack plugin "${name}" not available.`)
 }
+
 // endregion
 const configuration: ResolvedConfiguration = await getConfiguration()
 Logger.configureAllInstances({level: configuration.debug ? 'debug' : 'warn'})
 
-const module = configuration.module
+const {module} = configuration
 // region initialization
 /// region determine library name
 const exportFormatsNeedingAValidVariableName =
@@ -1485,15 +1484,19 @@ for (const pluginConfiguration of configuration.plugins) {
     type Initializer = new (..._parameters: Array<unknown>) =>
         Unpacked<WebpackConfiguration['plugins']>
 
-    const plugin: Mapping<Initializer> | null =
-        await optionalImport(pluginConfiguration.name.module)
-    if (plugin)
+    let plugin: (
+        {default: Mapping<Initializer>} | Mapping<Initializer> | null
+    ) = await optionalImport(pluginConfiguration.name.module)
+    if (plugin) {
+        if ('default' in plugin)
+            plugin = plugin.default as Mapping<Initializer>
+
         pluginInstances.push(
             (new (plugin[pluginConfiguration.name.initializer])(
                 ...pluginConfiguration.parameters
             ))
         )
-    else
+    } else
         log.warn(
             `Configured plugin module "${pluginConfiguration.name.module}"`,
             'could not be loaded.'
@@ -1740,13 +1743,14 @@ if (configuration.path.configuration.javaScript)
     try {
         import.meta.resolve(configuration.path.configuration.javaScript)
 
-        const result: unknown =
-            await optionalImport(configuration.path.configuration.javaScript)
+        let result = await optionalImport<null | PlainObject>(
+            configuration.path.configuration.javaScript
+        )
+        if (isPlainObject(result)) {
+            if ('default' in result)
+                result = result.default as PlainObject
 
-        if (isPlainObject(result))
-            if (Object.prototype.hasOwnProperty.call(
-                result, 'replaceWebOptimizer'
-            ))
+            if ('replaceWebOptimizer' in result)
                 webpackConfiguration = result.replaceWebOptimizer as
                     unknown as
                     WebpackConfiguration
@@ -1756,7 +1760,7 @@ if (configuration.path.configuration.javaScript)
                     webpackConfiguration,
                     result as RecursivePartial<WebpackConfiguration>
                 )
-        else
+        } else
             log.debug(
                 'Failed to load given JavaScript configuration file path',
                 `"${configuration.path.configuration.javaScript}".`

@@ -14,12 +14,10 @@
     See https://creativecommons.org/licenses/by/3.0/deed.de
     endregion
 */
-// region imports
+import type {ResolvedConfiguration} from './type'
+
 import getConfiguration from './configurator'
-import {ResolvedConfiguration} from './type'
-// endregion
+
 const configuration: ResolvedConfiguration = await getConfiguration()
 
-module.exports = configuration.stylelint
-
-export default module.exports
+export default configuration.stylelint

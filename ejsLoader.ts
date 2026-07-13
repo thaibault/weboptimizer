@@ -78,7 +78,6 @@ export type LoaderConfiguration =
         }
     }
 // endregion
-const configuration: ResolvedConfiguration = await getConfiguration()
 export const log = new Logger({name: 'weboptimizer.ejs-loader'})
 /**
  * Main transformation function.
@@ -93,6 +92,8 @@ export const loader = async function(
     source: string
 ): Promise<void> {
     const callback = this.async()
+
+    const configuration: ResolvedConfiguration = await getConfiguration()
 
     const givenOptions: RecursivePartial<LoaderConfiguration> =
         convertSubstringInPlainObject(
