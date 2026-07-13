@@ -82,9 +82,11 @@
     "webpack-dev-server": "*",
     "workbox-webpack-plugin": "*"
   },
+  "type": "module",
   "engines": {
-    "node": ">=18",
-    "npm": ">=9"
+    "node": ">=24",
+    "npm": ">=11",
+    "yarn": ">=4"
   },
   "sideEffects": false,
   "resolutions": {

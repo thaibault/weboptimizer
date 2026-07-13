@@ -33,7 +33,7 @@ for (const folder of ['simple', 'scss'])
                     'yarn',
                     ['weboptimizer', currentCommand],
                     {
-                        cwd: resolve(__dirname, folder),
+                        cwd: resolve(import.meta.dirname, folder),
                         env: process.env,
                         shell: true,
                         stdio: 'inherit'

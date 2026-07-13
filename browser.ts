@@ -23,7 +23,6 @@ import type {LoaderConfiguration} from './ejsLoader'
 import type {Browser, InitializedBrowser} from './type'
 
 import {CONSOLE_METHODS, Logger, timeout} from 'clientnode'
-import webOptimizerDefaultTemplate from 'webOptimizerDefaultTemplateFilePath'
 // endregion
 // region declaration
 declare const NAME: string
@@ -140,14 +139,14 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                 NOTE: We load dependencies now to avoid having file imports
                 after test runner has finished to isolate the environment.
             */
-            const ejsLoader = (await import('./ejsLoader')).default
+            const ejsLoader = (await import('./ejsLoader.js')).default
             const content: string = await (await import('fs')).promises
                 .readFile(filePath, {encoding: 'utf-8'})
 
             await ejsLoader.bind(
                 {
                     resourcePath: filePath,
-                    async: (error: Error | null, result: null | string) => {
+                    async: () => (error: Error | null, result: null | string) => {
                         if (error)
                             throw error
                         else
@@ -158,7 +157,8 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
                     LoaderContext<LoaderConfiguration>
             )(content)
         } else
-            evaluatedContent = webOptimizerDefaultTemplate
+            evaluatedContent =
+                (await import('webOptimizerDefaultTemplateFilePath')).default
 
         render(evaluatedContent)
         // endregion

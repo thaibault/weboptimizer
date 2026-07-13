@@ -456,23 +456,23 @@ describe('helper', (): void => {
         [{filePaths: [], directoryPaths: []}, 'example'],
         [
             {
-                directoryPaths: [resolve(__dirname, '../')],
-                filePaths: [resolve(__dirname, '../helper.js')]
+                directoryPaths: [resolve(import.meta.dirname, '../')],
+                filePaths: [resolve(import.meta.dirname, '../helper.js')]
             },
             'helper'
         ],
         [{filePaths: [], directoryPaths: []}, {example: 'example'}],
         [
             {
-                directoryPaths: [resolve(__dirname, '../')],
-                filePaths: [resolve(__dirname, '../helper.js')]
+                directoryPaths: [resolve(import.meta.dirname, '../')],
+                filePaths: [resolve(import.meta.dirname, '../helper.js')]
             },
             {example: 'helper'}
         ],
         [
             {
-                directoryPaths: [resolve(__dirname, '../')],
-                filePaths: [resolve(__dirname, '../', 'helper.ts')]
+                directoryPaths: [resolve(import.meta.dirname, '../')],
+                filePaths: [resolve(import.meta.dirname, '../', 'helper.ts')]
             },
             {helper: ['helper.ts']}
         ]
@@ -484,7 +484,7 @@ describe('helper', (): void => {
         [{}, {}], [{index: []}, {index: []}]
     )
     test('resolveModulesInFolders', () => {
-        expect(resolveModulesInFolders({a: [__dirname]}).a)
+        expect(resolveModulesInFolders({a: [import.meta.dirname]}).a)
             .toContain('./test/helper.ts')
     })
     testEach(
@@ -651,7 +651,7 @@ describe('helper', (): void => {
     testEachAgainstSameExpectation(
         'findPackageDescriptorFilePath',
         findPackageDescriptorFilePath,
-        resolve(__dirname, '../package.json'),
+        resolve(import.meta.dirname, '../package.json'),
 
         ['./', 'package.json'],
         ['../', 'package.json']
@@ -659,7 +659,8 @@ describe('helper', (): void => {
     test.each([['./'], ['../']])(
         `getClosestPackageDescriptor('%s') === {configuration: ...}`,
         async (modulePath: string) => {
-            const filePath: string = resolve(__dirname, '../package.json')
+            const filePath: string =
+                resolve(import.meta.dirname, '../package.json')
             await expect(getClosestPackageDescriptor(modulePath, filePath))
                 .resolves.toStrictEqual(
                     {
