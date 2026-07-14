@@ -661,11 +661,15 @@ describe('helper', (): void => {
         async (modulePath: string) => {
             const filePath: string =
                 resolve(import.meta.dirname, '../package.json')
+            const importedModule: PackageConfiguration & {
+                default?: PackageConfiguration
+            } = await import(filePath) as
+                PackageConfiguration & {default?: PackageConfiguration}
             await expect(getClosestPackageDescriptor(modulePath, filePath))
                 .resolves.toStrictEqual(
                     {
-                        configuration: (await import(filePath)) as
-                            PackageConfiguration,
+                        configuration:
+                            importedModule.default ?? importedModule,
                         filePath
                     }
                 )

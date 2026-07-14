@@ -1566,7 +1566,13 @@ export let webpackConfiguration: WebpackConfiguration = extend<
             WebpackConfiguration['devServer'],
         experiments: {
             futureDefaults: true,
-            outputModule: true
+            outputModule: true,
+            /*
+                "futureDefaults" would enable webpack's native type stripping
+                which cannot handle ".tsx" files; typescript sources are
+                transpiled via babel instead.
+            */
+            typescript: false
         },
         // region input
         entry: configuration.injection.entry.normalized,

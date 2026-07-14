@@ -587,10 +587,10 @@
               "terserOptions": {
                 "compress": {
                   "drop_console": {
-                    "__evaluate__": "!configuration.debug"
+                    "__evaluate__": "!self.debug"
                   },
                   "drop_debugger": {
-                    "__evaluate__": "!configuration.debug"
+                    "__evaluate__": "!self.debug"
                   }
                 }
               }
@@ -1063,10 +1063,10 @@
               "compress": {
                 "#": "To provide a logging output we need to exclude this feature.",
                 "drop_console": {
-                  "__evaluate__": "!configuration.debug"
+                  "__evaluate__": "!self.debug"
                 },
                 "drop_debugger": {
-                  "__evaluate__": "!configuration.debug"
+                  "__evaluate__": "!self.debug"
                 }
               }
             }

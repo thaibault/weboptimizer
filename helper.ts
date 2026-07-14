@@ -1120,8 +1120,17 @@ export const getClosestPackageDescriptor = async (
     if (!filePath)
         return null
 
+    /*
+        NOTE: In native ecmascript module contexts json imports are wrapped
+        into a module namespace object providing its content as "default"
+        export whereas commonjs interoperability provides it directly.
+    */
+    const importedModule: PackageConfiguration & {
+        default?: PackageConfiguration
+    } = await import(filePath) as
+        PackageConfiguration & {default?: PackageConfiguration}
     const configuration: PackageConfiguration =
-        await import(filePath) as PackageConfiguration
+        importedModule.default ?? importedModule
     /*
         If the package.json does not have a name property, try again from
         one level higher.
