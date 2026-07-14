@@ -65,7 +65,7 @@ export type LoaderConfiguration =
         compileSteps: number
         compress: {
             html: Mapping<unknown>
-            javaScript: Mapping<unknown>
+            javaScript: boolean
         }
         context: string
         debug: boolean
@@ -106,7 +106,7 @@ export const loader = async function(
                     compileSteps: 2,
                     compress: {
                         html: {},
-                        javaScript: {}
+                        javaScript: true
                     },
                     context: './',
                     debug: false,
@@ -403,7 +403,6 @@ export const loader = async function(
                             ast: false,
                             babelrc: false,
                             comments: !givenOptions.compress?.javaScript,
-                            compact: givenOptions.compress?.javaScript,
                             filename: options.filename || 'unknown',
                             minified: givenOptions.compress?.javaScript,
                             presets: [],
