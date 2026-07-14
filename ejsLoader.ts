@@ -28,7 +28,6 @@ import type {FileResult} from '@babel/core'
 import type {Extensions, Replacements, ResolvedConfiguration} from './type'
 
 import {transform as babelTransform} from '@babel/core'
-import babelMinifyPreset from 'babel-preset-minify'
 import {
     convertSubstringInPlainObject,
     copy,
@@ -404,17 +403,10 @@ export const loader = async function(
                             ast: false,
                             babelrc: false,
                             comments: !givenOptions.compress?.javaScript,
-                            compact:
-                                Boolean(givenOptions.compress?.javaScript),
+                            compact: givenOptions.compress?.javaScript,
                             filename: options.filename || 'unknown',
-                            minified:
-                                Boolean(givenOptions.compress?.javaScript),
-                            presets: givenOptions.compress?.javaScript ?
-                                [[
-                                    babelMinifyPreset, givenOptions.compress
-                                        .javaScript
-                                ]] :
-                                [],
+                            minified: givenOptions.compress?.javaScript,
+                            presets: [],
                             sourceMaps: false,
                             sourceType: 'script'
                         },

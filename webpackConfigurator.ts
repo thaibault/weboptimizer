@@ -1513,7 +1513,8 @@ if (!module.optimizer.minimizer) {
         module.optimizer.minimizer.push(
             new plugins.Terser({
                 extractComments: false,
-                parallel: true
+                parallel: true,
+                ...module.optimizer.terser
             })
         )
 
@@ -1704,7 +1705,6 @@ export let webpackConfiguration: WebpackConfiguration = extend<
                 module.optimizer as unknown as Mapping<unknown>,
                 {
                     exclude: {
-                        babelMinify: true,
                         cssnano: true,
                         data: true,
                         font: true,
