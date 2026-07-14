@@ -593,8 +593,8 @@
                     "__evaluate__": "!configuration.debug"
                   }
                 }
-              },
               }
+            }
           }
         }
       },
@@ -1061,6 +1061,7 @@
           "terser": {
             "terserOptions": {
               "compress": {
+                "#": "To provide a logging output we need to exclude this feature.",
                 "drop_console": {
                   "__evaluate__": "!configuration.debug"
                 },
@@ -1496,14 +1497,16 @@
         },
         "module": {
           "optimizer": {
-            "babelMinify": {
-              "bundle": {
-                "transform": {
-                  "removeConsole": false
+            "terser": {
+              "terserOptions": {
+                "compress": {
+                  "drop_console": {
+                    "__evaluate__": "false"
+                  },
+                  "drop_debugger": {
+                    "__evaluate__": "false"
+                  }
                 }
-              },
-              "module": {
-                "removeConsole": false
               }
             }
           }
