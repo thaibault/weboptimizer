@@ -1523,6 +1523,16 @@
         "targetTechnology": {
           "boilerplate": "node",
           "payload": "node"
+        },
+        "webpack": {
+          "module": {
+            "parser": {
+              "javascript": {
+                "#": "NOTE: Tells webpack to include dynamically-imported modules in the current chunk (returning an already-resolved promise) rather than emitting a separate [id].js. Result: only testBundle.js.",
+                "dynamicImportMode": "eager"
+              }
+            }
+          }
         }
       },
       "test:browser": {
