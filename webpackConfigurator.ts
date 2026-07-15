@@ -1593,6 +1593,12 @@ export let webpackConfiguration: WebpackConfiguration = extend<
         resolve: {
             alias: module.aliases,
             aliasFields: configuration.package.aliasPropertyNames,
+            /*
+                Resolves imports which were rewritten to ".js" (e.g. via
+                "babel-plugin-transform-rewrite-imports") back to their
+                (typescript) sources.
+            */
+            extensionAlias: configuration.extensions.file.alias,
             extensions: configuration.extensions.file.internal,
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,

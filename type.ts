@@ -318,6 +318,7 @@ export interface ResolvedBuildConfigurationItem extends BuildConfigurationItem {
 }
 export interface Extensions {
     file: {
+        alias: Mapping<Array<string>>
         external: Array<string>
         internal: Array<string>
     }

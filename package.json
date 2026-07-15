@@ -612,6 +612,15 @@
       },
       "extensions": {
         "file": {
+          "#": "NOTE: Maps import specifier extensions to resolvable source extensions (webpack's \"resolve.extensionAlias\") since imports rewritten to \".js\" have to be resolved back to their typescript sources.",
+          "alias": {
+            ".js": [
+              ".js",
+              ".ts",
+              ".tsx",
+              ".jsx"
+            ]
+          },
           "external": {
             "__evaluate__": "self.generic.isWeb ? self.extensions.file.internal : ['.compiled.js', '.js', '.json', '.mjs']"
           },
