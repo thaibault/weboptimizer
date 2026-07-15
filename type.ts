@@ -318,6 +318,7 @@ export interface ResolvedBuildConfigurationItem extends BuildConfigurationItem {
 }
 export interface Extensions {
     file: {
+        alias: Mapping<Array<string>>
         external: Array<string>
         internal: Array<string>
     }
@@ -416,29 +417,25 @@ export interface ResolvedConfiguration {
             directoryPaths: Array<string>
             filePaths: Array<string>
         }
-        optimizer: BaseWebpackConfiguration['optimization'] & {
-            babelMinify?: {
-                bundle?: {
-                    plugin?: PlainObject
-                    transform?: PlainObject
+        optimizer:
+            BaseWebpackConfiguration['optimization'] &
+            {
+                cssnano?: PlainObject
+                data: ResourceLoaderConfiguration
+                font: {
+                    eot: ResourceLoaderConfiguration
+                    svg: ResourceLoaderConfiguration
+                    ttf: ResourceLoaderConfiguration
+                    woff: ResourceLoaderConfiguration
                 }
-                module?: PlainObject
+                htmlMinifier?: PlainObject
+                image: {
+                    content: ImageMinimizerOptions<unknown, unknown>
+                    exclude: null | string
+                    loader: Array<string>
+                }
+                terser: Mapping<unknown>
             }
-            cssnano?: PlainObject
-            data: ResourceLoaderConfiguration
-            font: {
-                eot: ResourceLoaderConfiguration
-                svg: ResourceLoaderConfiguration
-                ttf: ResourceLoaderConfiguration
-                woff: ResourceLoaderConfiguration
-            }
-            htmlMinifier?: PlainObject
-            image: {
-                content: ImageMinimizerOptions<unknown, unknown>
-                exclude: null | string
-                loader: Array<string>
-            }
-        }
         preprocessor: {
             cascadingStyleSheet: WebpackLoader & {
                 additional: AdditionalLoader & {plugins: AdditionalLoader}

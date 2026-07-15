@@ -49,7 +49,6 @@ import {
     UTILITY_SCOPE
 } from 'clientnode'
 import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
-import {createRequire} from 'node:module'
 import path, {basename, dirname, join, resolve} from 'path'
 
 import {

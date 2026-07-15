@@ -182,7 +182,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {a$: 'webpack'},
             {},
-            {file: {external: [], internal: []}}
+            {file: {alias: {}, external: [], internal: []}}
         ],
         [
             'webpack',
@@ -193,7 +193,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {a$: 'webpack'},
             {},
-            {file: {external: ['.js'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.js'], internal: ['.js']}},
             './',
             ['./']
         ],
@@ -206,7 +206,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {a$: 'webpack'},
             {},
-            {file: {external: ['.js'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.js'], internal: ['.js']}},
             './',
             ['.git']
         ],
@@ -219,7 +219,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {a$: 'webpack'},
             {},
-            {file: {external: ['.js'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.js'], internal: ['.js']}},
             './',
             ['.git'],
             [],
@@ -237,7 +237,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {},
             {},
-            {file: {external: ['.js'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.js'], internal: ['.js']}},
             './',
             ['.git'],
             ['node_modules'],
@@ -256,7 +256,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {},
             {},
-            {file: {external: ['.js'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.js'], internal: ['.js']}},
             './',
             ['.git'],
             ['node_modules'],
@@ -276,7 +276,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {},
             {},
-            {file: {external: ['.js'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.js'], internal: ['.js']}},
             './',
             ['.git'],
             ['node_modules'],
@@ -296,7 +296,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {},
             {},
-            {file: {external: ['.js'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.js'], internal: ['.js']}},
             './',
             ['.git'],
             ['node_modules'],
@@ -316,7 +316,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {},
             {},
-            {file: {external: ['.js'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.js'], internal: ['.js']}},
             './',
             ['.git'],
             ['node_modules'],
@@ -337,7 +337,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {},
             {},
-            {file: {external: ['.js'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.js'], internal: ['.js']}},
             './',
             ['.git'],
             ['node_modules'],
@@ -358,7 +358,7 @@ describe('helper', (): void => {
             ['node_modules'],
             {},
             {},
-            {file: {external: ['.eot'], internal: ['.js']}},
+            {file: {alias: {}, external: ['.eot'], internal: ['.js']}},
             './',
             ['.git'],
             ['node_modules'],
@@ -512,7 +512,7 @@ describe('helper', (): void => {
             ),
             {},
             {},
-            {file: {external: [], internal: []}},
+            {file: {alias: {}, external: [], internal: []}},
             './',
             '',
             ['.git', 'node_modules']
@@ -533,7 +533,7 @@ describe('helper', (): void => {
             ),
             {},
             {},
-            {file: {external: [], internal: []}},
+            {file: {alias: {}, external: [], internal: []}},
             './',
             '',
             ['.git', 'node_modules']
@@ -546,7 +546,7 @@ describe('helper', (): void => {
             ),
             {},
             {},
-            {file: {external: [], internal: []}},
+            {file: {alias: {}, external: [], internal: []}},
             './',
             '',
             ['.git', 'node_modules']
@@ -563,7 +563,7 @@ describe('helper', (): void => {
             ),
             {},
             {},
-            {file: {external: [], internal: []}},
+            {file: {alias: {}, external: [], internal: []}},
             './',
             '',
             ['.git', 'node_modules']
@@ -584,7 +584,7 @@ describe('helper', (): void => {
             ),
             {},
             {},
-            {file: {external: [], internal: []}},
+            {file: {alias: {}, external: [], internal: []}},
             './',
             '',
             ['.git', 'node_modules']
@@ -661,11 +661,15 @@ describe('helper', (): void => {
         async (modulePath: string) => {
             const filePath: string =
                 resolve(import.meta.dirname, '../package.json')
+            const importedModule: PackageConfiguration & {
+                default?: PackageConfiguration
+            } = await import(filePath) as
+                PackageConfiguration & {default?: PackageConfiguration}
             await expect(getClosestPackageDescriptor(modulePath, filePath))
                 .resolves.toStrictEqual(
                     {
-                        configuration: (await import(filePath)) as
-                            PackageConfiguration,
+                        configuration:
+                            importedModule.default ?? importedModule,
                         filePath
                     }
                 )

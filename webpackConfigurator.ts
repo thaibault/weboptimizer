@@ -1513,7 +1513,8 @@ if (!module.optimizer.minimizer) {
         module.optimizer.minimizer.push(
             new plugins.Terser({
                 extractComments: false,
-                parallel: true
+                parallel: true,
+                ...module.optimizer.terser
             })
         )
 
@@ -1565,7 +1566,26 @@ export let webpackConfiguration: WebpackConfiguration = extend<
             WebpackConfiguration['devServer'],
         experiments: {
             futureDefaults: true,
-            outputModule: true
+            outputModule: true,
+            /*
+                "futureDefaults" would enable webpack's native css support
+                which disables the configured "mini-css-extract-plugin"
+                pipeline (naming outputs "<name>.css.css" instead of
+                "<name>.compiled.css").
+            */
+            css: false,
+            /*
+                "futureDefaults" would enable webpack's native html support
+                which conflicts with the configured ejs / html plugin
+                pipeline.
+            */
+            html: false,
+            /*
+                "futureDefaults" would enable webpack's native type stripping
+                which cannot handle ".tsx" files; typescript sources are
+                transpiled via babel instead.
+            */
+            typescript: false
         },
         // region input
         entry: configuration.injection.entry.normalized,
@@ -1573,6 +1593,12 @@ export let webpackConfiguration: WebpackConfiguration = extend<
         resolve: {
             alias: module.aliases,
             aliasFields: configuration.package.aliasPropertyNames,
+            /*
+                Resolves imports which were rewritten to ".js" (e.g. via
+                "babel-plugin-transform-rewrite-imports") back to their
+                (typescript) sources.
+            */
+            extensionAlias: configuration.extensions.file.alias,
             extensions: configuration.extensions.file.internal,
             mainFields: configuration.package.main.propertyNames,
             mainFiles: configuration.package.main.fileNames,
@@ -1704,7 +1730,6 @@ export let webpackConfiguration: WebpackConfiguration = extend<
                 module.optimizer as unknown as Mapping<unknown>,
                 {
                     exclude: {
-                        babelMinify: true,
                         cssnano: true,
                         data: true,
                         font: true,

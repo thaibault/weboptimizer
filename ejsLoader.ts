@@ -28,7 +28,6 @@ import type {FileResult} from '@babel/core'
 import type {Extensions, Replacements, ResolvedConfiguration} from './type'
 
 import {transform as babelTransform} from '@babel/core'
-import babelMinifyPreset from 'babel-preset-minify'
 import {
     convertSubstringInPlainObject,
     copy,
@@ -66,7 +65,7 @@ export type LoaderConfiguration =
         compileSteps: number
         compress: {
             html: Mapping<unknown>
-            javaScript: Mapping<unknown>
+            javaScript: boolean
         }
         context: string
         debug: boolean
@@ -107,12 +106,13 @@ export const loader = async function(
                     compileSteps: 2,
                     compress: {
                         html: {},
-                        javaScript: {}
+                        javaScript: true
                     },
                     context: './',
                     debug: false,
                     extensions: {
                         file: {
+                            alias: {'.js': ['.js', '.ts', '.tsx', '.jsx']},
                             external: [],
                             internal: [
                                 '.js', '.json',
@@ -404,17 +404,9 @@ export const loader = async function(
                             ast: false,
                             babelrc: false,
                             comments: !givenOptions.compress?.javaScript,
-                            compact:
-                                Boolean(givenOptions.compress?.javaScript),
                             filename: options.filename || 'unknown',
-                            minified:
-                                Boolean(givenOptions.compress?.javaScript),
-                            presets: givenOptions.compress?.javaScript ?
-                                [[
-                                    babelMinifyPreset, givenOptions.compress
-                                        .javaScript
-                                ]] :
-                                [],
+                            minified: givenOptions.compress?.javaScript,
+                            presets: [],
                             sourceMaps: false,
                             sourceType: 'script'
                         },

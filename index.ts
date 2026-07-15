@@ -747,8 +747,12 @@ const main = async (
     } catch (error) {
         if (configuration.debug)
             throw error
-        else
+        else {
             log.error(error)
+
+            // NOTE: Forward nested return codes.
+            process.exitCode = (error as {returnCode?: number}).returnCode ?? 1
+        }
     }
 
     return clear

@@ -146,12 +146,13 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
             await ejsLoader.bind(
                 {
                     resourcePath: filePath,
-                    async: () => (error: Error | null, result: null | string) => {
-                        if (error)
-                            throw error
-                        else
-                            evaluatedContent = result as string
-                    }
+                    async: () =>
+                        (error: Error | null, result: null | string) => {
+                            if (error)
+                                throw error
+                            else
+                                evaluatedContent = result as string
+                        }
                 } as
                     unknown as
                     LoaderContext<LoaderConfiguration>
