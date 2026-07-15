@@ -751,7 +751,7 @@ const main = async (
             log.error(error)
 
             // NOTE: Forward nested return codes.
-            process.exitCode = (error as ProcessError).returnCode ?? 1
+            process.exitCode = (error as {returnCode?: number}).returnCode ?? 1
         }
     }
 

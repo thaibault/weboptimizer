@@ -112,6 +112,7 @@ export const loader = async function(
                     debug: false,
                     extensions: {
                         file: {
+                            alias: {'.js': ['.js', '.ts', '.tsx', '.jsx']},
                             external: [],
                             internal: [
                                 '.js', '.json',

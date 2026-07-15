@@ -253,6 +253,7 @@ export const determineExternalRequest = (
     aliases: Mapping = {},
     moduleReplacements: Replacements = {},
     extensions: Extensions = {file: {
+        alias: {'.js': ['.js', '.ts', '.tsx', '.jsx']},
         external: ['.compiled.js', '.js', '.json'],
         internal: KNOWN_FILE_EXTENSIONS.map((suffix: string): string =>
             `.${suffix}`
@@ -718,6 +719,7 @@ export const resolveAutoInjection = <T extends GivenInjectionConfiguration>(
     aliases: Mapping = {},
     moduleReplacements: Replacements = {},
     extensions: Extensions = {file: {
+        alias: {'.js': ['.js', '.ts', '.tsx', '.jsx']},
         external: ['compiled.js', '.js', '.json'],
         internal: KNOWN_FILE_EXTENSIONS.map((suffix: string): string =>
             `.${suffix}`
