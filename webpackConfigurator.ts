@@ -1568,6 +1568,19 @@ export let webpackConfiguration: WebpackConfiguration = extend<
             futureDefaults: true,
             outputModule: true,
             /*
+                "futureDefaults" would enable webpack's native css support
+                which disables the configured "mini-css-extract-plugin"
+                pipeline (naming outputs "<name>.css.css" instead of
+                "<name>.compiled.css").
+            */
+            css: false,
+            /*
+                "futureDefaults" would enable webpack's native html support
+                which conflicts with the configured ejs / html plugin
+                pipeline.
+            */
+            html: false,
+            /*
                 "futureDefaults" would enable webpack's native type stripping
                 which cannot handle ".tsx" files; typescript sources are
                 transpiled via babel instead.
