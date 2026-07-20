@@ -419,7 +419,7 @@ export const load = async (
             nowUTCTimestamp: getUTCTimestamp(now)
         }
     }
-    const resolvedConfiguration: ResolvedConfiguration =
+    const resolvedConfiguration =
         await evaluateAsyncDynamicData<ResolvedConfiguration>(
             evaluateDynamicData<ResolvedConfiguration>(
                 configuration as
