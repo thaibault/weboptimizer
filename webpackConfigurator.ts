@@ -1734,7 +1734,8 @@ export let webpackConfiguration: WebpackConfiguration = extend<
                         data: true,
                         font: true,
                         htmlMinifier: true,
-                        image: true
+                        image: true,
+                        terser: true
                     }
                 }
             )
