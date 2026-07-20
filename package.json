@@ -1563,8 +1563,10 @@
         },
         "watchOptions": {
           "ignored": [
+            "./.yarn",
             "./*.js",
             "./end-to-end-tests",
+            "**/.*",
             "**/deprecated",
             "**/exclude",
             "**/node_modules",
