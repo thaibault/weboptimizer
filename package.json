@@ -1201,15 +1201,9 @@
                 "__evaluate__": "!self.debug"
               },
               "plugins": [
-                [
-                  "@babel/plugin-transform-class-properties"
-                ],
-                [
-                  "@babel/plugin-proposal-decorators",
-                  {
-                    "version": "legacy"
-                  }
-                ],
+                "#: NOTE: We need to place the decorators in front of all other class property transformations.",
+                ["@babel/plugin-proposal-decorators", {"version": "legacy"}],
+                ["@babel/plugin-transform-class-properties"],
                 [
                   "babel-plugin-transform-rewrite-imports",
                   {
@@ -1224,12 +1218,7 @@
                     ]
                   }
                 ],
-                [
-                  "polyfill-corejs3",
-                  {
-                    "method": "usage-global"
-                  }
-                ]
+                ["polyfill-corejs3", {"method": "usage-global"}]
               ],
               "presets": {
                 "#": "NOTE: We disable module export/import transformation to allow tree shaking by the final (minimizer).",
