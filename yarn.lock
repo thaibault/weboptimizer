@@ -7640,9 +7640,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1455":
-  version: 4.0.1455
-  resolution: "clientnode@npm:4.0.1455"
+"clientnode@npm:4.0.1456":
+  version: 4.0.1456
+  resolution: "clientnode@npm:4.0.1456"
   peerDependencies:
     "@types/prop-types": "*"
     node-fetch: "*"
@@ -7654,7 +7654,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/be6ab90f502df5353b6f60c182196e624bad05c3adba99824d506454b4b41ff1101800b180e54d8aa6bc4cf4b59b0227c28553dfc858f38352757ca8565b9f38
+  checksum: 10c0/32d42556ae35d676d7e47f1e20a9c08423adb1cdcca6f55904a06c879e0355763d7eba679b8696850b1b10b5798a6f7c1013f8dc410d4a29a77db018b271c728
   languageName: node
   linkType: hard
 
@@ -15071,7 +15071,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.5.16, postcss@npm:^8.5.20":
+"postcss@npm:^8.5.16":
   version: 8.5.20
   resolution: "postcss@npm:8.5.20"
   dependencies:
@@ -15079,6 +15079,17 @@ __metadata:
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.1"
   checksum: 10c0/9c7a0e32c77ac54c5613f974e6ccc97d4a70fdb3bf242617f3fb4d652e5c62a37c86c589e6e7a2d1e7120f80bc169cdf673482b88bd75020d2a44899fa569c13
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.5.21":
+  version: 8.5.21
+  resolution: "postcss@npm:8.5.21"
+  dependencies:
+    nanoid: "npm:^3.3.16"
+    picocolors: "npm:^1.1.1"
+    source-map-js: "npm:^1.2.1"
+  checksum: 10c0/89bf8860bba456eafcbc6c8addc3f5d3010529069ec67adb1a26b79b098d1b2afa49cc1abf80c5b01867980db6eae0c02fd0350e17a84c5f12d07aaec704aa50
   languageName: node
   linkType: hard
 
@@ -18329,7 +18340,7 @@ __metadata:
     babel-loader: "npm:^10.1.1"
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
-    clientnode: "npm:4.0.1455"
+    clientnode: "npm:4.0.1456"
     core-js: "npm:^3.49.0"
     css-loader: "npm:^7.1.4"
     cssnano: "npm:^8.0.2"
@@ -18354,7 +18365,7 @@ __metadata:
     mini-css-extract-plugin: "npm:^2.10.2"
     mkdirp: "npm:^3.0.1"
     node-fetch: "npm:^3.3.2"
-    postcss: "npm:^8.5.20"
+    postcss: "npm:^8.5.21"
     postcss-fontpath: "npm:^1.0.0"
     postcss-import: "npm:^16.1.1"
     postcss-loader: "npm:^8.2.1"
