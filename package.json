@@ -1067,6 +1067,10 @@
             },
             "loader": []
           },
+          "runtimeChunk": {
+            "#": "We need to include a single shared runtime chunk into the bundle to avoid duplication of runtime code.",
+            "__evaluate__": "self.givenCommandLineArguments[2] === 'serve' ? 'single' : false"
+          },
           "terser": {
             "terserOptions": {
               "compress": {
@@ -1507,6 +1511,10 @@
         },
         "module": {
           "optimizer": {
+            "runtimeChunk": {
+              "#": "We need to include a single shared runtime chunk into the bundle to avoid duplication of runtime code.",
+              "__evaluate__": "self.givenCommandLineArguments[2] === 'serve' ? 'single' : false"
+            },
             "terser": {
               "terserOptions": {
                 "compress": {
