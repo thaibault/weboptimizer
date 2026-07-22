@@ -61,11 +61,8 @@ test.only('ejsLoader', async (): Promise<void> => {
     await ejsLoader.call(
         complexContext,
         '<a></a>' +
-        `<%- _.include('<a>test</a>?{options: {isString: true}}') %>`
+        `<%- await _.include('<a>test</a>?{options: {isString: true}}') %>`
     )
-
-    // TODO
-    return
 
     expect(lastResult).toStrictEqual('<a></a><a>test</a>')
 
