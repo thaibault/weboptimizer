@@ -67,7 +67,7 @@ import {
     evaluate,
     escapeRegularExpressions,
     extend,
-    importsPromise,
+    importFilesystemAPI,
     isFileSync,
     isObject,
     isPlainObject,
@@ -106,7 +106,7 @@ import InPlaceAssetsIntoHTML from './plugins/InPlaceAssetsIntoHTML'
 import HTMLTransformation from './plugins/HTMLTransformation'
 
 // Wait until optional filesystem modules have been loaded.
-await importsPromise
+await importFilesystemAPI()
 
 /// region optional imports
 const postcssCSSnano = (

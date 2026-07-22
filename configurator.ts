@@ -36,7 +36,7 @@ import {
     evaluateDynamicData,
     extend,
     getUTCTimestamp,
-    importsPromise,
+    importFilesystemAPI,
     isFileSync,
     isObject,
     isPlainObject,
@@ -70,7 +70,7 @@ export let loadedConfiguration: null | ResolvedConfiguration = null
 export const log = new Logger({name: 'weboptimizer.configurator'})
 
 // Wait until optional filesystem modules have been loaded.
-await importsPromise
+await importFilesystemAPI()
 
 /**
  * Main entry point to determine current configuration.
