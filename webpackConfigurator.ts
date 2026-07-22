@@ -1566,7 +1566,8 @@ export let webpackConfiguration: WebpackConfiguration = extend<
             WebpackConfiguration['devServer'],
         experiments: {
             futureDefaults: true,
-            outputModule: true,
+            outputModule:
+                configuration.givenCommandLineArguments[2] !== 'serve',
             /*
                 "futureDefaults" would enable webpack's native css support
                 which disables the configured "mini-css-extract-plugin"
