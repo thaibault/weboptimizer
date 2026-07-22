@@ -54,7 +54,7 @@ import {
     evaluate,
     getProcessCloseHandler,
     handleChildProcess,
-    importsPromise,
+    importFilesystemAPI,
     isDirectory,
     isDirectorySync,
     isFile,
@@ -100,7 +100,7 @@ Logger.configureAllInstances({
 process.env.UV_THREADPOOL_SIZE = '128'
 
 // Wait until optional filesystem modules have been loaded.
-await importsPromise
+await importFilesystemAPI()
 
 /**
  * Main entry point.
