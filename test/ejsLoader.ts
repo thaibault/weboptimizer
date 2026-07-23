@@ -18,9 +18,10 @@ import type {LoaderContext} from 'webpack'
 
 import type {LoaderConfiguration} from '../ejsLoader'
 
-import {expect, test} from '@jest/globals'
+import {beforeAll, expect, test} from '@jest/globals'
 import {copy, extend, NOOP} from 'clientnode'
 
+import getConfiguration from '../configurator'
 import ejsLoader from '../ejsLoader'
 // endregion
 // region mockup
@@ -35,8 +36,13 @@ const context: LoaderContext<LoaderConfiguration> = {
     query: ''
 } as unknown as LoaderContext<LoaderConfiguration>
 // endregion
+/*
+    NOTE: We need to pre-cache the configuration to avoid exceeding timeout in
+    following tests.
+*/
+beforeAll(() => getConfiguration())
 // region tests
-test.only('ejsLoader', async (): Promise<void> => {
+test('ejsLoader', async (): Promise<void> => {
     await ejsLoader.call(context, '<a></a>')
     expect(lastResult).toStrictEqual('<a></a>')
 
@@ -50,7 +56,8 @@ test.only('ejsLoader', async (): Promise<void> => {
             },
             query: {
                 compiler: {strict: true},
-                locals: {test: 'hans'}
+                locals: {test: 'hans'},
+                pathsToIgnore: ['node_modules']
             }
         }
     )

@@ -36,6 +36,7 @@ import {
     copy,
     escapeRegularExpressions,
     extend,
+    importFilesystemAPI,
     isAnyMatching,
     isDirectorySync,
     isFileSync,
@@ -49,6 +50,7 @@ import {
     basename, dirname, extname, join, normalize, resolve, sep, relative
 } from 'path'
 // endregion
+await importFilesystemAPI()
 // region constants
 export const KNOWN_FILE_EXTENSIONS: Array<string> = [
     'js', 'ts',
@@ -65,6 +67,8 @@ export const KNOWN_FILE_EXTENSIONS: Array<string> = [
     'ttf',
     'woff', '.woff2'
 ]
+export const KNOWN_PATHS_TO_IGNORE: Array<string> =
+    ['.cache', '.claude', '.git', '.github', '.idea', '.yarn']
 export const log = new Logger({name: 'weboptimizer.helper'})
 // endregion
 // region functions
@@ -88,7 +92,7 @@ export const isFilePathInLocation = (
 // endregion
 // region string
 /**
- * Strips loader informations form given module request including loader prefix
+ * Strips loader information form given module request including loader prefix
  * and query parameter.
  * @param moduleID - Module request to strip.
  * @returns Given module id stripped.
@@ -124,7 +128,7 @@ export const normalizePaths = (paths: Array<string>): Array<string> =>
 // region file handler
 /**
  * Applies file path/name placeholder replacements with given bundle associated
- * informations.
+ * information.
  * @param template - File path to process placeholder in.
  * @param scope - Scope to use for processing.
  * @returns Processed file path.
@@ -260,7 +264,7 @@ export const determineExternalRequest = (
         )
     }},
     referencePath = './',
-    pathsToIgnore: Array<string> = ['.git'],
+    pathsToIgnore: Array<string> = KNOWN_PATHS_TO_IGNORE,
     relativeModuleLocations: Array<string> = ['node_modules'],
     packageEntryFileNames: Array<string> = ['index', 'main'],
     packageMainPropertyNames: Array<string> = ['main', 'module'],
@@ -354,7 +358,7 @@ export const determineExternalRequest = (
     /*
         NOTE: We mark dependencies as external if they do not contain a loader
         in their request and aren't part of the current main package or have a
-        file extension other than javaScript aware.
+        file extension other than JavaScript aware.
     */
     if (
         !inPlaceNormalLibrary &&
@@ -390,8 +394,8 @@ export const determineExternalRequest = (
 }
 /**
  * Determines asset type of given file.
- * @param filePath - Path to file to analyse.
- * @param buildConfiguration - Meta informations for available asset types.
+ * @param filePath - Path to file to analyze.
+ * @param buildConfiguration - Meta information for available asset types.
  * @param paths - List of paths to search if given path doesn't reference a
  * file directly.
  * @returns Determined file type or "null" of given file couldn't be
@@ -428,10 +432,10 @@ export const determineAssetType = (
 /**
  * Adds a property with a stored array of all matching file paths, which
  * matches each build configuration in given entry path and converts given
- * build configuration into a sorted array were javaScript files takes
+ * build configuration into a sorted array were JavaScript files takes
  * precedence.
  * @param configuration - Given build configurations.
- * @param entryPath - Path to analyse nested structure.
+ * @param entryPath - Path to analyze nested structure.
  * @param pathsToIgnore - Paths which marks location to ignore.
  * @param mainFileBasenames - File basenames to sort into the front.
  * @returns Converted build configuration.
@@ -439,7 +443,7 @@ export const determineAssetType = (
 export const resolveBuildConfigurationFilePaths = (
     configuration: BuildConfiguration,
     entryPath = './',
-    pathsToIgnore: Array<string> = ['.git'],
+    pathsToIgnore: Array<string> = KNOWN_PATHS_TO_IGNORE,
     mainFileBasenames: Array<string> = ['index', 'main']
 ): ResolvedBuildConfiguration => {
     const buildConfiguration: ResolvedBuildConfiguration = []
@@ -540,7 +544,7 @@ export const determineModuleLocations = (
     },
     context = './',
     referencePath = '',
-    pathsToIgnore: Array<string> = ['.git'],
+    pathsToIgnore: Array<string> = KNOWN_PATHS_TO_IGNORE,
     relativeModuleLocations: Array<string> = ['node_modules'],
     packageEntryFileNames: Array<string> = [
         '__package__', '', 'index', 'main'
@@ -609,7 +613,7 @@ export const resolveModulesInFolders = (
     moduleReplacements: Replacements = {},
     context = './',
     referencePath = '',
-    pathsToIgnore: Array<string> = ['.git']
+    pathsToIgnore: Array<string> = KNOWN_PATHS_TO_IGNORE
 ): NormalizedGivenInjection => {
     if (referencePath.startsWith('/'))
         referencePath = relative(context, referencePath)
@@ -727,7 +731,7 @@ export const resolveAutoInjection = <T extends GivenInjectionConfiguration>(
     }},
     context = './',
     referencePath = '',
-    pathsToIgnore: Array<string> = ['.git']
+    pathsToIgnore: Array<string> = KNOWN_PATHS_TO_IGNORE
 ): T => {
     const injection: T = copy(givenInjection)
     const moduleFilePathsToExclude: Array<string> = determineModuleLocations(
@@ -755,8 +759,8 @@ export const resolveAutoInjection = <T extends GivenInjectionConfiguration>(
                     for (const subChunk of Object.values(modules))
                         chunk.push(subChunk)
                     /*
-                        Reverse array to let javaScript and main files be
-                        the last ones to export them rather.
+                        Reverse array to let JavaScript and main files be the
+                        last ones to export them rather.
                     */
                     chunk.reverse()
                 }
@@ -950,7 +954,7 @@ export const determineModuleFilePath = (
     },
     context = './',
     referencePath = '',
-    pathsToIgnore: Array<string> = ['.git'],
+    pathsToIgnore: Array<string> = KNOWN_PATHS_TO_IGNORE,
     relativeModuleLocations: Array<string> = ['node_modules'],
     packageEntryFileNames: Array<string> = ['index'],
     packageMainPropertyNames: Array<string> = ['main'],
@@ -1111,7 +1115,7 @@ export const findPackageDescriptorFilePath = (
  * @param modulePath - Module path to take as reference location (leaf in
  * tree).
  * @param fileName - Package configuration file name.
- * @returns A object containing found parsed configuration an their
+ * @returns A object containing found parsed configuration and their
  * corresponding file path.
  */
 export const getClosestPackageDescriptor = async (
@@ -1123,7 +1127,7 @@ export const getClosestPackageDescriptor = async (
         return null
 
     /*
-        NOTE: In native ecmascript module contexts json imports are wrapped
+        NOTE: In native ecma script module contexts JSON imports are wrapped
         into a module namespace object providing its content as "default"
         export whereas commonjs interoperability provides it directly.
     */
