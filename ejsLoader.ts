@@ -75,6 +75,7 @@ export type LoaderConfiguration =
             aliases: Mapping
             replacements: Replacements
         }
+        pathsToIgnore: Array<string>
     }
 // endregion
 export const log = new Logger({name: 'weboptimizer.ejs-loader'})
@@ -126,7 +127,8 @@ export const loader = async function(
                     module: {
                         aliases: {},
                         replacements: {}
-                    }
+                    },
+                    pathsToIgnore: []
                 },
                 this.getOptions ?
                     this.getOptions() :
@@ -197,7 +199,9 @@ export const loader = async function(
                 {file: givenOptions.extensions?.file.internal || []},
                 givenOptions.context,
                 configuration.path.source.asset.base,
-                configuration.path.ignore,
+                configuration.path.ignore.concat(
+                    givenOptions.pathsToIgnore ?? []
+                ),
                 configuration.module.directoryNames,
                 configuration.package.main.fileNames,
                 configuration.package.main.propertyNames,
@@ -266,7 +270,7 @@ export const loader = async function(
         const isString = Boolean(options.isString)
         delete options.isString
 
-        // NOTE: Needed to have standalone useable js code afterwards.
+        // NOTE: Needed to have standalone usable code afterward.
         if (compileSteps % 2)
             options.client = true
 
