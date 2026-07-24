@@ -498,7 +498,8 @@ export interface WebpackConfiguration extends BaseWebpackConfiguration {
     replaceWebOptimizer: WebpackConfiguration
 }
 
-export type RuleSet = Array<WebpackRuleSetUseItem>
+export type RuleSetItem = WebpackRuleSetUseItem
+export type RuleSet = Array<RuleSetItem>
 export type RuleSetRule = WebpackRuleSetRule & {use: RuleSet}
 export interface GenericLoader {
     ejs: RuleSetRule

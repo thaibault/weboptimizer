@@ -52,6 +52,7 @@ import type {
     RedundantRequest,
     ResolvedConfiguration,
     RuleSet,
+    RuleSetItem,
     WebpackConfiguration,
     WebpackExtendedResolveData,
     WebpackLoader,
@@ -830,7 +831,7 @@ const scope = {
     loader
 }
 
-const evaluateAndThrow = <T = unknown>(
+const evaluateOrThrowOnError = <T = unknown>(
     object: unknown, givenOptions: {filePath?: string; type?: string} = {}
 ): T => {
     const options = {filePath: configuration.path.context, ...givenOptions}
@@ -851,18 +852,21 @@ const evaluateAndThrow = <T = unknown>(
     return object as T
 }
 const createEvaluateMapper = <T = unknown>(type: string) =>
-    (value: unknown): T => evaluateAndThrow<T>(value, {type})
+    (value: unknown): T => evaluateOrThrowOnError<T>(value, {type})
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration: AdditionalLoaderConfiguration
 ): WebpackLoaderConfiguration => ({
-    exclude: (filePath: string): boolean =>
-        evaluateAndThrow<boolean>(loaderConfiguration.exclude, {filePath}),
+    exclude: (filePath: string): boolean => evaluateOrThrowOnError<boolean>(
+        loaderConfiguration.exclude, {filePath}
+    ),
     include:
         loaderConfiguration.include &&
-        evaluateAndThrow<WebpackLoaderIndicator>(loaderConfiguration.include) ||
+        evaluateOrThrowOnError<WebpackLoaderIndicator>(
+            loaderConfiguration.include
+        ) ||
         configuration.path.source.base,
-    test: new RegExp(evaluateAndThrow(loaderConfiguration.test)),
-    use: evaluateAndThrow<Array<WebpackLoader> | WebpackLoader>(
+    test: new RegExp(evaluateOrThrowOnError(loaderConfiguration.test)),
+    use: evaluateOrThrowOnError<Array<WebpackLoader> | WebpackLoader>(
         loaderConfiguration.use
     )
 })
@@ -876,8 +880,10 @@ const postCSSResolver = (name: string, _context: string) => {
             return target
     return name
 }
-const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
-    .map(createEvaluateMapper('css'))
+const cssUse: RuleSet = (await Promise.all(
+    module.preprocessor.cascadingStyleSheet.additional.pre
+        .map(createEvaluateMapper('css'))
+))
     .concat(
         {loader: module.style.loader, options: module.style.options || {}},
         {
@@ -905,11 +911,14 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                         }
                                     ) as unknown as PostcssTransformer :
                                     [],
-                                module.preprocessor
-                                    .cascadingStyleSheet.additional.plugins.pre
-                                    .map(createEvaluateMapper(
-                                        'css.postcss'
-                                    )),
+                                (await Promise.all(
+                                    module.preprocessor
+                                        .cascadingStyleSheet.additional.plugins
+                                        .pre
+                                        .map(createEvaluateMapper<
+                                            Promise<PostcssTransformer>
+                                        >('css.postcss'))
+                                )),
                                 /*
                                     NOTE: Checking path doesn't work if fonts
                                     are referenced in libraries provided in
@@ -991,11 +1000,13 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                                         ...configuration.imageSprite
                                     }) :
                                     [],
-                                module.preprocessor
-                                    .cascadingStyleSheet.additional.plugins
-                                    .post.map(createEvaluateMapper(
-                                        'css.postcss'
-                                    )),
+                                (await Promise.all(
+                                    module.preprocessor
+                                        .cascadingStyleSheet.additional.plugins
+                                        .post.map(createEvaluateMapper<
+                                            Promise<PostcssTransformer>
+                                        >('css.postcss'))
+                                )),
                                 (module.optimizer.cssnano && postcssCSSnano) ?
                                     postcssCSSnano(
                                         module.optimizer.cssnano
@@ -1007,8 +1018,10 @@ const cssUse: RuleSet = module.preprocessor.cascadingStyleSheet.additional.pre
                     module.preprocessor.cascadingStyleSheet.options || {}
                 )} :
             [],
-        module.preprocessor.cascadingStyleSheet.additional.post
-            .map(createEvaluateMapper('css'))
+        (await Promise.all(
+            module.preprocessor.cascadingStyleSheet.additional.post
+                .map(createEvaluateMapper('css'))
+        ))
     ) as RuleSet
 
 const genericLoader: GenericLoader = {
@@ -1025,13 +1038,15 @@ const genericLoader: GenericLoader = {
             ).includes(filePath) ||
             (module.preprocessor.ejs.exclude === null) ?
                 false :
-                evaluateAndThrow<boolean>(
+                evaluateOrThrowOnError<boolean>(
                     module.preprocessor.ejs.exclude, {filePath}
                 ),
         include: getIncludingPaths(configuration.path.source.asset.template),
         test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
-        use: module.preprocessor.ejs.additional.pre
-            .map(createEvaluateMapper('ejs'))
+        use: (await Promise.all(
+            module.preprocessor.ejs.additional.pre
+                .map(createEvaluateMapper('ejs'))
+        ))
             .concat(
                 {
                     loader: module.preprocessor.ejs.loader,
@@ -1041,21 +1056,23 @@ const genericLoader: GenericLoader = {
                         {compress: {html: false}}
                     )
                 },
-                module.preprocessor.ejs.additional.post.map(
-                    createEvaluateMapper('ejs')
-                )
+                (await Promise.all(
+                    module.preprocessor.ejs.additional.post.map(
+                        createEvaluateMapper('ejs')
+                    )
+                ))
             ) as RuleSet
     },
     // endregion
     // region script
     script: {
         exclude: (filePath: string): boolean =>
-            evaluateAndThrow<boolean>(
+            evaluateOrThrowOnError<boolean>(
                 module.preprocessor.javaScript.exclude,
                 {filePath, type: 'script'}
             ),
         include: (filePath: string): boolean => {
-            const result: unknown = evaluateAndThrow(
+            const result: unknown = evaluateOrThrowOnError(
                 module.preprocessor.javaScript.include,
                 {filePath, type: 'script'}
             )
@@ -1074,15 +1091,19 @@ const genericLoader: GenericLoader = {
         test: new RegExp(
             module.preprocessor.javaScript.regularExpression, 'i'
         ),
-        use: module.preprocessor.javaScript.additional.pre
-            .map(createEvaluateMapper('script'))
+        use: (await Promise.all(
+            module.preprocessor.javaScript.additional.pre
+                .map(createEvaluateMapper('script'))
+        ))
             .concat(
                 {
                     loader: module.preprocessor.javaScript.loader,
                     options: module.preprocessor.javaScript.options || {}
                 },
-                module.preprocessor.javaScript.additional.post
-                    .map(createEvaluateMapper('script'))
+                (await Promise.all(
+                    module.preprocessor.javaScript.additional.post
+                        .map(createEvaluateMapper('script'))
+                ))
             ) as RuleSet
     },
     // endregion
@@ -1110,19 +1131,23 @@ const genericLoader: GenericLoader = {
                 ).includes(filePath) ||
                 ((module.preprocessor.html.exclude === null) ?
                     false :
-                    evaluateAndThrow<boolean>(
+                    evaluateOrThrowOnError<boolean>(
                         module.preprocessor.html.exclude,
                         {filePath, type: 'html.ejs'}
                     )
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
-            use: module.preprocessor.html.additional.pre
-                .map(createEvaluateMapper('html.ejs'))
+            use: (await Promise.all(
+                module.preprocessor.html.additional.pre
+                    .map(createEvaluateMapper<Promise<RuleSetItem>>(
+                        'html.ejs'
+                    ))
+            ))
                 .concat(
                     /*
                         We might need to evaluate ejs before we are able to
-                        parse html beforhand. If not we parse it as html
+                        parse html beforehand. If not we parse it as html
                         directly.
                     */
                     (
@@ -1145,9 +1170,13 @@ const genericLoader: GenericLoader = {
                         loader: module.preprocessor.html.loader,
                         options: module.preprocessor.html.options || {}
                     },
-                    module.preprocessor.html.additional.post
-                        .map(createEvaluateMapper('html.ejs'))
-                ) as RuleSet
+                    (await Promise.all(
+                        module.preprocessor.html.additional.post
+                            .map(createEvaluateMapper<Promise<RuleSetItem>>(
+                                'html.ejs'
+                            ))
+                    ))
+                )
         },
         html: {
             exclude: (filePath: string): boolean =>
@@ -1161,14 +1190,16 @@ const genericLoader: GenericLoader = {
                 (
                     (module.html.exclude === null) ?
                         true :
-                        evaluateAndThrow<boolean>(module.html.exclude,
+                        evaluateOrThrowOnError<boolean>(module.html.exclude,
                             {filePath, type: 'html'}
                         )
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
-            use: module.html.additional.pre
-                .map(createEvaluateMapper('html'))
+            use: (await Promise.all(
+                module.html.additional.pre
+                    .map(createEvaluateMapper('html'))
+            ))
                 .concat(
                     {
                         loader:
@@ -1187,9 +1218,11 @@ const genericLoader: GenericLoader = {
                         loader: module.html.loader,
                         options: module.html.options || {}
                     },
-                    module.html.additional.post.map(
-                        createEvaluateMapper('html')
-                    )
+                    (await Promise.all(
+                        module.html.additional.post.map(
+                            createEvaluateMapper('html')
+                        )
+                    ))
                 ) as RuleSet
         }
     },
@@ -1200,12 +1233,12 @@ const genericLoader: GenericLoader = {
         exclude: (filePath: string): boolean =>
             (module.cascadingStyleSheet.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                evaluateAndThrow<boolean>(
+                evaluateOrThrowOnError<boolean>(
                     module.cascadingStyleSheet.exclude,
                     {filePath, type: 'style'}
                 ),
         include: (filePath: string): boolean => {
-            const result: unknown = evaluateAndThrow(
+            const result: unknown = evaluateOrThrowOnError(
                 module.cascadingStyleSheet.include, {filePath, type: 'style'}
             )
             if ([null, undefined].includes(result as null)) {
@@ -1231,7 +1264,7 @@ const genericLoader: GenericLoader = {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.eot.exclude === null) ?
                     false :
-                    evaluateAndThrow<boolean>(
+                    evaluateOrThrowOnError<boolean>(
                         module.optimizer.font.eot.exclude,
                         {filePath, type: 'font.eot'}
                     ),
@@ -1254,15 +1287,17 @@ const genericLoader: GenericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            use: module.optimizer.font.eot.loader.map(
-                createEvaluateMapper('font.eot')
-            )
+            use: (await Promise.all(
+                module.optimizer.font.eot.loader.map(
+                    createEvaluateMapper<Promise<RuleSetItem>>('font.eot')
+                )
+            ))
         },
         svg: {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.svg.exclude === null) ?
                     false :
-                    evaluateAndThrow<boolean>(
+                    evaluateOrThrowOnError<boolean>(
                         module.optimizer.font.svg.exclude,
                         {filePath, type: 'svg'}
                     ),
@@ -1287,15 +1322,17 @@ const genericLoader: GenericLoader = {
             },
             test: /\.svg(?: \?.*)?$/i,
             type: 'asset/resource',
-            use: module.optimizer.font.svg.loader.map(
-                createEvaluateMapper('font.svg')
-            )
+            use: (await Promise.all(
+                module.optimizer.font.svg.loader.map(
+                    createEvaluateMapper<Promise<RuleSetItem>>('font.svg')
+                )
+            ))
         },
         ttf: {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.ttf.exclude === null) ?
                     false :
-                    evaluateAndThrow<boolean>(
+                    evaluateOrThrowOnError<boolean>(
                         module.optimizer.font.ttf.exclude,
                         {filePath, type: 'ttf'}
                     ),
@@ -1319,15 +1356,17 @@ const genericLoader: GenericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            use: module.optimizer.font.ttf.loader.map(createEvaluateMapper(
-                'font.ttf'
+            use: (await Promise.all(
+                module.optimizer.font.ttf.loader.map(
+                    createEvaluateMapper<Promise<RuleSetItem>>('font.ttf')
+                )
             ))
         },
         woff: {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.woff.exclude === null) ?
                     false :
-                    evaluateAndThrow<boolean>(
+                    evaluateOrThrowOnError<boolean>(
                         module.optimizer.font.woff.exclude,
                         {filePath, type: 'woff'}
                     ),
@@ -1350,8 +1389,10 @@ const genericLoader: GenericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            use: module.optimizer.font.woff.loader.map(createEvaluateMapper(
-                'font.woff'
+            use: (await Promise.all(
+                module.optimizer.font.woff.loader.map(
+                    createEvaluateMapper<Promise<RuleSetItem>>('font.woff')
+                )
             ))
         }
     },
@@ -1361,7 +1402,7 @@ const genericLoader: GenericLoader = {
         exclude: (filePath: string): boolean =>
             (module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                evaluateAndThrow<boolean>(
+                evaluateOrThrowOnError<boolean>(
                     module.optimizer.image.exclude, {filePath, type: 'image'}
                 ),
         generator: {
@@ -1385,9 +1426,9 @@ const genericLoader: GenericLoader = {
                 maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
             }
         },
-        use: module.optimizer.image.loader.map(createEvaluateMapper(
-            'image'
-        ))
+        use: (await Promise.all(module.optimizer.image.loader.map(
+            createEvaluateMapper<Promise<RuleSetItem>>('image')
+        )))
     },
     // endregion
     // region data
@@ -1402,7 +1443,7 @@ const genericLoader: GenericLoader = {
             (
                 (module.optimizer.data.exclude === null) ?
                     isFilePathInDependencies(filePath) :
-                    evaluateAndThrow<boolean>(
+                    evaluateOrThrowOnError<boolean>(
                         module.optimizer.data.exclude, {filePath, type: 'data'}
                     )
             )
@@ -1425,9 +1466,9 @@ const genericLoader: GenericLoader = {
                 maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
             }
         },
-        use: module.optimizer.data.loader.map(createEvaluateMapper(
-            'data'
-        ))
+        use: (await Promise.all(module.optimizer.data.loader.map(
+            createEvaluateMapper<Promise<RuleSetItem>>('data')
+        )))
     }
     // endregion
 }
