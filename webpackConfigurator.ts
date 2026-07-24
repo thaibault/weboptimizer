@@ -431,7 +431,13 @@ if (configuration.injection.external.modules === '__implicit__')
         {context, request},
         callback: (
             error?: Error,
-            result?: Array<string> | boolean | string | Mapping<unknown>,
+            result?: (
+                Array<string> |
+                boolean |
+                string |
+                Mapping<string | Array<string>> |
+                {interop?: 'default' | 'esModule'}
+            ),
             type?: string
         ) => void
     ): void => {
