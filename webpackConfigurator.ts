@@ -1685,6 +1685,23 @@ export let webpackConfiguration: WebpackConfiguration = extend<
         optimization: {
             chunkIds: configuration.debug ? 'named' : 'total-size',
             moduleIds: configuration.debug ? 'named' : 'size',
+            /*
+                NOTE: The dev-server ("serve") emits a non-module runtime.
+                Re-bundling an already webpack-bundled dependency that
+                externalizes its own dependencies then produces two
+                module-scope bindings with webpack's deterministic
+                "<name>__WEBPACK_IMPORTED_MODULE_0__" name in one function
+                scope: the downstream external import and the library's
+                internal harmony import. Via "var" hoisting they merge, so the
+                dependency's re-export facade references itself and any access
+                (e.g. "new Logger()") recurses endlessly. Scope hoisting
+                renames those bindings uniquely and dissolves the collision. It
+                is on by default for the production "build" but has to be forced
+                for the development server.
+            */
+            concatenateModules:
+                configuration.givenCommandLineArguments[2] === 'serve' ||
+                undefined,
             // region common chunks
             splitChunks: extend<NonNullable<
                 WebpackConfiguration['optimization']
