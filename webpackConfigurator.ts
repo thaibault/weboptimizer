@@ -178,27 +178,37 @@ const {module} = configuration
 /// region determine library name
 const exportFormatsNeedingAValidVariableName =
     ['assign', 'global', 'this', 'var', 'window']
+const exportFormatsNeedingUnsetLibraryName = ['modern-module']
 
 let libraryName: Array<string> | string | undefined
-if (configuration.libraryName)
-    libraryName = configuration.libraryName
-else if (Object.keys(configuration.injection.entry.normalized).length > 1)
-    libraryName = '[name]'
-else {
-    libraryName = configuration.name
-    if (exportFormatsNeedingAValidVariableName.includes(
-        configuration.exportFormat.self
-    ))
-        libraryName = convertToValidVariableName(libraryName)
+if (!exportFormatsNeedingUnsetLibraryName.includes(
+    configuration.exportFormat.self
+)) {
+    if (configuration.libraryName)
+        libraryName = configuration.libraryName
+    else if (Object.keys(configuration.injection.entry.normalized).length > 1)
+        libraryName = '[name]'
+    else {
+        libraryName = configuration.name
+        if (exportFormatsNeedingAValidVariableName.includes(
+            configuration.exportFormat.self
+        ))
+            libraryName = convertToValidVariableName(libraryName)
+    }
+    if (libraryName === '*')
+        libraryName = exportFormatsNeedingAValidVariableName.includes(
+            configuration.exportFormat.self
+        ) ?
+            Object.keys(
+                configuration.injection.entry.normalized
+            ).map((name: string): string => convertToValidVariableName(name)) :
+            undefined
 }
-if (libraryName === '*')
-    libraryName = exportFormatsNeedingAValidVariableName.includes(
-        configuration.exportFormat.self
-    ) ?
-        Object.keys(
-            configuration.injection.entry.normalized
-        ).map((name: string): string => convertToValidVariableName(name)) :
-        undefined
+
+console.log()
+console.log('TODO', libraryName, configuration.exportFormat.self)
+console.log()
+
 /// endregion
 /// region plugins
 const pluginInstances: WebpackConfiguration['plugins'] = []
