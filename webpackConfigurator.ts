@@ -204,11 +204,6 @@ if (!exportFormatsNeedingUnsetLibraryName.includes(
             ).map((name: string): string => convertToValidVariableName(name)) :
             undefined
 }
-
-console.log()
-console.log('TODO', libraryName, configuration.exportFormat.self)
-console.log()
-
 /// endregion
 /// region plugins
 const pluginInstances: WebpackConfiguration['plugins'] = []
