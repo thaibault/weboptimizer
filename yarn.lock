@@ -7651,9 +7651,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1472":
-  version: 4.0.1472
-  resolution: "clientnode@npm:4.0.1472"
+"clientnode@npm:4.0.1473":
+  version: 4.0.1473
+  resolution: "clientnode@npm:4.0.1473"
   peerDependencies:
     "@types/prop-types": "*"
     node-fetch: "*"
@@ -7665,7 +7665,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/7c29e532a970a4385dc57296c6b6da913899d402cd0917b34bbcd63c0bbd7ee71e20c62205eea445b5eb719566a5fc3d2ad469d2683a335ecada1900499b3171
+  checksum: 10c0/d282d9ee76b8ed2e11d348292772f7a2f8f363455669150446b68aafd4139a2d0b57d5573fe467af1873917ccd4342cf428eef14186723caee0cd703a8731022
   languageName: node
   linkType: hard
 
@@ -10284,10 +10284,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^17.7.0":
-  version: 17.7.0
-  resolution: "globals@npm:17.7.0"
-  checksum: 10c0/e83f791acf537b85fa1632ac48a45432a1999a61acd9f955b5c2145f66d6b5000a7945029874b6184fa2dfac8d33af03885a5a7ffa457866f1bcf0b40d0c1291
+"globals@npm:^17.8.0":
+  version: 17.8.0
+  resolution: "globals@npm:17.8.0"
+  checksum: 10c0/e31b36cef3befd446487674dc6ca7b8f8e62a3b76aadd975dbf80ffa732366b3ac58df8941999eb6b1406d97480103711db85d2a49c955da47ff5ec688bee9b5
   languageName: node
   linkType: hard
 
@@ -18301,12 +18301,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-documentation@npm:^1.0.42":
-  version: 1.0.42
-  resolution: "web-documentation@npm:1.0.42"
+"web-documentation@npm:^1.0.43":
+  version: 1.0.43
+  resolution: "web-documentation@npm:1.0.43"
   bin:
     web-documentation: build/deploy.js
-  checksum: 10c0/65dc08c579a1aa03a7c6deabe0ff5cd3c025daee77e47abb32cb8aba622582da6f8eecec60a25f9a2da148eba4fec550b9ebe793a70a584e9fb40adc336ea88f
+  checksum: 10c0/b73c604417117633b968b80a1070ed39348db91de95b570051d8b9825051a17431f903eb143e14555a27441a56b10c2bc5f103722c0b688c9c88230cb60805e5
   languageName: node
   linkType: hard
 
@@ -18359,7 +18359,7 @@ __metadata:
     babel-loader: "npm:^10.1.1"
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
-    clientnode: "npm:4.0.1472"
+    clientnode: "npm:4.0.1473"
     core-js: "npm:^3.49.0"
     css-loader: "npm:^7.1.4"
     cssnano: "npm:^8.0.2"
@@ -18372,7 +18372,7 @@ __metadata:
     favicons: "npm:^7.3.1"
     favicons-webpack-plugin: "npm:^6.0.1"
     glob-all: "npm:^3.3.1"
-    globals: "npm:^17.7.0"
+    globals: "npm:^17.8.0"
     html-loader: "npm:^5.1.0"
     html-minifier: "npm:^4.0.0"
     html-webpack-plugin: "npm:^5.6.8"
@@ -18402,7 +18402,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     typescript-eslint: "npm:^8.65.0"
     typescript-plugin-css-modules: "npm:^5.2.0"
-    web-documentation: "npm:^1.0.42"
+    web-documentation: "npm:^1.0.43"
     webpack: "npm:^5.109.0"
     webpack-cli: "npm:^7.2.1"
     webpack-sources: "npm:^3.5.1"
