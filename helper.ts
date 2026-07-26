@@ -1133,7 +1133,7 @@ export const getClosestPackageDescriptor = async (
     */
     const importedModule: PackageConfiguration & {
         default?: PackageConfiguration
-    } = await import(filePath) as
+    } = await import(filePath, {with: {type: 'json'}}) as
         PackageConfiguration & {default?: PackageConfiguration}
     const configuration: PackageConfiguration =
         importedModule.default ?? importedModule
