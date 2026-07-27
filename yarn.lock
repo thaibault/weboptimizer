@@ -7651,9 +7651,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1473":
-  version: 4.0.1473
-  resolution: "clientnode@npm:4.0.1473"
+"clientnode@npm:4.0.1475":
+  version: 4.0.1475
+  resolution: "clientnode@npm:4.0.1475"
   peerDependencies:
     "@types/prop-types": "*"
     node-fetch: "*"
@@ -7665,7 +7665,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/d282d9ee76b8ed2e11d348292772f7a2f8f363455669150446b68aafd4139a2d0b57d5573fe467af1873917ccd4342cf428eef14186723caee0cd703a8731022
+  checksum: 10c0/f6ff3b382eb5dba952883c0d8ff07218bb830ae4de99f0cb8dc7e97de8a6412b159f733a63adc141f9b00f46793276c5f79937ee286560914dcb2c6571a4a679
   languageName: node
   linkType: hard
 
@@ -9183,9 +9183,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^63.3.0":
-  version: 63.3.0
-  resolution: "eslint-plugin-jsdoc@npm:63.3.0"
+"eslint-plugin-jsdoc@npm:^63.3.1":
+  version: 63.3.1
+  resolution: "eslint-plugin-jsdoc@npm:63.3.1"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.90.0"
     "@es-joy/resolve.exports": "npm:1.2.0"
@@ -9203,7 +9203,7 @@ __metadata:
     to-valid-identifier: "npm:^1.0.0"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
-  checksum: 10c0/0e409fa2c77939d9aeb1ad389d8457b5cfd2eccddd46ba276ef80a0ab29a4299ff7e1b181cb515c19a18a732b66b805c11a994bbd2f8662cede85b549cd58b20
+  checksum: 10c0/e27da2ae00599c0ce70354e4aff06d6dcacf56cde2c405fcd52ecaa6fe5b61a7d90becbdcdc8a3516c27bf8ebc55eacb62dc1e24067df9c5ecc5ccf955a9ddbf
   languageName: node
   linkType: hard
 
@@ -18359,14 +18359,14 @@ __metadata:
     babel-loader: "npm:^10.1.1"
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
-    clientnode: "npm:4.0.1473"
+    clientnode: "npm:4.0.1475"
     core-js: "npm:^3.49.0"
     css-loader: "npm:^7.1.4"
     cssnano: "npm:^8.0.2"
     ejs: "npm:^6.0.1"
     eslint: "npm:^10.8.0"
     eslint-config-google: "npm:^0.14.0"
-    eslint-plugin-jsdoc: "npm:^63.3.0"
+    eslint-plugin-jsdoc: "npm:^63.3.1"
     exports-loader: "npm:^5.0.0"
     extract-loader: "npm:^5.1.0"
     favicons: "npm:^7.3.1"
