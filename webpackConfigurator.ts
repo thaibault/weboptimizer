@@ -1694,7 +1694,8 @@ export let webpackConfiguration: WebpackConfiguration = extend<
                 umdNamedDefine: true
             },
             path: configuration.path.target.base,
-            publicPath: configuration.path.target.public
+            publicPath: configuration.path.target.public,
+            uniqueName: configuration.name
         },
         performance: configuration.performanceHints,
         /*
