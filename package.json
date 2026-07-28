@@ -94,7 +94,7 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1475",
+    "clientnode": "4.0.1477",
     "core-js": "^3.49.0",
     "ejs": "^6.0.1",
     "exports-loader": "^5.0.0",
@@ -1068,10 +1068,7 @@
             },
             "loader": []
           },
-          "runtimeChunk": {
-            "#": "We need to include a single shared runtime chunk into the bundle to avoid duplication of runtime code.",
-            "__evaluate__": "self.givenCommandLineArguments[2] === 'serve' ? 'single' : false"
-          },
+          "runtimeChunk": false,
           "terser": {
             "terserOptions": {
               "compress": {
@@ -1512,10 +1509,6 @@
         },
         "module": {
           "optimizer": {
-            "runtimeChunk": {
-              "#": "We need to include a single shared runtime chunk into the bundle to avoid duplication of runtime code.",
-              "__evaluate__": "self.givenCommandLineArguments[2] === 'serve' ? 'single' : false"
-            },
             "terser": {
               "terserOptions": {
                 "compress": {
