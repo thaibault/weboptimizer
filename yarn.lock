@@ -5351,12 +5351,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^26.1.1":
-  version: 26.1.1
-  resolution: "@types/node@npm:26.1.1"
+"@types/node@npm:^26.1.2":
+  version: 26.1.2
+  resolution: "@types/node@npm:26.1.2"
   dependencies:
     undici-types: "npm:~8.3.0"
-  checksum: 10c0/25ac5093195736dd074d5027adbba85617bc951d5a41506ebd3b9073048acb7233613f3822d5f9b9447f9c0841c91f6387c46283916767e3ef79f23917452c46
+  checksum: 10c0/a45503222c7db8f374afd5c9381db63dd95b6b1f703abea0890dd3d4a09eeb41da489e08a1a45baf18fe89fb77fbf310ff2789f680c490b04dafc41a60800a86
   languageName: node
   linkType: hard
 
@@ -18350,7 +18350,7 @@ __metadata:
     "@types/html-minifier": "npm:^4.0.6"
     "@types/html-minifier-terser": "npm:^7.0.2"
     "@types/imagemin": "npm:^9.0.1"
-    "@types/node": "npm:^26.1.1"
+    "@types/node": "npm:^26.1.2"
     "@types/postcss-import": "npm:^14.0.3"
     "@types/postcss-url": "npm:^10.0.4"
     "@types/webpack-env": "npm:^1.18.8"
@@ -18403,7 +18403,7 @@ __metadata:
     typescript-eslint: "npm:^8.65.0"
     typescript-plugin-css-modules: "npm:^5.2.0"
     web-documentation: "npm:^1.0.43"
-    webpack: "npm:^5.109.0"
+    webpack: "npm:^5.109.1"
     webpack-cli: "npm:^7.2.1"
     webpack-sources: "npm:^3.5.1"
     workbox-webpack-plugin: "npm:^7.4.1"
@@ -18594,9 +18594,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.109.0":
-  version: 5.109.0
-  resolution: "webpack@npm:5.109.0"
+"webpack@npm:^5.109.1":
+  version: 5.109.1
+  resolution: "webpack@npm:5.109.1"
   dependencies:
     "@types/estree": "npm:^1.0.8"
     "@types/json-schema": "npm:^7.0.15"
@@ -18623,7 +18623,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10c0/c12a8c2f5f7ac588bd47299124b94938fadecdba8b73de156296af98f3bf57c68b3c42c53551bb373d49b974d613c010d2693c2287f9a6b87869184ddf5aab8f
+  checksum: 10c0/54f8d59fbdc75a17bbadbe349b59969a05903176450eabb277115839b8b488bb483d7e237b7955a3ca7ba6d42e07fd8f04d115670d348464fc57e5c14e939d8b
   languageName: node
   linkType: hard
 
