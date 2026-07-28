@@ -1618,8 +1618,7 @@ export let webpackConfiguration: WebpackConfiguration = extend<
             WebpackConfiguration['devServer'],
         experiments: {
             futureDefaults: true,
-            outputModule:
-                configuration.givenCommandLineArguments[2] !== 'serve',
+            outputModule: true,
             /*
                 "futureDefaults" would enable webpack's native css support
                 which disables the configured "mini-css-extract-plugin"
@@ -1694,8 +1693,7 @@ export let webpackConfiguration: WebpackConfiguration = extend<
                 umdNamedDefine: true
             },
             path: configuration.path.target.base,
-            publicPath: configuration.path.target.public,
-            uniqueName: configuration.name
+            publicPath: configuration.path.target.public
         },
         performance: configuration.performanceHints,
         /*

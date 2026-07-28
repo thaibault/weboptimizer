@@ -108,7 +108,7 @@
     "rimraf": "^6.1.3",
     "script-loader": "^0.7.2",
     "typescript": "^6.0.3",
-    "webpack": "^5.109.0",
+    "webpack": "^5.109.1",
     "webpack-cli": "^7.2.1",
     "webpack-sources": "^3.5.1"
   },
@@ -122,7 +122,7 @@
     "@types/html-minifier": "^4.0.6",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/imagemin": "^9.0.1",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.1.2",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
@@ -704,6 +704,7 @@
           "minify": {
             "__evaluate__": "self.module.optimizer.htmlMinifier ? self.module.optimizer.htmlMinifier : false"
           },
+          "scriptLoading": "module",
           "template": {
             "filePath": {
               "__evaluate__": "`${filesystem.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
