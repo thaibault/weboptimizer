@@ -1636,7 +1636,11 @@ const normalizedEntryInjection: Mapping<Array<string>> = {}
 for (const [chunkName, moduleIDs] of Object.entries(
     configuration.injection.entry.normalized
 ))
-    if (Array.isArray(moduleIDs) && moduleIDs.length > 1) {
+    if (
+        configuration.givenCommandLineArguments[2] === 'test' &&
+        Array.isArray(moduleIDs) &&
+        moduleIDs.length > 1
+    ) {
         const barrelModuleFilePath: string = resolve(
             configuration.path.context,
             `.__${convertToValidVariableName(chunkName)}__.barrel.mjs`
@@ -1665,9 +1669,7 @@ for (const [chunkName, moduleIDs] of Object.entries(
         )
 
         generatedBarrelModuleFilePaths.push(barrelModuleFilePath)
-        normalizedEntryInjection[chunkName] = [
-            `./${relative(configuration.path.context, barrelModuleFilePath)}`
-        ]
+        normalizedEntryInjection[chunkName] = [barrelModuleFilePath]
     } else
         normalizedEntryInjection[chunkName] = moduleIDs
 
