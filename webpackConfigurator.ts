@@ -1622,8 +1622,16 @@ if (configuration.path.configuration.json)
     treats (and, when async, awaits) as a whole. Re-exporting via "export *"
     preserves the (named) exports of all bundled modules while guaranteeing
     each one is evaluated in the given order.
+
+    NOTE: The barrel and every module it bundles are additionally forced to
+    "sideEffects: true" (see the corresponding module rule below). Otherwise a
+    consuming package declaring "sideEffects": false (e.g. a test bundle whose
+    exports are never imported) would have its bundled modules tree-shaken away
+    completely - resulting for example in a test bundle without any registered
+    test.
 */
 const generatedBarrelModuleFilePaths: Array<string> = []
+const barrelledModuleFilePaths: Array<string> = []
 const normalizedEntryInjection: Mapping<Array<string>> = {}
 for (const [chunkName, moduleIDs] of Object.entries(
     configuration.injection.entry.normalized
@@ -1639,12 +1647,18 @@ for (const [chunkName, moduleIDs] of Object.entries(
             moduleIDs
                 .map((moduleID: string): string => {
                     const specifier: string = stripLoader(moduleID)
-
-                    return `export * from ${JSON.stringify(
+                    const relativeOrAbsoluteSpecifier: string =
                         specifier.startsWith('.') || specifier.startsWith('/') ?
                             specifier :
                             `./${specifier}`
-                    )}`
+
+                    barrelledModuleFilePaths.push(resolve(
+                        configuration.path.context, relativeOrAbsoluteSpecifier
+                    ))
+
+                    return `export * from ${
+                        JSON.stringify(relativeOrAbsoluteSpecifier)
+                    }`
                 })
                 .join('\n') + '\n',
             {encoding: configuration.encoding}
@@ -1786,8 +1800,25 @@ export let webpackConfiguration: WebpackConfiguration = extend<
         mode: configuration.debug ? 'development' : 'production',
         module: {
             rules: (
-                module.additional.pre.map(
-                    evaluateAdditionalLoaderConfiguration
+                /*
+                    Force the generated barrel entry modules and every module
+                    they bundle to be treated as side-effectful so a consuming
+                    package declaring "sideEffects": false does not get them
+                    tree-shaken away (which would empty e.g. a test bundle).
+                */
+                (
+                    generatedBarrelModuleFilePaths.length ?
+                        [{
+                            include: generatedBarrelModuleFilePaths.concat(
+                                barrelledModuleFilePaths
+                            ),
+                            sideEffects: true
+                        }] as Array<RuleSetRule> :
+                        []
+                ).concat(
+                    module.additional.pre.map(
+                        evaluateAdditionalLoaderConfiguration
+                    )
                 ) as Array<(RuleSetRule | '...')>
             ).concat(
                 loader.ejs,
