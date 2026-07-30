@@ -78,6 +78,7 @@ import {
     represent,
     UTILITY_SCOPE
 } from 'clientnode'
+import {rm, writeFile} from 'fs/promises'
 import {extname, join, relative, resolve} from 'path'
 import util from 'util'
 import webpack from 'webpack'
@@ -1606,6 +1607,85 @@ if (configuration.path.configuration.json)
         )
     }
 
+// region collapse multi-module ("multi-main") entry chunks into a barrel
+/*
+    NOTE: Webpack awaits a single (async) entry module before completing the
+    startup evaluation but does NOT await async modules that are referenced as
+    part of an array ("multi-main") entry chunk. As a consequence any
+    top-level "await" (async module) reachable from such an entry - and every
+    side effect depending on it, like jest's synchronous "describe" / "test"
+    registration - would run only after the synchronous startup phase already
+    finished (leading for example to "Cannot nest a describe inside a test").
+
+    To keep evaluation deterministic we collapse every chunk which bundles
+    more than one module into a single generated barrel module which webpack
+    treats (and, when async, awaits) as a whole. Re-exporting via "export *"
+    preserves the (named) exports of all bundled modules while guaranteeing
+    each one is evaluated in the given order.
+*/
+const generatedBarrelModuleFilePaths: Array<string> = []
+const normalizedEntryInjection: Mapping<Array<string>> = {}
+for (const [chunkName, moduleIDs] of Object.entries(
+    configuration.injection.entry.normalized
+))
+    if (Array.isArray(moduleIDs) && moduleIDs.length > 1) {
+        const barrelModuleFilePath: string = resolve(
+            configuration.path.context,
+            `.__${convertToValidVariableName(chunkName)}__.barrel.mjs`
+        )
+
+        await writeFile(
+            barrelModuleFilePath,
+            moduleIDs
+                .map((moduleID: string): string => {
+                    const specifier: string = stripLoader(moduleID)
+
+                    return `export * from ${JSON.stringify(
+                        specifier.startsWith('.') || specifier.startsWith('/') ?
+                            specifier :
+                            `./${specifier}`
+                    )}`
+                })
+                .join('\n') + '\n',
+            {encoding: configuration.encoding}
+        )
+
+        generatedBarrelModuleFilePaths.push(barrelModuleFilePath)
+        normalizedEntryInjection[chunkName] = [
+            `./${relative(configuration.path.context, barrelModuleFilePath)}`
+        ]
+    } else
+        normalizedEntryInjection[chunkName] = moduleIDs
+
+if (generatedBarrelModuleFilePaths.length)
+    pluginInstances.push({apply: (compiler: Compiler): void => {
+        const removeGeneratedBarrelModules = async (): Promise<void> => {
+            for (const filePath of generatedBarrelModuleFilePaths)
+                try {
+                    await rm(filePath, {force: true})
+                } catch (error) {
+                    log.debug(
+                        'Removing generated barrel entry module ' +
+                        `"${filePath}" failed:`,
+                        represent(error)
+                    )
+                }
+        }
+
+        /*
+            NOTE: "shutdown" is an "AsyncSeriesHook" fired (and awaited) by
+            "compiler.close()" for both one-shot builds and watch-mode
+            teardown, so "tapPromise" guarantees the (async) removal finishes
+            before the process exits. "watchClose" would be a "SyncHook" which
+            cannot await a promise-based cleanup, hence it is not used here.
+        */
+        compiler.hooks.shutdown.tapPromise(
+            'WebOptimizerRemoveGeneratedBarrelModules',
+            removeGeneratedBarrelModules
+        )
+    }})
+// endregion
+
 export let webpackConfiguration: WebpackConfiguration = extend<
     WebpackConfiguration
 >(
@@ -1640,7 +1720,7 @@ export let webpackConfiguration: WebpackConfiguration = extend<
             typescript: false
         },
         // region input
-        entry: configuration.injection.entry.normalized,
+        entry: normalizedEntryInjection,
         externals: configuration.injection.external.modules,
         resolve: {
             alias: module.aliases,
