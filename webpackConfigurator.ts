@@ -681,10 +681,10 @@ if (module.enforceDeduplication) {
 
         if (
             targetPath &&
-            /((?: ^|\/)node_modules\/.+)/.test(targetPath) &&
+            /((?:^|\/)node_modules\/.+)/.test(targetPath) &&
             (
                 !targetPath.startsWith(absoluteContextPath) ||
-                /((?: ^|\/)node_modules\/.+){2}/.test(targetPath)
+                /((?:^|\/)node_modules\/.+){2}/.test(targetPath)
             ) &&
             isFileSync(targetPath)
         ) {
@@ -695,7 +695,7 @@ if (module.enforceDeduplication) {
                 let pathSuffix: string
                 if (targetPath.startsWith(absoluteContextPath)) {
                     const matches: null | RegExpMatchArray =
-                        targetPath.match(/((?: ^|.*?\/)node_modules\/)/g)
+                        targetPath.match(/((?:^|.*?\/)node_modules\/)/g)
                     if (matches === null)
                         return
 
@@ -716,7 +716,7 @@ if (module.enforceDeduplication) {
                     }
 
                     pathSuffix = targetPath.replace(
-                        /(?: ^|.*\/)node_modules\/(.+$)/, '$1'
+                        /(?:^|.*\/)node_modules\/(.+$)/, '$1'
                     )
                 } else {
                     pathPrefixes = [
@@ -1259,7 +1259,7 @@ const genericLoader: GenericLoader = {
 
             return Boolean(result)
         },
-        test: /\.s?css(?: \?.*)?$/i,
+        test: /\.s?css(?:\?.*)?$/i,
         use: cssUse
     },
     // endregion
@@ -1285,7 +1285,7 @@ const genericLoader: GenericLoader = {
                     ) +
                     `?${configuration.hashAlgorithm}=[contenthash]`
             },
-            test: /\.eot(?: \?.*)?$/i,
+            test: /\.eot(?:\?.*)?$/i,
             type: 'asset/resource',
             parser: {
                 dataUrlCondition: {
@@ -1326,7 +1326,7 @@ const genericLoader: GenericLoader = {
                         configuration.inPlace.otherMaximumFileSizeLimitInByte
                 }
             },
-            test: /\.svg(?: \?.*)?$/i,
+            test: /\.svg(?:\?.*)?$/i,
             type: 'asset/resource',
             use: (await Promise.all(
                 module.optimizer.font.svg.loader.map(
@@ -1353,7 +1353,7 @@ const genericLoader: GenericLoader = {
                     ) +
                     `?${configuration.hashAlgorithm}=[contenthash]`
             },
-            test: /\.ttf(?: \?.*)?$/i,
+            test: /\.ttf(?:\?.*)?$/i,
             type: 'asset/resource',
             mimetype: 'application/octet-stream',
             parser: {
@@ -1387,7 +1387,7 @@ const genericLoader: GenericLoader = {
                     ) +
                     `?${configuration.hashAlgorithm}=[contenthash]`
             },
-            test: /\.woff2?(?: \?.*)?$/i,
+            test: /\.woff2?(?:\?.*)?$/i,
             type: 'asset/resource',
             parser: {
                 dataUrlCondition: {
@@ -1425,7 +1425,7 @@ const genericLoader: GenericLoader = {
                     configuration.path.target.asset.image
         },
         include: configuration.path.source.asset.image,
-        test: /\.(?: gif|ico|jpg|png|svg)(?: \?.*)?$/i,
+        test: /\.(?:gif|ico|jpg|png|svg)(?:\?.*)?$/i,
         type: 'asset/resource',
         parser: {
             dataUrlCondition: {
