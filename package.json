@@ -127,15 +127,15 @@
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
     "@types/webpack-sources": "^3.2.3",
-    "@typescript-eslint/parser": "^8.65.0",
+    "@typescript-eslint/parser": "^8.66.0",
     "css-loader": "^7.1.4",
     "cssnano": "^8.0.2",
     "eslint": "^10.8.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^63.3.2",
+    "eslint-plugin-jsdoc": "^63.3.3",
     "favicons": "^7.3.1",
     "favicons-webpack-plugin": "^6.0.1",
-    "globals": "^17.8.0",
+    "globals": "^17.9.0",
     "image-minimizer-webpack-plugin": "^5.0.0",
     "jest": "^30.4.2",
     "jsdoc": "^4.0.5",
@@ -155,7 +155,7 @@
     "stylelint-config-standard": "^40.0.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "terser-webpack-plugin": "^5.6.1",
-    "typescript-eslint": "^8.65.0",
+    "typescript-eslint": "^8.66.0",
     "typescript-plugin-css-modules": "^5.2.0",
     "web-documentation": "^1.0.45",
     "workbox-webpack-plugin": "^7.4.1"
@@ -383,7 +383,7 @@
         "types": {
           "default": {
             "filePathPattern": {
-              "__evaluate__": "`^${string.maskForRegularExpression(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.js$`"
+              "__evaluate__": "`^${string.maskForRegularExpression(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.c?js$`"
             },
             "outputExtension": "js",
             "preinstall": {
@@ -1117,6 +1117,7 @@
             "loader": "ejs-loader",
             "options": {
               "compiler": {
+                "async": true,
                 "cache": true,
                 "compileDebug": false,
                 "debug": false,
@@ -1567,6 +1568,7 @@
         "watchOptions": {
           "ignored": [
             "./.yarn",
+            "./*.cjs",
             "./*.js",
             "./end-to-end-tests",
             "**/.*",
