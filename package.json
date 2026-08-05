@@ -162,7 +162,6 @@
   },
   "peerDependencies": {
     "@babel/eslint-parser": "*",
-    "@babel/preset-react": "*",
     "@eslint/js": "*",
     "@types/ejs": "*",
     "@types/html-minifier": "*",
@@ -202,9 +201,6 @@
   },
   "peerDependenciesMeta": {
     "@babel/eslint-parser": {
-      "optional": true
-    },
-    "@babel/preset-react": {
       "optional": true
     },
     "@eslint/js": {
@@ -1239,7 +1235,7 @@
               ],
               "presets": {
                 "#": "NOTE: We disable module export/import transformation to allow tree shaking by the final (minimizer).",
-                "__evaluate__": "[['@babel/preset-env', {targets: self.generic.isWeb ? {browsers: self.generic.supportedBrowsers, node: packageConfiguration.engines.node.replace(/>?=?([0-9]+)/, '$1')} : {node: packageConfiguration.engines.node.replace(/>?=?([0-9]+)/, '$1')}}], '@babel/preset-typescript', ['@babel/preset-react', {runtime: 'automatic'}]]"
+                "__evaluate__": "[['@babel/preset-env', {targets: self.generic.isWeb ? {browsers: self.generic.supportedBrowsers, node: packageConfiguration.engines.node.replace(/>?=?([0-9]+)/, '$1')} : {node: packageConfiguration.engines.node.replace(/>?=?([0-9]+)/, '$1')}}], '@babel/preset-typescript']"
               }
             },
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"

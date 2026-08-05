@@ -18461,7 +18461,6 @@ __metadata:
     workbox-webpack-plugin: "npm:^7.4.1"
   peerDependencies:
     "@babel/eslint-parser": "*"
-    "@babel/preset-react": "*"
     "@eslint/js": "*"
     "@types/ejs": "*"
     "@types/html-minifier": "*"
@@ -18500,8 +18499,6 @@ __metadata:
     workbox-webpack-plugin: "*"
   peerDependenciesMeta:
     "@babel/eslint-parser":
-      optional: true
-    "@babel/preset-react":
       optional: true
     "@eslint/js":
       optional: true
