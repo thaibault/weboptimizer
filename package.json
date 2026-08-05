@@ -1217,6 +1217,14 @@
                   {
                     "appendExtension": ".js",
                     "recognizedExtensions": [
+                      ".css",
+                      ".scss",
+                      ".sass",
+                      ".svg",
+                      ".png",
+                      ".jpg",
+                      ".jpeg",
+                      ".gif",
                       ".js",
                       ".jsx",
                       ".d.ts",
