@@ -327,8 +327,8 @@
     "colors": "1.4.0"
   },
   "engines": {
-    "node": ">=24",
-    "npm": ">=11",
+    "node": ">=26",
+    "npm": ">=12",
     "yarn": ">=4"
   },
   "configuration": {
