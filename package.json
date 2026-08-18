@@ -20,10 +20,22 @@
   },
   "license": "CC-BY-3.0",
   "author": {
-    "name": "Torben Sickert",
     "email": "info@torben.website",
+    "name": "Torben Sickert",
     "url": "https://torben.website"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thaibault/weboptimizer.git"
+  },
+  "type": "module",
+  "exports": {
+    ".": "/.index.js",
+    "./browser": "./browser.js",
+    "./ejsLoader": "./ejsLoader.js",
+    "./type": "./type.js"
+  },
+  "bin": "index.js",
   "files": [
     "browser.d.ts",
     "browser.js",
@@ -56,16 +68,12 @@
     "webpackConfigurator.d.ts",
     "webpackConfigurator.js"
   ],
-  "bin": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/thaibault/weboptimizer.git"
-  },
+  "sideEffects": true,
   "scripts": {
     "build": "yarn build:types; yarn build:lint; yarn build:plain",
+    "build:copy-test-artefacts": "cd test/simple && shx touch yarn.lock && rimraf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../ && cd test/scss && shx touch yarn.lock && rimraf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../ && rimraf node_modules/weboptimizer test/simple/node_modules/weboptimizer test/scss/node_modules/weboptimizer && shx mkdir -p node_modules/weboptimizer test/simple/node_modules/weboptimizer test/scss/node_modules/weboptimizer && copyCommand='shx cp -r plugins *.ts *.js *.json *.ejs' && $copyCommand node_modules/weboptimizer/ && $copyCommand test/simple/node_modules/weboptimizer/ && $copyCommand test/scss/node_modules/weboptimizer/",
     "build:lint": "           babel --extensions '.ts' --out-file eslint.config.js eslint.config.ts",
     "build:plain": "command=\"babel --extensions '.ts' --out-file\" && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestSetup.js jestSetup.ts && $command plugins/HTMLTransformation.js plugins/HTMLTransformation.ts && $command plugins/InPlaceAssetsIntoHTML.js plugins/InPlaceAssetsIntoHTML.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && shx chmod +x index.js && shx sed -i 's/(#!\\\\/usr\\\\/bin\\\\/env )babel-(node)/$1$2/' index.js 1>/dev/null",
-    "build:copy-test-artefacts": "cd test/simple && shx touch yarn.lock && rimraf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../ && cd test/scss && shx touch yarn.lock && rimraf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../ && rimraf node_modules/weboptimizer test/simple/node_modules/weboptimizer test/scss/node_modules/weboptimizer && shx mkdir -p node_modules/weboptimizer test/simple/node_modules/weboptimizer test/scss/node_modules/weboptimizer && copyCommand='shx cp -r plugins *.ts *.js *.json *.ejs' && $copyCommand node_modules/weboptimizer/ && $copyCommand test/simple/node_modules/weboptimizer/ && $copyCommand test/scss/node_modules/weboptimizer/",
     "build:test": "           yarn clear && yarn build && command='babel --extensions '.ts' --source-root ../ --out-file' && yarn build:copy-test-artefacts && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
     "build:test:source-map": "yarn clear && yarn build && command='babel --extensions '.ts' --source-maps inline --source-root ../ --out-file' && yarn build:copy-test-artefacts && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
     "build:types": "tsc --declaration --emitDeclarationOnly",
@@ -94,8 +102,8 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1483",
-    "core-js": "^3.49.0",
+    "clientnode": "4.0.1484",
+    "core-js": "^3.50.0",
     "ejs": "^6.0.1",
     "exports-loader": "^5.0.0",
     "extract-loader": "^5.1.0",
@@ -122,31 +130,31 @@
     "@types/html-minifier": "^4.0.6",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/imagemin": "^9.0.1",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.2.0",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
     "@types/webpack-sources": "^3.2.3",
-    "@typescript-eslint/parser": "^8.66.0",
+    "@typescript-eslint/parser": "^8.67.0",
     "css-loader": "^7.1.4",
-    "cssnano": "^8.0.3",
-    "eslint": "^10.8.0",
+    "cssnano": "^8.0.6",
+    "eslint": "^10.8.1",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^63.3.3",
+    "eslint-plugin-jsdoc": "^64.2.1",
     "favicons": "^7.3.1",
     "favicons-webpack-plugin": "^6.0.1",
-    "globals": "^17.9.0",
+    "globals": "^17.11.0",
     "image-minimizer-webpack-plugin": "^5.0.0",
     "jest": "^30.4.2",
     "jsdoc": "^4.0.5",
     "mini-css-extract-plugin": "^2.10.2",
     "mkdirp": "^3.0.1",
     "node-fetch": "^3.3.2",
-    "postcss": "^8.5.25",
+    "postcss": "^8.5.26",
     "postcss-fontpath": "^1.0.0",
-    "postcss-import": "^16.1.1",
+    "postcss-import": "^17.0.0",
     "postcss-loader": "^8.2.1",
-    "postcss-preset-env": "^11.3.2",
+    "postcss-preset-env": "^11.4.0",
     "postcss-sprites": "^4.2.1",
     "postcss-url": "^10.1.4",
     "shx": "^0.4.0",
@@ -155,9 +163,9 @@
     "stylelint-config-standard": "^40.0.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "terser-webpack-plugin": "^5.6.1",
-    "typescript-eslint": "^8.66.0",
+    "typescript-eslint": "^8.67.0",
     "typescript-plugin-css-modules": "^5.2.0",
-    "web-documentation": "^1.0.45",
+    "web-documentation": "^1.0.46",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "peerDependencies": {
@@ -315,26 +323,61 @@
       "optional": true
     }
   },
+  "resolutions": {
+    "colors": "1.4.0"
+  },
   "engines": {
     "node": ">=24",
     "npm": ">=11",
     "yarn": ">=4"
   },
-  "resolutions": {
-    "colors": "1.4.0"
-  },
-  "sideEffects": true,
-  "type": "module",
-  "exports": {
-    ".": "/.index.js",
-    "./browser": "./browser.js",
-    "./ejsLoader": "./ejsLoader.js",
-    "./type": "./type.js"
-  },
-  "webDocumentation": {
-    "trackingCode": "UA-40192634-11"
-  },
   "configuration": {
+    "debug": {
+      "debug": true,
+      "development": {
+        "server": {
+          "open": {
+            "__evaluate__": "`${path.join(self.path.target.public, self.files.defaultHTML.filename)}`"
+          }
+        }
+      },
+      "files": {
+        "compose": {
+          "javaScript": {
+            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name].js')}?${self.hashAlgorithm}=[chunkhash]`"
+          }
+        }
+      },
+      "inPlace": {
+        "cascadingStyleSheet": null,
+        "javaScript": null,
+        "otherMaximumFileSizeLimitInByte": 1
+      },
+      "module": {
+        "html": {
+          "options": {
+            "minimize": false
+          }
+        },
+        "optimizer": {
+          "cssnano": null,
+          "htmlMinifier": null,
+          "minimize": false
+        },
+        "preprocessor": {
+          "html": {
+            "options": {
+              "compiler": {
+                "_with": false,
+                "compileDebug": true,
+                "debug": true,
+                "strict": true
+              }
+            }
+          }
+        }
+      }
+    },
     "default": {
       "assetPattern": {
         "javaScript": {
@@ -377,6 +420,17 @@
           }
         },
         "types": {
+          "additional": {
+            "filePathPattern": "^.+\\.((bundle)|(compiled))(?:\\.map)?$",
+            "outputExtension": ""
+          },
+          "cascadingStyleSheet": {
+            "extension": "css",
+            "filePathPattern": {
+              "__evaluate__": "`^${string.maskForRegularExpression(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
+            },
+            "outputExtension": "css"
+          },
           "default": {
             "filePathPattern": {
               "__evaluate__": "`^${string.maskForRegularExpression(self.path.target.asset.javaScript)}.+(?:\\\\.[^.]+(?:\\\\.map)?)?\\\\.c?js$`"
@@ -387,6 +441,12 @@
               "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.\\${buildConfiguration.outputExtension}'`"
             }
           },
+          "javaScript": {
+            "extension": "js"
+          },
+          "javaScriptExtension": {
+            "extension": "jsx"
+          },
           "typeScript": {
             "extension": "ts",
             "ignoredExtension": "d.ts"
@@ -394,28 +454,10 @@
           "typeScriptExtension": {
             "extension": "tsx",
             "ignoredExtension": "d.ts"
-          },
-          "javaScript": {
-            "extension": "js"
-          },
-          "javaScriptExtension": {
-            "extension": "jsx"
-          },
-          "cascadingStyleSheet": {
-            "extension": "css",
-            "filePathPattern": {
-              "__evaluate__": "`^${string.maskForRegularExpression(self.path.target.asset.cascadingStyleSheet)}.+${self.path.target.asset.cascadingStyleSheet === self.path.source.asset.cascadingStyleSheet ? '\\\\.compiled' : ''}(?:\\\\.[^.]+(?:\\\\.map)?)?$`"
-            },
-            "outputExtension": "css"
-          },
-          "additional": {
-            "filePathPattern": "^.+\\.((bundle)|(compiled))(?:\\.map)?$",
-            "outputExtension": ""
           }
         }
       },
       "commandLine": {
-        "#": "Configures how to trigger corresponding project livecycle tasks from the command line.",
         "build": {
           "arguments": [
             "--config",
@@ -513,11 +555,11 @@
           "command": "webpack"
         },
         "test": {
-          "environments": {
-            "__evaluate__": "['node'].concat(self.generic.isWeb ? 'jsdom' : [])"
-          },
           "command": {
             "__evaluate__": "self.commandLine.test.environments.map((environment) => `${self.generic.testCommandLine} '${path.relative(self.path.base, self.path.target.test) === '' ? './test' : `${path.relative(self.path.base, self.path.target.test)}/`}.+\\\\.js$' --test-environment ${environment}`).join(' && ')"
+          },
+          "environments": {
+            "__evaluate__": "['node'].concat(self.generic.isWeb ? 'jsdom' : [])"
           }
         },
         "test:browser": {
@@ -608,7 +650,6 @@
       },
       "extensions": {
         "file": {
-          "#": "NOTE: Maps import specifier extensions to resolvable source extensions (webpack's \"resolve.extensionAlias\") since imports rewritten to \".js\" have to be resolved back to their typescript sources.",
           "alias": {
             ".js": [
               ".js",
@@ -707,9 +748,9 @@
               "__evaluate__": "`${filesystem.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
             },
             "postCompileOptions": {
+              "_with": false,
               "compileSteps": 0,
-              "strict": true,
-              "_with": false
+              "strict": true
             },
             "use": [
               {
@@ -728,6 +769,7 @@
                   "compiler": {
                     "__evaluate__": "self.module.preprocessor.ejs.options.compiler"
                   },
+                  "compileSteps": 2,
                   "compress": {
                     "__evaluate__": "self.module.preprocessor.ejs.options.compress"
                   },
@@ -742,8 +784,7 @@
                   },
                   "module": {
                     "__evaluate__": "self.module.preprocessor.ejs.options.module"
-                  },
-                  "compileSteps": 2
+                  }
                 }
               }
             ]
@@ -835,7 +876,6 @@
         ]
       },
       "inPlace": {
-        "#": "Indicates whether to include the corresponding artefacts into build target artefact or reference them to dynamically load them during runtime.",
         "cascadingStyleSheet": {
           "head": ".+"
         },
@@ -853,6 +893,9 @@
         "aliases": {
           "ejs-loader": "weboptimizer/ejsLoader"
         },
+        "directoryNames": [
+          "node_modules"
+        ],
         "extensions": {
           "file": [
             ".compiled.js",
@@ -861,9 +904,6 @@
             ".js"
           ]
         },
-        "directoryNames": [
-          "node_modules"
-        ],
         "resolveSymlinks": false
       },
       "module": {
@@ -874,31 +914,31 @@
         "aliases": {
           "#": "Local references to avoid relative paths in complex file structures.",
           "@asset": {
-            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base)))"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.source.base, self.path.source.asset.base)))"
           },
           "@cascadingStyleSheet": {
-            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.cascadingStyleSheet)))"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.source.base, self.path.source.asset.base, self.path.source.asset.cascadingStyleSheet)))"
           },
           "@data": {
-            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.data)))"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.source.base, self.path.source.asset.base, self.path.source.asset.data)))"
           },
           "@font": {
-            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.font)))"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.source.base, self.path.source.asset.base, self.path.source.asset.font)))"
           },
           "@image": {
-            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.image)))"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.source.base, self.path.source.asset.base, self.path.source.asset.image)))"
           },
           "@javaScript": {
-            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.javaScript)))"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.source.base, self.path.source.asset.base, self.path.source.asset.javaScript)))"
           },
           "@root": {
             "__evaluate__": "path.join('/', path.relative(self.path.context, self.path.base))"
           },
           "@source": {
-            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base)))"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, self.path.source.base))"
           },
           "@template": {
-            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.base, self.path.source.base, self.path.source.asset.base, self.path.source.asset.template)))"
+            "__evaluate__": "path.join('/', path.relative(self.path.base, path.resolve(self.path.source.asset.base, self.path.source.asset.template)))"
           }
         },
         "cascadingStyleSheet": {
@@ -907,7 +947,6 @@
           "loader": "css-loader",
           "options": {
             "esModule": false,
-            "#": "Configures importing css directives into js modules.",
             "modules": {
               "auto": true,
               "getLocalIdent": {
@@ -948,11 +987,11 @@
         },
         "optimizer": {
           "cssnano": {
-            "#": "The autoprefixer has to be disabled in this context since it would remove all needed vendor prefixes from the preceding processing (every prefix should be needed here).",
             "preset": [
               {
                 "__await_evaluate__": "module.optionalImport('cssnano-preset-default').then((module) => module?.default)"
               },
+              "#: The autoprefixer has to be disabled in this context since it would remove all needed vendor prefixes from the preceding processing (every prefix should be needed here).",
               {
                 "autoprefixer": false,
                 "discardUnused": {
@@ -1005,15 +1044,14 @@
             "minifyJS": true,
             "minifyURLs": false,
             "preserveLineBreaks": false,
-            "#": "NOTE: Needed for attribute nested quotes which should be escaped.",
             "preventAttributesEscaping": true,
-            "processScripts": [],
             "processConditionalComments": false,
+            "processScripts": [],
             "quoteCharacter": "\"",
             "removeAttributeQuotes": false,
+            "removeCDATASectionsFromCDATA": true,
             "removeComments": true,
             "removeCommentsFromCDATA": true,
-            "removeCDATASectionsFromCDATA": true,
             "removeEmptyAttributes": false,
             "removeEmptyElements": false,
             "removeOptionalTags": false,
@@ -1027,6 +1065,9 @@
           },
           "image": {
             "content": {
+              "exclude": {
+                "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? /.*/ : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{exclude:undefined}}}}}\" to enable default image file including.`) || /.*/"
+              },
               "minimizer": {
                 "options": {
                   "plugins": [
@@ -1059,9 +1100,6 @@
                     ]
                   ]
                 }
-              },
-              "exclude": {
-                "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? /.*/ : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{exclude:undefined}}}}}\" to enable default image file including.`) || /.*/"
               }
             },
             "loader": []
@@ -1070,8 +1108,8 @@
           "terser": {
             "terserOptions": {
               "compress": {
-                "#": "To provide a logging output we need to exclude this feature.",
                 "drop_console": {
+                  "#": "To provide a logging output we need to exclude this feature.",
                   "__evaluate__": "!self.debug"
                 },
                 "drop_debugger": {
@@ -1115,14 +1153,15 @@
             "loader": "ejs-loader",
             "options": {
               "compiler": {
+                "_with": false,
                 "async": true,
                 "cache": true,
                 "compileDebug": false,
                 "debug": false,
                 "localsName": "_",
-                "strict": true,
-                "_with": false
+                "strict": true
               },
+              "compileSteps": 2,
               "compress": {
                 "html": {
                   "__evaluate__": "self.module.optimizer.htmlMinifier"
@@ -1145,8 +1184,7 @@
                 "replacements": {
                   "__evaluate__": "self.module.replacements"
                 }
-              },
-              "compileSteps": 2
+              }
             }
           },
           "html": {
@@ -1164,6 +1202,7 @@
               "compiler": {
                 "__evaluate__": "self.module.preprocessor.ejs.options.compiler"
               },
+              "compileSteps": 2,
               "compress": {
                 "__evaluate__": "self.module.preprocessor.ejs.options.compress"
               },
@@ -1178,8 +1217,7 @@
               },
               "module": {
                 "__evaluate__": "self.module.preprocessor.ejs.options.module"
-              },
-              "compileSteps": 2
+              }
             }
           },
           "javaScript": {
@@ -1249,17 +1287,13 @@
             "regularExpression": "\\.[jt]sx?(?:\\?.*)?$"
           }
         },
-        "#": "Defines resources which should be mapped to given variables without referencing them explicitly.",
         "provide": null,
         "replacements": {
-          "#": "Defines referenced resources or contexts to be replaced.",
           "context": [],
           "normal": {}
         },
-        "#1": "NOTE: Breaks linked files live reloading when disabled.",
         "resolveSymlinks": true,
         "style": {
-          "#": "Includes referenced (hot module replaced) css files in-place into the html header to dynamically migrate them on changes without browser refresh.",
           "loader": "style-loader",
           "options": {
             "injectType": "singletonStyleTag",
@@ -1269,7 +1303,6 @@
       },
       "nodeENV": null,
       "nodeEnvironment": {
-        "#": "Indicates which node environment variables should be included in built artefacts.",
         "global": true
       },
       "offline": {
@@ -1538,7 +1571,7 @@
           "module": {
             "parser": {
               "javascript": {
-                "#": "NOTE: Tells webpack to include dynamically-imported modules in the current chunk (returning an already-resolved promise) rather than emitting a separate [id].js. Result: only testBundle.js.",
+                "#dynamicImportMode": "NOTE: Tells webpack to include dynamically-imported modules in the current chunk (returning an already-resolved promise) rather than emitting a separate [id].js. Result: only testBundle.js.",
                 "dynamicImportMode": "eager"
               }
             }
@@ -1590,52 +1623,6 @@
               "__evaluate__": "filesystem.isDirectorySync(path.resolve(self.path.target.base, 'node_modules')) ? path.resolve(self.path.target.base, '*/*.js') : path.resolve(self.path.target.base, '**/*.js')"
             }
           ]
-        }
-      }
-    },
-    "debug": {
-      "debug": true,
-      "development": {
-        "server": {
-          "open": {
-            "__evaluate__": "`${path.join(self.path.target.public, self.files.defaultHTML.filename)}`"
-          }
-        }
-      },
-      "files": {
-        "compose": {
-          "javaScript": {
-            "__evaluate__": "`${path.resolve(self.path.target.asset.javaScript, '[name].js')}?${self.hashAlgorithm}=[chunkhash]`"
-          }
-        }
-      },
-      "inPlace": {
-        "cascadingStyleSheet": null,
-        "javaScript": null,
-        "otherMaximumFileSizeLimitInByte": 1
-      },
-      "module": {
-        "html": {
-          "options": {
-            "minimize": false
-          }
-        },
-        "optimizer": {
-          "cssnano": null,
-          "htmlMinifier": null,
-          "minimize": false
-        },
-        "preprocessor": {
-          "html": {
-            "options": {
-              "compiler": {
-                "compileDebug": true,
-                "debug": true,
-                "strict": true,
-                "_with": false
-              }
-            }
-          }
         }
       }
     },
@@ -1753,20 +1740,20 @@
         "source": {
           "asset": {
             "cascadingStyleSheet": "./",
-            "javaScript": "./",
+            "data": "./",
             "image": "./",
-            "template": "./",
-            "data": "./"
+            "javaScript": "./",
+            "template": "./"
           },
           "base": "./"
         },
         "target": {
           "asset": {
             "cascadingStyleSheet": "./",
-            "javaScript": "./",
+            "data": "./",
             "image": "./",
-            "template": "./",
-            "data": "./"
+            "javaScript": "./",
+            "template": "./"
           },
           "base": "./"
         }
@@ -1786,6 +1773,9 @@
         }
       }
     }
+  },
+  "webDocumentation": {
+    "trackingCode": "UA-40192634-11"
   },
   "packageManager": "yarn@4.14.1+sha512.64df448055b2d37ba269d7db535a469b8da93f8ef1140c25fd7a83c00a8fbaacb214ca0e02553b92a2c54cef78bb67d0b4817fab02001df0e24fac0faccc3b42"
 }

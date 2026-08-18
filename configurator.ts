@@ -202,13 +202,14 @@ export const load = async (
         configuration = extend(
             true,
             modifyObject(
-                metaConfiguration.default as DefaultConfiguration,
+                metaConfiguration.default as unknown as DefaultConfiguration,
                 metaConfiguration.debug
             ),
             metaConfiguration.debug
         )
     else
-        configuration = metaConfiguration.default as DefaultConfiguration
+        configuration =
+            metaConfiguration.default as unknown as DefaultConfiguration
 
     configuration.debug = debug
     if (typeof configuration.library === 'object')
