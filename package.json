@@ -102,7 +102,7 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1485",
+    "clientnode": "4.0.1488",
     "core-js": "^3.50.0",
     "ejs": "^6.0.1",
     "exports-loader": "^5.0.0",
@@ -556,8 +556,7 @@
         },
         "test": {
           "command": {
-            "#": "We cannot reuse self.commandLine.test.environments here, because \"self.commandLine.test.environments\" must not yet evaluated at this point.",
-            "__evaluate__": "['node'].concat(self.generic.isWeb ? 'jsdom' : []).map((environment) => `${self.generic.testCommandLine} '${path.relative(self.path.base, self.path.target.test) === '' ? './test' : `${path.relative(self.path.base, self.path.target.test)}/`}.+\\\\.js$' --test-environment ${environment}`).join(' && ')"
+            "__evaluate__": "self.commandLine.test.environments.map((environment) => `${self.generic.testCommandLine} '${path.relative(self.path.base, self.path.target.test) === '' ? './test' : `${path.relative(self.path.base, self.path.target.test)}/`}.+\\\\.js$' --test-environment ${environment}`).join(' && ')"
           },
           "environments": {
             "__evaluate__": "['node'].concat(self.generic.isWeb ? 'jsdom' : [])"
