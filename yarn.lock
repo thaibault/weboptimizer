@@ -7701,9 +7701,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1484":
-  version: 4.0.1484
-  resolution: "clientnode@npm:4.0.1484"
+"clientnode@npm:4.0.1485":
+  version: 4.0.1485
+  resolution: "clientnode@npm:4.0.1485"
   peerDependencies:
     "@types/prop-types": "*"
     node-fetch: "*"
@@ -7715,7 +7715,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/09ad3c538b4fcd174e1caf33ef2bf0a72585e72248fda6ac424437ebdc5e4e81fa73a81b6f344630bb600f9eeb61324986d2aa159470281253dd86c91d5143b9
+  checksum: 10c0/7467a18f39c2c39d32b52ef501d30930433fca57c937af3a914a481252d0defdc3f4f5c0103eed5ad191da36f5f2ce166c43265dbdcb1885c4bfc7280b52ca3c
   languageName: node
   linkType: hard
 
@@ -8346,9 +8346,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano-preset-default@npm:^8.0.7":
-  version: 8.0.7
-  resolution: "cssnano-preset-default@npm:8.0.7"
+"cssnano-preset-default@npm:^8.0.8":
+  version: 8.0.8
+  resolution: "cssnano-preset-default@npm:8.0.8"
   dependencies:
     browserslist: "npm:^4.28.8"
     cssnano-utils: "npm:^6.0.4"
@@ -8362,7 +8362,7 @@ __metadata:
     postcss-merge-longhand: "npm:^8.0.4"
     postcss-merge-rules: "npm:^8.0.5"
     postcss-minify-font-values: "npm:^8.0.4"
-    postcss-minify-gradients: "npm:^8.0.4"
+    postcss-minify-gradients: "npm:^8.0.5"
     postcss-minify-params: "npm:^8.0.4"
     postcss-minify-selectors: "npm:^8.0.5"
     postcss-normalize-charset: "npm:^8.0.4"
@@ -8381,7 +8381,7 @@ __metadata:
     postcss-unique-selectors: "npm:^8.0.4"
   peerDependencies:
     postcss: ^8.5.26
-  checksum: 10c0/d3cd358f3eedf160c7c78d16a9dca2ee8c2412329b0aa361b2a739e2bc67579835b1a01eca7c48cbb9915bb009bb27d26a12404b9fa1a6dfe38081e7c609fc41
+  checksum: 10c0/b390fc9d9aa364b2f474a6eebf7652ac5b2c62c8122a07d419051766710afe3e1647ef6230b9f5d609e66d091256690ca7ab7b31b077e803dee1682888f1ee65
   languageName: node
   linkType: hard
 
@@ -8394,15 +8394,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano@npm:^8.0.7":
-  version: 8.0.7
-  resolution: "cssnano@npm:8.0.7"
+"cssnano@npm:^8.0.8":
+  version: 8.0.8
+  resolution: "cssnano@npm:8.0.8"
   dependencies:
-    cssnano-preset-default: "npm:^8.0.7"
+    cssnano-preset-default: "npm:^8.0.8"
     lilconfig: "npm:^3.1.3"
   peerDependencies:
     postcss: ^8.5.26
-  checksum: 10c0/15966100dc1bb683bff14dd42fefa4d618ba06ac3a7d0ba23d2a1235846451350f015f58b73655de0de44636201b6980e9e75ebef642c070fe58284d20bde4a0
+  checksum: 10c0/a336ee1a6d03261e7dea0b7a395d3f2a2e5f7c392f1a6433424b2704e3706dd3ada017ae959f093a881589ac800b9bf14ec3e51ee3aa4381df537974f2e1471b
   languageName: node
   linkType: hard
 
@@ -14585,16 +14585,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-minify-gradients@npm:^8.0.4":
-  version: 8.0.4
-  resolution: "postcss-minify-gradients@npm:8.0.4"
+"postcss-minify-gradients@npm:^8.0.5":
+  version: 8.0.5
+  resolution: "postcss-minify-gradients@npm:8.0.5"
   dependencies:
     "@colordx/core": "npm:^5.5.0"
     cssnano-utils: "npm:^6.0.4"
     postcss-value-parser: "npm:^4.2.0"
   peerDependencies:
     postcss: ^8.5.26
-  checksum: 10c0/ad9e1feaeb9fdc995bf19e99344dc707c28d692187dcc7e09fd4e58eb2855e9a5b6572ed4b9a4a40166e887930fad83b47a750c2c4298c1e9eb798a215746e32
+  checksum: 10c0/7f7a5b1a91efb4efc881c44b46ef044d09917a194799c32e8835b27a560034489325cb61c5a2433b99f2e1c5888d60b7188d16b27bd3e0fbe1cc0a75187575ea
   languageName: node
   linkType: hard
 
@@ -18472,10 +18472,10 @@ __metadata:
     babel-loader: "npm:^10.1.1"
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
-    clientnode: "npm:4.0.1484"
+    clientnode: "npm:4.0.1485"
     core-js: "npm:^3.50.0"
     css-loader: "npm:^7.1.4"
-    cssnano: "npm:^8.0.7"
+    cssnano: "npm:^8.0.8"
     ejs: "npm:^6.0.1"
     eslint: "npm:^10.9.0"
     eslint-config-google: "npm:^0.14.0"

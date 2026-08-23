@@ -102,7 +102,7 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1484",
+    "clientnode": "4.0.1485",
     "core-js": "^3.50.0",
     "ejs": "^6.0.1",
     "exports-loader": "^5.0.0",
@@ -137,7 +137,7 @@
     "@types/webpack-sources": "^3.2.3",
     "@typescript-eslint/parser": "^8.67.0",
     "css-loader": "^7.1.4",
-    "cssnano": "^8.0.7",
+    "cssnano": "^8.0.8",
     "eslint": "^10.9.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-jsdoc": "^64.2.1",
@@ -556,7 +556,8 @@
         },
         "test": {
           "command": {
-            "__evaluate__": "self.commandLine.test.environments.map((environment) => `${self.generic.testCommandLine} '${path.relative(self.path.base, self.path.target.test) === '' ? './test' : `${path.relative(self.path.base, self.path.target.test)}/`}.+\\\\.js$' --test-environment ${environment}`).join(' && ')"
+            "#": "We cannot reuse self.commandLine.test.environments here, because \"self.commandLine.test.environments\" must not yet evaluated at this point.",
+            "__evaluate__": "['node'].concat(self.generic.isWeb ? 'jsdom' : []).map((environment) => `${self.generic.testCommandLine} '${path.relative(self.path.base, self.path.target.test) === '' ? './test' : `${path.relative(self.path.base, self.path.target.test)}/`}.+\\\\.js$' --test-environment ${environment}`).join(' && ')"
           },
           "environments": {
             "__evaluate__": "['node'].concat(self.generic.isWeb ? 'jsdom' : [])"
