@@ -845,7 +845,7 @@ const evaluateOrThrowError = <T = unknown>(
     const options =
         {async: false, filePath: configuration.path.context, ...givenOptions}
     if (typeof object === 'string')
-        evaluateOrThrowErrorBase<T>(
+        return evaluateOrThrowErrorBase<T>(
             object,
             {
                 async: options.async,
