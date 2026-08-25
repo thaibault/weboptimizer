@@ -165,7 +165,7 @@ export const loader = async function(
                 const evaluated: EvaluationResult<Mapping<unknown>> =
                     evaluate<Mapping<unknown>>(
                         queryMatch[1],
-                        {compile, locals, request, source, template}
+                        {scope: {compile, locals, request, source, template}}
                     )
                 if (evaluated.error)
                     log.warn(
