@@ -66,6 +66,7 @@ import type {
 import {
     convertToValidVariableName,
     evaluate,
+    evaluateOrThrowError as evaluateOrThrowErrorBase,
     escapeRegularExpressions,
     extend,
     importFilesystemAPI,
@@ -837,43 +838,43 @@ const scope = {
     loader
 }
 
-const evaluateOrThrowOnError = <T = unknown>(
-    object: unknown, givenOptions: {filePath?: string; type?: string} = {}
+const evaluateOrThrowError = <T = unknown>(
+    object: unknown,
+    givenOptions: {async?: boolean, filePath?: string; type?: string} = {}
 ): T => {
-    const options = {filePath: configuration.path.context, ...givenOptions}
-    if (typeof object === 'string') {
-        const evaluated: EvaluationResult<T> = evaluate<T>(
+    const options =
+        {async: false, filePath: configuration.path.context, ...givenOptions}
+    if (typeof object === 'string')
+        evaluateOrThrowErrorBase<T>(
             object,
-            {scope: {filePath: options.filePath, ...scope, type: options.type}}
+            {
+                async: options.async,
+                scope: {
+                    filePath: options.filePath,
+                    ...scope,
+                    type: options.type
+                }
+            }
         )
-
-        if (evaluated.error)
-            throw new Error(
-                'Error occurred during processing given expression: ' +
-                evaluated.error
-            )
-
-        return (evaluated as PositiveEvaluationResult<T>).result
-    }
 
     return object as T
 }
-const createEvaluateMapper = <T = unknown>(type: string) =>
-    (value: unknown): T => evaluateOrThrowOnError<T>(value, {type})
+const createEvaluateMapper = <T = unknown>(type: string, async = false) =>
+    (value: unknown): T => evaluateOrThrowError<T>(value, {async, type})
 const evaluateAdditionalLoaderConfiguration = (
     loaderConfiguration: AdditionalLoaderConfiguration
 ): WebpackLoaderConfiguration => ({
-    exclude: (filePath: string): boolean => evaluateOrThrowOnError<boolean>(
+    exclude: (filePath: string): boolean => evaluateOrThrowError<boolean>(
         loaderConfiguration.exclude, {filePath}
     ),
     include:
         loaderConfiguration.include &&
-        evaluateOrThrowOnError<WebpackLoaderIndicator>(
+        evaluateOrThrowError<WebpackLoaderIndicator>(
             loaderConfiguration.include
         ) ||
         configuration.path.source.base,
-    test: new RegExp(evaluateOrThrowOnError(loaderConfiguration.test)),
-    use: evaluateOrThrowOnError<Array<WebpackLoader> | WebpackLoader>(
+    test: new RegExp(evaluateOrThrowError(loaderConfiguration.test)),
+    use: evaluateOrThrowError<Array<WebpackLoader> | WebpackLoader>(
         loaderConfiguration.use
     )
 })
@@ -924,7 +925,7 @@ const cssUse: RuleSet = (await Promise.all(
                                         .pre
                                         .map(createEvaluateMapper<
                                             Promise<PostcssTransformer>
-                                        >('css.postcss'))
+                                        >('css.postcss', true))
                                 )),
                                 /*
                                     NOTE: Checking path doesn't work if fonts
@@ -1045,7 +1046,7 @@ const genericLoader: GenericLoader = {
             ).includes(filePath) ||
             (module.preprocessor.ejs.exclude === null) ?
                 false :
-                evaluateOrThrowOnError<boolean>(
+                evaluateOrThrowError<boolean>(
                     module.preprocessor.ejs.exclude, {filePath}
                 ),
         include: getIncludingPaths(configuration.path.source.asset.template),
@@ -1074,12 +1075,12 @@ const genericLoader: GenericLoader = {
     // region script
     script: {
         exclude: (filePath: string): boolean =>
-            evaluateOrThrowOnError<boolean>(
+            evaluateOrThrowError<boolean>(
                 module.preprocessor.javaScript.exclude,
                 {filePath, type: 'script'}
             ),
         include: (filePath: string): boolean => {
-            const result: unknown = evaluateOrThrowOnError(
+            const result: unknown = evaluateOrThrowError(
                 module.preprocessor.javaScript.include,
                 {filePath, type: 'script'}
             )
@@ -1138,7 +1139,7 @@ const genericLoader: GenericLoader = {
                 ).includes(filePath) ||
                 ((module.preprocessor.html.exclude === null) ?
                     false :
-                    evaluateOrThrowOnError<boolean>(
+                    evaluateOrThrowError<boolean>(
                         module.preprocessor.html.exclude,
                         {filePath, type: 'html.ejs'}
                     )
@@ -1197,7 +1198,7 @@ const genericLoader: GenericLoader = {
                 (
                     (module.html.exclude === null) ?
                         true :
-                        evaluateOrThrowOnError<boolean>(module.html.exclude,
+                        evaluateOrThrowError<boolean>(module.html.exclude,
                             {filePath, type: 'html'}
                         )
                 ),
@@ -1240,12 +1241,12 @@ const genericLoader: GenericLoader = {
         exclude: (filePath: string): boolean =>
             (module.cascadingStyleSheet.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                evaluateOrThrowOnError<boolean>(
+                evaluateOrThrowError<boolean>(
                     module.cascadingStyleSheet.exclude,
                     {filePath, type: 'style'}
                 ),
         include: (filePath: string): boolean => {
-            const result: unknown = evaluateOrThrowOnError(
+            const result: unknown = evaluateOrThrowError(
                 module.cascadingStyleSheet.include, {filePath, type: 'style'}
             )
             if ([null, undefined].includes(result as null)) {
@@ -1271,7 +1272,7 @@ const genericLoader: GenericLoader = {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.eot.exclude === null) ?
                     false :
-                    evaluateOrThrowOnError<boolean>(
+                    evaluateOrThrowError<boolean>(
                         module.optimizer.font.eot.exclude,
                         {filePath, type: 'font.eot'}
                     ),
@@ -1304,7 +1305,7 @@ const genericLoader: GenericLoader = {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.svg.exclude === null) ?
                     false :
-                    evaluateOrThrowOnError<boolean>(
+                    evaluateOrThrowError<boolean>(
                         module.optimizer.font.svg.exclude,
                         {filePath, type: 'svg'}
                     ),
@@ -1339,7 +1340,7 @@ const genericLoader: GenericLoader = {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.ttf.exclude === null) ?
                     false :
-                    evaluateOrThrowOnError<boolean>(
+                    evaluateOrThrowError<boolean>(
                         module.optimizer.font.ttf.exclude,
                         {filePath, type: 'ttf'}
                     ),
@@ -1373,7 +1374,7 @@ const genericLoader: GenericLoader = {
             exclude: (filePath: string): boolean =>
                 (module.optimizer.font.woff.exclude === null) ?
                     false :
-                    evaluateOrThrowOnError<boolean>(
+                    evaluateOrThrowError<boolean>(
                         module.optimizer.font.woff.exclude,
                         {filePath, type: 'woff'}
                     ),
@@ -1409,7 +1410,7 @@ const genericLoader: GenericLoader = {
         exclude: (filePath: string): boolean =>
             (module.optimizer.image.exclude === null) ?
                 isFilePathInDependencies(filePath) :
-                evaluateOrThrowOnError<boolean>(
+                evaluateOrThrowError<boolean>(
                     module.optimizer.image.exclude, {filePath, type: 'image'}
                 ),
         generator: {
@@ -1450,7 +1451,7 @@ const genericLoader: GenericLoader = {
             (
                 (module.optimizer.data.exclude === null) ?
                     isFilePathInDependencies(filePath) :
-                    evaluateOrThrowOnError<boolean>(
+                    evaluateOrThrowError<boolean>(
                         module.optimizer.data.exclude, {filePath, type: 'data'}
                     )
             )
