@@ -7726,9 +7726,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1499":
-  version: 4.0.1499
-  resolution: "clientnode@npm:4.0.1499"
+"clientnode@npm:4.0.1500":
+  version: 4.0.1500
+  resolution: "clientnode@npm:4.0.1500"
   peerDependencies:
     "@types/prop-types": "*"
     node-fetch: "*"
@@ -7740,7 +7740,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/15af1af107b8cd12e76dbacc25667da9e68efd781f49efd329b8fd15ba2064c6d4b9c88c6893ed3a9cdc220b359f9b6f8e61ac162865eb846e7bc8658454fa91
+  checksum: 10c0/c701e5a43662018b9073fd14074aa84f475e1e044dfd13bee0a9bb20297cf6d6047bc6452177a68b608b1449162ce5c1f9c75b27ddb67f9deefb04c4e3896836
   languageName: node
   linkType: hard
 
@@ -18441,12 +18441,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-documentation@npm:^1.0.49":
-  version: 1.0.49
-  resolution: "web-documentation@npm:1.0.49"
+"web-documentation@npm:^1.0.50":
+  version: 1.0.50
+  resolution: "web-documentation@npm:1.0.50"
   bin:
     web-documentation: build/deploy.js
-  checksum: 10c0/cbc11c7146a50b7e378a5fba17e5747d5eb85e2182c746d0cb80390b52b785062672b7ce240f88acf2a09517f3e82d9a591b9f41066bf44883f267efa2a87938
+  checksum: 10c0/0d9bc3d510be65b55aaee96b834cd89ab22a2d089c397ea23a0749b81fd495dcf2066f8e9e1b974aaa2954d3b5fe850ddeeff63f3d4370698fdbef634e41a12b
   languageName: node
   linkType: hard
 
@@ -18499,7 +18499,7 @@ __metadata:
     babel-loader: "npm:^10.1.1"
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
-    clientnode: "npm:4.0.1499"
+    clientnode: "npm:4.0.1500"
     core-js: "npm:^3.50.0"
     css-loader: "npm:^7.1.4"
     cssnano: "npm:^8.0.8"
@@ -18542,7 +18542,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     typescript-eslint: "npm:^8.68.0"
     typescript-plugin-css-modules: "npm:^5.2.0"
-    web-documentation: "npm:^1.0.49"
+    web-documentation: "npm:^1.0.50"
     webpack: "npm:^5.109.2"
     webpack-cli: "npm:^7.2.2"
     webpack-sources: "npm:^3.5.1"
