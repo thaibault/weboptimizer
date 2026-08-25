@@ -48,7 +48,7 @@ import {
     removeKeyPrefixes,
     UTILITY_SCOPE
 } from 'clientnode'
-import fileSystem, {lstatSync, readFileSync, unlinkSync} from 'fs'
+import fileSystem, {lstat, readFile, unlink} from 'fs/promises'
 import path, {basename, dirname, join, resolve} from 'path'
 
 import {
@@ -138,10 +138,9 @@ export const load = async (
                 hierarchy.
             */
             try {
-                if (
-                    lstatSync(join(currentWorkingDirectory, 'node_modules'))
-                        .isSymbolicLink()
-                )
+                if ((await lstat(
+                    join(currentWorkingDirectory, 'node_modules'))
+                ).isSymbolicLink())
                     metaConfiguration.default.path.context =
                         currentWorkingDirectory
             } catch {
@@ -258,11 +257,11 @@ export const load = async (
     let runtimeInformation: RuntimeInformation =
         {givenCommandLineArguments: commandLineArguments}
     if (filePath) {
-        const fileContent: string = readFileSync(
+        const fileContent: string = await readFile(
             filePath, {encoding: configuration.encoding}
         )
         runtimeInformation = JSON.parse(fileContent) as RuntimeInformation
-        unlinkSync(filePath)
+        await unlink(filePath)
     }
     //// region task specific configuration
     ///// region apply task type specific configuration
@@ -346,7 +345,7 @@ export const load = async (
                         true,
                         result,
                         JSON.parse(
-                            readFileSync(name, configuration.encoding)
+                            await readFile(name, configuration.encoding)
                         ) as PlainObject
                     )
                 else
