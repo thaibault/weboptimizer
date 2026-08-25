@@ -102,7 +102,7 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1493",
+    "clientnode": "4.0.1494",
     "core-js": "^3.50.0",
     "ejs": "^6.0.1",
     "exports-loader": "^5.0.0",
@@ -989,7 +989,7 @@
           "cssnano": {
             "preset": [
               {
-                "__await_evaluate__": "(await module.optionalImport('cssnano-preset-default'))?.default"
+                "__async_evaluate__": "(await module.optionalImport('cssnano-preset-default'))?.default"
               },
               "#: The autoprefixer has to be disabled in this context since it would remove all needed vendor prefixes from the preceding processing (every prefix should be needed here).",
               {
@@ -1140,7 +1140,7 @@
               "pre": []
             },
             "loader": {
-              "__await_evaluate__": "(await module.optionalImport('postcss-loader')) ? 'postcss-loader' : null"
+              "__async_evaluate__": "(await module.optionalImport('postcss-loader')) ? 'postcss-loader' : null"
             },
             "options": {}
           },
