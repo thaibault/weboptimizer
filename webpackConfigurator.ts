@@ -650,7 +650,7 @@ for (const contextReplacement of module.replacements.context)
         contextReplacement.map((value: string): RegExp | string => {
             const evaluated: EvaluationResult<RegExp | string> =
                 evaluate<RegExp | string>(
-                    value, {configuration, metaImport: import.meta}
+                    value, {scope: {configuration, metaImport: import.meta}}
                 )
 
             if (evaluated.error)
@@ -843,7 +843,8 @@ const evaluateOrThrowOnError = <T = unknown>(
     const options = {filePath: configuration.path.context, ...givenOptions}
     if (typeof object === 'string') {
         const evaluated: EvaluationResult<T> = evaluate<T>(
-            object, {filePath: options.filePath, ...scope, type: options.type}
+            object,
+            {scope: {filePath: options.filePath, ...scope, type: options.type}}
         )
 
         if (evaluated.error)

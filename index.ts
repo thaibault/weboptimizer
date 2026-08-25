@@ -565,14 +565,14 @@ const main = async (
                         if (!testModuleFilePaths.includes(filePath)) {
                             const evaluated: EvaluationResult = evaluate(
                                 `\`${expression}\``,
-                                {
+                                {scope: {
                                     global,
                                     self: configuration,
                                     buildConfiguration,
                                     path,
                                     additionalArguments,
                                     filePath
-                                }
+                                }}
                             )
 
                             if (evaluated.error)
@@ -634,7 +634,7 @@ const main = async (
                                 task, 'indicator'
                             ) ? task.indicator as string : 'true'
                         ),
-                        {global, self: configuration, path}
+                        {scope: {global, self: configuration, path}}
                     )
 
                     if (evaluated.error)
