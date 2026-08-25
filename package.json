@@ -102,7 +102,7 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1498",
+    "clientnode": "4.0.1499",
     "core-js": "^3.50.0",
     "ejs": "^6.0.1",
     "exports-loader": "^5.0.0",
