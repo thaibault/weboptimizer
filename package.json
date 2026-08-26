@@ -99,6 +99,7 @@
     "@babel/plugin-transform-proto-to-assign": "^8.0.1",
     "@babel/preset-env": "^8.0.2",
     "@babel/preset-typescript": "^8.0.1",
+    "@typescript/native": "npm:typescript@^7.0.2",
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
@@ -115,7 +116,7 @@
     "jest-environment-jsdom": "^30.4.1",
     "rimraf": "^6.1.3",
     "script-loader": "^0.7.2",
-    "typescript": "^6.0.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "webpack": "^5.109.2",
     "webpack-cli": "^7.2.2",
     "webpack-sources": "^3.5.1"
@@ -1777,5 +1778,5 @@
   "webDocumentation": {
     "trackingCode": "UA-40192634-11"
   },
-  "packageManager": "yarn@4.14.1+sha512.64df448055b2d37ba269d7db535a469b8da93f8ef1140c25fd7a83c00a8fbaacb214ca0e02553b92a2c54cef78bb67d0b4817fab02001df0e24fac0faccc3b42"
+  "packageManager": "yarn@4.18.0"
 }
