@@ -137,7 +137,7 @@
     "@types/webpack-sources": "^3.2.3",
     "@typescript-eslint/parser": "^8.68.0",
     "css-loader": "^7.1.4",
-    "cssnano": "^8.0.8",
+    "cssnano": "^8.0.9",
     "eslint": "^10.9.1",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-jsdoc": "^64.2.1",
@@ -165,7 +165,7 @@
     "terser-webpack-plugin": "^5.6.1",
     "typescript-eslint": "^8.68.0",
     "typescript-plugin-css-modules": "^5.2.0",
-    "web-documentation": "^1.0.50",
+    "web-documentation": "^1.0.51",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "peerDependencies": {
