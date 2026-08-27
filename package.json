@@ -653,6 +653,7 @@
         "file": {
           "alias": {
             ".js": [
+              ".ejs",
               ".js",
               ".ts",
               ".tsx",
