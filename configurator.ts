@@ -48,6 +48,7 @@ import {
     removeKeyPrefixes,
     UTILITY_SCOPE
 } from 'clientnode'
+import fileSystemSynchronous from 'fs'
 import fileSystem, {lstat, readFile, unlink} from 'fs/promises'
 import path, {basename, dirname, join, resolve} from 'path'
 
@@ -425,7 +426,13 @@ export const load = async (
                 configuration as
                     unknown as
                     RecursiveEvaluateable<ResolvedConfiguration>,
-                evaluationOptions
+                {
+                    ...evaluationOptions,
+                    scope: {
+                        ...evaluationOptions.scope,
+                        fs: fileSystemSynchronous
+                    }
+                }
             ) as
                 unknown as
                 RecursiveAsyncEvaluateable<ResolvedConfiguration>,
