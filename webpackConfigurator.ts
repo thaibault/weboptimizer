@@ -113,7 +113,7 @@ await importFilesystemAPI()
 
 /// region optional imports
 const postcssCSSnano = (
-    await optionalImport<{default: typeof import('cssnano')}>('cssnano')
+    await optionalImport<typeof import('cssnano')>('cssnano')
 )?.default
 const postcssFontpath =
     (await optionalImport<typeof import('postcss-fontpath')>(

@@ -326,8 +326,8 @@ export const loader = async function(
                         const compiledSourceCode =
                             templateInstance.source
 
-                        result = `
-                            module.exports = function(
+                        result = `module.exports =
+                            ${options.async ? 'async ' : ''}function(
                                 ${options.localsName as string}
                             ) {
                                 var escapeFn = function(value) {
