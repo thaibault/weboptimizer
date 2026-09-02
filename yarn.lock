@@ -5548,12 +5548,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^26.4.0":
-  version: 26.4.0
-  resolution: "@types/node@npm:26.4.0"
+"@types/node@npm:^26.4.1":
+  version: 26.4.1
+  resolution: "@types/node@npm:26.4.1"
   dependencies:
     undici-types: "npm:~8.3.0"
-  checksum: 10c0/e6fc94ea3b58fb8040b38c465dec1c53c1fd9d2c092c81f699d28799726baf59f12e1600318e79e8e6f985bb919dab6ae820180b942b8e38c51acaad63e8aada
+  checksum: 10c0/29568336db8bc67740744782492af0e81ab1f88d86eaa07e38cf0a4c8bae7250a7b4b85c80ac1014fc98b2bc6d4bcac872b2c494ee0671b3880eada7c1fdbc94
   languageName: node
   linkType: hard
 
@@ -9786,9 +9786,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^64.3.3":
-  version: 64.3.3
-  resolution: "eslint-plugin-jsdoc@npm:64.3.3"
+"eslint-plugin-jsdoc@npm:^64.3.4":
+  version: 64.3.4
+  resolution: "eslint-plugin-jsdoc@npm:64.3.4"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.95.1"
     "@es-joy/resolve.exports": "npm:1.2.0"
@@ -9807,7 +9807,7 @@ __metadata:
     to-valid-identifier: "npm:^1.0.0"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
-  checksum: 10c0/261dd56ccd0ae4d8ff88a607f26d77ad97153b719b492d41fc7c059e4e38c751307f9d5655b9401fb939d31b6b7385a0aa92f193933b62af5a95ac5084f98cab
+  checksum: 10c0/49b983bef00e6f310c7bc1c5d120efcfafee221f2a37d42b40d8d739934401e480d2b0ec67392582b839a24dab6c7762f938bcf997ad3382b9c5c66d31728bcc
   languageName: node
   linkType: hard
 
@@ -18948,7 +18948,7 @@ __metadata:
     "@types/html-minifier": "npm:^4.0.6"
     "@types/html-minifier-terser": "npm:^7.0.2"
     "@types/imagemin": "npm:^9.0.1"
-    "@types/node": "npm:^26.4.0"
+    "@types/node": "npm:^26.4.1"
     "@types/postcss-import": "npm:^14.0.3"
     "@types/postcss-url": "npm:^10.0.4"
     "@types/webpack-env": "npm:^1.18.8"
@@ -18965,7 +18965,7 @@ __metadata:
     ejs: "npm:^6.0.1"
     eslint: "npm:^10.9.1"
     eslint-config-google: "npm:^0.14.0"
-    eslint-plugin-jsdoc: "npm:^64.3.3"
+    eslint-plugin-jsdoc: "npm:^64.3.4"
     exports-loader: "npm:^5.0.0"
     extract-loader: "npm:^5.1.0"
     favicons: "npm:^7.3.1"
@@ -19002,7 +19002,7 @@ __metadata:
     typescript-eslint: "npm:^8.69.0"
     typescript-plugin-css-modules: "npm:^5.2.0"
     web-documentation: "npm:^1.0.52"
-    webpack: "npm:^5.110.2"
+    webpack: "npm:^5.110.3"
     webpack-cli: "npm:^7.2.3"
     webpack-sources: "npm:^3.5.1"
     workbox-webpack-plugin: "npm:^7.4.1"
@@ -19190,9 +19190,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.110.2":
-  version: 5.110.2
-  resolution: "webpack@npm:5.110.2"
+"webpack@npm:^5.110.3":
+  version: 5.110.3
+  resolution: "webpack@npm:5.110.3"
   dependencies:
     "@types/estree": "npm:^1.0.8"
     "@types/json-schema": "npm:^7.0.15"
@@ -19218,7 +19218,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10c0/1fb6eb4c454e17b9ac7beb0bd4e56fe9bda7939a91e43575f8ab2e173454f0cf69be3aecff3b3e6f205a570f49564cac1679de3355c0ce87e8afa0ae12da4063
+  checksum: 10c0/e1c86317d2d04d33f670a0ad7095e1a8d410867360c327c2dfb14f589794d8ce9b0619998e6fe66aebcfdac6d2e6c9e6f7085adfc9e44cd7d39855654fe75ed4
   languageName: node
   linkType: hard
 
