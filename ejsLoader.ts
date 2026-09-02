@@ -410,7 +410,7 @@ export const loader = async function(
                             minified: givenOptions.compress?.javaScript,
                             presets: [],
                             sourceMaps: false,
-                            sourceType: 'script'
+                            sourceType: 'module'
                         },
                         (error: Error | null, file: FileResult | null) => {
                             if (error)

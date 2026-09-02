@@ -27,7 +27,10 @@ import ejsLoader from '../ejsLoader'
 // region mockup
 let lastResult = ''
 const context: LoaderContext<LoaderConfiguration> = {
-    async: () => (_error: Error | null, result: string) => {
+    async: () => (error: Error | null, result: string) => {
+        if (error)
+            throw error
+
         lastResult = result
     },
     debug: false,
@@ -70,7 +73,6 @@ test('ejsLoader', async (): Promise<void> => {
         '<a></a>' +
         `<%- await _.include('<a>test</a>?{options: {isString: true}}') %>`
     )
-
     expect(lastResult).toStrictEqual('<a></a><a>test</a>')
 
     ;(complexContext.query as LoaderConfiguration).compileSteps = 0
@@ -79,7 +81,7 @@ test('ejsLoader', async (): Promise<void> => {
 
     ;(complexContext.query as LoaderConfiguration).compileSteps = 1
     await ejsLoader.call(complexContext, '<a></a>')
-    expect(lastResult.startsWith(`'use strict';\nmodule.exports=`))
+    expect(lastResult.startsWith(`'use strict';\nexport default `))
         .toStrictEqual(true)
 
     ;(complexContext.query as LoaderConfiguration).compileSteps = 2
@@ -88,7 +90,7 @@ test('ejsLoader', async (): Promise<void> => {
 
     ;(complexContext.query as LoaderConfiguration).compileSteps = 3
     await ejsLoader.call(complexContext, '<a></a>')
-    expect(lastResult.startsWith(`'use strict';\nmodule.exports=`))
+    expect(lastResult.startsWith(`'use strict';\nexport default `))
         .toStrictEqual(true)
 })
 // endregion
