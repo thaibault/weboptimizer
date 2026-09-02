@@ -326,67 +326,65 @@ export const loader = async function(
                         const compiledSourceCode =
                             templateInstance.source
 
-                        result = `module.exports =
-                            ${options.async ? 'async ' : ''}function(
-                                ${options.localsName as string}
-                            ) {
-                                var escapeFn = function(value) {
-                                    return String(value)
-                                        .replace(
-                                            /[&<>"']/g,
-                                            function(char) {
-                                                return {
-                                                    '&': '&amp;',
-                                                    '<': '&lt;',
-                                                    '>': '&gt;',
-                                                    '"': '&quot;',
-                                                    "'": "&#39;"
-                                                }[char]
-                                            }
-                                        )
-                                };
-                                var include = function() {
-                                    throw new Error('Include not implemented.')
-                                };
-                                var rethrow = function rethrow(
-                                    err, str, flnm, lineno, esc
-                                ) {
-                                    var lines = str.split('\\n');
-                                    var start = Math.max(lineno - 3, 0);
-                                    var end = Math.min(
-                                        lines.length, lineno + 3
-                                    );
-                                    var filename = esc(flnm);
-                                    // Error context
-                                    var context = lines
-                                        .slice(start, end)
-                                        .map(function (line, i) {
-                                            var curr = i + start + 1;
-                                            return (
-                                                curr == lineno ?
-                                                    ' >> ' :
-                                                    '    '
-                                                ) +
-                                                curr +
-                                                '| ' +
-                                                line;
-                                        })
-                                        .join('\\n');
-                                    // Alter exception message
-                                    err.path = filename;
-                                    err.message =
-                                        (filename || 'ejs') +
-                                        ':' +
-                                        lineno +
-                                        '\\n' +
-                                        context +
-                                        '\\n\\n' +
-                                        err.message;
-                                    throw err;
-                                };
-                                ${compiledSourceCode}
+                        result = `export default ${
+                            options.async ? 'async ' : ''
+                        }function(${options.localsName as string}) {
+                            var escapeFn = function(value) {
+                                return String(value)
+                                    .replace(
+                                        /[&<>"']/g,
+                                        function(char) {
+                                            return {
+                                                '&': '&amp;',
+                                                '<': '&lt;',
+                                                '>': '&gt;',
+                                                '"': '&quot;',
+                                                "'": "&#39;"
+                                            }[char]
+                                        }
+                                    )
                             };
-                        `.trim()
+                            var include = function() {
+                                throw new Error('Include not implemented.')
+                            };
+                            var rethrow = function rethrow(
+                                err, str, flnm, lineno, esc
+                            ) {
+                                var lines = str.split('\\n');
+                                var start = Math.max(lineno - 3, 0);
+                                var end = Math.min(
+                                    lines.length, lineno + 3
+                                );
+                                var filename = esc(flnm);
+                                // Error context
+                                var context = lines
+                                    .slice(start, end)
+                                    .map(function (line, i) {
+                                        var curr = i + start + 1;
+                                        return (
+                                            curr == lineno ?
+                                                ' >> ' :
+                                                '    '
+                                            ) +
+                                            curr +
+                                            '| ' +
+                                            line;
+                                    })
+                                    .join('\\n');
+                                // Alter exception message
+                                err.path = filename;
+                                err.message =
+                                    (filename || 'ejs') +
+                                    ':' +
+                                    lineno +
+                                    '\\n' +
+                                    context +
+                                    '\\n\\n' +
+                                    err.message;
+                                throw err;
+                            };
+                            ${compiledSourceCode}
+                        };`.trim()
                     } else
                         result = ejs.compile(result, options) as
                             EJSAsyncTemplateFunction
