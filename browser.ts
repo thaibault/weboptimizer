@@ -43,130 +43,122 @@ export const browser: Browser = {
 export const log = new Logger({name: 'weboptimizer.browser'})
 // endregion
 // region ensure presence of common browser environment
-if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node')
-    /*
-        NOTE: We use an asynchronous wrapper method to initialize
-        "browser.initialized" at module loading time.
-    */
-    (async (): Promise<void> => {
-        // region mock browser environment
-        const [{JSDOM, VirtualConsole: VirtualConsoleImplementation}, path] =
-            await Promise.all([import('jsdom'), import('path')])
+if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
+    // region mock browser environment
+    const [{JSDOM, VirtualConsole: VirtualConsoleImplementation}, path] =
+        await Promise.all([import('jsdom'), import('path')])
 
-        const virtualConsole: VirtualConsole =
-            new VirtualConsoleImplementation()
-        for (const name of CONSOLE_METHODS)
-            virtualConsole.on(name, console[name].bind(console))
-        virtualConsole.on(
-            'error',
-            (error: Error & {
-                detail: string
-                type: string
-            }): void => {
-                if (
-                    !browser.debug &&
-                    ['XMLHttpRequest', 'resource loading'].includes(error.type)
-                )
-                    log.warn(`Loading resource failed: ${error.toString()}.`)
-                else
-                    log.error(error.stack, error.detail)
-            }
-        )
+    const virtualConsole: VirtualConsole =
+        new VirtualConsoleImplementation()
+    for (const name of CONSOLE_METHODS)
+        virtualConsole.on(name, console[name].bind(console))
+    virtualConsole.on(
+        'error',
+        (error: Error & {
+            detail: string
+            type: string
+        }): void => {
+            if (
+                !browser.debug &&
+                ['XMLHttpRequest', 'resource loading'].includes(error.type)
+            )
+                log.warn(`Loading resource failed: ${error.toString()}.`)
+            else
+                log.error(error.stack, error.detail)
+        }
+    )
 
-        const render = (template: string): void => {
-            browser.DOM = JSDOM
-            browser.initialized = true
-            browser.instance = new browser.DOM(
-                template,
-                {
-                    beforeParse: (window: DOMWindow): void => {
-                        // We want to use it in a polymorphic way.
-                        /*
-                            eslint-disable
-                            @typescript-eslint/no-unnecessary-type-assertion
-                        */
-                        browser.window =
-                            (global.window as Window | null) ?? window as
-                                unknown as Window
-                        /*
-                            eslint-enable
-                            @typescript-eslint/no-unnecessary-type-assertion
-                        */
+    const render = (template: string): void => {
+        browser.DOM = JSDOM
+        browser.initialized = true
+        browser.instance = new browser.DOM(
+            template,
+            {
+                beforeParse: (window: DOMWindow): void => {
+                    // We want to use it in a polymorphic way.
+                    /*
+                        eslint-disable
+                        @typescript-eslint/no-unnecessary-type-assertion
+                    */
+                    browser.window =
+                        (global.window as Window | null) ?? window as
+                            unknown as Window
+                    /*
+                        eslint-enable
+                        @typescript-eslint/no-unnecessary-type-assertion
+                    */
 
-                        window.document.addEventListener(
-                            'DOMContentLoaded',
-                            () => {
-                                /*
-                                    Move template results into global
-                                    pre-defined dom.
-                                */
-                                if (global.window as unknown)
-                                    for (const type of [
-                                        'head', 'body'
-                                    ] as const)
-                                        global.window.document[type]
-                                            .innerHTML =
-                                                window.document[type].innerHTML
-
-                                browser.domContentLoaded = true
-                            }
-                        )
-                        window.addEventListener('load', () => {
+                    window.document.addEventListener(
+                        'DOMContentLoaded',
+                        () => {
                             /*
-                                NOTE: Maybe we have miss the "DOMContentLoaded"
-                                event caused by a race condition.
+                                Move template results into global
+                                pre-defined dom.
                             */
-                            browser.domContentLoaded =
+                            if (global.window as unknown)
+                                for (const type of [
+                                    'head', 'body'
+                                ] as const)
+                                    global.window.document[type]
+                                        .innerHTML =
+                                        window.document[type].innerHTML
+
+                            browser.domContentLoaded = true
+                        }
+                    )
+                    window.addEventListener('load', () => {
+                        /*
+                            NOTE: Maybe we have miss the "DOMContentLoaded"
+                            event caused by a race condition.
+                        */
+                        browser.domContentLoaded =
                             browser.windowLoaded =
                                 true
-                        })
+                    })
 
-                        for (const callback of onCreatedListener)
-                            void callback()
-                    },
-                    resources: 'usable',
-                    runScripts: 'dangerously',
-                    url: 'http://localhost',
-                    virtualConsole
-                }
-            )
-        }
+                    for (const callback of onCreatedListener)
+                        void callback()
+                },
+                resources: 'usable',
+                runScripts: 'dangerously',
+                url: 'http://localhost',
+                virtualConsole
+            }
+        )
+    }
 
-        let evaluatedContent = ''
-        if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
-            const filePath = path.join(import.meta.dirname, 'index.html.ejs')
-            /*
-                NOTE: We load dependencies now to avoid having file imports
-                after test runner has finished to isolate the environment.
-            */
-            const ejsLoader = (await import('./ejsLoader.js')).default
-            const content: string = await (await import('fs')).promises
-                .readFile(filePath, {encoding: 'utf-8'})
+    let evaluatedContent = ''
+    if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
+        const filePath = path.join(import.meta.dirname, 'index.html.ejs')
+        /*
+            NOTE: We load dependencies now to avoid having file imports
+            after test runner has finished to isolate the environment.
+        */
+        const ejsLoader = (await import('./ejsLoader.js')).default
+        const content: string = await (await import('fs')).promises
+            .readFile(filePath, {encoding: 'utf-8'})
 
-            await ejsLoader.bind(
-                {
-                    resourcePath: filePath,
-                    async: () =>
-                        (error: Error | null, result: null | string) => {
-                            if (error)
-                                throw error
-                            else
-                                evaluatedContent = result as string
-                        }
-                } as
-                    unknown as
-                    LoaderContext<LoaderConfiguration>
-            )(content)
-        } else
-            evaluatedContent =
-                (await import('webOptimizerDefaultTemplateFilePath')).default
+        await ejsLoader.bind(
+            {
+                resourcePath: filePath,
+                async: () =>
+                    (error: Error | null, result: null | string) => {
+                        if (error)
+                            throw error
+                        else
+                            evaluatedContent = result as string
+                    }
+            } as
+                unknown as
+                LoaderContext<LoaderConfiguration>
+        )(content)
+    } else
+        evaluatedContent =
+            (await import('webOptimizerDefaultTemplateFilePath')).default
 
-        render(evaluatedContent)
-        // endregion
-    })().catch((error: unknown) => {
-        log.error(error)
-    })
-else {
+    render(evaluatedContent)
+    // endregion
+} else {
     browser.initialized = true
     browser.window = window
 
@@ -222,4 +214,5 @@ export const getInitializedBrowser = async (
 
     return promise
 }
+
 export default getInitializedBrowser

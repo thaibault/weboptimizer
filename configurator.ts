@@ -37,7 +37,7 @@ import {
     extend,
     getUTCTimestamp,
     importFilesystemAPI,
-    isFileSync,
+    isFile,
     isObject,
     isPlainObject,
     Logger,
@@ -248,7 +248,7 @@ export const load = async (
             `${configuration.path.context}.dynamicConfiguration-` +
             `${String(count)}.json`
 
-        if (!isFileSync(newFilePath))
+        if (!await isFile(newFilePath))
             break
 
         filePath = newFilePath
@@ -341,7 +341,7 @@ export const load = async (
                         configuration[name as keyof DefaultConfiguration] as
                             PlainObject
                     )
-                else if (isFileSync(name))
+                else if (await isFile(name))
                     extend(
                         true,
                         result,
