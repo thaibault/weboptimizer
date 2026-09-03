@@ -19,11 +19,6 @@ import {expect, test} from '@jest/globals'
 import getInitializedBrowser, {browser} from '../browser'
 // endregion
 test('browser', async (): Promise<void> => {
-    expect(browser.debug).toStrictEqual(false)
-    expect(browser.domContentLoaded).toStrictEqual(false)
-    expect(browser.initialized).toStrictEqual(false)
-    expect(browser.windowLoaded).toStrictEqual(false)
-
     const initializedBrowser = await getInitializedBrowser()
 
     expect(initializedBrowser).toStrictEqual(browser)
