@@ -1803,6 +1803,15 @@ export let webpackConfiguration: WebpackConfiguration = extend<
         // endregion
         mode: configuration.debug ? 'development' : 'production',
         module: {
+            parser: {
+                javascript: {
+                    /*
+                        Avoids to overwrite "import.meta.url" with a static
+                        build time url.
+                    */
+                    importMeta: false
+                }
+            },
             rules: (
                 /*
                     Force the generated barrel entry modules and every module
