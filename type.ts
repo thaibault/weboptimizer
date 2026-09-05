@@ -331,6 +331,7 @@ export interface InPlaceAssetConfiguration {
 export interface InPlaceConfiguration {
     cascadingStyleSheet: InPlaceAssetConfiguration | null
     externalLibrary: {
+        special: boolean
         normal: boolean
         dynamic: boolean
     }

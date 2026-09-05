@@ -144,7 +144,7 @@
     "cssnano": "^9.0.2",
     "eslint": "^10.10.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^64.3.5",
+    "eslint-plugin-jsdoc": "^64.3.6",
     "favicons": "^7.3.1",
     "favicons-webpack-plugin": "^6.0.1",
     "globals": "^17.12.0",
@@ -884,8 +884,9 @@
           "head": ".+"
         },
         "externalLibrary": {
-          "dynamic": true,
-          "normal": true
+          "dynamic": false,
+          "normal": true,
+          "special": true
         },
         "javaScript": {
           "head": "(^|/)errorreporter(/index)?\\.js([?#]|$)"
@@ -1551,6 +1552,11 @@
         "generic": {
           "isWeb": false
         },
+        "inPlace": {
+          "externalLibrary": {
+            "dynamic": true
+          }
+        },
         "module": {
           "optimizer": {
             "terser": {
@@ -1570,16 +1576,6 @@
         "targetTechnology": {
           "boilerplate": "node",
           "payload": "node"
-        },
-        "#: webpack -> module -> parser -> javascript -> dynamicImportMode": "NOTE: Tells webpack to include dynamically-imported modules in the current chunk (returning an already-resolved promise) rather than emitting a separate [id].js. Result: only testBundle.js.",
-        "webpack": {
-          "module": {
-            "parser": {
-              "javascript": {
-                "dynamicImportMode": "eager"
-              }
-            }
-          }
         }
       },
       "test:browser": {

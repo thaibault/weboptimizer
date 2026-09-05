@@ -556,7 +556,7 @@ if (configuration.injection.external.modules === '__implicit__')
             configuration.injection.external.implicit.pattern.include,
             configuration.injection.external.implicit.pattern.exclude,
             configuration.inPlace.externalLibrary.normal,
-            configuration.inPlace.externalLibrary.dynamic,
+            configuration.inPlace.externalLibrary.special,
             configuration.encoding
         )
 
@@ -1805,6 +1805,10 @@ export let webpackConfiguration: WebpackConfiguration = extend<
         module: {
             parser: {
                 javascript: {
+                    dynamicImportMode:
+                        configuration.inPlace.externalLibrary.dynamic ?
+                            'eager' :
+                            'lazy',
                     /*
                         Avoids to overwrite "import.meta.url" with a static
                         build time url.
