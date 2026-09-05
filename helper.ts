@@ -242,7 +242,7 @@ export const applyContext = (
  * internal dependency.
  * @param inPlaceNormalLibrary - Indicates whether normal libraries should be
  * external or not.
- * @param inPlaceDynamicLibrary - Indicates whether requests with integrated
+ * @param inPlaceSpecialImports - Indicates whether requests with integrated
  * loader configurations should be marked as external or not.
  * @param encoding - Encoding for file names to use during file traversing.
  * @returns A new resolved request indicating whether given request is an
@@ -272,7 +272,7 @@ export const determineExternalRequest = (
     includePattern: Array<string | RegExp> = [],
     excludePattern: Array<string | RegExp> = [],
     inPlaceNormalLibrary = false,
-    inPlaceDynamicLibrary = true,
+    inPlaceSpecialImports = true,
     encoding: Encoding = 'utf-8'
 ): null | string => {
     context = resolve(context)
@@ -368,9 +368,9 @@ export const determineExternalRequest = (
             extensions.file.external.includes(extname(filePath)) ||
             !filePath && extensions.file.external.includes('')
         ) &&
-        !(inPlaceDynamicLibrary && request.includes('!')) &&
+        !(inPlaceSpecialImports && request.includes('!')) &&
         (
-            !filePath && inPlaceDynamicLibrary ||
+            !filePath && inPlaceSpecialImports ||
             filePath &&
             (
                 !filePath.startsWith(context) ||
