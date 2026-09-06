@@ -653,12 +653,13 @@
       },
       "extensions": {
         "file": {
+          "#": "NOTE: Sources have to win over already emitted build artifacts since a build output may share its directory with its sources. Otherwise a rebuild silently bundles the previous build result instead of the current sources.",
           "alias": {
             ".js": [
-              ".ejs",
-              ".js",
               ".ts",
               ".tsx",
+              ".ejs",
+              ".js",
               ".jsx"
             ]
           },
@@ -666,13 +667,13 @@
             "__evaluate__": "self.generic.isWeb ? self.extensions.file.internal : ['.compiled.js', '.cjs', '.js', '.json', '.mjs']"
           },
           "internal": [
-            ".compiled.js",
+            ".ts",
+            ".tsx",
             ".cjs",
             ".mjs",
             ".js",
             ".jsx",
-            ".ts",
-            ".tsx",
+            ".compiled.js",
             ".json",
             ".sass",
             ".scss",
