@@ -1808,12 +1808,7 @@ export let webpackConfiguration: WebpackConfiguration = extend<
                     dynamicImportMode:
                         configuration.inPlace.externalLibrary.dynamic ?
                             'eager' :
-                            'lazy',
-                    /*
-                        Avoids to overwrite "import.meta.url" with a static
-                        build time url.
-                    */
-                    importMeta: false
+                            'lazy'
                 }
             },
             rules: (
