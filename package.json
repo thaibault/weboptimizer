@@ -895,7 +895,8 @@
         },
         "externalLibrary": {
           "dynamic": false,
-          "normal": false,
+          "#normal": "That default is only ever visible to projects that set \"library\": false — library projects always get it overwritten by the configuration.library section (normal = \"command is serve\").",
+          "normal": true,
           "special": true
         },
         "javaScript": {
