@@ -1596,11 +1596,6 @@
             "inject": "head"
           }
         },
-        "inPlace": {
-          "externalLibrary": {
-            "normal": true
-          }
-        },
         "module": {
           "optimizer": {
             "cssnano": null
