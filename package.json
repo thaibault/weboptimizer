@@ -1694,7 +1694,7 @@
                 "__evaluate__": "self.path.apiDocumentation"
               },
               {
-                "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '*.js')"
+                "__evaluate__": "path.resolve(self.path.target.asset.javaScript, '**/*.js')"
               }
             ]
           }
