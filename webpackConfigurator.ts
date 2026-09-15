@@ -133,8 +133,35 @@ type UpdateRule = (
 ) => void
 const updateRule: undefined | UpdateRule =
     (await optionalImport<{default: {updateRule: UpdateRule}}>(
-        'postcss-sprites/lib/core'
+        /*
+            NOTE: The file extension is needed since native module resolution
+            does not support extension less specifiers.
+        */
+        'postcss-sprites/lib/core.js'
     ))?.default.updateRule
+/**
+ * Converts a legacy (postcss 7) plugin into a visitor based one which runs
+ * after all other plugins have finished.
+ *
+ * NOTE: Postcss 8 runs legacy plugins during its initial root pass which
+ * happens before any visitor based plugin (like "postcss-mixins" or
+ * "postcss-nested") had the chance to resolve its constructs. A legacy plugin
+ * would therefore see (and modify) not yet resolved declarations like mixin
+ * definitions and its modifications would get lost during their later
+ * expansion.
+ * @param transformer - Legacy plugin to defer.
+ * @returns Wrapped visitor based plugin.
+ */
+const deferTransformer = (
+    transformer: PostcssTransformer
+): PostcssTransformer =>
+    ({
+        postcssPlugin: transformer.postcssPlugin,
+        OnceExit: (
+            root: Parameters<PostcssTransformer>[0],
+            {result}: {result: Parameters<PostcssTransformer>[1]}
+        ): ReturnType<PostcssTransformer> => transformer(root, result)
+    }) as unknown as PostcssTransformer
 
 const postcssURL =
     (await optionalImport<{default: typeof import('postcss-url')}>(
@@ -948,7 +975,7 @@ const cssUse: RuleSet = (await Promise.all(
                                         PostcssTransformer :
                                     [],
                                 postcssSprites ?
-                                    postcssSprites({
+                                    deferTransformer(postcssSprites({
                                         filterBy: (): Promise<void> =>
                                             configuration.files.compose.image ?
                                                 Promise.resolve() :
@@ -1006,7 +1033,7 @@ const cssUse: RuleSet = (await Promise.all(
                                             configuration.path.source.asset
                                                 .image,
                                         ...configuration.imageSprite
-                                    }) :
+                                    })) :
                                     [],
                                 (await Promise.all(
                                     module.preprocessor
