@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: browser.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: browser.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// #!/usr/bin/env babel-node
+// -*- coding: utf-8 -*-
+/** @module browser */
+'use strict';
+
+/* !
+    region header
+    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+    License
+    -------
+
+    This library written by Torben Sickert stands under a creative commons
+    naming 3.0 unported license.
+    See https://creativecommons.org/licenses/by/3.0/deed.de
+    endregion
+*/
+// region imports
+import { CONSOLE_METHODS, Logger, timeout } from 'clientnode';
+// endregion
+// region declaration
+
+//  endregion
+//  region variables
+const onCreatedListener = [];
+export const browser = {
+  debug: false,
+  domContentLoaded: false,
+  DOM: null,
+  initialized: false,
+  instance: null,
+  window: null,
+  windowLoaded: false
+};
+export const log = new Logger({
+  name: 'weboptimizer.browser'
+});
+// endregion
+// region ensure presence of common browser environment
+if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
+  // region mock browser environment
+  const [{
+    JSDOM,
+    VirtualConsole: VirtualConsoleImplementation
+  }, path] = await Promise.all([import('jsdom'), import('path')]);
+  const virtualConsole = new VirtualConsoleImplementation();
+  for (const name of CONSOLE_METHODS) virtualConsole.on(name, console[name].bind(console));
+  virtualConsole.on('error', error => {
+    if (!browser.debug &amp;&amp; ['XMLHttpRequest', 'resource loading'].includes(error.type)) log.warn(`Loading resource failed: ${error.toString()}.`);else log.error(error.stack, error.detail);
+  });
+  const render = template => {
+    browser.DOM = JSDOM;
+    browser.initialized = true;
+    browser.instance = new browser.DOM(template, {
+      beforeParse: window => {
+        // We want to use it in a polymorphic way.
+        /*
+            eslint-disable
+            @typescript-eslint/no-unnecessary-type-assertion
+        */
+        browser.window = global.window ?? window;
+        /*
+            eslint-enable
+            @typescript-eslint/no-unnecessary-type-assertion
+        */
+
+        window.document.addEventListener('DOMContentLoaded', () => {
+          /*
+              Move template results into global
+              pre-defined dom.
+          */
+          if (global.window) for (const type of ['head', 'body']) global.window.document[type].innerHTML = window.document[type].innerHTML;
+          browser.domContentLoaded = true;
+        });
+        window.addEventListener('load', () => {
+          /*
+              NOTE: Maybe we have miss the "DOMContentLoaded"
+              event caused by a race condition.
+          */
+          browser.domContentLoaded = browser.windowLoaded = true;
+        });
+        for (const callback of onCreatedListener) void callback();
+      },
+      resources: 'usable',
+      runScripts: 'dangerously',
+      url: 'http://localhost',
+      virtualConsole
+    });
+  };
+  let evaluatedContent = '';
+  if (typeof NAME === 'undefined' || NAME === 'webOptimizer') {
+    const filePath = path.join(import.meta.dirname, 'index.html.ejs');
+    /*
+        NOTE: We load dependencies now to avoid having file imports
+        after test runner has finished to isolate the environment.
+    */
+    const ejsLoader = (await import('./ejsLoader.js')).default;
+    const content = await (await import('fs')).promises.readFile(filePath, {
+      encoding: 'utf-8'
+    });
+    await ejsLoader.bind({
+      resourcePath: filePath,
+      async: () => (error, result) => {
+        if (error) throw error;else evaluatedContent = result;
+      }
+    })(content);
+  } else evaluatedContent = (await import('webOptimizerDefaultTemplateFilePath')).default;
+  render(evaluatedContent);
+  // endregion
+} else {
+  browser.initialized = true;
+  browser.window = window;
+  window.document.addEventListener('DOMContentLoaded', () => {
+    browser.domContentLoaded = true;
+  });
+  window.addEventListener('load', () => {
+    browser.windowLoaded = true;
+  });
+  void timeout(() => {
+    for (const callback of onCreatedListener) void callback();
+  });
+}
+// endregion
+/**
+ * Provides a generic browser api in node or web contexts.
+ * @param replaceWindow - Indicates whether a potential existing window object
+ * should be replaced or not.
+ * @returns Determined environment.
+ */
+export const getInitializedBrowser = async (replaceWindow = true) => {
+  let resolvePromise;
+  const promise = new Promise(resolve => {
+    resolvePromise = resolve;
+  });
+
+  /*
+      NOTE: We have to define window globally before anything is loaded to
+      ensure that all future instances share the same window object.
+  */
+  const wrappedCallback = () => {
+    if (replaceWindow &amp;&amp; typeof global !== 'undefined' &amp;&amp; global !== browser.window) global.window = browser.window;
+    resolvePromise(browser);
+  };
+  if (browser.initialized) wrappedCallback();else onCreatedListener.push(wrappedCallback);
+  return promise;
+};
+export default getInitializedBrowser;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isFile">isFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Sep 16 2026 19:28:59 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

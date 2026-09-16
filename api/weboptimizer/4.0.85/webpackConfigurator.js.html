@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: webpackConfigurator.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: webpackConfigurator.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// #!/usr/bin/env babel-node
+// -*- coding: utf-8 -*-
+/** @module webpackConfigurator */
+'use strict';
+
+/* !
+    region header
+    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+    License
+    -------
+
+    This library written by Torben Sickert stands under a creative commons
+    naming 3.0 unported license.
+    See https://creativecommons.org/licenses/by/3.0/deed.de
+    endregion
+*/
+// region imports
+import { convertToValidVariableName, evaluate, evaluateOrThrowError as evaluateOrThrowErrorBase, escapeRegularExpressions, extend, importFilesystemAPI, isFileSync, isObject, isPlainObject, Logger, mask, optionalImport, represent, UTILITY_SCOPE } from 'clientnode';
+import { rm, writeFile } from 'fs/promises';
+import { extname, join, relative, resolve } from 'path';
+import util from 'util';
+import webpack from 'webpack';
+const {
+  Compilation,
+  ContextReplacementPlugin,
+  DefinePlugin,
+  HotModuleReplacementPlugin,
+  IgnorePlugin,
+  NormalModuleReplacementPlugin,
+  ProvidePlugin
+} = webpack;
+import webpackSources from 'webpack-sources';
+const {
+  RawSource: WebpackRawSource
+} = webpackSources;
+import getConfiguration from "./configurator.js";
+import { determineAssetType, determineExternalRequest, determineModuleFilePath, getClosestPackageDescriptor, isFilePathInLocation, normalizePaths, stripLoader } from "./helper.js";
+import InPlaceAssetsIntoHTML from "./plugins/InPlaceAssetsIntoHTML.js";
+import HTMLTransformation from "./plugins/HTMLTransformation.js";
+
+// Wait until optional filesystem modules have been loaded.
+await importFilesystemAPI();
+
+/// region optional imports
+const postcssCSSnano = (await optionalImport('cssnano'))?.default;
+const postcssFontpath = (await optionalImport('postcss-fontpath'))?.default;
+const postcssImport = (await optionalImport('postcss-import'))?.default;
+const postcssSprites = (await optionalImport('postcss-sprites'))?.default;
+const updateRule = (await optionalImport(
+/*
+    NOTE: The file extension is needed since native module resolution
+    does not support extension less specifiers.
+*/
+'postcss-sprites/lib/core.js'))?.default.updateRule;
+/**
+ * Converts a legacy (postcss 7) plugin into a visitor based one which runs
+ * after all other plugins have finished.
+ *
+ * NOTE: Postcss 8 runs legacy plugins during its initial root pass which
+ * happens before any visitor based plugin (like "postcss-mixins" or
+ * "postcss-nested") had the chance to resolve its constructs. A legacy plugin
+ * would therefore see (and modify) not yet resolved declarations like mixin
+ * definitions and its modifications would get lost during their later
+ * expansion.
+ * @param transformer - Legacy plugin to defer.
+ * @returns Wrapped visitor based plugin.
+ */
+const deferTransformer = transformer => ({
+  postcssPlugin: transformer.postcssPlugin,
+  OnceExit: (root, {
+    result
+  }) => transformer(root, result)
+});
+const postcssURL = (await optionalImport('postcss-url'))?.default;
+/// endregion
+export const log = new Logger({
+  name: 'weboptimizer.webpack-configurator'
+});
+Logger.configureAllInstances({
+  level: ['debug', 'development'].includes(process.env.NODE_ENV ?? '') ? 'debug' : 'warn'
+});
+const pluginNameResourceMapping = {
+  Favicon: 'favicons-webpack-plugin',
+  ImageMinimizer: 'image-minimizer-webpack-plugin',
+  HTML: 'html-webpack-plugin',
+  MiniCSSExtract: 'mini-css-extract-plugin',
+  offline: 'workbox-webpack-plugin',
+  Terser: 'terser-webpack-plugin'
+};
+const plugins = {};
+for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
+  const plugin = await optionalImport(alias);
+  if (plugin) {
+    if ('default' in plugin) plugins[name] = plugin.default;else plugins[name] = plugin;
+  } else log.debug(`Optional webpack plugin "${name}" not available.`);
+}
+
+// endregion
+const configuration = await getConfiguration();
+Logger.configureAllInstances({
+  level: configuration.debug ? 'debug' : 'warn'
+});
+const {
+  module
+} = configuration;
+// region initialization
+/// region determine library name
+const exportFormatsNeedingAValidVariableName = ['assign', 'global', 'this', 'var', 'window'];
+const exportFormatsNeedingUnsetLibraryName = ['modern-module'];
+let libraryName;
+if (!exportFormatsNeedingUnsetLibraryName.includes(configuration.exportFormat.self)) {
+  if (configuration.libraryName) libraryName = configuration.libraryName;else if (Object.keys(configuration.injection.entry.normalized).length > 1) libraryName = '[name]';else {
+    libraryName = configuration.name;
+    if (exportFormatsNeedingAValidVariableName.includes(configuration.exportFormat.self)) libraryName = convertToValidVariableName(libraryName);
+  }
+  if (libraryName === '*') libraryName = exportFormatsNeedingAValidVariableName.includes(configuration.exportFormat.self) ? Object.keys(configuration.injection.entry.normalized).map(name => convertToValidVariableName(name)) : undefined;
+}
+/// endregion
+/// region plugins
+const pluginInstances = [];
+//// region define modules to ignore
+for (const pattern of [].concat(configuration.injection.ignorePattern)) {
+  if (typeof pattern.contextRegExp === 'string') pattern.contextRegExp = new RegExp(pattern.contextRegExp);
+  if (typeof pattern.resourceRegExp === 'string') pattern.resourceRegExp = new RegExp(pattern.resourceRegExp);
+  pluginInstances.push(new IgnorePlugin(pattern));
+}
+//// endregion
+//// region define modules to replace
+for (const [source, replacement] of Object.entries(module.replacements.normal)) {
+  const search = new RegExp(source);
+  pluginInstances.push(new NormalModuleReplacementPlugin(search, resource => {
+    resource.request = resource.request.replace(search, replacement);
+  }));
+}
+//// endregion
+//// region generate html file
+let htmlAvailable = false;
+if (plugins.HTML) for (const htmlConfiguration of configuration.files.html) if (isFileSync(htmlConfiguration.template.filePath)) {
+  pluginInstances.push(new plugins.HTML({
+    ...htmlConfiguration,
+    template: htmlConfiguration.template.request
+  }));
+  htmlAvailable = true;
+}
+//// endregion
+//// region generate favicons
+if (htmlAvailable &amp;&amp; Object.prototype.hasOwnProperty.call(configuration, 'favicon') &amp;&amp; plugins.Favicon &amp;&amp; isFileSync([].concat(configuration.favicon.logo)[0])) pluginInstances.push(new plugins.Favicon(configuration.favicon));
+//// endregion
+//// region provide offline functionality
+if (htmlAvailable &amp;&amp; configuration.offline &amp;&amp; Object.prototype.hasOwnProperty.call(plugins, 'offline')) {
+  if (!['serve', 'test:browser'].includes(configuration.givenCommandLineArguments[2])) for (const [name, extension] of Object.entries({
+    cascadingStyleSheet: 'css',
+    javaScript: 'js'
+  })) {
+    const type = name;
+    if (configuration.inPlace[type]) {
+      const matches = Object.keys(configuration.inPlace[type]);
+      if (!Array.isArray(configuration.offline.common.excludeChunks)) configuration.offline.common.excludeChunks = [];
+      for (const name of matches) configuration.offline.common.excludeChunks.push(relative(configuration.path.target.base, configuration.path.target.asset[type]) + `${name}.${extension}?${configuration.hashAlgorithm}=*`);
+    }
+  }
+  if (plugins.offline) {
+    if ([].concat(configuration.offline.use).includes('injectionManifest')) pluginInstances.push(new plugins.offline.InjectManifest(extend(true, configuration.offline.common, configuration.offline.injectionManifest)));
+    if ([].concat(configuration.offline.use).includes('generateServiceWorker')) pluginInstances.push(new plugins.offline.GenerateSW(extend(true, configuration.offline.common, configuration.offline.generateServiceWorker)));
+  }
+}
+//// endregion
+//// region provide build environment
+if (Object.prototype.hasOwnProperty.call(configuration.buildContext, 'definitions')) pluginInstances.push(new DefinePlugin(configuration.buildContext.definitions));
+if (module.provide) pluginInstances.push(new ProvidePlugin(module.provide));
+//// endregion
+//// region modules/assets
+///// region apply module pattern
+pluginInstances.push({
+  apply: compiler => {
+    const name = 'ApplyModulePattern';
+    compiler.hooks.compilation.tap(name, compilation => {
+      compilation.hooks.processAssets.tap({
+        name,
+        additionalAssets: true,
+        stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS
+      }, assets => {
+        for (const [request, asset] of Object.entries(assets)) {
+          const filePath = request.replace(/\?[^?]+$/, '');
+          const type = determineAssetType(filePath, configuration.buildContext.types, configuration.path);
+          if (type &amp;&amp; Object.prototype.hasOwnProperty.call(configuration.assetPattern, type) &amp;&amp; new RegExp(configuration.assetPattern[type].includeFilePathRegularExpression).test(filePath) &amp;&amp; !new RegExp(configuration.assetPattern[type].excludeFilePathRegularExpression).test(filePath)) {
+            const source = asset.source();
+            if (typeof source === 'string') compilation.assets[request] = new WebpackRawSource(configuration.assetPattern[type].pattern.replace(/\{1\}/g, source.replace(/\$/g, '$$$')));
+          }
+        }
+      });
+    });
+  }
+});
+///// endregion
+///// region in-place configured assets in the main HTML file
+if (plugins.HTML &amp;&amp; htmlAvailable &amp;&amp; !['serve', 'test:browser'].includes(configuration.givenCommandLineArguments[2]) &amp;&amp; configuration.inPlace.cascadingStyleSheet &amp;&amp; Object.keys(configuration.inPlace.cascadingStyleSheet).length || configuration.inPlace.javaScript &amp;&amp; Object.keys(configuration.inPlace.javaScript).length) pluginInstances.push(new InPlaceAssetsIntoHTML({
+  cascadingStyleSheet: configuration.inPlace.cascadingStyleSheet,
+  javaScript: configuration.inPlace.javaScript,
+  htmlPlugin: plugins.HTML
+}));
+///// endregion
+///// region mark empty JavaScript modules as dummy
+if (!(configuration.needed.javaScript || configuration.needed.javaScriptExtension || configuration.needed.typeScript || configuration.needed.typeScriptExtension)) configuration.files.compose.javaScript = resolve(configuration.path.target.asset.javaScript, '.__dummy__.compiled.js');
+///// endregion
+///// region extract cascading style sheets
+const cssOutputPath = configuration.files.compose.cascadingStyleSheet;
+if (cssOutputPath &amp;&amp; plugins.MiniCSSExtract) pluginInstances.push(new plugins.MiniCSSExtract({
+  filename: typeof cssOutputPath === 'string' ? relative(configuration.path.target.base, cssOutputPath) : cssOutputPath
+}));
+///// endregion
+///// region performs implicit external logic
+if (configuration.injection.external.modules === '__implicit__')
+  /*
+      We only want to process modules from local context in library mode,
+      since a concrete project using this library should combine all assets
+      (and de-duplicate them) for optimal bundling results.
+      NOTE: Only native JavaScript and json modules will be marked as
+      external dependency.
+  */
+  configuration.injection.external.modules = ({
+    context,
+    request
+  }, callback) => {
+    if (typeof request !== 'string') {
+      callback();
+      return;
+    }
+    request = request.replace(/^!+/, '');
+    if (request.startsWith('/')) request = relative(configuration.path.context, request);
+    for (const filePath of module.directoryNames) if (request.startsWith(filePath)) {
+      request = request.substring(filePath.length);
+      if (request.startsWith('/')) request = request.substring(1);
+      break;
+    }
+    // region pattern based aliasing
+    const filePath = determineModuleFilePath(request, {}, {}, {
+      file: configuration.extensions.file.external
+    }, configuration.path.context, context, configuration.path.ignore, module.directoryNames, configuration.package.main.fileNames, configuration.package.main.propertyNames, configuration.package.aliasPropertyNames, configuration.encoding);
+    if (filePath) for (const [pattern, targetConfiguration] of Object.entries(configuration.injection.external.aliases)) if (targetConfiguration &amp;&amp; pattern.startsWith('^')) {
+      const regularExpression = new RegExp(pattern);
+      if (regularExpression.test(filePath)) {
+        let match = false;
+        const firstKey = Object.keys(targetConfiguration)[0];
+        let target = targetConfiguration[firstKey];
+        if (typeof target !== 'string') break;
+        const replacementRegularExpression = new RegExp(firstKey);
+        if (target.startsWith('?')) {
+          target = target.substring(1);
+          const aliasedRequest = request.replace(replacementRegularExpression, target);
+          if (aliasedRequest !== request) match = Boolean(determineModuleFilePath(aliasedRequest, {}, {}, {
+            file: configuration.extensions.file.external
+          }, configuration.path.context, context, configuration.path.ignore, module.directoryNames, configuration.package.main.fileNames, configuration.package.main.propertyNames, configuration.package.aliasPropertyNames, configuration.encoding));
+        } else match = true;
+        if (match) {
+          request = request.replace(replacementRegularExpression, target);
+          break;
+        }
+      }
+    }
+    // endregion
+    const resolvedRequest = determineExternalRequest(request, configuration.path.context, context, configuration.injection.entry.normalized, module.directoryNames, module.aliases, module.replacements.normal, configuration.extensions, configuration.path.source.asset.base, configuration.path.ignore, module.directoryNames, configuration.package.main.fileNames, configuration.package.main.propertyNames, configuration.package.aliasPropertyNames, configuration.injection.external.implicit.pattern.include, configuration.injection.external.implicit.pattern.exclude, configuration.inPlace.externalLibrary.normal, configuration.inPlace.externalLibrary.special, configuration.encoding);
+    if (resolvedRequest) {
+      const keys = ['amd', 'commonjs', 'commonjs2', 'root'];
+      let result = resolvedRequest;
+      if (Object.prototype.hasOwnProperty.call(configuration.injection.external.aliases, request)) {
+        // region normal alias replacement
+        result = {
+          default: request
+        };
+        if (typeof configuration.injection.external.aliases[request] === 'string') for (const key of keys) result[key] = configuration.injection.external.aliases[request];else if (typeof configuration.injection.external.aliases[request] === 'function') for (const key of keys) result[key] = configuration.injection.external.aliases[request](request, key);else if (isObject(configuration.injection.external.aliases[request])) extend(result, configuration.injection.external.aliases[request]);
+        if (Object.prototype.hasOwnProperty.call(result, 'default')) for (const key of keys) if (!Object.prototype.hasOwnProperty.call(result, key)) result[key] = result.default;
+        // endregion
+      }
+      if (typeof result !== 'string' &amp;&amp; Object.prototype.hasOwnProperty.call(result, 'root') &amp;&amp; Array.isArray(result.root)) result.root = [].concat(result.root).map(name => convertToValidVariableName(name));
+      const {
+        external: exportFormat
+      } = configuration.exportFormat;
+      let reference = exportFormat === 'umd' || typeof result === 'string' ? result : result[exportFormat];
+      if (typeof reference === 'string' &amp;&amp; ['window', 'var'].includes(exportFormat)) reference = convertToValidVariableName(reference);
+      callback(undefined, reference, exportFormat);
+      return;
+    }
+    callback();
+  };
+///// endregion
+//// endregion
+//// region apply final HTML modifications/fixes
+if (htmlAvailable &amp;&amp; plugins.HTML) pluginInstances.push(new HTMLTransformation({
+  hashAlgorithm: configuration.hashAlgorithm,
+  htmlPlugin: plugins.HTML,
+  files: configuration.files.html
+}));
+//// endregion
+//// region context replacements
+for (const contextReplacement of module.replacements.context) pluginInstances.push(new ContextReplacementPlugin(...contextReplacement.map(value => {
+  const evaluated = evaluate(value, {
+    scope: {
+      configuration,
+      metaImport: import.meta
+    }
+  });
+  if (evaluated.error) throw new Error('Error occurred during processing given context ' + `replacement: ${evaluated.error}`);
+  return evaluated.result;
+})));
+//// endregion
+//// region consolidate duplicated module requests
+/*
+    NOTE: Redundancies usually occur when symlinks aren't converted to their
+    real paths since real paths can be de-duplicated by webpack but if two
+    linked modules share the same transitive dependency webpack won't recognize
+    them as same dependency.
+*/
+if (module.enforceDeduplication) {
+  const absoluteContextPath = resolve(configuration.path.context);
+  const consolidator = async result => {
+    const targetPath = result.createData.resource;
+    if (targetPath &amp;&amp; /((?:^|\/)node_modules\/.+)/.test(targetPath) &amp;&amp; (!targetPath.startsWith(absoluteContextPath) || /((?:^|\/)node_modules\/.+){2}/.test(targetPath)) &amp;&amp; isFileSync(targetPath)) {
+      const packageDescriptor = await getClosestPackageDescriptor(targetPath);
+      if (packageDescriptor) {
+        let pathPrefixes;
+        let pathSuffix;
+        if (targetPath.startsWith(absoluteContextPath)) {
+          const matches = targetPath.match(/((?:^|.*?\/)node_modules\/)/g);
+          if (matches === null) return;
+          pathPrefixes = Array.from(matches);
+          /*
+              Remove last one to avoid replacing with the already set
+              path.
+          */
+          pathPrefixes.pop();
+          let index = 0;
+          for (const pathPrefix of pathPrefixes) {
+            if (index > 0) pathPrefixes[index] = resolve(pathPrefixes[index - 1], pathPrefix);
+            index += 1;
+          }
+          pathSuffix = targetPath.replace(/(?:^|.*\/)node_modules\/(.+$)/, '$1');
+        } else {
+          pathPrefixes = [resolve(absoluteContextPath, 'node_modules')];
+          // Find longest common prefix.
+          let index = 0;
+          while (index &lt; absoluteContextPath.length &amp;&amp; absoluteContextPath.charAt(index) === targetPath.charAt(index)) index += 1;
+          pathSuffix = targetPath.substring(index).replace(/^.*\/node_modules\//, '');
+        }
+        let redundantRequest = null;
+        for (const pathPrefix of pathPrefixes) {
+          const alternateTargetPath = resolve(pathPrefix, pathSuffix);
+          if (isFileSync(alternateTargetPath)) {
+            const otherPackageDescriptor = await getClosestPackageDescriptor(alternateTargetPath);
+            if (otherPackageDescriptor) {
+              if (packageDescriptor.configuration.version === otherPackageDescriptor.configuration.version) {
+                log.info('\nConsolidate module request', `"${targetPath}" to`, `"${alternateTargetPath}".`);
+                /*
+                    NOTE: Only overwriting
+                    "result.createData.resource" like
+                    implemented in
+                    "NormaleModuleReplacementPlugin" does
+                    not always work.
+                */
+                result.request = result.createData.rawRequest = result.createData.request = result.createData.resource = result.createData.userRequest = alternateTargetPath;
+                return;
+              }
+              redundantRequest = {
+                path: alternateTargetPath,
+                version: otherPackageDescriptor.configuration.version
+              };
+            }
+          }
+        }
+        if (redundantRequest) log.warn('\nIncluding different versions of same package', `"${packageDescriptor.configuration.name}". Module`, `"${targetPath}" (version`, `${packageDescriptor.configuration.version}) has`, `redundancies with "${redundantRequest.path}"`, `(version ${redundantRequest.version}).`);
+      }
+    }
+  };
+  pluginInstances.push({
+    apply: compiler => {
+      compiler.hooks.normalModuleFactory.tap('WebOptimizerModuleConsolidation', nmf => {
+        nmf.hooks.afterResolve.tapPromise('WebOptimizerModuleConsolidation', consolidator);
+      });
+    }
+  });
+}
+//// endregion
+/// endregion
+/// region loader helper
+const isFilePathInDependencies = filePath => {
+  filePath = stripLoader(filePath);
+  return isFilePathInLocation(filePath, configuration.path.ignore.concat(module.directoryNames, configuration.loader.directoryNames).map(filePath => resolve(configuration.path.context, filePath)).filter(filePath => !configuration.path.context.startsWith(filePath)));
+};
+const loader = {};
+const scope = {
+  ...UTILITY_SCOPE,
+  configuration,
+  isFilePathInDependencies,
+  loader
+};
+const evaluateOrThrowError = (object, givenOptions = {}) => {
+  const options = {
+    async: false,
+    filePath: configuration.path.context,
+    ...givenOptions
+  };
+  if (typeof object === 'string') return evaluateOrThrowErrorBase(object, {
+    async: options.async,
+    scope: {
+      filePath: options.filePath,
+      ...scope,
+      type: options.type
+    }
+  });
+  return object;
+};
+const createEvaluateMapper = (type, async = false) => value => evaluateOrThrowError(value, {
+  async,
+  type
+});
+const evaluateAdditionalLoaderConfiguration = loaderConfiguration => ({
+  exclude: filePath => evaluateOrThrowError(loaderConfiguration.exclude, {
+    filePath
+  }),
+  include: loaderConfiguration.include &amp;&amp; evaluateOrThrowError(loaderConfiguration.include) || configuration.path.source.base,
+  test: new RegExp(evaluateOrThrowError(loaderConfiguration.test)),
+  use: evaluateOrThrowError(loaderConfiguration.use)
+});
+const getIncludingPaths = path => normalizePaths([path].concat(module.locations.directoryPaths));
+const postCSSResolver = (name, _context) => {
+  for (const [source, target] of Object.entries(configuration.module.aliases)) if (source.startsWith(name)) return target;
+  return name;
+};
+const cssUse = (await Promise.all(module.preprocessor.cascadingStyleSheet.additional.pre.map(createEvaluateMapper('css')))).concat({
+  loader: module.style.loader,
+  options: module.style.options || {}
+}, {
+  loader: module.cascadingStyleSheet.loader,
+  options: module.cascadingStyleSheet.options || {}
+}, module.preprocessor.cascadingStyleSheet.loader ? {
+  loader: module.preprocessor.cascadingStyleSheet.loader,
+  options: extend(true, (await optionalImport('postcss')) ? {
+    postcssOptions: {
+      /*
+          NOTE: Some plugins like "postcss-import" are
+          not yet ported to postcss 8. Let the final
+          consumer decide which distribution suites most.
+      */
+      plugins: [].concat(postcssImport ? postcssImport({
+        root: configuration.path.context,
+        resolve: postCSSResolver
+      }) : [], await Promise.all(module.preprocessor.cascadingStyleSheet.additional.plugins.pre.map(createEvaluateMapper('css.postcss', true))),
+      /*
+          NOTE: Checking path doesn't work if fonts
+          are referenced in libraries provided in
+          another location than the project itself
+          like the "node_modules" folder.
+      */
+      postcssFontpath ? postcssFontpath({
+        checkPath: false,
+        formats: [{
+          ext: 'woff2',
+          type: 'woff2'
+        }, {
+          ext: 'woff',
+          type: 'woff'
+        }]
+      }) : [], postcssURL ? postcssURL({
+        url: 'rebase'
+      }) : [], postcssSprites ? deferTransformer(postcssSprites({
+        filterBy: () => configuration.files.compose.image ? Promise.resolve() : Promise.reject(new Error()),
+        hooks: {
+          onSaveSpritesheet: image => join(image.spritePath, relative(configuration.path.target.asset.image, configuration.files.compose.image)),
+          /*
+              Reset this token due to a
+              sprite bug with
+              "background-image" declaration
+              which do not refer to an image
+              (e.g. linear gradient instead).
+          */
+          onUpdateRule: (rule, token, image) => {
+            if (updateRule) if (token.value.includes(token.text)) updateRule(rule, token, image);else token.cloneAfter({
+              type: 'decl',
+              prop: 'background-' + 'image',
+              value: token.value
+            });
+          }
+        },
+        stylesheetPath: configuration.path.source.asset.cascadingStyleSheet,
+        spritePath: configuration.path.source.asset.image,
+        ...configuration.imageSprite
+      })) : [], await Promise.all(module.preprocessor.cascadingStyleSheet.additional.plugins.post.map(createEvaluateMapper('css.postcss'))), module.optimizer.cssnano &amp;&amp; postcssCSSnano ? postcssCSSnano(module.optimizer.cssnano) : [])
+    }
+  } : {}, module.preprocessor.cascadingStyleSheet.options || {})
+} : [], await Promise.all(module.preprocessor.cascadingStyleSheet.additional.post.map(createEvaluateMapper('css'))));
+const genericLoader = {
+  // Convert to compatible native web types.
+  // region generic template
+  ejs: {
+    exclude: filePath => normalizePaths(configuration.files.html.concat(configuration.files.defaultHTML).map(htmlConfiguration => htmlConfiguration.template.filePath)).includes(filePath) || module.preprocessor.ejs.exclude === null ? false : evaluateOrThrowError(module.preprocessor.ejs.exclude, {
+      filePath
+    }),
+    include: getIncludingPaths(configuration.path.source.asset.template),
+    test: /^(?!.+\.html\.ejs$).+\.ejs$/i,
+    use: (await Promise.all(module.preprocessor.ejs.additional.pre.map(createEvaluateMapper('ejs')))).concat({
+      loader: module.preprocessor.ejs.loader,
+      options: extend(true, module.preprocessor.ejs.options || {}, {
+        compress: {
+          html: false
+        }
+      })
+    }, await Promise.all(module.preprocessor.ejs.additional.post.map(createEvaluateMapper('ejs'))))
+  },
+  // endregion
+  // region script
+  script: {
+    exclude: filePath => evaluateOrThrowError(module.preprocessor.javaScript.exclude, {
+      filePath,
+      type: 'script'
+    }),
+    include: filePath => {
+      const result = evaluateOrThrowError(module.preprocessor.javaScript.include, {
+        filePath,
+        type: 'script'
+      });
+      if ([null, undefined].includes(result)) {
+        for (const includePath of getIncludingPaths(configuration.path.source.asset.javaScript)) if (filePath.startsWith(includePath)) return true;
+        return false;
+      }
+      return Boolean(result);
+    },
+    test: new RegExp(module.preprocessor.javaScript.regularExpression, 'i'),
+    use: (await Promise.all(module.preprocessor.javaScript.additional.pre.map(createEvaluateMapper('script')))).concat({
+      loader: module.preprocessor.javaScript.loader,
+      options: module.preprocessor.javaScript.options || {}
+    }, await Promise.all(module.preprocessor.javaScript.additional.post.map(createEvaluateMapper('script'))))
+  },
+  // endregion
+  // region HTML template
+  html: {
+    // NOTE: This is only for the main entry template.
+    main: {
+      test: new RegExp('^' + escapeRegularExpressions(configuration.files.defaultHTML.template.filePath) + '(?:\\?.*)?$'),
+      use: configuration.files.defaultHTML.template.use
+    },
+    ejs: {
+      exclude: filePath => normalizePaths(configuration.files.html.concat(configuration.files.defaultHTML).map(htmlConfiguration => htmlConfiguration.template.filePath)).includes(filePath) || (module.preprocessor.html.exclude === null ? false : evaluateOrThrowError(module.preprocessor.html.exclude, {
+        filePath,
+        type: 'html.ejs'
+      })),
+      include: configuration.path.source.asset.template,
+      test: /\.html\.ejs(?:\?.*)?$/i,
+      use: (await Promise.all(module.preprocessor.html.additional.pre.map(createEvaluateMapper('html.ejs')))).concat(
+      /*
+          We might need to evaluate ejs before we are able to
+          parse html beforehand. If not we parse it as html
+          directly.
+      */
+
+      (isPlainObject(module.preprocessor.html.options) ? module.preprocessor.html.options : {
+        compileSteps: 2
+      }).compileSteps % 2 ? [] : [{
+        loader: 'extract'
+      }, {
+        loader: module.html.loader,
+        options: module.html.options || {}
+      }], {
+        loader: module.preprocessor.html.loader,
+        options: module.preprocessor.html.options || {}
+      }, await Promise.all(module.preprocessor.html.additional.post.map(createEvaluateMapper('html.ejs'))))
+    },
+    html: {
+      exclude: filePath => normalizePaths(configuration.files.html.concat(configuration.files.defaultHTML).map(htmlConfiguration => htmlConfiguration.template.filePath)).includes(filePath) || (module.html.exclude === null ? true : evaluateOrThrowError(module.html.exclude, {
+        filePath,
+        type: 'html'
+      })),
+      include: configuration.path.source.asset.template,
+      test: /\.html(?:\?.*)?$/i,
+      use: (await Promise.all(module.html.additional.pre.map(createEvaluateMapper('html')))).concat({
+        loader: 'file?name=' + join(relative(configuration.path.target.base, configuration.path.target.asset.template), `[name][ext]?${configuration.hashAlgorithm}=` + '[contenthash]')
+      }, {
+        loader: 'extract'
+      }, {
+        loader: module.html.loader,
+        options: module.html.options || {}
+      }, await Promise.all(module.html.additional.post.map(createEvaluateMapper('html'))))
+    }
+  },
+  // endregion
+  // Load dependencies.
+  // region style
+  style: {
+    exclude: filePath => module.cascadingStyleSheet.exclude === null ? isFilePathInDependencies(filePath) : evaluateOrThrowError(module.cascadingStyleSheet.exclude, {
+      filePath,
+      type: 'style'
+    }),
+    include: filePath => {
+      const result = evaluateOrThrowError(module.cascadingStyleSheet.include, {
+        filePath,
+        type: 'style'
+      });
+      if ([null, undefined].includes(result)) {
+        for (const includePath of getIncludingPaths(configuration.path.source.asset.cascadingStyleSheet)) if (filePath.startsWith(includePath)) return true;
+        return false;
+      }
+      return Boolean(result);
+    },
+    test: /\.s?css(?:\?.*)?$/i,
+    use: cssUse
+  },
+  // endregion
+  // Optimize loaded assets.
+  // region font
+  font: {
+    eot: {
+      exclude: filePath => module.optimizer.font.eot.exclude === null ? false : evaluateOrThrowError(module.optimizer.font.eot.exclude, {
+        filePath,
+        type: 'font.eot'
+      }),
+      generator: {
+        filename: join(relative(configuration.path.target.base, configuration.path.target.asset.font), '[name][ext]') + `?${configuration.hashAlgorithm}=[contenthash]`
+      },
+      test: /\.eot(?:\?.*)?$/i,
+      type: 'asset/resource',
+      parser: {
+        dataUrlCondition: {
+          maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
+        }
+      },
+      use: await Promise.all(module.optimizer.font.eot.loader.map(createEvaluateMapper('font.eot')))
+    },
+    svg: {
+      exclude: filePath => module.optimizer.font.svg.exclude === null ? false : evaluateOrThrowError(module.optimizer.font.svg.exclude, {
+        filePath,
+        type: 'svg'
+      }),
+      include: configuration.path.source.asset.font,
+      generator: {
+        filename: join(relative(configuration.path.target.base, configuration.path.target.asset.font), '[name][ext]') + `?${configuration.hashAlgorithm}=[contenthash]`
+      },
+      mimetype: 'image/svg+xml',
+      parser: {
+        dataUrlCondition: {
+          maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
+        }
+      },
+      test: /\.svg(?:\?.*)?$/i,
+      type: 'asset/resource',
+      use: await Promise.all(module.optimizer.font.svg.loader.map(createEvaluateMapper('font.svg')))
+    },
+    ttf: {
+      exclude: filePath => module.optimizer.font.ttf.exclude === null ? false : evaluateOrThrowError(module.optimizer.font.ttf.exclude, {
+        filePath,
+        type: 'ttf'
+      }),
+      generator: {
+        filename: join(relative(configuration.path.target.base, configuration.path.target.asset.font), '[name][ext]') + `?${configuration.hashAlgorithm}=[contenthash]`
+      },
+      test: /\.ttf(?:\?.*)?$/i,
+      type: 'asset/resource',
+      mimetype: 'application/octet-stream',
+      parser: {
+        dataUrlCondition: {
+          maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
+        }
+      },
+      use: await Promise.all(module.optimizer.font.ttf.loader.map(createEvaluateMapper('font.ttf')))
+    },
+    woff: {
+      exclude: filePath => module.optimizer.font.woff.exclude === null ? false : evaluateOrThrowError(module.optimizer.font.woff.exclude, {
+        filePath,
+        type: 'woff'
+      }),
+      generator: {
+        filename: join(relative(configuration.path.target.base, configuration.path.target.asset.font), '[name][ext]') + `?${configuration.hashAlgorithm}=[contenthash]`
+      },
+      test: /\.woff2?(?:\?.*)?$/i,
+      type: 'asset/resource',
+      parser: {
+        dataUrlCondition: {
+          maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
+        }
+      },
+      use: await Promise.all(module.optimizer.font.woff.loader.map(createEvaluateMapper('font.woff')))
+    }
+  },
+  // endregion
+  // region image
+  image: {
+    exclude: filePath => module.optimizer.image.exclude === null ? isFilePathInDependencies(filePath) : evaluateOrThrowError(module.optimizer.image.exclude, {
+      filePath,
+      type: 'image'
+    }),
+    generator: {
+      filename: typeof configuration.path.target.asset.image === 'string' ? join(relative(configuration.path.target.base, configuration.path.target.asset.image), '[name][ext]') + `?${configuration.hashAlgorithm}=[contenthash]` : configuration.path.target.asset.image
+    },
+    include: configuration.path.source.asset.image,
+    test: /\.(?:gif|ico|jpg|png|svg)(?:\?.*)?$/i,
+    type: 'asset/resource',
+    parser: {
+      dataUrlCondition: {
+        maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
+      }
+    },
+    use: await Promise.all(module.optimizer.image.loader.map(createEvaluateMapper('image')))
+  },
+  // endregion
+  // region data
+  data: {
+    exclude: filePath => {
+      if (typeof filePath !== 'string') return false;
+      return configuration.extensions.file.internal.includes(extname(stripLoader(filePath))) || (module.optimizer.data.exclude === null ? isFilePathInDependencies(filePath) : evaluateOrThrowError(module.optimizer.data.exclude, {
+        filePath,
+        type: 'data'
+      }));
+    },
+    generator: {
+      filename: join(relative(configuration.path.target.base, configuration.path.target.asset.data), '[name][ext]') + `?${configuration.hashAlgorithm}=[contenthash]`
+    },
+    test: /.+/,
+    type: 'asset/resource',
+    parser: {
+      dataUrlCondition: {
+        maxSize: configuration.inPlace.otherMaximumFileSizeLimitInByte
+      }
+    },
+    use: await Promise.all(module.optimizer.data.loader.map(createEvaluateMapper('data')))
+  }
+  // endregion
+};
+extend(loader, genericLoader);
+if (configuration.files.compose.cascadingStyleSheet &amp;&amp; plugins.MiniCSSExtract) {
+  /*
+      NOTE: We have to remove the client side JavaScript hmr style loader
+      first.
+  */
+  loader.style.use.shift();
+  loader.style.use.unshift({
+    loader: plugins.MiniCSSExtract.loader
+  });
+}
+/// endregion
+/// region apply runtime dev helper
+/*
+    NOTE: Disable automatic injection to avoid injection in all chunks and as
+    last module which would shadow main module (e.g. index).
+    So we inject live reload and hot module replacement manually.
+*/
+if (htmlAvailable &amp;&amp; configuration.debug &amp;&amp; configuration.development.server.liveReload &amp;&amp; !Object.prototype.hasOwnProperty.call(configuration.injection.entry.normalized, 'developmentHandler') &amp;&amp; (configuration.development.includeClient || typeof configuration.development.includeClient !== 'boolean' &amp;&amp; ['serve', 'test:browser'].includes(configuration.givenCommandLineArguments[2]))) {
+  configuration.injection.entry.normalized.developmentHandler = ['webpack-dev-server/client/index.js?' + 'live-reload=true' + `&amp;hot=${configuration.development.server.hot ? 'true' : 'false'}` + `&amp;http${configuration.development.server.https ? 's' : ''}://` + `${configuration.development.server.host}:` + String(configuration.development.server.port)];
+  if (configuration.development.server.hot) {
+    configuration.injection.entry.normalized.developmentHandler.push('webpack/hot/dev-server.js');
+    configuration.development.server.hot = false;
+    pluginInstances.push(new HotModuleReplacementPlugin());
+  }
+}
+/// endregion
+// endregion
+// region plugins
+for (const pluginConfiguration of configuration.plugins) {
+  let plugin = await optionalImport(pluginConfiguration.name.module);
+  if (plugin) {
+    if ('default' in plugin) plugin = plugin.default;
+    pluginInstances.push(new plugin[pluginConfiguration.name.initializer](...pluginConfiguration.parameters));
+  } else log.warn(`Configured plugin module "${pluginConfiguration.name.module}"`, 'could not be loaded.');
+}
+// endregion
+// region minimizer and image compression
+// NOTE: This plugin should be loaded at last to ensure that all emitted images
+// ran through.
+if (!module.optimizer.minimizer) {
+  module.optimizer.minimizer = [];
+  if (plugins.Terser) module.optimizer.minimizer.push(new plugins.Terser({
+    extractComments: false,
+    parallel: true,
+    ...module.optimizer.terser
+  }));
+  if (plugins.ImageMinimizer) module.optimizer.minimizer.push(new plugins.ImageMinimizer(extend(true, {
+    minimizer: {
+      implementation: plugins.ImageMinimizer.imageminMinify
+    }
+  }, module.optimizer.image.content)));
+}
+// endregion
+// region configuration
+let customConfiguration = {};
+if (configuration.path.configuration.json) try {
+  import.meta.resolve(configuration.path.configuration.json);
+  try {
+    customConfiguration = await import(configuration.path.configuration.json);
+  } catch (error) {
+    log.debug('Importing provided json webpack configuration file path', `under "${configuration.path.configuration.json}" failed:`, represent(error));
+  }
+} catch {
+  log.debug('Optional configuration file', `"${configuration.path.configuration.json}" not available.`);
+}
+
+// region collapse multi-module ("multi-main") entry chunks into a barrel
+/*
+    NOTE: Webpack awaits a single (async) entry module before completing the
+    startup evaluation but does NOT await async modules that are referenced as
+    part of an array ("multi-main") entry chunk. As a consequence any
+    top-level "await" (async module) reachable from such an entry - and every
+    side effect depending on it, like jest's synchronous "describe" / "test"
+    registration - would run only after the synchronous startup phase already
+    finished (leading for example to "Cannot nest a describe inside a test").
+
+    To keep evaluation deterministic we collapse every chunk which bundles
+    more than one module into a single generated barrel module which webpack
+    treats (and, when async, awaits) as a whole. Re-exporting via "export *"
+    preserves the (named) exports of all bundled modules while guaranteeing
+    each one is evaluated in the given order.
+
+    NOTE: The barrel and every module it bundles are additionally forced to
+    "sideEffects: true" (see the corresponding module rule below). Otherwise a
+    consuming package declaring "sideEffects": false (e.g. a test bundle whose
+    exports are never imported) would have its bundled modules tree-shaken away
+    completely - resulting for example in a test bundle without any registered
+    test.
+*/
+const generatedBarrelModuleFilePaths = [];
+const barrelledModuleFilePaths = [];
+const normalizedEntryInjection = {};
+for (const [chunkName, moduleIDs] of Object.entries(configuration.injection.entry.normalized)) if (configuration.givenCommandLineArguments[2] === 'test' &amp;&amp; Array.isArray(moduleIDs) &amp;&amp; moduleIDs.length > 1) {
+  const barrelModuleFilePath = resolve(configuration.path.context, `.__${convertToValidVariableName(chunkName)}__.barrel.mjs`);
+  await writeFile(barrelModuleFilePath, moduleIDs.map(moduleID => {
+    const specifier = stripLoader(moduleID);
+    const relativeOrAbsoluteSpecifier = specifier.startsWith('.') || specifier.startsWith('/') ? specifier : `./${specifier}`;
+    barrelledModuleFilePaths.push(resolve(configuration.path.context, relativeOrAbsoluteSpecifier));
+    return `export * from ${JSON.stringify(relativeOrAbsoluteSpecifier)}`;
+  }).join('\n') + '\n', {
+    encoding: configuration.encoding
+  });
+  generatedBarrelModuleFilePaths.push(barrelModuleFilePath);
+  normalizedEntryInjection[chunkName] = [barrelModuleFilePath];
+} else normalizedEntryInjection[chunkName] = moduleIDs;
+if (generatedBarrelModuleFilePaths.length) pluginInstances.push({
+  apply: compiler => {
+    const removeGeneratedBarrelModules = async () => {
+      for (const filePath of generatedBarrelModuleFilePaths) try {
+        await rm(filePath, {
+          force: true
+        });
+      } catch (error) {
+        log.debug('Removing generated barrel entry module ' + `"${filePath}" failed:`, represent(error));
+      }
+    };
+
+    /*
+        NOTE: "shutdown" is an "AsyncSeriesHook" fired (and awaited) by
+        "compiler.close()" for both one-shot builds and watch-mode
+        teardown, so "tapPromise" guarantees the (async) removal finishes
+        before the process exits. "watchClose" would be a "SyncHook" which
+        cannot await a promise-based cleanup, hence it is not used here.
+    */
+    compiler.hooks.shutdown.tapPromise('WebOptimizerRemoveGeneratedBarrelModules', removeGeneratedBarrelModules);
+  }
+});
+// endregion
+
+export let webpackConfiguration = extend(true, {
+  bail: !configuration.givenCommandLineArguments.includes('--watch'),
+  context: configuration.path.context,
+  devtool: configuration.development.tool,
+  devServer: configuration.development.server,
+  experiments: {
+    futureDefaults: true,
+    outputModule: true,
+    /*
+        "futureDefaults" would enable webpack's native css support
+        which disables the configured "mini-css-extract-plugin"
+        pipeline (naming outputs "&lt;name>.css.css" instead of
+        "&lt;name>.compiled.css").
+    */
+    css: false,
+    /*
+        "futureDefaults" would enable webpack's native html support
+        which conflicts with the configured ejs / html plugin
+        pipeline.
+    */
+    html: false,
+    /*
+        "futureDefaults" would enable webpack's native type stripping
+        which cannot handle ".tsx" files; typescript sources are
+        transpiled via babel instead.
+    */
+    typescript: false
+  },
+  // region input
+  entry: normalizedEntryInjection,
+  externals: configuration.injection.external.modules,
+  resolve: {
+    alias: module.aliases,
+    aliasFields: configuration.package.aliasPropertyNames,
+    /*
+        Resolves imports which were rewritten to ".js" (e.g. via
+        "babel-plugin-transform-rewrite-imports") back to their
+        (typescript) sources.
+    */
+    extensionAlias: configuration.extensions.file.alias,
+    extensions: configuration.extensions.file.internal,
+    mainFields: configuration.package.main.propertyNames,
+    mainFiles: configuration.package.main.fileNames,
+    modules: normalizePaths(module.directoryNames),
+    symlinks: module.resolveSymlinks,
+    unsafeCache: Boolean(configuration.cache?.unsafe ?? configuration.cache?.main)
+  },
+  resolveLoader: {
+    alias: configuration.loader.aliases,
+    aliasFields: configuration.package.aliasPropertyNames,
+    extensions: configuration.loader.extensions.file,
+    mainFields: configuration.package.main.propertyNames,
+    mainFiles: configuration.package.main.fileNames,
+    modules: configuration.loader.directoryNames,
+    symlinks: configuration.loader.resolveSymlinks
+  },
+  // endregion
+  // region output
+  output: {
+    assetModuleFilename: join(relative(configuration.path.target.base, configuration.path.target.asset.base), '[name][ext]') + `?${configuration.hashAlgorithm}=[chunkhash]`,
+    filename: relative(configuration.path.target.base, configuration.files.compose.javaScript),
+    globalObject: configuration.exportFormat.globalObject,
+    hashFunction: configuration.hashAlgorithm,
+    library: {
+      name: libraryName,
+      type: configuration.exportFormat.self,
+      umdNamedDefine: true
+    },
+    path: configuration.path.target.base,
+    publicPath: configuration.path.target.public
+  },
+  performance: configuration.performanceHints,
+  /*
+      NOTE: Live-reload is not working if target technology is not set to
+      "web". Webpack boilerplate code may not support target
+      technologies.
+  */
+  target: configuration.targetTechnology.boilerplate,
+  // endregion
+  mode: configuration.debug ? 'development' : 'production',
+  module: {
+    parser: {
+      javascript: {
+        dynamicImportMode: configuration.inPlace.externalLibrary.dynamic ? 'eager' : 'lazy'
+      }
+    },
+    rules:
+    /*
+        Force the generated barrel entry modules and every module
+        they bundle to be treated as side-effectful so a consuming
+        package declaring "sideEffects": false does not get them
+        tree-shaken away (which would empty e.g. a test bundle).
+    */
+    (generatedBarrelModuleFilePaths.length ? [{
+      include: generatedBarrelModuleFilePaths.concat(barrelledModuleFilePaths),
+      sideEffects: true
+    }] : []).concat(module.additional.pre.map(evaluateAdditionalLoaderConfiguration)).concat(loader.ejs, loader.script, loader.html.main, loader.html.ejs, loader.html.html, loader.style, loader.font.eot, loader.font.svg, loader.font.ttf, loader.font.woff, loader.image, loader.data, module.additional.post.map(evaluateAdditionalLoaderConfiguration))
+  },
+  node: configuration.nodeEnvironment,
+  optimization: {
+    chunkIds: configuration.debug ? 'named' : 'total-size',
+    moduleIds: configuration.debug ? 'named' : 'size',
+    /*
+        NOTE: The dev-server ("serve") emits a non-module runtime.
+        Re-bundling an already webpack-bundled dependency that
+        externalizes its own dependencies then produces two
+        module-scope bindings with webpack's deterministic
+        "&lt;name>__WEBPACK_IMPORTED_MODULE_0__" name in one function
+        scope: the downstream external import and the library's
+        internal harmony import. Via "var" hoisting they merge, so the
+        dependency's re-export facade references itself and any access
+        (e.g. "new Logger()") recurses endlessly. Scope hoisting
+        renames those bindings uniquely and dissolves the collision. It
+        is on by default for the production "build" but has to be forced
+        for the development server.
+    */
+    concatenateModules: configuration.givenCommandLineArguments[2] === 'serve' || undefined,
+    // region common chunks
+    splitChunks: extend(true, !configuration.injection.chunks || configuration.targetTechnology.payload === 'node' || configuration.givenCommandLineArguments[2] === 'test' ? {
+      cacheGroups: {
+        default: false,
+        defaultVendors: false
+      }
+    } : {
+      chunks: 'all',
+      cacheGroups: {
+        defaultVendors: {
+          chunks: chunk => {
+            if (configuration.inPlace.javaScript) for (const name of Object.keys(configuration.inPlace.javaScript)) if (name === '*' || name === chunk.name) return false;
+            return true;
+          },
+          priority: -10,
+          reuseExistingChunk: true,
+          test: /[\\/]node_modules[\\/]/
+        }
+      }
+    }, configuration.injection.chunks),
+    // endregion
+    ...mask(module.optimizer, {
+      exclude: {
+        cssnano: true,
+        data: true,
+        font: true,
+        htmlMinifier: true,
+        image: true,
+        terser: true
+      }
+    })
+  },
+  plugins: pluginInstances
+}, configuration.cache?.main ? {
+  cache: configuration.cache.main
+} : {}, configuration.webpack, customConfiguration);
+if (configuration.nodeENV !== null) if (typeof webpackConfiguration.optimization === 'object') webpackConfiguration.optimization.nodeEnv = configuration.nodeENV;else webpackConfiguration.optimization = {
+  nodeEnv: configuration.nodeENV
+};
+if (Array.isArray(module.skipParseRegularExpressions) ? module.skipParseRegularExpressions.length : module.skipParseRegularExpressions) if (typeof webpackConfiguration.module === 'object') webpackConfiguration.module.noParse = module.skipParseRegularExpressions;else webpackConfiguration.module = {
+  noParse: module.skipParseRegularExpressions
+};
+if (configuration.path.configuration.javaScript) try {
+  import.meta.resolve(configuration.path.configuration.javaScript);
+  let result = await optionalImport(configuration.path.configuration.javaScript);
+  if (isPlainObject(result)) {
+    if ('default' in result) result = result.default;
+    if ('replaceWebOptimizer' in result) webpackConfiguration = result.replaceWebOptimizer;else extend(true, webpackConfiguration, result);
+  } else log.debug('Failed to load given JavaScript configuration file path', `"${configuration.path.configuration.javaScript}".`);
+} catch {
+  log.debug('Optional configuration file script', `"${configuration.path.configuration.javaScript}" not available.`);
+}
+log.debug('Using internal configuration:', util.inspect(configuration, {
+  depth: null
+}));
+log.debug('-----------------------------------------------------------');
+log.debug('Using webpack configuration:', util.inspect(webpackConfiguration, {
+  depth: null
+}));
+
+// endregion
+export default webpackConfiguration;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isFile">isFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Sep 16 2026 19:28:59 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
