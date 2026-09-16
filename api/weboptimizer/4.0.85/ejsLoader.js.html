@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ejsLoader.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ejsLoader.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// #!/usr/bin/env babel-node
+// -*- coding: utf-8 -*-
+/** @module ejsLoader */
+'use strict';
+
+/* !
+    region header
+    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+
+    License
+    -------
+
+    This library written by Torben Sickert stands under a creative commons
+    naming 3.0 unported license.
+    See https://creativecommons.org/licenses/by/3.0/deed.de
+    endregion
+*/
+// region
+import { transform as babelTransform } from '@babel/core';
+import { convertSubstringInPlainObject, copy, evaluate, extend, Logger, UTILITY_SCOPE } from 'clientnode';
+import ejs from 'ejs';
+import { readFile } from 'fs/promises';
+import { minify as minifyHTML } from 'html-minifier';
+import { extname } from 'path';
+import getConfiguration from "./configurator.js";
+import { determineModuleFilePath } from "./helper.js";
+// endregion
+// region types
+
+// endregion
+export const log = new Logger({
+  name: 'weboptimizer.ejs-loader'
+});
+/**
+ * Main transformation function.
+ * @param source - Input string to transform.
+ * @returns Transformed string.
+ */
+export const loader = async function (source) {
+  const callback = this.async();
+  const configuration = await getConfiguration();
+  const givenOptions = convertSubstringInPlainObject(extend(true, {
+    compiler: {
+      async: true,
+      localsName: '_'
+    },
+    compileSteps: 2,
+    compress: {
+      html: {},
+      javaScript: true
+    },
+    context: './',
+    debug: false,
+    extensions: {
+      file: {
+        alias: {
+          '.js': ['.js', '.ts', '.tsx', '.jsx']
+        },
+        external: [],
+        internal: ['.js', '.json', '.css', '.svg', '.png', '.jpg', '.gif', '.ico', '.html', '.eot', '.ttf', '.woff', '.woff2']
+      }
+    },
+    module: {
+      aliases: {},
+      replacements: {}
+    },
+    pathsToIgnore: []
+  }, this.getOptions ? this.getOptions() : this.query ?? {}), /#%%%#/g, '!');
+  const compile = (template, nestedGivenOptions = givenOptions.compiler, compileSteps = 2) => async (locals = {}) => {
+    const options = {
+      filename: template,
+      ...(nestedGivenOptions || {})
+    };
+    const givenLocals = [].concat(locals);
+    const importFile = async (request, nestedLocals = {}) => {
+      const template = request.replace(/^(.+)\?[^?]+$/, '$1');
+      const queryMatch = /^[^?]+\?(.+)$/.exec(request);
+      if (queryMatch) {
+        const evaluated = evaluate(queryMatch[1], {
+          scope: {
+            compile,
+            locals,
+            request,
+            source,
+            template
+          }
+        });
+        if (evaluated.error) log.warn('Error occurred during processing given query:', evaluated.error);else if (evaluated.result) extend(true, nestedLocals, evaluated.result);
+      }
+      let nestedOptions = copy(options);
+      delete nestedOptions.client;
+      nestedOptions = extend(true, {
+        encoding: configuration.encoding
+      }, nestedOptions, nestedLocals.options || {}, options);
+      if (nestedOptions.isString) return await compile(template, nestedOptions)(nestedLocals);
+      const templateFilePath = determineModuleFilePath(template, givenOptions.module?.aliases, givenOptions.module?.replacements, {
+        file: givenOptions.extensions?.file.internal || []
+      }, givenOptions.context, configuration.path.source.asset.base, configuration.path.ignore.concat(givenOptions.pathsToIgnore ?? []), configuration.module.directoryNames, configuration.package.main.fileNames, configuration.package.main.propertyNames, configuration.package.aliasPropertyNames, configuration.encoding);
+      if (templateFilePath) {
+        if (this.addDependency) this.addDependency(templateFilePath);
+        /*
+            NOTE: If there aren't any locals options or variables and
+            file doesn't seem to be an ejs template we simply load
+            included file content.
+        */
+        if (queryMatch || templateFilePath.endsWith('.ejs')) return await compile(templateFilePath, nestedOptions)(nestedLocals);
+        return await readFile(templateFilePath, {
+          encoding: nestedOptions.encoding
+        });
+      }
+      throw new Error(`Given template file "${template}" couldn't be resolved.`);
+    };
+    const compressHTML = content => minifyHTML(content, extend(true, {
+      caseSensitive: true,
+      collapseInlineTagWhitespace: true,
+      collapseWhitespace: true,
+      conservativeCollapse: true,
+      minifyCSS: true,
+      minifyJS: true,
+      processScripts: ['text/ng-template', 'text/x-handlebars-template'],
+      removeAttributeQuotes: true,
+      removeComments: true,
+      removeRedundantAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      sortAttributes: true,
+      sortClassName: true,
+      /*
+          NOTE: Avoids whitespace around placeholder in
+          tags.
+      */
+      trimCustomFragments: true,
+      useShortDoctype: true
+    }, givenOptions.compress?.html || {}));
+    let result = template;
+    const isString = Boolean(options.isString);
+    delete options.isString;
+
+    // NOTE: Needed to have standalone usable code afterward.
+    if (compileSteps % 2) options.client = true;
+    let stepLocals;
+    let scope = {};
+    for (let step = 1; step &lt;= compileSteps; step += 1) {
+      // On every odd compile step we have to determine the environment.
+      if (step % 2) {
+        // region determine scope
+        const localsIndex = Math.round(step / 2) - 1;
+        stepLocals = localsIndex &lt; givenLocals.length ? givenLocals[localsIndex] : {};
+        scope = {};
+        if (step &lt; 3 &amp;&amp; 1 &lt; compileSteps) scope = {
+          ...UTILITY_SCOPE,
+          configuration,
+          include: importFile,
+          ...(Array.isArray(stepLocals) ? {} : stepLocals)
+        };else if (!Array.isArray(stepLocals)) scope = stepLocals;
+        // endregion
+      }
+      if (typeof result === 'string') {
+        const filePath = isString ? options.filename : result;
+        if (filePath &amp;&amp; extname(filePath) === '.js') result = await import(filePath);else {
+          if (!isString) {
+            let encoding = configuration.encoding;
+            if (typeof options.encoding === 'string') encoding = options.encoding;
+            result = await readFile(result, {
+              encoding
+            });
+          }
+          if (step === compileSteps &amp;&amp; givenOptions.compress?.html) result = compressHTML(result);
+          if (step === compileSteps &amp;&amp; compileSteps % 2) {
+            /*
+                We have to use the templace class directly to get
+                the generated source code.
+             */
+            const templateInstance = new ejs.Template(template, options);
+            templateInstance.compile();
+            const compiledSourceCode = templateInstance.source;
+            result = `export default ${options.async ? 'async ' : ''}function(${options.localsName}) {
+                            var escapeFn = function(value) {
+                                return String(value)
+                                    .replace(
+                                        /[&amp;&lt;>"']/g,
+                                        function(char) {
+                                            return {
+                                                '&amp;': '&amp;amp;',
+                                                '&lt;': '&amp;lt;',
+                                                '>': '&amp;gt;',
+                                                '"': '&amp;quot;',
+                                                "'": "&amp;#39;"
+                                            }[char]
+                                        }
+                                    )
+                            };
+                            var include = function() {
+                                throw new Error('Include not implemented.')
+                            };
+                            var rethrow = function rethrow(
+                                err, str, flnm, lineno, esc
+                            ) {
+                                var lines = str.split('\\n');
+                                var start = Math.max(lineno - 3, 0);
+                                var end = Math.min(
+                                    lines.length, lineno + 3
+                                );
+                                var filename = esc(flnm);
+                                // Error context
+                                var context = lines
+                                    .slice(start, end)
+                                    .map(function (line, i) {
+                                        var curr = i + start + 1;
+                                        return (
+                                            curr == lineno ?
+                                                ' >> ' :
+                                                '    '
+                                            ) +
+                                            curr +
+                                            '| ' +
+                                            line;
+                                    })
+                                    .join('\\n');
+                                // Alter exception message
+                                err.path = filename;
+                                err.message =
+                                    (filename || 'ejs') +
+                                    ':' +
+                                    lineno +
+                                    '\\n' +
+                                    context +
+                                    '\\n\\n' +
+                                    err.message;
+                                throw err;
+                            };
+                            ${compiledSourceCode}
+                        };`.trim();
+          } else result = ejs.compile(result, options);
+        }
+      } else {
+        result = await result(scope);
+        if (givenOptions.compress?.html) result = compressHTML(result);
+      }
+    }
+    if (compileSteps % 2) {
+      const processed = await new Promise((resolve, reject) => {
+        babelTransform(result, {
+          ast: false,
+          babelrc: false,
+          comments: !givenOptions.compress?.javaScript,
+          filename: options.filename || 'unknown',
+          minified: givenOptions.compress?.javaScript,
+          presets: [],
+          sourceMaps: false,
+          sourceType: 'module'
+        }, (error, file) => {
+          if (error) reject(error);else resolve(file);
+        });
+      });
+      if (typeof processed?.code === 'string') result = processed.code;
+      return `${options.strict ? `'use strict';\n` : ''}${result}`;
+    }
+    if (typeof result === 'string') {
+      result = result.replace(new RegExp(`&lt;script +processing-workaround *` + `(?: = *(?: " *"|' *') *)?>([\\s\\S]*?)&lt;/ *script *>`, 'ig'), '$1').replace(new RegExp(`&lt;script +processing(-+)-workaround *` + `(?: = *(?: " *"|' *') *)?>([\\s\\S]*?)&lt;/ *script *>`, 'ig'), '&lt;script processing$1workaround>$2&lt;/script>');
+      return result;
+    }
+    return '';
+  };
+  try {
+    callback(null, await compile(source, {
+      ...givenOptions.compiler,
+      client: Boolean((givenOptions.compileSteps ?? 2) % 2),
+      compileDebug: givenOptions.debug,
+      debug: givenOptions.debug,
+      filename: this.resourcePath || 'unknown',
+      isString: true
+    }, givenOptions.compileSteps)(givenOptions.locals || {}));
+  } catch (error) {
+    callback(error);
+  }
+};
+export default loader;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isFile">isFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Sep 16 2026 19:28:59 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
