@@ -10,7 +10,8 @@ This library written by Torben Sickert stands under a creative commons naming
 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 endregion -->
 
-Project status
+<!--|deDE:Projektstatus-->
+Project Status
 --------------
 
 [![npm](https://img.shields.io/npm/v/weboptimizer?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d&style=for-the-badge)](https://www.npmjs.com/package/weboptimizer)
@@ -30,6 +31,7 @@ Project status
 
 [![Open in CodeSandbox](https://img.shields.io/badge/Open%20in-CodeSandbox-blue?style=for-the-badge&logo=codesandbox)](https://githubbox.com/thaibault/weboptimizer)
 
+<!--|deDE:Verwendung-->
 Use case
 --------
 
@@ -39,10 +41,9 @@ or node. All native web types like html, css and JavaScript are supported
 natively in their latest language specification through preconfigured
 transpiler.
 
-<!--Place for automatic generated table of contents.-->
-<div class="doc-toc" style="display:none">
-    <!--|deDE:Inhalt-->
-    <h2 id="content">Content</h2>
+<div class="wd-table-of-contents">
+    <h2 id="content">Content<!--deDE:Inhalt--><!--frFR:Contenu--></h2>
+    <!--wd-table-of-contents-->
 </div>
 
 Features
@@ -96,21 +97,22 @@ Features
 Installation
 ------------
 
-Edit your **package.json** to add **one** dependency:
+You can install via package manager, simply download the compiled version as
+zip file here and inject or request via CDN in HTML:
+<!--deDE:
+    Sie können das Paket über den Paketmanager installieren oder einfach die
+    kompilierte Version als ZIP-Datei hier herunterladen und in HTML einbinden
+    oder über ein CDN abrufen:
+-->
+<!--frFR:
+    Vous pouvez installer le paquet via le gestionnaire de paquets ou
+    simplement télécharger ici la version compilée sous forme de fichier ZIP,
+    puis l'intégrer dans une page HTML ou la récupérer via un CDN:
+-->
 
-```JSON
-...
-"dependencies": {
-    ...
-    "weboptimizer": "latest",
-    ...
-},
-...
+```bash
+npm install weboptimizer
 ```
-
-Update your **packages** via npm and have fun:
-
-    npm update
 
 Configuration
 -------------
