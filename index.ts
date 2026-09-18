@@ -465,7 +465,7 @@ const main = async (
                         configuration.commandLine.build.arguments || []
                     ).concat(additionalArguments)
 
-                    log.info(
+                    void log.info(
                         'Running "' +
                         (
                             `${configuration.commandLine.build.command} ` +
@@ -581,7 +581,7 @@ const main = async (
                                     `command: ${evaluated.error}`
                                 )
 
-                            log.info(
+                            void log.info(
                                 `Running "${(
                                     evaluated as PositiveEvaluationResult
                                 ).result}"`
@@ -652,7 +652,7 @@ const main = async (
                                 task.arguments || []
                             ).concat(additionalArguments)
 
-                            log.info(
+                            void log.info(
                                 'Running "' +
                                 (
                                     `${task.command} ` +
@@ -729,7 +729,7 @@ const main = async (
                 )
             )
         )
-            log.info(
+            void log.info(
                 `Give one of "${possibleArguments.join('", "')}" as command`,
                 'line argument. You can provide a json string as second',
                 'parameter to dynamically overwrite some configurations.\n'
@@ -739,7 +739,7 @@ const main = async (
         try {
             await Promise.all(processPromises)
         } catch (error) {
-            log.error(error)
+            void log.error(error)
 
             process.exit((error as ProcessError).returnCode)
         }
@@ -748,7 +748,7 @@ const main = async (
         if (configuration.debug)
             throw error
         else {
-            log.error(error)
+            void log.error(error)
 
             // NOTE: Forward nested return codes.
             process.exitCode = (error as {returnCode?: number}).returnCode ?? 1

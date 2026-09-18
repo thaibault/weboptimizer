@@ -168,7 +168,7 @@ export const loader = async function(
                         {scope: {compile, locals, request, source, template}}
                     )
                 if (evaluated.error)
-                    log.warn(
+                    void log.warn(
                         'Error occurred during processing given query:',
                         evaluated.error
                     )

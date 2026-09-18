@@ -62,9 +62,9 @@ if (typeof TARGET_TECHNOLOGY === 'undefined' || TARGET_TECHNOLOGY === 'node') {
                 !browser.debug &&
                 ['XMLHttpRequest', 'resource loading'].includes(error.type)
             )
-                log.warn(`Loading resource failed: ${error.toString()}.`)
+                void log.warn(`Loading resource failed: ${error.toString()}.`)
             else
-                log.error(error.stack, error.detail)
+                void log.error(error.stack, error.detail)
         }
     )
 
