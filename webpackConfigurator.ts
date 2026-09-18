@@ -195,7 +195,7 @@ for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
         else
             plugins[name] = plugin
     else
-        log.debug(`Optional webpack plugin "${name}" not available.`)
+        void log.debug(`Optional webpack plugin "${name}" not available.`)
 }
 
 // endregion
@@ -779,7 +779,7 @@ if (module.enforceDeduplication) {
                                 packageDescriptor.configuration.version ===
                                 otherPackageDescriptor.configuration.version
                             ) {
-                                log.info(
+                                void log.info(
                                     '\nConsolidate module request',
                                     `"${targetPath}" to`,
                                     `"${alternateTargetPath}".`
@@ -812,7 +812,7 @@ if (module.enforceDeduplication) {
                 }
 
                 if (redundantRequest)
-                    log.warn(
+                    void log.warn(
                         '\nIncluding different versions of same package',
                         `"${packageDescriptor.configuration.name}". Module`,
                         `"${targetPath}" (version`,
@@ -1579,7 +1579,7 @@ for (const pluginConfiguration of configuration.plugins) {
             ))
         )
     } else
-        log.warn(
+        void log.warn(
             `Configured plugin module "${pluginConfiguration.name.module}"`,
             'could not be loaded.'
         )
@@ -1623,14 +1623,14 @@ if (configuration.path.configuration.json)
                 configuration.path.configuration.json
             ) as PlainObject
         } catch (error) {
-            log.debug(
+            void log.debug(
                 'Importing provided json webpack configuration file path',
                 `under "${configuration.path.configuration.json}" failed:`,
                 represent(error)
             )
         }
     } catch {
-        log.debug(
+        void log.debug(
             'Optional configuration file',
             `"${configuration.path.configuration.json}" not available.`
         )
@@ -1709,7 +1709,7 @@ if (generatedBarrelModuleFilePaths.length)
                 try {
                     await rm(filePath, {force: true})
                 } catch (error) {
-                    log.debug(
+                    void log.debug(
                         'Removing generated barrel entry module ' +
                         `"${filePath}" failed:`,
                         represent(error)
@@ -2006,23 +2006,23 @@ if (configuration.path.configuration.javaScript)
                     result as RecursivePartial<WebpackConfiguration>
                 )
         } else
-            log.debug(
+            void log.debug(
                 'Failed to load given JavaScript configuration file path',
                 `"${configuration.path.configuration.javaScript}".`
             )
     } catch {
-        log.debug(
+        void log.debug(
             'Optional configuration file script',
             `"${configuration.path.configuration.javaScript}" not available.`
         )
     }
 
-log.debug(
+void log.debug(
     'Using internal configuration:',
     util.inspect(configuration, {depth: null})
 )
-log.debug('-----------------------------------------------------------')
-log.debug(
+void log.debug('-----------------------------------------------------------')
+void log.debug(
     'Using webpack configuration:',
     util.inspect(webpackConfiguration, {depth: null})
 )

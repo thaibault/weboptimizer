@@ -888,7 +888,7 @@ export const determineModuleFilePathInPackage = (
                     readFileSync(pathToPackageJSON, {encoding})
                 ) as PlainObject
             } catch (error) {
-                log.warn(
+                void log.warn(
                     `Package configuration file "${pathToPackageJSON}"`,
                     `could not parsed: ${represent(error)}`
                 )

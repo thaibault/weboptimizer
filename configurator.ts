@@ -350,7 +350,7 @@ export const load = async (
                         ) as PlainObject
                     )
                 else
-                    log.warn(
+                    void log.warn(
                         `Given dynamic referenced configuration "${name}"`,
                         'could not be resolved.'
                     )
