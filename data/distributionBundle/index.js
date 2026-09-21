@@ -5,9 +5,9 @@
 
 /* !
     region header
-    [Project page](https://torben.website/webOptimizer)
+    [Project page](https://tsickert.com/webOptimizer)
 
-    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+    Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
     License
     -------
@@ -180,7 +180,7 @@ environment = eval('process.env')) => {
         */
         processPromises.push(new Promise((resolve, reject) => {
           const commandLineArguments = (configuration.commandLine.build.arguments || []).concat(additionalArguments);
-          log.info('Running "' + (`${configuration.commandLine.build.command} ` + commandLineArguments.join(' ')).trim() + '"');
+          void log.info('Running "' + (`${configuration.commandLine.build.command} ` + commandLineArguments.join(' ')).trim() + '"');
 
           /*
               NOTE: Take current weboptimizer's dependencies into
@@ -230,7 +230,7 @@ environment = eval('process.env')) => {
               }
             });
             if (evaluated.error) throw new Error('Error occurred during processing given ' + `command: ${evaluated.error}`);
-            log.info(`Running "${evaluated.result}"`);
+            void log.info(`Running "${evaluated.result}"`);
             processPromises.push(new Promise((resolve, reject) => [handleChildProcess(execChildProcess(evaluated.result, {
               encoding: configuration.encoding,
               ...processOptions
@@ -258,7 +258,7 @@ environment = eval('process.env')) => {
           if (evaluated.error) throw new Error('Error occurred during processing given task: ' + evaluated.error);
           if (evaluated.result) processPromises.push(new Promise((resolve, reject) => {
             const commandLineArguments = (task.arguments || []).concat(additionalArguments);
-            log.info('Running "' + (`${task.command} ` + commandLineArguments.join(' ')).trim() + '"');
+            void log.info('Running "' + (`${task.command} ` + commandLineArguments.join(' ')).trim() + '"');
             const childProcess = spawnChildProcess(task.command, commandLineArguments, childProcessOptions);
             const closeHandler = getProcessCloseHandler(resolve, reject);
             for (const closeEventName of CLOSE_EVENT_NAMES) childProcess.on(closeEventName, closeHandler);
@@ -281,19 +281,19 @@ environment = eval('process.env')) => {
       finished = true;
     };
     for (const closeEventName of CLOSE_EVENT_NAMES) process.on(closeEventName, closeHandler);
-    if (import.meta.main && (configuration.givenCommandLineArguments.length < 3 || !possibleArguments.includes(configuration.givenCommandLineArguments[2]))) log.info(`Give one of "${possibleArguments.join('", "')}" as command`, 'line argument. You can provide a json string as second', 'parameter to dynamically overwrite some configurations.\n');
+    if (import.meta.main && (configuration.givenCommandLineArguments.length < 3 || !possibleArguments.includes(configuration.givenCommandLineArguments[2]))) void log.info(`Give one of "${possibleArguments.join('", "')}" as command`, 'line argument. You can provide a json string as second', 'parameter to dynamically overwrite some configurations.\n');
     // endregion
     // region forward nested return codes
     try {
       await Promise.all(processPromises);
     } catch (error) {
-      log.error(error);
+      void log.error(error);
       process.exit(error.returnCode);
     }
     // endregion
   } catch (error) {
     if (configuration.debug) throw error;else {
-      log.error(error);
+      void log.error(error);
 
       // NOTE: Forward nested return codes.
       process.exitCode = error.returnCode ?? 1;

@@ -5,7 +5,7 @@
 
 /* !
     region header
-    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+    Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
     License
     -------
@@ -473,7 +473,7 @@ export const determineModuleFilePathInPackage = (packagePath, packageMainPropert
           encoding
         }));
       } catch (error) {
-        log.warn(`Package configuration file "${pathToPackageJSON}"`, `could not parsed: ${represent(error)}`);
+        void log.warn(`Package configuration file "${pathToPackageJSON}"`, `could not parsed: ${represent(error)}`);
       }
       for (const propertyName of packageMainPropertyNames) if (Object.prototype.hasOwnProperty.call(localConfiguration, propertyName) && typeof localConfiguration[propertyName] === 'string' && localConfiguration[propertyName]) {
         result.fileName = localConfiguration[propertyName];
