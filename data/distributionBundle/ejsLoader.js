@@ -5,7 +5,7 @@
 
 /* !
     region header
-    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+    Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
     License
     -------
@@ -85,7 +85,7 @@ export const loader = async function (source) {
             template
           }
         });
-        if (evaluated.error) log.warn('Error occurred during processing given query:', evaluated.error);else if (evaluated.result) extend(true, nestedLocals, evaluated.result);
+        if (evaluated.error) void log.warn('Error occurred during processing given query:', evaluated.error);else if (evaluated.result) extend(true, nestedLocals, evaluated.result);
       }
       let nestedOptions = copy(options);
       delete nestedOptions.client;

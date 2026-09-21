@@ -5,7 +5,7 @@
 
 /* !
     region header
-    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+    Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
     License
     -------
@@ -166,7 +166,7 @@ environment = eval('process.env')) => {
     if (Object.prototype.hasOwnProperty.call(result, '__reference__')) {
       const referenceNames = [].concat(result.__reference__);
       delete result.__reference__;
-      for (const name of referenceNames) if (Object.prototype.hasOwnProperty.call(configuration, name)) extend(true, result, configuration[name]);else if (await isFile(name)) extend(true, result, JSON.parse(await readFile(name, configuration.encoding)));else log.warn(`Given dynamic referenced configuration "${name}"`, 'could not be resolved.');
+      for (const name of referenceNames) if (Object.prototype.hasOwnProperty.call(configuration, name)) extend(true, result, configuration[name]);else if (await isFile(name)) extend(true, result, JSON.parse(await readFile(name, configuration.encoding)));else void log.warn(`Given dynamic referenced configuration "${name}"`, 'could not be resolved.');
     }
     extend(true, modifyObject(configuration, result), result);
   }

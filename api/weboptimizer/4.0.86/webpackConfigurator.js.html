@@ -33,7 +33,7 @@
 
 /* !
     region header
-    Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+    Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
     License
     -------
@@ -121,7 +121,7 @@ for (const [name, alias] of Object.entries(pluginNameResourceMapping)) {
   const plugin = await optionalImport(alias);
   if (plugin) {
     if ('default' in plugin) plugins[name] = plugin.default;else plugins[name] = plugin;
-  } else log.debug(`Optional webpack plugin "${name}" not available.`);
+  } else void log.debug(`Optional webpack plugin "${name}" not available.`);
 }
 
 // endregion
@@ -378,7 +378,7 @@ if (module.enforceDeduplication) {
             const otherPackageDescriptor = await getClosestPackageDescriptor(alternateTargetPath);
             if (otherPackageDescriptor) {
               if (packageDescriptor.configuration.version === otherPackageDescriptor.configuration.version) {
-                log.info('\nConsolidate module request', `"${targetPath}" to`, `"${alternateTargetPath}".`);
+                void log.info('\nConsolidate module request', `"${targetPath}" to`, `"${alternateTargetPath}".`);
                 /*
                     NOTE: Only overwriting
                     "result.createData.resource" like
@@ -396,7 +396,7 @@ if (module.enforceDeduplication) {
             }
           }
         }
-        if (redundantRequest) log.warn('\nIncluding different versions of same package', `"${packageDescriptor.configuration.name}". Module`, `"${targetPath}" (version`, `${packageDescriptor.configuration.version}) has`, `redundancies with "${redundantRequest.path}"`, `(version ${redundantRequest.version}).`);
+        if (redundantRequest) void log.warn('\nIncluding different versions of same package', `"${packageDescriptor.configuration.name}". Module`, `"${targetPath}" (version`, `${packageDescriptor.configuration.version}) has`, `redundancies with "${redundantRequest.path}"`, `(version ${redundantRequest.version}).`);
       }
     }
   };
@@ -786,7 +786,7 @@ for (const pluginConfiguration of configuration.plugins) {
   if (plugin) {
     if ('default' in plugin) plugin = plugin.default;
     pluginInstances.push(new plugin[pluginConfiguration.name.initializer](...pluginConfiguration.parameters));
-  } else log.warn(`Configured plugin module "${pluginConfiguration.name.module}"`, 'could not be loaded.');
+  } else void log.warn(`Configured plugin module "${pluginConfiguration.name.module}"`, 'could not be loaded.');
 }
 // endregion
 // region minimizer and image compression
@@ -813,10 +813,10 @@ if (configuration.path.configuration.json) try {
   try {
     customConfiguration = await import(configuration.path.configuration.json);
   } catch (error) {
-    log.debug('Importing provided json webpack configuration file path', `under "${configuration.path.configuration.json}" failed:`, represent(error));
+    void log.debug('Importing provided json webpack configuration file path', `under "${configuration.path.configuration.json}" failed:`, represent(error));
   }
 } catch {
-  log.debug('Optional configuration file', `"${configuration.path.configuration.json}" not available.`);
+  void log.debug('Optional configuration file', `"${configuration.path.configuration.json}" not available.`);
 }
 
 // region collapse multi-module ("multi-main") entry chunks into a barrel
@@ -866,7 +866,7 @@ if (generatedBarrelModuleFilePaths.length) pluginInstances.push({
           force: true
         });
       } catch (error) {
-        log.debug('Removing generated barrel entry module ' + `"${filePath}" failed:`, represent(error));
+        void log.debug('Removing generated barrel entry module ' + `"${filePath}" failed:`, represent(error));
       }
     };
 
@@ -1047,15 +1047,15 @@ if (configuration.path.configuration.javaScript) try {
   if (isPlainObject(result)) {
     if ('default' in result) result = result.default;
     if ('replaceWebOptimizer' in result) webpackConfiguration = result.replaceWebOptimizer;else extend(true, webpackConfiguration, result);
-  } else log.debug('Failed to load given JavaScript configuration file path', `"${configuration.path.configuration.javaScript}".`);
+  } else void log.debug('Failed to load given JavaScript configuration file path', `"${configuration.path.configuration.javaScript}".`);
 } catch {
-  log.debug('Optional configuration file script', `"${configuration.path.configuration.javaScript}" not available.`);
+  void log.debug('Optional configuration file script', `"${configuration.path.configuration.javaScript}" not available.`);
 }
-log.debug('Using internal configuration:', util.inspect(configuration, {
+void log.debug('Using internal configuration:', util.inspect(configuration, {
   depth: null
 }));
-log.debug('-----------------------------------------------------------');
-log.debug('Using webpack configuration:', util.inspect(webpackConfiguration, {
+void log.debug('-----------------------------------------------------------');
+void log.debug('Using webpack configuration:', util.inspect(webpackConfiguration, {
   depth: null
 }));
 
@@ -1077,7 +1077,7 @@ export default webpackConfiguration;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Sep 16 2026 19:28:59 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Sep 21 2026 17:23:40 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>
