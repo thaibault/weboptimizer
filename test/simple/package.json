@@ -5,16 +5,16 @@
   "keywords": [
     "dummy"
   ],
-  "homepage": "https://torben.website/weboptimizer",
+  "homepage": "https://tsickert.com/weboptimizer",
   "bugs": {
-    "email": "info@torben.website",
+    "email": "info@tsickert.com",
     "url": "https://github.com/thaibault/weboptimizer/issues"
   },
   "license": "CC-BY-3.0",
   "author": {
     "name": "Torben Sickert",
-    "email": "info@torben.website",
-    "url": "https://torben.website"
+    "email": "info@tsickert.com",
+    "url": "https://tsickert.com"
   },
   "files": [
     "index.d.ts",
