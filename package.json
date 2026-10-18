@@ -106,7 +106,7 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1521",
+    "clientnode": "4.0.1522",
     "core-js": "^3.50.0",
     "ejs": "^7.0.1",
     "exports-loader": "^5.0.0",
@@ -141,10 +141,10 @@
     "@types/webpack-sources": "^3.2.3",
     "@typescript-eslint/parser": "^8.71.2",
     "css-loader": "^7.1.5",
-    "cssnano": "^9.8.0",
-    "eslint": "^10.12.0",
+    "cssnano": "^9.9.0",
+    "eslint": "^10.13.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^65.3.6",
+    "eslint-plugin-jsdoc": "^65.3.8",
     "favicons": "^7.3.1",
     "favicons-webpack-plugin": "^6.0.1",
     "globals": "^17.13.0",
@@ -1004,9 +1004,7 @@
         "optimizer": {
           "cssnano": {
             "preset": [
-              {
-                "__async_evaluate__": "(await module.optionalImport('cssnano-preset-default'))?.default"
-              },
+              "default",
               "#: The autoprefixer has to be disabled in this context since it would remove all needed vendor prefixes from the preceding processing (every prefix should be needed here).",
               {
                 "autoprefixer": false,
