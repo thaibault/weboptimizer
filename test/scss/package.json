@@ -79,7 +79,6 @@
     "postcss-scss": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
-    "rimraf": ">=5",
     "sass": "*",
     "sass-loader": "*",
     "style-loader": "*",

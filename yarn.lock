@@ -8486,9 +8486,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1522":
-  version: 4.0.1522
-  resolution: "clientnode@npm:4.0.1522"
+"clientnode@npm:4.0.1523":
+  version: 4.0.1523
+  resolution: "clientnode@npm:4.0.1523"
   peerDependencies:
     "@types/prop-types": "*"
     node-fetch: "*"
@@ -8500,7 +8500,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/fcb644abc88a6a8090658d74b23af677c5e77c73d8450e522752496ab80193a9193df0a853b87384e241606dbb593da4ba54eb303feea118d1ebf66345ed7363
+  checksum: 10c0/43fc4332bb1a947d1a6db23f8f370d2650e550cff96d779ab0fd509355aefc8a3d4efe901161ae07e8221f4e9d3e8910134d20698ad40ff90a2c3b73fe363caf
   languageName: node
   linkType: hard
 
@@ -9479,12 +9479,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ejs@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "ejs@npm:7.0.1"
+"ejs@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "ejs@npm:7.0.2"
   bin:
     ejs: bin/cli.js
-  checksum: 10c0/683485e8f4d1db361fe4c6b3906733555460eb7f858ad4ca7f7c0e0e7925d83e6b6e55edda9baf0701213c2e9a7e08e83c2ec116ba71a98affdf5638e8ba8067
+  checksum: 10c0/f5f8b44411766186e38aec59a4974612cc259121e58a6af40c04a5613218503a92386cedc9fe7faf474bf928596c4ede9b7ce98babcf08d6d2e55c7189617259
   languageName: node
   linkType: hard
 
@@ -9924,9 +9924,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^65.3.8":
-  version: 65.3.8
-  resolution: "eslint-plugin-jsdoc@npm:65.3.8"
+"eslint-plugin-jsdoc@npm:^65.3.12":
+  version: 65.3.12
+  resolution: "eslint-plugin-jsdoc@npm:65.3.12"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.98.0"
     "@es-joy/resolve.exports": "npm:1.2.0"
@@ -9949,7 +9949,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/0d1a71c265faee5b897467d26bca81f6d667de0d67e94a0437c76cac74aa1e9e1421795c9c110f2c5afe8afe51b61aa7ff3297ca4a9d4573775dc7d5d7084c73
+  checksum: 10c0/69aeb8039c6d107b4c4e596818abcc1e43f6270896246b80042419fb87d371d71338287ca402d5a5e9886eebdc59e2e90191d4a4b9f4d7e6e50b4521901fcc8e
   languageName: node
   linkType: hard
 
@@ -10946,17 +10946,6 @@ __metadata:
     minipass: "npm:^7.1.3"
     path-scurry: "npm:^2.0.2"
   checksum: 10c0/269c236f11a9b50357fe7a8c6aadac667e01deb5242b19c84975628f05f4438d8ee1354bb62c5d6c10f37fd59911b54d7799730633a2786660d8c69f1d18120a
-  languageName: node
-  linkType: hard
-
-"glob@npm:^13.0.3":
-  version: 13.0.5
-  resolution: "glob@npm:13.0.5"
-  dependencies:
-    minimatch: "npm:^10.2.1"
-    minipass: "npm:^7.1.2"
-    path-scurry: "npm:^2.0.0"
-  checksum: 10c0/1388527676127f337877eaf3403d6c54d3fa5e5599e10c1532d73108435b4da66d8fff4b00eb5b306388090a180c6a92d70694df1c19171cf820e285fb1dfee5
   languageName: node
   linkType: hard
 
@@ -13657,15 +13646,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^10.2.1":
-  version: 10.2.1
-  resolution: "minimatch@npm:10.2.1"
-  dependencies:
-    brace-expansion: "npm:^5.0.2"
-  checksum: 10c0/86c3ed013630e820fda00336ee786a03098723b60bfae452de6306708fc83619df40a99dc6ec59c97d14e25b3b3371669a04e5bf508b1b00339b20229c4907d2
-  languageName: node
-  linkType: hard
-
 "minimatch@npm:^10.2.2":
   version: 10.2.2
   resolution: "minimatch@npm:10.2.2"
@@ -14474,13 +14454,6 @@ __metadata:
   version: 1.0.0
   resolution: "package-json-from-dist@npm:1.0.0"
   checksum: 10c0/e3ffaf6ac1040ab6082a658230c041ad14e72fabe99076a2081bb1d5d41210f11872403fc09082daf4387fc0baa6577f96c9c0e94c90c394fd57794b66aa4033
-  languageName: node
-  linkType: hard
-
-"package-json-from-dist@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "package-json-from-dist@npm:1.0.1"
-  checksum: 10c0/62ba2785eb655fec084a257af34dbe24292ab74516d6aecef97ef72d4897310bc6898f6c85b5cd22770eaa1ce60d55a0230e150fb6a966e3ecd6c511e23d164b
   languageName: node
   linkType: hard
 
@@ -16195,18 +16168,6 @@ __metadata:
   bin:
     rimraf: ./bin.js
   checksum: 10c0/4eef73d406c6940927479a3a9dee551e14a54faf54b31ef861250ac815172bade86cc6f7d64a4dc5e98b65e4b18a2e1c9ff3b68d296be0c748413f092bb0dd40
-  languageName: node
-  linkType: hard
-
-"rimraf@npm:^6.1.3":
-  version: 6.1.3
-  resolution: "rimraf@npm:6.1.3"
-  dependencies:
-    glob: "npm:^13.0.3"
-    package-json-from-dist: "npm:^1.0.1"
-  bin:
-    rimraf: dist/esm/bin.mjs
-  checksum: 10c0/4a56537850102e20ba5d5eb49f366b4b7b2435389734b4b8480cf0e0eb0f6f5d0c44120a171aeb0d8f9ab40312a10d2262f3f50acbad803e32caef61b6cf86fc
   languageName: node
   linkType: hard
 
@@ -18700,12 +18661,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-documentation@npm:^1.0.61":
-  version: 1.0.61
-  resolution: "web-documentation@npm:1.0.61"
+"web-documentation@npm:^1.0.63":
+  version: 1.0.63
+  resolution: "web-documentation@npm:1.0.63"
   bin:
     web-documentation: build/deploy.js
-  checksum: 10c0/061910670f04e036b2cba54db2f680c37b7725feb40bfca1fdd85fd3658a255047b384c091e9389e3c2412e35279276c669370782cbb40d0c348f74e8832b94c
+  checksum: 10c0/7488437786ccc29f00ba5cacc6c3fad49f880fa2e8f8f1a14eb27935947b3e9d05ec97ae041ae7b56b76327900b3b8f1bf3be4bb23740bbb4da1dcb0d8450725
   languageName: node
   linkType: hard
 
@@ -18759,14 +18720,14 @@ __metadata:
     babel-loader: "npm:^10.1.1"
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
-    clientnode: "npm:4.0.1522"
+    clientnode: "npm:4.0.1523"
     core-js: "npm:^3.50.0"
     css-loader: "npm:^7.1.5"
     cssnano: "npm:^9.9.0"
-    ejs: "npm:^7.0.1"
+    ejs: "npm:^7.0.2"
     eslint: "npm:^10.13.0"
     eslint-config-google: "npm:^0.14.0"
-    eslint-plugin-jsdoc: "npm:^65.3.8"
+    eslint-plugin-jsdoc: "npm:^65.3.12"
     exports-loader: "npm:^5.0.0"
     extract-loader: "npm:^5.1.0"
     favicons: "npm:^7.3.1"
@@ -18791,7 +18752,6 @@ __metadata:
     postcss-preset-env: "npm:^11.6.1"
     postcss-sprites: "npm:^4.2.1"
     postcss-url: "npm:^10.1.4"
-    rimraf: "npm:^6.1.3"
     script-loader: "npm:^0.7.2"
     shx: "npm:^0.4.0"
     style-loader: "npm:^4.0.0"
@@ -18802,7 +18762,7 @@ __metadata:
     typescript: "npm:@typescript/typescript6@^6.0.2"
     typescript-eslint: "npm:^8.71.2"
     typescript-plugin-css-modules: "npm:^5.2.0"
-    web-documentation: "npm:^1.0.61"
+    web-documentation: "npm:^1.0.63"
     webpack: "npm:5.112.0"
     webpack-cli: "npm:^7.2.3"
     webpack-sources: "npm:^3.6.0"
