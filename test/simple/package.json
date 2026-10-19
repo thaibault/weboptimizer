@@ -78,7 +78,6 @@
     "postcss-scss": "*",
     "postcss-sprites": "*",
     "postcss-url": "*",
-    "rimraf": ">=5",
     "style-loader": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",

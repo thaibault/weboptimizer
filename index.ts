@@ -66,17 +66,13 @@ import {
     parseEncodedObject,
     walkDirectoryRecursively
 } from 'clientnode'
-import {chmodSync, unlinkSync} from 'fs'
-import {writeFile, unlink} from 'fs/promises'
+import {chmodSync, rmSync as removeSync, unlinkSync} from 'fs'
+import {rm as remove, writeFile, unlink} from 'fs/promises'
 import globAll from 'glob-all'
 const {sync: globAllSync} = globAll as
     unknown as
     {sync: (expression: Array<string>) => Array<string>}
 import path, {join, resolve} from 'path'
-import {
-    rimraf as removeDirectoryRecursively,
-    sync as removeDirectoryRecursivelySync
-} from 'rimraf'
 
 import {load as loadConfiguration} from './configurator'
 import {
@@ -295,8 +291,9 @@ const main = async (
                                     ].filePathPattern
                                 ).test(file.path)) {
                                     if (file.stats?.isDirectory()) {
-                                        await removeDirectoryRecursively(
-                                            file.path
+                                        await remove(
+                                            file.path,
+                                            {force: true, recursive: true}
                                         )
 
                                         return false
@@ -321,15 +318,17 @@ const main = async (
                         if (file.name.startsWith('npm-debug'))
                             await unlink(file.path)
                 } else
-                    await removeDirectoryRecursively(
-                        configuration.path.target.base
+                    await remove(
+                        configuration.path.target.base,
+                        {force: true, recursive: true}
                     )
 
                 if (await isDirectory(
                     configuration.path.apiDocumentation
                 ))
-                    await removeDirectoryRecursively(
-                        configuration.path.apiDocumentation
+                    await remove(
+                        configuration.path.apiDocumentation,
+                        {force: true, recursive: true}
                     )
 
                 for (const filePath of configuration.path.tidyUpOnClear)
@@ -338,11 +337,14 @@ const main = async (
                             // NOTE: Close handler have to be synchronous.
                             unlinkSync(filePath)
                         else if (isDirectorySync(filePath))
-                            removeDirectoryRecursivelySync(filePath)
+                            removeSync(
+                                filePath, {force: true, recursive: true}
+                            )
 
-                removeDirectoryRecursivelySync(
-                    globAllSync(configuration.path.tidyUpOnClearGlobs)
-                )
+                for (const filePath of globAllSync(
+                    configuration.path.tidyUpOnClearGlobs
+                ))
+                    removeSync(filePath, {force: true, recursive: true})
             }
             // endregion
             // region handle build
@@ -445,11 +447,14 @@ const main = async (
                                 // NOTE: Close handler have to be synchronous.
                                 unlinkSync(filePath)
                             else if (isDirectorySync(filePath))
-                                removeDirectoryRecursivelySync(filePath)
+                                removeSync(
+                                    filePath, {force: true, recursive: true}
+                                )
 
-                    removeDirectoryRecursivelySync(
-                        globAllSync(configuration.path.tidyUpGlobs)
-                    )
+                    for (const filePath of globAllSync(
+                        configuration.path.tidyUpGlobs
+                    ))
+                        removeSync(filePath, {force: true, recursive: true})
                 }
 
                 closeEventHandlers.push(tidyUp)
@@ -505,7 +510,10 @@ const main = async (
                             // NOTE: Close handler have to be synchronous.
                             if (isDirectorySync(sourcePath)) {
                                 if (isDirectorySync(targetPath))
-                                    removeDirectoryRecursivelySync(targetPath)
+                                    removeSync(
+                                        targetPath,
+                                        {force: true, recursive: true}
+                                    )
 
                                 copyDirectoryRecursiveSync(
                                     sourcePath, targetPath
