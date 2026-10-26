@@ -20,14 +20,13 @@
 // region imports
 import { exec as execChildProcess, spawn as spawnChildProcess } from 'child_process';
 import { CLOSE_EVENT_NAMES, copyDirectoryRecursiveSync, copyFileSync, evaluate, getProcessCloseHandler, handleChildProcess, importFilesystemAPI, isDirectory, isDirectorySync, isFile, isFileSync, isPlainObject, Logger, MAXIMAL_NUMBER_OF_ITERATIONS, NOOP, parseEncodedObject, walkDirectoryRecursively } from 'clientnode';
-import { chmodSync, unlinkSync } from 'fs';
-import { writeFile, unlink } from 'fs/promises';
+import { chmodSync, rmSync as removeSync, unlinkSync } from 'fs';
+import { rm as remove, writeFile, unlink } from 'fs/promises';
 import globAll from 'glob-all';
 const {
   sync: globAllSync
 } = globAll;
 import path, { join, resolve } from 'path';
-import { rimraf as removeDirectoryRecursively, sync as removeDirectoryRecursivelySync } from 'rimraf';
 import { load as loadConfiguration } from "./configurator.js";
 import { determineAssetType, determineModuleFilePath, determineModuleLocations, isFilePathInLocation, renderFilePathTemplate, resolveBuildConfigurationFilePaths, stripLoader } from "./helper.js";
 // endregion
@@ -123,7 +122,10 @@ environment = eval('process.env')) => {
             if (isFilePathInLocation(file.path, configuration.path.ignore.concat(configuration.module.directoryNames, configuration.loader.directoryNames).map(filePath => resolve(configuration.path.context, filePath)).filter(filePath => !configuration.path.context.startsWith(filePath)))) return false;
             for (const type in configuration.buildContext.types) if (new RegExp(configuration.buildContext.types[type].filePathPattern).test(file.path)) {
               if (file.stats?.isDirectory()) {
-                await removeDirectoryRecursively(file.path);
+                await remove(file.path, {
+                  force: true,
+                  recursive: true
+                });
                 return false;
               }
               await unlink(file.path);
@@ -131,12 +133,24 @@ environment = eval('process.env')) => {
             }
           });
           for (const file of await walkDirectoryRecursively(configuration.path.target.base, () => false, configuration.encoding)) if (file.name.startsWith('npm-debug')) await unlink(file.path);
-        } else await removeDirectoryRecursively(configuration.path.target.base);
-        if (await isDirectory(configuration.path.apiDocumentation)) await removeDirectoryRecursively(configuration.path.apiDocumentation);
+        } else await remove(configuration.path.target.base, {
+          force: true,
+          recursive: true
+        });
+        if (await isDirectory(configuration.path.apiDocumentation)) await remove(configuration.path.apiDocumentation, {
+          force: true,
+          recursive: true
+        });
         for (const filePath of configuration.path.tidyUpOnClear) if (filePath) if (isFileSync(filePath))
           // NOTE: Close handler have to be synchronous.
-          unlinkSync(filePath);else if (isDirectorySync(filePath)) removeDirectoryRecursivelySync(filePath);
-        removeDirectoryRecursivelySync(globAllSync(configuration.path.tidyUpOnClearGlobs));
+          unlinkSync(filePath);else if (isDirectorySync(filePath)) removeSync(filePath, {
+          force: true,
+          recursive: true
+        });
+        for (const filePath of globAllSync(configuration.path.tidyUpOnClearGlobs)) removeSync(filePath, {
+          force: true,
+          recursive: true
+        });
       }
       // endregion
       // region handle build
@@ -169,8 +183,14 @@ environment = eval('process.env')) => {
           }
           for (const filePath of configuration.path.tidyUp) if (filePath) if (isFileSync(filePath))
             // NOTE: Close handler have to be synchronous.
-            unlinkSync(filePath);else if (isDirectorySync(filePath)) removeDirectoryRecursivelySync(filePath);
-          removeDirectoryRecursivelySync(globAllSync(configuration.path.tidyUpGlobs));
+            unlinkSync(filePath);else if (isDirectorySync(filePath)) removeSync(filePath, {
+            force: true,
+            recursive: true
+          });
+          for (const filePath of globAllSync(configuration.path.tidyUpGlobs)) removeSync(filePath, {
+            force: true,
+            recursive: true
+          });
         };
         closeEventHandlers.push(tidyUp);
 
@@ -197,7 +217,10 @@ environment = eval('process.env')) => {
 
               // NOTE: Close handler have to be synchronous.
               if (isDirectorySync(sourcePath)) {
-                if (isDirectorySync(targetPath)) removeDirectoryRecursivelySync(targetPath);
+                if (isDirectorySync(targetPath)) removeSync(targetPath, {
+                  force: true,
+                  recursive: true
+                });
                 copyDirectoryRecursiveSync(sourcePath, targetPath);
               } else if (isFileSync(sourcePath)) copyFileSync(sourcePath, targetPath);
             }
