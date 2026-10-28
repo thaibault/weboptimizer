@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "4.0.92",
+  "version": "4.0.93",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -38,9 +38,7 @@
     "./type": "./type.js",
     "./type.js": "./type.js"
   },
-  "bin": {
-    "weboptimizer": "index.js"
-  },
+  "bin": "index.js",
   "files": [
     "browser.d.ts",
     "browser.js",
