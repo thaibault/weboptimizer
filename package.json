@@ -1,6 +1,6 @@
 {
   "name": "weboptimizer",
-  "version": "4.0.93",
+  "version": "4.0.94",
   "description": "A generic web optimizer, (module) bundler and development environment.",
   "keywords": [
     "webpack",
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thaibault/weboptimizer.git"
+    "url": "git+https://github.com/thaibault/weboptimizer.git"
   },
   "type": "module",
   "exports": {
@@ -38,7 +38,9 @@
     "./type": "./type.js",
     "./type.js": "./type.js"
   },
-  "bin": "index.js",
+  "bin": {
+    "weboptimizer": "index.js"
+  },
   "files": [
     "browser.d.ts",
     "browser.js",
