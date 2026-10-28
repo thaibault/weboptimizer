@@ -38,7 +38,9 @@
     "./type": "./type.js",
     "./type.js": "./type.js"
   },
-  "bin": "index.js",
+  "bin": {
+    "weboptimizer": "index.js"
+  },
   "files": [
     "browser.d.ts",
     "browser.js",
