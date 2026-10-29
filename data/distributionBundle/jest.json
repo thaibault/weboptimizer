@@ -4,6 +4,6 @@
         "\\.((css)|(less)|(sass)|(scss))$": "identity-obj-proxy"
     },
     "rootDir": "../../",
-    "setupFilesAfterEnv": ["./node_modules/weboptimizer/jestSetup.js"],
+    "setupFilesAfterEnv": ["./node_modules/weboptimizer/dist/jestSetup.js"],
     "testPathIgnorePatterns": ["^(.*[/])?testHelper([./].*)?$"]
 }
