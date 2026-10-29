@@ -31,9 +31,21 @@ for (const folder of ['simple', 'scss'])
             for (const currentCommand of ['clear', command, 'clear'])
                 expect(spawnChildProcessSync(
                     'yarn',
-                    ['weboptimizer', currentCommand],
+                    /*
+                        NOTE: Yarn resolves "yarn weboptimizer" against the
+                        installed (published) manifest's binary location
+                        which may differ from the copied local build.
+                    */
+                    [
+                        'node',
+                        'node_modules/weboptimizer/dist/index.js',
+                        currentCommand
+                    ],
                     {
-                        cwd: resolve(import.meta.dirname, folder),
+                        // NOTE: Fixtures are not compiled into "dist".
+                        cwd: resolve(
+                            import.meta.dirname, '../../src/test', folder
+                        ),
                         env: process.env,
                         shell: true,
                         stdio: 'inherit'

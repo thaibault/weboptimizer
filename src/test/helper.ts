@@ -47,6 +47,10 @@ import {
 } from '../helper'
 // endregion
 // region mockup
+// NOTE: Compiled tests are running from "dist/test".
+const ROOT_PATH = resolve(import.meta.dirname, '../../')
+const SOURCE_PATH = resolve(ROOT_PATH, 'src')
+
 const buildConfiguration: BuildConfiguration = {
     example: {
         extension: 'example',
@@ -151,17 +155,17 @@ describe('helper', (): void => {
         [null, ''],
         ['a', 'a'],
         ['path', 'path'],
-        [null, './helper'],
-        [null, './helper', './'],
-        [null, './helper', '../'],
+        [null, './src/helper'],
+        [null, './src/helper', './'],
+        [null, './src/helper', '../'],
         ['./helper', './helper', './a'],
-        [null, './helper', './', './'],
+        [null, './src/helper', './', './'],
         ['a/a', './a', './', './node_modules/a'],
         ['a', './', './', 'a'],
         ['path', 'path', './', './', {}, []],
         ['./main.js', 'path', './', './', {}, [], {path: './main.js'}],
         ['main.js', 'path', './', './', {}, [], {path: 'main.js'}],
-        [null, 'path', './', './', {}, [], {path: './helper.ts'}],
+        [null, 'path', './', './', {}, [], {path: './src/helper.ts'}],
         ['webpack', 'webpack'],
         ['webpack', 'a', './', './', {}, ['node_modules'], {a$: 'webpack'}],
         [
@@ -456,25 +460,25 @@ describe('helper', (): void => {
         [{filePaths: [], directoryPaths: []}, 'example'],
         [
             {
-                directoryPaths: [resolve(import.meta.dirname, '../')],
-                filePaths: [resolve(import.meta.dirname, '../helper.js')]
+                directoryPaths: [SOURCE_PATH],
+                filePaths: [resolve(SOURCE_PATH, 'helper.ts')]
             },
-            'helper'
+            'src/helper'
         ],
         [{filePaths: [], directoryPaths: []}, {example: 'example'}],
         [
             {
-                directoryPaths: [resolve(import.meta.dirname, '../')],
-                filePaths: [resolve(import.meta.dirname, '../helper.js')]
+                directoryPaths: [SOURCE_PATH],
+                filePaths: [resolve(SOURCE_PATH, 'helper.ts')]
             },
-            {example: 'helper'}
+            {example: 'src/helper'}
         ],
         [
             {
-                directoryPaths: [resolve(import.meta.dirname, '../')],
-                filePaths: [resolve(import.meta.dirname, '../', 'helper.ts')]
+                directoryPaths: [SOURCE_PATH],
+                filePaths: [resolve(SOURCE_PATH, 'helper.ts')]
             },
-            {helper: ['helper.ts']}
+            {helper: ['src/helper.ts']}
         ]
     )
     testEach(
@@ -484,8 +488,8 @@ describe('helper', (): void => {
         [{}, {}], [{index: []}, {index: []}]
     )
     test('resolveModulesInFolders', () => {
-        expect(resolveModulesInFolders({a: [import.meta.dirname]}).a)
-            .toContain('./test/helper.ts')
+        expect(resolveModulesInFolders({a: [resolve(SOURCE_PATH, 'test')]}).a)
+            .toContain('./src/test/helper.ts')
     })
     testEach(
         'normalizeGivenInjection',
@@ -616,10 +620,18 @@ describe('helper', (): void => {
         [null, 'a', {}, {}, {file: []}, './', '', []],
         [null, 'a', {a: 'b'}, {}, {file: []}, './', '', []],
         [null, 'bba', {a: 'b'}, {}, {file: []}, './', '', []],
-        [resolve('helper.js'), 'helper'],
+        [resolve('src/helper.ts'), 'src/helper'],
         [null, 'helper', {}, {}, {file: []}, './', '', []],
         [null, './helper', {}, {}, {file: ['.ts']}, '', 'a', []],
-        [resolve('helper.ts'), 'helper', {}, {}, {file: ['.ts']}, './', './']
+        [
+            resolve('src/helper.ts'),
+            'src/helper',
+            {},
+            {},
+            {file: ['.ts']},
+            './',
+            './'
+        ]
     )
     /// endregion
     testEach(
@@ -651,7 +663,7 @@ describe('helper', (): void => {
     testEachAgainstSameExpectation(
         'findPackageDescriptorFilePath',
         findPackageDescriptorFilePath,
-        resolve(import.meta.dirname, '../package.json'),
+        resolve(ROOT_PATH, 'package.json'),
 
         ['./', 'package.json'],
         ['../', 'package.json']
@@ -660,7 +672,7 @@ describe('helper', (): void => {
         `getClosestPackageDescriptor('%s') === {configuration: ...}`,
         async (modulePath: string) => {
             const filePath: string =
-                resolve(import.meta.dirname, '../package.json')
+                resolve(ROOT_PATH, 'package.json')
             const importedModule: PackageConfiguration & {
                 default?: PackageConfiguration
             } = await import(filePath) as

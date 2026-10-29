@@ -4,6 +4,6 @@
         "\\.((css)|(less)|(sass)|(scss))$": "identity-obj-proxy"
     },
     "rootDir": "../../",
-    "setupFilesAfterEnv": ["./jestSetup.js"],
+    "setupFilesAfterEnv": ["./dist/jestSetup.js"],
     "testPathIgnorePatterns": ["^(.*[/])?testHelper([./].*)?$"]
 }

@@ -72,7 +72,7 @@ if (PACKAGE_CONFIGURATION.name !== 'weboptimizer')
     try {
         type Type = ConfigWithExtends & Array<ConfigWithExtends>
         // @ts-expect-error Need to create polymorphic type.
-        const config = await import('../../eslint.config.js') as
+        const config = await import('../../../eslint.config.js') as
             Type & {default?: Type} & {config?: Type} & {configuration?: Type}
         const resolvedConfig =
             config.config ?? config.default ?? config.configuration ?? config

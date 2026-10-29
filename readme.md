@@ -322,4 +322,4 @@ package.json (see the API-Documentation, link above, for more details):
 2. Set Working directory:
     /PATH/TO/PROJECT
 3. Set configuration file path:
-    /PATH/TO/PROJECT/node_modules/weboptimizer/eslint.config.js
+    /PATH/TO/PROJECT/node_modules/weboptimizer/dist/eslint.config.js

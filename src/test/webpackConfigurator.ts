@@ -18,9 +18,20 @@ import type {Mapping} from 'clientnode'
 
 import type {WebpackConfiguration} from '../type'
 
-import {expect, test} from '@jest/globals'
+import {afterAll, expect, test} from '@jest/globals'
+import {resolve} from 'path'
 import webpack from 'webpack'
 // endregion
+/*
+    NOTE: Compiled tests are running from "dist/test" but expect the sources
+    to be located in the current working directory.
+*/
+const PREVIOUS_WORKING_DIRECTORY = process.cwd()
+process.chdir(resolve(import.meta.dirname, '../../src'))
+afterAll((): void => {
+    process.chdir(PREVIOUS_WORKING_DIRECTORY)
+})
+
 test('webpackConfigurator', async (): Promise<void> => {
     const webpackConfiguration: WebpackConfiguration = (await import(
         '../webpackConfigurator'

@@ -24,6 +24,8 @@
     },
     "exclude": [
         "**/exclude/*",
+        "dist",
+        "src/test/**/*.d.ts",
         "test/**/*.d.ts"
     ],
     "include": [
