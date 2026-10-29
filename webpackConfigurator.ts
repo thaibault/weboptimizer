@@ -1658,7 +1658,15 @@ if (configuration.path.configuration.json)
     exports are never imported) would have its bundled modules tree-shaken away
     completely - resulting for example in a test bundle without any registered
     test.
+
+    NOTE: This applies to every command which runs the test bundle through
+    jest (with or without coverage instrumentation) - otherwise for example
+    "test:coverage" fails with "Cannot add a test after tests have started
+    running".
 */
+const isJestTestRun: boolean = [
+    'test', 'test:coverage', 'test:coverage:report'
+].includes(configuration.givenCommandLineArguments[2])
 const generatedBarrelModuleFilePaths: Array<string> = []
 const barrelledModuleFilePaths: Array<string> = []
 const normalizedEntryInjection: Mapping<Array<string>> = {}
@@ -1666,7 +1674,7 @@ for (const [chunkName, moduleIDs] of Object.entries(
     configuration.injection.entry.normalized
 ))
     if (
-        configuration.givenCommandLineArguments[2] === 'test' &&
+        isJestTestRun &&
         Array.isArray(moduleIDs) &&
         moduleIDs.length > 1
     ) {
@@ -1911,7 +1919,7 @@ export let webpackConfiguration: WebpackConfiguration = extend<
                 (
                     !configuration.injection.chunks ||
                     configuration.targetTechnology.payload === 'node' ||
-                    configuration.givenCommandLineArguments[2] === 'test'
+                    isJestTestRun
                 ) ?
                     {
                         cacheGroups: {
