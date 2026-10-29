@@ -112,7 +112,7 @@ const main = async (
     context?: string,
     currentWorkingDirectory: string = process.cwd(),
     commandLineArguments: Array<string> = process.argv,
-    webOptimizerPath: string = import.meta.dirname,
+    webOptimizerPath: string = resolve(import.meta.dirname, '..'),
     /*
         NOTE: We have to avoid that some pre-processor removes this
         assignment.

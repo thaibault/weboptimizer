@@ -30,65 +30,44 @@
   },
   "type": "module",
   "exports": {
-    ".": "/.index.js",
-    "./browser": "./browser.js",
-    "./browser.js": "./browser.js",
-    "./ejsLoader": "./ejsLoader.js",
-    "./ejsLoader.js": "./ejsLoader.js",
-    "./type": "./type.js",
-    "./type.js": "./type.js"
+    ".": "./dist/index.js",
+    "./browser": "./dist/browser.js",
+    "./browser.js": "./dist/browser.js",
+    "./ejsLoader": "./dist/ejsLoader.js",
+    "./ejsLoader.js": "./dist/ejsLoader.js",
+    "./type": "./dist/type.js",
+    "./type.js": "./dist/type.js"
   },
-  "bin": "index.js",
+  "bin": "dist/index.js",
   "files": [
-    "browser.d.ts",
-    "browser.js",
-    "configurator.d.ts",
-    "configurator.js",
-    "declarations.d.ts",
-    "ejsLoader.d.ts",
-    "ejsLoader.js",
-    "eslint.config.d.ts",
-    "eslint.config.js",
-    "helper.d.ts",
-    "helper.js",
-    "index.d.ts",
-    "index.html.ejs",
-    "index.js",
+    "dist/*.d.ts",
+    "dist/*.js",
+    "dist/index.html.ejs",
+    "dist/plugins/*.d.ts",
+    "dist/plugins/*.js",
     "jest.json",
-    "jestSetup.d.ts",
-    "jestSetup.js",
-    "plugins/HTMLTransformation.d.ts",
-    "plugins/HTMLTransformation.js",
-    "plugins/InPlaceAssetsIntoHTML.d.ts",
-    "plugins/InPlaceAssetsIntoHTML.js",
-    "stylelintConfigurator.d.ts",
-    "stylelintConfigurator.js",
     "tsconfig.json",
     "tsconfig.application.json",
-    "tsconfig.library.json",
-    "type.d.ts",
-    "type.js",
-    "webpackConfigurator.d.ts",
-    "webpackConfigurator.js"
+    "tsconfig.library.json"
   ],
   "sideEffects": true,
   "scripts": {
     "build": "yarn build:types && yarn build:lint && yarn build:plain",
-    "build:copy-test-artefacts": "cd test/simple && shx touch yarn.lock && shx rm -rf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../ && cd test/scss && shx touch yarn.lock && shx rm -rf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../ && shx rm -rf node_modules/weboptimizer test/simple/node_modules/weboptimizer test/scss/node_modules/weboptimizer && shx mkdir -p node_modules/weboptimizer test/simple/node_modules/weboptimizer test/scss/node_modules/weboptimizer && copyCommand='shx cp -r plugins *.ts *.js *.json *.ejs' && $copyCommand node_modules/weboptimizer/ && $copyCommand test/simple/node_modules/weboptimizer/ && $copyCommand test/scss/node_modules/weboptimizer/",
-    "build:lint": "           babel --extensions '.ts' --out-file eslint.config.js eslint.config.ts",
-    "build:plain": "command=\"babel --extensions '.ts' --out-file\" && $command browser.js browser.ts && $command configurator.js configurator.ts && $command ejsLoader.js ejsLoader.ts && $command helper.js helper.ts && $command index.js index.ts && $command jestSetup.js jestSetup.ts && $command plugins/HTMLTransformation.js plugins/HTMLTransformation.ts && $command plugins/InPlaceAssetsIntoHTML.js plugins/InPlaceAssetsIntoHTML.ts && $command stylelintConfigurator.js stylelintConfigurator.ts && $command type.js type.ts && $command webpackConfigurator.js webpackConfigurator.ts && shx chmod +x index.js && shx sed -i 's/(#!\\\\/usr\\\\/bin\\\\/env )babel-(node)/$1$2/' index.js 1>/dev/null",
-    "build:test": "           yarn clear && yarn build && command='babel --extensions '.ts' --source-root ../ --out-file' && yarn build:copy-test-artefacts && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
-    "build:test:source-map": "yarn clear && yarn build && command='babel --extensions '.ts' --source-maps inline --source-root ../ --out-file' && yarn build:copy-test-artefacts && $command test/browser.js test/browser.ts && $command test/configurator.js test/configurator.ts && $command test/helper.js test/helper.ts && $command test/ejsLoader.js test/ejsLoader.ts && $command test/stylelintConfigurator.js test/stylelintConfigurator.ts && $command test/index.js test/index.ts && $command test/webpackConfigurator.js test/webpackConfigurator.ts",
-    "build:types": "tsc --declaration --emitDeclarationOnly",
+    "build:copy-test-artefacts": "cd src/test/simple && shx touch yarn.lock && shx rm -rf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../../ && cd src/test/scss && shx touch yarn.lock && shx rm -rf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../../ && shx rm -rf node_modules/weboptimizer src/test/simple/node_modules/weboptimizer src/test/scss/node_modules/weboptimizer && shx mkdir -p node_modules/weboptimizer src/test/simple/node_modules/weboptimizer src/test/scss/node_modules/weboptimizer && copyCommand='shx cp -r dist *.json' && $copyCommand node_modules/weboptimizer/ && $copyCommand src/test/simple/node_modules/weboptimizer/ && $copyCommand src/test/scss/node_modules/weboptimizer/",
+    "build:lint": "           babel --extensions '.ts' --out-file dist/eslint.config.js src/eslint.config.ts",
+    "build:plain": "babel --extensions '.ts' --ignore 'src/**/*.d.ts,src/eslint.config.ts,src/test/**' --copy-files --no-copy-ignored --out-dir dist src && shx cp src/declarations.d.ts dist/ && shx chmod +x dist/index.js && shx sed -i 's/(#!\\\\/usr\\\\/bin\\\\/env )babel-(node)/$1$2/' dist/index.js 1>/dev/null",
+    "build:test": "           yarn clear && yarn build && yarn build:copy-test-artefacts && babel --extensions '.ts' --ignore 'src/test/**/*.d.ts,src/test/scss/**,src/test/simple/**' --out-dir dist/test src/test",
+    "build:test:source-map": "yarn clear && yarn build && yarn build:copy-test-artefacts && babel --extensions '.ts' --ignore 'src/test/**/*.d.ts,src/test/scss/**,src/test/simple/**' --source-maps inline --out-dir dist/test src/test",
+    "build:types": "tsc --declaration --emitDeclarationOnly --rootDir src --declarationDir dist",
     "check": "yarn check:types && yarn lint",
     "check:types": "tsc --noEmit",
-    "clear": "shx rm -rf apiDocumentation browser.d.ts configurator.d.ts ejsLoader.d.ts eslint.config.d.ts helper.d.ts index.d.ts jestSetup.d.ts 'plugins/*.d.ts' 'plugins/*.js' stylelintConfigurator.d.ts 'test/*.js' 'test/*.compiled.*' 'test/*.d.ts' 'test/**/yarn.lock' 'test/**/node_modules' type.d.ts webpackConfigurator.d.ts '*.compiled.*' '*.compiled' '*.html' '*.js' '*.log' node_modules/weboptimizer .coverage .nyc_output",
-    "document": "yarn build:plain && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation *.js",
+    "clear": "shx rm -rf apiDocumentation dist 'src/test/*/*.d.ts' 'src/test/**/yarn.lock' 'src/test/**/node_modules' '*.log' node_modules/weboptimizer .coverage .nyc_output",
+    "document": "yarn build:plain && jsdoc --package ./package.json --readme ./readme.md --destination apiDocumentation dist/*.js",
     "lint": "yarn build:lint && yarn lint:base",
-    "lint:base": "eslint --no-warn-ignored *.ts */*.ts test/*/*.ts",
+    "lint:base": "eslint --config dist/eslint.config.js --no-warn-ignored src/*.ts src/*/*.ts src/test/*/*.ts",
     "prepare": "yarn build",
     "prettify": "yarn lint:base --fix || true",
-    "test": "yarn build:test && node --experimental-vm-modules node_modules/.bin/jest --config ./weboptimizerJest.json --noStackTrace --root-dir './' --test-regex '/test/.+\\\\.js$' test/browser.js test/configurator.js test/ejsLoader.js test/helper.js test/stylelintConfigurator.js test/index.js test/webpackConfigurator.js",
+    "test": "yarn build:test && node --experimental-vm-modules node_modules/.bin/jest --config ./weboptimizerJest.json --noStackTrace --root-dir './' --test-regex '/dist/test/.+\\\\.js$' dist/test/browser.js dist/test/configurator.js dist/test/ejsLoader.js dist/test/helper.js dist/test/stylelintConfigurator.js dist/test/index.js dist/test/webpackConfigurator.js",
     "test:coverage": "yarn test --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults",
     "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info",
     "test:watch": "yarn test --watch",
@@ -133,7 +112,7 @@
     "@types/html-minifier": "^4.0.6",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/imagemin": "^9.0.1",
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
@@ -464,7 +443,7 @@
           "arguments": [
             "--config",
             {
-              "__evaluate__": "`${webOptimizerPath}/webpackConfigurator.js`"
+              "__evaluate__": "`${webOptimizerPath}/dist/webpackConfigurator.js`"
             },
             "--progress"
           ],
@@ -516,7 +495,7 @@
               },
               "--config",
               {
-                "__evaluate__": "path.relative(self.path.context, path.resolve(webOptimizerPath, 'stylelintConfigurator.js'))"
+                "__evaluate__": "path.relative(self.path.context, path.resolve(webOptimizerPath, 'dist', 'stylelintConfigurator.js'))"
               }
             ],
             "command": "stylelint",
@@ -526,7 +505,7 @@
             "arguments": [
               "--config",
               {
-                "__evaluate__": "`'${webOptimizerPath}/eslint.config.js'`"
+                "__evaluate__": "`'${webOptimizerPath}/dist/eslint.config.js'`"
               },
               "--ignore-pattern",
               {
@@ -550,7 +529,7 @@
             "serve",
             "--config",
             {
-              "__evaluate__": "`'${webOptimizerPath}/webpackConfigurator.js'`"
+              "__evaluate__": "`'${webOptimizerPath}/dist/webpackConfigurator.js'`"
             },
             "--progress"
           ],
@@ -749,7 +728,7 @@
           "scriptLoading": "module",
           "template": {
             "filePath": {
-              "__evaluate__": "`${filesystem.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'index.html.ejs')}`"
+              "__evaluate__": "`${filesystem.isFileSync(path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`)) ? path.resolve(self.path.source.base, `${self.files.defaultHTML.filename}.ejs`) : path.resolve(webOptimizerPath, 'dist', 'index.html.ejs')}`"
             },
             "postCompileOptions": {
               "_with": false,

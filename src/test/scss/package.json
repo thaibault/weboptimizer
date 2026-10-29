@@ -107,7 +107,7 @@
             },
             "--config",
             {
-              "__evaluate__": "path.relative(self.path.context, path.resolve(webOptimizerPath, 'stylelintConfigurator.js'))"
+              "__evaluate__": "path.relative(self.path.context, path.resolve(webOptimizerPath, 'dist', 'stylelintConfigurator.js'))"
             }
           ],
           "command": "stylelint",
