@@ -38,9 +38,7 @@
     "./type": "./dist/type.js",
     "./type.js": "./dist/type.js"
   },
-  "bin": {
-    "weboptimizer": "dist/index.js"
-  },
+  "bin": "dist/index.js",
   "files": [
     "dist/*.d.ts",
     "dist/*.js",
@@ -87,7 +85,7 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1526",
+    "clientnode": "4.0.1527",
     "core-js": "^3.51.0",
     "ejs": "^7.0.2",
     "exports-loader": "^5.0.0",
