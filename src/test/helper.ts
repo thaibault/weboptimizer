@@ -81,7 +81,14 @@ describe('helper', (): void => {
 
         [true, './', ['./']],
         [true, './', ['../']],
-        [false, '../', ['./']]
+        [false, '../', ['./']],
+        [true, '/a/b', ['/a/b']],
+        [true, '/a/b/c.js', ['/a/b']],
+        [true, '/a/b/c.js', ['/a/b/']],
+        [true, '/a/b/c.js', ['/x', '/a']],
+        [false, '/a/bc/d.js', ['/a/b']],
+        [false, '/a/.github/a.yml', ['/a/.git']],
+        [false, '/a/b', []]
     )
     /// endregion
     /// region string
@@ -98,7 +105,10 @@ describe('helper', (): void => {
         ['c', 'aa!b!c?a'],
         ['c', 'aa!b!c?abb?'],
         ['c', 'aa!b!c?abb?a'],
-        ['moduleName', 'imports?$=library!moduleName']
+        ['moduleName', 'imports?$=library!moduleName'],
+        ['a', 'a.webpack[javascript/auto]'],
+        ['a', 'b!a.webpack[javascript/auto]'],
+        ['a.webpack[]', 'a.webpack[]']
     )
     /// endregion
     /// region array
@@ -127,6 +137,7 @@ describe('helper', (): void => {
         ['a.__dummy__b', 'a[name]b', {}],
         ['a.__dummy__b.__dummy__', 'a[name]b[name]', {}],
         ['a.__dummy__b.__dummy__', 'a[id]b[chunkhash]', {}],
+        ['a.__dummy__b.__dummy__', 'a[contenthash]b[fullhash]', {}],
         ['a1b2', 'a[id]b[chunkhash]', {'[id]': 1, '[chunkhash]': 2}],
         [
             'a[id]b[chunkhash]',
@@ -375,7 +386,13 @@ describe('helper', (): void => {
             false
         ]
     )
-    test.each([[null, './'], ['javaScript', 'a.js'], [null, 'a.css']])(
+    test.each([
+        [null, './'],
+        ['javaScript', 'a.js'],
+        [null, 'a.css'],
+        ['cascadingStyleSheet', 'css/a.css'],
+        ['javaScript', 'css/a.js']
+    ])(
         `%p === determineAssetType('%s')`,
         (
             expected: ReturnType<typeof determineAssetType>,
@@ -390,7 +407,7 @@ describe('helper', (): void => {
                 source: {
                     asset: {
                         base: '',
-                        cascadingStyleSheet: '',
+                        cascadingStyleSheet: 'css/',
                         data: '',
                         font: '',
                         image: '',
@@ -658,7 +675,8 @@ describe('helper', (): void => {
         ['b', 'a', {a$: 'b'} as unknown as Replacements],
         ['b', 'a', {'^a$': 'b'} as unknown as Replacements],
         ['ba', 'aa', {a: 'b'} as unknown as Replacements],
-        ['helper', 'helper', {}]
+        ['helper', 'helper', {}],
+        [false, false, {a: 'b'} as unknown as Replacements]
     )
     testEachAgainstSameExpectation(
         'findPackageDescriptorFilePath',
@@ -667,6 +685,13 @@ describe('helper', (): void => {
 
         ['./', 'package.json'],
         ['../', 'package.json']
+    )
+    testEach(
+        'findPackageDescriptorFilePath',
+        findPackageDescriptorFilePath,
+
+        [null, './', 'not-existing.json'],
+        [null, [], 'package.json']
     )
     test.each([['./'], ['../']])(
         `getClosestPackageDescriptor('%s') === {configuration: ...}`,
@@ -687,5 +712,19 @@ describe('helper', (): void => {
                 )
         }
     )
+    test('getClosestPackageDescriptor', async (): Promise<void> => {
+        await expect(getClosestPackageDescriptor('./', 'not-existing.json'))
+            .resolves.toStrictEqual(null)
+        // NOTE: Fixtures are not compiled into "dist".
+        const filePath: string =
+            resolve(SOURCE_PATH, 'test/packageDescriptor/descriptor.json')
+        await expect(getClosestPackageDescriptor(
+            resolve(SOURCE_PATH, 'test/packageDescriptor/nameless/index.js'),
+            'descriptor.json'
+        )).resolves.toStrictEqual({
+            configuration: {name: 'mockup-package', version: 'not set'},
+            filePath
+        })
+    })
     // endregion
 })

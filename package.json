@@ -67,7 +67,7 @@
     "lint:base": "eslint --config dist/eslint.config.js --no-warn-ignored src/*.ts src/*/*.ts src/test/*/*.ts",
     "prepare": "yarn build",
     "prettify": "yarn lint:base --fix || true",
-    "test": "yarn build:test && node --experimental-vm-modules node_modules/.bin/jest --config ./weboptimizerJest.json --noStackTrace --root-dir './' --test-regex '/dist/test/.+\\\\.js$' dist/test/browser.js dist/test/configurator.js dist/test/ejsLoader.js dist/test/helper.js dist/test/stylelintConfigurator.js dist/test/index.js dist/test/webpackConfigurator.js",
+    "test": "yarn build:test && node --experimental-vm-modules node_modules/.bin/jest --config ./weboptimizerJest.json --noStackTrace --root-dir './' --test-regex '/dist/test/.+\\\\.js$' dist/test/browser.js dist/test/configurator.js dist/test/ejsLoader.js dist/test/helper.js dist/test/HTMLTransformation.js dist/test/stylelintConfigurator.js dist/test/index.js dist/test/webpackConfigurator.js",
     "test:coverage": "yarn test --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults",
     "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info",
     "test:watch": "yarn test --watch",
