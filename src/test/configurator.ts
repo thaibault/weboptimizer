@@ -66,7 +66,11 @@ const loadGivenValue = async (
     process.chdir(contextPath)
 
     return (await load(
-        contextPath, contextPath, ['', '', ...commandLineArguments], undefined, {}
+        contextPath,
+        contextPath,
+        ['', '', ...commandLineArguments],
+        undefined,
+        {}
     ) as unknown as {givenValue: unknown}).givenValue
 }
 // endregion
@@ -90,7 +94,8 @@ describe('load', (): void => {
     ])(
         `%p === load(..., ['', '', '%s'])`,
         async (expected: string, task: string): Promise<void> => {
-            await expect(loadGivenValue([task])).resolves.toStrictEqual(expected)
+            await expect(loadGivenValue([task]))
+                .resolves.toStrictEqual(expected)
         }
     )
     test('repeated loading of same project', async (): Promise<void> => {
