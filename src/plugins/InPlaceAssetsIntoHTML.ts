@@ -57,13 +57,24 @@ export class InPlaceAssetsIntoHTML {
                         ): HtmlWebpackPlugin.HtmlTagObject => {
                             let settings: InPlaceAssetConfiguration | null =
                                 null
-                            let url: boolean | null | string | undefined = false
+                            let url: boolean | null | string | undefined =
+                                false
+                            let tagName = 'script'
                             if (tag.tagName === 'script') {
                                 settings = this.options.javaScript
                                 url = tag.attributes.src
-                            } else if (tag.tagName === 'style') {
+                            } else if (
+                                tag.tagName === 'link' &&
+                                tag.attributes.rel === 'stylesheet'
+                            ) {
+                                /*
+                                    NOTE: Style sheets are referenced via
+                                    "link" tags and have to be in placed as
+                                    "style" tags.
+                                */
                                 settings = this.options.cascadingStyleSheet
                                 url = tag.attributes.href
+                                tagName = 'style'
                             }
                             if (!(url && typeof url === 'string'))
                                 return tag
@@ -91,6 +102,7 @@ export class InPlaceAssetsIntoHTML {
                                     ]
                                 ) = {...tag.attributes}
                                 delete newAttributes.href
+                                delete newAttributes.rel
                                 delete newAttributes.src
 
                                 inPlacedAssetNames.push(name)
@@ -101,7 +113,8 @@ export class InPlaceAssetsIntoHTML {
                                     innerHTML:
                                         compilation.assets[name].source() as
                                             string,
-                                    tagName: 'script'
+                                    tagName,
+                                    voidTag: false
                                 }
                             }
 

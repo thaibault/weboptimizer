@@ -54,6 +54,7 @@ const run = (
     publicPath = ''
 ): {assetNames: Array<string>, tags: WebpackAssets} => {
     const assets: Mapping<{source: () => string}> = {
+        'a.css': {source: () => 'a {color: red}'},
         'a.js': {source: () => 'window.a = 1'},
         'b.js': {source: () => 'window.b = 1'}
     }
@@ -109,7 +110,7 @@ describe('InPlaceAssetsIntoHTML', (): void => {
         const tag = createTag('script', {src: 'a.js'})
 
         expect(run({}, {headTags: [tag]})).toStrictEqual({
-            assetNames: ['a.js', 'b.js'],
+            assetNames: ['a.css', 'a.js', 'b.js'],
             tags: {bodyTags: [], headTags: [tag]}
         })
     })
@@ -143,7 +144,7 @@ describe('InPlaceAssetsIntoHTML', (): void => {
             innerHTML: 'window.b = 1'
         })
         // NOTE: In placed assets are not emitted anymore.
-        expect(assetNames).toStrictEqual([])
+        expect(assetNames).toStrictEqual(['a.css'])
     })
     test('respects public path', () => {
         for (const publicPath of ['/public', '/public/']) {
@@ -154,8 +155,41 @@ describe('InPlaceAssetsIntoHTML', (): void => {
             )
 
             expect(tags.headTags[0].innerHTML).toStrictEqual('window.a = 1')
-            expect(assetNames).toStrictEqual(['b.js'])
+            expect(assetNames).toStrictEqual(['a.css', 'b.js'])
         }
+    })
+    test('in places matching style sheets', () => {
+        const createLink = (
+            attributes: TagObject['attributes'] = {}
+        ): TagObject => ({
+            ...createTag(
+                'link', {href: 'a.css', rel: 'stylesheet', ...attributes}
+            ),
+            voidTag: true
+        })
+        const {assetNames, tags} = run(
+            {cascadingStyleSheet: {head: 'a.css'}, javaScript: {head: /./}},
+            {
+                bodyTags: [createLink()],
+                headTags: [
+                    createLink({media: 'print'}),
+                    createLink({rel: 'preload'}),
+                    createLink({href: 'not-existing.css'})
+                ]
+            }
+        )
+
+        expect(tags.headTags[0]).toStrictEqual({
+            ...createTag('style', {media: 'print'}),
+            innerHTML: 'a {color: red}'
+        })
+        // NOTE: Only style sheet links are in placed.
+        expect(tags.headTags[1]).toStrictEqual(createLink({rel: 'preload'}))
+        expect(tags.headTags[2])
+            .toStrictEqual(createLink({href: 'not-existing.css'}))
+        // NOTE: Patterns are configured per location.
+        expect(tags.bodyTags[0]).toStrictEqual(createLink())
+        expect(assetNames).toStrictEqual(['a.js', 'b.js'])
     })
 })
 // endregion
