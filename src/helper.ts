@@ -83,9 +83,21 @@ export const log = new Logger({name: 'weboptimizer.helper'})
 export const isFilePathInLocation = (
     filePath: string, locationsToCheck: Array<string>
 ): boolean => {
-    for (const pathToCheck of locationsToCheck)
-        if (resolve(filePath).startsWith(resolve(pathToCheck)))
+    filePath = resolve(filePath)
+    for (const pathToCheck of locationsToCheck) {
+        const location: string = resolve(pathToCheck)
+        /*
+            NOTE: Only match whole path segments to avoid treating sibling
+            locations sharing a prefix (e.g. ".github" vs. ".git") as nested.
+        */
+        if (
+            filePath === location ||
+            filePath.startsWith(
+                location.endsWith(sep) ? location : `${location}${sep}`
+            )
+        )
             return true
+    }
 
     return false
 }
