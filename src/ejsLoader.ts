@@ -434,7 +434,7 @@ export const loader = async function(
                 .replace(
                     new RegExp(
                         `<script +processing-workaround *` +
-                        `(?: = *(?: " *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
+                        `(?:= *(?:" *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
                         'ig'
                     ),
                     '$1'
@@ -442,7 +442,7 @@ export const loader = async function(
                 .replace(
                     new RegExp(
                         `<script +processing(-+)-workaround *` +
-                        `(?: = *(?: " *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
+                        `(?:= *(?:" *"|' *') *)?>([\\s\\S]*?)</ *script *>`,
                         'ig'
                     ),
                     '<script processing$1workaround>$2</script>'

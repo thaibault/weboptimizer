@@ -152,12 +152,16 @@ export const load = async (
     // region load application specific configuration
     let specificConfiguration: PlainObject = {}
     try {
-        specificConfiguration = (await optionalImport(
+        /*
+            NOTE: Imported modules are cached so we have to copy to avoid
+            leaking task specific merges into subsequent loads.
+        */
+        specificConfiguration = copy((await optionalImport(
             join(
                 metaConfiguration.default.path.context, 'package.json'
             ),
             {with: {type: 'json'}}
-        ) as PlainObject).default as PlainObject
+        ) as PlainObject).default as PlainObject)
     } catch {
         metaConfiguration.default.path.context = currentWorkingDirectory
     }

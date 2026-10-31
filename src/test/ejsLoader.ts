@@ -132,10 +132,14 @@ test('ejsLoader', async (): Promise<void> => {
 test('ejsLoader includes files', async (): Promise<void> => {
     const plainFilePath = resolve(TEMPLATE_PATH, 'plain.html')
     // NOTE: Non templates are included as they are.
-    let outcome = await run(`<a><%- await _.include('${plainFilePath}') %></a>`)
+    let outcome = await run(
+        `<a><%- await _.include('${plainFilePath}') %></a>`,
+        // NOTE: Avoid whitespace normalisation to check raw inclusion.
+        {compress: {html: false}} as unknown as Partial<LoaderConfiguration>
+    )
     expect(outcome.error).toStrictEqual(null)
     expect(outcome.result).toStrictEqual(
-        '<a><b>plain <%- _.notEvaluated %></b></a>'
+        '<a><b>plain <%- _.notEvaluated %></b>\n</a>'
     )
     expect(outcome.dependencies).toStrictEqual([plainFilePath])
 
@@ -144,7 +148,7 @@ test('ejsLoader includes files', async (): Promise<void> => {
         `<a><%- await _.include('${nestedFilePath}?{name: "hans"}') %></a>`
     )
     expect(outcome.error).toStrictEqual(null)
-    expect(outcome.result).toStrictEqual('<a><i>hans</i></a>')
+    expect(outcome.result).toStrictEqual('<a><i>hans</i> </a>')
     expect(outcome.dependencies).toStrictEqual([nestedFilePath])
 })
 test('ejsLoader reports errors', async (): Promise<void> => {
@@ -160,8 +164,9 @@ test('ejsLoader reports errors', async (): Promise<void> => {
 test('ejsLoader processing workaround', async (): Promise<void> => {
     expect((await run(
         '<script processing-workaround><%- "a" %></script>' +
-        `<script processing-workaround=''>b</script>`
-    )).result).toStrictEqual('ab')
+        `<script processing-workaround=''>b</script>` +
+        '<script processing-workaround = " ">c</script>'
+    )).result).toStrictEqual('abc')
     expect((await run(
         '<script processing--workaround>a</script>'
     )).result).toStrictEqual('<script processing-workaround>a</script>')
