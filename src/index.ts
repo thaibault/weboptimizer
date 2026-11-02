@@ -490,9 +490,14 @@ const main = async (
                     childProcessOptions.env.PATH +=
                         `: ${webOptimizerPath}/node_modules/.bin`
 
+                    /*
+                        NOTE: Passing arguments separately is deprecated in
+                        shell mode since they would only be concatenated.
+                    */
                     const childProcess: ChildProcess = spawnChildProcess(
-                        configuration.commandLine.build.command,
-                        commandLineArguments,
+                        [configuration.commandLine.build.command]
+                            .concat(commandLineArguments)
+                            .join(' '),
                         childProcessOptions
                     )
 
@@ -669,10 +674,12 @@ const main = async (
                                 '"'
                             )
 
+                            // NOTE: See notice for build process above.
                             const childProcess: ChildProcess =
                                 spawnChildProcess(
-                                    task.command,
-                                    commandLineArguments,
+                                    [task.command]
+                                        .concat(commandLineArguments)
+                                        .join(' '),
                                     childProcessOptions
                                 )
 
