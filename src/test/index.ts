@@ -47,7 +47,6 @@ for (const folder of ['simple', 'scss'])
                             import.meta.dirname, '../../src/test', folder
                         ),
                         env: process.env,
-                        shell: true,
                         stdio: 'inherit'
                     }
                 ).status).toStrictEqual(0)
