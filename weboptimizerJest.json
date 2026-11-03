@@ -5,5 +5,5 @@
     },
     "rootDir": "../../",
     "setupFilesAfterEnv": ["./dist/jestSetup.js"],
-    "testPathIgnorePatterns": ["^(.*[/])?testHelper([./].*)?$"]
+    "testPathIgnorePatterns": ["^(.*[/])?test-?[hH]elper([./].*)?$"]
 }
