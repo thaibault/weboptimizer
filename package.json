@@ -1377,7 +1377,7 @@
             "javaScript": "javaScript/",
             "template": "template/"
           },
-          "base": "source/",
+          "base": "src/",
           "test": "test/"
         },
         "target": {
@@ -1393,7 +1393,7 @@
             "javaScript": "javaScript/",
             "template": "template/"
           },
-          "base": "build/",
+          "base": "dist/",
           "manifest": "manifest.appcache",
           "public": "",
           "test": "./"

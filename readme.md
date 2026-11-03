@@ -184,7 +184,7 @@ default source, target, asset or build paths do it in your **package.json**:
         "manifest": "manifest.appcache",
         "target": {
             ...
-            "base": "build/",
+            "base": "dist/",
             ...
         },
         "tidyUp": ["crap"],

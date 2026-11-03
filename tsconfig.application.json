@@ -4,15 +4,15 @@
     "compilerOptions": {
         "declaration": false,
         "paths": {
-            "@asset/*": ["../../source/*"],
-            "@cascadingStyleSheet/*": ["../../source/cascadingStyleSheet/*"],
-            "@data/*": ["../../source/data/*"],
-            "@font/*": ["../../source/font/*"],
-            "@image/*": ["../../source/image/*"],
-            "@javaScript/*": ["../../source/javaScript/*"],
-            "@root/*": ["../../source/*"],
-            "@source/*": ["../../source/*"],
-            "@template/*": ["../../source/template/*"]
+            "@asset/*": ["../../src/*"],
+            "@cascadingStyleSheet/*": ["../../src/cascadingStyleSheet/*"],
+            "@data/*": ["../../src/data/*"],
+            "@font/*": ["../../src/font/*"],
+            "@image/*": ["../../src/image/*"],
+            "@javaScript/*": ["../../src/javaScript/*"],
+            "@root/*": ["../../src/*"],
+            "@source/*": ["../../src/*"],
+            "@template/*": ["../../src/template/*"]
         }
     },
 
@@ -20,10 +20,8 @@
         "../../*.ts", "../../*.tsx",
         "../../*/*.ts", "../../*/*.tsx",
 
-        "../../assets/source/**/*.ts", "../../assets/source/**/*.tsx",
         "../../assets/src/**/*.ts", "../../assets/src/**/*.tsx",
 
-        "../../source/**/*.ts", "../../source/**/*.tsx",
         "../../src/**/*.ts", "../../src/**/*.tsx",
 
         "../../test/*.ts", "../../test/*.tsx",
