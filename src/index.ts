@@ -395,7 +395,11 @@ const main = async (
                                             .internal
                                     },
                                     configuration.path.context,
-                                    configuration.path.source.asset.base,
+                                    /*
+                                        NOTE: Module ids are already resolved
+                                        against the source asset base.
+                                    */
+                                    '',
                                     configuration.path.ignore,
                                     configuration.module.directoryNames,
                                     configuration.package.main.fileNames,
