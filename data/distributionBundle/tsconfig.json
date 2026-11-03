@@ -34,9 +34,7 @@
         "*/declarations.d.ts",
 
         "assets/src/**/*.ts", "/assets/src/**/*.tsx",
-        "assets/source/**/*.ts", "/assets/source/**/*.tsx",
 
-        "source/**/*.ts", "source/**/*.tsx",
         "src/**/*.ts", "src/**/*.tsx",
 
         "test/*.ts", "test/*.tsx",
