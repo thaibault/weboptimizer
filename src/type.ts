@@ -141,6 +141,10 @@ export interface InPlaceAssetsIntoHTMLOptions {
     javaScript: InPlaceAssetConfiguration | null
     htmlPlugin: typeof HtmlWebpackPlugin
 }
+export interface RemoveStyleOnlyScriptsOptions {
+    javaScriptFilePattern: RegExp
+    loader: string
+}
 // endregion
 //// region path
 export interface AssetPathConfiguration {

@@ -107,6 +107,7 @@ import {
 } from './helper'
 import InPlaceAssetsIntoHTML from './plugins/InPlaceAssetsIntoHTML'
 import HTMLTransformation from './plugins/HTMLTransformation'
+import RemoveStyleOnlyScripts from './plugins/RemoveStyleOnlyScripts'
 
 // Wait until optional filesystem modules have been loaded.
 await importFilesystemAPI()
@@ -446,12 +447,20 @@ if (!(
 ///// region extract cascading style sheets
 const cssOutputPath: string | ((_asset: unknown) => string) =
     configuration.files.compose.cascadingStyleSheet
-if (cssOutputPath && plugins.MiniCSSExtract)
+if (cssOutputPath && plugins.MiniCSSExtract) {
     pluginInstances.push(new plugins.MiniCSSExtract({
         filename: typeof cssOutputPath === 'string' ?
             relative(configuration.path.target.base, cssOutputPath) :
             cssOutputPath
     }))
+    /*
+        NOTE: Chunks consisting of extracted style sheets only would result in
+        nearly empty and useless java script files.
+    */
+    pluginInstances.push(
+        new RemoveStyleOnlyScripts({loader: plugins.MiniCSSExtract.loader})
+    )
+}
 ///// endregion
 ///// region performs implicit external logic
 if (configuration.injection.external.modules === '__implicit__')
