@@ -82,7 +82,7 @@
     "sass": "*",
     "sass-loader": "*",
     "style-loader": "*",
-    "stylelint": "*",
+    "stylelint": "^17.0.0",
     "stylelint-config-standard-scss": "*",
     "typescript-plugin-css-modules": "*",
     "weboptimizer": "*",
