@@ -8635,9 +8635,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1530":
-  version: 4.0.1530
-  resolution: "clientnode@npm:4.0.1530"
+"clientnode@npm:4.0.1531":
+  version: 4.0.1531
+  resolution: "clientnode@npm:4.0.1531"
   peerDependencies:
     "@types/prop-types": "*"
     node-fetch: "*"
@@ -8649,7 +8649,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/3aa080f17cdaaa3dac38a0a9d68ef9669efed29d6cb2ee4b310525d3274b676d7f1fafc0ebc880a72d08ee1fa6432269248c3d1dda2c08f8b8ded5dfb01e8bd9
+  checksum: 10c0/693139f69b4524e070ef58f26aa460290858ce2fbfd4addeb59e7c0d63d199098cf8b6f93b170609295339ed69dac3a171591b357f0179e0d35afd4d98e9fc7a
   languageName: node
   linkType: hard
 
@@ -10082,9 +10082,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^65.4.2":
-  version: 65.4.2
-  resolution: "eslint-plugin-jsdoc@npm:65.4.2"
+"eslint-plugin-jsdoc@npm:^65.4.3":
+  version: 65.4.3
+  resolution: "eslint-plugin-jsdoc@npm:65.4.3"
   dependencies:
     "@es-joy/escodegen": "npm:^4.2.0"
     "@es-joy/jsdoccomment": "npm:~1.0.0"
@@ -10108,7 +10108,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/24108aee2bb1fa5f53fb5a8e7caca4bc46140c75f037895b43ab3ddbdc93f04f9abd115c9a3ae05ff691348e59af85c55f25c5e03b398ce55c36876cb6f222dd
+  checksum: 10c0/41fd9fbcea551bb0860df240830d5c73cfdb910715786033e5840dc71e2437bbcab84438e877d41c412f15a50c969a655b243b84c341fc3e072205f8d32f51e3
   languageName: node
   linkType: hard
 
@@ -18890,12 +18890,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-documentation@npm:^1.0.71":
-  version: 1.0.71
-  resolution: "web-documentation@npm:1.0.71"
+"web-documentation@npm:^1.0.72":
+  version: 1.0.72
+  resolution: "web-documentation@npm:1.0.72"
   bin:
     web-documentation: dist/deploy.js
-  checksum: 10c0/14cfff190a8e2341f747ef28be29687d4647f6ae2f3cd76202a586d83954cf76eb06c01069a64e1e17492acfe7890e2f02c24bcfdb2a0e4c8e3c779d716ba866
+  checksum: 10c0/feb36967f3cfc9f53d19e836b306e667f4056b5741629f0c681a7dc15e0aeed5b6d09c3f04073a79516b38b23661081c801562accf38e2eb38d0e662b3624aea
   languageName: node
   linkType: hard
 
@@ -18949,14 +18949,14 @@ __metadata:
     babel-loader: "npm:^10.1.1"
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
-    clientnode: "npm:4.0.1530"
+    clientnode: "npm:4.0.1531"
     core-js: "npm:^3.51.0"
     css-loader: "npm:^7.1.5"
     cssnano: "npm:^9.9.0"
     ejs: "npm:^7.0.2"
     eslint: "npm:^10.14.0"
     eslint-config-google: "npm:^0.14.0"
-    eslint-plugin-jsdoc: "npm:^65.4.2"
+    eslint-plugin-jsdoc: "npm:^65.4.3"
     exports-loader: "npm:^5.0.0"
     extract-loader: "npm:^5.1.0"
     favicons: "npm:^7.3.1"
@@ -18991,7 +18991,7 @@ __metadata:
     typescript: "npm:@typescript/typescript6@^6.0.2"
     typescript-eslint: "npm:^8.72.1"
     typescript-plugin-css-modules: "npm:^5.3.0"
-    web-documentation: "npm:^1.0.71"
+    web-documentation: "npm:^1.0.72"
     webpack: "npm:5.112.2"
     webpack-cli: "npm:^7.3.1"
     webpack-sources: "npm:^3.7.0"
