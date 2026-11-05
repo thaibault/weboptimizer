@@ -232,39 +232,64 @@ export const loader = async function(
             )
         }
 
-        const compressHTML = (content: string): string =>
-            minifyHTML(
-                content,
-                extend(
-                    true,
-                    {
-                        caseSensitive: true,
-                        collapseInlineTagWhitespace: true,
-                        collapseWhitespace: true,
-                        conservativeCollapse: true,
-                        minifyCSS: true,
-                        minifyJS: true,
-                        processScripts: [
-                            'text/ng-template',
-                            'text/x-handlebars-template'
-                        ],
-                        removeAttributeQuotes: true,
-                        removeComments: true,
-                        removeRedundantAttributes: true,
-                        removeScriptTypeAttributes: true,
-                        removeStyleLinkTypeAttributes: true,
-                        sortAttributes: true,
-                        sortClassName: true,
-                        /*
-                            NOTE: Avoids whitespace around placeholder in
-                            tags.
-                        */
-                        trimCustomFragments: true,
-                        useShortDoctype: true
-                    },
-                    givenOptions.compress?.html || {}
-                )
+        const compressHTML = (content: string): Promise<string> => {
+            const minifierOptions: Mapping<unknown> = extend(
+                true,
+                {
+                    caseSensitive: true,
+                    collapseInlineTagWhitespace: true,
+                    collapseWhitespace: true,
+                    conservativeCollapse: true,
+                    minifyCSS: true,
+                    minifyJS: true,
+                    processScripts: [
+                        'text/ng-template', 'text/x-handlebars-template'
+                    ],
+                    removeAttributeQuotes: true,
+                    removeComments: true,
+                    removeDefaultTypeAttributes: true,
+                    removeRedundantAttributes: true,
+                    sortAttributes: true,
+                    sortClassNames: true,
+                    // NOTE: Avoids whitespace around placeholder in tags.
+                    trimCustomFragments: true,
+                    useShortDoctype: true
+                },
+                givenOptions.compress?.html || {}
             )
+            /*
+                NOTE: Given options are shared with "html-webpack-plugin" and
+                "html-loader" which are based on "html-minifier-terser" so we
+                have to map its option names to "html-minifier".
+            */
+            const renamedOptions: Mapping<boolean | undefined> = {}
+            for (const [oldName, newName] of [
+                ['removeScriptTypeAttributes', 'removeDefaultTypeAttributes'],
+                [
+                    'removeStyleLinkTypeAttributes',
+                    'removeDefaultTypeAttributes'
+                ],
+                ['sortClassName', 'sortClassNames']
+            ])
+                if (Object.prototype.hasOwnProperty.call(
+                    minifierOptions, oldName
+                )) {
+                    renamedOptions[newName] =
+                        Boolean(renamedOptions[newName]) ||
+                        Boolean(minifierOptions[oldName])
+                    delete minifierOptions[oldName]
+                }
+            Object.assign(minifierOptions, renamedOptions)
+            for (const name of [
+                'html5',
+                'processConditionalComments',
+                'removeCDATASectionsFromCDATA',
+                'removeCommentsFromCDATA'
+            ])
+                delete minifierOptions[name]
+
+            return minifyHTML(content, minifierOptions)
+        }
 
         let result: string | TemplateFunction = template
         const isString = Boolean(options.isString)
@@ -312,7 +337,7 @@ export const loader = async function(
                         result = await readFile(result, {encoding})
                     }
                     if (step === compileSteps && givenOptions.compress?.html)
-                        result = compressHTML(result)
+                        result = await compressHTML(result)
 
                     if (step === compileSteps && compileSteps % 2) {
                         /*
@@ -393,7 +418,7 @@ export const loader = async function(
                 result = await result(scope)
 
                 if (givenOptions.compress?.html)
-                    result = compressHTML(result)
+                    result = await compressHTML(result)
             }
         }
 

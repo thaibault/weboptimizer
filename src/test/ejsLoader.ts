@@ -18,7 +18,7 @@ import type {LoaderContext} from 'webpack'
 
 import type {LoaderConfiguration} from '../ejsLoader'
 
-import {beforeAll, expect, test} from '@jest/globals'
+import {beforeAll, expect, jest, test} from '@jest/globals'
 import {copy, extend, NOOP} from 'clientnode'
 import {resolve} from 'path'
 
@@ -160,6 +160,37 @@ test('ejsLoader reports errors', async (): Promise<void> => {
     outcome = await run('<% if ( %>')
     expect(outcome.error).toBeInstanceOf(Error)
     expect(outcome.result).toStrictEqual(null)
+})
+test('ejsLoader maps legacy html minifier options', async (
+): Promise<void> => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(NOOP)
+    const source =
+        '<p class="b a"><script type="text/javascript">var a = 1</script></p>'
+
+    expect((await run(source)).result).toStrictEqual(
+        '<p class="a b"><script>var a=1</script></p>'
+    )
+    expect((await run(
+        source,
+        {
+            compress: {
+                html: {
+                    html5: true,
+                    processConditionalComments: true,
+                    removeCDATASectionsFromCDATA: true,
+                    removeCommentsFromCDATA: true,
+                    removeScriptTypeAttributes: false,
+                    removeStyleLinkTypeAttributes: false,
+                    sortClassName: false
+                }
+            }
+        } as unknown as Partial<LoaderConfiguration>
+    )).result).toStrictEqual(
+        '<p class="b a"><script type=text/javascript>var a=1</script></p>'
+    )
+    expect(warn).not.toHaveBeenCalled()
+
+    warn.mockRestore()
 })
 test('ejsLoader processing workaround', async (): Promise<void> => {
     expect((await run(
