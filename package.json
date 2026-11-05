@@ -38,9 +38,7 @@
     "./type": "./dist/type.js",
     "./type.js": "./dist/type.js"
   },
-  "bin": {
-    "weboptimizer": "dist/index.js"
-  },
+  "bin": "dist/index.js",
   "files": [
     "dist/*.d.ts",
     "dist/*.js",
@@ -87,7 +85,7 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1530",
+    "clientnode": "4.0.1531",
     "core-js": "^3.51.0",
     "ejs": "^7.0.2",
     "exports-loader": "^5.0.0",
@@ -124,7 +122,7 @@
     "cssnano": "^9.9.0",
     "eslint": "^10.14.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^65.4.2",
+    "eslint-plugin-jsdoc": "^65.4.3",
     "favicons": "^7.3.1",
     "favicons-webpack-plugin": "^6.0.1",
     "globals": "^17.14.0",
@@ -149,7 +147,7 @@
     "terser-webpack-plugin": "^5.6.1",
     "typescript-eslint": "^8.72.1",
     "typescript-plugin-css-modules": "^5.3.0",
-    "web-documentation": "^1.0.71",
+    "web-documentation": "^1.0.72",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "peerDependencies": {
