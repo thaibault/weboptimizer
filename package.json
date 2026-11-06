@@ -38,9 +38,7 @@
     "./type": "./dist/type.js",
     "./type.js": "./dist/type.js"
   },
-  "bin": {
-    "weboptimizer": "dist/index.js"
-  },
+  "bin": "dist/index.js",
   "files": [
     "dist/*.d.ts",
     "dist/*.js",
@@ -147,7 +145,7 @@
     "terser-webpack-plugin": "^5.6.1",
     "typescript-eslint": "^8.72.1",
     "typescript-plugin-css-modules": "^5.3.0",
-    "web-documentation": "^1.0.72",
+    "web-documentation": "^1.0.74",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "peerDependencies": {
@@ -1751,9 +1749,6 @@
         }
       }
     }
-  },
-  "webDocumentation": {
-    "trackingCode": "UA-40192634-11"
   },
   "packageManager": "yarn@4.18.1+sha512.b2e1e7524f654f2749d32b4ebcb4622473cb5bcbc485df2007e12a154e50162a4d795526768bc5f5b8f81717bfd79deb2472813d86fb5ae2eb551fa9c872b08f"
 }
