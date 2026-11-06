@@ -38,9 +38,7 @@
     "./type": "./dist/type.js",
     "./type.js": "./dist/type.js"
   },
-  "bin": {
-    "weboptimizer": "dist/index.js"
-  },
+  "bin": "dist/index.js",
   "files": [
     "dist/*.d.ts",
     "dist/*.js",
@@ -147,7 +145,7 @@
     "terser-webpack-plugin": "^5.6.1",
     "typescript-eslint": "^8.72.1",
     "typescript-plugin-css-modules": "^5.3.0",
-    "web-documentation": "^1.0.72",
+    "web-documentation": "^1.0.74",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "peerDependencies": {

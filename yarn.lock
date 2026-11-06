@@ -18617,12 +18617,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-documentation@npm:^1.0.72":
-  version: 1.0.72
-  resolution: "web-documentation@npm:1.0.72"
+"web-documentation@npm:^1.0.74":
+  version: 1.0.74
+  resolution: "web-documentation@npm:1.0.74"
   bin:
     web-documentation: dist/deploy.js
-  checksum: 10c0/feb36967f3cfc9f53d19e836b306e667f4056b5741629f0c681a7dc15e0aeed5b6d09c3f04073a79516b38b23661081c801562accf38e2eb38d0e662b3624aea
+  checksum: 10c0/fbef518963c1931b0a8bb2c049ac9ec25ddeed4bf3f93ebb49bb0fcb7dbe0964999b6a6ca3a366f94fa770df5e7ceb4adf42b705ac0035f550da931cd6c34a20
   languageName: node
   linkType: hard
 
@@ -18716,7 +18716,7 @@ __metadata:
     typescript: "npm:@typescript/typescript6@^6.0.2"
     typescript-eslint: "npm:^8.72.1"
     typescript-plugin-css-modules: "npm:^5.3.0"
-    web-documentation: "npm:^1.0.72"
+    web-documentation: "npm:^1.0.74"
     webpack: "npm:5.112.2"
     webpack-cli: "npm:^7.3.1"
     webpack-sources: "npm:^3.7.0"
