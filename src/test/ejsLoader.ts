@@ -134,7 +134,7 @@ test('ejsLoader includes files', async (): Promise<void> => {
     // NOTE: Non templates are included as they are.
     let outcome = await run(
         `<a><%- await _.include('${plainFilePath}') %></a>`,
-        // NOTE: Avoid whitespace normalisation to check raw inclusion.
+        // NOTE: Avoid whitespace normalization to check raw inclusion.
         {compress: {html: false}} as unknown as Partial<LoaderConfiguration>
     )
     expect(outcome.error).toStrictEqual(null)
