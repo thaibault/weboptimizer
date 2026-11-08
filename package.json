@@ -55,11 +55,11 @@
   "sideEffects": true,
   "scripts": {
     "build": "yarn build:types && yarn build:lint && yarn build:plain",
-    "build:copy-test-artefacts": "cd src/test/simple && shx touch yarn.lock && shx rm -rf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../../ && cd src/test/scss && shx touch yarn.lock && shx rm -rf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../../ && shx rm -rf node_modules/weboptimizer src/test/simple/node_modules/weboptimizer src/test/scss/node_modules/weboptimizer && shx mkdir -p node_modules/weboptimizer src/test/simple/node_modules/weboptimizer src/test/scss/node_modules/weboptimizer && copyCommand='shx cp -r dist *.json' && $copyCommand node_modules/weboptimizer/ && $copyCommand src/test/simple/node_modules/weboptimizer/ && $copyCommand src/test/scss/node_modules/weboptimizer/",
+    "build:copy-test-artifacts": "cd src/test/simple && shx touch yarn.lock && shx rm -rf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../../ && cd src/test/scss && shx touch yarn.lock && shx rm -rf node_modules && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; cd ../../../ && shx rm -rf node_modules/weboptimizer src/test/simple/node_modules/weboptimizer src/test/scss/node_modules/weboptimizer && shx mkdir -p node_modules/weboptimizer src/test/simple/node_modules/weboptimizer src/test/scss/node_modules/weboptimizer && copyCommand='shx cp -r dist *.json' && $copyCommand node_modules/weboptimizer/ && $copyCommand src/test/simple/node_modules/weboptimizer/ && $copyCommand src/test/scss/node_modules/weboptimizer/",
     "build:lint": "           babel --extensions '.ts' --out-file dist/eslint.config.js src/eslint.config.ts",
     "build:plain": "babel --extensions '.ts' --ignore 'src/**/*.d.ts,src/eslint.config.ts,src/test/**' --copy-files --no-copy-ignored --out-dir dist src && shx cp src/declarations.d.ts dist/ && shx chmod +x dist/index.js && shx sed -i 's/(#!\\\\/usr\\\\/bin\\\\/env )babel-(node)/$1$2/' dist/index.js 1>/dev/null",
-    "build:test": "           yarn clear && yarn build && yarn build:copy-test-artefacts && babel --extensions '.ts' --ignore 'src/test/**/*.d.ts,src/test/scss/**,src/test/simple/**' --out-dir dist/test src/test",
-    "build:test:source-map": "yarn clear && yarn build && yarn build:copy-test-artefacts && babel --extensions '.ts' --ignore 'src/test/**/*.d.ts,src/test/scss/**,src/test/simple/**' --source-maps inline --out-dir dist/test src/test",
+    "build:test": "           yarn clear && yarn build && yarn build:copy-test-artifacts && babel --extensions '.ts' --ignore 'src/test/**/*.d.ts,src/test/scss/**,src/test/simple/**' --out-dir dist/test src/test",
+    "build:test:source-map": "yarn clear && yarn build && yarn build:copy-test-artifacts && babel --extensions '.ts' --ignore 'src/test/**/*.d.ts,src/test/scss/**,src/test/simple/**' --source-maps inline --out-dir dist/test src/test",
     "build:types": "tsc --declaration --emitDeclarationOnly --rootDir src --declarationDir dist",
     "check": "yarn check:types && yarn lint",
     "check:types": "tsc --noEmit",
@@ -414,7 +414,7 @@
             },
             "outputExtension": "js",
             "preinstall": {
-              "#": "Create dummy file before building to let build artefacts created on install correctly be set their needed executable bits.",
+              "#": "Create dummy file before building to let build artifacts created on install correctly be set their needed executable bits.",
               "__evaluate__": "`touch '\\${path.resolve(self.path.target.asset[buildConfiguration.type], path.basename(filePath, \\`.\\${buildConfiguration.extension}\\`))}.\\${buildConfiguration.outputExtension}'`"
             }
           },
@@ -839,7 +839,7 @@
                 {
                   "__evaluate__": "/^\\./"
                 },
-                "#: Usually we need to pre-process these artefacts against target technology specific environment.",
+                "#: Usually we need to pre-process these artifacts against target technology specific environment.",
                 {
                   "__evaluate__": "/^weboptimizer\\/browser(?:\\.js)?$/"
                 },
@@ -1520,7 +1520,7 @@
         "assetPattern": {
           "javaScript": {
             "pattern": {
-              "#": "This is how we can make our test artefact executable.",
+              "#": "This is how we can make our test artifact executable.",
               "__evaluate__": "`#!/usr/bin/env node\n// -*- coding: utf-8 -*-\n{1}`"
             }
           }

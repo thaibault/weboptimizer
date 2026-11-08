@@ -54,7 +54,7 @@ Features
 - Completely **adaptable** for your needs.
 - Targets **library** and **web** bundle building out of the box.
 - Only one configuration file (your already existing **package.json**) for all
-  needed customisations needed.
+  needed customizations needed.
 - Many **uses-cases** are preconfigured and mostly works out of the box for
   your project:
     - Preconfigured **preprocessing** for css (PostCSS), javaScript (Babel,
