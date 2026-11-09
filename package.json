@@ -83,6 +83,7 @@
     "@babel/preset-typescript": "^8.0.7",
     "@typescript/native": "npm:typescript@^7.0.2",
     "babel-loader": "^10.1.1",
+    "babel-plugin-istanbul": "^8.0.2",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
     "clientnode": "4.0.1531",

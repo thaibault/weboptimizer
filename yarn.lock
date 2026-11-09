@@ -7430,7 +7430,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-istanbul@npm:^8.0.0":
+"babel-plugin-istanbul@npm:^8.0.0, babel-plugin-istanbul@npm:^8.0.2":
   version: 8.0.2
   resolution: "babel-plugin-istanbul@npm:8.0.2"
   dependencies:
@@ -18589,6 +18589,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.72.1"
     "@typescript/native": "npm:typescript@^7.0.2"
     babel-loader: "npm:^10.1.1"
+    babel-plugin-istanbul: "npm:^8.0.2"
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
     clientnode: "npm:4.0.1531"

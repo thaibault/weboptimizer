@@ -864,6 +864,43 @@ const isFilePathInDependencies = (filePath: string): boolean => {
             )
     )
 }
+/*
+    NOTE: Coverage has to be measured against the original source files
+    instead of the generated test bundle (which additionally contains the
+    webpack runtime, all bundled dependencies and the tests themselves).
+    Therefore we instrument each source module before it gets bundled and let
+    jest collect the resulting "__coverage__" global (jest itself does not
+    instrument the bundle since it matches the test file pattern).
+*/
+if ([
+    'test:coverage', 'test:coverage:report'
+].includes(configuration.givenCommandLineArguments[2])) {
+    const options: Mapping<unknown> =
+        module.preprocessor.javaScript.options ??= {}
+    const toGlob = (path: string): string =>
+        `${relative(configuration.path.context, path) || '.'}/**`
+
+    options.plugins = [
+        /*
+            NOTE: Has to come first to instrument the original (not yet
+            transformed) source code.
+        */
+        [
+            'babel-plugin-istanbul',
+            {
+                cwd: configuration.path.context,
+                exclude: [
+                    toGlob(configuration.path.source.test),
+                    '**/*.d.ts',
+                    '**/.__*__.barrel.mjs',
+                    '**/node_modules/**'
+                ],
+                include: [toGlob(configuration.path.source.base)]
+            }
+        ],
+        ...(options.plugins as Array<unknown> | undefined ?? [])
+    ]
+}
 
 const loader: Loader = {} as unknown as Loader
 
