@@ -414,7 +414,8 @@ describe('helper', (): void => {
                         javaScript: '',
                         template: ''
                     },
-                    base: ''
+                    base: '',
+                    test: ''
                 },
                 target: {
                     asset: {

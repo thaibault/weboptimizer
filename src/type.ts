@@ -162,6 +162,7 @@ export interface BasePathConfiguration {
     source: {
         asset: AssetPathConfiguration
         base: string
+        test: string
     }
     target: {
         asset: AssetPathConfiguration
