@@ -38,9 +38,7 @@
     "./type": "./dist/type.js",
     "./type.js": "./dist/type.js"
   },
-  "bin": {
-    "weboptimizer": "dist/index.js"
-  },
+  "bin": "dist/index.js",
   "files": [
     "dist/*.d.ts",
     "dist/*.js",
@@ -123,7 +121,7 @@
     "cssnano": "^9.9.0",
     "eslint": "^10.14.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^65.4.3",
+    "eslint-plugin-jsdoc": "^65.4.5",
     "favicons": "^7.3.1",
     "favicons-webpack-plugin": "^6.0.1",
     "globals": "^17.14.0",
