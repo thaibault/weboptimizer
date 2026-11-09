@@ -877,8 +877,12 @@ if ([
 ].includes(configuration.givenCommandLineArguments[2])) {
     const options: Mapping<unknown> =
         module.preprocessor.javaScript.options ??= {}
-    const toGlob = (path: string): string =>
-        `${relative(configuration.path.context, path) || '.'}/**`
+    // NOTE: "./**" would not match any (relative) file path.
+    const toGlob = (path: string): string => {
+        const relativePath: string = relative(configuration.path.context, path)
+
+        return relativePath ? `${relativePath}/**` : '**'
+    }
 
     options.plugins = [
         /*
@@ -891,6 +895,11 @@ if ([
                 cwd: configuration.path.context,
                 exclude: [
                     toGlob(configuration.path.source.test),
+                    // NOTE: Test files living next to the sources.
+                    '**/test{,s}/**',
+                    '**/test{,-*}.{js,cjs,mjs,ts,tsx,jsx}',
+                    '**/*{.,-}test.{js,cjs,mjs,ts,tsx,jsx}',
+                    '**/__tests__/**',
                     '**/*.d.ts',
                     '**/.__*__.barrel.mjs',
                     '**/node_modules/**'
