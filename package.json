@@ -1433,6 +1433,9 @@
         ],
         "tidyUpOnClear": [
           {
+            "__evaluate__": "path.resolve(self.imageSprite.spritePath || self.path.source.asset.image, typeof self.files.compose.image === 'string' ? path.relative(self.path.target.asset.image, self.files.compose.image) : 'sprite.png')"
+          },
+          {
             "__evaluate__": "path.resolve(self.path.target.base, 'yarn-error.log')"
           },
           {
