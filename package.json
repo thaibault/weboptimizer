@@ -87,7 +87,6 @@
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
     "clientnode": "4.0.1531",
-    "core-js": "^3.51.0",
     "ejs": "^7.0.2",
     "exports-loader": "^5.0.0",
     "extract-loader": "^5.1.0",
@@ -118,6 +117,7 @@
     "@types/webpack-env": "^1.18.8",
     "@types/webpack-sources": "^3.2.3",
     "@typescript-eslint/parser": "^8.72.1",
+    "core-js": "^3.51.0",
     "css-loader": "^7.1.5",
     "cssnano": "^9.9.0",
     "eslint": "^10.14.0",
@@ -156,6 +156,7 @@
     "@types/imagemin": "*",
     "@types/node": "*",
     "@types/webpack-env": "*",
+    "core-js": "*",
     "css-loader": "*",
     "cssnano": "*",
     "eslint": "*",
@@ -1262,7 +1263,10 @@
                 [
                   "polyfill-corejs3",
                   {
-                    "method": "usage-global"
+                    "method": "usage-global",
+                    "version": {
+                      "__evaluate__": "(() => {try {return JSON.parse(fs.readFileSync(path.resolve(currentPath, 'node_modules/core-js/package.json'), {encoding: 'utf8'})).version} catch {return '3.0'}})()"
+                    }
                   }
                 ]
               ],

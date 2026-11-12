@@ -18645,6 +18645,7 @@ __metadata:
     "@types/imagemin": "*"
     "@types/node": "*"
     "@types/webpack-env": "*"
+    core-js: "*"
     css-loader: "*"
     cssnano: "*"
     eslint: "*"
