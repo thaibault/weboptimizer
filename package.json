@@ -317,7 +317,8 @@
       "development": {
         "server": {
           "open": {
-            "__evaluate__": "`${path.join(self.path.target.public, self.files.defaultHTML.filename)}`"
+            "#": "An automatically determined public path has no static prefix.",
+            "__evaluate__": "path.join(self.path.target.public === 'auto' ? '' : self.path.target.public, self.files.defaultHTML.filename)"
           }
         }
       },
@@ -1325,7 +1326,8 @@
           ],
           "inlineWorkboxRuntime": true,
           "navigateFallback": {
-            "__evaluate__": "path.join(self.path.target.public, self.files.defaultHTML.filename)"
+            "#": "An automatically determined public path has no static prefix.",
+            "__evaluate__": "path.join(self.path.target.public === 'auto' ? '' : self.path.target.public, self.files.defaultHTML.filename)"
           }
         },
         "injectionManifest": {
