@@ -1392,7 +1392,8 @@
           },
           "base": "dist/",
           "manifest": "manifest.appcache",
-          "public": "",
+          "#": "Lazy chunks are loaded via native \"import()\" which needs a resolvable (non bare) specifier.",
+          "public": "auto",
           "test": "./"
         },
         "tidyUp": [

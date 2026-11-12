@@ -158,6 +158,16 @@ describe('InPlaceAssetsIntoHTML', (): void => {
             expect(assetNames).toStrictEqual(['a.css', 'b.js'])
         }
     })
+    test('ignores automatically determined public path', () => {
+        const {assetNames, tags} = run(
+            {javaScript: {head: 'auto/a.js'}},
+            {headTags: [createTag('script', {src: 'auto/a.js'})]},
+            'auto'
+        )
+
+        expect(tags.headTags[0].attributes.src).toStrictEqual('auto/a.js')
+        expect(assetNames).toStrictEqual(['a.css', 'a.js', 'b.js'])
+    })
     test('in places matching style sheets', () => {
         const createLink = (
             attributes: TagObject['attributes'] = {}
