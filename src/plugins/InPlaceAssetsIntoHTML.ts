@@ -38,6 +38,12 @@ export class InPlaceAssetsIntoHTML {
     apply(compiler: Compiler): void {
         let publicPath: string =
             compiler.options.output.publicPath as string || ''
+        /*
+            NOTE: An automatically determined public path results in
+            relative asset urls in generated html files.
+        */
+        if (publicPath === 'auto')
+            publicPath = ''
         if (publicPath && !publicPath.endsWith('/'))
             publicPath += '/'
 
