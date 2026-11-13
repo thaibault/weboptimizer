@@ -18735,6 +18735,7 @@ __metadata:
     webpack-sources: "npm:^3.7.0"
     workbox-webpack-plugin: "npm:^7.4.1"
   peerDependencies:
+    "@babel/core": ^8.1.0
     "@babel/eslint-parser": "*"
     "@eslint/js": "*"
     "@types/ejs": "*"

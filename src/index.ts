@@ -72,7 +72,7 @@ import globAll from 'glob-all'
 const {sync: globAllSync} = globAll as
     unknown as
     {sync: (expression: Array<string>) => Array<string>}
-import path, {join, resolve} from 'path'
+import path, {delimiter, join, resolve} from 'path'
 
 import {load as loadConfiguration} from './configurator'
 import {
@@ -119,10 +119,19 @@ const main = async (
     */
     environment: NodeJS.ProcessEnv = eval('process.env') as NodeJS.ProcessEnv
 ): Promise<() => void> => {
-    if (environment.PATH && !environment.PATH.includes(':node_modules/.bin'))
-        environment.PATH += ':node_modules/.bin'
-    else
-        environment.PATH = 'node_modules/.bin'
+    /*
+        NOTE: Take project specific binaries and current weboptimizer's own
+        dependencies into account. Package managers may not hoist the latter
+        (e.g. "webpack-cli") into the project's "node_modules" folder.
+    */
+    const binaryPaths: Array<string> =
+        environment.PATH ? environment.PATH.split(delimiter) : []
+    for (const binaryPath of [
+        'node_modules/.bin', join(webOptimizerPath, 'node_modules/.bin')
+    ])
+        if (!binaryPaths.includes(binaryPath))
+            binaryPaths.push(binaryPath)
+    environment.PATH = binaryPaths.join(delimiter)
 
     const configuration: ResolvedConfiguration = await loadConfiguration(
         context,
@@ -482,17 +491,6 @@ const main = async (
                         ).trim() +
                         '"'
                     )
-
-                    /*
-                        NOTE: Take current weboptimizer's dependencies into
-                        account.
-                    */
-                    if (!childProcessOptions.env)
-                        childProcessOptions.env = {}
-                    if (typeof childProcessOptions.env.PATH !== 'string')
-                        childProcessOptions.env.PATH = ''
-                    childProcessOptions.env.PATH +=
-                        `: ${webOptimizerPath}/node_modules/.bin`
 
                     /*
                         NOTE: Passing arguments separately is deprecated in
