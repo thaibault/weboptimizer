@@ -240,6 +240,7 @@ const main = async (
                     ![
                         'build',
                         'build:types',
+                        'check:types',
                         'lint',
                         'preinstall',
                         'test',

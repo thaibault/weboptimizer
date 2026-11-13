@@ -14,21 +14,28 @@
     endregion
 */
 // region imports
+import type {Mapping} from 'clientnode'
+
+import type {ResolvedConfiguration} from '../type'
+
 import {afterAll, describe, expect, test} from '@jest/globals'
 import {mkdtemp, readdir, rm, writeFile} from 'fs/promises'
 import {tmpdir} from 'os'
 import {join} from 'path'
 
-import loadConfiguration, {load} from '../configurator'
+import loadConfiguration, {load, makeLocationsAbsolute} from '../configurator'
 // endregion
 // region mockup
 const PREVIOUS_WORKING_DIRECTORY = process.cwd()
 const contextPaths: Array<string> = []
 /**
  * Creates a minimal temporary project to load configurations from.
+ * @param configuration - Additional web optimizer configuration.
  * @returns Path to created project.
  */
-const createContext = async (): Promise<string> => {
+const createContext = async (
+    configuration: Mapping<unknown> = {}
+): Promise<string> => {
     const path = await mkdtemp(join(tmpdir(), 'weboptimizer-configurator-'))
     contextPaths.push(path)
 
@@ -38,7 +45,8 @@ const createContext = async (): Promise<string> => {
             name: 'mockup-context',
             webOptimizer: {
                 givenValue: 'default',
-                test: {givenValue: 'test'}
+                test: {givenValue: 'test'},
+                ...configuration
             }
         })
     )
@@ -53,11 +61,11 @@ const createContext = async (): Promise<string> => {
  * command line arguments.
  * @param commandLineArguments - Arguments following the binary.
  * @param contextPath - Project to load.
- * @returns Value of the custom "givenValue" configuration property.
+ * @returns Loaded configuration.
  */
-const loadGivenValue = async (
+const loadContext = async (
     commandLineArguments: Array<string>, contextPath?: string
-): Promise<unknown> => {
+): Promise<ResolvedConfiguration> => {
     contextPath = contextPath ?? await createContext()
     /*
         NOTE: Entries are resolved against the current working directory, so
@@ -65,14 +73,28 @@ const loadGivenValue = async (
     */
     process.chdir(contextPath)
 
-    return (await load(
+    return load(
         contextPath,
         contextPath,
         ['', '', ...commandLineArguments],
         undefined,
         {}
-    ) as unknown as {givenValue: unknown}).givenValue
+    )
 }
+/**
+ * Loads configuration of given (or a newly created) project with given
+ * command line arguments.
+ * @param commandLineArguments - Arguments following the binary.
+ * @param contextPath - Project to load.
+ * @returns Value of the custom "givenValue" configuration property.
+ */
+const loadGivenValue = async (
+    commandLineArguments: Array<string>, contextPath?: string
+): Promise<unknown> =>
+    (await loadContext(commandLineArguments, contextPath) as
+        unknown as
+        {givenValue: unknown}
+    ).givenValue
 // endregion
 afterAll(async (): Promise<void> => {
     process.chdir(PREVIOUS_WORKING_DIRECTORY)
@@ -138,5 +160,67 @@ describe('load', (): void => {
         expect(await readdir(contextPath))
             .not.toContain('.dynamicConfiguration-0.json')
     })
+    test('debug mode via encoded configuration argument', async (
+    ): Promise<void> => {
+        const configuration = await loadContext(['build', '{debug: true}'])
+
+        expect(configuration.debug).toStrictEqual(true)
+        // NOTE: Debug specific configuration has been applied.
+        expect(configuration.module.optimizer.cssnano).toBeNull()
+
+        expect((await loadContext(['build'])).debug).toStrictEqual(false)
+    })
+    test('dynamic locations', async (): Promise<void> => {
+        const contextPath = await createContext({
+            path: {
+                apiDocumentation: {__evaluate__: `'documentation'`},
+                target: {
+                    asset: {data: {__evaluate__: `'data'`}},
+                    base: {__evaluate__: `'build'`}
+                }
+            }
+        })
+
+        const {path} = await loadContext(['build'], contextPath)
+
+        expect(path.apiDocumentation)
+            .toStrictEqual(join(contextPath, 'documentation/'))
+        expect(path.target.base).toStrictEqual(join(contextPath, 'build'))
+        expect(path.target.asset.data)
+            .toStrictEqual(join(contextPath, 'build/data/'))
+    })
+})
+test('makeLocationsAbsolute', (): void => {
+    const locations: Mapping<unknown> = {
+        base: 'a',
+        configuration: 'kept',
+        file: {__evaluate__: `'file'`},
+        sub: {base: {__evaluate__: `'b'`}, c: 'c'},
+        target: {base: 'b', options: {d: 'd'}, public: 'e', f: 'f'}
+    }
+    const deferredLocations: Parameters<typeof makeLocationsAbsolute>[3] = []
+
+    makeLocationsAbsolute(
+        locations,
+        '/root',
+        (location: Mapping<unknown>): string =>
+            (location.__evaluate__ as string).replace(/'/g, ''),
+        deferredLocations
+    )
+
+    expect(locations).toStrictEqual({
+        base: '/root/a',
+        configuration: 'kept',
+        file: {__evaluate__: `'file'`},
+        sub: {base: '/root/a/b', c: '/root/a/b/c/'},
+        target: {
+            base: '/root/a/b',
+            options: {d: 'd'},
+            public: 'e',
+            f: '/root/a/b/f/'
+        }
+    })
+    expect(deferredLocations)
+        .toStrictEqual([{base: '/root/a', keys: ['file']}])
 })
 // endregion
