@@ -251,20 +251,21 @@ weboptimizer's own "package.json". Keys like "#" or "#1" are comments:
 
 The sections "debug", "document", "test" and "test:browser" are merged in
 only for the corresponding command or for debug mode. Debug mode leaves
-stylesheets and HTML unminified and is enabled via "debug": true or the
-environment variable "NODE_ENV=development".
+stylesheets and HTML unminified and is enabled via "debug": true (also on
+the command line) or the environment variable "NODE_ENV=development".
 <!--deDE:
     Die Abschnitte "debug", "document", "test" und "test:browser" werden nur
     beim jeweiligen Befehl bzw. im Debug-Modus eingemischt. Der Debug-Modus
     lässt Stylesheets und HTML unminifiziert und wird über "debug": true
-    oder die Umgebungsvariable "NODE_ENV=development" aktiviert.
+    (auch auf der Kommandozeile) oder die Umgebungsvariable
+    "NODE_ENV=development" aktiviert.
 -->
 <!--frFR:
     Les sections "debug", "document", "test" et "test:browser" ne sont
     intégrées que pour la commande correspondante ou en mode débogage. Le
     mode débogage laisse les feuilles de style et le HTML non minifiés et
-    s'active via "debug": true ou la variable d'environnement
-    "NODE_ENV=development".
+    s'active via "debug": true (aussi en ligne de commande) ou la variable
+    d'environnement "NODE_ENV=development".
 -->
 
 <!--|deDE:Berechnete Werte-->
@@ -275,14 +276,14 @@ Values can be JavaScript expressions with "__evaluate__" or function bodies
 with "__execute__". "self" is the whole configuration, further available are
 e.g. "currentPath", "path", "fs", "webOptimizerPath" and the helpers of
 [clientnode](https://tsickert.com/clientnode) like "string" or "array".
-Values inside "path" have to be plain strings:
+Computed locations in "path" are made absolute like plain ones:
 <!--deDE:
     Werte können JavaScript-Ausdrücke mit "__evaluate__" oder
     Funktionsrümpfe mit "__execute__" sein. "self" ist die gesamte
     Konfiguration, außerdem verfügbar sind z. B. "currentPath", "path",
     "fs", "webOptimizerPath" und die Hilfsfunktionen von
     [clientnode](https://tsickert.com/clientnode) wie "string" oder
-    "array". Werte innerhalb von "path" müssen einfache Zeichenketten sein:
+    "array". Berechnete Pfade in "path" werden wie einfache absolut gemacht:
 -->
 <!--frFR:
     Les valeurs peuvent être des expressions JavaScript avec "__evaluate__"
@@ -290,13 +291,18 @@ Values inside "path" have to be plain strings:
     entière, sont aussi disponibles par exemple "currentPath", "path", "fs",
     "webOptimizerPath" et les utilitaires de
     [clientnode](https://tsickert.com/clientnode) comme "string" ou "array".
-    Les valeurs dans "path" doivent être de simples chaînes de caractères:
+    Les chemins calculés dans "path" sont rendus absolus comme les autres:
 -->
 
 ```JSON
 {
   "webOptimizer": {
-    "libraryName": {"__evaluate__": "`${self.name}-library`"}
+    "libraryName": {"__evaluate__": "`${self.name}-library`"},
+    "path": {
+      "target": {
+        "base": {"__evaluate__": "self.debug ? 'build/' : 'dist/'"}
+      }
+    }
   }
 }
 ```
@@ -361,19 +367,19 @@ npx weboptimizer build \
 Point your editor's ESLint integration to the project's "eslint" package
 and to the configuration
 "node_modules/weboptimizer/dist/eslint.config.js". TypeScript
-configurations can extend "./node_modules/weboptimizer/tsconfig.json".
+configurations can extend "weboptimizer/tsconfig.json".
 <!--deDE:
     Richten Sie die ESLint-Integration Ihres Editors auf das
     "eslint"-Paket des Projekts und auf die Konfiguration
     "node_modules/weboptimizer/dist/eslint.config.js" aus.
-    TypeScript-Konfigurationen können
-    "./node_modules/weboptimizer/tsconfig.json" erweitern.
+    TypeScript-Konfigurationen können "weboptimizer/tsconfig.json"
+    erweitern.
 -->
 <!--frFR:
     Faites pointer l'intégration ESLint de votre éditeur vers le paquet
     "eslint" du projet et vers la configuration
     "node_modules/weboptimizer/dist/eslint.config.js". Les configurations
-    TypeScript peuvent étendre "./node_modules/weboptimizer/tsconfig.json".
+    TypeScript peuvent étendre "weboptimizer/tsconfig.json".
 -->
 
 <!--|deDE:Entwicklung-->

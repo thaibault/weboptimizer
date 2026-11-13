@@ -35,6 +35,9 @@
     "./browser.js": "./dist/browser.js",
     "./ejsLoader": "./dist/ejsLoader.js",
     "./ejsLoader.js": "./dist/ejsLoader.js",
+    "./tsconfig.application.json": "./tsconfig.application.json",
+    "./tsconfig.json": "./tsconfig.json",
+    "./tsconfig.library.json": "./tsconfig.library.json",
     "./type": "./dist/type.js",
     "./type.js": "./dist/type.js"
   },
@@ -153,10 +156,12 @@
     "@babel/core": "^8.1.0",
     "@babel/eslint-parser": "*",
     "@eslint/js": "*",
+    "@stylistic/eslint-plugin": "*",
     "@types/ejs": "*",
     "@types/imagemin": "*",
     "@types/node": "*",
     "@types/webpack-env": "*",
+    "@typescript-eslint/parser": "*",
     "core-js": "*",
     "css-loader": "*",
     "cssnano": "*",
@@ -164,6 +169,7 @@
     "eslint-config-google": "*",
     "eslint-plugin-jsdoc": "*",
     "favicons-webpack-plugin": "*",
+    "globals": "*",
     "identity-obj-proxy": "*",
     "image-minimizer-webpack-plugin": "*",
     "imagemin": "*",
@@ -196,6 +202,9 @@
     "@eslint/js": {
       "optional": true
     },
+    "@stylistic/eslint-plugin": {
+      "optional": true
+    },
     "@types/ejs": {
       "optional": true
     },
@@ -206,9 +215,6 @@
       "optional": true
     },
     "@types/webpack-env": {
-      "optional": true
-    },
-    "@typescript-eslint/eslint-plugin": {
       "optional": true
     },
     "@typescript-eslint/parser": {
@@ -230,6 +236,9 @@
       "optional": true
     },
     "favicons-webpack-plugin": {
+      "optional": true
+    },
+    "globals": {
       "optional": true
     },
     "identity-obj-proxy": {

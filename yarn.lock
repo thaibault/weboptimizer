@@ -18738,10 +18738,12 @@ __metadata:
     "@babel/core": ^8.1.0
     "@babel/eslint-parser": "*"
     "@eslint/js": "*"
+    "@stylistic/eslint-plugin": "*"
     "@types/ejs": "*"
     "@types/imagemin": "*"
     "@types/node": "*"
     "@types/webpack-env": "*"
+    "@typescript-eslint/parser": "*"
     core-js: "*"
     css-loader: "*"
     cssnano: "*"
@@ -18749,6 +18751,7 @@ __metadata:
     eslint-config-google: "*"
     eslint-plugin-jsdoc: "*"
     favicons-webpack-plugin: "*"
+    globals: "*"
     identity-obj-proxy: "*"
     image-minimizer-webpack-plugin: "*"
     imagemin: "*"
@@ -18778,6 +18781,8 @@ __metadata:
       optional: true
     "@eslint/js":
       optional: true
+    "@stylistic/eslint-plugin":
+      optional: true
     "@types/ejs":
       optional: true
     "@types/imagemin":
@@ -18785,8 +18790,6 @@ __metadata:
     "@types/node":
       optional: true
     "@types/webpack-env":
-      optional: true
-    "@typescript-eslint/eslint-plugin":
       optional: true
     "@typescript-eslint/parser":
       optional: true
@@ -18801,6 +18804,8 @@ __metadata:
     eslint-plugin-jsdoc:
       optional: true
     favicons-webpack-plugin:
+      optional: true
+    globals:
       optional: true
     identity-obj-proxy:
       optional: true

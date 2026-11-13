@@ -32,6 +32,7 @@ import type {
 import {
     convertCircularObjectToJSON,
     copy,
+    evaluate,
     evaluateAsyncDynamicData,
     evaluateDynamicData,
     extend,
@@ -50,7 +51,7 @@ import {
 } from 'clientnode'
 import fileSystemSynchronous from 'fs'
 import fileSystem, {lstat, readFile, unlink} from 'fs/promises'
-import path, {basename, dirname, join, resolve} from 'path'
+import path, {basename, dirname, isAbsolute, join, resolve} from 'path'
 
 import {
     determineAssetType,
@@ -66,6 +67,64 @@ import packageConfiguration from '../package.json' with {type: 'json'}
 import {SubConfigurationTypes} from './type'
 // endregion
 const {configuration: metaConfiguration} = packageConfiguration
+
+/**
+ * Determines whether given value has to be evaluated first.
+ * @param value - Value to check.
+ * @returns Indicates whether given value is a dynamic one.
+ */
+export const isDynamicValue = (value: unknown): boolean =>
+    isPlainObject(value) &&
+    ['__evaluate__', '__execute__'].some((name: string): boolean =>
+        Object.prototype.hasOwnProperty.call(value, name)
+    )
+/**
+ * Resolves given (nested) locations against their nearest "base" location
+ * and adds a trailing slash to each of them. Dynamic "base" locations are
+ * evaluated directly since other locations depend on them. Other dynamic
+ * locations are skipped and registered to be resolved after their
+ * evaluation.
+ * @param locations - Locations to resolve in place.
+ * @param parentBase - Absolute location to resolve given "base" against.
+ * @param evaluateLocation - Evaluates a dynamic location.
+ * @param deferredLocations - Collects dynamic locations to resolve later.
+ * @param keys - Key path to given locations.
+ * @param level - Nesting level of given locations.
+ */
+export const makeLocationsAbsolute = (
+    locations: Mapping<unknown>,
+    parentBase: string,
+    evaluateLocation: (location: Mapping<unknown>) => string,
+    deferredLocations: Array<{base: string, keys: Array<string>}> = [],
+    keys: Array<string> = [],
+    level = 1
+): void => {
+    if (isDynamicValue(locations.base))
+        locations.base = evaluateLocation(locations.base as Mapping<unknown>)
+    if (Object.prototype.hasOwnProperty.call(locations, 'base'))
+        locations.base = resolve(parentBase, locations.base as string)
+
+    const base: string = (locations.base as string | undefined) ?? parentBase
+    const ignoredKeys: Array<string> =
+        [[], ['configuration'], ['options', 'public'], []][level]
+
+    for (const [key, location] of Object.entries(locations))
+        if (key === 'base' || ignoredKeys.includes(key))
+            continue
+        else if (typeof location === 'string')
+            locations[key] = resolve(base, location) + '/'
+        else if (isDynamicValue(location))
+            deferredLocations.push({base, keys: keys.concat(key)})
+        else if (level < 3 && isPlainObject(location))
+            makeLocationsAbsolute(
+                location,
+                base,
+                evaluateLocation,
+                deferredLocations,
+                keys.concat(key),
+                level + 1
+            )
+}
 
 export let loadedConfiguration: null | ResolvedConfiguration = null
 export const log = new Logger({name: 'weboptimizer.configurator'})
@@ -181,11 +240,57 @@ export const load = async (
         (specificConfiguration.webOptimizer as PlainObject | undefined) || {}
     specificConfiguration.name = name
     // endregion
+    // region load additional dynamically given configuration
+    let count = 0
+    let filePath: null | string = null
+    for (
+        let iteration = 0;
+        iteration < MAXIMAL_NUMBER_OF_ITERATIONS.value;
+        iteration++
+    ) {
+        const newFilePath =
+            `${metaConfiguration.default.path.context}/.dynamicConfiguration-` +
+            `${String(count)}.json`
+
+        if (!await isFile(newFilePath))
+            break
+
+        filePath = newFilePath
+        count += 1
+    }
+
+    let runtimeInformation: RuntimeInformation =
+        {givenCommandLineArguments: commandLineArguments}
+    if (filePath) {
+        const fileContent: string = await readFile(
+            filePath,
+            {encoding: metaConfiguration.default.encoding as BufferEncoding}
+        )
+        runtimeInformation = JSON.parse(fileContent) as RuntimeInformation
+        await unlink(filePath)
+    }
+    // endregion
     // region determine debug mode
     // NOTE: Given node command line arguments results in "npm_config_*"
     // environment variables.
     let debug: boolean = metaConfiguration.default.debug
-    if (typeof specificConfiguration.debug === 'boolean')
+    /*
+        NOTE: A configuration given via command line can only be evaluated
+        without any configuration scope this early.
+    */
+    const givenConfiguration: null | PlainObject =
+        runtimeInformation.givenCommandLineArguments.length > 3 ?
+            parseEncodedObject(
+                runtimeInformation.givenCommandLineArguments[
+                    runtimeInformation.givenCommandLineArguments.length - 1
+                ],
+                {},
+                'configuration'
+            ) :
+            null
+    if (typeof givenConfiguration?.debug === 'boolean')
+        debug = givenConfiguration.debug
+    else if (typeof specificConfiguration.debug === 'boolean')
         debug = specificConfiguration.debug
     else if (
         environment.npm_config_dev === 'true' ||
@@ -201,19 +306,20 @@ export const load = async (
     // Merges final default configuration object depending on given target
     // environment.
     const libraryConfiguration: PlainObject = metaConfiguration.library
-    let configuration: DefaultConfiguration
-    if (debug)
+    /*
+        NOTE: We have to copy to avoid leaking debug specific modifications
+        into subsequent loads.
+    */
+    let configuration: DefaultConfiguration =
+        copy(metaConfiguration.default) as unknown as DefaultConfiguration
+    if (debug) {
+        const debugConfiguration: PlainObject = copy(metaConfiguration.debug)
         configuration = extend(
             true,
-            modifyObject(
-                metaConfiguration.default as unknown as DefaultConfiguration,
-                metaConfiguration.debug
-            ),
-            metaConfiguration.debug
+            modifyObject(configuration, debugConfiguration),
+            debugConfiguration
         )
-    else
-        configuration =
-            metaConfiguration.default as unknown as DefaultConfiguration
+    }
 
     configuration.debug = debug
     if (typeof configuration.library === 'object')
@@ -240,36 +346,8 @@ export const load = async (
 
     // endregion
     // region merging and evaluating task specific and dynamic configurations
-    /// region load additional dynamically given configuration
-    let count = 0
-    let filePath: null | string = null
-    for (
-        let iteration = 0;
-        iteration < MAXIMAL_NUMBER_OF_ITERATIONS.value;
-        iteration++
-    ) {
-        const newFilePath =
-            `${configuration.path.context}.dynamicConfiguration-` +
-            `${String(count)}.json`
-
-        if (!await isFile(newFilePath))
-            break
-
-        filePath = newFilePath
-        count += 1
-    }
-
-    let runtimeInformation: RuntimeInformation =
-        {givenCommandLineArguments: commandLineArguments}
-    if (filePath) {
-        const fileContent: string = await readFile(
-            filePath, {encoding: configuration.encoding}
-        )
-        runtimeInformation = JSON.parse(fileContent) as RuntimeInformation
-        await unlink(filePath)
-    }
-    //// region task specific configuration
-    ///// region apply task type specific configuration
+    /// region task specific configuration
+    //// region apply task type specific configuration
     if (runtimeInformation.givenCommandLineArguments.length > 2)
         for (const type of SubConfigurationTypes)
             if (
@@ -296,8 +374,8 @@ export const load = async (
                             ),
                             configurationTarget[type] as PlainObject
                         )
-    ///// endregion
-    ///// region clear task type specific configurations
+    //// endregion
+    //// region clear task type specific configurations
     for (const type of SubConfigurationTypes)
         for (const configurationTarget of [
             configuration, specificConfiguration
@@ -309,7 +387,6 @@ export const load = async (
                 typeof configurationTarget[type] === 'object'
             )
                 delete configurationTarget[type]
-    ///// endregion
     //// endregion
     /// endregion
     extend(
@@ -365,47 +442,6 @@ export const load = async (
     // Removing comments (default key name to delete is "#").
     configuration = removeKeyPrefixes(configuration)
     // endregion
-    /// region build absolute paths
-    configuration.path.base =
-        resolve(configuration.path.context, configuration.path.base)
-
-    for (const [key, path] of Object.entries(configuration.path))
-        if (!['base', 'configuration'].includes(key))
-            if (typeof path === 'string')
-                configuration.path[key] =
-                    resolve(configuration.path.base, path) + '/'
-            else if (isPlainObject(path)) {
-                if (Object.prototype.hasOwnProperty.call(path, 'base'))
-                    configuration.path[key as 'source'].base = resolve(
-                        configuration.path.base, path.base as string
-                    )
-
-                for (const [subKey, subPath] of Object.entries(path))
-                    if (
-                        !['base', 'public'].includes(subKey) &&
-                        typeof subPath === 'string'
-                    )
-                        path[subKey as 'manifest'] =
-                            resolve(path.base as string, subPath) + '/'
-                    else if (
-                        subKey !== 'options' && isPlainObject(subPath)
-                    ) {
-                        subPath.base = resolve(
-                            path.base as string, subPath.base as string
-                        )
-
-                        for (const [subSubKey, subSubPath] of Object.entries(
-                            subPath
-                        ))
-                            if (
-                                subSubKey !== 'base' &&
-                                typeof subSubPath === 'string'
-                            )
-                                subPath[subSubKey as 'data'] =
-                                    resolve(subPath.base, subSubPath) + '/'
-                    }
-            }
-    /// endregion
     // region evaluate dynamic configuration structures
     const now: Date = new Date()
     /*
@@ -424,6 +460,41 @@ export const load = async (
             nowUTCTimestamp: getUTCTimestamp(now)
         }
     }
+    /// region build absolute paths
+    /*
+        NOTE: Dynamic "base" locations (e.g. given via "__evaluate__") are
+        evaluated directly, all other dynamic locations are made absolute
+        after the whole configuration has been evaluated.
+    */
+    const deferredLocations: Array<{base: string, keys: Array<string>}> = []
+    makeLocationsAbsolute(
+        configuration.path,
+        configuration.path.context,
+        (location: Mapping<unknown>): string => {
+            const execute =
+                Object.prototype.hasOwnProperty.call(location, '__execute__')
+            const result = evaluate(
+                location[execute ? '__execute__' : '__evaluate__'] as string,
+                {
+                    execute,
+                    scope: {
+                        ...evaluationOptions.scope,
+                        fs: fileSystemSynchronous,
+                        self: configuration
+                    }
+                }
+            )
+
+            if (result.error !== null)
+                throw new Error(
+                    'Given location could not be evaluated: ' + result.error
+                )
+
+            return result.result
+        },
+        deferredLocations
+    )
+    /// endregion
     const resolvedConfiguration =
         await evaluateAsyncDynamicData<ResolvedConfiguration>(
             evaluateDynamicData<ResolvedConfiguration>(
@@ -442,6 +513,19 @@ export const load = async (
                 RecursiveAsyncEvaluateable<ResolvedConfiguration>,
             evaluationOptions
         )
+
+    for (const {base, keys} of deferredLocations) {
+        const locations = keys.slice(0, -1).reduce(
+            (locations: Mapping<unknown>, key: string): Mapping<unknown> =>
+                locations[key] as Mapping<unknown>,
+            resolvedConfiguration.path as unknown as Mapping<unknown>
+        )
+        const key = keys[keys.length - 1]
+        const location: unknown = locations[key]
+        // NOTE: Evaluated absolute locations may point to files.
+        if (typeof location === 'string' && !isAbsolute(location))
+            locations[key] = resolve(base, location) + '/'
+    }
     // endregion
     // region consolidate file specific build configuration
     // Apply default file level build configurations to all file type specific
