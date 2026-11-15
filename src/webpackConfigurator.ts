@@ -1037,13 +1037,29 @@ const cssUse: RuleSet = (await Promise.all(
                                             ): string =>
                                                 join(
                                                     image.spritePath as string,
-                                                    relative(
-                                                        configuration.path
-                                                            .target.asset
-                                                            .image,
-                                                        configuration.files
-                                                            .compose.image
-                                                    )
+                                                    /*
+                                                        NOTE: Both paths may
+                                                        be functions
+                                                        (resolved per asset)
+                                                        so fall back to a
+                                                        static name.
+                                                    */
+                                                    typeof configuration
+                                                        .files.compose
+                                                        .image ===
+                                                        'string' &&
+                                                    typeof configuration
+                                                        .path.target.asset
+                                                        .image === 'string' ?
+                                                        relative(
+                                                            configuration.path
+                                                                .target.asset
+                                                                .image,
+                                                            configuration
+                                                                .files.compose
+                                                                .image
+                                                        ) :
+                                                        'sprite.png'
                                                 ),
                                             /*
                                                 Reset this token due to a
