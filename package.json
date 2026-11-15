@@ -115,7 +115,6 @@
     "@types/ejs": "^3.1.5",
     "@types/eslint": "^9.6.1",
     "@types/html-minifier-terser": "^7.0.2",
-    "@types/imagemin": "^9.0.1",
     "@types/node": "^26.6.6",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
@@ -131,10 +130,10 @@
     "favicons": "^7.3.1",
     "favicons-webpack-plugin": "^6.0.1",
     "globals": "^17.14.0",
-    "image-minimizer-webpack-plugin": "^5.0.0",
     "jest": "^30.5.2",
     "jsdoc": "^4.0.5",
     "mini-css-extract-plugin": "^2.10.2",
+    "minimizer-webpack-plugin": "^5.13.0",
     "mkdirp": "^3.0.1",
     "node-fetch": "^3.3.2",
     "postcss": "^8.5.33",
@@ -148,7 +147,6 @@
     "style-loader": "^4.0.0",
     "stylelint": "^18.0.0",
     "stylelint-config-standard": "^41.0.0",
-    "terser-webpack-plugin": "^5.6.1",
     "typescript-eslint": "^8.72.2",
     "typescript-plugin-css-modules": "^5.3.0",
     "web-documentation": "^1.0.74",
@@ -160,7 +158,6 @@
     "@eslint/js": "*",
     "@stylistic/eslint-plugin": "*",
     "@types/ejs": "*",
-    "@types/imagemin": "*",
     "@types/node": "*",
     "@types/webpack-env": "*",
     "@typescript-eslint/parser": "*",
@@ -173,12 +170,12 @@
     "favicons-webpack-plugin": "*",
     "globals": "*",
     "identity-obj-proxy": "*",
-    "image-minimizer-webpack-plugin": "*",
     "imagemin": "*",
     "jest": "*",
     "jest-canvas-mock": "*",
     "jsdoc": "*",
     "mini-css-extract-plugin": "*",
+    "minimizer-webpack-plugin": "^5.12.0",
     "postcss": "*",
     "postcss-fontpath": "*",
     "postcss-import": "*",
@@ -191,7 +188,6 @@
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "stylelint-config-standard-scss": "*",
-    "terser-webpack-plugin": "*",
     "typescript-eslint": "*",
     "typescript-plugin-css-modules": "*",
     "webpack-dev-server": "*",
@@ -208,9 +204,6 @@
       "optional": true
     },
     "@types/ejs": {
-      "optional": true
-    },
-    "@types/imagemin": {
       "optional": true
     },
     "@types/node": {
@@ -246,9 +239,6 @@
     "identity-obj-proxy": {
       "optional": true
     },
-    "image-minimizer-webpack-plugin": {
-      "optional": true
-    },
     "imagemin": {
       "optional": true
     },
@@ -262,6 +252,9 @@
       "optional": true
     },
     "mini-css-extract-plugin": {
+      "optional": true
+    },
+    "minimizer-webpack-plugin": {
       "optional": true
     },
     "postcss-fontpath": {
@@ -295,9 +288,6 @@
       "optional": true
     },
     "stylelint-config-standard-scss": {
-      "optional": true
-    },
-    "terser-webpack-plugin": {
       "optional": true
     },
     "typescript-eslint": {
@@ -611,14 +601,16 @@
         "module": {
           "optimizer": {
             "cssnano": null,
-            "terser": {
-              "terserOptions": {
-                "compress": {
-                  "drop_console": {
-                    "__evaluate__": "!self.debug"
-                  },
-                  "drop_debugger": {
-                    "__evaluate__": "!self.debug"
+            "javaScript": {
+              "minify": {
+                "options": {
+                  "compress": {
+                    "drop_console": {
+                      "__evaluate__": "!self.debug"
+                    },
+                    "drop_debugger": {
+                      "__evaluate__": "!self.debug"
+                    }
                   }
                 }
               }
@@ -1070,7 +1062,11 @@
               "exclude": {
                 "__evaluate__": "self.debug || 2 < self.givenCommandLineArguments.length && self.givenCommandLineArguments[2] !== 'build' ? /.*/ : self.debug && console.warn(`Image compression disabled. Use configuration: \"{module:{optimizer:{image:{content:{exclude:undefined}}}}}\" to enable default image file including.`) || /.*/"
               },
-              "minimizer": {
+              "minify": {
+                "implementation": {
+                  "path": "minimizer-webpack-plugin",
+                  "export": "imageminMinify"
+                },
                 "options": {
                   "plugins": [
                     [
@@ -1102,24 +1098,35 @@
                     ]
                   ]
                 }
+              },
+              "test": {
+                "__evaluate__": "/^[^?#]*\\.(?:avif|gif|jpe?g|jxl|png|svg|tif|webp)(?:[?#].*)?$/i"
               }
             },
             "loader": []
           },
-          "runtimeChunk": false,
-          "terser": {
-            "terserOptions": {
-              "compress": {
-                "drop_console": {
-                  "#": "To provide a logging output we need to exclude this feature.",
-                  "__evaluate__": "!self.debug"
-                },
-                "drop_debugger": {
-                  "__evaluate__": "!self.debug"
+          "javaScript": {
+            "extractComments": false,
+            "parallel": true,
+            "minify": {
+              "implementation": {
+                "path": "minimizer-webpack-plugin",
+                "export": "terserMinify"
+              },
+              "options": {
+                "compress": {
+                  "drop_console": {
+                    "#": "To provide a logging output we need to exclude this feature.",
+                    "__evaluate__": "!self.debug"
+                  },
+                  "drop_debugger": {
+                    "__evaluate__": "!self.debug"
+                  }
                 }
               }
             }
-          }
+          },
+          "runtimeChunk": false
         },
         "preprocessor": {
           "cascadingStyleSheet": {
@@ -1453,7 +1460,7 @@
         ],
         "tidyUpOnClear": [
           {
-            "__evaluate__": "path.resolve(self.imageSprite.spritePath || self.path.source.asset.image, typeof self.files.compose.image === 'string' ? path.relative(self.path.target.asset.image, self.files.compose.image) : 'sprite.png')"
+            "__evaluate__": "path.resolve(self.imageSprite.spritePath || self.path.source.asset.image, typeof self.files.compose.image === 'string' && typeof self.path.target.asset.image === 'string' ? path.relative(self.path.target.asset.image, self.files.compose.image) : 'sprite.png')"
           },
           {
             "__evaluate__": "path.resolve(self.path.target.base, 'yarn-error.log')"
@@ -1564,14 +1571,16 @@
         },
         "module": {
           "optimizer": {
-            "terser": {
-              "terserOptions": {
-                "compress": {
-                  "drop_console": {
-                    "__evaluate__": "false"
-                  },
-                  "drop_debugger": {
-                    "__evaluate__": "false"
+            "javaScript": {
+              "minify": {
+                "options": {
+                  "compress": {
+                    "drop_console": {
+                      "__evaluate__": "false"
+                    },
+                    "drop_debugger": {
+                      "__evaluate__": "false"
+                    }
                   }
                 }
               }

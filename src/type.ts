@@ -23,13 +23,9 @@ import type {
     FaviconWebpackPlugionOptions as FaviconWebpackPluginOptions
 } from 'favicons-webpack-plugin/src/options'
 import type HtmlWebpackPlugin from 'html-webpack-plugin'
-import type ImageMinimizerWebpackPlugin from 'image-minimizer-webpack-plugin'
-import type {
-    PluginOptions as ImageMinimizerOptions
-} from 'image-minimizer-webpack-plugin'
 import type {JSDOM} from 'jsdom'
 import type MiniCSSExtractPlugin from 'mini-css-extract-plugin'
-import type TerserWebpackPlugin from 'terser-webpack-plugin'
+import type MinimizerWebpackPlugin from 'minimizer-webpack-plugin'
 import type {
     DefinePlugin as WebpackDefinePlugin,
     Configuration as BaseWebpackConfiguration,
@@ -436,11 +432,15 @@ export interface ResolvedConfiguration {
                 }
                 htmlMinifier?: PlainObject
                 image: {
-                    content: ImageMinimizerOptions<unknown, unknown>
+                    content: ConstructorParameters<
+                        typeof MinimizerWebpackPlugin
+                    >[0]
                     exclude: null | string
                     loader: Array<string>
                 }
-                terser: Mapping<unknown>
+                javaScript: ConstructorParameters<
+                    typeof MinimizerWebpackPlugin
+                >[0]
             }
         preprocessor: {
             cascadingStyleSheet: WebpackLoader & {
@@ -557,13 +557,12 @@ export type WebpackPlugins =
     {
         Favicon?: typeof FaviconWebpackPlugin
         HTML?: typeof HtmlWebpackPlugin
-        ImageMinimizer?: typeof ImageMinimizerWebpackPlugin
         offline?: {
             GenerateSW: typeof OfflinePlugin.GenerateSW
             InjectManifest: typeof OfflinePlugin.InjectManifest
         }
         MiniCSSExtract?: typeof MiniCSSExtractPlugin
-        Terser?: typeof TerserWebpackPlugin
+        Minimizer?: typeof MinimizerWebpackPlugin
     }
 export type WebpackResolveData =
     // NOTE: Hack to retrieve needed types.

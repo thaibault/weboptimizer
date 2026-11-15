@@ -26,9 +26,6 @@ import type {
 import type {Transformer as PostcssTransformer} from 'postcss'
 import type PostcssNode from 'postcss/lib/node'
 import type {
-    PluginOptions as ImageMinimizerOptions
-} from 'image-minimizer-webpack-plugin'
-import type {
     Chunk,
     Compiler,
     Compilation as CompilationType,
@@ -178,11 +175,10 @@ Logger.configureAllInstances({
 
 const pluginNameResourceMapping: Mapping = {
     Favicon: 'favicons-webpack-plugin',
-    ImageMinimizer: 'image-minimizer-webpack-plugin',
     HTML: 'html-webpack-plugin',
     MiniCSSExtract: 'mini-css-extract-plugin',
-    offline: 'workbox-webpack-plugin',
-    Terser: 'terser-webpack-plugin'
+    Minimizer: 'minimizer-webpack-plugin',
+    offline: 'workbox-webpack-plugin'
 }
 
 const plugins: WebpackPlugins = {}
@@ -1646,25 +1642,21 @@ for (const pluginConfiguration of configuration.plugins) {
 if (!module.optimizer.minimizer) {
     module.optimizer.minimizer = []
 
-    if (plugins.Terser)
+    if (plugins.Minimizer)
         module.optimizer.minimizer.push(
-            new plugins.Terser({
-                extractComments: false,
-                parallel: true,
-                ...module.optimizer.terser
-            })
+            new plugins.Minimizer(module.optimizer.javaScript)
         )
+    else
+        /*
+            NOTE: An empty list would disable webpack's own default
+            minimizer, so fall back to it.
+        */
+        module.optimizer.minimizer.push('...')
 
-    if (plugins.ImageMinimizer)
-        module.optimizer.minimizer.push(new plugins.ImageMinimizer(extend(
-            true,
-            {
-                minimizer: {
-                    implementation: plugins.ImageMinimizer.imageminMinify
-                }
-            } as ImageMinimizerOptions<unknown, unknown>,
-            module.optimizer.image.content
-        )))
+    if (plugins.Minimizer)
+        module.optimizer.minimizer.push(
+            new plugins.Minimizer(module.optimizer.image.content)
+        )
 }
 // endregion
 // region configuration
@@ -2017,7 +2009,7 @@ export let webpackConfiguration: WebpackConfiguration = extend<
                         font: true,
                         htmlMinifier: true,
                         image: true,
-                        terser: true
+                        javaScript: true
                     }
                 }
             )

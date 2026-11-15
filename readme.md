@@ -210,7 +210,9 @@ Features beyond building scripts need additional packages:
   "eslint-plugin-jsdoc", "typescript-eslint", "@stylistic/eslint-plugin" and
   "globals", for stylesheets "stylelint" and "stylelint-config-standard".<!--deDE:Linting: "eslint", "@eslint/js", "eslint-config-google", "eslint-plugin-jsdoc", "typescript-eslint", "@stylistic/eslint-plugin" und "globals", für Stylesheets "stylelint" und "stylelint-config-standard".--><!--frFR:Linting: "eslint", "@eslint/js", "eslint-config-google", "eslint-plugin-jsdoc", "typescript-eslint", "@stylistic/eslint-plugin" et "globals", pour les feuilles de style "stylelint" et "stylelint-config-standard".-->
 - Favicons from "src/image/favicon.png": "favicons-webpack-plugin".<!--deDE:Favicons aus "src/image/favicon.png": "favicons-webpack-plugin".--><!--frFR:Favicons à partir de "src/image/favicon.png": "favicons-webpack-plugin".-->
-- Image compression: "image-minimizer-webpack-plugin" and "imagemin".<!--deDE:Bildkomprimierung: "image-minimizer-webpack-plugin" und "imagemin".--><!--frFR:Compression des images: "image-minimizer-webpack-plugin" et "imagemin".-->
+- Image compression: "imagemin" plus "imagemin-gifsicle", "imagemin-jpegtran",
+  "imagemin-optipng" and "imagemin-svgo" (disabled by default, enable it by
+  setting "module.optimizer.image.content.exclude" to "null").<!--deDE:Bildkomprimierung: "imagemin" sowie "imagemin-gifsicle", "imagemin-jpegtran", "imagemin-optipng" und "imagemin-svgo" (standardmäßig deaktiviert, aktivierbar indem "module.optimizer.image.content.exclude" auf "null" gesetzt wird).--><!--frFR:Compression des images: "imagemin" ainsi que "imagemin-gifsicle", "imagemin-jpegtran", "imagemin-optipng" et "imagemin-svgo" (désactivée par défaut, activable en définissant "module.optimizer.image.content.exclude" sur "null").-->
 - Offline support via service worker: "workbox-webpack-plugin".<!--deDE:Offline-Unterstützung per Service Worker: "workbox-webpack-plugin".--><!--frFR:Prise en charge hors ligne via service worker: "workbox-webpack-plugin".-->
 - API documentation: "jsdoc".<!--deDE:API-Dokumentation: "jsdoc".--><!--frFR:Documentation de l'API: "jsdoc".-->
 
