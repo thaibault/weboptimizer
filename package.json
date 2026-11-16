@@ -1122,6 +1122,12 @@
                   "drop_debugger": {
                     "__evaluate__": "!self.debug"
                   }
+                },
+                "format": {
+                  "comments": {
+                    "#": "Keep license and bundler directive comments (e.g. \"webpackIgnore\" or \"@vite-ignore\"), so that consumers bundling a minified library still respect them.",
+                    "__evaluate__": "'webpack[A-Z][A-Za-z]*\\\\s*:|@vite-ignore|@preserve|@lic|@cc_on|^\\\\**!'"
+                  }
                 }
               }
             }
