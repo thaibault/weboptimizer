@@ -41,9 +41,7 @@
     "./type": "./dist/type.js",
     "./type.js": "./dist/type.js"
   },
-  "bin": {
-    "weboptimizer": "dist/index.js"
-  },
+  "bin": "dist/index.js",
   "files": [
     "dist/*.d.ts",
     "dist/*.js",
@@ -90,13 +88,13 @@
     "babel-plugin-istanbul": "8.0.2",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1531",
+    "clientnode": "4.0.1532",
     "ejs": "^7.0.2",
     "exports-loader": "^5.0.0",
     "extract-loader": "^5.1.0",
     "glob-all": "^3.3.1",
     "html-loader": "^5.1.0",
-    "html-minifier": "^5.1.0",
+    "html-minifier": "^5.2.0",
     "html-webpack-plugin": "^5.6.8",
     "imports-loader": "^5.0.0",
     "jest-environment-jsdom": "^30.5.2",
@@ -111,7 +109,7 @@
     "@babel/core": "^8.1.2",
     "@babel/eslint-parser": "^8.1.2",
     "@eslint/js": "^10.0.1",
-    "@stylistic/eslint-plugin": "^5.10.0",
+    "@stylistic/eslint-plugin": "^6.0.0",
     "@types/ejs": "^3.1.5",
     "@types/eslint": "^9.6.1",
     "@types/html-minifier-terser": "^7.0.2",
@@ -133,7 +131,7 @@
     "jest": "^30.5.2",
     "jsdoc": "^4.0.5",
     "mini-css-extract-plugin": "^2.10.2",
-    "minimizer-webpack-plugin": "^5.13.0",
+    "minimizer-webpack-plugin": "^5.14.0",
     "mkdirp": "^3.0.1",
     "node-fetch": "^3.3.2",
     "postcss": "^8.5.33",
@@ -149,7 +147,7 @@
     "stylelint-config-standard": "^41.0.0",
     "typescript-eslint": "^8.72.2",
     "typescript-plugin-css-modules": "^5.3.0",
-    "web-documentation": "^1.0.74",
+    "web-documentation": "^1.0.76",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "peerDependencies": {
