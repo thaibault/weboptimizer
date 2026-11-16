@@ -5699,9 +5699,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stylistic/eslint-plugin@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@stylistic/eslint-plugin@npm:6.0.0"
+"@stylistic/eslint-plugin@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@stylistic/eslint-plugin@npm:6.0.1"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.10.1"
     "@typescript-eslint/types": "npm:^8.72.2"
@@ -5716,7 +5716,7 @@ __metadata:
       optional: true
     oxlint:
       optional: true
-  checksum: 10c0/8820cece908d12e4e3f4a5443148128721ed4fff93f954855424b2b53f28697734d739d8a37661171dd34c2f91436d107b80e5e9ab3e37ea7aee83ef738487e6
+  checksum: 10c0/0a52be780f60997a83291a6da6d9c1bbd2e54c2d00b8929e27dd38d5565a8d621786994eec2a58b86aa3e0c7c10815180b5e2ff817a51b5386636cf26ebfd502
   languageName: node
   linkType: hard
 
@@ -18568,7 +18568,7 @@ __metadata:
     "@babel/preset-env": "npm:^8.0.7"
     "@babel/preset-typescript": "npm:^8.0.7"
     "@eslint/js": "npm:^10.0.1"
-    "@stylistic/eslint-plugin": "npm:^6.0.0"
+    "@stylistic/eslint-plugin": "npm:^6.0.1"
     "@types/ejs": "npm:^3.1.5"
     "@types/eslint": "npm:^9.6.1"
     "@types/html-minifier-terser": "npm:^7.0.2"
