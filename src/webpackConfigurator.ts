@@ -97,6 +97,7 @@ import {
     determineAssetType,
     determineExternalRequest,
     determineModuleFilePath,
+    determineStyleExport,
     getClosestPackageDescriptor,
     isFilePathInLocation,
     normalizePaths,
@@ -960,11 +961,13 @@ const evaluateAdditionalLoaderConfiguration = (
 const getIncludingPaths = (path: string): Array<string> =>
     normalizePaths([path].concat(module.locations.directoryPaths))
 
-const postCSSResolver = (name: string, _context: string) => {
+const postCSSResolver = (name: string, context: string) => {
     for (const [source, target] of Object.entries(configuration.module.aliases))
         if (source.startsWith(name))
             return target
-    return name
+    return determineStyleExport(
+        name, context, normalizePaths(module.directoryNames)
+    ) ?? name
 }
 const cssUse: RuleSet = (await Promise.all(
     module.preprocessor.cascadingStyleSheet.additional.pre

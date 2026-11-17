@@ -45,6 +45,7 @@ import {
     represent,
     walkDirectoryRecursivelySync
 } from 'clientnode'
+import enhancedResolve from 'enhanced-resolve'
 import {existsSync, readFileSync} from 'fs'
 import {
     basename, dirname, extname, join, normalize, resolve, sep, relative
@@ -70,6 +71,9 @@ export const KNOWN_FILE_EXTENSIONS: Array<string> = [
 export const KNOWN_PATHS_TO_IGNORE: Array<string> =
     ['.cache', '.claude', '.git', '.github', '.idea', '.yarn']
 export const log = new Logger({name: 'weboptimizer.helper'})
+
+type StyleResolver = ReturnType<typeof enhancedResolve.create.sync>
+const STYLE_RESOLVER_CACHE = new Map<string, StyleResolver>()
 // endregion
 // region functions
 // region boolean
@@ -1075,6 +1079,50 @@ export const applyAliases = (moduleID: string, aliases: Mapping): string => {
             moduleID = moduleID.replace(name, alias)
 
     return moduleID
+}
+/**
+ * Determines the style file path of given bare module request via its
+ * package's "exports" field (respecting the "style" condition) or "style"
+ * main field. Tools like "postcss-import" do not respect package exports so
+ * style only exports like "{'./index.css': {style: './dist/index.css'}}"
+ * would not be found otherwise.
+ * @param moduleID - Module id to determine.
+ * @param context - Directory to resolve given module id from.
+ * @param moduleDirectoryNames - Directory names to search modules in.
+ * @param extensions - File extensions a determined style file may have.
+ * @returns Determined file path or "null" if given module id is not a bare
+ * request or does not resolve to a style file.
+ */
+export const determineStyleExport = (
+    moduleID: string,
+    context: string,
+    moduleDirectoryNames: Array<string> = ['node_modules'],
+    extensions: Array<string> = ['.css']
+): null | string => {
+    if (/^(?:[./~]|[a-z]+:)/i.test(moduleID))
+        return null
+
+    const key: string =
+        JSON.stringify([moduleDirectoryNames, extensions])
+    if (!STYLE_RESOLVER_CACHE.has(key))
+        STYLE_RESOLVER_CACHE.set(key, enhancedResolve.create.sync({
+            conditionNames: ['style'],
+            extensions,
+            mainFields: ['style'],
+            modules: moduleDirectoryNames
+        }))
+
+    try {
+        const filePath =
+            (STYLE_RESOLVER_CACHE.get(key) as StyleResolver)(context, moduleID)
+
+        if (filePath && extensions.includes(extname(filePath)))
+            return filePath
+    } catch {
+        // Let the caller fall back to its own resolving strategy.
+    }
+
+    return null
 }
 /**
  * Determines a concrete file path for given module id.

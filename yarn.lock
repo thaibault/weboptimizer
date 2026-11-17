@@ -18588,6 +18588,7 @@ __metadata:
     css-loader: "npm:^7.1.5"
     cssnano: "npm:^9.9.0"
     ejs: "npm:^7.0.2"
+    enhanced-resolve: "npm:^5.26.0"
     eslint: "npm:^10.15.0"
     eslint-config-google: "npm:^0.14.0"
     eslint-plugin-jsdoc: "npm:^65.4.8"

@@ -14,7 +14,7 @@
     endregion
 */
 // region imports
-import type {FirstParameter} from 'clientnode'
+import type {FirstParameter, Mapping} from 'clientnode'
 
 import type {
     BuildConfiguration, PackageConfiguration, PathConfiguration, Replacements
@@ -22,7 +22,9 @@ import type {
 
 import {describe, expect, test} from '@jest/globals'
 import {testEach, testEachAgainstSameExpectation} from 'clientnode/test-helper'
-import {resolve} from 'path'
+import {mkdir, mkdtemp, realpath, rm, writeFile} from 'fs/promises'
+import {tmpdir} from 'os'
+import {join, resolve} from 'path'
 
 import {
     applyAliases,
@@ -33,6 +35,7 @@ import {
     determineModuleFilePath,
     determineModuleFilePathInPackage,
     determineModuleLocations,
+    determineStyleExport,
     findPackageDescriptorFilePath,
     getAutoInjection,
     getClosestPackageDescriptor,
@@ -713,6 +716,65 @@ describe('helper', (): void => {
                 )
         }
     )
+    test('determineStyleExport', async (): Promise<void> => {
+        const path: string = await realpath(
+            await mkdtemp(join(tmpdir(), 'weboptimizer-helper-'))
+        )
+        const modulesPath: string = join(path, 'node_modules')
+        /**
+         * Creates a mockup package with given descriptor and empty files.
+         * @param name - Package name.
+         * @param descriptor - Additional package descriptor properties.
+         * @param filePaths - Files to create relative to the package.
+         */
+        const createPackage = async (
+            name: string,
+            descriptor: Mapping<unknown>,
+            filePaths: Array<string>
+        ): Promise<void> => {
+            await mkdir(join(modulesPath, name, 'dist'), {recursive: true})
+            await writeFile(
+                join(modulesPath, name, 'package.json'),
+                JSON.stringify({name, ...descriptor})
+            )
+            for (const filePath of filePaths)
+                await writeFile(join(modulesPath, name, filePath), '')
+        }
+
+        try {
+            await createPackage(
+                'exported',
+                {exports: {
+                    '.': './dist/index.js',
+                    './index.css': {style: './dist/index.css'}
+                }},
+                ['dist/index.css', 'dist/index.js']
+            )
+            await createPackage('scripted', {main: 'index.js'}, ['index.js'])
+            await createPackage('styled', {style: 'main.css'}, ['main.css'])
+
+            expect(determineStyleExport('exported/index.css', path))
+                .toStrictEqual(join(modulesPath, 'exported/dist/index.css'))
+            expect(determineStyleExport('styled', path))
+                .toStrictEqual(join(modulesPath, 'styled/main.css'))
+
+            for (const moduleID of [
+                // Resolves to a script.
+                'exported',
+                // Not exported.
+                'exported/dist/index.css',
+                'missing/index.css',
+                'scripted',
+                // Not a bare request.
+                './index.css',
+                '/index.css',
+                'https://example.com/index.css'
+            ])
+                expect(determineStyleExport(moduleID, path)).toBeNull()
+        } finally {
+            await rm(path, {force: true, recursive: true})
+        }
+    })
     test('getClosestPackageDescriptor', async (): Promise<void> => {
         await expect(getClosestPackageDescriptor('./', 'not-existing.json'))
             .resolves.toStrictEqual(null)
