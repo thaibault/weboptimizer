@@ -87,10 +87,9 @@ const {
     HotModuleReplacementPlugin,
     IgnorePlugin,
     NormalModuleReplacementPlugin,
-    ProvidePlugin
+    ProvidePlugin,
+    sources: {RawSource: WebpackRawSource}
 } = webpack
-import webpackSources from 'webpack-sources'
-const {RawSource: WebpackRawSource} = webpackSources
 
 import getConfiguration from './configurator'
 import {
