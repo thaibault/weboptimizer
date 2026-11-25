@@ -35,15 +35,15 @@
     "./browser.js": "./dist/browser.js",
     "./ejsLoader": "./dist/ejsLoader.js",
     "./ejsLoader.js": "./dist/ejsLoader.js",
+    "./extractLoader": "./dist/extractLoader.js",
+    "./extractLoader.js": "./dist/extractLoader.js",
     "./tsconfig.application.json": "./tsconfig.application.json",
     "./tsconfig.json": "./tsconfig.json",
     "./tsconfig.library.json": "./tsconfig.library.json",
     "./type": "./dist/type.js",
     "./type.js": "./dist/type.js"
   },
-  "bin": {
-    "weboptimizer": "dist/index.js"
-  },
+  "bin": "dist/index.js",
   "files": [
     "dist/*.d.ts",
     "dist/*.js",
@@ -72,7 +72,7 @@
     "lint:base": "eslint --config dist/eslint.config.js --no-warn-ignored src/*.ts src/*/*.ts src/test/*/*.ts",
     "prepare": "yarn build",
     "prettify": "yarn lint:base --fix || true",
-    "test": "yarn build:test && node --experimental-vm-modules node_modules/.bin/jest --config ./weboptimizerJest.json --noStackTrace --root-dir './' --test-regex '/dist/test/.+\\\\.js$' dist/test/browser.js dist/test/configurator.js dist/test/ejsLoader.js dist/test/helper.js dist/test/HTMLTransformation.js dist/test/InPlaceAssetsIntoHTML.js dist/test/RemoveStyleOnlyScripts.js dist/test/stylelintConfigurator.js dist/test/index.js dist/test/webpackConfigurator.js",
+    "test": "yarn build:test && node --experimental-vm-modules node_modules/.bin/jest --config ./weboptimizerJest.json --noStackTrace --root-dir './' --test-regex '/dist/test/.+\\\\.js$' dist/test/browser.js dist/test/configurator.js dist/test/ejsLoader.js dist/test/extractLoader.js dist/test/helper.js dist/test/HTMLTransformation.js dist/test/InPlaceAssetsIntoHTML.js dist/test/RemoveStyleOnlyScripts.js dist/test/stylelintConfigurator.js dist/test/index.js dist/test/webpackConfigurator.js",
     "test:coverage": "yarn test --ci --coverage --coverageReporters=text --coverageReporters=text-summary --silent --testLocationInResults",
     "test:coverage:report": "yarn test:coverage --coverageDirectory=.coverage --coverageReporters=lcov --outputFile=lcov.info",
     "test:watch": "yarn test --watch",
@@ -94,7 +94,6 @@
     "ejs": "^7.0.2",
     "enhanced-resolve": "^5.26.0",
     "exports-loader": "^5.0.0",
-    "extract-loader": "^5.1.0",
     "glob-all": "^3.3.1",
     "html-loader": "^5.1.0",
     "html-minifier": "^5.2.0",
@@ -887,7 +886,8 @@
       "library": true,
       "loader": {
         "aliases": {
-          "ejs-loader": "weboptimizer/ejsLoader"
+          "ejs-loader": "weboptimizer/ejsLoader",
+          "extract-loader": "weboptimizer/extractLoader"
         },
         "directoryNames": [
           "node_modules"

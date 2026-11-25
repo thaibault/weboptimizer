@@ -1128,6 +1128,15 @@ const cssUse: RuleSet = (await Promise.all(
                 .map(createEvaluateMapper('css'))
         ))
     ) as RuleSet
+/*
+    An even number of ejs compile steps results in plain html (instead of a
+    template function) which we have to parse and extract afterward.
+*/
+const ejsResultsInHTML = !((
+    isPlainObject(module.preprocessor.html.options) ?
+        module.preprocessor.html.options as EJSLoaderConfiguration :
+        {compileSteps: 2}
+).compileSteps % 2)
 
 const genericLoader: GenericLoader = {
     // Convert to compatible native web types.
@@ -1243,6 +1252,8 @@ const genericLoader: GenericLoader = {
                 ),
             include: configuration.path.source.asset.template,
             test: /\.html\.ejs(?:\?.*)?$/i,
+            // Exports the resulting html as string.
+            ...(ejsResultsInHTML ? {type: 'asset/source'} : {}),
             use: (await Promise.all(
                 module.preprocessor.html.additional.pre
                     .map(createEvaluateMapper<Promise<RuleSetItem>>(
@@ -1255,22 +1266,15 @@ const genericLoader: GenericLoader = {
                         parse html beforehand. If not we parse it as html
                         directly.
                     */
-                    (
-                        (
-                            isPlainObject(module.preprocessor.html.options) ?
-                                module.preprocessor.html.options as
-                                    EJSLoaderConfiguration :
-                                {compileSteps: 2}
-                        ).compileSteps % 2 ?
-                            [] :
-                            [
-                                {loader: 'extract'},
-                                {
-                                    loader: module.html.loader,
-                                    options: module.html.options || {}
-                                }
-                            ]
-                    ),
+                    ejsResultsInHTML ?
+                        [
+                            {loader: 'extract-loader'},
+                            {
+                                loader: module.html.loader,
+                                options: module.html.options || {}
+                            }
+                        ] :
+                        [],
                     {
                         loader: module.preprocessor.html.loader,
                         options: module.preprocessor.html.options || {}
@@ -1299,26 +1303,33 @@ const genericLoader: GenericLoader = {
                             {filePath, type: 'html'}
                         )
                 ),
+            generator: {
+                filename: join(
+                    relative(
+                        configuration.path.target.base,
+                        configuration.path.target.asset.template
+                    ),
+                    `[name][ext]?${configuration.hashAlgorithm}=[contenthash]`
+                )
+            },
             include: configuration.path.source.asset.template,
             test: /\.html(?:\?.*)?$/i,
+            // Emits the extracted html file and exports its url.
+            type: 'asset/resource',
             use: (await Promise.all(
                 module.html.additional.pre
                     .map(createEvaluateMapper('html'))
             ))
                 .concat(
                     {
-                        loader:
-                           'file?name=' +
-                            join(
-                                relative(
-                                    configuration.path.target.base,
-                                    configuration.path.target.asset.template
-                                ),
-                                `[name][ext]?${configuration.hashAlgorithm}=` +
-                                '[contenthash]'
+                        loader: 'extract-loader',
+                        options: {
+                            outputDirectory: relative(
+                                configuration.path.target.base,
+                                configuration.path.target.asset.template
                             )
+                        }
                     },
-                    {loader: 'extract'},
                     {
                         loader: module.html.loader,
                         options: module.html.options || {}
