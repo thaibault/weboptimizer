@@ -114,7 +114,7 @@
     "@types/ejs": "^3.1.5",
     "@types/eslint": "^9.6.1",
     "@types/html-minifier-terser": "^7.0.2",
-    "@types/node": "^26.6.6",
+    "@types/node": "^26.6.10",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
@@ -124,7 +124,7 @@
     "cssnano": "^9.9.0",
     "eslint": "^10.15.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^65.5.4",
+    "eslint-plugin-jsdoc": "^65.5.5",
     "favicons": "^7.3.1",
     "favicons-webpack-plugin": "^6.0.1",
     "globals": "^17.14.0",
@@ -1795,5 +1795,5 @@
       "frFR"
     ]
   },
-  "packageManager": "yarn@4.18.1+sha512.b2e1e7524f654f2749d32b4ebcb4622473cb5bcbc485df2007e12a154e50162a4d795526768bc5f5b8f81717bfd79deb2472813d86fb5ae2eb551fa9c872b08f"
+  "packageManager": "yarn@4.19.0+sha512.2cb9e5a36f7f11f2bc6ff444830d87368d419e0d83b6a0fb6077d3e6fed0f476c9514dff4ba4d84b049bd34ef32954e550f264ad2fbbfebcba6c89e869530bba"
 }

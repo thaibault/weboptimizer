@@ -6077,12 +6077,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^26.6.6":
-  version: 26.6.6
-  resolution: "@types/node@npm:26.6.6"
+"@types/node@npm:^26.6.10":
+  version: 26.6.10
+  resolution: "@types/node@npm:26.6.10"
   dependencies:
     undici-types: "npm:~8.9.0"
-  checksum: 10c0/5cb63f644f6e85a257a9cd2403cbcbe196760e2a35fd3ec9fb8b5cff663e14cc832b198cc17b53f870a2e30900ed45a1fb3f53e6589aba26b8e8c484aa672053
+  checksum: 10c0/d249c40c72ee1e61aeb9633263e5ebf428359206926a2ca12435cf7112e09a49aa5ef7a787e413fdf66b9ad8f41fb474eeb4e18e31e9b49a64033393e888ce56
   languageName: node
   linkType: hard
 
@@ -7583,16 +7583,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"baseline-browser-mapping@npm:^2.11.26, baseline-browser-mapping@npm:^2.9.0":
-  version: 2.11.37
-  resolution: "baseline-browser-mapping@npm:2.11.37"
-  bin:
-    baseline-browser-mapping: dist/cli.cjs
-  checksum: 10c0/48322036bee156d700d1511045abcce3be6cd596d4fadd2e383960ba4206ef4f5eb8c1485481443f931e9b972ab5d9a6f91ec19e7e7778c197fcda88bcf27349
-  languageName: node
-  linkType: hard
-
-"baseline-browser-mapping@npm:^2.11.37":
+"baseline-browser-mapping@npm:^2.11.26, baseline-browser-mapping@npm:^2.11.37, baseline-browser-mapping@npm:^2.9.0":
   version: 2.11.39
   resolution: "baseline-browser-mapping@npm:2.11.39"
   bin:
@@ -7901,17 +7892,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001587, caniuse-lite@npm:^1.0.30001663, caniuse-lite@npm:^1.0.30001759, caniuse-lite@npm:^1.0.30001813":
-  version: 1.0.30001826
-  resolution: "caniuse-lite@npm:1.0.30001826"
-  checksum: 10c0/11e9dba4dd105d270f69da022ce6a47be67cd1cc376f74029f99524ba8141a840153aa285f22c9a643a2fe608ffc0879592bcc9b7c20ad6875ad7ede663a1a6d
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001826":
-  version: 1.0.30001827
-  resolution: "caniuse-lite@npm:1.0.30001827"
-  checksum: 10c0/219e1b503b2a462f862700c90ec13df61ece2f09b1c1a23cbda0e0c46eb5376dddadc13d9512fa7ada4bc17cc64192387c2709ce6c5c5442baf3cd2bf918a9ac
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001587, caniuse-lite@npm:^1.0.30001663, caniuse-lite@npm:^1.0.30001759, caniuse-lite@npm:^1.0.30001813, caniuse-lite@npm:^1.0.30001826":
+  version: 1.0.30001828
+  resolution: "caniuse-lite@npm:1.0.30001828"
+  checksum: 10c0/502039ade9e280fdcd3362673f615587f4b363ab4a002f6a2c006979928ab3a79a16ea335b76757e3d07c30cefa4b0526b44182b498fe2c8dc52680706d4d960
   languageName: node
   linkType: hard
 
@@ -9527,9 +9511,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^65.5.4":
-  version: 65.5.4
-  resolution: "eslint-plugin-jsdoc@npm:65.5.4"
+"eslint-plugin-jsdoc@npm:^65.5.5":
+  version: 65.5.5
+  resolution: "eslint-plugin-jsdoc@npm:65.5.5"
   dependencies:
     "@es-joy/escodegen": "npm:^5.0.1"
     "@es-joy/jsdoccomment": "npm:~1.2.1"
@@ -9553,7 +9537,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/b40e994a1dfc83b5a05c16cf01eb413ba6fce2eb52608ad0b7bdf574f9b9b79929500402abd485b78bd10c0101e472243d856be9fc58071819cde4b41ca3761d
+  checksum: 10c0/5b0aae3fe4b421adcf6e63543b6ac11a860d89c310edfae558d93729247e1493228b314a27c1f7bee7e9ded4e121b12995b5a59f7cc17d3e75da2a88656526fc
   languageName: node
   linkType: hard
 
@@ -17949,7 +17933,7 @@ __metadata:
     "@types/ejs": "npm:^3.1.5"
     "@types/eslint": "npm:^9.6.1"
     "@types/html-minifier-terser": "npm:^7.0.2"
-    "@types/node": "npm:^26.6.6"
+    "@types/node": "npm:^26.6.10"
     "@types/postcss-import": "npm:^14.0.3"
     "@types/postcss-url": "npm:^10.0.4"
     "@types/webpack-env": "npm:^1.18.8"
@@ -17967,7 +17951,7 @@ __metadata:
     enhanced-resolve: "npm:^5.27.0"
     eslint: "npm:^10.15.0"
     eslint-config-google: "npm:^0.14.0"
-    eslint-plugin-jsdoc: "npm:^65.5.4"
+    eslint-plugin-jsdoc: "npm:^65.5.5"
     exports-loader: "npm:^5.0.0"
     favicons: "npm:^7.3.1"
     favicons-webpack-plugin: "npm:^6.0.1"
