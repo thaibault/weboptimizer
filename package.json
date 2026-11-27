@@ -43,9 +43,7 @@
     "./type": "./dist/type.js",
     "./type.js": "./dist/type.js"
   },
-  "bin": {
-    "weboptimizer": "dist/index.js"
-  },
+  "bin": "dist/index.js",
   "files": [
     "dist/*.d.ts",
     "dist/*.js",
@@ -92,7 +90,7 @@
     "babel-plugin-istanbul": "8.0.2",
     "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-rewrite-imports": "^1.5.4",
-    "clientnode": "4.0.1532",
+    "clientnode": "4.0.1533",
     "ejs": "^7.0.2",
     "enhanced-resolve": "^5.27.0",
     "exports-loader": "^5.0.0",
@@ -116,7 +114,7 @@
     "@types/ejs": "^3.1.5",
     "@types/eslint": "^9.6.1",
     "@types/html-minifier-terser": "^7.0.2",
-    "@types/node": "^26.6.10",
+    "@types/node": "^26.6.11",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
     "@types/webpack-env": "^1.18.8",
@@ -126,7 +124,7 @@
     "cssnano": "^9.9.0",
     "eslint": "^10.15.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^65.5.5",
+    "eslint-plugin-jsdoc": "^65.5.6",
     "favicons": "^7.3.1",
     "favicons-webpack-plugin": "^6.0.1",
     "globals": "^17.14.0",
@@ -149,7 +147,7 @@
     "stylelint-config-standard": "^41.1.0",
     "typescript-eslint": "^8.74.0",
     "typescript-plugin-css-modules": "^5.3.1",
-    "web-documentation": "^1.0.77",
+    "web-documentation": "^2.0.0",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "peerDependencies": {

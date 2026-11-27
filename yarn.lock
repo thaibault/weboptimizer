@@ -6077,12 +6077,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^26.6.10":
-  version: 26.6.10
-  resolution: "@types/node@npm:26.6.10"
+"@types/node@npm:^26.6.11":
+  version: 26.6.11
+  resolution: "@types/node@npm:26.6.11"
   dependencies:
     undici-types: "npm:~8.9.0"
-  checksum: 10c0/d249c40c72ee1e61aeb9633263e5ebf428359206926a2ca12435cf7112e09a49aa5ef7a787e413fdf66b9ad8f41fb474eeb4e18e31e9b49a64033393e888ce56
+  checksum: 10c0/9771f1140557ee98f65de05fdc50a4da8d0e602bbbedf206b41f679f95fb52c9a39d854ad813dc3e4f1fb9a4c22f1b4d324607eb299670c515d3ab093701e815
   languageName: node
   linkType: hard
 
@@ -8016,9 +8016,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clientnode@npm:4.0.1532":
-  version: 4.0.1532
-  resolution: "clientnode@npm:4.0.1532"
+"clientnode@npm:4.0.1533":
+  version: 4.0.1533
+  resolution: "clientnode@npm:4.0.1533"
   peerDependencies:
     "@types/prop-types": "*"
     core-js: "*"
@@ -8031,7 +8031,7 @@ __metadata:
       optional: true
     prop-types:
       optional: true
-  checksum: 10c0/c68cde696bf7308bdc929ca6d6e1a0431cdf4e6bc54848ba673d3fa49168c791fe80eb0dc79b8304fd9b4c3fc882b03b26a5c89fa6324fd85c035de32ede73e6
+  checksum: 10c0/50c3007504d57d222139131cd2135d44b835b44a18975985af9e769dfc7d636895d5176d695360582c9b7ec3e637732ad67acc447da3d05124233409c3539be2
   languageName: node
   linkType: hard
 
@@ -9511,9 +9511,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^65.5.5":
-  version: 65.5.5
-  resolution: "eslint-plugin-jsdoc@npm:65.5.5"
+"eslint-plugin-jsdoc@npm:^65.5.6":
+  version: 65.5.6
+  resolution: "eslint-plugin-jsdoc@npm:65.5.6"
   dependencies:
     "@es-joy/escodegen": "npm:^5.0.1"
     "@es-joy/jsdoccomment": "npm:~1.2.1"
@@ -9537,7 +9537,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/5b0aae3fe4b421adcf6e63543b6ac11a860d89c310edfae558d93729247e1493228b314a27c1f7bee7e9ded4e121b12995b5a59f7cc17d3e75da2a88656526fc
+  checksum: 10c0/7ed8909f6bf540ad1c4ed7c92718797ccfc4ed12e13ffb7abcde280cf57016cfb48ddbe0146bdf3058878ab746a55ec3454f38b34f838a74354a8ba5eac0896b
   languageName: node
   linkType: hard
 
@@ -17886,12 +17886,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-documentation@npm:^1.0.77":
-  version: 1.0.77
-  resolution: "web-documentation@npm:1.0.77"
+"web-documentation@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "web-documentation@npm:2.0.0"
   bin:
     web-documentation: dist/deploy.js
-  checksum: 10c0/48e01e75e515815a46108925fa3c115aee20654340f6f7ceabfe84e1fa12dbd3c04d710ac4835818c9c333f2037cb1dffb48cfe4e489eb665a4227ff05f4e5e5
+  checksum: 10c0/991771c56e2c51ba0771439fbadedc25fec973f0077bca36cf8ebe93a57027abbc8b2d5a81a9c265d6d936a7f3ab3ac1bedf0a49a312cc7e1f69786151e246ac
   languageName: node
   linkType: hard
 
@@ -17933,7 +17933,7 @@ __metadata:
     "@types/ejs": "npm:^3.1.5"
     "@types/eslint": "npm:^9.6.1"
     "@types/html-minifier-terser": "npm:^7.0.2"
-    "@types/node": "npm:^26.6.10"
+    "@types/node": "npm:^26.6.11"
     "@types/postcss-import": "npm:^14.0.3"
     "@types/postcss-url": "npm:^10.0.4"
     "@types/webpack-env": "npm:^1.18.8"
@@ -17943,7 +17943,7 @@ __metadata:
     babel-plugin-istanbul: "npm:8.0.2"
     babel-plugin-polyfill-corejs3: "npm:^1.0.0"
     babel-plugin-transform-rewrite-imports: "npm:^1.5.4"
-    clientnode: "npm:4.0.1532"
+    clientnode: "npm:4.0.1533"
     core-js: "npm:^3.51.0"
     css-loader: "npm:^7.1.5"
     cssnano: "npm:^9.9.0"
@@ -17951,7 +17951,7 @@ __metadata:
     enhanced-resolve: "npm:^5.27.0"
     eslint: "npm:^10.15.0"
     eslint-config-google: "npm:^0.14.0"
-    eslint-plugin-jsdoc: "npm:^65.5.5"
+    eslint-plugin-jsdoc: "npm:^65.5.6"
     exports-loader: "npm:^5.0.0"
     favicons: "npm:^7.3.1"
     favicons-webpack-plugin: "npm:^6.0.1"
@@ -17983,7 +17983,7 @@ __metadata:
     typescript: "npm:@typescript/typescript6@^6.0.2"
     typescript-eslint: "npm:^8.74.0"
     typescript-plugin-css-modules: "npm:^5.3.1"
-    web-documentation: "npm:^1.0.77"
+    web-documentation: "npm:^2.0.0"
     webpack: "npm:5.113.0"
     webpack-cli: "npm:^7.3.1"
     workbox-webpack-plugin: "npm:^7.4.1"
