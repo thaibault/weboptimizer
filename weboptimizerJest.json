@@ -2,6 +2,7 @@
     "moduleNameMapper": {
         "\\.((css)|(less)|(sass)|(scss))$": "identity-obj-proxy"
     },
+    "globalTeardown": "<rootDir>/dist/test/globalTeardown.js",
     "rootDir": "../../",
     "setupFilesAfterEnv": ["./dist/jestSetup.js"],
     "testPathIgnorePatterns": ["^(.*[/])?test-?[hH]elper([./].*)?$"]
