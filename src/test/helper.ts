@@ -24,7 +24,7 @@ import {describe, expect, test} from '@jest/globals'
 import {testEach, testEachAgainstSameExpectation} from 'clientnode/test-helper'
 import {mkdir, mkdtemp, realpath, rm, writeFile} from 'fs/promises'
 import {tmpdir} from 'os'
-import {join, resolve} from 'path'
+import {join, resolve, sep} from 'path'
 
 import {
     applyAliases,
@@ -472,6 +472,24 @@ describe('helper', (): void => {
                 outputExtension: 'other'
             }
         ])
+        // NOTE: The fixture's own installed "node_modules" has to be skipped.
+        const fixturePath = resolve(SOURCE_PATH, 'test/simple')
+        const [{filePaths}] = resolveBuildConfigurationFilePaths(
+            {
+                json: {
+                    extension: 'json',
+                    filePathPattern: '^$',
+                    ignoredExtension: '',
+                    outputExtension: 'json'
+                }
+            },
+            fixturePath,
+            []
+        )
+        expect(filePaths).toContain(resolve(fixturePath, 'package.json'))
+        expect(filePaths.filter((filePath: string): boolean =>
+            filePath.includes(`${sep}node_modules${sep}`)
+        )).toStrictEqual([])
     })
     testEach(
         'determineModuleLocations',

@@ -454,28 +454,44 @@ export const determineAssetType = (
  * @param entryPath - Path to analyze nested structure.
  * @param pathsToIgnore - Paths which marks location to ignore.
  * @param mainFileBasenames - File basenames to sort into the front.
+ * @param moduleDirectoryNames - Directory names which mark (nested) module
+ * locations to skip at any depth.
  * @returns Converted build configuration.
  */
 export const resolveBuildConfigurationFilePaths = (
     configuration: BuildConfiguration,
     entryPath = './',
     pathsToIgnore: Array<string> = KNOWN_PATHS_TO_IGNORE,
-    mainFileBasenames: Array<string> = ['index', 'main']
+    mainFileBasenames: Array<string> = ['index', 'main'],
+    moduleDirectoryNames: Array<string> = ['node_modules']
 ): ResolvedBuildConfiguration => {
     const buildConfiguration: ResolvedBuildConfiguration = []
+    const values = Object.values(configuration)
+    /*
+        NOTE: Walk only once for all build types and skip nested module
+        directories since walking them is expensive and they never contain
+        project assets.
+    */
+    const files: Array<File> = values.length ?
+        walkDirectoryRecursivelySync(
+            entryPath,
+            (file: File): false | undefined => {
+                if (
+                    isFilePathInLocation(file.path, pathsToIgnore) ||
+                    file.stats?.isDirectory() &&
+                    moduleDirectoryNames.includes(file.name)
+                )
+                    return false
+            }
+        ) :
+        []
 
-    for (const value of Object.values(configuration)) {
+    for (const value of values) {
         const newItem: ResolvedBuildConfigurationItem = extend<
             ResolvedBuildConfigurationItem
         >(true, {filePaths: []}, value)
 
-        for (const file of walkDirectoryRecursivelySync(
-            entryPath,
-            (file: File): false | undefined => {
-                if (isFilePathInLocation(file.path, pathsToIgnore))
-                    return false
-            }
-        ))
+        for (const file of files)
             if (
                 file.stats?.isFile() &&
                 file.path.endsWith(`.${newItem.extension}`) &&

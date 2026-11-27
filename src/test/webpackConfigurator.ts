@@ -18,7 +18,7 @@ import type {Mapping} from 'clientnode'
 
 import type {WebpackConfiguration} from '../type'
 
-import {afterAll, expect, test} from '@jest/globals'
+import {afterAll, expect, jest, test} from '@jest/globals'
 import {resolve} from 'path'
 import webpack from 'webpack'
 // endregion
@@ -31,6 +31,12 @@ process.chdir(resolve(import.meta.dirname, '../../src'))
 afterAll((): void => {
     process.chdir(PREVIOUS_WORKING_DIRECTORY)
 })
+/*
+    NOTE: Loading the whole configuration (all plugins) can exceed the default
+    five seconds when running next to the spawned fixture builds of the
+    "index" test.
+*/
+jest.setTimeout(60 * 1000)
 
 test('webpackConfigurator', async (): Promise<void> => {
     const webpackConfiguration: WebpackConfiguration = (await import(

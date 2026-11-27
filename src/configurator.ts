@@ -574,7 +574,10 @@ export const load = async (
                     !resolvedConfiguration.path.context.startsWith(filePath)
                 )
             ),
-            resolvedConfiguration.package.main.fileNames
+            resolvedConfiguration.package.main.fileNames,
+            resolvedConfiguration.module.directoryNames.concat(
+                resolvedConfiguration.loader.directoryNames
+            )
         ),
         resolvedConfiguration.module.aliases,
         resolvedConfiguration.module.replacements.normal,

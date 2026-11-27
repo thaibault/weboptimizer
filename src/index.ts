@@ -370,7 +370,10 @@ const main = async (
                     ).filter((filePath: string): boolean =>
                         !configuration.path.context.startsWith(filePath)
                     ),
-                    configuration.package.main.fileNames
+                    configuration.package.main.fileNames,
+                    configuration.module.directoryNames.concat(
+                        configuration.loader.directoryNames
+                    )
                 )
 
             if ([
