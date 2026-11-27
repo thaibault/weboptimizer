@@ -45,6 +45,7 @@
 */
 // region imports
 import { copy, escapeRegularExpressions, extend, importFilesystemAPI, isAnyMatching, isDirectorySync, isFileSync, isPlainObject, Logger, represent, walkDirectoryRecursivelySync } from 'clientnode';
+import enhancedResolve from 'enhanced-resolve';
 import { existsSync, readFileSync } from 'fs';
 import { basename, dirname, extname, join, normalize, resolve, sep, relative } from 'path';
 // endregion
@@ -55,6 +56,7 @@ export const KNOWN_PATHS_TO_IGNORE = ['.cache', '.claude', '.git', '.github', '.
 export const log = new Logger({
   name: 'weboptimizer.helper'
 });
+const STYLE_RESOLVER_CACHE = new Map();
 // endregion
 // region functions
 // region boolean
@@ -261,17 +263,26 @@ export const determineAssetType = (filePath, buildConfiguration, paths) => {
  * @param entryPath - Path to analyze nested structure.
  * @param pathsToIgnore - Paths which marks location to ignore.
  * @param mainFileBasenames - File basenames to sort into the front.
+ * @param moduleDirectoryNames - Directory names which mark (nested) module
+ * locations to skip at any depth.
  * @returns Converted build configuration.
  */
-export const resolveBuildConfigurationFilePaths = (configuration, entryPath = './', pathsToIgnore = KNOWN_PATHS_TO_IGNORE, mainFileBasenames = ['index', 'main']) => {
+export const resolveBuildConfigurationFilePaths = (configuration, entryPath = './', pathsToIgnore = KNOWN_PATHS_TO_IGNORE, mainFileBasenames = ['index', 'main'], moduleDirectoryNames = ['node_modules']) => {
   const buildConfiguration = [];
-  for (const value of Object.values(configuration)) {
+  const values = Object.values(configuration);
+  /*
+      NOTE: Walk only once for all build types and skip nested module
+      directories since walking them is expensive and they never contain
+      project assets.
+  */
+  const files = values.length ? walkDirectoryRecursivelySync(entryPath, file => {
+    if (isFilePathInLocation(file.path, pathsToIgnore) || file.stats?.isDirectory() &amp;&amp; moduleDirectoryNames.includes(file.name)) return false;
+  }) : [];
+  for (const value of values) {
     const newItem = extend(true, {
       filePaths: []
     }, value);
-    for (const file of walkDirectoryRecursivelySync(entryPath, file => {
-      if (isFilePathInLocation(file.path, pathsToIgnore)) return false;
-    })) if (file.stats?.isFile() &amp;&amp; file.path.endsWith(`.${newItem.extension}`) &amp;&amp; !(newItem.ignoredExtension &amp;&amp; file.path.endsWith(`.${newItem.ignoredExtension}`)) &amp;&amp; !new RegExp(newItem.filePathPattern).test(file.path)) newItem.filePaths.push(file.path);
+    for (const file of files) if (file.stats?.isFile() &amp;&amp; file.path.endsWith(`.${newItem.extension}`) &amp;&amp; !(newItem.ignoredExtension &amp;&amp; file.path.endsWith(`.${newItem.ignoredExtension}`)) &amp;&amp; !new RegExp(newItem.filePathPattern).test(file.path)) newItem.filePaths.push(file.path);
     newItem.filePaths.sort((firstFilePath, secondFilePath) => {
       if (mainFileBasenames.includes(basename(firstFilePath, extname(firstFilePath)))) {
         if (mainFileBasenames.includes(basename(secondFilePath, extname(secondFilePath)))) return 0;
@@ -592,6 +603,36 @@ export const applyAliases = (moduleID, aliases) => {
   return moduleID;
 };
 /**
+ * Determines the style file path of given bare module request via its
+ * package's "exports" field (respecting the "style" condition) or "style"
+ * main field. Tools like "postcss-import" do not respect package exports so
+ * style only exports like "{'./index.css': {style: './dist/index.css'}}"
+ * would not be found otherwise.
+ * @param moduleID - Module id to determine.
+ * @param context - Directory to resolve given module id from.
+ * @param moduleDirectoryNames - Directory names to search modules in.
+ * @param extensions - File extensions a determined style file may have.
+ * @returns Determined file path or "null" if given module id is not a bare
+ * request or does not resolve to a style file.
+ */
+export const determineStyleExport = (moduleID, context, moduleDirectoryNames = ['node_modules'], extensions = ['.css']) => {
+  if (/^(?:[./~]|[a-z]+:)/i.test(moduleID)) return null;
+  const key = JSON.stringify([moduleDirectoryNames, extensions]);
+  if (!STYLE_RESOLVER_CACHE.has(key)) STYLE_RESOLVER_CACHE.set(key, enhancedResolve.create.sync({
+    conditionNames: ['style'],
+    extensions,
+    mainFields: ['style'],
+    modules: moduleDirectoryNames
+  }));
+  try {
+    const filePath = STYLE_RESOLVER_CACHE.get(key)(context, moduleID);
+    if (filePath &amp;&amp; extensions.includes(extname(filePath))) return filePath;
+  } catch {
+    // Let the caller fall back to its own resolving strategy.
+  }
+  return null;
+};
+/**
  * Determines a concrete file path for given module id.
  * @param moduleID - Module id to determine.
  * @param replacements - Mapping of regular expressions to their corresponding
@@ -668,13 +709,13 @@ export const getClosestPackageDescriptor = async (modulePath, fileName = 'packag
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isFile">isFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-extractLoader.html">extractLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isFile">isFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Nov 17 2026 11:50:35 GMT+0100 (Mitteleuropäische Normalzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Nov 27 2026 11:01:38 GMT+0100 (Mitteleuropäische Normalzeit)
 </footer>
 
 <script> prettyPrint(); </script>

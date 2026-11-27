@@ -1,8 +1,0 @@
-{
-    "moduleNameMapper": {
-        "\\.((css)|(less)|(sass)|(scss))$": "identity-obj-proxy"
-    },
-    "rootDir": "../../",
-    "setupFilesAfterEnv": ["./node_modules/weboptimizer/dist/jestSetup.js"],
-    "testPathIgnorePatterns": ["^(.*[/])?test-?[hH]elper([./].*)?$"]
-}

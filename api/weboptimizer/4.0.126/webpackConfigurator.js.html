@@ -56,14 +56,13 @@ const {
   HotModuleReplacementPlugin,
   IgnorePlugin,
   NormalModuleReplacementPlugin,
-  ProvidePlugin
+  ProvidePlugin,
+  sources: {
+    RawSource: WebpackRawSource
+  }
 } = webpack;
-import webpackSources from 'webpack-sources';
-const {
-  RawSource: WebpackRawSource
-} = webpackSources;
 import getConfiguration from "./configurator.js";
-import { determineAssetType, determineExternalRequest, determineModuleFilePath, getClosestPackageDescriptor, isFilePathInLocation, normalizePaths, stripLoader } from "./helper.js";
+import { determineAssetType, determineExternalRequest, determineModuleFilePath, determineStyleExport, getClosestPackageDescriptor, isFilePathInLocation, normalizePaths, stripLoader } from "./helper.js";
 import InPlaceAssetsIntoHTML from "./plugins/InPlaceAssetsIntoHTML.js";
 import HTMLTransformation from "./plugins/HTMLTransformation.js";
 import RemoveStyleOnlyScripts from "./plugins/RemoveStyleOnlyScripts.js";
@@ -488,9 +487,9 @@ const evaluateAdditionalLoaderConfiguration = loaderConfiguration => ({
   use: evaluateOrThrowError(loaderConfiguration.use)
 });
 const getIncludingPaths = path => normalizePaths([path].concat(module.locations.directoryPaths));
-const postCSSResolver = (name, _context) => {
+const postCSSResolver = (name, context) => {
   for (const [source, target] of Object.entries(configuration.module.aliases)) if (source.startsWith(name)) return target;
-  return name;
+  return determineStyleExport(name, context, normalizePaths(module.directoryNames)) ?? name;
 };
 const cssUse = (await Promise.all(module.preprocessor.cascadingStyleSheet.additional.pre.map(createEvaluateMapper('css')))).concat({
   loader: module.style.loader,
@@ -562,6 +561,13 @@ const cssUse = (await Promise.all(module.preprocessor.cascadingStyleSheet.additi
     }
   } : {}, module.preprocessor.cascadingStyleSheet.options || {})
 } : [], await Promise.all(module.preprocessor.cascadingStyleSheet.additional.post.map(createEvaluateMapper('css'))));
+/*
+    An even number of ejs compile steps results in plain html (instead of a
+    template function) which we have to parse and extract afterward.
+*/
+const ejsResultsInHTML = !((isPlainObject(module.preprocessor.html.options) ? module.preprocessor.html.options : {
+  compileSteps: 2
+}).compileSteps % 2);
 const genericLoader = {
   // Convert to compatible native web types.
   // region generic template
@@ -619,21 +625,22 @@ const genericLoader = {
       })),
       include: configuration.path.source.asset.template,
       test: /\.html\.ejs(?:\?.*)?$/i,
+      // Exports the resulting html as string.
+      ...(ejsResultsInHTML ? {
+        type: 'asset/source'
+      } : {}),
       use: (await Promise.all(module.preprocessor.html.additional.pre.map(createEvaluateMapper('html.ejs')))).concat(
       /*
           We might need to evaluate ejs before we are able to
           parse html beforehand. If not we parse it as html
           directly.
       */
-
-      (isPlainObject(module.preprocessor.html.options) ? module.preprocessor.html.options : {
-        compileSteps: 2
-      }).compileSteps % 2 ? [] : [{
-        loader: 'extract'
+      ejsResultsInHTML ? [{
+        loader: 'extract-loader'
       }, {
         loader: module.html.loader,
         options: module.html.options || {}
-      }], {
+      }] : [], {
         loader: module.preprocessor.html.loader,
         options: module.preprocessor.html.options || {}
       }, await Promise.all(module.preprocessor.html.additional.post.map(createEvaluateMapper('html.ejs'))))
@@ -643,12 +650,18 @@ const genericLoader = {
         filePath,
         type: 'html'
       })),
+      generator: {
+        filename: join(relative(configuration.path.target.base, configuration.path.target.asset.template), `[name][ext]?${configuration.hashAlgorithm}=[contenthash]`)
+      },
       include: configuration.path.source.asset.template,
       test: /\.html(?:\?.*)?$/i,
+      // Emits the extracted html file and exports its url.
+      type: 'asset/resource',
       use: (await Promise.all(module.html.additional.pre.map(createEvaluateMapper('html')))).concat({
-        loader: 'file?name=' + join(relative(configuration.path.target.base, configuration.path.target.asset.template), `[name][ext]?${configuration.hashAlgorithm}=` + '[contenthash]')
-      }, {
-        loader: 'extract'
+        loader: 'extract-loader',
+        options: {
+          outputDirectory: relative(configuration.path.target.base, configuration.path.target.asset.template)
+        }
       }, {
         loader: module.html.loader,
         options: module.html.options || {}
@@ -1118,13 +1131,13 @@ export default webpackConfiguration;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isFile">isFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-browser.html">browser</a></li><li><a href="module-configurator.html">configurator</a></li><li><a href="module-ejsLoader.html">ejsLoader</a></li><li><a href="module-extractLoader.html">extractLoader</a></li><li><a href="module-helper.html">helper</a></li><li><a href="module-stylelintConfigurator.html">stylelintConfigurator</a></li><li><a href="module-type.html">type</a></li><li><a href="module-weboptimizer.html">weboptimizer</a></li><li><a href="module-webpackConfigurator.html">webpackConfigurator</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isFile">isFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Nov 17 2026 11:50:35 GMT+0100 (Mitteleuropäische Normalzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Nov 27 2026 11:01:38 GMT+0100 (Mitteleuropäische Normalzeit)
 </footer>
 
 <script> prettyPrint(); </script>
